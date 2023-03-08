@@ -17,8 +17,7 @@
 package connectors
 
 import com.typesafe.config.ConfigFactory
-import models.ReturnPeriod
-import models.backend.{Contact, Site, UkAddress}
+import models.{Contact, ReturnPeriod, ReturnVariationData, SdilReturn, Site, SmallProducer, UkAddress}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -26,9 +25,11 @@ import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.play.PlaySpec
 import play.api.Configuration
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import play.api.http.Status.OK
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http._
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
@@ -49,6 +50,28 @@ class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar wit
 
 
   val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http =mockHttp, config)
+
+  val sdilReturn = SdilReturn(
+  (1L, 1L),
+  (1L,1L),
+  List(SmallProducer("test", "test", (15,14))),
+  (1L, 1L),
+  (1L, 1L),
+  (1L, 1L),
+  (1L, 1L)
+  //submittedOn: Option[LocalDateTime] = None
+  )
+
+  val revisedSdilReturn = SdilReturn(
+    (2L, 2L),
+    (2L,2L),
+    List(SmallProducer("test2", "test2", (16,15))),
+    (2L, 2L),
+    (2L, 2L),
+    (2L, 2L),
+    (2L, 2L)
+    //submittedOn: Option[LocalDateTime] = None
+  )
 
   val aSubscription = RetrievedSubscription(
     "0000000022",
@@ -123,6 +146,44 @@ class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar wit
       Await.result(softDrinksIndustryLevyConnector.oldestPendingReturnPeriod(utr), 4.seconds) mustBe Some(returnPeriod)
 
     }
+
+    "returns pending should return a list of return periods successfully" in {
+
+      val utr: String = "1234567891"
+      val returnPeriodLiist = List(ReturnPeriod(year = 2022, quarter = 3), ReturnPeriod(year = 2021, quarter = 3), ReturnPeriod(year = 2020, quarter = 3))
+      when(mockHttp.GET[List[ReturnPeriod]](any(),any(),any())(any(),any(),any())).thenReturn(Future.successful(returnPeriodLiist))
+      Await.result(softDrinksIndustryLevyConnector.returns_pending(utr), 4.seconds) mustBe Some(returnPeriodLiist)
+
+    }
+
+    "returns variable should return a list of return periods successfully" in {
+
+      val utr: String = "1234567891"
+      val returnPeriodLiist = List(ReturnPeriod(year = 2022, quarter = 3), ReturnPeriod(year = 2021, quarter = 3), ReturnPeriod(year = 2020, quarter = 3))
+      when(mockHttp.GET[List[ReturnPeriod]](any(),any(),any())(any(),any(),any())).thenReturn(Future.successful(returnPeriodLiist))
+      Await.result(softDrinksIndustryLevyConnector.returns_variable(utr), 4.seconds) mustBe Some(returnPeriodLiist)
+    }
+
+    "returns variable should post return variation data successfully" in {
+
+      val utr: String = "1234567891"
+      val returnPeriodLiist = List(ReturnPeriod(year = 2022, quarter = 3), ReturnPeriod(year = 2021, quarter = 3), ReturnPeriod(year = 2020, quarter = 3))
+      val returnVariationData = ReturnVariationData(  sdilReturn,
+        revisedSdilReturn,
+        ReturnPeriod(year = 2021, quarter = 3),
+        "Highly Addictive Drinks Plc",
+        UkAddress(List("117 Jerusalem Court", "St Albans"), "AL10 3UJ"),
+        "reason",
+        None)
+
+      when(mockHttp.POST[ReturnVariationData, HttpResponse](any(),any(),any())(any(),any(),any(),any())).thenReturn(
+        Future.successful(
+          HttpResponse.apply(OK)
+        )
+      )
+      Await.result(softDrinksIndustryLevyConnector.returns_vary(utr,returnVariationData), 4.seconds) mustBe HttpResponse(OK)
+    }
+
   }
 
 }
