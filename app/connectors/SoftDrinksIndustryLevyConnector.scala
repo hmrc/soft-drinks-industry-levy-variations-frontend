@@ -1,9 +1,25 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package connectors
 
-import models.{FinancialLineItem, ReturnPeriod}
+import models.{FinancialLineItem, ReturnPeriod, ReturnVariationData, ReturnsVariation, SdilReturn, VariationsSubmission}
 import play.api.Configuration
 import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, _}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import models.retrieved.RetrievedSubscription
 
@@ -32,6 +48,44 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     http.GET[Option[Boolean]](smallProducerUrl(sdilRef,period)).map {
       case Some(a) => Some(a)
       case _ => None
+    }
+
+  def submitVariation(variation: VariationsSubmission, sdilNumber: String)(implicit hc: HeaderCarrier): Future[Unit] =
+    http.POST[VariationsSubmission, HttpResponse](s"$sdilUrl/submit-variations/sdil/$sdilNumber", variation) map { _ =>
+      ()
+    }
+
+  def returns_pending(
+                       utr: String
+                     )(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] =
+    http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
+
+  def returns_variable(
+                        utr: String
+                      )(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] =
+    http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/variable")
+
+  def returns_vary(
+                    sdilRef: String,
+                    data: ReturnVariationData
+                  )(implicit hc: HeaderCarrier): Future[Unit] = {
+    val uri = s"$sdilUrl/returns/vary/$sdilRef"
+    http.POST[ReturnVariationData, HttpResponse](uri, data) map { _ =>
+      ()
+    }
+  }
+
+  def returns_get(
+                   utr: String,
+                   period: ReturnPeriod
+                 )(implicit hc: HeaderCarrier): Future[Option[SdilReturn]] = {
+    val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
+    http.GET[Option[SdilReturn]](uri)
+  }
+
+  def returns_variation(variation: ReturnsVariation, sdilRef: String)(implicit hc: HeaderCarrier): Future[Unit] =
+    http.POST[ReturnsVariation, HttpResponse](s"$sdilUrl/returns/variation/sdil/$sdilRef", variation) map { _ =>
+      ()
     }
 
   def oldestPendingReturnPeriod(utr: String)(implicit hc: HeaderCarrier): Future[Option[ReturnPeriod]] = {

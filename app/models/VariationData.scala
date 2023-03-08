@@ -39,6 +39,10 @@ case class ReturnVariationData(
 
 }
 
+object ReturnVariationData {
+  implicit val format: Format[ReturnVariationData] = Json.format[ReturnVariationData]
+}
+
 case class RegistrationVariationData(
                                       original: RetrievedSubscription,
                                       updatedBusinessAddress: Address,
@@ -87,7 +91,7 @@ case class RegistrationVariationData(
       updatedProductionSites.nonEmpty,
       deregDate.isDefined
     ).foldLeft(false)(_ || _)
-  }
+}
 
 }
 
@@ -107,7 +111,7 @@ object RegistrationVariationData {
       } yield Call(method, url)
   }
 
-//  implicit val returnTupleFormat: Format[(SdilReturn, SdilReturn)] = Json.format[(SdilReturn, SdilReturn)]
+  implicit val returnTupleFormat: Format[(SdilReturn, SdilReturn)] = Json.format[(SdilReturn, SdilReturn)]
   implicit val format: Format[RegistrationVariationData] = Json.format[RegistrationVariationData]
 
   def apply(original: RetrievedSubscription): RegistrationVariationData = RegistrationVariationData(

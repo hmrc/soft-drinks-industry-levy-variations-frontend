@@ -20,6 +20,9 @@ import cats.implicits.{catsSyntaxSemigroup, toFoldableOps}
 
 import java.time.{LocalDate, LocalDateTime}
 import cats.implicits._
+import models.requests.DataRequest
+import play.api.libs.json.{Format, Json}
+
 import scala.collection.immutable.ListMap
 
 case class SdilReturn(
@@ -72,6 +75,13 @@ case class SdilReturn(
   }
 }
 
+object SdilReturn {
+  implicit val format: Format[SdilReturn] = Json.format[SdilReturn]
+  implicit class SmallProducerDetails(smallProducers: List[SmallProducer]) {
+    def total: (Long, Long) = smallProducers.map(x => x.litreage).combineAll
+  }
+}
+
 case class ReturnPeriod(year: Int, quarter: Int) {
   require(quarter <= 3 && quarter >= 0)
   require(year >= 2018)
@@ -88,9 +98,10 @@ object ReturnPeriod {
     val i = o + 1
     ReturnPeriod(2018 + i / 4, i % 4)
   }
+
   def apply(date: LocalDate): ReturnPeriod = ReturnPeriod(date.getYear, quarter(date))
   def quarter(date: LocalDate): Int = { date.getMonthValue - 1 } / 3
-
+  implicit val format = Json.format[ReturnPeriod]
 }
 
 object ReturnLiterageList {

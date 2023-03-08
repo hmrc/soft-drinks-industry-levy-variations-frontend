@@ -14,22 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.backend
 
-import play.api.libs.json.{Json, Reads, Writes}
+import play.api.libs.json.{Format, Json}
 
-case class SmallProducer(alias: String, sdilRef: String, litreage: (Long, Long)) {
+case class Contact(name: Option[String], positionInCompany: Option[String], phoneNumber: String, email: String)
 
-  def getNameAndRef: String =
-    if (alias.nonEmpty)
-      alias ++ "</br>" ++ sdilRef
-    else
-      sdilRef
-
-}
-
-object SmallProducer {
-  implicit val writes: Writes[SmallProducer] = Json.writes
-  implicit val reads: Reads[SmallProducer] = Json.reads
-
+object Contact {
+  implicit val format: Format[Contact] = Json.format[Contact]
 }
