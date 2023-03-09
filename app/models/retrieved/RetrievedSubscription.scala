@@ -16,7 +16,7 @@
 
 package models.retrieved
 
-import models.backend.{Contact, Site, UkAddress}
+import models.{Contact, Site, UkAddress}
 
 import java.time.LocalDate
 import play.api.libs.json.Json

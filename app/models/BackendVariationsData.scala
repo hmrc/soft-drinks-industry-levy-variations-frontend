@@ -19,7 +19,7 @@ package models
 import java.time.LocalDate
 
 import play.api.libs.json._
-import models.backend.{Activity,UkAddress}
+import models.backend.Activity
 
 object VariationsSubmission {
   implicit val writes: Writes[VariationsSubmission] = Json.writes[VariationsSubmission]
