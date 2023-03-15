@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SoftDrinksIndustryLevyConnector @Inject()(
                                                  val http: HttpClient,
-                                                 val configuration: Configuration
+                                                 val configuration: Configuration,
                                                  sdilSessionCache: SDILSessionCache
                                                )(implicit ec: ExecutionContext)
   extends ServicesConfig(configuration) {

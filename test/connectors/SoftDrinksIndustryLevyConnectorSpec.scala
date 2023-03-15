@@ -16,6 +16,7 @@
 
 package connectors
 
+import base.SpecBase
 import com.typesafe.config.ConfigFactory
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import models.{Contact, FinancialLineItem, ReturnCharge, ReturnPeriod, ReturnVariationData, ReturnsVariation, SdilReturn, Site, SmallProducer, UkAddress}
@@ -23,21 +24,20 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.play.PlaySpec
 import play.api.Configuration
 import play.api.http.Status.OK
+import repositories.SDILSessionCache
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.DurationInt
-import scala.concurrent.{Await, Future}
+import scala.concurrent.Future
 
-class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar with ScalaFutures with IntegrationPatience  {
+class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar with ScalaFutures with IntegrationPatience  {
 
   val (host, port) = ("host", "123")
 
-  val config = Configuration(
+  val localConfig = Configuration(
     ConfigFactory.parseString(s"""
                                  | microservice.services.soft-drinks-industry-levy {
                                  |    host     = "$host"
@@ -45,10 +45,11 @@ class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar wit
                                  |  }
                                  |""".stripMargin)
   )
+
   val mockHttp = mock[HttpClient]
+  val mockSDILSessionCache = mock[SDILSessionCache]
+  val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http = mockHttp, localConfig, mockSDILSessionCache)
 
-
-  val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http =mockHttp, config)
 
   val sdilReturn = SdilReturn(
     (1L, 1L),
@@ -120,49 +121,80 @@ class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar wit
 
   implicit val hc = HeaderCarrier()
 
-  "SoftDrinksIndustryLevyConnector" must {
+  "SoftDrinksIndustryLevyConnector" - {
 
-    "return a subscription Successfully" in {
+    "return a subscription from cache Successfully" in {
 
-      val identifierType: String = "0000000022"
+      val identifierType: String = "sdil"
 
       when(mockHttp.GET[Option[RetrievedSubscription]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(aSubscription)))
-      Await.result(softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber,identifierType), 4.seconds) mustBe  Some(aSubscription)
+      val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
 
+      whenReady(
+        res
+      ) {
+        response =>
+          response mustEqual Some(aSubscription)
+      }
     }
 
     "return a small producer status successfully" in {
 
       when(mockHttp.GET[Option[Boolean]](any(),any(),any())(any(),any(),any())).thenReturn(Future.successful(Some(false)))
-      Await.result(softDrinksIndustryLevyConnector.checkSmallProducerStatus(sdilNumber, returnPeriod), 4.seconds) mustBe Some(false)
+      val res = softDrinksIndustryLevyConnector.checkSmallProducerStatus(sdilNumber, returnPeriod)
 
+      whenReady(
+        res
+      ) {
+        response =>
+          response mustBe Some(false)
+      }
     }
 
     "return a oldest pending return period successfully" in {
 
       when(mockHttp.GET[List[ReturnPeriod]](any(),any(),any())(any(),any(),any())).thenReturn(Future.successful(List(returnPeriod)))
-      Await.result(softDrinksIndustryLevyConnector.oldestPendingReturnPeriod(utr), 4.seconds) mustBe Some(returnPeriod)
+      val res = softDrinksIndustryLevyConnector.oldestPendingReturnPeriod(utr)
 
+      whenReady(
+        res
+      ) {
+        response =>
+          response mustBe Some(returnPeriod)
+      }
     }
 
     "returns pending should return a list of return periods successfully" in {
 
-      val returnPeriodLiist = List(ReturnPeriod(year = 2022, quarter = 3), ReturnPeriod(year = 2021, quarter = 3), ReturnPeriod(year = 2020, quarter = 3))
-      when(mockHttp.GET[List[ReturnPeriod]](any(),any(),any())(any(),any(),any())).thenReturn(Future.successful(returnPeriodLiist))
-      Await.result(softDrinksIndustryLevyConnector.returns_pending(utr), 4.seconds) mustBe Some(returnPeriodLiist)
+      val returnPeriodList = List(ReturnPeriod(year = 2022, quarter = 3), ReturnPeriod(year = 2021, quarter = 3), ReturnPeriod(year = 2020, quarter = 3))
+      when(mockHttp.GET[List[ReturnPeriod]](any(),any(),any())(any(),any(),any())).thenReturn(Future.successful(returnPeriodList))
+      val res = softDrinksIndustryLevyConnector.returns_pending(utr)
 
+      whenReady (
+      res
+      ) {
+      response =>
+        response mustBe Some(returnPeriodList)
+      }
     }
 
     "returns variable should return a list of return periods successfully" in {
 
       when(mockHttp.GET[List[ReturnPeriod]](any(),any(),any())(any(),any(),any())).thenReturn(Future.successful(returnPeriodList))
-      Await.result(softDrinksIndustryLevyConnector.returns_variable(utr), 4.seconds) mustBe Some(returnPeriodList)
+      val res = softDrinksIndustryLevyConnector.returns_variable(utr)
+
+      whenReady(
+        res
+      ) {
+        response =>
+          response mustBe Some(returnPeriodList)
+      }
 
     }
 
     "returns vary should post return variation data successfully" in {
 
-      val returnVariationData = ReturnVariationData(  sdilReturn,
+      val returnVariationData = ReturnVariationData(sdilReturn,
         revisedSdilReturn,
         ReturnPeriod(year = 2021, quarter = 3),
         "Highly Addictive Drinks Plc",
@@ -170,18 +202,32 @@ class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar wit
         "reason",
         None)
 
-      when(mockHttp.POST[ReturnVariationData, HttpResponse](any(),any(),any())(any(),any(),any(),any())).thenReturn(
+      when(mockHttp.POST[ReturnVariationData, HttpResponse](any(), any(), any())(any(), any(), any(), any())).thenReturn(
         Future.successful(
           HttpResponse.apply(OK)
         )
       )
-      Await.result(softDrinksIndustryLevyConnector.returns_vary(sdilNumber,returnVariationData), 4.seconds) mustBe HttpResponse(OK)
+      val res = softDrinksIndustryLevyConnector.returns_vary(sdilNumber, returnVariationData)
+
+      whenReady(
+        res
+      ) {
+        response =>
+          response mustBe HttpResponse(OK)
+      }
     }
 
     "returns get should return a sdil return successfully" in {
 
       when(mockHttp.GET[Option[SdilReturn]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(emptySdilReturn)))
-      Await.result(softDrinksIndustryLevyConnector.returns_get(utr,returnPeriod), 4.seconds) mustBe Some(emptySdilReturn)
+      val res = softDrinksIndustryLevyConnector.returns_get(utr,returnPeriod)
+
+      whenReady(
+        res
+      ) {
+        response =>
+          response mustBe Some(emptySdilReturn)
+      }
     }
 
     "returns variation should post a returns variation successfully" in {
@@ -198,13 +244,27 @@ class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar wit
       )
 
       when(mockHttp.GET[Option[SdilReturn]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(emptySdilReturn)))
-      Await.result(softDrinksIndustryLevyConnector.returns_variation(returnsVariation, sdilNumber), 4.seconds) mustBe Some(emptySdilReturn)
+      val res = softDrinksIndustryLevyConnector.returns_variation(returnsVariation, sdilNumber)
+
+      whenReady(
+        res
+      ) {
+        response =>
+          response mustBe Some(emptySdilReturn)
+      }
     }
 
     "balance should return a big decimal successfully" in {
       val withAssesment = true
       when(mockHttp.GET[BigDecimal](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(0))
-      Await.result(softDrinksIndustryLevyConnector.balance(sdilNumber,withAssesment), 4.seconds) mustBe Some(emptySdilReturn)
+      val res = softDrinksIndustryLevyConnector.balance(sdilNumber,withAssesment)
+
+      whenReady(
+        res
+      ) {
+        response =>
+          response mustBe Some(emptySdilReturn)
+      }
     }
 
     "balance history should return a big decimal successfully" in {
@@ -216,9 +276,15 @@ class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar wit
 
       val financialLineItemList = List(returnCharge)
       when(mockHttp.GET[List[FinancialLineItem]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(financialLineItemList))
-      Await.result(softDrinksIndustryLevyConnector.balance(sdilNumber,withAssesment), 4.seconds) mustBe Some(emptySdilReturn)
+      val res = softDrinksIndustryLevyConnector.balance(sdilNumber,withAssesment)
+
+      whenReady(
+        res
+      ) {
+        response =>
+          response mustBe Some(emptySdilReturn)
+      }
     }
 
   }
-
 }
