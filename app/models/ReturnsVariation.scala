@@ -30,6 +30,6 @@ case class ReturnsVariation(
                              email: String,
                              taxEstimation: BigDecimal)
 object ReturnsVariation {
-  implicit val bllFormat: Format[(Boolean, (Long, Long))] = Json.format[(Boolean, (Long, Long))]
+  implicit val booleanLongLongFormat: Format[(Boolean, (Long, Long))] = Json.format[(Boolean, (Long, Long))]
   implicit val format: Format[ReturnsVariation] = Json.format[ReturnsVariation]
 }
