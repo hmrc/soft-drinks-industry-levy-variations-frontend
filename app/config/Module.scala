@@ -17,7 +17,7 @@
 package config
 
 import com.google.inject.AbstractModule
-import controllers.actions._
+import controllers.actions.{AuthenticatedIdentifierAction, DataRequiredAction, DataRequiredActionImpl, DataRetrievalAction, DataRetrievalActionImpl, IdentifierAction}
 
 import java.time.{Clock, ZoneOffset}
 

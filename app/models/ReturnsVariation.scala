@@ -17,7 +17,8 @@
 package models
 
 import play.api.libs.json.{Format, Json}
-import models.{Site, UkAddress}
+import models.UkAddress
+import models.backend.Site
 
 case class ReturnsVariation(
                              orgName: String,

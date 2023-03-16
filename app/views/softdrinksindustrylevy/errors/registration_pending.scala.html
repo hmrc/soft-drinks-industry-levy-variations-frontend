@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,15 +12,22 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package models.requests
+@import sdil.config.AppConfig
+@import sdil.models.Address
+@import views.html.softdrinksindustrylevy.helpers._
 
-import models.ReturnPeriod
-import models.retrieved.RetrievedSubscription
-import play.api.mvc.{Request, WrappedRequest}
+@this()
 
-case class IdentifierRequest[A] (request: Request[A],
-                                 sdilEnrolment: String,
-                                 subscription: RetrievedSubscription,
-                                 returnPeriod: Option[ReturnPeriod] = None) extends WrappedRequest[A](request)
+@(utr: String, organisation: String, address: Address)(implicit request: Request[_], messages: Messages, config: AppConfig)
+
+@main_template(Messages("sdil.registration-pending.title")) {
+
+    <h1 class="heading-large" id="registration-pending-title">@messages("sdil.registration-pending.title")</h1>
+
+    @businessDetails(utr, organisation, address)
+    
+    <p>@messages("sdil.registration-pending.p1")</p>
+    <p>@messages("sdil.registration-pending.p2")</p>
+}

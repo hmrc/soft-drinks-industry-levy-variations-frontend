@@ -17,6 +17,7 @@
 package models
 
 import base.SpecBase
+import models.backend.Site
 import org.scalatestplus.mockito.MockitoSugar
 
 class SiteModelSpec extends SpecBase with MockitoSugar with DataHelper {

@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package models.requests
+package models.backend
 
-import models.ReturnPeriod
-import models.retrieved.RetrievedSubscription
-import play.api.mvc.{Request, WrappedRequest}
+import play.api.libs.json.{Format, Json}
 
-case class IdentifierRequest[A] (request: Request[A],
-                                 sdilEnrolment: String,
-                                 subscription: RetrievedSubscription,
-                                 returnPeriod: Option[ReturnPeriod] = None) extends WrappedRequest[A](request)
+case class Contact(name: Option[String],
+                   positionInCompany: Option[String],
+                   phoneNumber: String,
+                   email: String)
+
+object Contact {
+  implicit val format: Format[Contact] = Json.format[Contact]
+}

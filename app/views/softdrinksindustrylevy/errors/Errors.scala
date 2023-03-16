@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package models
+package views.softdrinksindustrylevy.errors
 
-import play.api.libs.json.{Format, Json}
+import javax.inject.Inject
+import views.html.softdrinksindustrylevy.errors._
 
-case class Contact(name: Option[String],
-                   positionInCompany: Option[String],
-                   phoneNumber: String,
-                   email: String)
-
-object Contact {
-  implicit val format: Format[Contact] = Json.format[Contact]
-}
+class Errors @Inject()(
+  val invalidAffinity: invalid_affinity,
+  val invalidRole: invalid_role,
+  val registrationPending: registration_pending
+) {}

@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package models
+package models.backend
 
+import models.{Address, UkAddress, Warehouse}
 import play.api.libs.json.{Format, Json}
 
 import java.time.LocalDate

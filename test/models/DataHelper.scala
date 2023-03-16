@@ -16,6 +16,7 @@
 
 package models
 
+import models.backend.{Contact, Site}
 import play.api.mvc.Call
 
 import java.time.LocalDate
@@ -112,7 +113,7 @@ trait DataHelper {
                 ref: Option[String] = None,
                 tradingName: Option[String] = None,
                 closureDate: Option[LocalDate] = None
-              ): Site = Site(
+              ): Site = backend.Site(
     address = address,
     ref = ref,
     tradingName = tradingName,

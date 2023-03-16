@@ -1,0 +1,276 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import sdil.config.AppConfig
+@import sdil.uniform.AdaptMessages.ufMessagesToPlayMessages
+@import views.html.softdrinksindustrylevy.helpers._
+@import sdil.models.Address
+@import sdil.models.retrieved.RetrievedSubscription
+@import java.time.format.DateTimeFormatter._
+@import java.time.LocalDateTime
+@import java.time.LocalDate
+@import java.time.ZoneId
+@import sdil.models.ReturnPeriod
+@import sdil.models.SdilReturn
+
+@this()
+
+@(address: Address, sdilReference: String, subscription: RetrievedSubscription, periodsDue: List[ReturnPeriod] = Nil, lastReturn: Option[SdilReturn], balance: BigDecimal, interest: BigDecimal = 0, hasExistingDD: Option[Boolean])(implicit request: Request[_], messages: Messages, config: AppConfig)
+
+@main_template(Messages("sdil.service-page.title"), noArticle = true) {
+    <div class="grid-row">
+        <div class="column-two-thirds">
+            <span class="govuk-caption-xl service-comp-name">
+                @subscription.orgName
+            </span>
+            <h1 class="heading-large service-header">
+                @messages("sdil.service-page.title")
+            </h1>
+
+            @if(subscription.activity.voluntaryRegistration) {
+                <div class="panel panel-border-wide">
+                    <p>@messages("sdil.service-page.p2.voluntary-only")</p>
+                    <p>@Html(
+                         Messages(
+                             "sdil.service-page.p3.voluntary-only",
+                             sdil.controllers.routes.VariationsController.changeActorStatus("")
+                         )
+                        )
+                    </p>
+                </div>
+            } else {
+                @lastReturn.map { lr =>
+                    <div class="panel-border-narrow panel">
+                        <p>
+                            @messages(
+                                "sdil.service-page.completed-return",
+                                ReturnPeriod(LocalDate.now).previous.start.format("MMMM"),
+                                ReturnPeriod(LocalDate.now).previous.end.format("MMMM yyyy"),
+                                lr.submittedOn.getOrElse(LocalDateTime.now).atZone(ZoneId.of("Europe/London")).format(ofPattern("h:mma")).toLowerCase,
+                                lr.submittedOn.getOrElse(LocalDateTime.now).format(ofPattern("d MMMM yyyy")),
+                                ReturnPeriod(LocalDate.now).start.format("MMMM"),
+                                ReturnPeriod(LocalDate.now).end.format("MMMM yyyy"),
+                                ReturnPeriod(LocalDate.now).deadline.format("d MMMM yyyy")
+                            )
+                        </p>
+                    </div>
+                }
+
+                @for(period <- periodsDue.take(1)) {
+                    <div class="notice">
+                        <i class="icon icon-important icon-image">
+                            <span class="visually-hidden">@messages("warning")</span>
+                        </i>
+                        <p>
+                            <strong class="bold-small">
+                            @if(periodsDue.length == 1) {
+                                @messages(
+                                    "returnsHome.returnsDue",
+                                    subscription.orgName,
+                                    period.start.format("MMMM"),
+                                    period.end.format("MMMM yyyy"),
+                                    period.deadline.format("d MMMM yyyy")
+                                )
+                            </strong>
+                        </p>
+                    </div>
+                } else {
+                    @messages("returnsHome.returnsDueMulti", periodsDue.length)
+                        </strong>
+                        </p>
+                    </div>
+
+        <p>@messages("returnsHome.returnsDueList.p1", periodsDue.length)</p>
+
+        @if(periodsDue.nonEmpty) {
+            <ol class="no-break-margin">
+            @for(periodList <- periodsDue) {
+                <li>
+                @messages("returnsHome.returnsDueList.li",
+                    periodsDue.indexOf(periodList) + 1,
+                    periodList.start.format("MMMM"),
+                    periodList.end.format("MMMM yyyy")
+                )
+                </li>
+            }
+            </ol>
+        }
+        }
+
+        <div>
+        @details("returnsHome.help.title") {
+            <p>@messages("returnsHome.help.p1")</p>
+            <ul class="list list-bullet">
+                <li>@messages("returnsHome.help.li1")</li>
+                <li>@messages("returnsHome.help.li2")</li>
+                <li>@messages("returnsHome.help.li3")</li>
+                <li>@messages("returnsHome.help.li4")</li>
+            </ul>
+            <p>@messages("returnsHome.help.p2")</p>
+            <p class="bold">@messages("sdil.service-page.repayment.warning")</p>
+            <p>@messages("returnsHome.help.p3")</p>
+            <ul class="list list-bullet">
+                <li>@messages("returnsHome.help.li5")</li>
+                <li>@messages("returnsHome.help.li6")</li>
+            </ul>
+            <p>@Html(Messages("returnsHome.help.guidance", Messages("returnsHome.help.guidance.link")))</p>
+        }
+        </div>
+        <div class="margin-bottom-25 return-button-padding">
+            <a href='@sdil.controllers.routes.ReturnsController.index(
+                period.year,
+                period.quarter,
+                nilReturn = false,
+                if(subscription.activity.smallProducer){
+                    "packaged-as-a-contract-packer"
+                } else {
+                    "own-brands-packaged-at-own-sites"
+                }
+            )' class="button">
+                @messages("return.file")
+            </a>
+        </div>
+        <div>
+            <a href='@sdil.controllers.routes.ReturnsController.index(
+                period.year,
+                period.quarter,
+                nilReturn = true,
+                "nil-return"
+            )'>
+                @messages("return.file.nil")
+            </a>
+        </div>
+        }
+        }
+        <hr class="govuk-section-break--visible">
+
+        <div>
+            <h2 class="heading-medium">@messages("account.balance")</h2>
+
+            <p @if(balance < 0){ class="bold" }>
+            @if(balance == 0) {
+                @Html(Messages("account.balance.amount.zero.fullstop"))
+            } else {
+                @if(balance > 0) {
+                    @printbalance("account.balance.amount.in-credit.fullstop", balance)
+                } else {
+                    @if(interest < 0) {
+                        @printbalance("account.balance.amount.need-to-pay", balance.abs)
+                        @messages("account.balance.amount.need-to-pay.interest.fullstop", format_money(interest.abs))
+                    } else {
+                        @printbalance("account.balance.amount.need-to-pay.fullstop", balance.abs)
+                    }
+                }
+            }
+            </p>
+
+            @if(balance < 0) {
+                @if(periodsDue.nonEmpty) {
+                  <p>@messages("account.balance.need-to-pay-by", periodsDue.map(_.deadline).min(Ordering.fromLessThan[LocalDate]((a, b) => a.isBefore(b))).format("d MMMM yyyy"))</p>
+                }
+
+                @manage_direct_debit_section(hasExistingDD)
+
+                <div class="panel panel-border-wide">
+                    <p>
+                    @Html(Messages("how-to-pay.title", sdilReference))
+                    </p>
+                </div>
+                <p class="font-xsmall">@messages("balance.table.p1")</p>
+
+                <a class="button--secondary" href="@sdil.controllers.routes.PaymentController.payNow()">@messages("account.balance.pay-now")</a>
+                <br>
+                <br>
+            } else {
+                @manage_direct_debit_section(hasExistingDD)
+            }
+            <a href="@sdil.controllers.routes.ServicePageController.balanceHistory">@messages("view.balance.history")</a>
+        </div>
+        <hr class="govuk-section-break--visible">
+        @defining(
+            subscription match {
+                case s if s.activity.isLiable => Some("man")
+                case s if s.activity.isVoluntaryMandatory => Some("volMan")
+                case _ => None
+            }
+        ) { subKey =>
+
+
+            @declaration_description_list("service-page", "business-details.title", subKey) {
+             @declaration_description_term("service-page", "sdil-ref", None, s"$sdilReference")
+             @declaration_description_term("verify", "utr", None, s"${subscription.utr}")
+             @declaration_description_term("verify", "organisation", None, s"${subscription.orgName}")
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        @messages("sdil.verify.address")
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @address.nonEmptyLines.init.map { l =>
+                            <div>@l</div>
+                        }
+                        <div>@address.postcode</div>
+                    </dd>
+                </div>
+            }
+        }
+
+        <h2 class="heading-medium">@messages("sdil.service-page.variations.title")</h2>
+        <div class="grid-row">
+            <div class="column-one-half">
+                <h3 class="heading-small">
+                    <a href='@sdil.controllers.routes.VariationsController.index("select-change")'>
+                    @messages("sdil.service-page.variations.subtitle.3")
+                    </a>
+                </h3>
+                <p>@messages("sdil.service-page.variations.p3")</p>
+                <ul class="list-bullet">
+                    <li>@messages("sdil.service-page.variations.li.1")</li>
+                    <li>@messages("sdil.service-page.variations.li.2")</li>
+                    <li>@messages("sdil.service-page.variations.li.3")</li>
+                    <li>@messages("sdil.service-page.variations.li.4")</li>
+                </ul>
+            </div>
+            <div class="column-one-half">
+                <h3 class="heading-small">
+                    <a href='@sdil.controllers.routes.VariationsController.changeAddressAndContact("")'>
+                    @messages("sdil.service-page.variations.subtitle.2")
+                    </a>
+                </h3>
+                <p>@messages("sdil.service-page.variations.p2")</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="column-one-third option-box-padding">
+        <div class="section--blue-top">
+            <h2 class="heading-small">@messages("sdil.service-page.support.title2")</h2>
+
+            <p><a href='@messages("sdil.service-page.support.link1")' target="_blank"
+            onclick="ga('send', 'event', 'moreLinks', 'click', 'guidance')">
+                @messages("sdil.service-page.support.p3")
+            </a></p>
+
+            <p><a href='@messages("sdil.service-page.support.link2")' target="_blank"
+            onclick="ga('send', 'event', 'moreLinks', 'click', 'legislation')">
+                @messages("sdil.service-page.support.p4")
+            </a></p>
+
+            <span>@messages("sdil.service-page.support.p5")</span>
+            <span>@messages("sdil.service-page.support.p6")</span>
+        </div>
+    </div>
+}

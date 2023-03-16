@@ -16,6 +16,7 @@
 
 package models
 
+import models.backend.Site
 import play.api.libs.json.{Format, Json}
 
 case class Warehouse(
