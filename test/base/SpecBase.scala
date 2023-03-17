@@ -83,7 +83,7 @@ trait SpecBase
     with ScalaFutures
     with IntegrationPatience {
 
-  val userAnswersId: String = "id"
+  val userAnswersId: String = "XKSDIL000000022"
 
   val application = applicationBuilder(userAnswers = None).build()
   implicit lazy val messagesAPI = application.injector.instanceOf[MessagesApi]

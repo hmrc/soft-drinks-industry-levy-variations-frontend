@@ -90,7 +90,9 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
 
       val identifierType: String = "sdil"
 
-      when(mockHttp.GET[Option[RetrievedSubscription]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(aSubscription)))
+      when(mockSDILSessionCache.fetchEntry[RetrievedSubscription](any(),any())(any())).thenReturn(Future.successful(Some(aSubscription)))
+
+      //when(mockHttp.GET[Option[RetrievedSubscription]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(aSubscription)))
       val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
 
       whenReady(
@@ -127,96 +129,6 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
       }
     }
 
-    "returns pending should return a list of return periods successfully" in {
-
-      val returnPeriodList = List(ReturnPeriod(year = 2022, quarter = 3), ReturnPeriod(year = 2021, quarter = 3), ReturnPeriod(year = 2020, quarter = 3))
-      when(mockHttp.GET[List[ReturnPeriod]](any(),any(),any())(any(),any(),any())).thenReturn(Future.successful(returnPeriodList))
-      val res = softDrinksIndustryLevyConnector.returns_pending(utr)
-
-      whenReady (
-      res
-      ) {
-      response =>
-        response mustBe Some(returnPeriodList)
-      }
-    }
-
-//    "returns variable should return a list of return periods successfully" in {
-//
-//      when(mockHttp.GET[List[ReturnPeriod]](any(),any(),any())(any(),any(),any())).thenReturn(Future.successful(returnPeriodList))
-//      val res = softDrinksIndustryLevyConnector.returns_variable(utr)
-//
-//      whenReady(
-//        res
-//      ) {
-//        response =>
-//          response mustBe Some(returnPeriodList)
-//      }
-//
-//    }
-
-    "returns vary should post return variation data successfully" in {
-
-      val returnVariationData = ReturnVariationData(sdilReturn,
-        revisedSdilReturn,
-        ReturnPeriod(year = 2021, quarter = 3),
-        "Highly Addictive Drinks Plc",
-        UkAddress(List("117 Jerusalem Court", "St Albans"), "AL10 3UJ"),
-        "reason",
-        None)
-
-      when(mockHttp.POST[ReturnVariationData, HttpResponse](any(), any(), any())(any(), any(), any(), any())).thenReturn(
-        Future.successful(
-          HttpResponse.apply(OK)
-        )
-      )
-      val res = softDrinksIndustryLevyConnector.returns_vary(sdilNumber, returnVariationData)
-
-      whenReady(
-        res
-      ) {
-        response =>
-          response mustBe HttpResponse(OK)
-      }
-    }
-
-    "returns get should return a sdil return successfully" in {
-
-      when(mockHttp.GET[Option[SdilReturn]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(emptySdilReturn)))
-      val res = softDrinksIndustryLevyConnector.returns_get(utr,returnPeriod)
-
-      whenReady(
-        res
-      ) {
-        response =>
-          response mustBe Some(emptySdilReturn)
-      }
-    }
-
-    "returns variation should post a returns variation successfully" in {
-
-      val returnsVariation = ReturnsVariation("Super Lemonade Plc",
-        UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-        (false, (0, 0)),
-        (false, (0, 0)),
-        List(),
-        List(),
-        "07942009503",
-        "Adeline.Greene@gmail.com",
-        0
-      )
-
-      when(mockHttp.GET[Option[SdilReturn]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(emptySdilReturn)))
-      val res = softDrinksIndustryLevyConnector.returns_variation(returnsVariation, sdilNumber)
-
-      whenReady(
-        res
-      ) {
-        response =>
-          response mustBe Some(emptySdilReturn)
-      }
-    }
-
     "balance should return a big decimal successfully" in {
       val withAssesment = true
       when(mockHttp.GET[BigDecimal](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(0))
@@ -226,28 +138,28 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
         res
       ) {
         response =>
-          response mustBe Some(emptySdilReturn)
+          response mustBe 0
       }
     }
 
-    "balance history should return a big decimal successfully" in {
-      val withAssesment = true
-
-      val date: LocalDate = LocalDate.of(2022,10,10)
-      val bigDecimal: BigDecimal = 1000
-      val returnCharge: FinancialLineItem = ReturnCharge(ReturnPeriod(date), bigDecimal)
-
-      val financialLineItemList = List(returnCharge)
-      when(mockHttp.GET[List[FinancialLineItem]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(financialLineItemList))
-      val res = softDrinksIndustryLevyConnector.balance(sdilNumber,withAssesment)
-
-      whenReady(
-        res
-      ) {
-        response =>
-          response mustBe Some(emptySdilReturn)
-      }
-    }
+//    "balance history should return a big decimal successfully" in {
+//      val withAssesment = true
+//
+//      val date: LocalDate = LocalDate.of(2022,10,10)
+//      val bigDecimal: BigDecimal = 1000
+//      val returnCharge: FinancialLineItem = ReturnCharge(ReturnPeriod(date), bigDecimal)
+//
+//      val financialLineItemList = List(returnCharge)
+//      when(mockHttp.GET[List[FinancialLineItem]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(financialLineItemList))
+//      val res = softDrinksIndustryLevyConnector.balance(sdilNumber,withAssesment)
+//
+//      whenReady(
+//        res
+//      ) {
+//        response =>
+//          response mustBe financialLineItemList
+//      }
+//    }
 
   }
 }

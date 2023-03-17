@@ -59,44 +59,6 @@ class SoftDrinksIndustryLevyConnector @Inject()(
       case _ => None
     }
 
-  def submitVariation(variation: VariationsSubmission, sdilNumber: String)(implicit hc: HeaderCarrier): Future[Unit] =
-    http.POST[VariationsSubmission, HttpResponse](s"$sdilUrl/submit-variations/sdil/$sdilNumber", variation) map { _ =>
-      ()
-    }
-
-  def returns_pending(
-                       utr: String
-                     )(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] =
-    http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
-
-  def returns_variable(
-                        utr: String
-                      )(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] =
-    http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/variable")
-
-  def returns_vary(
-                    sdilRef: String,
-                    data: ReturnVariationData
-                  )(implicit hc: HeaderCarrier): Future[Unit] = {
-    val uri = s"$sdilUrl/returns/vary/$sdilRef"
-    http.POST[ReturnVariationData, HttpResponse](uri, data) map { _ =>
-      ()
-    }
-  }
-
-  def returns_get(
-                   utr: String,
-                   period: ReturnPeriod
-                 )(implicit hc: HeaderCarrier): Future[Option[SdilReturn]] = {
-    val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
-    http.GET[Option[SdilReturn]](uri)
-  }
-
-  def returns_variation(variation: ReturnsVariation, sdilRef: String)(implicit hc: HeaderCarrier): Future[Unit] =
-    http.POST[ReturnsVariation, HttpResponse](s"$sdilUrl/returns/variation/sdil/$sdilRef", variation) map { _ =>
-      ()
-    }
-
   def oldestPendingReturnPeriod(utr: String)(implicit hc: HeaderCarrier): Future[Option[ReturnPeriod]] = {
     val returnPeriods = http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
     returnPeriods.map(_.sortBy(_.year).sortBy(_.quarter).headOption)
