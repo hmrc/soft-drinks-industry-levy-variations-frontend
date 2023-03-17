@@ -17,6 +17,7 @@
 package models
 
 import models.backend.{Contact, Site}
+import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import play.api.mvc.Call
 
 import java.time.LocalDate
