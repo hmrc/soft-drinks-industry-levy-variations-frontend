@@ -31,18 +31,17 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration.DurationInt
 import scala.concurrent.{Await, Future}
 
-class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar with ScalaFutures with IntegrationPatience {
+class SoftDrinksIndustryLevyConnectorSpec extends PlaySpec with MockitoSugar with ScalaFutures with IntegrationPatience  {
 
   val (host, port) = ("host", "123")
 
   val config = Configuration(
-    ConfigFactory.parseString(
-      s"""
-         | microservice.services.soft-drinks-industry-levy {
-         |    host     = "$host"
-         |    port     = $port
-
-         |""".stripMargin)
+    ConfigFactory.parseString(s"""
+                                 | microservice.services.soft-drinks-industry-levy {
+                                 |    host     = "$host"
+                                 |    port     = $port
+                                 |  }
+                                 |""".stripMargin)
   )
   val mockHttp = mock[HttpClient]
 
