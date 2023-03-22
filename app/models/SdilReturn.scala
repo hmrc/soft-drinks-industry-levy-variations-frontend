@@ -20,6 +20,8 @@ import cats.implicits.{catsSyntaxSemigroup, toFoldableOps}
 
 import java.time.{LocalDate, LocalDateTime}
 import cats.implicits._
+import play.api.libs.json.Json
+
 import scala.collection.immutable.ListMap
 
 case class SdilReturn(
@@ -90,7 +92,7 @@ object ReturnPeriod {
   }
   def apply(date: LocalDate): ReturnPeriod = ReturnPeriod(date.getYear, quarter(date))
   def quarter(date: LocalDate): Int = { date.getMonthValue - 1 } / 3
-
+  implicit val format = Json.format[ReturnPeriod]
 }
 
 object ReturnLiterageList {
