@@ -2,6 +2,7 @@ import sbt._
 
 object AppDependencies {
   import play.core.PlayVersion
+  val bootstrapVersion = "7.12.0"
 
   val compile = Seq(
     play.sbt.PlayImport.ws,
@@ -14,6 +15,7 @@ object AppDependencies {
   )
 
   val test = Seq(
+    "uk.gov.hmrc"            %% "bootstrap-test-play-28"   % bootstrapVersion,
     "org.scalatest"           %% "scalatest"               % "3.2.15",
     "org.scalatestplus"       %% "scalacheck-1-15"         % "3.2.11.0",
     "org.scalatestplus"       %% "mockito-3-4"             % "3.2.10.0",
