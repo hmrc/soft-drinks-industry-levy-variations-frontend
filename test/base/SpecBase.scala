@@ -83,6 +83,7 @@ trait SpecBase
     with IntegrationPatience {
 
   val userAnswersId: String = "id"
+  val sdilNumber: String = "XKSDIL000000022"
 
   def emptyUserAnswers : UserAnswers = UserAnswers(userAnswersId)
 

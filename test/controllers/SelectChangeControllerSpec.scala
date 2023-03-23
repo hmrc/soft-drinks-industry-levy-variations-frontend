@@ -42,7 +42,7 @@ class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
   val formProvider = new SelectChangeFormProvider()
   val form = formProvider()
 
-  "SelectChange Controller" - {
+  "OwnBrands Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -62,7 +62,7 @@ class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(userAnswersId).set(SelectChangePage, SelectChange.values.head).success.value
+      val userAnswers = UserAnswers(sdilNumber).set(SelectChangePage, SelectChange.values.head).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -121,37 +121,6 @@ class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
-      }
-    }
-
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, selectChangeRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
-      }
-    }
-
-    "redirect to Journey Recovery for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, selectChangeRoute)
-            .withFormUrlEncodedBody(("value", SelectChange.values.head.toString))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
   }

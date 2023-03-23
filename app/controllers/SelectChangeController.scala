@@ -18,8 +18,9 @@ package controllers
 
 import controllers.actions._
 import forms.SelectChangeFormProvider
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.SelectChangePage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -58,16 +59,16 @@ class SelectChangeController @Inject()(
 
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    implicit request =>
-
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+      implicit request =>
+        val answers = request.userAnswers.getOrElse(UserAnswers(id = request.sdilEnrolment))
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(SelectChangePage, value))
+            updatedAnswers <- Future.fromTry(answers.set(SelectChangePage, value))
             _              <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(SelectChangePage, mode, updatedAnswers))
       )
