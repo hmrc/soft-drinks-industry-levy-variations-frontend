@@ -19,3 +19,8 @@ GET         /account/sign-out                            controllers.auth.AuthCo
 GET         /account/signed-out                          controllers.auth.SignedOutController.onPageLoad
 
 GET         /unauthorised                                controllers.UnauthorisedController.onPageLoad
+
+GET        /select-change                        controllers.SelectChangeController.onPageLoad(mode: Mode = NormalMode)
+POST       /select-change                        controllers.SelectChangeController.onSubmit(mode: Mode = NormalMode)
+GET        /change-select-change                  controllers.SelectChangeController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-select-change                  controllers.SelectChangeController.onSubmit(mode: Mode = CheckMode)

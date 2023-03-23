@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-import org.scalacheck.Arbitrary
-import pages._
+import javax.inject.Inject
 
-trait PageGenerators {
+import forms.mappings.Mappings
+import play.api.data.Form
+import models.SelectChange
 
-  implicit lazy val arbitrarySelectChangePage: Arbitrary[SelectChangePage.type] =
-    Arbitrary(SelectChangePage)
+class SelectChangeFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[SelectChange] =
+    Form(
+      "value" -> enumerable[SelectChange]("selectChange.error.required")
+    )
 }
