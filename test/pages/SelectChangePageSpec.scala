@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-import org.scalacheck.Arbitrary
-import pages._
+import models.SelectChange
+import pages.behaviours.PageBehaviours
 
-trait PageGenerators {
+class SelectChangeSpec extends PageBehaviours {
 
-  implicit lazy val arbitrarySelectChangePage: Arbitrary[SelectChangePage.type] =
-    Arbitrary(SelectChangePage)
+  "SelectChangePage" - {
+
+    beRetrievable[SelectChange](SelectChangePage)
+
+    beSettable[SelectChange](SelectChangePage)
+
+    beRemovable[SelectChange](SelectChangePage)
+  }
 }
