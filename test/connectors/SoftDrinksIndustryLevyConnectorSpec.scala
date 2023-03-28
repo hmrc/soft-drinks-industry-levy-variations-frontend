@@ -28,11 +28,10 @@ import play.api.Configuration
 import repositories.SDILSessionCache
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import java.time.LocalDate
-import scala.concurrent.Future
+import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration.DurationInt
-import scala.concurrent.Await
 
-class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar with ScalaFutures with IntegrationPatience  {
+class SoftDrinksIndustryLevyConnectorSpec(implicit ec: ExecutionContext) extends SpecBase with MockitoSugar with ScalaFutures with IntegrationPatience  {
 
   val (host, port) = ("host", "123")
 

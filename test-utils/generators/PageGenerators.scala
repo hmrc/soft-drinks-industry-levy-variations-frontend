@@ -16,6 +16,9 @@
 
 package generators
 
+import org.scalacheck.Arbitrary
+import pages.SelectChangePage
+
 trait PageGenerators {
 
   implicit lazy val arbitrarySelectChangePage: Arbitrary[SelectChangePage.type] =

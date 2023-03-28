@@ -38,7 +38,6 @@ class AuthController @Inject()(
       sessionRepository
 
         .clear(request.subscription.sdilRef)
-        .clear(request.sdilEnrolment)
         .map {
           _ =>
             Redirect(config.signOutUrl, Map("continue" -> Seq(config.exitSurveyUrl)))
@@ -49,7 +48,6 @@ class AuthController @Inject()(
     implicit request =>
     sessionRepository
       .clear(request.subscription.sdilRef)
-      .clear(request.sdilEnrolment)
       .map {
         _ =>
         Redirect(config.signOutUrl, Map("continue" -> Seq(routes.SignedOutController.onPageLoad.url)))

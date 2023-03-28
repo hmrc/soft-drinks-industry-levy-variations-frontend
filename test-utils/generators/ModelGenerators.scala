@@ -16,6 +16,9 @@
 
 package generators
 
+import models.SelectChange
+import org.scalacheck.{Arbitrary, Gen}
+
 trait ModelGenerators {
 
   implicit lazy val arbitrarySelectChange: Arbitrary[SelectChange] =

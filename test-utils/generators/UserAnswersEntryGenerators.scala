@@ -16,13 +16,18 @@
 
 package generators
 
+import models.SelectChange
+import org.scalacheck.Arbitrary
+import pages.SelectChangePage
+import play.api.libs.json.{JsValue, Json}
+
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
   implicit lazy val arbitrarySelectChangeUserAnswersEntry: Arbitrary[(SelectChangePage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[SelectChangePage.type]
-        value <- arbitrary[SelectChange].map(Json.toJson(_))
+        page  <- Arbitrary.arbitrary[SelectChangePage.type]
+        value <- Arbitrary.arbitrary[SelectChange].map(Json.toJson(_))
       } yield (page, value)
     }
 }
