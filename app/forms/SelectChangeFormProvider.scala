@@ -14,12 +14,18 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-trait ModelGenerators {
+import javax.inject.Inject
 
-  implicit lazy val arbitrarySelectChange: Arbitrary[SelectChange] =
-    Arbitrary {
-      Gen.oneOf(SelectChange.values.toSeq)
-    }
+import forms.mappings.Mappings
+import play.api.data.Form
+import models.SelectChange
+
+class SelectChangeFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[SelectChange] =
+    Form(
+      "value" -> enumerable[SelectChange]("selectChange.error.required")
+    )
 }

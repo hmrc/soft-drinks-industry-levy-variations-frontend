@@ -10,6 +10,7 @@ site.start = Start now
 site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
+site.saveContinue = Save and continue
 
 date.day = Day
 date.month = Month
@@ -55,3 +56,14 @@ signedOut.guidance = We did not save your answers.
 
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
+
+selectChange.title = What do you need to do
+selectChange.heading = What do you need to do?
+selectChange.hint = Changes can take up to 15 working days to process.
+selectChange.update = Update contact, packaging site or warehouse details
+selectChange.changeActivity = Change business activity
+selectChange.cancelReg = Cancel Soft Drinks Industry Levy registration
+selectChange.correctReturn = Correct an error in previous return
+selectChange.checkYourAnswersLabel = What do you need to do
+selectChange.error.required = Select what you need to do
+selectChange.change.hidden = SelectChange

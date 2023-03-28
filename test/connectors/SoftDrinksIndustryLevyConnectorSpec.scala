@@ -27,10 +27,10 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
 import repositories.SDILSessionCache
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-
 import java.time.LocalDate
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
+import scala.concurrent.duration.DurationInt
+import scala.concurrent.Await
 
 class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar with ScalaFutures with IntegrationPatience  {
 
@@ -155,6 +155,12 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
         response =>
           response mustBe financialLineItemList
       }
+
+      val utr: String = "1234567891"
+      val returnPeriod = ReturnPeriod(year = 2022, quarter = 3)
+      when(mockHttp.GET[List[ReturnPeriod]](any(),any(),any())(any(),any(),any())).thenReturn(Future.successful(List(returnPeriod)))
+      Await.result(softDrinksIndustryLevyConnector.oldestPendingReturnPeriod(utr), 4.seconds) mustBe Some(returnPeriod)
+
     }
 
   }

@@ -17,4 +17,7 @@
 package generators
 
 trait PageGenerators {
+
+  implicit lazy val arbitrarySelectChangePage: Arbitrary[SelectChangePage.type] =
+    Arbitrary(SelectChangePage)
 }

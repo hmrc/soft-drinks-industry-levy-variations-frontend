@@ -17,8 +17,8 @@
 package controllers.actions
 
 import base.SpecBase
-import models.requests.{IdentifierRequest, OptionalDataRequest}
 import models.{ReturnPeriod, UserAnswers}
+import models.requests.{IdentifierRequest, OptionalDataRequest}
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
@@ -56,7 +56,6 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
         val sessionRepository = mock[SessionRepository]
         when(sessionRepository.get("id")) thenReturn Future(Some(UserAnswers("id")))
         val action = new Harness(sessionRepository)
-
         val result = action.callTransform(new IdentifierRequest(FakeRequest(), "id", largePackerSubscription, Some(ReturnPeriod(2023,1)))).futureValue
 
         result.userAnswers mustBe defined

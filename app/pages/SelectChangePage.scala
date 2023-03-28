@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-trait ModelGenerators {
+import models.SelectChange
+import play.api.libs.json.JsPath
 
-  implicit lazy val arbitrarySelectChange: Arbitrary[SelectChange] =
-    Arbitrary {
-      Gen.oneOf(SelectChange.values.toSeq)
-    }
+case object SelectChangePage extends QuestionPage[SelectChange] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "selectChange"
 }

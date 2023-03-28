@@ -17,7 +17,7 @@
 package base
 
 import controllers.actions._
-import models.backend.Contact
+import models.backend.{Contact, Site}
 import models.retrieved.{RetrievedActivity, RetrievedSubscription}
 import models.{ReturnPeriod, SmallProducer, UkAddress, UserAnswers, backend}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -31,7 +31,6 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.mvc.{MessagesControllerComponents, PlayBodyParsers}
 import play.api.test.FakeRequest
-
 import java.time.LocalDate
 
 trait SpecBase

@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package generators
+package pages
 
-trait ModelGenerators {
+import models.SelectChange
+import pages.behaviours.PageBehaviours
 
-  implicit lazy val arbitrarySelectChange: Arbitrary[SelectChange] =
-    Arbitrary {
-      Gen.oneOf(SelectChange.values.toSeq)
-    }
+class SelectChangeSpec extends PageBehaviours {
+
+  "SelectChangePage" - {
+
+    beRetrievable[SelectChange](SelectChangePage)
+
+    beSettable[SelectChange](SelectChangePage)
+
+    beRemovable[SelectChange](SelectChangePage)
+  }
 }

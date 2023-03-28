@@ -27,7 +27,7 @@ case class OptionalDataRequest[A] (request: Request[A],
                                    returnPeriod: Option[ReturnPeriod]) extends WrappedRequest[A](request)
 
 case class DataRequest[A] (request: Request[A],
-                           dilEnrolment: String,
+                           sdilEnrolment: String,
                            subscription: RetrievedSubscription,
                            userAnswers: UserAnswers,
-                           returnPeriod: Option[ReturnPeriod] ) extends WrappedRequest[A](request)
+                           returnPeriod: Option[ReturnPeriod]) extends WrappedRequest[A](request)
