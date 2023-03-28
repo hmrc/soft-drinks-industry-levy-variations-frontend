@@ -16,9 +16,8 @@
 
 package models.retrieved
 
-import models.backend.{Contact, Site}
 import models.UkAddress
-
+import models.backend.{Contact, Site}
 import java.time.LocalDate
 import play.api.libs.json.Json
 

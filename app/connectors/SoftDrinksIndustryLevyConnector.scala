@@ -16,13 +16,13 @@
 
 package connectors
 
-import models.{FinancialLineItem, ReturnPeriod, ReturnVariationData, ReturnsVariation, SdilReturn, VariationsSubmission}
-import play.api.Configuration
-import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, _}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import models.retrieved.RetrievedSubscription
+import models.{FinancialLineItem, ReturnPeriod}
+import play.api.Configuration
 import repositories.{SDILSessionCache, SDILSessionKeys}
+import uk.gov.hmrc.http.HttpReads.Implicits.{readFromJson, _}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

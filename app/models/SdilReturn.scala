@@ -20,7 +20,6 @@ import cats.implicits.{catsSyntaxSemigroup, toFoldableOps}
 
 import java.time.{LocalDate, LocalDateTime}
 import cats.implicits._
-import models.requests.DataRequest
 import play.api.libs.json.{Format, Json}
 
 import scala.collection.immutable.ListMap
