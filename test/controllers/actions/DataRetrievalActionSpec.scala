@@ -17,9 +17,8 @@
 package controllers.actions
 
 import base.SpecBase
-import models.{ReturnPeriod, UserAnswers}
 import models.requests.{IdentifierRequest, OptionalDataRequest}
-import models.retrieved.RetrievedSubscription
+import models.{ReturnPeriod, UserAnswers}
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.test.FakeRequest
@@ -44,7 +43,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
         when(sessionRepository.get("id")) thenReturn Future(None)
         val action = new Harness(sessionRepository)
 
-        val result = action.callTransform(IdentifierRequest(FakeRequest(), "id", aSubscription, Some(ReturnPeriod(2023,1)))).futureValue
+        val result = action.callTransform(IdentifierRequest(FakeRequest(), "id", largePackerSubscription, Some(ReturnPeriod(2023,1)))).futureValue
 
         result.userAnswers must not be defined
       }
@@ -58,7 +57,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
         when(sessionRepository.get("id")) thenReturn Future(Some(UserAnswers("id")))
         val action = new Harness(sessionRepository)
 
-        val result = action.callTransform(new IdentifierRequest(FakeRequest(), "id", aSubscription, Some(ReturnPeriod(2023,1)))).futureValue
+        val result = action.callTransform(new IdentifierRequest(FakeRequest(), "id", largePackerSubscription, Some(ReturnPeriod(2023,1)))).futureValue
 
         result.userAnswers mustBe defined
       }

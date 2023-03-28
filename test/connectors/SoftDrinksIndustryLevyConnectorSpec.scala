@@ -16,21 +16,17 @@
 
 package connectors
 
-import akka.http.scaladsl.model.DateTime.month
 import base.SpecBase
 import com.typesafe.config.ConfigFactory
-import models.backend.{Contact, Site}
-import models.retrieved.{RetrievedActivity, RetrievedSubscription}
-import models.{FinancialLineItem, ReturnCharge, ReturnPeriod, ReturnVariationData, ReturnsVariation, SdilReturn, SmallProducer, UkAddress, backend}
-import org.joda.time.DateTimeFieldType.{dayOfMonth, year}
+import models.retrieved.RetrievedSubscription
+import models.{FinancialLineItem, ReturnCharge, ReturnPeriod, SdilReturn, SmallProducer}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.Configuration
-import play.api.http.Status.OK
 import repositories.SDILSessionCache
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import java.time.LocalDate
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -90,7 +86,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
 
       val identifierType: String = "sdil"
 
-      when(mockSDILSessionCache.fetchEntry[RetrievedSubscription](any(),any())(any())).thenReturn(Future.successful(Some(aSubscription)))
+      when(mockSDILSessionCache.fetchEntry[RetrievedSubscription](any(),any())(any())).thenReturn(Future.successful(Some(largePackerSubscription)))
 
       //when(mockHttp.GET[Option[RetrievedSubscription]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(aSubscription)))
       val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
@@ -99,7 +95,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
         res
       ) {
         response =>
-          response mustEqual Some(aSubscription)
+          response mustEqual Some(largePackerSubscription)
       }
     }
 
@@ -130,9 +126,9 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
     }
 
     "balance should return a big decimal successfully" in {
-      val withAssesment = true
+      val withAssessment = true
       when(mockHttp.GET[BigDecimal](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(0))
-      val res = softDrinksIndustryLevyConnector.balance(sdilNumber,withAssesment)
+      val res = softDrinksIndustryLevyConnector.balance(sdilNumber,withAssessment)
 
       whenReady(
         res
@@ -142,24 +138,24 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
       }
     }
 
-//    "balance history should return a big decimal successfully" in {
-//      val withAssesment = true
-//
-//      val date: LocalDate = LocalDate.of(2022,10,10)
-//      val bigDecimal: BigDecimal = 1000
-//      val returnCharge: FinancialLineItem = ReturnCharge(ReturnPeriod(date), bigDecimal)
-//
-//      val financialLineItemList = List(returnCharge)
-//      when(mockHttp.GET[List[FinancialLineItem]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(financialLineItemList))
-//      val res = softDrinksIndustryLevyConnector.balance(sdilNumber,withAssesment)
-//
-//      whenReady(
-//        res
-//      ) {
-//        response =>
-//          response mustBe financialLineItemList
-//      }
-//    }
+    "balance history should return a big decimal successfully" in {
+      val withAssessment = true
+
+      val date: LocalDate = LocalDate.of(2022,10,10)
+      val bigDecimal: BigDecimal = 1000
+      val returnCharge: FinancialLineItem = ReturnCharge(ReturnPeriod(date), bigDecimal)
+
+      val financialLineItemList = List(returnCharge)
+      when(mockHttp.GET[List[FinancialLineItem]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(financialLineItemList))
+      val res = softDrinksIndustryLevyConnector.balanceHistory(sdilNumber,withAssessment)
+
+      whenReady(
+        res
+      ) {
+        response =>
+          response mustBe financialLineItemList
+      }
+    }
 
   }
 }
