@@ -1,7 +1,18 @@
 
 # soft-drinks-industry-levy-variations-frontend
 
-This is a placeholder README.md for a new repository
+Soft Drinks Industry Levy variations frontend is a microservice that is part of the Soft Drinks Industry Levy service.
+
+The variations journey allows users to:
+- Correct an error in a previous return
+- Update contact, packaging site or warehouse details
+- Change business activity
+- Cancel SDIL registration
+
+### Running the tests
+
+
+### Further documentation
 
 ### License
 
