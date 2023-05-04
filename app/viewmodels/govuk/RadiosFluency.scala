@@ -55,36 +55,47 @@ trait RadiosFluency {
 
     def yesNo(
                field: Field,
-               legend: Legend
+               legend: Legend,
+               hint: Option[Hint]
              )(implicit messages: Messages): Radios =
       yesNo(
-        field    = field,
-        fieldset = FieldsetViewModel(legend)
+        field = field,
+        fieldset = FieldsetViewModel(legend),
+        hint
       )
 
     def yesNo(
                field: Field,
-               fieldset: Fieldset
+               fieldset: Fieldset,
+               hint: Option[Hint]
              )(implicit messages: Messages): Radios = {
 
       val items = Seq(
         RadioItem(
-          id      = Some(field.id),
-          value   = Some("true"),
+          id = Some(field.id),
+          value = Some("true"),
           content = Text(messages("site.yes"))
         ),
         RadioItem(
-          id      = Some(s"${field.id}-no"),
-          value   = Some("false"),
+          id = Some(s"${field.id}-no"),
+          value = Some("false"),
           content = Text(messages("site.no"))
         )
       )
+      if (hint.isDefined) {
+        apply(
+          field = field,
+          fieldset = fieldset,
+          items = items
+        ).inline().withHint(hint.get)
+      } else {
+        apply(
+          field = field,
+          fieldset = fieldset,
+          items = items
+        ).inline()
+      }
 
-      apply(
-        field    = field,
-        fieldset = fieldset,
-        items    = items
-      ).inline()
     }
   }
 

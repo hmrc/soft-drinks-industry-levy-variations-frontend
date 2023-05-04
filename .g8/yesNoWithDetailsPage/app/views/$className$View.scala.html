@@ -1,11 +1,10 @@
-@import viewmodels.InputWidth._
-
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton
+    govukRadios: GovukRadios,
+    govukButton: GovukButton,
+    govukDetails: GovukDetails
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
@@ -18,22 +17,19 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("$className;format="decap"$.heading")</h1>
-
-        @govukInput(
-            InputViewModel(
-                field = form("$field1Name$"),
-                label = LabelViewModel(messages("$className;format="decap"$.$field1Name$"))
+        @govukRadios(
+            RadiosViewModel.yesNo(
+                field = form("value"),
+                legend = LegendViewModel(messages("$className;format="decap"$.heading")).asPageHeading(),
+                hint = None
             )
-            .withWidth(Full)
         )
 
-        @govukInput(
-            InputViewModel(
-                field = form("$field2Name$"),
-                label = LabelViewModel(messages("$className;format="decap"$.$field2Name$"))
+        @govukDetails(
+            Details(
+                summary = Text(messages("$className;format="decap"$.detailsLink")),
+                content = Text(messages("$className;format="decap"$.detailsContent"))
             )
-            .withWidth(Full)
         )
 
         @govukButton(
