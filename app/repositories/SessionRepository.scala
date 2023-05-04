@@ -39,7 +39,7 @@ class SessionRepository @Inject()(
   extends PlayMongoRepository[UserAnswers](
     collectionName = "user-answers",
     mongoComponent = mongoComponent,
-    domainFormat   = UserAnswers.format
+    domainFormat   = UserAnswers.format,
     indexes        = Seq(
       IndexModel(
         Indexes.ascending("lastUpdated"),
@@ -58,7 +58,7 @@ class SessionRepository @Inject()(
     collection
       .updateOne(
         filter = byId(id),
-        update = Updates.set("lastUpdated", Instant.now(clock)),
+        update = Updates.set("lastUpdated", Instant.now(clock))
       )
       .toFuture
       .map(_ => true)
