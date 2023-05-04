@@ -34,7 +34,6 @@ case class SdilReturn(
                      ) {
 
   def smallPackTotal: (Long, Long) = packSmall.map(x => x.litreage).combineAll
-  
   def totalPacked: (Long, Long) = packLarge |+| smallPackTotal
   def totalImported: (Long, Long) = importLarge |+| importSmall
 

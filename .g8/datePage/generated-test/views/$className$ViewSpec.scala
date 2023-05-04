@@ -57,7 +57,7 @@ class $className$ViewSpec extends ViewSpecHelper {
       legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("$className;format="decap"$" + ".heading")
     }
 
-    "when the form is not preoccupied and has no errors" - {
+    "when the form is not prepopulated and has no errors" - {
 
       "should include the expected date fields" - {
         val dateItems = document.getElementsByClass(Selectors.dateItems)
