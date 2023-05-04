@@ -14,22 +14,13 @@
  * limitations under the License.
  */
 
-package models
+package repositories
 
-import play.api.libs.json.{Json, Reads, Writes}
+import play.api.libs.json.{JsValue, Json}
 
-case class SmallProducer(alias: String, sdilRef: String, litreage: (Long, Long)) {
+case class CacheMap(id: String,
+                    data: Map[String, JsValue])
 
-  def getNameAndRef: String =
-    if (alias.nonEmpty)
-      alias ++ "</br>" ++ sdilRef
-    else
-      sdilRef
-
-}
-
-object SmallProducer {
-  implicit val writes: Writes[SmallProducer] = Json.writes
-  implicit val reads: Reads[SmallProducer] = Json.reads
-
+object CacheMap {
+  implicit val formats = Json.format[CacheMap]
 }

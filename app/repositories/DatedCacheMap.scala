@@ -14,22 +14,24 @@
  * limitations under the License.
  */
 
-package models
+package repositories
 
-import play.api.libs.json.{Json, Reads, Writes}
+import play.api.libs.json.{JsValue, Json, OFormat}
+import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
-case class SmallProducer(alias: String, sdilRef: String, litreage: (Long, Long)) {
+import java.time.Instant
 
-  def getNameAndRef: String =
-    if (alias.nonEmpty)
-      alias ++ "</br>" ++ sdilRef
-    else
-      sdilRef
+case class DatedCacheMap(
+                          id: String,
+                          data: Map[String, JsValue],
+                          lastUpdated: Instant = Instant.now()
+                        )
 
+object DatedCacheMap extends MongoJavatimeFormats {
+
+  implicit val formats: OFormat[DatedCacheMap]   = Json.format[DatedCacheMap]
+
+  def apply(cacheMap: CacheMap): DatedCacheMap = DatedCacheMap(cacheMap.id, cacheMap.data)
 }
 
-object SmallProducer {
-  implicit val writes: Writes[SmallProducer] = Json.writes
-  implicit val reads: Reads[SmallProducer] = Json.reads
 
-}

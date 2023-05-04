@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package models
+package repositories
 
-import play.api.libs.json.{Json, Reads, Writes}
+import play.api.libs.json._
 
-case class SmallProducer(alias: String, sdilRef: String, litreage: (Long, Long)) {
+import javax.inject.Singleton
 
-  def getNameAndRef: String =
-    if (alias.nonEmpty)
-      alias ++ "</br>" ++ sdilRef
-    else
-      sdilRef
+@Singleton
+class CascadeUpsert {
 
-}
+  val funcMap: Map[String, (JsValue, CacheMap) => CacheMap] = Map()
 
-object SmallProducer {
-  implicit val writes: Writes[SmallProducer] = Json.writes
-  implicit val reads: Reads[SmallProducer] = Json.reads
+  def apply[A](key: String, value: A, originalCacheMap: CacheMap)(implicit fmt: Format[A]): CacheMap =
+    funcMap.get(key).fold(store(key, value, originalCacheMap)) { fn => fn(Json.toJson(value), originalCacheMap)}
 
+  private def store[A](key:String, value: A, cacheMap: CacheMap)(implicit fmt: Format[A]): CacheMap =
+    cacheMap copy (data = cacheMap.data + (key -> Json.toJson(value)))
 }

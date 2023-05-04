@@ -17,8 +17,7 @@
 package controllers.actions
 
 import base.SpecBase
-import base.SpecBase.aSubscription
-import models.{RetrievedSubscription, ReturnPeriod, UserAnswers}
+import models.{ReturnPeriod, UserAnswers}
 import models.requests.{IdentifierRequest, OptionalDataRequest}
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
