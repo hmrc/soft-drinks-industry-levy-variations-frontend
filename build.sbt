@@ -12,6 +12,7 @@ lazy val root = (project in file("."))
   .configs(IntegrationTest)
   .settings(inConfig(IntegrationTest)(itSettings): _*)
   .settings(majorVersion := 0, libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always) // libraryDependencySchemes added to get around the scoverage compile errors for scala 2.13.10
+  .settings(ThisBuild / useSuperShell := false)
   .settings(
     scalaVersion := "2.13.10",
     name := appName,
@@ -54,7 +55,7 @@ lazy val root = (project in file("."))
         ))
     ),
     // scalacOptions += "-deprecation",
-      scalacOptions ++= Seq("-Ypatmat-exhaust-depth", "off"),
+    scalacOptions ++= Seq("-Ypatmat-exhaust-depth", "off"),
     // prevent removal of unused code which generates warning errors due to use of third-party libs
     uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
     pipelineStages := Seq(digest),

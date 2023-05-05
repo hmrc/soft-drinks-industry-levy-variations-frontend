@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 @Singleton
 class FrontendAppConfig @Inject() (configuration: ServicesConfig) {
 
-  val host: String    = configuration.getString("host")
+  val host: String    = configuration.getConfString("soft-drinks-industry-levy-variations-frontend.host", throw new Exception("missing config soft-drinks-industry-levy-variations-frontend.host"))
   val appName: String = configuration.getString("appName")
 
   private val contactHost = configuration.getString("contact-frontend.host")
@@ -33,10 +33,13 @@ class FrontendAppConfig @Inject() (configuration: ServicesConfig) {
   def feedbackUrl(implicit request: RequestHeader): String =
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
 
-  val loginUrl: String         = configuration.getString("urls.login")
-  val loginContinueUrl: String = configuration.getString("urls.loginContinue")
-  val signOutUrl: String       = configuration.getString("urls.signOut")
+  val basGatewayBaseUrl: String = configuration.baseUrl("bas-gateway")
+  val sdilFrontendBaseUrl: String = configuration.baseUrl("soft-drinks-industry-levy-frontend")
   val sdilBaseUrl: String = configuration.baseUrl("soft-drinks-industry-levy")
+
+  val loginUrl: String         = s"$basGatewayBaseUrl/bas-gateway/sign-in"
+  val loginContinueUrl: String = s"$sdilFrontendBaseUrl/soft-drinks-industry-levy"
+  val signOutUrl: String       = s"$basGatewayBaseUrl/bas-gateway/sign-out-without-state"
 
   private val exitSurveyBaseUrl: String = configuration.baseUrl("feedback-frontend")
   val exitSurveyUrl: String             = s"$exitSurveyBaseUrl/feedback/soft-drinks-industry-levy-variations-frontend"
