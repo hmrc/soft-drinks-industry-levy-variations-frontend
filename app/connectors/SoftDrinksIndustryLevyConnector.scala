@@ -16,26 +16,41 @@
 
 package connectors
 
-import models.{RetrievedSubscription, ReturnPeriod}
-import play.api.Configuration
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import config.FrontendAppConfig
+import models.{FinancialLineItem, RetrievedSubscription, ReturnPeriod, SdilReturn}
+import repositories.{SDILSessionCache, SDILSessionKeys}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SoftDrinksIndustryLevyConnector @Inject()(
                                                  val http: HttpClient,
-                                                 val configuration: Configuration
-                                               )(implicit ec: ExecutionContext)
-  extends ServicesConfig(configuration) {
+                                                 frontendAppConfig: FrontendAppConfig,
+                                                 sdilSessionCache: SDILSessionCache
+                                               )(implicit ec: ExecutionContext) {
 
-  lazy val sdilUrl: String = baseUrl("soft-drinks-industry-levy")
+  lazy val sdilUrl: String = frontendAppConfig.sdilBaseUrl
 
   private def getSubscriptionUrl(sdilNumber: String,identifierType: String): String = s"$sdilUrl/subscription/$identifierType/$sdilNumber"
 
-  def retrieveSubscription(sdilNumber: String, identifierType: String)(implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] =
-    http.GET[Option[RetrievedSubscription]](getSubscriptionUrl(sdilNumber: String,identifierType)).map {
+  def retrieveSubscription(sdilNumber: String, identifierType: String)(implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] = {
+    sdilSessionCache.fetchEntry[RetrievedSubscription](sdilNumber, SDILSessionKeys.SUBSCRIPTION).flatMap{
+      case Some(subscription) => Future.successful(Some(subscription))
+      case None =>
+        http.GET[Option[RetrievedSubscription]](getSubscriptionUrl(sdilNumber: String, identifierType)).flatMap {
+          case Some(a) =>
+            sdilSessionCache.save(a.sdilRef, SDILSessionKeys.SUBSCRIPTION, a)
+              .map{_ => Some(a)}
+          case _ => Future.successful(None)
+        }
+    }
+  }
+
+  private def smallProducerUrl(sdilRef:String, period:ReturnPeriod):String = s"$sdilUrl/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"
+
+  def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod)(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
+    http.GET[Option[Boolean]](smallProducerUrl(sdilRef,period)).map {
       case Some(a) => Some(a)
       case _ => None
     }
@@ -45,5 +60,28 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     returnPeriods.map(_.sortBy(_.year).sortBy(_.quarter).headOption)
   }
 
+  def balance(
+               sdilRef: String,
+               withAssessment: Boolean
+             )(implicit hc: HeaderCarrier): Future[BigDecimal] =
+    http.GET[BigDecimal](s"$sdilUrl/balance/$sdilRef/$withAssessment")
 
+  def balanceHistory(
+                      sdilRef: String,
+                      withAssessment: Boolean
+                    )(implicit hc: HeaderCarrier): Future[List[FinancialLineItem]] = {
+    import FinancialLineItem.formatter
+    http.GET[List[FinancialLineItem]](s"$sdilUrl/balance/$sdilRef/history/all/$withAssessment")
   }
+
+  def returns_pending(utr: String)(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] =
+    http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
+
+  def returns_update(utr: String, period: ReturnPeriod, sdilReturn: SdilReturn)(implicit hc: HeaderCarrier): Future[Option[Int]] = {
+    val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
+    http.POST[SdilReturn, HttpResponse](uri, sdilReturn) map {
+      response => Some(response.status)
+    }
+  }
+
+}

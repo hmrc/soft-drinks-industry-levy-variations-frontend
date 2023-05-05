@@ -73,6 +73,10 @@ case class SdilReturn(
   }
 }
 
+object SdilReturn {
+  implicit val format = Json.format[SdilReturn]
+}
+
 case class ReturnPeriod(year: Int, quarter: Int) {
   require(quarter <= 3 && quarter >= 0)
   require(year >= 2018)

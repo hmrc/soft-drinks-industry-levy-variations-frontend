@@ -19,7 +19,7 @@ package models
 import base.SpecBase
 import org.scalatestplus.mockito.MockitoSugar
 
-class SmallProducerModelSpec  extends SpecBase with MockitoSugar with DataHelper {
+class SmallProducerModelSpec extends SpecBase with MockitoSugar with DataHelper {
 
   "SmallProducer" - {
     "getNameAndRef returns the alias plus </br> and the sdil ref" in {
