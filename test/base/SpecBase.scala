@@ -25,9 +25,10 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{OptionValues, TryValues}
 import play.api.Application
-import play.api.i18n.{Messages, MessagesApi}
+import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
 
 import java.time.LocalDate
@@ -98,4 +99,10 @@ trait SpecBase
         bind[IdentifierAction].to[FakeIdentifierAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, returnPeriod))
       )
+
+  val application = applicationBuilder(userAnswers = None).build()
+
+  implicit lazy val messagesAPI = application.injector.instanceOf[MessagesApi]
+  implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
+  lazy val mcc = application.injector.instanceOf[MessagesControllerComponents]
 }
