@@ -20,4 +20,11 @@ rsync -avm --include='*.scala' -f 'hide,! */' ../generated-test/ ../test/
 rm -rf ../generated-test/
 
 echo ""
+echo "Moving integration test files from generated-it-test/ to it/"
+echo ""
+
+rsync -avm --include='*.scala' -f 'hide,! */' ../generated-it-test/ ../it/
+rm -rf ../generated-it-test/
+
+echo ""
 echo "Migrations complete"
