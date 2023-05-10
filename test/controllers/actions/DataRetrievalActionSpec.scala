@@ -40,12 +40,12 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
       "must set userAnswers to 'None' in the request" in {
 
         val sessionRepository = mock[SessionRepository]
-        when(sessionRepository.get("id")) thenReturn Future(None)
+        when(sessionRepository.get("id")) thenReturn Future(Right(None))
         val action = new Harness(sessionRepository)
 
         val result = action.callTransform(IdentifierRequest(FakeRequest(), "id", aSubscription, Some(ReturnPeriod(2023,1)))).futureValue
 
-        result.userAnswers must not be defined
+        result.userAnswers.map(_.isDefined) mustBe Right(false)
       }
     }
 
@@ -54,12 +54,12 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
       "must build a userAnswers object and add it to the request" in {
 
         val sessionRepository = mock[SessionRepository]
-        when(sessionRepository.get("id")) thenReturn Future(Some(UserAnswers("id")))
+        when(sessionRepository.get("id")) thenReturn Future(Right(Some(UserAnswers("id"))))
         val action = new Harness(sessionRepository)
 
         val result = action.callTransform(new IdentifierRequest(FakeRequest(), "id", aSubscription, Some(ReturnPeriod(2023,1)))).futureValue
 
-        result.userAnswers mustBe defined
+        result.userAnswers.map(_.isDefined) mustBe Right(true)
       }
     }
   }
