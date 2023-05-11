@@ -66,4 +66,13 @@ awk '/val generators/ {\
     print "    arbitrary[($className$Page.type, JsValue)] ::";\
     next }1' ../test-utils/generators/UserAnswersGenerator.scala > tmp && mv tmp ../test-utils/generators/UserAnswersGenerator.scala
 
+
+echo "Adding to ITCoreTestData"
+awk '/trait ITCoreTestData/ {\
+    print;\
+    print "";\
+    print "  val $className;format="decap"$: $className$ = $className$(\"test1\", \"test2\")";\
+    print "  val $className;format="decap"$Diff: $className$ = $className$(\"diff1\", \"diff2\")";\
+    next }1' ../it/testSupport/ITCoreTestData.scala > tmp && mv tmp ../it/testSupport/ITCoreTestData.scala
+
 echo "Migration $className;format="snake"$ completed"
