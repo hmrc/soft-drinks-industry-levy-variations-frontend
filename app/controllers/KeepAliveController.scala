@@ -34,7 +34,7 @@ class KeepAliveController @Inject()(
   def keepAlive: Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
       request.userAnswers match {
-        case Right(Some(answers)) => sessionRepository.keepAlive(answers.id).map(_ => Ok)
+        case Some(answers) => sessionRepository.keepAlive(answers.id).map(_ => Ok)
         case _ => Future.successful(Ok)
       }
   }

@@ -70,7 +70,8 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         }
       }
     }
-    testUnauthorisedUserGET(baseUrl + normalRoutePath)
+    testUnauthorisedUser(baseUrl + normalRoutePath)
+    testAuthenticatedUserButNoUserAnswers(baseUrl + normalRoutePath)
   }
 
   s"GET " + checkRoutePath - {
@@ -130,8 +131,8 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         }
       }
     }
-
-    testUnauthorisedUserGET(baseUrl + checkRoutePath)
+    testUnauthorisedUser(baseUrl + checkRoutePath)
+    testAuthenticatedUserButNoUserAnswers(baseUrl + checkRoutePath)
 
   }
 
@@ -151,7 +152,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.IndexController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some($nextPage$.url)
                 val dataStoredForPage = getAnswers(sdilNumber).fold[Option[$className$]](None)(_.get($className$Page))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
@@ -173,7 +174,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.IndexController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some($nextPage$.url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[$className$]](None)(_.get($className$Page))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
@@ -209,7 +210,8 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         }
       }
     }
-    testUnauthorisedUserPOST(baseUrl + normalRoutePath, Json.obj("value" -> "true"))
+    testUnauthorisedUser(baseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedUserButNoUserAnswers(baseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
   }
 
   s"POST " + checkRoutePath - {
@@ -286,6 +288,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         }
       }
     }
-    testUnauthorisedUserPOST(baseUrl + checkRoutePath, Json.obj("value" -> "true"))
+    testUnauthorisedUser(baseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedUserButNoUserAnswers(baseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
   }
 }

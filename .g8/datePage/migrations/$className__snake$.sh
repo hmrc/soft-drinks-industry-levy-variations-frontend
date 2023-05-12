@@ -51,4 +51,14 @@ awk '/val generators/ {\
     print "    arbitrary[($className$Page.type, JsValue)] ::";\
     next }1' ../test-utils/generators/UserAnswersGenerator.scala > tmp && mv tmp ../test-utils/generators/UserAnswersGenerator.scala
 
+awk '/private val normalRoutes/ {\
+    print;\
+    print "    case $className$Page => userAnswers => mode => $nextPage$";\
+    next }1' ../app/navigation/Navigator.scala > tmp && mv tmp ../app/navigation/Navigator.scala
+
+awk '/private val checkRouteMap/ {\
+    print;\
+    print "    case $className$Page => userAnswers => mode => routes.CheckYourAnswersController.onPageLoad";\
+    next }1' ../app/navigation/Navigator.scala > tmp && mv tmp ../app/navigation/Navigator.scala
+
 echo "Migration $className;format="snake"$ completed"

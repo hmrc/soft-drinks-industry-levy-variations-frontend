@@ -28,6 +28,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         }
       }
     }
-    testUnauthorisedUserGET(baseUrl + normalRoutePath)
+    testUnauthorisedUser(baseUrl + normalRoutePath)
+    testAuthenticatedUserButNoUserAnswers(baseUrl + normalRoutePath)
   }
 }

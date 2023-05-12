@@ -7,7 +7,7 @@ case class UserStub
 (implicit builder: PreconditionBuilder) {
 
 
-  def isAuthorised() = {
+  def isAuthorisedButNotEnrolled() = {
     stubFor(
       post(urlPathEqualTo("/auth/authorise"))
         .willReturn(
