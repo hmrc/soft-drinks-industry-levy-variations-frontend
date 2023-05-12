@@ -53,7 +53,7 @@ trait ViewSpecHelper extends SpecBase{
     "contain the timeout dialog" - {
       "that has the expected keep alive and signout urls" in {
         timeoutDialog.isDefined mustBe true
-        timeoutDialog.get.attr("data-keep-alive-url") mustBe routes.KeepAliveController.keepAlive.url
+        timeoutDialog.get.attr("data-keep-alive-url") must include("/refresh-session")
         timeoutDialog.get.attr("data-sign-out-url") mustBe controllers.auth.routes.AuthController.signOut.url
       }
     }

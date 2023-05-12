@@ -51,12 +51,7 @@ awk '/val generators/ {\
 
 awk '/private val normalRoutes/ {\
     print;\
-    print "    case $className$Page => userAnswers => mode => $nextPage$";\
-    next }1' ../app/navigation/Navigator.scala > tmp && mv tmp ../app/navigation/Navigator.scala
-
-awk '/private val checkRouteMap/ {\
-    print;\
-    print "    case $className$Page => userAnswers => mode => routes.CheckYourAnswersController.onPageLoad";\
+    print "    case $className$Page => userAnswers => $nextPage$";\
     next }1' ../app/navigation/Navigator.scala > tmp && mv tmp ../app/navigation/Navigator.scala
 
 echo "Adding to ITCoreTestData"

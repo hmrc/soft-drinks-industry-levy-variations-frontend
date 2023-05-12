@@ -1,5 +1,6 @@
 package controllers
 
+import models.NormalMode
 import models.$className$
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
