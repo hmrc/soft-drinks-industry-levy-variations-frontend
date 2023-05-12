@@ -47,4 +47,15 @@ awk '/val generators/ {\
     print "    arbitrary[($className$Page.type, JsValue)] ::";\
     next }1' ../test-utils/generators/UserAnswersGenerator.scala > tmp && mv tmp ../test-utils/generators/UserAnswersGenerator.scala
 
+echo "Adding to ITCoreTestData"
+awk '/trait ITCoreTestData/ {\
+    print;\
+    print "";\
+    print "  val userAnswersFor$className$Page: Map[String, UserAnswers] = {";\
+    print "    val yesSelected = emptyUserAnswers.set($className$Page, true).success.value";\
+    print "    val noSelected = emptyUserAnswers.set($className$Page, false).success.value";\
+    print "    Map(\"yes\" -> yesSelected, \"no\" -> noSelected)";\
+    print "    }";\
+    next }1' ../it/testSupport/ITCoreTestData.scala > tmp && mv tmp ../it/testSupport/ITCoreTestData.scala
+
 echo "Migration $className;format="snake"$ completed"
