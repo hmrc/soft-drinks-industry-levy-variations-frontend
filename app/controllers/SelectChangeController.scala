@@ -48,7 +48,7 @@ class SelectChangeController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
     implicit request =>
       val preparedForm = request.userAnswers match {
-        case Right(Some(userAnswers)) =>
+        case Some(userAnswers) =>
           userAnswers.get(SelectChangePage)
             .fold(form)(pageContent => form.fill(pageContent))
       }
@@ -59,8 +59,7 @@ class SelectChangeController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
       request.userAnswers match {
-        case Left(_) => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
-        case Right(optUserAnswers) =>
+        case optUserAnswers =>
           form.bindFromRequest().fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
             value => {

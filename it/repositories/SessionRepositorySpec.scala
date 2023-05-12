@@ -28,7 +28,7 @@ class SessionRepositorySpec
   private val instant = Instant.now.truncatedTo(ChronoUnit.MILLIS)
   private val stubClock: Clock = Clock.fixed(instant, ZoneId.systemDefault)
 
-  private val userAnswers = UserAnswers("id", Json.obj("foo" -> "bar"), Instant.ofEpochSecond(1))
+  private val userAnswers = UserAnswers("id", Json.obj("foo" -> "bar"), lastUpdated = Instant.ofEpochSecond(1))
 
   private val mockAppConfig = mock[FrontendAppConfig]
   when(mockAppConfig.cacheTtl) thenReturn 1
@@ -48,7 +48,7 @@ class SessionRepositorySpec
       val setResult     = repository.set(userAnswers).futureValue
       val updatedRecord = find(Filters.equal("_id", userAnswers.id)).futureValue.headOption.value
 
-      setResult mustEqual true
+      setResult mustEqual Right(true)
       updatedRecord mustEqual expectedResult
     }
   }
@@ -62,9 +62,9 @@ class SessionRepositorySpec
         insert(userAnswers).futureValue
 
         val result         = repository.get(userAnswers.id).futureValue
-        val expectedResult = userAnswers copy (lastUpdated = instant)
+        val expectedResult = userAnswers.copy(lastUpdated = instant)
 
-        result.value mustEqual expectedResult
+        result.map(_.value) mustBe Right(expectedResult)
       }
     }
 
@@ -72,7 +72,7 @@ class SessionRepositorySpec
 
       "must return None" in {
 
-        repository.get("id that does not exist").futureValue must not be defined
+        repository.get("id that does not exist").futureValue.map(_.isDefined) mustBe Right(false)
       }
     }
   }
@@ -85,14 +85,14 @@ class SessionRepositorySpec
 
       val result = repository.clear(userAnswers.id).futureValue
 
-      result mustEqual true
-      repository.get(userAnswers.id).futureValue must not be defined
+      result mustEqual Right(true)
+      repository.get(userAnswers.id).futureValue.map(_.isDefined) mustBe Right(false)
     }
 
     "must return true when there is no record to remove" in {
       val result = repository.clear("id that does not exist").futureValue
 
-      result mustEqual true
+      result mustEqual Right(true)
     }
   }
 

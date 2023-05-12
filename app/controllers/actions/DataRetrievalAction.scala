@@ -16,23 +16,27 @@
 
 package controllers.actions
 
+import handlers.ErrorHandler
+
 import javax.inject.Inject
 import models.requests.{IdentifierRequest, OptionalDataRequest}
-import play.api.mvc.ActionTransformer
+import play.api.mvc.Results.InternalServerError
+import play.api.mvc.{ActionRefiner, Result}
 import repositories.SessionRepository
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class DataRetrievalActionImpl @Inject()(
-                                         val sessionRepository: SessionRepository
+class DataRetrievalActionImpl @Inject()(val sessionRepository: SessionRepository,
+                                        errorHandler: ErrorHandler
                                        )(implicit val executionContext: ExecutionContext) extends DataRetrievalAction {
 
-  override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] = {
+  override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, OptionalDataRequest[A]]] = {
 
-    sessionRepository.get(request.sdilEnrolment).map { userAnsOps =>
-      OptionalDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnsOps)
+    sessionRepository.get(request.sdilEnrolment).map {
+      case Right(userAnsOps) => Right(OptionalDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnsOps))
+      case Left(_) => Left(InternalServerError(errorHandler.internalServerErrorTemplate(request)))
     }
   }
 }
 
-trait DataRetrievalAction extends ActionTransformer[IdentifierRequest, OptionalDataRequest]
+trait DataRetrievalAction extends ActionRefiner[IdentifierRequest, OptionalDataRequest]
