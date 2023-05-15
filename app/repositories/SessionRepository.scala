@@ -17,7 +17,6 @@
 package repositories
 
 import config.FrontendAppConfig
-import errors.{SessionDatabaseDeleteError, SessionDatabaseGetError, SessionDatabaseInsertError, VariationsErrors}
 import models.UserAnswers
 import org.mongodb.scala.bson.conversions.Bson
 import org.mongodb.scala.model._
@@ -64,19 +63,14 @@ class SessionRepository @Inject()(
       .toFuture
       .map(_ => true)
 
-  def get(id: String): Future[Either[VariationsErrors, Option[UserAnswers]]] = {
-    val res = for {
+  def get(id: String): Future[Option[UserAnswers]] = {
+    for {
       _ <- keepAlive(id)
       optUserAnswers <- collection.find(byId(id)).headOption
     } yield optUserAnswers
-
-    res.map(Right(_))
-      .recover{
-        case _ => Left(SessionDatabaseGetError)
-      }
   }
 
-  def set(answers: UserAnswers): Future[Either[VariationsErrors, Boolean]] = {
+  def set(answers: UserAnswers): Future[Boolean] = {
 
     val updatedAnswers = answers copy (lastUpdated = Instant.now(clock))
 
@@ -87,18 +81,13 @@ class SessionRepository @Inject()(
         options     = ReplaceOptions().upsert(true)
       )
       .toFuture
-      .map(_ => Right(true))
-      .recover{
-        case _ => Left(SessionDatabaseInsertError)
-      }
+      .map(_ => true)
+
   }
 
-  def clear(id: String): Future[Either[VariationsErrors, Boolean]] =
+  def clear(id: String): Future[Boolean] =
     collection
       .deleteOne(byId(id))
       .toFuture
-      .map(_ => Right(true))
-      .recover{
-        case _ => Left(SessionDatabaseDeleteError)
-      }
+      .map(_ => true)
 }

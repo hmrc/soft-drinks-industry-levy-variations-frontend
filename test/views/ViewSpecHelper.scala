@@ -42,6 +42,21 @@ trait ViewSpecHelper extends SpecBase{
     }
   }
 
+  def testDetails(doc: Document, expectedDetails: Map[String, String]) = {
+    val expectedNumberOfDetails = expectedDetails.size
+    val details = doc.getElementsByClass("govuk-details")
+    "should include " + expectedNumberOfDetails + " detail sections" in {
+      details.size() mustEqual expectedNumberOfDetails
+    }
+    expectedDetails.zipWithIndex.foreach { case ((detailsSummary, detailsContent), index) =>
+      "should include the " + detailsSummary + " details summary with expected content" in {
+        val detail = details.get(index)
+        detail.getElementsByClass("govuk-details__summary-text").text() mustBe detailsSummary
+        detail.getElementsByClass("govuk-details__text").text() mustBe detailsContent
+      }
+    }
+  }
+
   def validateTimeoutDialog(doc: Document): Unit = {
     val timeoutDialog = doc
       .select("meta")

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.helpers.returnDetails
+package views.summary
 
 import controllers.routes
 import models.{CheckMode, LitresInBands}

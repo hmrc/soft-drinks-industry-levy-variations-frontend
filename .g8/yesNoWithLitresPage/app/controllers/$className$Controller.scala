@@ -8,7 +8,7 @@ import navigation.Navigator
 import pages.{$className$Page, HowMany$className$Page}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
+import services.SessionService
 import views.html.$className$View
 import handlers.ErrorHandler
 
@@ -16,7 +16,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class $className;format="cap"$Controller @Inject()(
                                          override val messagesApi: MessagesApi,
-                                         val sessionRepository: SessionRepository,
+                                         val sessionService: SessionService,
                                          val navigator: Navigator,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,

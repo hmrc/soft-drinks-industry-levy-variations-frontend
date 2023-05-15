@@ -45,10 +45,10 @@ class SessionRepositorySpec
 
       val expectedResult = userAnswers copy (lastUpdated = instant)
 
-      val setResult     = repository.set(userAnswers).futureValue
+      val setResult = repository.set(userAnswers).futureValue
       val updatedRecord = find(Filters.equal("_id", userAnswers.id)).futureValue.headOption.value
 
-      setResult mustEqual Right(true)
+      setResult mustEqual true
       updatedRecord mustEqual expectedResult
     }
   }
@@ -61,10 +61,10 @@ class SessionRepositorySpec
 
         insert(userAnswers).futureValue
 
-        val result         = repository.get(userAnswers.id).futureValue
-        val expectedResult = userAnswers.copy(lastUpdated = instant)
+        val result = repository.get(userAnswers.id).futureValue
+        val expectedResult = userAnswers copy (lastUpdated = instant)
 
-        result.map(_.value) mustBe Right(expectedResult)
+        result.value mustEqual expectedResult
       }
     }
 
@@ -72,7 +72,7 @@ class SessionRepositorySpec
 
       "must return None" in {
 
-        repository.get("id that does not exist").futureValue.map(_.isDefined) mustBe Right(false)
+        repository.get("id that does not exist").futureValue must not be defined
       }
     }
   }
@@ -85,14 +85,14 @@ class SessionRepositorySpec
 
       val result = repository.clear(userAnswers.id).futureValue
 
-      result mustEqual Right(true)
-      repository.get(userAnswers.id).futureValue.map(_.isDefined) mustBe Right(false)
+      result mustEqual true
+      repository.get(userAnswers.id).futureValue must not be defined
     }
 
     "must return true when there is no record to remove" in {
       val result = repository.clear("id that does not exist").futureValue
 
-      result mustEqual Right(true)
+      result mustEqual true
     }
   }
 

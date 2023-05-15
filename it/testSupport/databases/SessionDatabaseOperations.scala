@@ -13,24 +13,18 @@ trait SessionDatabaseOperations {
 
   val sessionRespository: SessionRepository
 
-  def setAnswers(userAnswers: UserAnswers)(implicit timeout: Duration, ec: ExecutionContext): Unit = Await.result(
-    sessionRespository.set(userAnswers).map(_ => ()),
+  def setAnswers(userAnswers: UserAnswers)(implicit timeout: Duration): Unit = Await.result(
+    sessionRespository.set(userAnswers),
     timeout
   )
 
-  def getAnswers(id: String)(implicit timeout: Duration, ec: ExecutionContext): Option[UserAnswers] = Await.result(
-    sessionRespository.get(id).map{
-      case Left(_) => None
-      case Right(optUA) => optUA
-    },
+  def getAnswers(id: String)(implicit timeout: Duration): Option[UserAnswers] = Await.result(
+    sessionRespository.get(id),
     timeout
   )
 
-  def remove(id: String)(implicit timeout: Duration, ec: ExecutionContext): Boolean = Await.result(
-    sessionRespository.clear(id).map {
-      case Left(_) => false
-      case Right(x) => x
-    },
+  def remove(id: String)(implicit timeout: Duration): Boolean = Await.result(
+    sessionRespository.clear(id),
     timeout
   )
 

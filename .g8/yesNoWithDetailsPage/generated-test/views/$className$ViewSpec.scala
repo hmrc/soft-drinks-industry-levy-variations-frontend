@@ -161,6 +161,9 @@ class $className$ViewSpec extends ViewSpecHelper {
       }
     }
 
+    val expectedDetails = Map(Messages("$className;format="decap"$.detailsLink") -> Messages("$className;format="decap"$.detailsContent"))
+    testDetails(document, expectedDetails)
+
     "contain the correct button" - {
       document.getElementsByClass(Selectors.button).text() mustBe Messages("site.continue")
     }

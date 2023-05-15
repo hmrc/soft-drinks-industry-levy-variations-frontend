@@ -8,7 +8,7 @@ import navigation.Navigator
 import pages.HowMany$className$Page
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
+import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.HowMany$className$View
 import handlers.ErrorHandler
@@ -17,7 +17,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class HowMany$className;format="cap"$Controller @Inject()(
                                          override val messagesApi: MessagesApi,
-                                         val sessionRepository: SessionRepository,
+                                         val sessionService: SessionService,
                                          val navigator: Navigator,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,

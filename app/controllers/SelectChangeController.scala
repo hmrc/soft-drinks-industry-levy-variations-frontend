@@ -24,7 +24,7 @@ import navigation.Navigator
 import pages.SelectChangePage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
+import services.SessionService
 import views.html.SelectChangeView
 
 import javax.inject.Inject
@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SelectChangeController @Inject()(
                                         override val messagesApi: MessagesApi,
-                                        val sessionRepository: SessionRepository,
+                                        val sessionService: SessionService,
                                         val navigator: Navigator,
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,

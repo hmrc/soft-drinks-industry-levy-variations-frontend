@@ -23,6 +23,7 @@ import pages.Page
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Request, Result}
 import repositories.SessionRepository
+import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,7 +31,7 @@ import scala.util.{Failure, Success, Try}
 
 trait ControllerHelper extends FrontendBaseController with I18nSupport {
 
-  val sessionRepository: SessionRepository
+  val sessionService: SessionService
   val navigator: Navigator
   val errorHandler: ErrorHandler
 
@@ -40,7 +41,7 @@ trait ControllerHelper extends FrontendBaseController with I18nSupport {
       case Failure(_) => Future.successful(
         InternalServerError(errorHandler.internalServerErrorTemplate)
       )
-      case Success(answers) => sessionRepository.set(answers).map {
+      case Success(answers) => sessionService.set(answers).map {
         case Right(_) => Redirect(navigator.nextPage(page, mode, answers))
         case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
       }
