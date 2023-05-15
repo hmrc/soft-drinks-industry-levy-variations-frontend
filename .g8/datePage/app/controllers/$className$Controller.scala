@@ -48,8 +48,10 @@ class $className$Controller @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
-        value =>
-      val updatedAnswers = request.userAnswers.set($className$Page, value)
-    )
+        value => {
+          val updatedAnswers = request.userAnswers.set($className$Page, value)
+          updateDatabaseAndRedirect(updatedAnswers, $className$Page, mode)
+        }
+      )
   }
 }
