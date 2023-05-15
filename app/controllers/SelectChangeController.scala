@@ -51,6 +51,7 @@ class SelectChangeController @Inject()(
         case Some(userAnswers) =>
           userAnswers.get(SelectChangePage)
             .fold(form)(pageContent => form.fill(pageContent))
+        case None => form
       }
       Ok(view(preparedForm, mode))
 
@@ -58,17 +59,14 @@ class SelectChangeController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
-      request.userAnswers match {
-        case optUserAnswers =>
-          form.bindFromRequest().fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-            value => {
-              val updatedAnswers = optUserAnswers
-                .getOrElse(UserAnswers(id = request.sdilEnrolment))
-                .set(SelectChangePage, value)
-              updateDatabaseAndRedirect(updatedAnswers, SelectChangePage, mode)
-            }
-          )
-      }
+      form.bindFromRequest().fold(
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+        value => {
+          val updatedAnswers = request.userAnswers
+            .getOrElse(UserAnswers(id = request.sdilEnrolment))
+            .set(SelectChangePage, value)
+          updateDatabaseAndRedirect(updatedAnswers, SelectChangePage, mode)
+        }
+      )
   }
 }

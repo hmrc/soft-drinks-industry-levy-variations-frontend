@@ -6,10 +6,9 @@ import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
 import pages.$className$Page
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.$className$View
 import handlers.ErrorHandler
 

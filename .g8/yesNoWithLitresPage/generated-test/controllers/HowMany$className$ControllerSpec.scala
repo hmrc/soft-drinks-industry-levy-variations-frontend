@@ -16,6 +16,7 @@ import services.SessionService
 import views.html.HowMany$className$View
 
 import scala.concurrent.Future
+import org.jsoup.Jsoup
 
 class HowMany$className$ControllerSpec extends SpecBase with MockitoSugar {
 
@@ -135,6 +136,23 @@ class HowMany$className$ControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must fail if the setting of userAnswers fails" in {
+
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, howMany$className$Route)
+        .withFormUrlEncodedBody(("lowBand", "1000"), ("highBand", "2000"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual INTERNAL_SERVER_ERROR
+        val page = Jsoup.parse(contentAsString(result))
+        page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - soft-drinks-industry-levy - GOV.UK"
       }
     }
   }
