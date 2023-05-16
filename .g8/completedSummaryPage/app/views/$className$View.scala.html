@@ -1,12 +1,30 @@
 @this(
         layout: templates.Layout,
-        govukPanel : GovukPanel,
-        govukButton: GovukButton
+        govukPanel : GovukPanel
 )
 
-@()(implicit request: Request[_], messages: Messages)
+@(userAnswers: UserAnswers)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("$className;format="decap"$.title"))) {
+@layout(pageTitle = titleNoForm(messages("$className;format="decap"$.title")), showBackLink = false) {
 
-    <h1 class="govuk-heading-m">@messages("$className;format="decap"$.heading")</h1>
+    @govukPanel(Panel(
+    title = Text(messages("$className;format="decap"$.title")),
+    content = HtmlContent(messages("$className;format="decap"$.panel.message"))
+    ))
+
+    <p class="govuk-body-m" id="printPage" xmlns="http://www.w3.org/1999/html">
+        <a href="javascript:window.print()" class="govuk-link">@messages("site.print")</a>
+    </p>
+
+
+    <h2 class="govuk-heading-m" id="whatNextHeader">
+        @messages("site.whatNext")
+    </h2>
+
+    <p class="govuk-body" id="whatNextText">@messages("$className;format="decap"$.whatNextText")</p>
+
+    @govukDetails(Details(
+    summary = Text(Messages("$className;format="decap"$.detailsSummary")),
+    content = Text("reference file here that is shared with checkAnswers for this flow")
+    ))
 }

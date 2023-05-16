@@ -28,20 +28,61 @@ class $className$ViewSpec extends ViewSpecHelper {
 
   object Selectors {
     val heading = "govuk-heading-m"
+    val panel = "govuk-panel govuk-panel--confirmation"
+    val panel_title = "govuk-panel__title"
+    val panel_body = "govuk-panel__body"
+    val bodyM = "govuk-body-m"
+    val body = "govuk-body"
+    val link = "govuk-link"
+    val details = "govuk-details"
+    val detailsText = "govuk-details__summary-text"
+    val detailsContent = "govuk-details__text"
   }
 
   "View" - {
-    val html = view()(request, messages(application))
+    val html = view(emptyUserAnswers)(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
       document.title() must include(Messages("$className;format="decap"$" + ".title"))
     }
 
-    "should have the expected heading" in {
-      document.getElementsByClass(Selectors.heading).text() mustEqual Messages("$className;format="decap"$" + ".heading")
+    "should include the expected panel" in {
+      val panel = document.getElementsByClass(Selectors.panel).get(0)
+      panel.getElementsByClass(Selectors.panel_title).text() mustEqual Messages("$className;format="decap"$" + ".title")
+      panel.getElementsByClass(Selectors.panel_body).text() mustEqual Messages("$className;format="decap"$" + ".panel.message")
     }
 
-    testBackLink(document)
+    "should include a link to print page" in {
+      val printPageElements = document.getElementById("printPage")
+      printPageElements.className() mustBe Selectors.bodyM
+      val link = printPageElements.getElementsByClass(Selectors.link)
+      link.text() mustEqual Messages("site.print")
+      link.attr("href") mustEqual "javascript:window.print()"
+    }
+
+    "should include a what happens next section" - {
+      "that has the expected subheading" in {
+        val subHeading = document1.getElementById("whatNextHeader")
+        subHeading.text() mustEqual Messages("site.whatNext")
+      }
+      "that has the expected body" in {
+        val body = document1.getElementById("whatNextText")
+        body.text() mustEqual Messages("$className;format="decap"$.whatNextText")
+      }
+    }
+
+    "should include a details section" - {
+      val details = document.getElementsByClass(Selectors.details).get(0)
+      "that has the expected details summary text" in {
+        details.getElementsByClass(Selectors.detailsText).text() mustEqual Messages("$className;format="decap"$.detailsSummary")
+      }
+
+      "that has the expected content" in {
+        details.getElementByClass(Selectors.detailsContent).text() mustEqual "reference file here that is shared with checkAnswers for this flow"
+      }
+    }
+
+    testNoBackLink(document)
     validateTimeoutDialog(document)
     validateTechnicalHelpLinkPresent(document)
     validateAccessibilityStatementLinkPresent(document)

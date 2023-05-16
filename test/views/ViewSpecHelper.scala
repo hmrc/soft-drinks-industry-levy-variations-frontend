@@ -42,6 +42,14 @@ trait ViewSpecHelper extends SpecBase{
     }
   }
 
+  def testNoBackLink(doc: Document) = {
+    val bLink = "govuk-back-link"
+    "should not contain a back link" in {
+      val backLink = doc.getElementsByClass(bLink)
+      backLink.size() mustEqual 0
+    }
+  }
+
   def testDetails(doc: Document, expectedDetails: Map[String, String]) = {
     val expectedNumberOfDetails = expectedDetails.size
     val details = doc.getElementsByClass("govuk-details")
