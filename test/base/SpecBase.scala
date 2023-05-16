@@ -18,7 +18,7 @@ package base
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.{Contact, RetrievedActivity, RetrievedSubscription, ReturnCharge, ReturnPeriod, Site, UkAddress, UserAnswers}
+import models.{Contact, LitresInBands, RetrievedActivity, RetrievedSubscription, ReturnCharge, ReturnPeriod, Site, UkAddress, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -27,10 +27,13 @@ import play.api.Application
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.Writes
 import play.api.mvc.MessagesControllerComponents
 import play.api.test.FakeRequest
+import queries.Settable
 
 import java.time.LocalDate
+import scala.util.{Failure, Try}
 
 object SpecBase {
   val aSubscription = RetrievedSubscription(
@@ -150,4 +153,11 @@ trait SpecBase
   val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(-200))
   val financialItemList = List(financialItem1, financialItem2)
 
+  val userDetailsWithSetMethodsReturningFailure: UserAnswers = new UserAnswers("sdilId") {
+    override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
+
+    override def setList[A](producer: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
+
+    override def setAndRemoveLitresIfReq(page: Settable[Boolean], litresPage: Settable[LitresInBands], value: Boolean)(implicit writes: Writes[Boolean]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
+  }
 }
