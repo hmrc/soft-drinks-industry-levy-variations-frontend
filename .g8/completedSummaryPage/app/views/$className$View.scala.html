@@ -1,0 +1,12 @@
+@this(
+        layout: templates.Layout,
+        govukPanel : GovukPanel,
+        govukButton: GovukButton
+)
+
+@()(implicit request: Request[_], messages: Messages)
+
+@layout(pageTitle = titleNoForm(messages("$className;format="decap"$.title"))) {
+
+    <h1 class="govuk-heading-m">@messages("$className;format="decap"$.heading")</h1>
+}
