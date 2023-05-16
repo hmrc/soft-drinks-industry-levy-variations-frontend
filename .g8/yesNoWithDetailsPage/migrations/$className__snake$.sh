@@ -49,6 +49,11 @@ awk '/val generators/ {\
     print "    arbitrary[($className$Page.type, JsValue)] ::";\
     next }1' ../test-utils/generators/UserAnswersGenerator.scala > tmp && mv tmp ../test-utils/generators/UserAnswersGenerator.scala
 
+awk '/private val normalRoutes/ {\
+    print;\
+    print "    case $className$Page => userAnswers => $nextPage$";\
+    next }1' ../app/navigation/Navigator.scala > tmp && mv tmp ../app/navigation/Navigator.scala
+
 echo "Adding to ITCoreTestData"
 awk '/trait ITCoreTestData/ {\
     print;\

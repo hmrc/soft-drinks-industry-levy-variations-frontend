@@ -16,9 +16,9 @@
 
 package forms.mappings
 
-import java.time.LocalDate
-
 import play.api.data.validation.{Constraint, Invalid, Valid}
+
+import java.time.LocalDate
 
 trait Constraints {
 
@@ -108,5 +108,16 @@ trait Constraints {
         Valid
       case _ =>
         Invalid(errorKey)
+    }
+
+  protected def maximumValueNotEqual[A](maximum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
+    Constraint {
+      input =>
+        import ev._
+        if (input < maximum) {
+          Valid
+        } else {
+          Invalid(errorKey, maximum)
+        }
     }
 }

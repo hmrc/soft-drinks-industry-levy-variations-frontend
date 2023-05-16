@@ -4,7 +4,7 @@ import models.UserAnswers
 import repositories.SessionRepository
 import testSupport.TestConfiguration
 
-import scala.concurrent.Await
+import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration.Duration
 
 trait SessionDatabaseOperations {

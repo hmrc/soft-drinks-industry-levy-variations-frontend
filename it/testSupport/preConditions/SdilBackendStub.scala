@@ -7,7 +7,7 @@ import play.api.libs.json.Json
 import java.time.LocalDate
 
 case class SdilBackendStub()
-                           (implicit builder: PreconditionBuilder)
+                          (implicit builder: PreconditionBuilder)
 {
   val aSubscription = RetrievedSubscription(
     utr = "0000001611",
@@ -55,6 +55,15 @@ case class SdilBackendStub()
         urlPathMatching(s"/subscription/$identifier/$refNum"))
         .willReturn(
           ok(Json.toJson(aSubscription).toString())))
+    builder
+  }
+
+  def retrieveSubscriptionNone(identifier: String, refNum: String) = {
+    stubFor(
+      get(
+        urlPathMatching(s"/subscription/$identifier/$refNum"))
+        .willReturn(
+          notFound()))
     builder
   }
 

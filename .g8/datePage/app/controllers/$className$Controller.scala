@@ -6,27 +6,28 @@ import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
 import pages.$className$Page
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import services.SessionService
 import views.html.$className$View
+import handlers.ErrorHandler
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class $className$Controller @Inject()(
-                                        override val messagesApi: MessagesApi,
-                                        sessionRepository: SessionRepository,
-                                        navigator: Navigator,
-                                        identify: IdentifierAction,
-                                        getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
-                                        formProvider: $className$FormProvider,
-                                        val controllerComponents: MessagesControllerComponents,
-                                        view: $className$View
-                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                       override val messagesApi: MessagesApi,
+                                       val sessionService: SessionService,
+                                       val navigator: Navigator,
+                                       identify: IdentifierAction,
+                                       getData: DataRetrievalAction,
+                                       requireData: DataRequiredAction,
+                                       formProvider: $className$FormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       view: $className$View,
+                                       val errorHandler: ErrorHandler
+                                     )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  def form = formProvider()
+  val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
@@ -46,11 +47,10 @@ class $className$Controller @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set($className$Page, value))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage($className$Page, mode, updatedAnswers))
+        value => {
+          val updatedAnswers = request.userAnswers.set($className$Page, value)
+          updateDatabaseAndRedirect(updatedAnswers, $className$Page, mode)
+        }
       )
   }
 }
