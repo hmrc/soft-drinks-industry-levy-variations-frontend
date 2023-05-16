@@ -48,4 +48,7 @@ class FrontendAppConfig @Inject() (configuration: ServicesConfig) {
   val countdown: Int = configuration.getInt("timeout-dialog.countdown")
 
   val cacheTtl: Int = configuration.getInt("mongodb.timeToLiveInSeconds")
+
+  val lowerBandCostPerLitre: BigDecimal = BigDecimal(configuration.getString("lowerBandCostPerLitre"))
+  val higherBandCostPerLitre: BigDecimal = BigDecimal(configuration.getString("higherBandCostPerLitre"))
 }

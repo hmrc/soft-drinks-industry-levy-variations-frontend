@@ -63,13 +63,12 @@ class SessionRepository @Inject()(
       .toFuture
       .map(_ => true)
 
-  def get(id: String): Future[Option[UserAnswers]] =
-    keepAlive(id).flatMap {
-      _ =>
-        collection
-          .find(byId(id))
-          .headOption
-    }
+  def get(id: String): Future[Option[UserAnswers]] = {
+    for {
+      _ <- keepAlive(id)
+      optUserAnswers <- collection.find(byId(id)).headOption
+    } yield optUserAnswers
+  }
 
   def set(answers: UserAnswers): Future[Boolean] = {
 
@@ -83,6 +82,7 @@ class SessionRepository @Inject()(
       )
       .toFuture
       .map(_ => true)
+
   }
 
   def clear(id: String): Future[Boolean] =

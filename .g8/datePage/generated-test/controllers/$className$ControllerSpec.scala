@@ -14,10 +14,11 @@ import play.api.inject.bind
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Call}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import repositories.SessionRepository
+import services.SessionService
 import views.html.$className$View
 
 import scala.concurrent.Future
+import org.jsoup.Jsoup
 
 class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
@@ -77,15 +78,15 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionRepository = mock[SessionRepository]
+      val mockSessionService = mock[SessionService]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionService].toInstance(mockSessionService)
           )
           .build()
 
@@ -138,6 +139,28 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must fail if the setting of userAnswers fails" in {
+      val mockSessionService = mock[SessionService]
+
+        when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+
+        val application =
+          applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure))
+            .overrides(
+              bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+              bind[SessionService].toInstance(mockSessionService)
+            )
+            .build()
+
+        running(application) {
+          val result = route(application, postRequest).value
+
+        status(result) mustEqual INTERNAL_SERVER_ERROR
+        val page = Jsoup.parse(contentAsString(result))
+        page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - soft-drinks-industry-levy - GOV.UK"
       }
     }
   }

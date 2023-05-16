@@ -16,11 +16,11 @@
 
 package forms.mappings
 
-import java.time.LocalDate
-
-import play.api.data.FieldMapping
-import play.api.data.Forms.of
 import models.Enumerable
+import play.api.data.Forms.of
+import play.api.data.{FieldMapping, Mapping}
+
+import java.time.LocalDate
 
 trait Mappings extends Formatters with Constraints {
 
@@ -32,6 +32,11 @@ trait Mappings extends Formatters with Constraints {
                     nonNumericKey: String = "error.nonNumeric",
                     args: Seq[String] = Seq.empty): FieldMapping[Int] =
     of(intFormatter(requiredKey, wholeNumberKey, nonNumericKey, args))
+
+  protected def litres(band: String,
+                       args: Seq[String] = Seq.empty): Mapping[Long] =
+    of(litresFormatter(band, args))
+      .verifying(maximumValueNotEqual(100000000000000L, s"litres.error.$band.outOfMaxVal"))
 
   protected def boolean(requiredKey: String = "error.required",
                         invalidKey: String = "error.boolean",

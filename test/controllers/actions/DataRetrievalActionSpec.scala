@@ -17,20 +17,26 @@
 package controllers.actions
 
 import base.SpecBase
-import models.{ReturnPeriod, UserAnswers}
+import errors.SessionDatabaseGetError
+import handlers.ErrorHandler
+import models.UserAnswers
 import models.requests.{IdentifierRequest, OptionalDataRequest}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.mvc.Result
+import play.api.mvc.Results.InternalServerError
 import play.api.test.FakeRequest
-import repositories.SessionRepository
+import play.twirl.api.Html
+import services.SessionService
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
 
-  class Harness(sessionRepository: SessionRepository) extends DataRetrievalActionImpl(sessionRepository) {
-    def callTransform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] = transform(request)
+  class Harness(sessionService: SessionService, errorHandler: ErrorHandler) extends DataRetrievalActionImpl(sessionService, errorHandler) {
+    def callRefine[A](request: IdentifierRequest[A]): Future[Either[Result, OptionalDataRequest[A]]] = refine(request)
   }
 
   "Data Retrieval Action" - {
@@ -39,13 +45,14 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
 
       "must set userAnswers to 'None' in the request" in {
 
-        val sessionRepository = mock[SessionRepository]
-        when(sessionRepository.get("id")) thenReturn Future(None)
-        val action = new Harness(sessionRepository)
+        val sessionService = mock[SessionService]
+        val errorHandler = mock[ErrorHandler]
+        when(sessionService.get("id")) thenReturn Future(Right(None))
+        val action = new Harness(sessionService, errorHandler)
 
-        val result = action.callTransform(IdentifierRequest(FakeRequest(), "id", aSubscription, Some(ReturnPeriod(2023,1)))).futureValue
+        val result = action.callRefine(IdentifierRequest(FakeRequest(), "id", aSubscription)).futureValue
 
-        result.userAnswers must not be defined
+        result.map(_.userAnswers.isDefined) mustBe Right(false)
       }
     }
 
@@ -53,13 +60,28 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
 
       "must build a userAnswers object and add it to the request" in {
 
-        val sessionRepository = mock[SessionRepository]
-        when(sessionRepository.get("id")) thenReturn Future(Some(UserAnswers("id")))
-        val action = new Harness(sessionRepository)
+        val sessionService = mock[SessionService]
+        val errorHandler = mock[ErrorHandler]
+        when(sessionService.get("id")) thenReturn Future(Right(Some(UserAnswers("id"))))
+        val action = new Harness(sessionService, errorHandler)
 
-        val result = action.callTransform(new IdentifierRequest(FakeRequest(), "id", aSubscription, Some(ReturnPeriod(2023,1)))).futureValue
+        val result = action.callRefine(new IdentifierRequest(FakeRequest(), "id", aSubscription)).futureValue
 
-        result.userAnswers mustBe defined
+        result.map(_.userAnswers.isDefined) mustBe Right(true)
+      }
+    }
+
+    "when a database error occurs" - {
+      "must render the internal error page" in {
+        val sessionService = mock[SessionService]
+        val errorHandler = mock[ErrorHandler]
+        when(sessionService.get("id")) thenReturn Future(Left(SessionDatabaseGetError))
+        when(errorHandler.internalServerErrorTemplate(any())) thenReturn(Html("error"))
+        val action = new Harness(sessionService, errorHandler)
+
+        val result = action.callRefine(new IdentifierRequest(FakeRequest(), "id", aSubscription)).futureValue
+
+        result mustBe Left(InternalServerError(Html("error")))
       }
     }
   }

@@ -18,7 +18,7 @@ package base
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.{Contact, RetrievedActivity, RetrievedSubscription, ReturnCharge, ReturnPeriod, Site, SmallProducer, UkAddress, UserAnswers}
+import models.{Contact, RetrievedActivity, RetrievedSubscription, ReturnCharge, ReturnPeriod, Site, UkAddress, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -98,13 +98,12 @@ trait SpecBase
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   protected def applicationBuilder(
-                                    userAnswers: Option[UserAnswers] = None,
-                                    returnPeriod: Option[ReturnPeriod] = None): GuiceApplicationBuilder =
+                                    userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
-        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, returnPeriod))
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
       )
 
   val aSubscription = RetrievedSubscription(

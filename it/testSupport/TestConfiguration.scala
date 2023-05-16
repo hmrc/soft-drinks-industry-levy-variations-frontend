@@ -20,6 +20,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
 import uk.gov.hmrc.play.health.HealthController
 
 import java.time.{Clock, ZoneOffset}
+import scala.concurrent.ExecutionContext
 import scala.jdk.CollectionConverters._
 
 trait TestConfiguration
@@ -125,4 +126,5 @@ trait TestConfiguration
   implicit lazy val messagesAPI = app.injector.instanceOf[MessagesApi]
   implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
   lazy val mcc = app.injector.instanceOf[MessagesControllerComponents]
+  implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
 }

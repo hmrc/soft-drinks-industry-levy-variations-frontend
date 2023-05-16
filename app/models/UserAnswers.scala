@@ -16,6 +16,7 @@
 
 package models
 
+import models.backend.Site
 import play.api.libs.json._
 import queries.{Gettable, Settable}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
@@ -26,11 +27,30 @@ import scala.util.{Failure, Success, Try}
 final case class UserAnswers(
                               id: String,
                               data: JsObject = Json.obj(),
+                              smallProducerList: List[SmallProducer] = List.empty,
+                              packagingSiteList: Map[String, Site] = Map.empty,
+                              warehouseList: Map[String, Warehouse] = Map.empty,
+                              submitted:Boolean = true,
                               lastUpdated: Instant = Instant.now
                             ) {
 
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
     Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)
+
+  def setList[A](producer: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = {
+    val updatedData = data.setObject(path = (JsPath \ s"producerList"), Json.toJson(value)) match {
+      case JsSuccess(jsValue, _) =>
+        Success(jsValue)
+      case JsError(errors) =>
+        Failure(JsResultException(errors))
+    }
+
+    updatedData.flatMap {
+      d =>
+        val updatedAnswers = copy(data = d)
+        producer.cleanup(Some(value), updatedAnswers)
+    }
+  }
 
   def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = {
 
@@ -43,8 +63,20 @@ final case class UserAnswers(
 
     updatedData.flatMap {
       d =>
-        val updatedAnswers = copy (data = d)
+        val updatedAnswers = copy(data = d)
         page.cleanup(Some(value), updatedAnswers)
+    }
+  }
+
+  def setAndRemoveLitresIfReq(page: Settable[Boolean], litresPage: Settable[LitresInBands], value: Boolean)
+                             (implicit writes: Writes[Boolean]): Try[UserAnswers] = {
+
+    set(page, value).map { updatedAnswers =>
+      if (value) {
+        updatedAnswers
+      } else {
+        removeLitres(litresPage, updatedAnswers.data)
+      }
     }
   }
 
@@ -59,9 +91,22 @@ final case class UserAnswers(
 
     updatedData.flatMap {
       d =>
-        val updatedAnswers = copy (data = d)
+        val updatedAnswers = copy(data = d)
         page.cleanup(None, updatedAnswers)
     }
+  }
+
+  def removeLitres(page: Settable[LitresInBands], updatedData: JsObject): UserAnswers = {
+
+    val dataWithNoLitres = updatedData.removeObject(page.path) match {
+      case JsSuccess(jsValue, _) =>
+        jsValue
+      case JsError(_) =>
+        updatedData
+    }
+
+    val updatedAnswers = copy(data = dataWithNoLitres)
+    page.cleanup(None, updatedAnswers).get
   }
 }
 
@@ -73,9 +118,13 @@ object UserAnswers {
 
     (
       (__ \ "_id").read[String] and
-      (__ \ "data").read[JsObject] and
-      (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
-    ) (UserAnswers.apply _)
+        (__ \ "data").read[JsObject] and
+        (__ \ "smallProducerList").read[List[SmallProducer]] and
+        (__ \ "packagingSiteList").read[Map[String, Site]] and
+        (__ \ "warehouseList").read[Map[String, Warehouse]] and
+        (__ \ "submitted").read[Boolean] and
+        (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
+      ) (UserAnswers.apply _)
   }
 
   val writes: OWrites[UserAnswers] = {
@@ -84,9 +133,13 @@ object UserAnswers {
 
     (
       (__ \ "_id").write[String] and
-      (__ \ "data").write[JsObject] and
-      (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
-    ) (unlift(UserAnswers.unapply))
+        (__ \ "data").write[JsObject] and
+        (__ \ "smallProducerList").write[List[SmallProducer]] and
+        (__ \ "packagingSiteList").write[Map[String, Site]] and
+        (__ \ "warehouseList").write[Map[String, Warehouse]] and
+        (__ \ "submitted").write[Boolean] and
+        (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
+      ) (unlift(UserAnswers.unapply))
   }
 
   implicit val format: OFormat[UserAnswers] = OFormat(reads, writes)
