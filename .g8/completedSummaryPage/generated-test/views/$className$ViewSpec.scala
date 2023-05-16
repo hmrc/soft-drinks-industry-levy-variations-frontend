@@ -62,11 +62,11 @@ class $className$ViewSpec extends ViewSpecHelper {
 
     "should include a what happens next section" - {
       "that has the expected subheading" in {
-        val subHeading = document1.getElementById("whatNextHeader")
+        val subHeading = document.getElementById("whatNextHeader")
         subHeading.text() mustEqual Messages("site.whatNext")
       }
       "that has the expected body" in {
-        val body = document1.getElementById("whatNextText")
+        val body = document.getElementById("whatNextText")
         body.text() mustEqual Messages("$className;format="decap"$.whatNextText")
       }
     }
@@ -78,7 +78,7 @@ class $className$ViewSpec extends ViewSpecHelper {
       }
 
       "that has the expected content" in {
-        details.getElementByClass(Selectors.detailsContent).text() mustEqual "reference file here that is shared with checkAnswers for this flow"
+        details.getElementsByClass(Selectors.detailsContent).text() mustEqual "reference file here that is shared with checkAnswers for this flow"
       }
     }
 
