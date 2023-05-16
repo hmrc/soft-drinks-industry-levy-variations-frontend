@@ -23,7 +23,6 @@ import org.jsoup.select.Elements
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import uk.gov.hmrc.hmrcfrontend.controllers.routes
 
 import scala.jdk.CollectionConverters._
 
