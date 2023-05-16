@@ -20,7 +20,6 @@ import base.SpecBase
 import errors.{SessionDatabaseDeleteError, SessionDatabaseGetError, SessionDatabaseInsertError}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.mongodb.scala.model.Filters
 import org.scalatestplus.mockito.MockitoSugar
 import repositories.SessionRepository
 

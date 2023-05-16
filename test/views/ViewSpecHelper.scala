@@ -23,7 +23,6 @@ import org.jsoup.select.Elements
 import play.api.i18n.Messages
 import play.api.test.Helpers._
 import play.twirl.api.Html
-import uk.gov.hmrc.hmrcfrontend.controllers.routes
 
 import scala.jdk.CollectionConverters._
 
@@ -39,6 +38,14 @@ trait ViewSpecHelper extends SpecBase{
       val backLink = doc.getElementsByClass(bLink)
       backLink.text mustBe Messages("site.back")
       backLink.get(0).attr("href") mustBe href
+    }
+  }
+
+  def testNoBackLink(doc: Document) = {
+    val bLink = "govuk-back-link"
+    "should not contain a back link" in {
+      val backLink = doc.getElementsByClass(bLink)
+      backLink.size() mustEqual 0
     }
   }
 

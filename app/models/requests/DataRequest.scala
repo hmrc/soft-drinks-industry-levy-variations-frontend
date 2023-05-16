@@ -16,7 +16,6 @@
 
 package models.requests
 
-import errors.VariationsErrors
 import models.{RetrievedSubscription, UserAnswers}
 import play.api.mvc.{Request, WrappedRequest}
 

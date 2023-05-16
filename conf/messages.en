@@ -11,6 +11,8 @@ site.startAgain = Start again
 site.signIn = Sign in
 site.govuk = GOV.UK
 site.saveContinue = Save and continue
+site.whatNext = What happens next
+site.print = Print this page
 
 date.day = Day
 date.month = Month
