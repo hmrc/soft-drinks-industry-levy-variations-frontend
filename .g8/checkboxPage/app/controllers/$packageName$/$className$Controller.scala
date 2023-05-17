@@ -1,6 +1,5 @@
 package controllers.$packageName$
 
-import controllers.ControllerHelper
 import controllers.actions._
 import forms.$packageName$.$className$FormProvider
 import javax.inject.Inject
@@ -11,13 +10,14 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
 import views.html.$packageName$.$className$View
 import handlers.ErrorHandler
+import navigation.NavigatorFor$packageName;format="cap"$
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class $className$Controller @Inject()(
                                         override val messagesApi: MessagesApi,
                                         val sessionService: SessionService,
-                                        val navigator: Navigator,
+                                        val navigator: NavigatorFor$packageName;format="cap"$,
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         requireData: DataRequiredAction,
