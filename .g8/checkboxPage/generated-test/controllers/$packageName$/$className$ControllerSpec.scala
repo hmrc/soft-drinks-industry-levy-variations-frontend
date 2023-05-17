@@ -18,6 +18,7 @@ import views.html.$packageName$.$className$View
 import org.jsoup.Jsoup
 import controllers.routes._
 import scala.concurrent.Future
+import models.SelectChange
 
 class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
@@ -49,7 +50,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(sdilNumber).set($className$Page, $className$.values.toSet).success.value
+      val userAnswers = UserAnswers(sdilNumber, SelectChange.UpdateRegisteredAccount).set($className$Page, $className$.values.toSet).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       
@@ -74,7 +75,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[NavigatorFor$packageName;format="cap"$].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           )
           .build()
