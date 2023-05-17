@@ -1,4 +1,4 @@
-package models
+package models.$packageName$
 
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem

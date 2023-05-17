@@ -1,7 +1,7 @@
-package controllers
+package controllers.$packageName$
 
 import controllers.actions._
-import forms.$className$FormProvider
+import forms.$packageName$.$className$FormProvider
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
@@ -9,7 +9,7 @@ import pages.$className$Page
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
-import views.html.$className$View
+import views.html.$packageName$.$className$View
 import handlers.ErrorHandler
 
 import scala.concurrent.{ExecutionContext, Future}

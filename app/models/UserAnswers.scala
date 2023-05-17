@@ -26,6 +26,7 @@ import scala.util.{Failure, Success, Try}
 
 case class UserAnswers(
                               id: String,
+                              journeyType: SelectChange,
                               data: JsObject = Json.obj(),
                               smallProducerList: List[SmallProducer] = List.empty,
                               packagingSiteList: Map[String, Site] = Map.empty,
@@ -118,6 +119,7 @@ object UserAnswers {
 
     (
       (__ \ "_id").read[String] and
+        (__ \ "journeyType").read[SelectChange] and
         (__ \ "data").read[JsObject] and
         (__ \ "smallProducerList").read[List[SmallProducer]] and
         (__ \ "packagingSiteList").read[Map[String, Site]] and
@@ -133,6 +135,7 @@ object UserAnswers {
 
     (
       (__ \ "_id").write[String] and
+        (__ \ "journeyType").write[SelectChange] and
         (__ \ "data").write[JsObject] and
         (__ \ "smallProducerList").write[List[SmallProducer]] and
         (__ \ "packagingSiteList").write[Map[String, Site]] and

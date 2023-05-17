@@ -1,7 +1,7 @@
-package forms
+package forms.$packageName$
 
 import forms.behaviours.CheckboxFieldBehaviours
-import models.$className$
+import models.$packageName$.$className$
 import play.api.data.FormError
 
 class $className$FormProviderSpec extends CheckboxFieldBehaviours {

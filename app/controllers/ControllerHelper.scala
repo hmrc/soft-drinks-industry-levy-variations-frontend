@@ -47,4 +47,12 @@ trait ControllerHelper extends FrontendBaseController with I18nSupport {
     }
   }
 
+  def updateDatabaseAndRedirect(updatedAnswers: UserAnswers, page: Page, mode: Mode)
+                               (implicit ec: ExecutionContext, request: Request[AnyContent]): Future[Result] = {
+    sessionService.set(updatedAnswers).map {
+      case Right(_) => Redirect(navigator.nextPage(page, mode, updatedAnswers))
+      case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
+    }
+  }
+
 }

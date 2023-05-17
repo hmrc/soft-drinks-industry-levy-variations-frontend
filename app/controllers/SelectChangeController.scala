@@ -62,9 +62,9 @@ class SelectChangeController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value => {
-          val updatedAnswers = request.userAnswers
-            .getOrElse(UserAnswers(id = request.sdilEnrolment))
-            .set(SelectChangePage, value)
+          val updatedAnswers = request
+            .userAnswers
+            .fold(UserAnswers(id = request.sdilEnrolment, journeyType = value))(_.copy(journeyType = value))
           updateDatabaseAndRedirect(updatedAnswers, SelectChangePage, mode)
         }
       )
