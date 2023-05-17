@@ -24,7 +24,7 @@ import play.api.mvc.Call
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class NavigatorForAccountDetails @Inject()() {
+class NavigatorForUpdateRegisteredDetails @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Call = {
     case _ => _ => routes.IndexController.onPageLoad
