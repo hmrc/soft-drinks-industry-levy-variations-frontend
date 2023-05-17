@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.updateRegisteredDetails
 
 import handlers.ErrorHandler
 import models.{Mode, UserAnswers}
-import navigation.Navigator
+import navigation.NavigatorForUpdateRegisteredDetails
 import pages.Page
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Request, Result}
@@ -31,7 +31,7 @@ import scala.util.{Failure, Success, Try}
 trait ControllerHelper extends FrontendBaseController with I18nSupport {
 
   val sessionService: SessionService
-  val navigator: Navigator
+  val navigator: NavigatorForUpdateRegisteredDetails
   val errorHandler: ErrorHandler
 
   def updateDatabaseAndRedirect(updatedAnswers: Try[UserAnswers], page: Page, mode: Mode)

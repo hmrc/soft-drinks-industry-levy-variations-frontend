@@ -8,6 +8,7 @@ import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
 import models.$packageName$.$className$
+import controllers.ControllerITTestHelper
 
 class $className$ControllerISpec extends ControllerITTestHelper {
 

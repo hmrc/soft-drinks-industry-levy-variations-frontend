@@ -16,10 +16,11 @@
 
 package navigation
 
-import controllers.routes
+import controllers.routes._
 import models._
 import pages._
 import play.api.mvc.Call
+import controllers.updateRegisteredDetails.routes._
 
 import javax.inject.{Inject, Singleton}
 
@@ -27,11 +28,11 @@ import javax.inject.{Inject, Singleton}
 class NavigatorForUpdateRegisteredDetails @Inject()() {
 
   private val normalRoutes: Page => UserAnswers => Call = {
-    case _ => _ => routes.IndexController.onPageLoad
+    case _ => _ => IndexController.onPageLoad
   }
 
   private val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => routes.CheckYourAnswersController.onPageLoad
+    case _ => _ => UpdateRegisteredDetailsCYAController.onPageLoad
   }
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {

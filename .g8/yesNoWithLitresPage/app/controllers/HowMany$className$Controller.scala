@@ -4,7 +4,6 @@ import controllers.actions._
 import forms.HowManyLitresFormProvider
 import javax.inject.Inject
 import models.Mode
-import navigation.Navigator
 import pages.HowMany$className$Page
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

@@ -17,13 +17,14 @@
 package navigation
 
 import base.SpecBase
-import controllers.routes
+import controllers.routes._
 import pages._
 import models._
+import controllers.updateRegisteredDetails.routes._
 
-class NavigatorSpec extends SpecBase {
+class NavigatorForUpdateRegisteredAccountSpec extends SpecBase {
 
-  val navigator = new Navigator
+  val navigator = new NavigatorForUpdateRegisteredDetails
 
   "Navigator" - {
 
@@ -32,7 +33,7 @@ class NavigatorSpec extends SpecBase {
       "must go from a page that doesn't exist in the route map to Index" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id", SelectChange.UpdateRegisteredAccount)) mustBe routes.IndexController.onPageLoad
+        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id", SelectChange.UpdateRegisteredAccount)) mustBe IndexController.onPageLoad
       }
     }
 
@@ -41,7 +42,7 @@ class NavigatorSpec extends SpecBase {
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", SelectChange.UpdateRegisteredAccount)) mustBe routes.CheckYourAnswersController.onPageLoad
+        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", SelectChange.UpdateRegisteredAccount)) mustBe UpdateRegisteredDetailsCYAController.onPageLoad
       }
     }
   }
