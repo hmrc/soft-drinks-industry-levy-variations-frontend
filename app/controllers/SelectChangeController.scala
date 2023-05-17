@@ -48,9 +48,7 @@ class SelectChangeController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
     implicit request =>
       val preparedForm = request.userAnswers match {
-        case Some(userAnswers) =>
-          userAnswers.get(SelectChangePage)
-            .fold(form)(pageContent => form.fill(pageContent))
+        case Some(userAnswers) => form.fill(userAnswers.journeyType)
         case None => form
       }
       Ok(view(preparedForm, mode))

@@ -19,7 +19,7 @@ package controllers.actions
 import base.SpecBase
 import errors.SessionDatabaseGetError
 import handlers.ErrorHandler
-import models.UserAnswers
+import models.{SelectChange, UserAnswers}
 import models.requests.{IdentifierRequest, OptionalDataRequest}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
@@ -62,7 +62,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
 
         val sessionService = mock[SessionService]
         val errorHandler = mock[ErrorHandler]
-        when(sessionService.get("id")) thenReturn Future(Right(Some(UserAnswers("id"))))
+        when(sessionService.get("id")) thenReturn Future(Right(Some(UserAnswers("id", SelectChange.UpdateRegisteredAccount))))
         val action = new Harness(sessionService, errorHandler)
 
         val result = action.callRefine(new IdentifierRequest(FakeRequest(), "id", aSubscription)).futureValue

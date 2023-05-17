@@ -24,13 +24,13 @@ sealed trait SelectChange
 
 object SelectChange extends Enumerable.Implicits {
 
-  case object Update extends WithName("update") with SelectChange
+  case object UpdateRegisteredAccount extends WithName("updateRegisteredAccount") with SelectChange
   case object Changeactivity extends WithName("changeActivity") with SelectChange
   case object CancelReg extends WithName("cancelReg") with SelectChange
   case object CorrectReturn extends WithName("correctReturn") with SelectChange
 
   val values: Seq[SelectChange] = Seq(
-    Update, Changeactivity, CancelReg, CorrectReturn
+    UpdateRegisteredAccount, Changeactivity, CancelReg, CorrectReturn
   )
 
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {

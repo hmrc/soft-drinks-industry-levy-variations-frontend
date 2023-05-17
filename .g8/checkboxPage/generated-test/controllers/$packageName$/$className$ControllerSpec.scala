@@ -16,7 +16,7 @@ import play.api.test.Helpers._
 import services.SessionService
 import views.html.$packageName$.$className$View
 import org.jsoup.Jsoup
-
+import controllers.routes._
 import scala.concurrent.Future
 
 class $className$ControllerSpec extends SpecBase with MockitoSugar {
@@ -121,7 +121,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual JourneyRecoveryController.onPageLoad().url
       }
     }
 
@@ -137,7 +137,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual JourneyRecoveryController.onPageLoad().url
       }
     }
 

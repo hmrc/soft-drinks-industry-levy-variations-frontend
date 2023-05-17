@@ -1,11 +1,12 @@
 package controllers.$packageName$
 
+import controllers.ControllerHelper
 import controllers.actions._
 import forms.$packageName$.$className$FormProvider
 import javax.inject.Inject
 import models.Mode
 import navigation.Navigator
-import pages.$className$Page
+import pages.$packageName$.$className$Page
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService

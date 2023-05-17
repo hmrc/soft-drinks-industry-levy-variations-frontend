@@ -47,7 +47,7 @@ echo "Adding to ModelGenerators"
 awk '/trait ModelGenerators/ {\
     print;\
     print "";\
-    print "  implicit lazy val arbitrary$packageName;format="cap"$.$className$: Arbitrary[$packageName$.$className$] =";\
+    print "  implicit lazy val arbitrary$packageName;format="cap"$$className$: Arbitrary[$packageName$.$className$] =";\
     print "    Arbitrary {";\
     print "      Gen.oneOf($packageName$.$className$.values)";\
     print "    }";\
@@ -59,9 +59,11 @@ awk '/val generators/ {\
     print "    arbitrary[($packageName$.$className$Page.type, JsValue)] ::";\
     next }1' ../test-utils/generators/UserAnswersGenerator.scala > tmp && mv tmp ../test-utils/generators/UserAnswersGenerator.scala
 
+echo "Adding to Navigator$packageName;format="cap"$"
+
 awk '/private val normalRoutes/ {\
     print;\
-    print "    case $packageName$.$className$Page => userAnswers => $nextPage$";\
-    next }1' ../app/navigation/Navigator.scala > tmp && mv tmp ../app/navigation/Navigator.scala
+    print "    case $className$Page => userAnswers => $nextPage$";\
+    next }1' ../app/navigation/Navigator$packageName;format="cap"$.scala > tmp && mv tmp ../app/navigation/Navigator$packageName;format="cap"$.scala
 
 echo "Migration $className;format="snake"$ completed"
