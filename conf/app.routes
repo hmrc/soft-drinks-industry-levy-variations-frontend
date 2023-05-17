@@ -2,7 +2,7 @@
 
 ->          /hmrc-frontend                               hmrcfrontend.Routes
 
-->          /                                            app.accountDetails.Routes
+->          /                                            app.updateRegisteredDetails.Routes
 
 GET         /                                            controllers.IndexController.onPageLoad
 
