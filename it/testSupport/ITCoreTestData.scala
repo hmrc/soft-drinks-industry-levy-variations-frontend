@@ -1,5 +1,6 @@
 package testSupport
 
+import controllers.routes
 import models._
 import org.scalatest.TryValues
 import pages._
@@ -28,4 +29,6 @@ trait ITCoreTestData extends TryValues {
 
   implicit val duration = 5.seconds
   def emptyUserAnswers = UserAnswers(sdilNumber, SelectChange.UpdateRegisteredAccount, Json.obj())
+
+  val defaultCall = routes.IndexController.onPageLoad
 }

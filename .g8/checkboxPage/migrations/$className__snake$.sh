@@ -64,6 +64,6 @@ echo "Adding to Navigator$packageName;format="cap"$"
 awk '/private val normalRoutes/ {\
     print;\
     print "    case $className$Page => userAnswers => $nextPage$";\
-    next }1' ../app/navigation/Navigator$packageName;format="cap"$.scala > tmp && mv tmp ../app/navigation/Navigator$packageName;format="cap"$.scala
+    next }1' ../app/navigation/NavigatorFor$packageName;format="cap"$.scala > tmp && mv tmp ../app/navigation/NavigatorFor$packageName;format="cap"$.scala
 
 echo "Migration $className;format="snake"$ completed"

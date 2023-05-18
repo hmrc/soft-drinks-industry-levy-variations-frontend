@@ -4,7 +4,7 @@ import base.SpecBase
 import forms.$packageName$.$className$FormProvider
 import models.{NormalMode, UserAnswers}
 import models.$packageName$.$className$
-import navigation.{FakeNavigator, NavigatorForUpdateRegisteredDetails}
+import navigation.{FakeNavigatorFor$packageName;format="cap"$, NavigatorFor$packageName;format="cap"$}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -75,7 +75,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[NavigatorFor$packageName;format="cap"$].toInstance(new FakeNavigator(onwardRoute)),
+            bind[NavigatorFor$packageName;format="cap"$].toInstance(new FakeNavigatorFor$packageName;format="cap"$(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           )
           .build()
