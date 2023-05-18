@@ -53,13 +53,13 @@ class $className$ViewSpec extends ViewSpecHelper {
     val html = view(form, NormalMode)(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
-      document.title() must include(Messages("$className;format="decap"$" + ".title"))
+      document.title() must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
     }
 
     "should include a legend with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("$className;format="decap"$" + ".heading")
+      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("$packageName$.$className;format="decap"$" + ".heading")
     }
 
     "when the form is not preoccupied and has no errors" - {
@@ -76,7 +76,7 @@ class $className$ViewSpec extends ViewSpecHelper {
               .get(index)
             checkbox1
               .getElementsByClass(Selectors.checkboxesLables)
-              .text() mustBe Messages("$className;format="decap"$." + checkbox.toString)
+              .text() mustBe Messages("$packageName$.$className;format="decap"$." + checkbox.toString)
             val input = checkbox1
               .getElementsByClass(Selectors.checkboxesInput)
             input.attr("value") mustBe checkbox.toString
@@ -100,7 +100,7 @@ class $className$ViewSpec extends ViewSpecHelper {
                   .get(index)
                 checkboxes1
                   .getElementsByClass(Selectors.checkboxesLables)
-                  .text() mustBe Messages("$className;format="decap"$." + checkbox1.toString)
+                  .text() mustBe Messages("$packageName$.$className;format="decap"$." + checkbox1.toString)
                 val input = checkboxes1
                   .getElementsByClass(Selectors.checkboxesInput)
                 input.attr("value") mustBe checkbox1.toString
@@ -112,7 +112,7 @@ class $className$ViewSpec extends ViewSpecHelper {
                   .get(index)
                 checkboxes1
                   .getElementsByClass(Selectors.checkboxesLables)
-                  .text() mustBe Messages("$className;format="decap"$." + checkbox1.toString)
+                  .text() mustBe Messages("$packageName$.$className;format="decap"$." + checkbox1.toString)
                 val input = checkboxes1
                   .getElementsByClass(Selectors.checkboxesInput)
                 input.attr("value") mustBe checkbox1.toString
@@ -170,7 +170,7 @@ class $className$ViewSpec extends ViewSpecHelper {
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
-        val titleMessage = Messages("$className;format="decap"$.title")
+        val titleMessage = Messages("$packageName$.$className;format="decap"$.title")
         documentWithErrors.title must include("Error: " + titleMessage)
       }
 
@@ -181,7 +181,7 @@ class $className$ViewSpec extends ViewSpecHelper {
         errorSummary
           .select("a")
           .attr("href") mustBe "#value_0"
-        errorSummary.text() mustBe Messages("$className;format="decap"$.error.required")
+        errorSummary.text() mustBe Messages("$packageName$.$className;format="decap"$.error.required")
       }
     }
 

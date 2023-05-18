@@ -21,7 +21,7 @@ object $className$ extends Enumerable.Implicits {
     values.zipWithIndex.map {
       case (value, index) =>
         CheckboxItemViewModel(
-          content = Text(messages(s"$className;format="decap"$.\${value.toString}")),
+          content = Text(messages(s"$packageName$.$className;format="decap"$.\${value.toString}")),
           fieldId = "value",
           index   = index,
           value   = value.toString

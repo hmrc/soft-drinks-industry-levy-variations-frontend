@@ -31,7 +31,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("$className;format="decap"$" + ".title"))
+            page.title must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
             val checkBoxInputs = page.getElementsByClass("govuk-checkboxes__input")
             checkBoxInputs.size() mustBe $className$.values.size
 
@@ -60,7 +60,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("$className;format="
+              page.title must include(Messages("$packageName$.$className;format="
               decap"$" + ".title"
               ) )
               val checkBoxInputs = page.getElementsByClass("govuk-checkboxes__input")
@@ -91,7 +91,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("$className;format="
+            page.title must include(Messages("$packageName$.$className;format="
             decap"$" + ".title"
             ) )
             val checkBoxInputs = page.getElementsByClass("govuk-checkboxes__input")
@@ -124,7 +124,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("$className;format="
+            page.title must include(Messages("$packageName$.$className;format="
             decap"$" + ".title"
             ) )
             val checkBoxInputs = page.getElementsByClass("govuk-checkboxes__input")
@@ -156,7 +156,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("$className;format="
+              page.title must include(Messages("$packageName$.$className;format="
               decap"$" + ".title"
               ) )
               val checkBoxInputs = page.getElementsByClass("govuk-checkboxes__input")
@@ -187,7 +187,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("$className;format="
+            page.title must include(Messages("$packageName$.$className;format="
             decap"$" + ".title"
             ) )
             val checkBoxInputs = page.getElementsByClass("govuk-checkboxes__input")
@@ -316,13 +316,13 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("$className;format="decap"$" + ".title"))
+            page.title must include("Error: " + Messages("$packageName$.$className;format="decap"$" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value_0"
-            errorSummary.text() mustBe Messages("$className;format="decap"$" + ".error.required")
+            errorSummary.text() mustBe Messages("$packageName$.$className;format="decap"$" + ".error.required")
           }
         }
       }
@@ -440,7 +440,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("$className;format="
+            page.title must include("Error: " + Messages("$packageName$.$className;format="
             decap"$" + ".title"
             ) )
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
@@ -448,7 +448,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             errorSummary
               .select("a")
               .attr("href") mustBe "#value_0"
-            errorSummary.text() mustBe Messages("$className;format="
+            errorSummary.text() mustBe Messages("$packageName$.$className;format="
             decap"$" + ".error.required"
             )
           }

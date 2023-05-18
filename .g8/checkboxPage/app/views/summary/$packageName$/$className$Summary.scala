@@ -19,18 +19,18 @@ object $className$Summary  {
         val value = ValueViewModel(
           HtmlContent(
             answers.map {
-              answer => HtmlFormat.escape(messages(s"$className;format="decap"$.\$answer")).toString
+              answer => HtmlFormat.escape(messages(s"$packageName$.$className;format="decap"$.\$answer")).toString
             }
             .mkString(",<br>")
           )
         )
 
         SummaryListRowViewModel(
-          key     = "$className;format="decap"$.checkYourAnswersLabel",
+          key     = "$packageName$.$className;format="decap"$.checkYourAnswersLabel",
           value   = value,
           actions = Seq(
             ActionItemViewModel("site.change", routes.$className$Controller.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("$className;format="decap"$.change.hidden"))
+              .withVisuallyHiddenText(messages("$packageName$.$className;format="decap"$.change.hidden"))
           )
         )
     }
