@@ -23,7 +23,7 @@ import play.api.mvc.Call
 
 trait Navigator {
 
-  val defaultCall = routes.IndexController.onPageLoad
+  def defaultCall = routes.IndexController.onPageLoad
 
   val normalRoutes: Page => UserAnswers => Call
 
