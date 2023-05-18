@@ -10,7 +10,7 @@ import play.api.test.WsTestClient
 import models.$packageName$.$className$
 import controllers.ControllerITTestHelper
 import controllers.routes._
-import controllers.$pathName$.routes._
+import controllers.$packageName$.routes._
 
 class $className$ControllerISpec extends ControllerITTestHelper {
 
