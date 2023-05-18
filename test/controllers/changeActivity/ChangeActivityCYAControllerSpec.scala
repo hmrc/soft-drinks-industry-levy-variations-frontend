@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package controllers.updateRegisteredDetails
+package controllers.changeActivity
 
 import base.SpecBase
-import controllers.updateRegisteredDetails.routes._
 import controllers.routes._
+import controllers.changeActivity.routes._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
-import views.html.updateRegisteredDetails.UpdateRegisteredDetailsCYAView
+import views.html.changeActivity.ChangeActivityCYAView
 
-class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryListFluency {
+class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency {
 
   "Check Your Answers Controller" - {
 
@@ -33,11 +33,11 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, UpdateRegisteredDetailsCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, ChangeActivityCYAController.onPageLoad.url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[UpdateRegisteredDetailsCYAView]
+        val view = application.injector.instanceOf[ChangeActivityCYAView]
         val list = SummaryListViewModel(Seq.empty)
 
         status(result) mustEqual OK
@@ -50,7 +50,7 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, UpdateRegisteredDetailsCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, ChangeActivityCYAController.onPageLoad.url)
 
         val result = route(application, request).value
 

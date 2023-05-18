@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,25 +12,18 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package navigation
+@this(
+    layout: templates.Layout,
+    govukSummaryList: GovukSummaryList
+)
 
-import controllers.updateRegisteredDetails.routes
-import models.UserAnswers
-import pages.Page
-import play.api.mvc.Call
+@(list: SummaryList)(implicit request: Request[_], messages: Messages)
 
-import javax.inject.{Inject, Singleton}
+@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
-@Singleton
-class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
+    <h1 class="govuk-heading-xl">@messages("checkYourAnswers.heading")</h1>
 
-  override val normalRoutes: Page => UserAnswers => Call = {
-    case _ => _ => defaultCall
-  }
-
-  override val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => routes.UpdateRegisteredDetailsCYAController.onPageLoad
-  }
+    @govukSummaryList(list)
 }

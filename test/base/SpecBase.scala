@@ -18,6 +18,7 @@ package base
 
 import config.FrontendAppConfig
 import controllers.actions._
+import controllers.routes
 import models.{Contact, LitresInBands, RetrievedActivity, RetrievedSubscription, ReturnCharge, ReturnPeriod, SelectChange, Site, UkAddress, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
@@ -28,7 +29,7 @@ import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Writes
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{Call, MessagesControllerComponents}
 import play.api.test.FakeRequest
 import queries.Settable
 
@@ -160,4 +161,6 @@ trait SpecBase
 
     override def setAndRemoveLitresIfReq(page: Settable[Boolean], litresPage: Settable[LitresInBands], value: Boolean)(implicit writes: Writes[Boolean]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
   }
+
+  val defaultCall: Call = routes.IndexController.onPageLoad
 }

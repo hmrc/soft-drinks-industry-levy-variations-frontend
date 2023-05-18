@@ -1,3 +1,1 @@
-# accountDetails specific routes
-
 GET         /check-your-answers-variations1                          controllers.updateRegisteredDetails.UpdateRegisteredDetailsCYAController.onPageLoad

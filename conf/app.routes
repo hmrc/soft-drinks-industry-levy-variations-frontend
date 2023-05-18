@@ -2,6 +2,9 @@
 
 ->          /hmrc-frontend                               hmrcfrontend.Routes
 
+->          /                                            app.cancelRegistration.Routes
+->          /                                            app.correctReturn.Routes
+->          /                                            app.changeActivity.Routes
 ->          /                                            app.updateRegisteredDetails.Routes
 
 GET         /                                            controllers.IndexController.onPageLoad

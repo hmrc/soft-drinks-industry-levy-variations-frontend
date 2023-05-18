@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers.updateRegisteredDetails
+package controllers.cancelRegistration
 
 import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
@@ -22,15 +22,15 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.govuk.summarylist._
-import views.html.updateRegisteredDetails.UpdateRegisteredDetailsCYAView
+import views.html.cancelRegistration.CancelRegistrationCYAView
 
-class UpdateRegisteredDetailsCYAController @Inject()(
+class CancelRegistrationCYAController @Inject()(
                                             override val messagesApi: MessagesApi,
                                             identify: IdentifierAction,
                                             getData: DataRetrievalAction,
                                             requireData: DataRequiredAction,
                                             val controllerComponents: MessagesControllerComponents,
-                                            view: UpdateRegisteredDetailsCYAView
+                                            view: CancelRegistrationCYAView
                                           ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {

@@ -17,13 +17,13 @@
 package navigation
 
 import base.SpecBase
-import pages._
+import controllers.correctReturn.routes
 import models._
-import controllers.updateRegisteredDetails.routes
+import pages._
 
-class NavigatorForUpdateRegisteredAccountSpec extends SpecBase {
+class NavigatorForCorrectReturnSpec extends SpecBase {
 
-  val navigator = new NavigatorForUpdateRegisteredDetails
+  val navigator = new NavigatorForCorrectReturn
 
   "Navigator" - {
 
@@ -32,7 +32,7 @@ class NavigatorForUpdateRegisteredAccountSpec extends SpecBase {
       "must go from a page that doesn't exist in the route map to Index" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id", SelectChange.UpdateRegisteredAccount)) mustBe defaultCall
+        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id", SelectChange.CorrectReturn)) mustBe defaultCall
       }
     }
 
@@ -41,7 +41,7 @@ class NavigatorForUpdateRegisteredAccountSpec extends SpecBase {
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", SelectChange.UpdateRegisteredAccount)) mustBe routes.UpdateRegisteredDetailsCYAController.onPageLoad
+        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", SelectChange.CorrectReturn)) mustBe routes.CorrectReturnCYAController.onPageLoad
       }
     }
   }

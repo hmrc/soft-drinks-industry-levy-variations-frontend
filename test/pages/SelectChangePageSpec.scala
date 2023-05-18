@@ -19,7 +19,7 @@ package pages
 import models.SelectChange
 import pages.behaviours.PageBehaviours
 
-class SelectChangeSpec extends PageBehaviours {
+class SelectChangePageSpec extends PageBehaviours {
 
   "SelectChangePage" - {
 

@@ -16,21 +16,12 @@
 
 package navigation
 
-import controllers.updateRegisteredDetails.routes
-import models.UserAnswers
-import pages.Page
 import play.api.mvc.Call
+import pages.Page
+import models.{Mode, UserAnswers}
 
-import javax.inject.{Inject, Singleton}
+class FakeNavigatorForUpdateRegisteredDetails(desiredRoute: Call) extends NavigatorForUpdateRegisteredDetails {
 
-@Singleton
-class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
-
-  override val normalRoutes: Page => UserAnswers => Call = {
-    case _ => _ => defaultCall
-  }
-
-  override val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => routes.UpdateRegisteredDetailsCYAController.onPageLoad
-  }
+  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
+    desiredRoute
 }
