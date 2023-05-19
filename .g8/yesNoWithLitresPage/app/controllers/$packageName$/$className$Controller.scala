@@ -12,11 +12,12 @@ import views.html.$packageName$.$className$View
 import handlers.ErrorHandler
 
 import scala.concurrent.{ExecutionContext, Future}
+import navigation._
 
 class $className$Controller @Inject()(
                                          override val messagesApi: MessagesApi,
                                          val sessionService: SessionService,
-                                         val navigator: Navigator,
+                                         val navigator: NavigatorFor$packageName;format="cap"$,
                                          identify: IdentifierAction,
                                          getData: DataRetrievalAction,
                                          requireData: DataRequiredAction,

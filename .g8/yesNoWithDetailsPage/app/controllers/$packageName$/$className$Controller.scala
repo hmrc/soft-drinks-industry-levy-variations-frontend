@@ -10,13 +10,14 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
 import views.html.$className$View
 import handlers.ErrorHandler
+import navigation._
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class $className$Controller @Inject()(
                                        override val messagesApi: MessagesApi,
                                        val sessionService: SessionService,
-                                       val navigator: Navigator,
+                                       val navigator: NavigatorFor$packageName;format="cap"$,
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,

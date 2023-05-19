@@ -4,7 +4,7 @@ import base.SpecBase
 import forms.$packageName$.$className$FormProvider
 import models.{NormalMode, UserAnswers}
 import models.$packageName$.$className$
-import navigation.{FakeNavigatorFor$packageName;format="cap"$, NavigatorFor$packageName;format="cap"$}
+import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar

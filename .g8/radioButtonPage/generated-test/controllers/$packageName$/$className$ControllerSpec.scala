@@ -3,7 +3,7 @@ package controllers
 import base.SpecBase
 import forms.$className$FormProvider
 import models.{NormalMode, $className$, UserAnswers}
-import navigation.FakeNavigator
+import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -72,7 +72,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
+            bind[NavigatorFor$packageName;format="cap"$].toInstance(new FakeNavigatorFor$packageName;format="cap"$(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           )
           .build()

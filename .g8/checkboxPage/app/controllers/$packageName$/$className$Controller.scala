@@ -11,7 +11,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
 import views.html.$packageName$.$className$View
 import handlers.ErrorHandler
-import navigation.NavigatorFor$packageName;format="cap"$
+import navigation._
 
 import scala.concurrent.{ExecutionContext, Future}
 
