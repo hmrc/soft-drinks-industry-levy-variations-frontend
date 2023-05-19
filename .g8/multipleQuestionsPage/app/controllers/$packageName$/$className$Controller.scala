@@ -1,5 +1,6 @@
 package controllers
 
+import controllers.ControllerHelper
 import controllers.actions._
 import forms.$className$FormProvider
 import javax.inject.Inject

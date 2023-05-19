@@ -10,6 +10,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
 import views.html.$className$View
 import handlers.ErrorHandler
+import controllers.ControllerHelper
 
 import scala.concurrent.{ExecutionContext, Future}
 import navigation._
