@@ -32,7 +32,7 @@ awk '/trait UserAnswersEntryGenerators/ {\
     print "    Arbitrary {";\
     print "      for {";\
     print "        page  <- arbitrary[$className$Page.type]";\
-    print "        value <- arbitrary[$className$].map(Json.toJson(_))";\
+    print "        value <- arbitrary[Int].map(Json.toJson(_))";\
     print "      } yield (page, value)";\
     print "    }";\
     next }1' ../test-utils/generators/UserAnswersEntryGenerators.scala > tmp && mv tmp ../test-utils/generators/UserAnswersEntryGenerators.scala
@@ -53,7 +53,7 @@ awk '/val generators/ {\
 
 echo "Adding to Navigator$packageName;format="cap"$"
 
-awk '/private val normalRoutes/ {\
+awk '/override val normalRoutes/ {\
     print;\
     print "    case $className$Page => userAnswers => $nextPage$";\
     next }1' ../app/navigation/NavigatorFor$packageName;format="cap"$.scala > tmp && mv tmp ../app/navigation/NavigatorFor$packageName;format="cap"$.scala

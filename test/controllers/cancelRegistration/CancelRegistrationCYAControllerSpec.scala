@@ -30,7 +30,7 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersUpdateRegisteredAccount)).build()
 
       running(application) {
         val request = FakeRequest(GET, CancelRegistrationCYAController.onPageLoad.url)

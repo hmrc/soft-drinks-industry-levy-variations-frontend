@@ -20,6 +20,7 @@ import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import views.html.$packageName$.$className$View
+import views.ViewSpecHelper
 
 class $className$ViewSpec extends ViewSpecHelper {
 

@@ -16,14 +16,14 @@
 
 package views.$packageName$
 
-import controllers.routes
+import controllers.$packageName$.routes
 import forms.$packageName$.$className$FormProvider
 import models.{CheckMode, NormalMode}
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import views.html.$packageName$.$className$View
-
+import views.ViewSpecHelper
 class $className$ViewSpec extends ViewSpecHelper {
 
   val view = application.injector.instanceOf[$className$View]

@@ -97,8 +97,13 @@ trait SpecBase
 
 
 
-  def emptyUserAnswers : UserAnswers = UserAnswers(userAnswersId, SelectChange.UpdateRegisteredAccount)
+  def emptyUserAnswersUpdateRegisteredAccount : UserAnswers = UserAnswers(userAnswersId, SelectChange.UpdateRegisteredAccount)
 
+  def emptyUserAnswersForChangeActivity = UserAnswers(sdilNumber, SelectChange.Changeactivity)
+
+  def emptyUserAnswersForCorrectReturn = UserAnswers(sdilNumber, SelectChange.CorrectReturn)
+
+  def emptyUserAnswersForCancelRegistration = UserAnswers(sdilNumber, SelectChange.CancelRegistration)
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   protected def applicationBuilder(
@@ -163,4 +168,5 @@ trait SpecBase
   }
 
   val defaultCall: Call = routes.IndexController.onPageLoad
+  val recoveryCall: Call = routes.JourneyRecoveryController.onPageLoad()
 }

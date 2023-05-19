@@ -1,5 +1,6 @@
 package controllers.$packageName$
 
+import controllers.ControllerITTestHelper
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
@@ -21,7 +22,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers)
+        setAnswers(emptyUserAnswers$packageName;format="cap"$)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, baseUrl + normalRoutePath)
@@ -48,7 +49,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          val userAnswers = emptyUserAnswers.set($className$Page, radio).success.value
+          val userAnswers = emptyUserAnswers$packageName;format="cap"$.set($className$Page, radio).success.value
 
           setAnswers(userAnswers)
 
@@ -81,7 +82,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers)
+        setAnswers(emptyUserAnswers$packageName;format="cap"$)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, baseUrl + checkRoutePath)
@@ -108,7 +109,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          val userAnswers = emptyUserAnswers.set($className$Page, radio).success.value
+          val userAnswers = emptyUserAnswers$packageName;format="cap"$.set($className$Page, radio).success.value
 
 
           setAnswers(userAnswers)
@@ -145,7 +146,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswers)
+            setAnswers(emptyUserAnswers$packageName;format="cap"$)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
                 client, baseUrl + normalRoutePath, Json.obj("value" -> radio)
@@ -165,7 +166,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            val userAnswers = emptyUserAnswers.set($className$Page, radio).success.value
+            val userAnswers = emptyUserAnswers$packageName;format="cap"$.set($className$Page, radio).success.value
 
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
@@ -191,7 +192,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers)
+        setAnswers(emptyUserAnswers$packageName;format="cap"$)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, baseUrl + normalRoutePath, Json.obj("value" -> "")
@@ -223,7 +224,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswers)
+            setAnswers(emptyUserAnswers$packageName;format="cap"$)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
                 client, baseUrl + checkRoutePath, Json.obj("value" -> Json.toJson(radio))
@@ -231,7 +232,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.CheckYourAnswersController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.$packageName;format="cap"$CYAController.onPageLoad.url)
                 val dataStoredForPage = getAnswers(sdilNumber).fold[Option[$className$]](None)(_.get($className$Page))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
@@ -243,7 +244,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            val userAnswers = emptyUserAnswers.set($className$Page, radio).success.value
+            val userAnswers = emptyUserAnswers$packageName;format="cap"$.set($className$Page, radio).success.value
 
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
@@ -253,7 +254,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.CheckYourAnswersController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.$packageName;format="cap"$CYAController.onPageLoad.url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[$className$]](None)(_.get($className$Page))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
@@ -269,7 +270,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers)
+        setAnswers(emptyUserAnswers$packageName;format="cap"$)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, baseUrl + checkRoutePath, Json.obj("value" -> "")

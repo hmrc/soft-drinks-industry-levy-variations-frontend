@@ -5,7 +5,7 @@ import controllers.actions._
 import forms.HowManyLitresFormProvider
 import javax.inject.Inject
 import models.Mode
-import pages.HowMany$className$Page
+import pages.$packageName$.HowMany$className$Page
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService

@@ -2,7 +2,7 @@ package controllers.$packageName$
 
 import base.SpecBase
 import forms.$packageName$.$className$FormProvider
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -31,7 +31,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers$packageName;format="cap"$)).build()
 
       running(application) {
         val request = FakeRequest(GET, $className;format="decap"$Route)
@@ -47,7 +47,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(sdilNumber).set($className$Page, true).success.value
+      val userAnswers = emptyUserAnswers$packageName;format="cap"$.set($className$Page, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -70,9 +70,9 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(emptyUserAnswers$packageName;format="cap"$))
           .overrides(
-            bind[NavigatorFor$packageName;format="cap"$].toInstance(new FakeNavigator(onwardRoute)),
+            bind[NavigatorFor$packageName;format="cap"$].toInstance(new FakeNavigatorFor$packageName;format="cap"$(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           )
           .build()
@@ -91,7 +91,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers$packageName;format="cap"$)).build()
 
       running(application) {
         val request =
@@ -119,7 +119,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual recoveryCall.url
       }
     }
 
@@ -135,7 +135,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual recoveryCall.url
       }
     }
 

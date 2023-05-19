@@ -10,7 +10,7 @@ class $className$ControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers$packageName;format="cap"$)).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.$className$Controller.onPageLoad().url)
@@ -20,7 +20,7 @@ class $className$ControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[$className$View]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(emptyUserAnswers)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(emptyUserAnswers$packageName;format="cap"$)(request, messages(application)).toString
       }
     }
   }

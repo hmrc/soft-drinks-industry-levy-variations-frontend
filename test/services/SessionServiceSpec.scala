@@ -39,7 +39,7 @@ class SessionServiceSpec extends SpecBase with MockitoSugar {
 
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-        val res = sessionService.set(emptyUserAnswers)
+        val res = sessionService.set(emptyUserAnswersUpdateRegisteredAccount)
 
         whenReady(res) {result =>
           result mustBe Right(true)
@@ -52,7 +52,7 @@ class SessionServiceSpec extends SpecBase with MockitoSugar {
 
         when(mockSessionRepository.set(any())) thenReturn Future.failed(new Exception("error"))
 
-        val res = sessionService.set(emptyUserAnswers)
+        val res = sessionService.set(emptyUserAnswersUpdateRegisteredAccount)
 
         whenReady(res) { result =>
           result mustBe Left(SessionDatabaseInsertError)
@@ -65,7 +65,7 @@ class SessionServiceSpec extends SpecBase with MockitoSugar {
 
     "must return useranswers" - {
       "when no mongo errors occur and a record exists" in {
-        val record = emptyUserAnswers
+        val record = emptyUserAnswersUpdateRegisteredAccount
 
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(record))
 

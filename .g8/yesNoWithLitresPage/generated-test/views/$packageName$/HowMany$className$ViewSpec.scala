@@ -17,14 +17,14 @@
 package views.$packageName$
 
 import config.FrontendAppConfig
-import controllers.routes
+import controllers.$packageName$.routes
 import models.{CheckMode, NormalMode}
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
 import views.html.$packageName$.HowMany$className$View
-
+import views.LitresSpecHelper
 class HowMany$className$ViewSpec extends LitresSpecHelper {
 
   val howMany$className$View: HowMany$className$View = application.injector.instanceOf[HowMany$className$View]

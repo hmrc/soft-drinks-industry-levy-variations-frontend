@@ -16,9 +16,10 @@
 
 package views.summary.$packageName$
 
-import controllers.routes
+import controllers.$packageName$.routes
 import models.{CheckMode, LitresInBands}
-import pages.$packageName$.{HowMany$className$Page, $className$Page, QuestionPage}
+import pages.$packageName$.{HowMany$className$Page, $className$Page}
+import pages.QuestionPage
 import views.summary.{ReturnDetailsSummaryListWithLitres, SummaryListRowLitresHelper}
 
 object $className$Summary extends ReturnDetailsSummaryListWithLitres  {

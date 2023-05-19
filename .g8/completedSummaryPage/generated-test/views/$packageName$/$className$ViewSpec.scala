@@ -20,6 +20,7 @@ import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import views.html.$packageName$.$className$View
+import views.ViewSpecHelper
 
 class $className$ViewSpec extends ViewSpecHelper {
 
@@ -40,7 +41,7 @@ class $className$ViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view(emptyUserAnswers)(request, messages(application))
+    val html = view(emptyUserAnswers$packageName;format="cap"$)(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
       document.title() must include(Messages("$packageName$.$className;format="decap"$" + ".title"))

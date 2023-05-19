@@ -25,15 +25,15 @@ trait Navigator {
 
   def defaultCall = routes.IndexController.onPageLoad
 
-  val normalRoutes: Page => UserAnswers => Call
+  val normalRoutes: Page => UserAnswers => Mode => Call
 
-  val checkRouteMap: Page => UserAnswers => Call
+  val checkRouteMap: Page => UserAnswers => Mode => Call
 
   def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = mode match {
     case NormalMode =>
-      normalRoutes(page)(userAnswers)
+      normalRoutes(page)(userAnswers)(mode)
     case CheckMode =>
-      checkRouteMap(page)(userAnswers)
+      checkRouteMap(page)(userAnswers)(mode)
   }
 
 }

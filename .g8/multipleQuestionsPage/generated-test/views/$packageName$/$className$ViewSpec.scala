@@ -16,14 +16,16 @@
 
 package views.$packageName$
 
-import controllers.routes
+import controllers.$packageName$.routes
 import forms.$packageName$.$className$FormProvider
-import models.{CheckMode, NormalMode, $className$}
+import models.{CheckMode, NormalMode}
+import models.$packageName$.$className$
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import views.html.$packageName$.$className$View
 import play.api.libs.json.{JsObject, Json}
+import views.ViewSpecHelper
 
 
 

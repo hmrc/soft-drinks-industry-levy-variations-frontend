@@ -1,5 +1,6 @@
 package controllers.$packageName$
 
+import controllers.ControllerITTestHelper
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
@@ -20,7 +21,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
 
   val randomStringExceedingMaxLength = Random.nextString($maxLength$ + 1)
 
-  val userAnswers = emptyUserAnswers.set($className$Page, $className;format="decap"$).success.value
+  val userAnswers = emptyUserAnswers$packageName;format="cap"$.set($className$Page, $className;format="decap"$).success.value
 
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
@@ -28,7 +29,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers)
+        setAnswers(emptyUserAnswers$packageName;format="cap"$)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, baseUrl + normalRoutePath)
@@ -75,7 +76,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers)
+        setAnswers(emptyUserAnswers$packageName;format="cap"$)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, baseUrl + checkRoutePath)
@@ -124,7 +125,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswers)
+          setAnswers(emptyUserAnswers$packageName;format="cap"$)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, baseUrl + normalRoutePath, Json.obj("value" -> $className;format="decap"$Diff)
@@ -167,7 +168,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers)
+        setAnswers(emptyUserAnswers$packageName;format="cap"$)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, baseUrl + normalRoutePath, Json.obj("value" -> randomStringExceedingMaxLength)
@@ -204,7 +205,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswers)
+          setAnswers(emptyUserAnswers$packageName;format="cap"$)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, baseUrl + checkRoutePath, Json.obj("value" -> $className;format="decap"$Diff)
@@ -212,7 +213,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(routes.CheckYourAnswersController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.$packageName;format="cap"$CYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[String]](None)(_.get($className$Page))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe $className;format="decap"$Diff
@@ -232,7 +233,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(routes.CheckYourAnswersController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.$packageName;format="cap"$CYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[String]](None)(_.get($className$Page))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe $className;format="decap"$Diff
@@ -247,7 +248,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers)
+        setAnswers(emptyUserAnswers$packageName;format="cap"$)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, baseUrl + checkRoutePath, Json.obj("value" -> randomStringExceedingMaxLength)

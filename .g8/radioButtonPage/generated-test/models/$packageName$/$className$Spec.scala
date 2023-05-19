@@ -1,5 +1,6 @@
 package models.$packageName$
 
+import models.{Enumerable, WithName}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks

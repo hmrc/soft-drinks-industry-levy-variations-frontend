@@ -17,7 +17,7 @@
 package navigation
 
 import controllers.cancelRegistration.routes
-import models.UserAnswers
+import models.{Mode, UserAnswers}
 import pages.Page
 import play.api.mvc.Call
 
@@ -26,11 +26,11 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class NavigatorForCancelRegistration @Inject()() extends Navigator {
 
-  override val normalRoutes: Page => UserAnswers => Call = {
-    case _ => _ => defaultCall
+  override val normalRoutes: Page => UserAnswers => Mode => Call = {
+    case _ => _ => _ => defaultCall
   }
 
-  override val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => routes.CancelRegistrationCYAController.onPageLoad
+  override val checkRouteMap: Page => UserAnswers => Mode => Call = {
+    case _ => _ => _ => routes.CancelRegistrationCYAController.onPageLoad
   }
 }

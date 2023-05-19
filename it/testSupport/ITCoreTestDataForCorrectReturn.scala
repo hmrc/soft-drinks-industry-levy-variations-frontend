@@ -2,12 +2,13 @@ package testSupport
 
 import models.{SelectChange, UserAnswers}
 import play.api.libs.json.Json
+import org.scalatest.TryValues.convertTryToSuccessOrFailure
 
 trait ITCoreTestDataForCorrectReturn {
 
   def sdilNumber: String
 
-  val emptyUserAnswersForCorrectReturn = UserAnswers(sdilNumber, SelectChange.CorrectReturn, Json.obj())
+  def emptyUserAnswersForCorrectReturn = UserAnswers(sdilNumber, SelectChange.CorrectReturn, Json.obj())
 
 
 }

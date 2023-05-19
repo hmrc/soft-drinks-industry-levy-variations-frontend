@@ -41,7 +41,7 @@ awk '/trait UserAnswersEntryGenerators/ {\
     print "    Arbitrary {";\
     print "      for {";\
     print "        page  <- arbitrary[$className$Page.type]";\
-    print "        value <- arbitrary[$className$].map(Json.toJson(_))";\
+    print "        value <- arbitrary[Boolean].map(Json.toJson(_))";\
     print "      } yield (page, value)";\
     print "    }";\
     next }1' ../test-utils/generators/UserAnswersEntryGenerators.scala > tmp && mv tmp ../test-utils/generators/UserAnswersEntryGenerators.scala
@@ -68,20 +68,20 @@ awk '/class NavigatorFor$packageName;format="cap"$/ {\
     print "    if (userAnswers.get(page = $className$Page).contains(true)) {";\
     print "      routes.HowMany$className$Controller.onPageLoad(mode)";\
     print "    } else if(mode == CheckMode){";\
-    print "        routes.CheckYourAnswersController.onPageLoad";\
+    print "        routes.$packageName;format="cap"$CYAController.onPageLoad";\
     print "    } else {";\
     print "        $nextPage$";\
     print "    }";\
     print "  }";\
     next }1' ../app/navigation/NavigatorFor$packageName;format="cap"$.scala > tmp && mv tmp ../app/navigation/NavigatorFor$packageName;format="cap"$.scala
 
-awk '/private val normalRoutes/ {\
+awk '/overrride val normalRoutes/ {\
     print;\
     print "    case $className$Page => userAnswers => navigationFor$className$(userAnswers, NormalMode)";\
     print "    case HowMany$className$Page => userAnswers => $nextPage$";\
     next }1' ../app/navigation/NavigatorFor$packageName;format="cap"$.scala > tmp && mv tmp ../app/navigation/NavigatorFor$packageName;format="cap"$.scala
 
-awk '/private val checkRouteMap/ {\
+awk '/override val checkRouteMap/ {\
     print;\
     print "    case $className$Page => userAnswers => navigationFor$className$(userAnswers, CheckMode)";\
     next }1' ../app/navigation/NavigatorFor$packageName;format="cap"$.scala > tmp && mv tmp ../app/navigation/NavigatorFor$packageName;format="cap"$.scala
@@ -91,8 +91,8 @@ awk '/trait ITCoreTestDataFor$packageName;format="cap"$/ {\
     print;\
     print "";\
     print "  val userAnswersFor$packageName;format="cap"$$className$Page: Map[String, UserAnswers] = {";\
-    print "    val yesSelected = emptyUserAnswersFor$packageName;format="cap"$.set($className$Page, true).success.value";\
-    print "    val noSelected = emptyUserAnswersFor$packageName;format="cap"$.set($className$Page, false).success.value";\
+    print "    val yesSelected = emptyUserAnswers$packageName;format="cap"$For$packageName;format="cap"$.set($className$Page, true).success.value";\
+    print "    val noSelected = emptyUserAnswers$packageName;format="cap"$For$packageName;format="cap"$.set($className$Page, false).success.value";\
     print "    Map(\"yes\" -> yesSelected, \"no\" -> noSelected)";\
     print "    }";\
     next }1' ../it/testSupport/ITCoreTestDataFor$packageName;format="cap"$.scala > tmp && mv tmp ../it/testSupport/ITCoreTestDataFor$packageName;format="cap"$.scala

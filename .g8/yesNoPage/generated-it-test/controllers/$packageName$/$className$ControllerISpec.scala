@@ -1,5 +1,6 @@
 package controllers.$packageName$
 
+import controllers.ControllerITTestHelper
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
@@ -20,7 +21,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers)
+        setAnswers(emptyUserAnswers$packageName;format="cap"$)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, baseUrl + normalRoutePath)
@@ -40,7 +41,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
       }
     }
 
-    userAnswersFor$className$Page.foreach { case (key, userAnswers) =>
+    userAnswersFor$packageName;format="cap"$$className$Page.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
           given
@@ -75,7 +76,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers)
+        setAnswers(emptyUserAnswers$packageName;format="cap"$)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, baseUrl + checkRoutePath)
@@ -95,7 +96,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
       }
     }
 
-    userAnswersFor$className$Page.foreach { case (key, userAnswers) =>
+    userAnswersFor$packageName;format="cap"$$className$Page.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
           given
@@ -127,14 +128,14 @@ class $className$ControllerISpec extends ControllerITTestHelper {
   }
 
   s"POST " + normalRoutePath - {
-    userAnswersFor$className$Page.foreach { case (key, userAnswers) =>
+    userAnswersFor$packageName;format="cap"$$className$Page.foreach { case (key, userAnswers) =>
       "when the user selects " + key - {
         "should update the session with the new value and redirect to the index controller" - {
           "when the session contains no data for page" in {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswers)
+            setAnswers(emptyUserAnswers$packageName;format="cap"$)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -180,7 +181,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers)
+        setAnswers(emptyUserAnswers$packageName;format="cap"$)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, baseUrl + normalRoutePath, Json.obj("value" -> "")
@@ -205,14 +206,14 @@ class $className$ControllerISpec extends ControllerITTestHelper {
   }
 
   s"POST " + checkRoutePath - {
-    userAnswersFor$className$Page.foreach { case (key, userAnswers) =>
+    userAnswersFor$packageName;format="cap"$$className$Page.foreach { case (key, userAnswers) =>
       "when the user selects " + key - {
         "should update the session with the new value and redirect to the checkAnswers controller" - {
           "when the session contains no data for page" in {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswers)
+            setAnswers(emptyUserAnswers$packageName;format="cap"$)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -221,7 +222,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.CheckYourAnswersController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.$packageName;format="cap"$CYAController.onPageLoad.url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get($className$Page))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe yesSelected
@@ -242,7 +243,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.CheckYourAnswersController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.$packageName;format="cap"$CYAController.onPageLoad.url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get($className$Page))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe yesSelected
@@ -258,7 +259,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers)
+        setAnswers(emptyUserAnswers$packageName;format="cap"$)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, baseUrl + checkRoutePath, Json.obj("value" -> "")

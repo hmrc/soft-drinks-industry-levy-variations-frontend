@@ -1,5 +1,6 @@
 package controllers.$packageName$
 
+import controllers.ControllerITTestHelper
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import play.api.i18n.Messages
@@ -14,7 +15,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
       given
         .commonPrecondition
 
-      setAnswers(emptyUserAnswers)
+      setAnswers(emptyUserAnswers$packageName;format="cap"$)
 
       WsTestClient.withClient { client =>
         val result1 = createClientRequestGet(client, baseUrl + normalRoutePath)

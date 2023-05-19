@@ -16,7 +16,7 @@
 
 package views.summary.$packageName$
 
-import controllers.routes
+import controllers.$packageName$.routes
 import models.CheckMode
 import views.summary.SummaryListRowLitresHelper
 

@@ -53,7 +53,10 @@ awk '/trait ModelGenerators/ {\
     print "";\
     print "  implicit lazy val arbitrary$packageName;format="cap"$$className$: Arbitrary[$className$] =";\
     print "    Arbitrary {";\
-    print "      Gen.oneOf($className$.values)";\
+    print "      for {";\
+    print "        $field1Name$ <- arbitrary[String]";\
+    print "        $field2Name$ <- arbitrary[String]";\
+    print "      } yield $className$($field1Name$, $field2Name$)";\
     print "    }";\
     next }1' ../test-utils/generators/ModelGenerators.scala > tmp && mv tmp ../test-utils/generators/ModelGenerators.scala
 
@@ -65,9 +68,16 @@ awk '/val generators/ {\
 
 echo "Adding to Navigator$packageName;format="cap"$"
 
-awk '/private val normalRoutes/ {\
+awk '/override val normalRoutes/ {\
     print;\
     print "    case $className$Page => userAnswers => $nextPage$";\
     next }1' ../app/navigation/NavigatorFor$packageName;format="cap"$.scala > tmp && mv tmp ../app/navigation/NavigatorFor$packageName;format="cap"$.scala
 
+echo "Adding to ITCoreTestDataFor$packageName;format="cap"$"
+awk '/trait ITCoreTestData$packageName;format="cap"$/ {\
+    print;\
+    print "";\
+    print "  val $className;format="decap"$: $className$ = $className$(\"test1\", \"test2\")";\
+    print "  val $className;format="decap"$Diff: $className$ = $className$(\"diff1\", \"diff2\")";\
+    next }1' ../it/testSupport/ITCoreTestDataFor$packageName;format="cap"$.scala > tmp && mv tmp ../it/testSupport/ITCoreTestDataFor$packageName;format="cap"$.scala
 echo "Migration $className;format="snake"$ completed"

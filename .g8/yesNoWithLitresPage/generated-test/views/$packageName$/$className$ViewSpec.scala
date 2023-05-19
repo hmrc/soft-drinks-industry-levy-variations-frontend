@@ -16,14 +16,14 @@
 
 package views.$packageName$
 
-import controllers.routes
+import controllers.$packageName$.routes
 import forms.$packageName$.$className$FormProvider
 import models.{CheckMode, NormalMode}
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import views.html.$packageName$.$className$View
-
+import views.ViewSpecHelper
 class $className$ViewSpec extends ViewSpecHelper {
 
   val view = application.injector.instanceOf[$className$View]
@@ -48,13 +48,13 @@ class $className$ViewSpec extends ViewSpecHelper {
     val html = view(form, NormalMode)(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
-      document.title() must include(Messages("$className;format="decap"$" + ".title"))
+      document.title() must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
     }
 
     "should include a legend with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("$className;format="decap"$.heading")
+      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("$packageName$.$className;format="decap"$.heading")
     }
 
     "when the form is not preoccupied and has no errors" - {
@@ -206,7 +206,7 @@ class $className$ViewSpec extends ViewSpecHelper {
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
-        val titleMessage = Messages("$className;format="decap"$.title")
+        val titleMessage = Messages("$packageName$.$className;format="decap"$.title")
         documentWithErrors.title must include("Error: " + titleMessage)
       }
 
@@ -217,7 +217,7 @@ class $className$ViewSpec extends ViewSpecHelper {
         errorSummary
           .select("a")
           .attr("href") mustBe "#value"
-        errorSummary.text() mustBe Messages("$className;format="decap"$.error.required")
+        errorSummary.text() mustBe Messages("$packageName$.$className;format="decap"$.error.required")
       }
     }
 

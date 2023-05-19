@@ -2,7 +2,7 @@ package controllers.$packageName$
 
 import base.SpecBase
 import forms.$packageName$.$className$FormProvider
-import models.{NormalMode, UserAnswers}
+import models.NormalMode
 import models.$packageName$.$className$
 import navigation._
 import org.mockito.ArgumentMatchers.any
@@ -16,9 +16,7 @@ import play.api.test.Helpers._
 import services.SessionService
 import views.html.$packageName$.$className$View
 import org.jsoup.Jsoup
-import controllers.routes._
 import scala.concurrent.Future
-import models.SelectChange
 
 class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
@@ -33,7 +31,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers$packageName;format="cap"$)).build()
 
       running(application) {
         val request = FakeRequest(GET, $className;format="decap"$Route)
@@ -50,7 +48,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(sdilNumber, SelectChange.UpdateRegisteredAccount).set($className$Page, $className$.values.toSet).success.value
+      val userAnswers = emptyUserAnswersForUpdateRegistrationDetails.set($className$Page, $className$.values.toSet).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       
@@ -73,7 +71,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(emptyUserAnswers$packageName;format="cap"$))
           .overrides(
             bind[NavigatorFor$packageName;format="cap"$].toInstance(new FakeNavigatorFor$packageName;format="cap"$(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
@@ -94,7 +92,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers$packageName;format="cap"$)).build()
 
       running(application) {
         val request =
