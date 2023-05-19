@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.summary
+package views.summary.$packageName$
 
 import controllers.routes
 import models.CheckMode

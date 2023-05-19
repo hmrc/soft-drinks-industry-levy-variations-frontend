@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package views.summary
+package views.summary.$packageName$
 
 import controllers.routes
 import models.{CheckMode, LitresInBands}
-import pages.{HowMany$className$Page, $className$Page, QuestionPage}
+import pages.$packageName$.{HowMany$className$Page, $className$Page, QuestionPage}
 import views.summary.{ReturnDetailsSummaryListWithLitres, SummaryListRowLitresHelper}
 
 object $className$Summary extends ReturnDetailsSummaryListWithLitres  {

@@ -1,4 +1,4 @@
-package forms
+package forms.$packageName$
 
 import javax.inject.Inject
 
@@ -10,6 +10,6 @@ class $className$FormProvider @Inject() extends Mappings {
   def apply(): Form[String] =
     Form(
       "value" -> text()
-        .verifying(maxLength($maxLength$, "$className;format="decap"$.error.length"))
+        .verifying(maxLength($maxLength$, "$packageName$.$className;format="decap"$.error.length"))
     )
 }

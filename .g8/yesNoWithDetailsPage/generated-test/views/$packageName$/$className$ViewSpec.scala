@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package views
+package views.$packageName$
 
 import controllers.routes
-import forms.$className$FormProvider
+import forms.$packageName$.$className$FormProvider
 import models.{CheckMode, NormalMode}
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import views.html.$className$View
+import views.html.$packageName$.$className$View
 
 class $className$ViewSpec extends ViewSpecHelper {
 

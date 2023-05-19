@@ -1,4 +1,4 @@
-package models
+package models.$packageName$
 
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
@@ -18,7 +18,7 @@ object $className$ extends Enumerable.Implicits {
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {
     case (value, index) =>
       RadioItem(
-        content = Text(messages(s"$className;format="decap"$.\${value.toString}")),
+        content = Text(messages(s"$packageName$.$className;format="decap"$.\${value.toString}")),
         value   = Some(value.toString),
         id      = Some(s"value_\$index")
       )

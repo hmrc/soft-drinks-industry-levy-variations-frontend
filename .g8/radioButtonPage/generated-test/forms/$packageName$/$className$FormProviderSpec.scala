@@ -1,7 +1,7 @@
-package forms
+package forms.$packageName$
 
 import forms.behaviours.OptionFieldBehaviours
-import models.$className$
+import models.$packageName$.$className$
 import play.api.data.FormError
 
 class $className$FormProviderSpec extends OptionFieldBehaviours {
@@ -11,7 +11,7 @@ class $className$FormProviderSpec extends OptionFieldBehaviours {
   ".value" - {
 
     val fieldName = "value"
-    val requiredKey = "$className;format="decap"$.error.required"
+    val requiredKey = "$packageName$.$className;format="decap"$.error.required"
 
     behave like optionsField[$className$](
       form,

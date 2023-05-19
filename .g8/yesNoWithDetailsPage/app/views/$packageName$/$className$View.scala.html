@@ -1,4 +1,3 @@
-@import models.$packageName$._
 @import controllers.$packageName$.routes
 
 @this(
@@ -12,7 +11,7 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("$className;format="decap"$.title"))) {
+@layout(pageTitle = title(form, messages("$packageName$.$className;format="decap"$.title"))) {
 
     @formHelper(action = routes.$className$Controller.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
@@ -23,15 +22,15 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("$className;format="decap"$.heading")).asPageHeading(),
+                legend = LegendViewModel(messages("$packageName$.$className;format="decap"$.heading")).asPageHeading(),
                 hint = None
             )
         )
 
         @govukDetails(
             Details(
-                summary = Text(messages("$className;format="decap"$.detailsLink")),
-                content = Text(messages("$className;format="decap"$.detailsContent"))
+                summary = Text(messages("$packageName$.$className;format="decap"$.detailsLink")),
+                content = Text(messages("$packageName$.$className;format="decap"$.detailsContent"))
             )
         )
 

@@ -1,8 +1,8 @@
-package controllers
+package controllers.$packageName$
 
 import models.{CheckMode, LitresInBands, NormalMode}
 import org.jsoup.Jsoup
-import pages.HowMany$className$Page
+import pages.$packageName$.HowMany$className$Page
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.Json

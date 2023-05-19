@@ -1,10 +1,10 @@
-package controllers
+package controllers.$packageName$
 
 import models.NormalMode
-import models.$className$
+import models.$packageName$.$className$
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.$className$Page
+import pages.$packageName$.$className$Page
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json}
@@ -36,7 +36,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("$className;format="decap"$" + ".title"))
+            page.title must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
             val inputFields = page.getElementsByClass("govuk-form-group")
             inputFields.size() mustBe 2
             $className;format="decap"$Map.zipWithIndex.foreach { case ((fieldName, _), index) =>
@@ -61,7 +61,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("$className;format="decap"$" + ".title"))
+            page.title must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
             val inputFields = page.getElementsByClass("govuk-form-group")
             inputFields.size() mustBe 2
             $className;format="decap"$Map.zipWithIndex.foreach { case ((fieldName, fieldValue), index) =>
@@ -91,7 +91,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("$className;format="decap"$" + ".title"))
+            page.title must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
             val inputFields = page.getElementsByClass("govuk-form-group")
             inputFields.size() mustBe 2
             $className;format="decap"$Map.zipWithIndex.foreach { case ((fieldName, _), index) =>
@@ -116,7 +116,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("$className;format="decap"$" + ".title"))
+            page.title must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
             val inputFields = page.getElementsByClass("govuk-form-group")
             inputFields.size() mustBe 2
             $className;format="decap"$Map.zipWithIndex.foreach { case ((fieldName, fieldValue), index) =>
@@ -191,7 +191,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("$className;format="decap"$" + ".title"))
+            page.title must include("Error: " + Messages("$packageName$.$className;format="decap"$" + ".title"))
             val errorSummaryList = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first().getElementsByTag("li")
             errorSummaryList.size() mustBe $className;format="decap"$Map.size
@@ -200,7 +200,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
               errorSummary
                 .select("a")
                 .attr("href") mustBe "#" + fieldName
-              errorSummary.text() mustBe Messages("$className;format="decap"$.error." + fieldName + ".required")
+              errorSummary.text() mustBe Messages("$packageName$.$className;format="decap"$.error." + fieldName + ".required")
             }
           }
         }
@@ -227,13 +227,13 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             whenReady(result) { res =>
               res.status mustBe 400
               val page = Jsoup.parse(res.body)
-              page.title must include("Error: " + Messages("$className;format="decap"$" + ".title"))
+              page.title must include("Error: " + Messages("$packageName$.$className;format="decap"$" + ".title"))
               val errorSummaryList = page.getElementsByClass("govuk-list govuk-error-summary__list")
                 .first()
               errorSummaryList
                 .select("a")
                 .attr("href") mustBe "#" + fieldName
-              errorSummaryList.text() mustBe Messages("$className;format="decap"$.error." + fieldName + ".required")
+              errorSummaryList.text() mustBe Messages("$packageName$.$className;format="decap"$.error." + fieldName + ".required")
             }
           }
         }
@@ -303,7 +303,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("$className;format="decap"$" + ".title"))
+            page.title must include("Error: " + Messages("$packageName$.$className;format="decap"$" + ".title"))
             val errorSummaryList = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first().getElementsByTag("li")
             errorSummaryList.size() mustBe $className;format="decap"$Map.size
@@ -312,7 +312,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
               errorSummary
                 .select("a")
                 .attr("href") mustBe "#" + fieldName
-              errorSummary.text() mustBe Messages("$className;format="decap"$.error." + fieldName + ".required")
+              errorSummary.text() mustBe Messages("$packageName$.$className;format="decap"$.error." + fieldName + ".required")
             }
           }
         }
@@ -339,13 +339,13 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             whenReady(result) { res =>
               res.status mustBe 400
               val page = Jsoup.parse(res.body)
-              page.title must include("Error: " + Messages("$className;format="decap"$" + ".title"))
+              page.title must include("Error: " + Messages("$packageName$.$className;format="decap"$" + ".title"))
               val errorSummaryList = page.getElementsByClass("govuk-list govuk-error-summary__list")
                 .first()
               errorSummaryList
                 .select("a")
                 .attr("href") mustBe "#" + fieldName
-              errorSummaryList.text() mustBe Messages("$className;format="decap"$.error." + fieldName + ".required")
+              errorSummaryList.text() mustBe Messages("$packageName$.$className;format="decap"$.error." + fieldName + ".required")
             }
           }
         }

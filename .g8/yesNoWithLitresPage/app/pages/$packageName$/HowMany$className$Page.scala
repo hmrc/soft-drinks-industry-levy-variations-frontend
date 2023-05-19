@@ -1,7 +1,8 @@
-package pages
+package pages.$packageName$
 
 import play.api.libs.json.JsPath
 import models.LitresInBands
+import pages.QuestionPage
 
 case object HowMany$className$Page extends QuestionPage[LitresInBands] {
 

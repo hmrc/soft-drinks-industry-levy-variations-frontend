@@ -1,11 +1,11 @@
-package forms
+package forms.$packageName$
 
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
 class $className$FormProviderSpec extends StringFieldBehaviours {
 
-  val lengthKey = "$className;format="decap"$.error.length"
+  val lengthKey = "$packageName$.$className;format="decap"$.error.length"
   val maxLength = $maxLength$
 
   val form = new $className$FormProvider()()

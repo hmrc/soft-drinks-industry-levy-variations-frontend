@@ -1,9 +1,9 @@
-package controllers
+package controllers.$packageName$
 
 import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.$className$Page
+import pages.$packageName$.$className$Page
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.Json

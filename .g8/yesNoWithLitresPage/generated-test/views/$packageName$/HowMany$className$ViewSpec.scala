@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views
+package views.$packageName$
 
 import config.FrontendAppConfig
 import controllers.routes
@@ -23,7 +23,7 @@ import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import views.html.HowMany$className$View
+import views.html.$packageName$.HowMany$className$View
 
 class HowMany$className$ViewSpec extends LitresSpecHelper {
 

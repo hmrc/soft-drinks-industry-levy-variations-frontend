@@ -1,9 +1,9 @@
-package controllers
+package controllers.$packageName$
 
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.$className$Page
+import pages.$packageName$.$className$Page
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.Json
@@ -28,7 +28,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("$className;format="decap"$" + ".title"))
+            page.title must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -54,7 +54,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("$className;format="decap"$" + ".title"))
+              page.title must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -84,7 +84,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("$className;format="decap"$" + ".title"))
+            page.title must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -110,7 +110,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("$className;format="decap"$" + ".title"))
+              page.title must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -191,13 +191,13 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("$className;format="decap"$" + ".title"))
+            page.title must include("Error: " + Messages("$packageName$.$className;format="decap"$" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("$className;format="decap"$" + ".error.required")
+            errorSummary.text() mustBe Messages("$packageName$.$className;format="decap"$" + ".error.required")
           }
         }
       }
@@ -270,13 +270,13 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("$className;format="decap"$" + ".title"))
+            page.title must include("Error: " + Messages("$packageName$.$className;format="decap"$" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("$className;format="decap"$" + ".error.required")
+            errorSummary.text() mustBe Messages("$packageName$.$className;format="decap"$" + ".error.required")
           }
         }
       }

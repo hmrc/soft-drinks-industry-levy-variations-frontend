@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package views
+package views.$packageName$
 
 import controllers.routes
-import forms.$className$FormProvider
+import forms.$packageName$.$className$FormProvider
 import models.{CheckMode, NormalMode}
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import views.html.$className$View
+import views.html.$packageName$.$className$View
 
 
 
@@ -46,13 +46,13 @@ class $className$ViewSpec extends ViewSpecHelper {
     val document = doc(html)
     val formGroup = document.getElementsByClass(Selectors.formGroup)
     "should contain the expected title" in {
-      document.title() must include(Messages("$className;format="decap"$" + ".title"))
+      document.title() must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
     }
 
     "should contain a text input field" in {
       formGroup.size() mustBe 1
       formGroup.get(0).getElementsByClass(Selectors.labelAsHeading)
-        .text() mustBe Messages("$className;format="decap"$.heading")
+        .text() mustBe Messages("$packageName$.$className;format="decap"$.heading")
     }
 
     "contain the correct button" - {
@@ -81,7 +81,7 @@ class $className$ViewSpec extends ViewSpecHelper {
       val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode)(request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
       "should have a title containing error" in {
-        val titleMessage = Messages("$className;format="decap"$.title")
+        val titleMessage = Messages("$packageName$.$className;format="decap"$.title")
         documentWithErrors.title must include("Error: " + titleMessage)
       }
 
@@ -92,7 +92,7 @@ class $className$ViewSpec extends ViewSpecHelper {
         errorSummary
           .select("a")
           .attr("href") mustBe "#value"
-        errorSummary.text() mustBe Messages("$className;format="decap"$.error.required")
+        errorSummary.text() mustBe Messages("$packageName$.$className;format="decap"$.error.required")
       }
     }
 

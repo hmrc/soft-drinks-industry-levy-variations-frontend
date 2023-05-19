@@ -1,4 +1,4 @@
-package pages
+package pages.$packageName$
 
 import java.time.LocalDate
 

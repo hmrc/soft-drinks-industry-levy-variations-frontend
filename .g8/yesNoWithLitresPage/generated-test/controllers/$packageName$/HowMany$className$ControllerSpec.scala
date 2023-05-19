@@ -1,4 +1,4 @@
-package controllers
+package controllers.$packageName$
 
 import base.SpecBase
 import forms.HowManyLitresFormProvider
@@ -7,13 +7,13 @@ import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.HowMany$className$Page
+import pages.$packageName$.HowMany$className$Page
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
-import views.html.HowMany$className$View
+import views.html.$packageName$.HowMany$className$View
 
 import scala.concurrent.Future
 import org.jsoup.Jsoup

@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package views
+package views.$packageName$
 
 import controllers.routes
-import forms.$className$FormProvider
+import forms.$packageName$.$className$FormProvider
 import models.{CheckMode, NormalMode}
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import views.html.$className$View
+import views.html.$packageName$.$className$View
 import scala.util.Random
 
 
@@ -48,18 +48,18 @@ class $className$ViewSpec extends ViewSpecHelper {
     val document = doc(html)
     val formGroup = document.getElementsByClass(Selectors.formGroup)
     "should contain the expected title" in {
-      document.title() must include(Messages("$className;format="decap"$" + ".title"))
+      document.title() must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
     }
 
     "should contain a govuk form group" - {
       "that contains the page heading" in {
         formGroup.get(0).getElementsByClass(Selectors.labelAsHeading)
-          .text() mustBe Messages("$className;format="decap"$.heading")
+          .text() mustBe Messages("$packageName$.$className;format="decap"$.heading")
       }
 
       "that contains the expected hint test" in {
         formGroup.get(0).getElementsByClass(Selectors.hint)
-          .text() mustBe Messages("$className;format="decap"$.hint")
+          .text() mustBe Messages("$packageName$.$className;format="decap"$.hint")
       }
 
       "that contains a text area" in {
@@ -95,7 +95,7 @@ class $className$ViewSpec extends ViewSpecHelper {
       val htmlWithErrors = view(form.bind(Map("value" -> valueOutOfMaxRange)), NormalMode)(request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
       "should have a title containing error" in {
-        val titleMessage = Messages("$className;format="decap"$.title")
+        val titleMessage = Messages("$packageName$.$className;format="decap"$.title")
         documentWithErrors.title must include("Error: " + titleMessage)
       }
 
@@ -106,7 +106,7 @@ class $className$ViewSpec extends ViewSpecHelper {
         errorSummary
           .select("a")
           .attr("href") mustBe "#value"
-        errorSummary.text() mustBe Messages("$className;format="decap"$.error.length")
+        errorSummary.text() mustBe Messages("$packageName$.$className;format="decap"$.error.length")
       }
     }
 

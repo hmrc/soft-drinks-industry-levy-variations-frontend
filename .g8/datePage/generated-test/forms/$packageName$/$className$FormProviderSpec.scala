@@ -1,4 +1,4 @@
-package forms
+package forms.$packageName$
 
 import java.time.{LocalDate, ZoneOffset}
 
@@ -17,6 +17,6 @@ class $className$FormProviderSpec extends DateBehaviours {
 
     behave like dateField(form, "value", validData)
 
-    behave like mandatoryDateField(form, "value", "$className;format="decap"$.error.required.all")
+    behave like mandatoryDateField(form, "value", "$packageName$.$className;format="decap"$.error.required.all")
   }
 }

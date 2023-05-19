@@ -1,18 +1,18 @@
-package controllers
+package controllers.$packageName$
 
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.$className$Page
+import pages.$packageName$.$className$Page
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
-import models.$className$
+import models.$packageName$.$className$
 
 class $className$ControllerISpec extends ControllerITTestHelper {
 
-  val normalRoutePath = "/$className;format="decap"$"
+  val normalRoutePath = "/$packageName$.$className;format="decap"$"
   val checkRoutePath = "/change$className$"
 
   "GET " + normalRoutePath - {
@@ -29,7 +29,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("$className;format="decap"$" + ".title"))
+            page.title must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe $className$.values.size
 
@@ -58,7 +58,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("$className;format="decap"$" + ".title"))
+              page.title must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe $className$.values.size
 
@@ -89,7 +89,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("$className;format="decap"$" + ".title"))
+            page.title must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe $className$.values.size
 
@@ -119,7 +119,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("$className;format="decap"$" + ".title"))
+              page.title must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe $className$.values.size
 
@@ -200,13 +200,13 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("$className;format="decap"$" + ".title"))
+            page.title must include("Error: " + Messages("$packageName$.$className;format="decap"$" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value_0"
-            errorSummary.text() mustBe Messages("$className;format="decap"$" + ".error.required")
+            errorSummary.text() mustBe Messages("$packageName$.$className;format="decap"$" + ".error.required")
           }
         }
       }
@@ -278,13 +278,13 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("$className;format="decap"$" + ".title"))
+            page.title must include("Error: " + Messages("$packageName$.$className;format="decap"$" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value_0"
-            errorSummary.text() mustBe Messages("$className;format="decap"$" + ".error.required")
+            errorSummary.text() mustBe Messages("$packageName$.$className;format="decap"$" + ".error.required")
           }
         }
       }

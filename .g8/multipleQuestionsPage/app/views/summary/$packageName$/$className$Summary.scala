@@ -1,8 +1,8 @@
-package viewmodels.summary
+package viewmodels.summary.$packageName$
 
 import controllers.routes
 import models.{CheckMode, UserAnswers}
-import pages.$className$Page
+import pages.$packageName$.$className$Page
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -19,11 +19,11 @@ object $className$Summary  {
       val value = HtmlFormat.escape(answer.$field1Name$).toString + "<br/>" + HtmlFormat.escape(answer.$field2Name$).toString
 
         SummaryListRowViewModel(
-          key     = "$className;format="decap"$.checkYourAnswersLabel",
+          key     = "$packageName$.$className;format="decap"$.checkYourAnswersLabel",
           value   = ValueViewModel(HtmlContent(value)),
           actions = Seq(
             ActionItemViewModel("site.change", routes.$className$Controller.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("$className;format="decap"$.change.hidden"))
+              .withVisuallyHiddenText(messages("$packageName$.$className;format="decap"$.change.hidden"))
           )
         )
     }
