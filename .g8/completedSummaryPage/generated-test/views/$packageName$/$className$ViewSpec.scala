@@ -41,7 +41,7 @@ class $className$ViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view(emptyUserAnswers$packageName;format="cap"$)(request, messages(application))
+    val html = view(emptyUserAnswersFor$packageName;format="cap"$)(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
       document.title() must include(Messages("$packageName$.$className;format="decap"$" + ".title"))

@@ -61,8 +61,8 @@ awk '/trait ITCoreTestDataFor$packageName;format="cap"$/ {\
     print;\
     print "";\
     print "  val userAnswersFor$packageName;format="cap"$$className$Page: Map[String, UserAnswers] = {";\
-    print "    val yesSelected = emptyUserAnswers$packageName;format="cap"$For$packageName;format="cap"$.set($className$Page, true).success.value";\
-    print "    val noSelected = emptyUserAnswers$packageName;format="cap"$For$packageName;format="cap"$.set($className$Page, false).success.value";\
+    print "    val yesSelected = emptyUserAnswersFor$packageName;format="cap"$.set($className$Page, true).success.value";\
+    print "    val noSelected = emptyUserAnswersFor$packageName;format="cap"$.set($className$Page, false).success.value";\
     print "    Map(\"yes\" -> yesSelected, \"no\" -> noSelected)";\
     print "    }";\
     next }1' ../it/testSupport/ITCoreTestDataFor$packageName;format="cap"$.scala > tmp && mv tmp ../it/testSupport/ITCoreTestDataFor$packageName;format="cap"$.scala

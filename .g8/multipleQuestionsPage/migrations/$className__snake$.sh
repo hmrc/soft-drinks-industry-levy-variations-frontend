@@ -74,7 +74,7 @@ awk '/override val normalRoutes/ {\
     next }1' ../app/navigation/NavigatorFor$packageName;format="cap"$.scala > tmp && mv tmp ../app/navigation/NavigatorFor$packageName;format="cap"$.scala
 
 echo "Adding to ITCoreTestDataFor$packageName;format="cap"$"
-awk '/trait ITCoreTestData$packageName;format="cap"$/ {\
+awk '/trait ITCoreTestDataFor$packageName;format="cap"$/ {\
     print;\
     print "";\
     print "  val $className;format="decap"$: $className$ = $className$(\"test1\", \"test2\")";\

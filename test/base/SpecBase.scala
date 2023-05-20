@@ -97,7 +97,7 @@ trait SpecBase
 
 
 
-  def emptyUserAnswersUpdateRegisteredAccount : UserAnswers = UserAnswers(userAnswersId, SelectChange.UpdateRegisteredAccount)
+  def emptyUserAnswersUpdateRegisteredDetails : UserAnswers = UserAnswers(userAnswersId, SelectChange.UpdateRegisteredAccount)
 
   def emptyUserAnswersForChangeActivity = UserAnswers(sdilNumber, SelectChange.Changeactivity)
 

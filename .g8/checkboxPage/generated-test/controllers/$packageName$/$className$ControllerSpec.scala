@@ -31,7 +31,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers$packageName;format="cap"$)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersFor$packageName;format="cap"$)).build()
 
       running(application) {
         val request = FakeRequest(GET, $className;format="decap"$Route)
@@ -48,7 +48,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswersForUpdateRegistrationDetails.set($className$Page, $className$.values.toSet).success.value
+      val userAnswers = emptyUserAnswersFor$packageName;format="cap"$.set($className$Page, $className$.values.toSet).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       
@@ -71,7 +71,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers$packageName;format="cap"$))
+        applicationBuilder(userAnswers = Some(emptyUserAnswersFor$packageName;format="cap"$))
           .overrides(
             bind[NavigatorFor$packageName;format="cap"$].toInstance(new FakeNavigatorFor$packageName;format="cap"$(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
@@ -92,7 +92,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers$packageName;format="cap"$)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersFor$packageName;format="cap"$)).build()
 
       running(application) {
         val request =
@@ -120,7 +120,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual recoveryCall.url
       }
     }
 
@@ -136,7 +136,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual recoveryCall.url
       }
     }
 

@@ -8,7 +8,7 @@ trait ITCoreTestDataForUpdateRegisteredDetails {
 
   def sdilNumber: String
 
-  def emptyUserAnswersForUpdateRegisteredAccount = UserAnswers(sdilNumber, SelectChange.UpdateRegisteredAccount, Json.obj())
+  def emptyUserAnswersForUpdateRegisteredDetails = UserAnswers(sdilNumber, SelectChange.UpdateRegisteredAccount, Json.obj())
 
 
 }

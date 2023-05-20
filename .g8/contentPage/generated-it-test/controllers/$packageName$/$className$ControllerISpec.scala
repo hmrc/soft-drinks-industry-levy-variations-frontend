@@ -15,7 +15,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
       given
         .commonPrecondition
 
-      setAnswers(emptyUserAnswers$packageName;format="cap"$)
+      setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
 
       WsTestClient.withClient { client =>
         val result1 = createClientRequestGet(client, baseUrl + normalRoutePath)

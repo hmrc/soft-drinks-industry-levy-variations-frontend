@@ -13,7 +13,7 @@ import models.$packageName$.$className$
 
 class $className$ControllerISpec extends ControllerITTestHelper {
 
-  val normalRoutePath = "/$packageName$.$className;format="decap"$"
+  val normalRoutePath = "/$className;format="decap"$"
   val checkRoutePath = "/change$className$"
 
   "GET " + normalRoutePath - {
@@ -22,7 +22,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers$packageName;format="cap"$)
+        setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, baseUrl + normalRoutePath)
@@ -49,7 +49,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          val userAnswers = emptyUserAnswers$packageName;format="cap"$.set($className$Page, radio).success.value
+          val userAnswers = emptyUserAnswersFor$packageName;format="cap"$.set($className$Page, radio).success.value
 
           setAnswers(userAnswers)
 
@@ -82,7 +82,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers$packageName;format="cap"$)
+        setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, baseUrl + checkRoutePath)
@@ -109,7 +109,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          val userAnswers = emptyUserAnswers$packageName;format="cap"$.set($className$Page, radio).success.value
+          val userAnswers = emptyUserAnswersFor$packageName;format="cap"$.set($className$Page, radio).success.value
 
 
           setAnswers(userAnswers)
@@ -146,7 +146,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswers$packageName;format="cap"$)
+            setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
                 client, baseUrl + normalRoutePath, Json.obj("value" -> radio)
@@ -166,7 +166,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            val userAnswers = emptyUserAnswers$packageName;format="cap"$.set($className$Page, radio).success.value
+            val userAnswers = emptyUserAnswersFor$packageName;format="cap"$.set($className$Page, radio).success.value
 
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
@@ -192,7 +192,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers$packageName;format="cap"$)
+        setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, baseUrl + normalRoutePath, Json.obj("value" -> "")
@@ -224,7 +224,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswers$packageName;format="cap"$)
+            setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
                 client, baseUrl + checkRoutePath, Json.obj("value" -> Json.toJson(radio))
@@ -244,7 +244,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            val userAnswers = emptyUserAnswers$packageName;format="cap"$.set($className$Page, radio).success.value
+            val userAnswers = emptyUserAnswersFor$packageName;format="cap"$.set($className$Page, radio).success.value
 
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
@@ -270,7 +270,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers$packageName;format="cap"$)
+        setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, baseUrl + checkRoutePath, Json.obj("value" -> "")

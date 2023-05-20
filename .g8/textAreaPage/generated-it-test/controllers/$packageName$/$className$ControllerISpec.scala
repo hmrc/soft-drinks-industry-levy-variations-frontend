@@ -21,7 +21,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
 
   val randomStringExceedingMaxLength = Random.nextString($maxLength$ + 1)
 
-  val userAnswers = emptyUserAnswers$packageName;format="cap"$.set($className$Page, $className;format="decap"$).success.value
+  val userAnswers = emptyUserAnswersFor$packageName;format="cap"$.set($className$Page, $className;format="decap"$).success.value
 
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
@@ -29,7 +29,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers$packageName;format="cap"$)
+        setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, baseUrl + normalRoutePath)
@@ -76,7 +76,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers$packageName;format="cap"$)
+        setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, baseUrl + checkRoutePath)
@@ -125,7 +125,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswers$packageName;format="cap"$)
+          setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, baseUrl + normalRoutePath, Json.obj("value" -> $className;format="decap"$Diff)
@@ -168,7 +168,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers$packageName;format="cap"$)
+        setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, baseUrl + normalRoutePath, Json.obj("value" -> randomStringExceedingMaxLength)
@@ -205,7 +205,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswers$packageName;format="cap"$)
+          setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, baseUrl + checkRoutePath, Json.obj("value" -> $className;format="decap"$Diff)
@@ -248,7 +248,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers$packageName;format="cap"$)
+        setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, baseUrl + checkRoutePath, Json.obj("value" -> randomStringExceedingMaxLength)

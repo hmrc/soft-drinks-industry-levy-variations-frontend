@@ -21,7 +21,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
     $className;format="decap"$JsObject.map { case (fName, fValue) => fName -> fValue.as[String] }
   }
 
-  val userAnswers = emptyUserAnswers$packageName;format="cap"$.set($className$Page, $className;format="decap"$).success.value
+  val userAnswers = emptyUserAnswersFor$packageName;format="cap"$.set($className$Page, $className;format="decap"$).success.value
 
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
@@ -29,7 +29,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers$packageName;format="cap"$)
+        setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, baseUrl + normalRoutePath)
@@ -84,7 +84,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers$packageName;format="cap"$)
+        setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, baseUrl + checkRoutePath)
@@ -140,7 +140,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswers$packageName;format="cap"$)
+          setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, baseUrl + normalRoutePath, Json.toJson($className;format="decap"$Diff)
@@ -183,7 +183,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers$packageName;format="cap"$)
+        setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, baseUrl + normalRoutePath, Json.toJson($className$("", ""))
@@ -211,7 +211,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswers$packageName;format="cap"$)
+          setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
           val invalidJson = $className;format="decap"$Map.foldLeft(Json.obj()) { case (current, (fn, fv)) =>
             val fieldValue = if (fn == fieldName) {
               ""
@@ -252,7 +252,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswers$packageName;format="cap"$)
+          setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, baseUrl + checkRoutePath, Json.toJson($className;format="decap"$Diff)
@@ -295,7 +295,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswers$packageName;format="cap"$)
+        setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, baseUrl + checkRoutePath, Json.toJson($className$("", ""))
@@ -323,7 +323,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswers$packageName;format="cap"$)
+          setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
           val invalidJson = $className;format="decap"$Map.foldLeft(Json.obj()) { case (current, (fn, fv)) =>
             val fieldValue = if (fn == fieldName) {
               ""

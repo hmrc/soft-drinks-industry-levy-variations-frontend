@@ -80,7 +80,7 @@ class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersUpdateRegisteredAccount))
+        applicationBuilder(userAnswers = Some(emptyUserAnswersUpdateRegisteredDetails))
           .overrides(
             bind[SessionService].toInstance(mockSessionService)
           )
@@ -100,7 +100,7 @@ class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersUpdateRegisteredAccount)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersUpdateRegisteredDetails)).build()
 
       running(application) {
         val request =

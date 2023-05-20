@@ -1,6 +1,7 @@
 package models.$packageName$
 
 import play.api.i18n.Messages
+import models.{Enumerable, WithName}
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 

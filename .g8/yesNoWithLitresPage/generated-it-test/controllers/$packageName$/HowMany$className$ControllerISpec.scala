@@ -16,7 +16,7 @@ class HowMany$className$ControllerISpec extends LitresISpecHelper {
   val normalRoutePath = "/howMany$className$"
   val checkRoutePath = "/changeHowMany$className$"
 
-  val userAnswers = emptyUserAnswers$packageName;format="cap"$.set(HowMany$className$Page, litresInBands).success.value
+  val userAnswers = emptyUserAnswersFor$packageName;format="cap"$.set(HowMany$className$Page, litresInBands).success.value
 
   List(NormalMode, CheckMode).foreach { mode =>
     val (path, redirectLocation) = if(mode == NormalMode) {
@@ -31,7 +31,7 @@ class HowMany$className$ControllerISpec extends LitresISpecHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswers$packageName;format="cap"$)
+          setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, baseUrl + path)
@@ -76,7 +76,7 @@ class HowMany$className$ControllerISpec extends LitresISpecHelper {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswers$packageName;format="cap"$)
+            setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
                 client, baseUrl + path, Json.toJson(litresInBands)
@@ -121,7 +121,7 @@ class HowMany$className$ControllerISpec extends LitresISpecHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswers$packageName;format="cap"$)
+          setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, baseUrl + path, emptyJson
@@ -139,7 +139,7 @@ class HowMany$className$ControllerISpec extends LitresISpecHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswers$packageName;format="cap"$)
+          setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, baseUrl + path, jsonWithNoNumeric
@@ -157,7 +157,7 @@ class HowMany$className$ControllerISpec extends LitresISpecHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswers$packageName;format="cap"$)
+          setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, baseUrl + path, jsonWithNegativeNumber
@@ -175,7 +175,7 @@ class HowMany$className$ControllerISpec extends LitresISpecHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswers$packageName;format="cap"$)
+          setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, baseUrl + path, jsonWithDecimalNumber
@@ -193,7 +193,7 @@ class HowMany$className$ControllerISpec extends LitresISpecHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswers$packageName;format="cap"$)
+          setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, baseUrl + path, jsonWithOutOfRangeNumber

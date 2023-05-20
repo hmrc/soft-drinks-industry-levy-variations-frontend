@@ -26,11 +26,11 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
 
-  override val normalRoutes: Page => UserAnswers => Mode => Call = {
-    case _ => _ => _ => defaultCall
+  override val normalRoutes: Page => UserAnswers => Call = {
+    case _ => _ => defaultCall
   }
 
-  override val checkRouteMap: Page => UserAnswers => Mode => Call = {
-    case _ => _ => _ => routes.UpdateRegisteredDetailsCYAController.onPageLoad
+  override val checkRouteMap: Page => UserAnswers => Call = {
+    case _ => _ => routes.UpdateRegisteredDetailsCYAController.onPageLoad
   }
 }
