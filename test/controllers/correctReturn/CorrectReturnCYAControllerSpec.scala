@@ -30,7 +30,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersUpdateRegisteredDetails)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)).build()
 
       running(application) {
         val request = FakeRequest(GET, CorrectReturnCYAController.onPageLoad.url)

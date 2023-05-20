@@ -22,7 +22,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersFor$packageName;format="cap"$$packageName;format="cap"$)
+        setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, baseUrl + normalRoutePath)
@@ -49,7 +49,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          val userAnswers = emptyUserAnswersFor$packageName;format="cap"$$packageName;format="cap"$.set($className$Page, Set(checkboxItem)).success.value
+          val userAnswers = emptyUserAnswersFor$packageName;format="cap"$.set($className$Page, Set(checkboxItem)).success.value
 
           setAnswers(userAnswers)
 
@@ -80,7 +80,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        val userAnswers = emptyUserAnswersFor$packageName;format="cap"$$packageName;format="cap"$.set($className$Page, $className$.values.toSet).success.value
+        val userAnswers = emptyUserAnswersFor$packageName;format="cap"$.set($className$Page, $className$.values.toSet).success.value
 
         setAnswers(userAnswers)
 
@@ -115,7 +115,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersFor$packageName;format="cap"$$packageName;format="cap"$)
+        setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, baseUrl + checkRoutePath)
@@ -144,7 +144,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          val userAnswers = emptyUserAnswersFor$packageName;format="cap"$$packageName;format="cap"$.set($className$Page, Set(checkboxItem)).success.value
+          val userAnswers = emptyUserAnswersFor$packageName;format="cap"$.set($className$Page, Set(checkboxItem)).success.value
 
 
           setAnswers(userAnswers)
@@ -176,7 +176,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        val userAnswers = emptyUserAnswersFor$packageName;format="cap"$$packageName;format="cap"$.set($className$Page, $className$.values.toSet).success.value
+        val userAnswers = emptyUserAnswersFor$packageName;format="cap"$.set($className$Page, $className$.values.toSet).success.value
 
         setAnswers(userAnswers)
 
@@ -214,7 +214,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersFor$packageName;format="cap"$$packageName;format="cap"$)
+            setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
                 client, baseUrl + normalRoutePath, Json.obj("value" -> Set(checkboxItem))
@@ -234,7 +234,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            val userAnswers = emptyUserAnswersFor$packageName;format="cap"$$packageName;format="cap"$.set($className$Page, Set(checkboxItem)).success.value
+            val userAnswers = emptyUserAnswersFor$packageName;format="cap"$.set($className$Page, Set(checkboxItem)).success.value
 
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
@@ -261,7 +261,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersFor$packageName;format="cap"$$packageName;format="cap"$)
+          setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, baseUrl + normalRoutePath, Json.obj("value" -> $className$.values)
@@ -281,7 +281,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          val userAnswers = emptyUserAnswersFor$packageName;format="cap"$$packageName;format="cap"$.set($className$Page, $className$.values.toSet).success.value
+          val userAnswers = emptyUserAnswersFor$packageName;format="cap"$.set($className$Page, $className$.values.toSet).success.value
 
           setAnswers(userAnswers)
           WsTestClient.withClient { client =>
@@ -306,7 +306,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersFor$packageName;format="cap"$$packageName;format="cap"$)
+        setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, baseUrl + normalRoutePath, Json.obj("value" -> "")
@@ -338,7 +338,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersFor$packageName;format="cap"$$packageName;format="cap"$)
+            setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
                 client, baseUrl + checkRoutePath, Json.obj("value" -> Set(checkboxItem))
@@ -358,7 +358,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            val userAnswers = emptyUserAnswersFor$packageName;format="cap"$$packageName;format="cap"$.set($className$Page, Set(checkboxItem)).success.value
+            val userAnswers = emptyUserAnswersFor$packageName;format="cap"$.set($className$Page, Set(checkboxItem)).success.value
 
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
@@ -385,7 +385,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersFor$packageName;format="cap"$$packageName;format="cap"$)
+          setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, baseUrl + checkRoutePath, Json.obj("value" -> $className$.values)

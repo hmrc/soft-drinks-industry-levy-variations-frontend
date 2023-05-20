@@ -17,7 +17,7 @@
 package navigation
 
 import controllers.updateRegisteredDetails.routes
-import models.{Mode, UserAnswers}
+import models.UserAnswers
 import pages.Page
 import play.api.mvc.Call
 
