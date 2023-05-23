@@ -18,7 +18,7 @@ package models
 
 import cats.implicits.{catsSyntaxSemigroup, toFoldableOps}
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.{LocalDate, Instant}
 import cats.implicits._
 import play.api.libs.json.Json
 
@@ -32,7 +32,7 @@ case class SdilReturn(
                        importSmall: (Long, Long),
                        export: (Long, Long),
                        wastage: (Long, Long),
-                       submittedOn: Option[LocalDateTime] = None
+                       submittedOn: Option[Instant] = None
                      ) {
 
   def smallPackTotal: (Long, Long) = packSmall.map(x => x.litreage).combineAll
