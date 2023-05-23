@@ -19,13 +19,10 @@ package controllers
 import base.SpecBase
 import forms.SelectChangeFormProvider
 import models.{NormalMode, SelectChange, UserAnswers}
-import navigation.{FakeNavigator, Navigator}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.SelectChangePage
 import play.api.inject.bind
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
@@ -34,8 +31,6 @@ import views.html.SelectChangeView
 import scala.concurrent.Future
 
 class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
-
-  def onwardRoute = Call("GET", "/foo")
 
   lazy val selectChangeRoute = routes.SelectChangeController.onPageLoad(NormalMode).url
 
@@ -46,7 +41,7 @@ class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
         val request = FakeRequest(GET, selectChangeRoute)
@@ -62,7 +57,7 @@ class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(sdilNumber).set(SelectChangePage, SelectChange.values.head).success.value
+      val userAnswers = UserAnswers(sdilNumber, SelectChange.values.head)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -85,9 +80,8 @@ class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigator(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           )
           .build()
@@ -100,13 +94,13 @@ class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual routes.IndexController.onPageLoad.url
       }
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)).build()
 
       running(application) {
         val request =

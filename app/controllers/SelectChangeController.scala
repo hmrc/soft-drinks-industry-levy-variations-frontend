@@ -20,11 +20,10 @@ import controllers.actions._
 import forms.SelectChangeFormProvider
 import handlers.ErrorHandler
 import models.{Mode, UserAnswers}
-import navigation.Navigator
-import pages.SelectChangePage
-import play.api.i18n.MessagesApi
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.SelectChangeView
 
 import javax.inject.Inject
@@ -33,24 +32,20 @@ import scala.concurrent.{ExecutionContext, Future}
 class SelectChangeController @Inject()(
                                         override val messagesApi: MessagesApi,
                                         val sessionService: SessionService,
-                                        val navigator: Navigator,
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
-                                        requireData: DataRequiredAction,
                                         formProvider: SelectChangeFormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: SelectChangeView,
                                         val errorHandler: ErrorHandler
-                                      )(implicit ec: ExecutionContext) extends ControllerHelper {
+                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
     implicit request =>
       val preparedForm = request.userAnswers match {
-        case Some(userAnswers) =>
-          userAnswers.get(SelectChangePage)
-            .fold(form)(pageContent => form.fill(pageContent))
+        case Some(userAnswers) => form.fill(userAnswers.journeyType)
         case None => form
       }
       Ok(view(preparedForm, mode))
@@ -62,10 +57,13 @@ class SelectChangeController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value => {
-          val updatedAnswers = request.userAnswers
-            .getOrElse(UserAnswers(id = request.sdilEnrolment))
-            .set(SelectChangePage, value)
-          updateDatabaseAndRedirect(updatedAnswers, SelectChangePage, mode)
+          val updatedAnswers = request
+            .userAnswers
+            .fold(UserAnswers(id = request.sdilEnrolment, journeyType = value))(_.copy(journeyType = value))
+          sessionService.set(updatedAnswers).map {
+            case Right(_) => Redirect(routes.IndexController.onPageLoad)
+            case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
+          }
         }
       )
   }

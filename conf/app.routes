@@ -2,6 +2,11 @@
 
 ->          /hmrc-frontend                               hmrcfrontend.Routes
 
+->          /                                            app.cancelRegistration.Routes
+->          /                                            app.correctReturn.Routes
+->          /                                            app.changeActivity.Routes
+->          /                                            app.updateRegisteredDetails.Routes
+
 GET         /                                            controllers.IndexController.onPageLoad
 
 GET         /assets/*file                                controllers.Assets.versioned(path="/public", file: Asset)
@@ -10,7 +15,6 @@ GET         /refresh-session                             controllers.KeepAliveCo
 
 GET         /there-is-a-problem                          controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
-GET         /check-your-answers                          controllers.CheckYourAnswersController.onPageLoad
 
 GET         /account/sign-out-survey                     controllers.auth.AuthController.signOut
 GET         /account/sign-out                            controllers.auth.AuthController.signOutNoSurvey

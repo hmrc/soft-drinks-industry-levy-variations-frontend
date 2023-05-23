@@ -18,7 +18,8 @@ package base
 
 import config.FrontendAppConfig
 import controllers.actions._
-import models.{Contact, LitresInBands, RetrievedActivity, RetrievedSubscription, ReturnCharge, ReturnPeriod, Site, UkAddress, UserAnswers}
+import controllers.routes
+import models.{Contact, LitresInBands, RetrievedActivity, RetrievedSubscription, ReturnCharge, ReturnPeriod, SelectChange, Site, UkAddress, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -28,7 +29,7 @@ import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Writes
-import play.api.mvc.MessagesControllerComponents
+import play.api.mvc.{Call, MessagesControllerComponents}
 import play.api.test.FakeRequest
 import queries.Settable
 
@@ -96,8 +97,13 @@ trait SpecBase
 
 
 
-  def emptyUserAnswers : UserAnswers = UserAnswers(userAnswersId)
+  def emptyUserAnswersForUpdateRegisteredDetails : UserAnswers = UserAnswers(userAnswersId, SelectChange.UpdateRegisteredAccount)
 
+  def emptyUserAnswersForChangeActivity = UserAnswers(sdilNumber, SelectChange.Changeactivity)
+
+  def emptyUserAnswersForCorrectReturn = UserAnswers(sdilNumber, SelectChange.CorrectReturn)
+
+  def emptyUserAnswersForCancelRegistration = UserAnswers(sdilNumber, SelectChange.CancelRegistration)
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   protected def applicationBuilder(
@@ -153,11 +159,14 @@ trait SpecBase
   val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(-200))
   val financialItemList = List(financialItem1, financialItem2)
 
-  val userDetailsWithSetMethodsReturningFailure: UserAnswers = new UserAnswers("sdilId") {
+  val userDetailsWithSetMethodsReturningFailure: UserAnswers = new UserAnswers("sdilId", SelectChange.UpdateRegisteredAccount) {
     override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
 
     override def setList[A](producer: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
 
     override def setAndRemoveLitresIfReq(page: Settable[Boolean], litresPage: Settable[LitresInBands], value: Boolean)(implicit writes: Writes[Boolean]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
   }
+
+  val defaultCall: Call = routes.IndexController.onPageLoad
+  val recoveryCall: Call = routes.JourneyRecoveryController.onPageLoad()
 }

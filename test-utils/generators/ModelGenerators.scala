@@ -25,4 +25,12 @@ trait ModelGenerators {
     Arbitrary {
       Gen.oneOf(SelectChange.values.toSeq)
     }
+
+  implicit lazy val arbitraryLitresInBands: Arbitrary[LitresInBands] =
+    Arbitrary {
+      for {
+        lowBand <- arbitrary[Long]
+        highBand <- arbitrary[Long]
+      } yield LitresInBands(lowBand, highBand)
+    }
 }

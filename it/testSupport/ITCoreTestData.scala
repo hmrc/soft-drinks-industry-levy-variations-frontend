@@ -1,5 +1,6 @@
 package testSupport
 
+import controllers.routes
 import models._
 import org.scalatest.TryValues
 import pages._
@@ -8,7 +9,12 @@ import play.api.libs.json.Json
 import java.time.LocalDate
 import scala.concurrent.duration.DurationInt
 
-trait ITCoreTestData extends TryValues {
+trait ITCoreTestData
+  extends TryValues
+    with ITCoreTestDataForUpdateRegisteredDetails
+    with ITCoreTestDataForCancelRegistration
+    with ITCoreTestDataForChangeActivity
+    with ITCoreTestDataForCorrectReturn {
 
   val year = 2022
   val month = 11
@@ -27,5 +33,6 @@ trait ITCoreTestData extends TryValues {
   val producerName = Some("Super Cola Ltd")
 
   implicit val duration = 5.seconds
-  def emptyUserAnswers = UserAnswers(sdilNumber, Json.obj())
+
+  val defaultCall = routes.IndexController.onPageLoad
 }
