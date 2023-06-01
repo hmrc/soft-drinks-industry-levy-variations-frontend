@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package generators
+package pages.updateRegisteredDetails
 
-import org.scalacheck.Arbitrary
-import pages._
-import pages.updateRegisteredDetails.UpdateContactDetailsPage
+import models.updateRegisteredDetails.UpdateContactDetails
+import pages.behaviours.PageBehaviours
 
-trait PageGenerators {
+class UpdateContactDetailsPageSpec extends PageBehaviours {
 
-  implicit lazy val arbitraryUpdateRegisteredDetailsUpdateContactDetailsPage: Arbitrary[UpdateContactDetailsPage.type] =
-    Arbitrary(UpdateContactDetailsPage)
+  "UpdateContactDetailsPage" - {
 
-  implicit lazy val arbitrarySelectChangePage: Arbitrary[SelectChangePage.type] =
-    Arbitrary(SelectChangePage)
+    beRetrievable[UpdateContactDetails](UpdateContactDetailsPage)
+
+    beSettable[UpdateContactDetails](UpdateContactDetailsPage)
+
+    beRemovable[UpdateContactDetails](UpdateContactDetailsPage)
+  }
 }

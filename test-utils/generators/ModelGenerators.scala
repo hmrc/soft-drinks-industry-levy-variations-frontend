@@ -17,9 +17,20 @@
 package generators
 
 import models._
+import models.updateRegisteredDetails.UpdateContactDetails
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalacheck.Arbitrary._
 trait ModelGenerators {
+
+  implicit lazy val arbitraryUpdateRegisteredDetailsUpdateContactDetails: Arbitrary[UpdateContactDetails] =
+    Arbitrary {
+      for {
+        name <- arbitrary[String]
+        job <- arbitrary[String]
+        phoneNumber <- arbitrary[String]
+        email <- arbitrary[String]
+      } yield UpdateContactDetails(name, job, phoneNumber, email)
+    }
 
   implicit lazy val arbitrarySelectChange: Arbitrary[SelectChange] =
     Arbitrary {

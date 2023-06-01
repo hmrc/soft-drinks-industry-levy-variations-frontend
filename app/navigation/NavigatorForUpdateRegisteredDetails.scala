@@ -19,6 +19,7 @@ package navigation
 import controllers.updateRegisteredDetails.routes
 import models.UserAnswers
 import pages.Page
+import pages.updateRegisteredDetails._
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -27,6 +28,7 @@ import javax.inject.{Inject, Singleton}
 class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
 
   override val normalRoutes: Page => UserAnswers => Call = {
+    case UpdateContactDetailsPage => userAnswers => defaultCall
     case _ => _ => defaultCall
   }
 

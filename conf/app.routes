@@ -2,10 +2,10 @@
 
 ->          /hmrc-frontend                               hmrcfrontend.Routes
 
-->          /                                            app.cancelRegistration.Routes
-->          /                                            app.correctReturn.Routes
-->          /                                            app.changeActivity.Routes
-->          /                                            app.updateRegisteredDetails.Routes
+->          /cancel-registration                                            app.cancelRegistration.Routes
+->          /correct-return                                            app.correctReturn.Routes
+->          /change-activity                                            app.changeActivity.Routes
+->          /change-registered-details                                            app.updateRegisteredDetails.Routes
 
 GET         /                                            controllers.IndexController.onPageLoad
 
