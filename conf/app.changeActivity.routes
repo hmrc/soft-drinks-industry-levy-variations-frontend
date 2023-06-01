@@ -1,3 +1,3 @@
 # change the activity specific routes
 
-GET         /check-your-answers-variations2                          controllers.changeActivity.ChangeActivityCYAController.onPageLoad
+GET         /check-your-answers                          controllers.changeActivity.ChangeActivityCYAController.onPageLoad

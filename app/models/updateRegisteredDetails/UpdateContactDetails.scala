@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package generators
+package models.updateRegisteredDetails
 
-import org.scalacheck.Arbitrary
-import pages._
-import pages.updateRegisteredDetails.UpdateContactDetailsPage
+import play.api.libs.json._
 
-trait PageGenerators {
+case class UpdateContactDetails (fullName: String, position: String, phoneNumber: String, email: String)
 
-  implicit lazy val arbitraryUpdateRegisteredDetailsUpdateContactDetailsPage: Arbitrary[UpdateContactDetailsPage.type] =
-    Arbitrary(UpdateContactDetailsPage)
-
-  implicit lazy val arbitrarySelectChangePage: Arbitrary[SelectChangePage.type] =
-    Arbitrary(SelectChangePage)
+object UpdateContactDetails {
+  implicit val format = Json.format[UpdateContactDetails]
 }

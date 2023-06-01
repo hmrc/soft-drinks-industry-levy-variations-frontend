@@ -16,6 +16,7 @@
 
 package models
 
+import models.updateRegisteredDetails.UpdateContactDetails
 import play.api.mvc.Call
 
 import java.time.LocalDate
@@ -133,12 +134,13 @@ trait DataHelper {
 
   def testContactDetails(
                           fullName: String = "test name",
-                          position: String  = "test position",
+                          position: String = "test position",
                           phoneNumber: String = "testnumber",
-                          email: String  = "test@email.test",
-                        ): ContactDetails = ContactDetails(
+                          email: String = "test@email.test",
+                        ): UpdateContactDetails = UpdateContactDetails(
     fullName = fullName,
     position = position,
+
     phoneNumber = phoneNumber,
     email = email
   )
@@ -203,7 +205,7 @@ trait DataHelper {
                                      importsVol: Option[Litreage] = None,
                                      updatedProductionSites: Seq[Site] = Seq.empty,
                                      updatedWarehouseSites: Seq[Site] = Seq.empty,
-                                     updatedContactDetails: ContactDetails,
+                                     updatedContactDetails: UpdateContactDetails,
                                      previousPages: Seq[Call] = Seq.empty,
                                      reason: Option[String] = None,
                                      deregDate: Option[LocalDate] = None

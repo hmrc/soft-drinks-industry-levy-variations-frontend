@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package models
+package pages.updateRegisteredDetails
 
-import play.api.libs.json.{Format, Json}
+import models.updateRegisteredDetails.UpdateContactDetails
+import play.api.libs.json.JsPath
+import pages.QuestionPage
 
-case class ContactDetails(fullName: String, position: String, phoneNumber: String, email: String)
+case object UpdateContactDetailsPage extends QuestionPage[UpdateContactDetails] {
 
-object ContactDetails {
-  implicit val contactDetailsFormat: Format[ContactDetails] = Json.format[ContactDetails]
+  override def path: JsPath = JsPath \ journeyType \ toString
+
+  def journeyType: String = "updateRegisteredDetails"
+
+  override def toString: String = "updateContactDetails"
 }

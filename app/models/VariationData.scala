@@ -16,6 +16,7 @@
 
 package models
 
+import models.updateRegisteredDetails.UpdateContactDetails
 import play.api.libs.json.{Format, JsResult, JsValue, Json}
 import play.api.mvc.Call
 
@@ -52,7 +53,7 @@ case class RegistrationVariationData(
                                       importsVol: Option[Litreage],
                                       updatedProductionSites: Seq[Site],
                                       updatedWarehouseSites: Seq[Site],
-                                      updatedContactDetails: ContactDetails,
+                                      updatedContactDetails: UpdateContactDetails,
                                       previousPages: Seq[Call],
                                       reason: Option[String] = None,
                                       deregDate: Option[LocalDate] = None
@@ -123,7 +124,7 @@ object RegistrationVariationData {
     importsVol = None,
     original.productionSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))),
     original.warehouseSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))),
-    ContactDetails(
+    UpdateContactDetails(
       original.contact.name.getOrElse(""),
       original.contact.positionInCompany.getOrElse(""),
       original.contact.phoneNumber,
