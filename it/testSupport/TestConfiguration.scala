@@ -69,6 +69,8 @@ trait TestConfiguration
       interval = Span(50, Millis))
 
   lazy val config = Map(
+    s"microservice.services.address-lookup-frontend.host" -> s"$wiremockHost",
+    s"microservice.services.address-lookup-frontend.port" -> s"$wiremockPort",
     s"microservice.services.auth.host" -> s"$wiremockHost",
     s"microservice.services.auth.port" -> s"$wiremockPort",
     s"microservice.services.bas-gateway.host" -> s"$wiremockHost",
@@ -79,7 +81,8 @@ trait TestConfiguration
     "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
     "json.encryption.key" -> "fqpLDZ4sumDsekHkeEBlCA==",
     "json.encryption.previousKeys" -> "[]",
-    "play.http.router" -> "testOnlyDoNotUseInAppConf.Routes"
+    "play.http.router" -> "testOnlyDoNotUseInAppConf.Routes",
+    "addressLookupFrontendTest.enabled" -> "false"
   )
 
   override implicit lazy val app: Application = appBuilder().build()

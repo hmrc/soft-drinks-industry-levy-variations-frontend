@@ -16,6 +16,7 @@
 
 package models
 
+import models.backend.{Site, UkAddress}
 import models.updateRegisteredDetails.UpdateContactDetails
 import play.api.libs.json.{Format, JsResult, JsValue, Json}
 import play.api.mvc.Call
@@ -42,7 +43,7 @@ case class ReturnVariationData(
 
 case class RegistrationVariationData(
                                       original: RetrievedSubscription,
-                                      updatedBusinessAddress: Address,
+                                      updatedBusinessAddress: UkAddress,
                                       producer: Producer,
                                       usesCopacker: Option[Boolean],
                                       packageOwn: Option[Boolean],
@@ -113,7 +114,7 @@ object RegistrationVariationData {
 
   def apply(original: RetrievedSubscription): RegistrationVariationData = RegistrationVariationData(
     original,
-    Address.fromUkAddress(original.address),
+    original.address,
     Producer(original.activity.largeProducer || original.activity.smallProducer, Some(original.activity.largeProducer)),
     usesCopacker = if (original.activity.voluntaryRegistration) Some(true) else None,
     packageOwn = None,

@@ -26,3 +26,6 @@ GET        /select-change                        controllers.SelectChangeControl
 POST       /select-change                        controllers.SelectChangeController.onSubmit(mode: Mode = NormalMode)
 GET        /change-select-change                  controllers.SelectChangeController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-select-change                  controllers.SelectChangeController.onSubmit(mode: Mode = CheckMode)
+
+GET       /off-ramp/secondary-warehouses/:sdilId                       controllers.addressLookupFrontend.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId: String, id: String)
+GET       /off-ramp/packing-site-details/:sdilId                       controllers.addressLookupFrontend.RampOffController.packingSiteDetailsOffRamp(sdilId: String, id: String)

@@ -11,3 +11,8 @@
 
 # Add all the application routes to the prod.routes file
 ->         /                          prod.Routes
+
++nocsrf
+POST  /soft-drinks-industry-levy-variations-frontend/test-only/api/init   controllers.test.AddressFrontendStubController.initialise()
+
+GET  /soft-drinks-industry-levy-variations-frontend/test-only/api/confirmed   controllers.test.AddressFrontendStubController.addresses(id: String)

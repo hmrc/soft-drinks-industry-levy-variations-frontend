@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package models.backend
+package models.core
 
-import models.Warehouse
-
-import java.time.LocalDate
 import play.api.libs.json.{Format, Json}
 
-case class Site(
-                 address: UkAddress,
-                 ref: Option[String],
-                 tradingName: Option[String],
-                 closureDate: Option[LocalDate]
-               )
+sealed trait Error
 
-object Site {
-  implicit val format: Format[Site] = Json.format[Site]
-
-  def fromWarehouse(warehouse: Warehouse): Site =
-    Site(warehouse.address, None, warehouse.tradingName, None)
+object ErrorModel {
+  implicit val format: Format[ErrorModel] = Json.format[ErrorModel]
 }
+
+case class ErrorModel(status: Int, message: String) extends Error
+
+case object AddressValidationError extends Error
