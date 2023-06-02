@@ -39,7 +39,7 @@ class VariationDataModelSpec extends SpecBase with MockitoSugar with DataHelper 
           packSmall = List(testSmallProducer(alias = "test1", sdilRef = "testRef", litreage = (12, 12)))),
         period = testReturnPeriod(),
         orgName = "test name",
-        address = testUkAddress(),
+        address = testAddress(),
         reason = "test reason",
         repaymentMethod = None
       )
@@ -57,7 +57,7 @@ class VariationDataModelSpec extends SpecBase with MockitoSugar with DataHelper 
           packSmall = List(testSmallProducer(alias = "test1", sdilRef = "testRef", litreage = (12, 12)))),
         period = testReturnPeriod(),
         orgName = "test name",
-        address = testUkAddress(),
+        address = testAddress(),
         reason = "test reason",
         repaymentMethod = None
       )
@@ -78,7 +78,7 @@ class VariationDataModelSpec extends SpecBase with MockitoSugar with DataHelper 
             addedSmallProvider)),
         period = testReturnPeriod(),
         orgName = "test name",
-        address = testUkAddress(),
+        address = testAddress(),
         reason = "test reason",
         repaymentMethod = None
       )
@@ -96,7 +96,7 @@ class VariationDataModelSpec extends SpecBase with MockitoSugar with DataHelper 
           packSmall = List(testSmallProducer(alias = "test1", sdilRef = "testRef", litreage = (12, 12)))),
         period = testReturnPeriod(),
         orgName = "test name",
-        address = testUkAddress(),
+        address = testAddress(),
         reason = "test reason",
         repaymentMethod = None
       )
@@ -118,7 +118,7 @@ class VariationDataModelSpec extends SpecBase with MockitoSugar with DataHelper 
             addedSmallProvider)),
         period = testReturnPeriod(),
         orgName = "test name",
-        address = testUkAddress(),
+        address = testAddress(),
         reason = "test reason",
         repaymentMethod = None
       )
@@ -150,7 +150,7 @@ class VariationDataModelSpec extends SpecBase with MockitoSugar with DataHelper 
             wastage = (30, 30)),
         period = testReturnPeriod(),
         orgName = "test name",
-        address = testUkAddress(),
+        address = testAddress(),
         reason = "test reason",
         repaymentMethod = None
       )
@@ -177,7 +177,7 @@ class VariationDataModelSpec extends SpecBase with MockitoSugar with DataHelper 
           ),
         period = testReturnPeriod(),
         orgName = "test name",
-        address = testUkAddress(),
+        address = testAddress(),
         reason = "test reason",
         repaymentMethod = None
       )
@@ -190,7 +190,7 @@ class VariationDataModelSpec extends SpecBase with MockitoSugar with DataHelper 
   "RegistrationVariationData" - {
     val retrievedActivityData = testRetrievedActivity()
     val retrievedSubData = testRetrievedSubscription(
-      address = testUkAddress(),
+      address = testAddress(),
       activity = retrievedActivityData,
       liabilityDate = LocalDate.now(),
       productionSites = List.empty,
@@ -334,7 +334,7 @@ class VariationDataModelSpec extends SpecBase with MockitoSugar with DataHelper 
         updatedBusinessAddress = testAddress(),
         producer = testProducer(isProducer = false),
         updatedContactDetails = testContactDetails(),
-        updatedWarehouseSites = Seq(testSite(testUkAddress()))
+        updatedWarehouseSites = Seq(testSite(testAddress()))
       )
 
       data.isMaterialChange mustBe true
@@ -347,7 +347,7 @@ class VariationDataModelSpec extends SpecBase with MockitoSugar with DataHelper 
         updatedBusinessAddress = testAddress(),
         producer = testProducer(isProducer = false),
         updatedContactDetails = testContactDetails(),
-        updatedProductionSites = Seq(testSite(testUkAddress()))
+        updatedProductionSites = Seq(testSite(testAddress()))
       )
 
       data.isMaterialChange mustBe true

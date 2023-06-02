@@ -16,6 +16,7 @@
 
 package models
 
+import models.backend.{Site, UkAddress}
 import models.updateRegisteredDetails.UpdateContactDetails
 import play.api.mvc.Call
 
@@ -65,10 +66,6 @@ trait DataHelper {
     ReturnPeriod(year, quarter)
   }
 
-  def testUkAddress(lines: List[String] = List.empty): UkAddress = UkAddress(
-    lines = lines,
-    postCode = "AA111AA"
-  )
 
   def testSmallProducer(alias: String,
                         sdilRef: String,
@@ -145,25 +142,16 @@ trait DataHelper {
     email = email
   )
 
-  def testAddress(
-                   line1: String = "test line 1",
-                   line2: String = "test line 2",
-                   line3: String = "test line 3",
-                   line4: String = "test line 4",
-                   postcode: String = "AA111AA"
-                 ): Address = Address(
-    line1 = line1,
-    line2 = line2,
-    line3 = line3,
-    line4 = line4,
-    postcode = postcode
+  def testAddress(lines: List[String] = List.empty): UkAddress = UkAddress(
+    lines = lines,
+    postCode = "AA111AA"
   )
 
   def testWarehouse(
                      tradingName: String = "test trading name",
-                     address: Address
+                     address: UkAddress
                    ): Warehouse = Warehouse(
-    tradingName = tradingName,
+    tradingName = Some(tradingName),
     address = address
   )
 
@@ -194,7 +182,7 @@ trait DataHelper {
 
   def testRegistrationVariationData(
                                      original: RetrievedSubscription,
-                                     updatedBusinessAddress: Address,
+                                     updatedBusinessAddress: UkAddress,
                                      producer: Producer,
                                      usesCopacker: Option[Boolean] = None,
                                      packageOwn: Option[Boolean] = None,
@@ -227,6 +215,4 @@ trait DataHelper {
     reason = reason,
     deregDate = deregDate
   )
-
-
 }

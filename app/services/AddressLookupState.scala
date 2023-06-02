@@ -14,23 +14,10 @@
  * limitations under the License.
  */
 
-package models.backend
+package services
 
-import models.Warehouse
+sealed trait AddressLookupState
 
-import java.time.LocalDate
-import play.api.libs.json.{Format, Json}
+case object PackingDetails extends AddressLookupState
 
-case class Site(
-                 address: UkAddress,
-                 ref: Option[String],
-                 tradingName: Option[String],
-                 closureDate: Option[LocalDate]
-               )
-
-object Site {
-  implicit val format: Format[Site] = Json.format[Site]
-
-  def fromWarehouse(warehouse: Warehouse): Site =
-    Site(warehouse.address, None, warehouse.tradingName, None)
-}
+case object WarehouseDetails extends AddressLookupState

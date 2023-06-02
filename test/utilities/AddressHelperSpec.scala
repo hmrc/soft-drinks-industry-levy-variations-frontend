@@ -14,23 +14,20 @@
  * limitations under the License.
  */
 
-package models.backend
+package utilities
 
-import models.Warehouse
+import base.SpecBase
 
-import java.time.LocalDate
-import play.api.libs.json.{Format, Json}
+class AddressHelperSpec extends SpecBase with AddressHelper {
 
-case class Site(
-                 address: UkAddress,
-                 ref: Option[String],
-                 tradingName: Option[String],
-                 closureDate: Option[LocalDate]
-               )
+  "Address Helper" - {
+    "generate a unique id" in {
 
-object Site {
-  implicit val format: Format[Site] = Json.format[Site]
+      val result: List[String] = List(generateId , generateId)
 
-  def fromWarehouse(warehouse: Warehouse): Site =
-    Site(warehouse.address, None, warehouse.tradingName, None)
+      result.size mustBe 2
+      result.foreach(eachUUID => eachUUID.length mustBe 36)
+      result.distinct.size mustBe 2
+    }
+  }
 }

@@ -3,7 +3,6 @@ package testSupport
 import models.updateRegisteredDetails.UpdateContactDetails
 import models.{SelectChange, UserAnswers}
 import play.api.libs.json.Json
-import org.scalatest.TryValues.convertTryToSuccessOrFailure
 
 trait ITCoreTestDataForUpdateRegisteredDetails {
 

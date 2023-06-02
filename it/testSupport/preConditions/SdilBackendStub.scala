@@ -1,7 +1,8 @@
 package testSupport.preConditions
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.{Contact, RetrievedActivity, RetrievedSubscription, Site, UkAddress}
+import models.backend.{Site, UkAddress}
+import models.{Contact, RetrievedActivity, RetrievedSubscription}
 import play.api.libs.json.Json
 
 import java.time.LocalDate

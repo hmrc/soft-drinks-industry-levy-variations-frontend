@@ -19,12 +19,13 @@ package base
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.routes
-import models.{Contact, LitresInBands, RetrievedActivity, RetrievedSubscription, ReturnCharge, ReturnPeriod, SelectChange, Site, UkAddress, UserAnswers}
+import models.backend.{Site, UkAddress}
+import models.{Contact, LitresInBands, RetrievedActivity, RetrievedSubscription, ReturnCharge, ReturnPeriod, SelectChange, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.{OptionValues, TryValues}
-import play.api.Application
+import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
+import play.api.{Application, Play}
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -84,26 +85,29 @@ trait SpecBase
     with TryValues
     with OptionValues
     with ScalaFutures
-    with IntegrationPatience {
+    with IntegrationPatience
+    with BeforeAndAfterEach {
 
   val userAnswersId: String = "id"
   val sdilNumber: String = "XKSDIL000000022"
 
-  val application = applicationBuilder(userAnswers = None).build()
+  lazy val application = applicationBuilder(userAnswers = None).build()
   implicit lazy val messagesAPI = application.injector.instanceOf[MessagesApi]
   implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
   lazy val mcc = application.injector.instanceOf[MessagesControllerComponents]
   lazy val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
+  override def afterEach(): Unit = {
+    Play.stop(application)
+    super.afterEach()
+  }
 
+  val emptyUserAnswersForUpdateRegisteredDetails: UserAnswers = UserAnswers(userAnswersId, SelectChange.UpdateRegisteredAccount)
+  val emptyUserAnswersForChangeActivity = UserAnswers(sdilNumber, SelectChange.Changeactivity)
 
-  def emptyUserAnswersForUpdateRegisteredDetails : UserAnswers = UserAnswers(userAnswersId, SelectChange.UpdateRegisteredAccount)
+  val emptyUserAnswersForCorrectReturn = UserAnswers(sdilNumber, SelectChange.CorrectReturn)
 
-  def emptyUserAnswersForChangeActivity = UserAnswers(sdilNumber, SelectChange.Changeactivity)
-
-  def emptyUserAnswersForCorrectReturn = UserAnswers(sdilNumber, SelectChange.CorrectReturn)
-
-  def emptyUserAnswersForCancelRegistration = UserAnswers(sdilNumber, SelectChange.CancelRegistration)
+  val emptyUserAnswersForCancelRegistration = UserAnswers(sdilNumber, SelectChange.CancelRegistration)
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   protected def applicationBuilder(
@@ -161,8 +165,6 @@ trait SpecBase
 
   val userDetailsWithSetMethodsReturningFailure: UserAnswers = new UserAnswers("sdilId", SelectChange.UpdateRegisteredAccount) {
     override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-
-    override def setList[A](producer: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
 
     override def setAndRemoveLitresIfReq(page: Settable[Boolean], litresPage: Settable[LitresInBands], value: Boolean)(implicit writes: Writes[Boolean]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
   }
