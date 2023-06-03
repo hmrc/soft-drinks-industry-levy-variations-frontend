@@ -37,6 +37,10 @@ trait TestConfiguration
   val wiremockPort: Int = Port.randomAvailable
 
   val baseUrl = s"http://localhost:$port/soft-drinks-industry-levy-variations-frontend"
+  val changeActivityBaseUrl = baseUrl + "/change-activity"
+  val cancelRegistrationBaseUrl = baseUrl + "/cancel-registration"
+  val correctReturnBaseUrl = baseUrl + "/correct-return"
+  val updateRegisteredDetailsBaseUrl = baseUrl + "/change-registered-details"
 
   val sessionId = "sessionId-eb3158c2-0aff-4ce8-8d1b-f2208ace52fe"
   val xSessionId: (String, String) = "X-Session-ID" -> sessionId
