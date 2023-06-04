@@ -8,7 +8,7 @@ import controllers.ControllerITTestHelper
 
 class $className$ControllerISpec extends ControllerITTestHelper {
 
-  val normalRoutePath = "/$className;format="decap"$"
+  val normalRoutePath = "/$url$"
 
   "GET " + normalRoutePath - {
     "should return OK and render the $className$ page" in {
@@ -18,7 +18,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
       setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
 
       WsTestClient.withClient { client =>
-        val result1 = createClientRequestGet(client, baseUrl + normalRoutePath)
+        val result1 = createClientRequestGet(client, $packageName$BaseUrl + normalRoutePath)
 
         whenReady(result1) { res =>
           res.status mustBe 200
@@ -27,6 +27,6 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         }
       }
     }
-    testUnauthorisedUser(baseUrl + normalRoutePath)
+    testUnauthorisedUser($packageName$BaseUrl + normalRoutePath)
   }
 }

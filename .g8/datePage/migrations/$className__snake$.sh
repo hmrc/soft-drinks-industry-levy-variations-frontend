@@ -6,18 +6,18 @@ echo "Applying migration $className;format="snake"$"
 echo "Adding routes to conf/app.routes"
 
 echo "" >> ../conf/app.$packageName$.routes
-echo "GET        /$className;format="decap"$                        controllers.$packageName$.$className$Controller.onPageLoad(mode: Mode = NormalMode)" >> ../conf/app.$packageName$.routes
-echo "POST       /$className;format="decap"$                        controllers.$packageName$.$className$Controller.onSubmit(mode: Mode = NormalMode)" >> ../conf/app.$packageName$.routes
+echo "GET        /$url$                        controllers.$packageName$.$className$Controller.onPageLoad(mode: Mode = NormalMode)" >> ../conf/app.$packageName$.routes
+echo "POST       /$url$                        controllers.$packageName$.$className$Controller.onSubmit(mode: Mode = NormalMode)" >> ../conf/app.$packageName$.routes
 
-echo "GET        /change$className$                  controllers.$packageName$.$className$Controller.onPageLoad(mode: Mode = CheckMode)" >> ../conf/app.$packageName$.routes
-echo "POST       /change$className$                  controllers.$packageName$.$className$Controller.onSubmit(mode: Mode = CheckMode)" >> ../conf/app.$packageName$.routes
+echo "GET        /change-$url$                  controllers.$packageName$.$className$Controller.onPageLoad(mode: Mode = CheckMode)" >> ../conf/app.$packageName$.routes
+echo "POST       /change-$url$                  controllers.$packageName$.$className$Controller.onSubmit(mode: Mode = CheckMode)" >> ../conf/app.$packageName$.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "$packageName$.$className;format="decap"$.title = $className$" >> ../conf/messages.en
-echo "$packageName$.$className;format="decap"$.heading = $className$" >> ../conf/messages.en
+echo "$packageName$.$className;format="decap"$.title = $title$" >> ../conf/messages.en
+echo "$packageName$.$className;format="decap"$.heading = $heading$" >> ../conf/messages.en
 echo "$packageName$.$className;format="decap"$.hint = For example, 12 11 2007" >> ../conf/messages.en
-echo "$packageName$.$className;format="decap"$.checkYourAnswersLabel = $className$" >> ../conf/messages.en
+echo "$packageName$.$className;format="decap"$.checkYourAnswersLabel = $checkYourAnswersLabel$" >> ../conf/messages.en
 echo "$packageName$.$className;format="decap"$.error.required.all = Enter the $className;format="decap"$" >> ../conf/messages.en
 echo "$packageName$.$className;format="decap"$.error.required.two = The $className;format="decap"$" must include {0} and {1} >> ../conf/messages.en
 echo "$packageName$.$className;format="decap"$.error.required = The $className;format="decap"$ must include {0}" >> ../conf/messages.en

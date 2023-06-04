@@ -19,6 +19,8 @@ import views.html.$packageName$.$className$View
 
 import scala.concurrent.Future
 import org.jsoup.Jsoup
+import utilities.GenericLogger
+import errors.SessionDatabaseInsertError
 
 class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
@@ -159,7 +161,33 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual INTERNAL_SERVER_ERROR
         val page = Jsoup.parse(contentAsString(result))
-        page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - soft-drinks-industry-levy - GOV.UK"
+        page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - Soft Drinks Industry Levy - GOV.UK"
+      }
+    }
+
+    "should log an error message when internal server error is returned when user answers are not set in session repository" in {
+      val mockSessionService = mock[SessionService]
+
+      when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+
+      val application =
+        applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[NavigatorFor$packageName;format="cap"$].toInstance(new FakeNavigatorFor$packageName;format="cap"$(onwardRoute)),
+            bind[SessionService].toInstance(mockSessionService)
+          )
+          .build()
+
+      running(application) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+
+          await(route(application, postRequest).value)
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustBe "ERROR"
+              event.getMessage mustEqual "Failed to set value in session repository while attempting set on $className;format="decap"$"
+          }.getOrElse(fail("No logging captured"))
+        }
       }
     }
   }

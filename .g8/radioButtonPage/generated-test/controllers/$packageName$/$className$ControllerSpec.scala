@@ -15,10 +15,10 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
 import views.html.$packageName$.$className$View
-
-import scala.concurrent.Future
+import errors.SessionDatabaseInsertError
 import org.jsoup.Jsoup
-
+import scala.concurrent.Future
+import utilities.GenericLogger
 class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
@@ -42,6 +42,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[$className$View]
 
         status(result) mustEqual OK
+
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
       }
     }
@@ -72,16 +73,16 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersFor$packageName;format="cap"$))
-          .overrides(
-            bind[NavigatorFor$packageName;format="cap"$].toInstance(new FakeNavigatorFor$packageName;format="cap"$(onwardRoute)),
-            bind[SessionService].toInstance(mockSessionService)
-          )
-          .build()
+      .overrides(
+        bind[NavigatorFor$packageName;format="cap"$].toInstance(new FakeNavigatorFor$packageName;format="cap"$(onwardRoute)),
+      bind[SessionService].toInstance(mockSessionService)
+      )
+      .build()
 
       running(application) {
         val request =
           FakeRequest(POST, $className;format="decap"$Route)
-            .withFormUrlEncodedBody(("value", $className$.values.head.toString))
+        .withFormUrlEncodedBody(("value", $className$.values.head.toString))
 
         val result = route(application, request).value
 
@@ -97,7 +98,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, $className;format="decap"$Route)
-            .withFormUrlEncodedBody(("value", "invalid value"))
+        .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
@@ -124,19 +125,18 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "redirect to Journey Recovery for a POST if no existing data is found" in {
-      
+    "must redirect to Journey Recovery for a POST if no existing data is found" in {
+
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
         val request =
           FakeRequest(POST, $className;format="decap"$Route)
-            .withFormUrlEncodedBody(("value", $className$.values.head.toString))
+        .withFormUrlEncodedBody(("value", $className$.values.head.toString))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-
         redirectLocation(result).value mustEqual recoveryCall.url
       }
     }
@@ -147,17 +147,43 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, $className;
-        format = "decap" $Route
-        )
+          FakeRequest(POST, $className;format ="decap"$Route)
         .withFormUrlEncodedBody(("value", $className$.values.head.toString))
 
         val result = route(application, request).value
 
         status(result) mustEqual INTERNAL_SERVER_ERROR
         val page = Jsoup.parse(contentAsString(result))
-        page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - soft-drinks-industry-levy - GOV.UK"
+        page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - Soft Drinks Industry Levy - GOV.UK"
+      }
+    }
+    "should log an error message when internal server error is returned when user answers are not set in session repository" in {
+      val mockSessionService = mock[SessionService]
+
+      when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+
+      val application =
+        applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[NavigatorFor$packageName;format="cap"$].toInstance(new FakeNavigatorFor$packageName;format="cap"$(onwardRoute)),
+      bind[SessionService].toInstance(mockSessionService)
+      )
+      .build()
+
+      running(application) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          running(application) {
+            val request = FakeRequest(POST, $className;format="decap"$Route)
+            .withFormUrlEncodedBody(("value", $className$.values.head.toString))
+
+            await(route(application, request).value)
+            events.collectFirst {
+              case event =>
+                event.getLevel.levelStr mustBe "ERROR"
+                event.getMessage mustEqual "Failed to set value in session repository while attempting set on $className;format="decap"$"
+            }.getOrElse(fail("No logging captured"))
+          }
+        }
       }
     }
   }
-}
