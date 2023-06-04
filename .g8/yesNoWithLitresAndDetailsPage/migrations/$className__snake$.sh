@@ -6,11 +6,11 @@ echo "Applying migration $className;format="snake"$"
 echo "Adding routes to conf/app.routes"
 
 echo "" >> ../conf/app.$packageName$.routes
-echo "GET        /$yesNourl$                        controllers.$packageName$.$className$Controller.onPageLoad(mode: Mode = NormalMode)" >> ../conf/app.$packageName$.routes
-echo "POST       /$yesNourl$                        controllers.$packageName$.$className$Controller.onSubmit(mode: Mode = NormalMode)" >> ../conf/app.$packageName$.routes
+echo "GET        /$yesNoUrl$                        controllers.$packageName$.$className$Controller.onPageLoad(mode: Mode = NormalMode)" >> ../conf/app.$packageName$.routes
+echo "POST       /$yesNoUrl$                        controllers.$packageName$.$className$Controller.onSubmit(mode: Mode = NormalMode)" >> ../conf/app.$packageName$.routes
 
-echo "GET        /$change-yesNourl$                  controllers.$packageName$.$className$Controller.onPageLoad(mode: Mode = CheckMode)" >> ../conf/app.$packageName$.routes
-echo "POST       /$change-yesNourl$                  controllers.$packageName$.$className$Controller.onSubmit(mode: Mode = CheckMode)" >> ../conf/app.$packageName$.routes
+echo "GET        /change-$yesNoUrl$                  controllers.$packageName$.$className$Controller.onPageLoad(mode: Mode = CheckMode)" >> ../conf/app.$packageName$.routes
+echo "POST       /change-$yesNoUrl$                  controllers.$packageName$.$className$Controller.onSubmit(mode: Mode = CheckMode)" >> ../conf/app.$packageName$.routes
 
 echo "GET        /$litresUrl$                        controllers.$packageName$.HowMany$className$Controller.onPageLoad(mode: Mode = NormalMode)" >> ../conf/app.$packageName$.routes
 echo "POST       /$litresUrl$                        controllers.$packageName$.HowMany$className$Controller.onSubmit(mode: Mode = NormalMode)" >> ../conf/app.$packageName$.routes
@@ -20,8 +20,8 @@ echo "POST       /change-$litresUrl$                  controllers.$packageName$.
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "$packageName$.$className;format="decap"$.title = $title" >> ../conf/messages.en
-echo "$packageName$.$className;format="decap"$.heading = $heading$" >> ../conf/messages.en
+echo "$packageName$.$className;format="decap"$.title = $yesNoTitle$" >> ../conf/messages.en
+echo "$packageName$.$className;format="decap"$.heading = $yesNoHeading$" >> ../conf/messages.en
 echo "$packageName$.$className;format="decap"$.checkYourAnswersLabel = $checkYourAnswersLabel$" >> ../conf/messages.en
 echo "$packageName$.$className;format="decap"$.detailsLink = $detailsLinkText$" >> ../conf/messages.en
 echo "$packageName$.$className;format="decap"$.detailsContent = $detailsContent$" >> ../conf/messages.en

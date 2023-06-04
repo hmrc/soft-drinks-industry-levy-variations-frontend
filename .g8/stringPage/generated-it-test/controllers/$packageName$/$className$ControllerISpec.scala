@@ -35,7 +35,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
             page.title must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
-            val inputFields = page.getElementsByClass("govuk-input  govuk-!-width-full")
+            val inputFields = page.getElementsByClass("govuk-input  govuk-!-width-two-thirds")
             inputFields.size() mustBe 1
             inputFields.get(0).getElementById("value").hasAttr("value") mustBe false
           }
@@ -57,7 +57,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
             page.title must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
-            val inputFields = page.getElementsByClass("govuk-input  govuk-!-width-full")
+            val inputFields = page.getElementsByClass("govuk-input  govuk-!-width-two-thirds")
             inputFields.size() mustBe 1
             inputFields.get(0).getElementById("value").hasAttr("value") mustBe true
             inputFields.get(0).getElementById("value").attr("value") mustBe $className;format="decap"$
@@ -84,7 +84,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
             page.title must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
-            val inputFields = page.getElementsByClass("govuk-input  govuk-!-width-full")
+            val inputFields = page.getElementsByClass("govuk-input  govuk-!-width-two-thirds")
             inputFields.size() mustBe 1
             inputFields.get(0).getElementById("value").hasAttr("value") mustBe false
           }
@@ -106,7 +106,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
             page.title must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
-            val inputFields = page.getElementsByClass("govuk-input  govuk-!-width-full")
+            val inputFields = page.getElementsByClass("govuk-input  govuk-!-width-two-thirds")
             inputFields.size() mustBe 1
             inputFields.get(0).getElementById("value").hasAttr("value") mustBe true
             inputFields.get(0).getElementById("value").attr("value") mustBe $className;format = "decap"$

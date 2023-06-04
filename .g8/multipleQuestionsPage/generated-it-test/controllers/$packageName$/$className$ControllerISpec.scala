@@ -41,7 +41,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             val inputFields = page.getElementsByClass("govuk-form-group")
             inputFields.size() mustBe 2
             $className;format="decap"$Map.zipWithIndex.foreach { case ((fieldName, _), index) =>
-              inputFields.get(index).text() mustBe fieldName
+              inputFields.get(index).text() mustBe Messages("$packageName$.$className;format="decap"$." + fieldName)
               inputFields.get(index).getElementById(fieldName).hasAttr("value") mustBe false
             }
           }
@@ -66,7 +66,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             val inputFields = page.getElementsByClass("govuk-form-group")
             inputFields.size() mustBe 2
             $className;format="decap"$Map.zipWithIndex.foreach { case ((fieldName, fieldValue), index) =>
-              inputFields.get(index).text() mustBe fieldName
+              inputFields.get(index).text() mustBe Messages("$packageName$.$className;format="decap"$." + fieldName)
               inputFields.get(index).getElementById(fieldName).hasAttr("value") mustBe true
               inputFields.get(index).getElementById(fieldName).attr("value") mustBe fieldValue
             }
@@ -96,7 +96,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             val inputFields = page.getElementsByClass("govuk-form-group")
             inputFields.size() mustBe 2
             $className;format="decap"$Map.zipWithIndex.foreach { case ((fieldName, _), index) =>
-              inputFields.get(index).text() mustBe fieldName
+              inputFields.get(index).text() mustBe Messages("$packageName$.$className;format="decap"$." + fieldName)
               inputFields.get(index).getElementById(fieldName).hasAttr("value") mustBe false
             }
           }
@@ -121,7 +121,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             val inputFields = page.getElementsByClass("govuk-form-group")
             inputFields.size() mustBe 2
             $className;format="decap"$Map.zipWithIndex.foreach { case ((fieldName, fieldValue), index) =>
-              inputFields.get(index).text() mustBe fieldName
+              inputFields.get(index).text() mustBe Messages("$packageName$.$className;format="decap"$." + fieldName)
               inputFields.get(index).getElementById(fieldName).hasAttr("value") mustBe true
               inputFields.get(index).getElementById(fieldName).attr("value") mustBe fieldValue
             }

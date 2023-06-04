@@ -76,7 +76,7 @@ class $className$ViewSpec extends ViewSpecHelper {
               .get(index)
             questionItem1
               .getElementsByClass(Selectors.label)
-              .text() mustBe fieldName
+              .text() mustBe Messages("$packageName$.$className;format="decap"$." + fieldName)
           }
         }
       }

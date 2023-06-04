@@ -9,12 +9,12 @@ echo "" >> ../conf/app.$packageName$.routes
 echo "GET        /$url$                        controllers.$packageName$.$className$Controller.onPageLoad(mode: Mode = NormalMode)" >> ../conf/app.$packageName$.routes
 echo "POST       /$url$                        controllers.$packageName$.$className$Controller.onSubmit(mode: Mode = NormalMode)" >> ../conf/app.$packageName$.routes
 
-echo "GET        /$url$                  controllers.$packageName$.$className$Controller.onPageLoad(mode: Mode = CheckMode)" >> ../conf/app.$packageName$.routes
-echo "POST       /$url$                  controllers.$packageName$.$className$Controller.onSubmit(mode: Mode = CheckMode)" >> ../conf/app.$packageName$.routes
+echo "GET        /change-$url$                  controllers.$packageName$.$className$Controller.onPageLoad(mode: Mode = CheckMode)" >> ../conf/app.$packageName$.routes
+echo "POST       /change-$url$                  controllers.$packageName$.$className$Controller.onSubmit(mode: Mode = CheckMode)" >> ../conf/app.$packageName$.routes
 
 echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
-echo "$packageName$.$className;format="decap"$.title = $title" >> ../conf/messages.en
+echo "$packageName$.$className;format="decap"$.title = $title$" >> ../conf/messages.en
 echo "$packageName$.$className;format="decap"$.heading = $heading$" >> ../conf/messages.en
 echo "$packageName$.$className;format="decap"$.checkYourAnswersLabel = $checkYourAnswersLabel$" >> ../conf/messages.en
 echo "$packageName$.$className;format="decap"$.error.required = Enter $className;format="decap"$" >> ../conf/messages.en

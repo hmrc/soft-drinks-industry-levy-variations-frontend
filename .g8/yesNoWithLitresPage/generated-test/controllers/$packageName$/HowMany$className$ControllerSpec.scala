@@ -14,7 +14,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
 import views.html.$packageName$.HowMany$className$View
-
+import utilities.GenericLogger
+import errors.SessionDatabaseInsertError
 import scala.concurrent.Future
 import org.jsoup.Jsoup
 
@@ -162,7 +163,7 @@ class HowMany$className$ControllerSpec extends SpecBase with MockitoSugar {
       when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
       val application =
-        applicationBuilder(userAnswers = None)
+        applicationBuilder(userAnswers = Some(emptyUserAnswersFor$packageName;format="cap"$))
           .overrides(
             bind[NavigatorFor$packageName;format="cap"$].toInstance(new FakeNavigatorFor$packageName;format = "cap" $ (onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
@@ -171,14 +172,14 @@ class HowMany$className$ControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request =
-            FakeRequest(POST, $className;format="decap"$Route)
+            FakeRequest(POST, howMany$className$Route)
           .withFormUrlEncodedBody(("lowBand", "1000"), ("highBand", "2000"))
 
           await(route(application, request).value)
           events.collectFirst {
             case event =>
               event.getLevel.levelStr mustBe "ERROR"
-              event.getMessage mustEqual "Failed to set value in session repository while attempting set on $className;format="decap"$"
+              event.getMessage mustEqual "Failed to set value in session repository while attempting set on howMany$className$"
           }.getOrElse(fail("No logging captured"))
         }
       }

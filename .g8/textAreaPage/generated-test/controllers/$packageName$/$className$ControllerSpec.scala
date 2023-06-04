@@ -14,7 +14,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
 import views.html.$packageName$.$className$View
-
+import utilities.GenericLogger
+import errors.SessionDatabaseInsertError
 import scala.concurrent.Future
 import org.jsoup.Jsoup
 
@@ -165,7 +166,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
       when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
       val application =
-        applicationBuilder(userAnswers = None)
+        applicationBuilder(userAnswers = Some(emptyUserAnswersFor$packageName;format="cap"$))
           .overrides(
             bind[NavigatorFor$packageName;format="cap"$].toInstance(new FakeNavigatorFor$packageName;format="cap"$ (onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
