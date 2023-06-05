@@ -11,5 +11,5 @@ case object $className$Page extends QuestionPage[LocalDate] {
 
   def journeyType: String = "$packageName$"
 
-  override def toString: String = "$packageName$.$className;format="decap"$"
+  override def toString: String = "$className;format="decap"$"
 }

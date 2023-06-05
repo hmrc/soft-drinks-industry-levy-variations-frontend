@@ -13,8 +13,8 @@ import play.api.test.WsTestClient
 
 class $className$ControllerISpec extends ControllerITTestHelper {
 
-  val normalRoutePath = "/$className;format="decap"$"
-  val checkRoutePath = "/change$className$"
+  val normalRoutePath = "/$url$"
+  val checkRoutePath = "/change-$url$"
 
   val $className;format="decap"$JsObject = Json.toJson($className;format="decap"$).as[JsObject].value
   val $className;format="decap"$Map: collection.Map[String, String] = {
@@ -32,7 +32,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
 
         WsTestClient.withClient { client =>
-          val result1 = createClientRequestGet(client, baseUrl + normalRoutePath)
+          val result1 = createClientRequestGet(client, $packageName$BaseUrl + normalRoutePath)
 
           whenReady(result1) { res =>
             res.status mustBe 200
@@ -41,7 +41,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             val inputFields = page.getElementsByClass("govuk-form-group")
             inputFields.size() mustBe 2
             $className;format="decap"$Map.zipWithIndex.foreach { case ((fieldName, _), index) =>
-              inputFields.get(index).text() mustBe fieldName
+              inputFields.get(index).text() mustBe Messages("$packageName$.$className;format="decap"$." + fieldName)
               inputFields.get(index).getElementById(fieldName).hasAttr("value") mustBe false
             }
           }
@@ -57,7 +57,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         setAnswers(userAnswers)
 
         WsTestClient.withClient { client =>
-          val result1 = createClientRequestGet(client, baseUrl + normalRoutePath)
+          val result1 = createClientRequestGet(client, $packageName$BaseUrl + normalRoutePath)
 
           whenReady(result1) { res =>
             res.status mustBe 200
@@ -66,7 +66,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             val inputFields = page.getElementsByClass("govuk-form-group")
             inputFields.size() mustBe 2
             $className;format="decap"$Map.zipWithIndex.foreach { case ((fieldName, fieldValue), index) =>
-              inputFields.get(index).text() mustBe fieldName
+              inputFields.get(index).text() mustBe Messages("$packageName$.$className;format="decap"$." + fieldName)
               inputFields.get(index).getElementById(fieldName).hasAttr("value") mustBe true
               inputFields.get(index).getElementById(fieldName).attr("value") mustBe fieldValue
             }
@@ -74,8 +74,8 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         }
       }
     }
-    testUnauthorisedUser(baseUrl + normalRoutePath)
-    testAuthenticatedUserButNoUserAnswers(baseUrl + normalRoutePath)
+    testUnauthorisedUser($packageName$BaseUrl + normalRoutePath)
+    testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + normalRoutePath)
   }
 
   "GET " + checkRoutePath - {
@@ -87,7 +87,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
 
         WsTestClient.withClient { client =>
-          val result1 = createClientRequestGet(client, baseUrl + checkRoutePath)
+          val result1 = createClientRequestGet(client, $packageName$BaseUrl + checkRoutePath)
 
           whenReady(result1) { res =>
             res.status mustBe 200
@@ -96,7 +96,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             val inputFields = page.getElementsByClass("govuk-form-group")
             inputFields.size() mustBe 2
             $className;format="decap"$Map.zipWithIndex.foreach { case ((fieldName, _), index) =>
-              inputFields.get(index).text() mustBe fieldName
+              inputFields.get(index).text() mustBe Messages("$packageName$.$className;format="decap"$." + fieldName)
               inputFields.get(index).getElementById(fieldName).hasAttr("value") mustBe false
             }
           }
@@ -112,7 +112,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         setAnswers(userAnswers)
 
         WsTestClient.withClient { client =>
-          val result1 = createClientRequestGet(client, baseUrl + checkRoutePath)
+          val result1 = createClientRequestGet(client, $packageName$BaseUrl + checkRoutePath)
 
           whenReady(result1) { res =>
             res.status mustBe 200
@@ -121,7 +121,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
             val inputFields = page.getElementsByClass("govuk-form-group")
             inputFields.size() mustBe 2
             $className;format="decap"$Map.zipWithIndex.foreach { case ((fieldName, fieldValue), index) =>
-              inputFields.get(index).text() mustBe fieldName
+              inputFields.get(index).text() mustBe Messages("$packageName$.$className;format="decap"$." + fieldName)
               inputFields.get(index).getElementById(fieldName).hasAttr("value") mustBe true
               inputFields.get(index).getElementById(fieldName).attr("value") mustBe fieldValue
             }
@@ -129,8 +129,8 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         }
       }
     }
-    testUnauthorisedUser(baseUrl + checkRoutePath)
-    testAuthenticatedUserButNoUserAnswers(baseUrl + checkRoutePath)
+    testUnauthorisedUser($packageName$BaseUrl + checkRoutePath)
+    testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + checkRoutePath)
   }
 
   s"POST " + normalRoutePath - {
@@ -143,7 +143,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, baseUrl + normalRoutePath, Json.toJson($className;format="decap"$Diff)
+              client, $packageName$BaseUrl + normalRoutePath, Json.toJson($className;format="decap"$Diff)
             )
 
             whenReady(result) { res =>
@@ -163,7 +163,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           setAnswers(userAnswers)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, baseUrl + normalRoutePath, Json.toJson($className;format="decap"$Diff)
+              client, $packageName$BaseUrl + normalRoutePath, Json.toJson($className;format="decap"$Diff)
             )
 
             whenReady(result) { res =>
@@ -186,7 +186,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, baseUrl + normalRoutePath, Json.toJson($className$("", ""))
+            client, $packageName$BaseUrl + normalRoutePath, Json.toJson($className$("", ""))
           )
 
           whenReady(result) { res =>
@@ -222,7 +222,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           }
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, baseUrl + normalRoutePath, invalidJson
+              client, $packageName$BaseUrl + normalRoutePath, invalidJson
             )
 
             whenReady(result) { res =>
@@ -241,8 +241,8 @@ class $className$ControllerISpec extends ControllerITTestHelper {
       }
     }
 
-    testUnauthorisedUser(baseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedUserButNoUserAnswers(baseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+    testUnauthorisedUser($packageName$BaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
   }
 
   s"POST " + checkRoutePath - {
@@ -255,7 +255,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, baseUrl + checkRoutePath, Json.toJson($className;format="decap"$Diff)
+              client, $packageName$BaseUrl + checkRoutePath, Json.toJson($className;format="decap"$Diff)
             )
 
             whenReady(result) { res =>
@@ -275,7 +275,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           setAnswers(userAnswers)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, baseUrl + checkRoutePath, Json.toJson($className;format="decap"$Diff)
+              client, $packageName$BaseUrl + checkRoutePath, Json.toJson($className;format="decap"$Diff)
             )
 
             whenReady(result) { res =>
@@ -298,7 +298,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
         setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, baseUrl + checkRoutePath, Json.toJson($className$("", ""))
+            client, $packageName$BaseUrl + checkRoutePath, Json.toJson($className$("", ""))
           )
 
           whenReady(result) { res =>
@@ -334,7 +334,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           }
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, baseUrl + checkRoutePath, invalidJson
+              client, $packageName$BaseUrl + checkRoutePath, invalidJson
             )
 
             whenReady(result) { res =>
@@ -353,6 +353,6 @@ class $className$ControllerISpec extends ControllerITTestHelper {
       }
     }
 
-    testUnauthorisedUser(baseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedUserButNoUserAnswers(baseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))  }
+    testUnauthorisedUser($packageName$BaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))  }
 }

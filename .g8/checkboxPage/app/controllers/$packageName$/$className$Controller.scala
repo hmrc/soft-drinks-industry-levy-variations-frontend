@@ -1,5 +1,6 @@
 package controllers.$packageName$
 
+import utilities.GenericLogger
 import controllers.ControllerHelper
 import controllers.actions._
 import forms.$packageName$.$className$FormProvider
@@ -25,6 +26,7 @@ class $className$Controller @Inject()(
                                         formProvider: $className$FormProvider,
                                         val controllerComponents: MessagesControllerComponents,
                                         view: $className$View,
+                                        val genericLogger: GenericLogger,
                                         val errorHandler: ErrorHandler
                                       )(implicit ec: ExecutionContext) extends ControllerHelper {
 

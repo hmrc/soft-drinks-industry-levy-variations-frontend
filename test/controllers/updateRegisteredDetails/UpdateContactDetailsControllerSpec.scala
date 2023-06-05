@@ -17,6 +17,7 @@
 package controllers.updateRegisteredDetails
 
 import base.SpecBase
+import errors.SessionDatabaseInsertError
 import forms.updateRegisteredDetails.UpdateContactDetailsFormProvider
 import models.NormalMode
 import models.updateRegisteredDetails.UpdateContactDetails
@@ -35,6 +36,7 @@ import views.html.updateRegisteredDetails.UpdateContactDetailsView
 
 import scala.concurrent.Future
 import org.jsoup.Jsoup
+import utilities.GenericLogger
 
 class UpdateContactDetailsControllerSpec extends SpecBase with MockitoSugar {
 
@@ -192,6 +194,37 @@ class UpdateContactDetailsControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual INTERNAL_SERVER_ERROR
         val page = Jsoup.parse(contentAsString(result))
         page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - Soft Drinks Industry Levy - GOV.UK"
+      }
+    }
+    "should log an error message when internal server error is returned when user answers are not set in session repository" in {
+      val mockSessionService = mock[SessionService]
+
+      when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
+          .overrides(
+            bind[NavigatorForUpdateRegisteredDetails].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
+            bind[SessionService].toInstance(mockSessionService)
+          )
+          .build()
+
+      running(application) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          val request =
+            FakeRequest(POST, updateContactDetailsRoute)
+              .withFormUrlEncodedBody(("fullName", "Testing Example"),
+                ("position", "Job Position"),
+                ("phoneNumber", "080073282942"),
+                ("email", "email@test.com"))
+
+          await(route(application, request).value)
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustBe "ERROR"
+              event.getMessage mustEqual "Failed to set value in session repository while attempting set on updateContactDetails"
+          }.getOrElse(fail("No logging captured"))
+        }
       }
     }
   }

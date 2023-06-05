@@ -19,6 +19,7 @@ package controllers.updateRegisteredDetails
 import controllers.ControllerHelper
 import controllers.actions._
 import forms.updateRegisteredDetails.UpdateContactDetailsFormProvider
+
 import javax.inject.Inject
 import models.Mode
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
@@ -30,6 +31,7 @@ import handlers.ErrorHandler
 
 import scala.concurrent.{ExecutionContext, Future}
 import navigation._
+import utilities.GenericLogger
 
 class UpdateContactDetailsController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -41,6 +43,7 @@ class UpdateContactDetailsController @Inject()(
                                        formProvider: UpdateContactDetailsFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: UpdateContactDetailsView,
+                                       val genericLogger: GenericLogger,
                                        val errorHandler: ErrorHandler
                                      )(implicit ec: ExecutionContext) extends ControllerHelper {
 

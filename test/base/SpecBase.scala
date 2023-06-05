@@ -19,6 +19,7 @@ package base
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.routes
+import helpers.LoggerHelper
 import models.backend.{Site, UkAddress}
 import models.{Contact, LitresInBands, RetrievedActivity, RetrievedSubscription, ReturnCharge, ReturnPeriod, SelectChange, UserAnswers}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -86,7 +87,8 @@ trait SpecBase
     with OptionValues
     with ScalaFutures
     with IntegrationPatience
-    with BeforeAndAfterEach {
+    with BeforeAndAfterEach
+    with LoggerHelper {
 
   val userAnswersId: String = "id"
   val sdilNumber: String = "XKSDIL000000022"
@@ -169,6 +171,6 @@ trait SpecBase
     override def setAndRemoveLitresIfReq(page: Settable[Boolean], litresPage: Settable[LitresInBands], value: Boolean)(implicit writes: Writes[Boolean]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
   }
 
-  val defaultCall: Call = routes.IndexController.onPageLoad
-  val recoveryCall: Call = routes.JourneyRecoveryController.onPageLoad()
+  def defaultCall: Call = routes.IndexController.onPageLoad
+  def recoveryCall: Call = routes.JourneyRecoveryController.onPageLoad()
 }

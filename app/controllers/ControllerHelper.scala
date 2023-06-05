@@ -24,6 +24,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Request, Result}
 import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilities.GenericLogger
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success, Try}
@@ -33,16 +34,20 @@ trait ControllerHelper extends FrontendBaseController with I18nSupport {
   val sessionService: SessionService
   val navigator: Navigator
   val errorHandler: ErrorHandler
+  val genericLogger: GenericLogger
 
+  private val internalServerErrorBaseMessage = "Failed to set value in session repository"
+  private def sessionRepo500ErrorMessage(page: Page): String = s"$internalServerErrorBaseMessage while attempting set on ${page.toString}"
   def updateDatabaseAndRedirect(updatedAnswers: Try[UserAnswers], page: Page, mode: Mode)
                                (implicit ec: ExecutionContext, request: Request[AnyContent]): Future[Result] = {
     updatedAnswers match {
-      case Failure(_) => Future.successful(
-        InternalServerError(errorHandler.internalServerErrorTemplate)
-      )
+      case Failure(_) =>
+        genericLogger.logger.error(s"Failed to resolve user answers while on ${page.toString}")
+        Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
       case Success(answers) => sessionService.set(answers).map {
         case Right(_) => Redirect(navigator.nextPage(page, mode, answers))
-        case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
+        case Left(_) => genericLogger.logger.error(sessionRepo500ErrorMessage(page))
+          InternalServerError(errorHandler.internalServerErrorTemplate)
       }
     }
   }
@@ -51,7 +56,9 @@ trait ControllerHelper extends FrontendBaseController with I18nSupport {
                                (implicit ec: ExecutionContext, request: Request[AnyContent]): Future[Result] = {
     sessionService.set(updatedAnswers).map {
       case Right(_) => Redirect(navigator.nextPage(page, mode, updatedAnswers))
-      case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
+      case Left(_) =>
+        genericLogger.logger.error(sessionRepo500ErrorMessage(page))
+        InternalServerError(errorHandler.internalServerErrorTemplate)
     }
   }
 
