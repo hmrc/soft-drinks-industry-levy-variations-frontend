@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
-package navigation
+package forms.changeActivity
 
-import controllers.changeActivity.routes
-import models.UserAnswers
-import pages.Page
-import pages.changeActivity.AmountProducedPage
-import play.api.mvc.Call
+import javax.inject.Inject
 
-import javax.inject.{Inject, Singleton}
+import forms.mappings.Mappings
+import play.api.data.Form
+import models.changeActivity.AmountProduced
 
-@Singleton
-class NavigatorForChangeActivity @Inject()() extends Navigator {
+class AmountProducedFormProvider @Inject() extends Mappings {
 
-  override val normalRoutes: Page => UserAnswers => Call = {
-    case AmountProducedPage => userAnswers => defaultCall
-    case _ => _ => defaultCall
-  }
-
-  override val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => routes.ChangeActivityCYAController.onPageLoad
-  }
+  def apply(): Form[AmountProduced] =
+    Form(
+      "value" -> enumerable[AmountProduced]("changeActivity.amountProduced.error.required")
+    )
 }

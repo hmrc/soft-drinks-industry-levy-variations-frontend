@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2023 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,27 +12,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package navigation
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
-import controllers.changeActivity.routes
-import models.UserAnswers
-import pages.Page
-import pages.changeActivity.AmountProducedPage
-import play.api.mvc.Call
+@this(govukInput: GovukInput, govukDetails: GovukDetails, govukButton: GovukButton)
 
-import javax.inject.{Inject, Singleton}
+@(form: Form[_])(implicit messages: Messages)
 
-@Singleton
-class NavigatorForChangeActivity @Inject()() extends Navigator {
-
-  override val normalRoutes: Page => UserAnswers => Call = {
-    case AmountProducedPage => userAnswers => defaultCall
-    case _ => _ => defaultCall
-  }
-
-  override val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => routes.ChangeActivityCYAController.onPageLoad
-  }
-}
+@govukDetails(Details(
+ summary = Text(messages("whatDoesPackagedMean.summary")),
+ content = Text(messages("whatDoesPackagedMean.content"))
+))

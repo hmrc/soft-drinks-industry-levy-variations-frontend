@@ -1,50 +1,63 @@
-package controllers.$packageName$
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package controllers.changeActivity
 
 import base.SpecBase
-import forms.$packageName$.$className$FormProvider
+import errors.SessionDatabaseInsertError
+import forms.changeActivity.AmountProducedFormProvider
 import models.NormalMode
-import models.$packageName$.$className$
+import models.changeActivity.AmountProduced
 import navigation._
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.$packageName$.$className$Page
+import pages.changeActivity.AmountProducedPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
-import views.html.$packageName$.$className$View
-import errors.SessionDatabaseInsertError
-import org.jsoup.Jsoup
-import scala.concurrent.Future
 import utilities.GenericLogger
-class $className$ControllerSpec extends SpecBase with MockitoSugar {
+import views.html.changeActivity.AmountProducedView
 
-  def onwardRoute = Call("GET", "/foo")
+import scala.concurrent.Future
 
-  lazy val $className;
-  format = "decap" $Route: String = routes.$className$Controller.onPageLoad(NormalMode).url
+class AmountProducedControllerSpec extends SpecBase with MockitoSugar {
 
-  val formProvider = new $className$FormProvider()
-  val form = formProvider()
+  def onwardRoute: Call = Call("GET", "/foo")
 
-  "$className$ Controller" - {
+  lazy val amountProducedRoute: String = routes.AmountProducedController.onPageLoad(NormalMode).url
+
+  val formProvider = new AmountProducedFormProvider()
+  val form: Form[AmountProduced] = formProvider()
+
+  "AmountProduced Controller" - {
 
     "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersFor$packageName;
-      format = "cap" $
-      ) ).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
 
       running(application) {
-        val request = FakeRequest(GET, $className;
-        format = "decap" $Route
-        )
+        val request = FakeRequest(GET, amountProducedRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[$className$View]
+        val view = application.injector.instanceOf[AmountProducedView]
 
         status(result) mustEqual OK
 
@@ -53,24 +66,20 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
+      val userAnswersWithAmountProduced = emptyUserAnswersForChangeActivity
+      .set(AmountProducedPage, AmountProduced.values.head).success.value
 
-      val userAnswers = emptyUserAnswersFor$packageName;
-      format = "cap" $
-      .set($className$Page, $className$.values.head).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithAmountProduced)).build()
 
       running(application) {
-        val request = FakeRequest(GET, $className;
-        format = "decap" $Route
-        )
-
-        val view = application.injector.instanceOf[$className$View]
+        val request = FakeRequest(GET, amountProducedRoute)
 
         val result = route(application, request).value
 
+        val view = application.injector.instanceOf[AmountProducedView]
+
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill($className$.values.head), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(AmountProduced.values.head), NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -81,25 +90,19 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersFor$packageName;
-      format = "cap" $
-      ) )
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
       .overrides(
-        bind[NavigatorFor$packageName;
-      format = "cap" $
-      ].toInstance(new FakeNavigatorFor$packageName;
-      format = "cap" $ (onwardRoute)
-      ),
+        bind[NavigatorForChangeActivity
+      ].toInstance(new FakeNavigatorForChangeActivity (onwardRoute)),
       bind[SessionService].toInstance(mockSessionService)
       )
       .build()
 
       running(application) {
         val request =
-          FakeRequest(POST, $className;
-        format = "decap" $Route
+          FakeRequest(POST, amountProducedRoute
         )
-        .withFormUrlEncodedBody(("value", $className$.values.head.toString))
+        .withFormUrlEncodedBody(("value", AmountProduced.values.head.toString))
 
         val result = route(application, request).value
 
@@ -110,20 +113,17 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersFor$packageName;
-      format = "cap" $
-      ) ).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
 
       running(application) {
         val request =
-          FakeRequest(POST, $className;
-        format = "decap" $Route
+          FakeRequest(POST, amountProducedRoute
         )
         .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
-        val view = application.injector.instanceOf[$className$View]
+        val view = application.injector.instanceOf[AmountProducedView]
 
         val result = route(application, request).value
 
@@ -137,8 +137,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, $className;
-        format = "decap" $Route
+        val request = FakeRequest(GET, amountProducedRoute
         )
 
         val result = route(application, request).value
@@ -154,10 +153,8 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, $className;
-        format = "decap" $Route
-        )
-        .withFormUrlEncodedBody(("value", $className$.values.head.toString))
+          FakeRequest(POST, amountProducedRoute)
+        .withFormUrlEncodedBody(("value", AmountProduced.values.head.toString))
 
         val result = route(application, request).value
 
@@ -172,10 +169,8 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, $className;
-        format = "decap" $Route
-        )
-        .withFormUrlEncodedBody(("value", $className$.values.head.toString))
+          FakeRequest(POST, amountProducedRoute)
+        .withFormUrlEncodedBody(("value", AmountProduced.values.head.toString))
 
         val result = route(application, request).value
 
@@ -190,9 +185,9 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
       when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersFor$packageName;format="cap"$))
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
           .overrides(
-            bind[NavigatorFor$packageName;format="cap"$].toInstance(new FakeNavigatorFor$packageName;format = "cap" $ (onwardRoute)),
+            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity (onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           )
           .build()
@@ -200,17 +195,15 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           running(application) {
-            val request = FakeRequest(POST, $className;
-            format = "decap" $Route
+            val request = FakeRequest(POST, amountProducedRoute
             )
-            .withFormUrlEncodedBody(("value", $className$.values.head.toString))
+            .withFormUrlEncodedBody(("value", AmountProduced.values.head.toString))
 
             await(route(application, request).value)
             events.collectFirst {
               case event =>
                 event.getLevel.levelStr mustBe "ERROR"
-                event.getMessage mustEqual "Failed to set value in session repository while attempting set on $className;format="
-                decap"$"
+                event.getMessage mustEqual "Failed to set value in session repository while attempting set on amountProduced"
             }.getOrElse(fail("No logging captured"))
           }
         }

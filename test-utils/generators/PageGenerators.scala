@@ -18,9 +18,13 @@ package generators
 
 import org.scalacheck.Arbitrary
 import pages._
+import pages.changeActivity.AmountProducedPage
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 
 trait PageGenerators {
+
+  implicit lazy val arbitraryChangeActivityAmountProducedPage: Arbitrary[AmountProducedPage.type] =
+    Arbitrary(AmountProducedPage)
 
   implicit lazy val arbitraryUpdateRegisteredDetailsUpdateContactDetailsPage: Arbitrary[UpdateContactDetailsPage.type] =
     Arbitrary(UpdateContactDetailsPage)
