@@ -16,8 +16,12 @@
 
 package repositories
 
-import play.api.libs.json.{JsValue, Json, OFormat}
-import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
+import models.ModelEncryption
+import play.api.libs.functional.syntax.toFunctionalBuilderOps
+import play.api.libs.json._
+import services.Encryption
+import uk.gov.hmrc.crypto.EncryptedValue
+import uk.gov.hmrc.crypto.json.CryptoFormats
 
 import java.time.Instant
 
@@ -27,10 +31,34 @@ case class DatedCacheMap(
                           lastUpdated: Instant = Instant.now()
                         )
 
-object DatedCacheMap extends MongoJavatimeFormats {
+object DatedCacheMap {
+  object MongoFormats {
+    implicit val cryptEncryptedValueFormats: Format[EncryptedValue] = CryptoFormats.encryptedValueFormat
+    import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats.Implicits._
+    def reads(implicit encryption: Encryption): Reads[DatedCacheMap] = {
+      (
+        (__ \ "id").read[String] and
+          (__ \ "data").read[Map[String, EncryptedValue]] and
+          (__ \ "lastUpdated").read[Instant]
+        ) (ModelEncryption.decryptDatedCacheMap _)
+    }
 
-  implicit val formats: OFormat[DatedCacheMap]   = Json.format[DatedCacheMap]
+    def writes(implicit encryption: Encryption): OWrites[DatedCacheMap] = new OWrites[DatedCacheMap] {
+      override def writes(datedCacheMap: DatedCacheMap): JsObject = {
+        val encryptedValue: (String, Map[String, EncryptedValue], Instant) = {
+          ModelEncryption.encryptDatedCacheMap(datedCacheMap)
+        }
+        Json.obj(
+          "id" -> encryptedValue._1,
+          "data" -> encryptedValue._2,
+          "lastUpdated" -> encryptedValue._3
+        )
+      }
+    }
 
+    def formats(implicit encryption: Encryption): OFormat[DatedCacheMap] = OFormat(reads, writes)
+
+  }
   def apply(cacheMap: CacheMap): DatedCacheMap = DatedCacheMap(cacheMap.id, cacheMap.data)
 }
 
