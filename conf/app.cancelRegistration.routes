@@ -1,3 +1,8 @@
 # cancel registration specific routes
 
 GET         /check-your-answers                          controllers.cancelRegistration.CancelRegistrationCYAController.onPageLoad
+
+GET        /reason                        controllers.cancelRegistration.ReasonController.onPageLoad(mode: Mode = NormalMode)
+POST       /reason                        controllers.cancelRegistration.ReasonController.onSubmit(mode: Mode = NormalMode)
+GET        /change-reason                  controllers.cancelRegistration.ReasonController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-reason                  controllers.cancelRegistration.ReasonController.onSubmit(mode: Mode = CheckMode)
