@@ -17,14 +17,24 @@
 package generators
 
 import models._
+import models.changeActivity.AmountProduced
 import models.updateRegisteredDetails.UpdateContactDetails
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages._
+import pages.changeActivity.AmountProducedPage
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
+  implicit lazy val arbitraryChangeActivityAmountProducedUserAnswersEntry: Arbitrary[(AmountProducedPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[AmountProducedPage.type]
+        value <- arbitrary[AmountProduced].map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryUpdateRegisteredDetailsUpdateContactDetailsUserAnswersEntry: Arbitrary[(UpdateContactDetailsPage.type, JsValue)] =
     Arbitrary {

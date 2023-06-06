@@ -35,7 +35,7 @@ case class UserAnswers(
                               smallProducerList: List[SmallProducer] = List.empty,
                               packagingSiteList: Map[String, Site] = Map.empty,
                               warehouseList: Map[String, Warehouse] = Map.empty,
-                              submitted: Boolean = true,
+                              submitted:Boolean = false,
                               lastUpdated: Instant = Instant.now
                             ) {
 

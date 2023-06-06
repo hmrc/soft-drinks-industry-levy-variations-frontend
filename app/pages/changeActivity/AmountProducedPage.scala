@@ -14,25 +14,16 @@
  * limitations under the License.
  */
 
-package navigation
+package pages.changeActivity
 
-import controllers.changeActivity.routes
-import models.UserAnswers
-import pages.Page
-import pages.changeActivity.AmountProducedPage
-import play.api.mvc.Call
+import models.changeActivity.AmountProduced
+import play.api.libs.json.JsPath
+import pages.QuestionPage
 
-import javax.inject.{Inject, Singleton}
+case object AmountProducedPage extends QuestionPage[AmountProduced] {
 
-@Singleton
-class NavigatorForChangeActivity @Inject()() extends Navigator {
+  override def path: JsPath = JsPath \ journeyType \ toString
 
-  override val normalRoutes: Page => UserAnswers => Call = {
-    case AmountProducedPage => userAnswers => defaultCall
-    case _ => _ => defaultCall
-  }
-
-  override val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => routes.ChangeActivityCYAController.onPageLoad
-  }
+  def journeyType: String = "changeActivity"
+  override def toString: String = "amountProduced"
 }
