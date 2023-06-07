@@ -77,7 +77,7 @@ echo "Adding to ITCoreTestDataFor$packageName;format="cap"$"
 awk '/trait ITCoreTestDataFor$packageName;format="cap"$/ {\
     print;\
     print "";\
-    print "  val $className;format="decap"$: $className$ = $className$(\"test1\", \"test2\")";\
-    print "  val $className;format="decap"$Diff: $className$ = $className$(\"diff1\", \"diff2\")";\
+    print "  val $packageName$$className$: $className$ = $className$(\"test1\", \"test2\")";\
+    print "  val $packageName$$className$Diff: $className$ = $className$(\"diff1\", \"diff2\")";\
     next }1' ../it/testSupport/ITCoreTestDataFor$packageName;format="cap"$.scala > tmp && mv tmp ../it/testSupport/ITCoreTestDataFor$packageName;format="cap"$.scala
 echo "Migration $className;format="snake"$ completed"
