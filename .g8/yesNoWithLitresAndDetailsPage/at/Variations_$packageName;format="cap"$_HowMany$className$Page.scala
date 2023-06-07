@@ -12,15 +12,6 @@ object Variations_$packageName;format="cap"$_HowMany$className$Page extends Base
 
   override val url: String = TestConfiguration.url("variations-frontend", $packageName$) + "/$litresUrl$"
   override val title = "$litresTitle$"
-
-  override def expectedPageErrorTitle: Option[String] = Some("Error: $litresTitle$ - Soft Drinks Industry Levy - GOV.UK")
-
-  override def expectedPageTitle: Option[String] = Some(
-    "$litresTitle$ - Soft Drinks Industry Levy - GOV.UK"
-  )
-
-  override def expectedPageHeader: Option[String] = Some(
-    "$litresHeading$"
-  )
+  override val header = "$litresHeading$"
 
 }
