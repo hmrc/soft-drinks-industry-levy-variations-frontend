@@ -16,12 +16,12 @@
 
 package generators
 
-import models._
+import models.SelectChange
 import models.changeActivity.AmountProduced
 import models.updateRegisteredDetails.UpdateContactDetails
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
-import pages._
+import pages.SelectChangePage
 import pages.cancelRegistration.ReasonPage
 import pages.changeActivity.AmountProducedPage
 import pages.updateRegisteredDetails.UpdateContactDetailsPage

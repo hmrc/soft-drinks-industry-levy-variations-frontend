@@ -26,11 +26,11 @@ echo "Adding to UserAnswersEntryGenerators"
 awk '/trait UserAnswersEntryGenerators/ {\
     print;\
     print "";\
-    print "  implicit lazy val arbitrary$packageName;format="cap"$$className$UserAnswersEntry: Arbitrary[($className$Page.type, JsValue)] =";\
+    print "  implicit lazy val arbitrary$packageName;format="cap"$$className$UserAnswersEntry: Arbitrary[(pages.$packageName$.$className$Page.type, JsValue)] =";\
     print "    Arbitrary {";\
     print "      for {";\
-    print "        page  <- arbitrary[$className$Page.type]";\
-    print "        value <- arbitrary[$className$].map(Json.toJson(_))";\
+    print "        page  <- arbitrary[pages.$packageName$.$className$Page.type]";\
+    print "        value <- arbitrary[models.$packageName$.$className$].map(Json.toJson(_))";\
     print "      } yield (page, value)";\
     print "    }";\
     next }1' ../test-utils/generators/UserAnswersEntryGenerators.scala > tmp && mv tmp ../test-utils/generators/UserAnswersEntryGenerators.scala
@@ -39,24 +39,24 @@ echo "Adding to PageGenerators"
 awk '/trait PageGenerators/ {\
     print;\
     print "";\
-    print "  implicit lazy val arbitrary$packageName;format="cap"$$className$Page: Arbitrary[$className$Page.type] =";\
-    print "    Arbitrary($className$Page)";\
+    print "  implicit lazy val arbitrary$packageName;format="cap"$$className$Page: Arbitrary[$packageName$.$className$Page.type] =";\
+    print "    Arbitrary($packageName$.$className$Page)";\
     next }1' ../test-utils/generators/PageGenerators.scala > tmp && mv tmp ../test-utils/generators/PageGenerators.scala
 
 echo "Adding to ModelGenerators"
 awk '/trait ModelGenerators/ {\
     print;\
     print "";\
-    print "  implicit lazy val arbitrary$packageName;format="cap"$$className$: Arbitrary[$className$] =";\
+    print "  implicit lazy val arbitrary$packageName;format="cap"$$className$: Arbitrary[$packageName$.$className$] =";\
     print "    Arbitrary {";\
-    print "      Gen.oneOf($className$.values)";\
+    print "      Gen.oneOf($packageName$.$className$.values)";\
     print "    }";\
     next }1' ../test-utils/generators/ModelGenerators.scala > tmp && mv tmp ../test-utils/generators/ModelGenerators.scala
 
 echo "Adding to UserAnswersGenerator"
 awk '/val generators/ {\
     print;\
-    print "    arbitrary[($className$Page.type, JsValue)] ::";\
+    print "    arbitrary[($packageName$.$className$Page.type, JsValue)] ::";\
     next }1' ../test-utils/generators/UserAnswersGenerator.scala > tmp && mv tmp ../test-utils/generators/UserAnswersGenerator.scala
 
 echo "Adding to Navigator$packageName;format="cap"$"
