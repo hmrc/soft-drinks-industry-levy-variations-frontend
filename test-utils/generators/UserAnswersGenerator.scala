@@ -21,6 +21,7 @@ import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.TryValues
 import pages._
+import pages.cancelRegistration.ReasonPage
 import pages.changeActivity.AmountProducedPage
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.libs.json.{JsValue, Json}
@@ -29,6 +30,7 @@ trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
+    arbitrary[(ReasonPage.type, JsValue)] ::
     arbitrary[(AmountProducedPage.type, JsValue)] ::
     arbitrary[(UpdateContactDetailsPage.type, JsValue)] ::
     arbitrary[(SelectChangePage.type, JsValue)] ::

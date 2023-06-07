@@ -14,25 +14,15 @@
  * limitations under the License.
  */
 
-package navigation
+package pages.cancelRegistration
 
-import controllers.cancelRegistration.routes
-import models.UserAnswers
-import pages.Page
-import pages.cancelRegistration.ReasonPage
-import play.api.mvc.Call
+import play.api.libs.json.JsPath
+import pages.QuestionPage
 
-import javax.inject.{Inject, Singleton}
+case object ReasonPage extends QuestionPage[String] {
 
-@Singleton
-class NavigatorForCancelRegistration @Inject()() extends Navigator {
+  override def path: JsPath = JsPath \ journeyType \ toString
 
-  override val normalRoutes: Page => UserAnswers => Call = {
-    case ReasonPage => userAnswers => defaultCall
-    case _ => _ => defaultCall
-  }
-
-  override val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => routes.CancelRegistrationCYAController.onPageLoad
-  }
+  def journeyType: String = "cancelRegistration"
+  override def toString: String = "reason"
 }

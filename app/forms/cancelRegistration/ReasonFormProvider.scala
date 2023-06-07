@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
-package navigation
+package forms.cancelRegistration
 
-import controllers.cancelRegistration.routes
-import models.UserAnswers
-import pages.Page
-import pages.cancelRegistration.ReasonPage
-import play.api.mvc.Call
+import javax.inject.Inject
 
-import javax.inject.{Inject, Singleton}
+import forms.mappings.Mappings
+import play.api.data.Form
 
-@Singleton
-class NavigatorForCancelRegistration @Inject()() extends Navigator {
+class ReasonFormProvider @Inject() extends Mappings {
 
-  override val normalRoutes: Page => UserAnswers => Call = {
-    case ReasonPage => userAnswers => defaultCall
-    case _ => _ => defaultCall
-  }
-
-  override val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => routes.CancelRegistrationCYAController.onPageLoad
-  }
+  def apply(): Form[String] =
+    Form(
+      "value" -> text("cancelRegistration.reason.error.required")
+        .verifying(maxLength(255, "cancelRegistration.reason.error.length"))
+    )
 }
