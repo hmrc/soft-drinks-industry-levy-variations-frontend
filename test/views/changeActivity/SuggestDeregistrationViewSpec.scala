@@ -16,6 +16,8 @@
 
 package views.changeActivity
 
+import controllers.changeActivity.routes
+import models.NormalMode
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import views.ViewSpecHelper
@@ -28,6 +30,8 @@ class SuggestDeregistrationViewSpec extends ViewSpecHelper {
 
   object Selectors {
     val heading = "govuk-heading-m"
+    val body = "govuk-body"
+    val button = "govuk-button"
   }
 
   "View" - {
@@ -39,6 +43,20 @@ class SuggestDeregistrationViewSpec extends ViewSpecHelper {
 
     "should have the expected heading" in {
       document.getElementsByClass(Selectors.heading).text() mustBe "You need to cancel your Soft Drinks Industry Levy registration"
+    }
+
+    "should have the expected cancel registration button" in {
+      document.getElementsByClass(Selectors.button).text() mustBe "Cancel your registration"
+    }
+
+    "should include the deregistration information content" in {
+      document.getElementsByClass(Selectors.body).text() mustBe
+        "Based on your answers, you are a small producer who does not use a third party to package liable drinks. If you do not think this is right you need to go back and change your answers."
+    }
+
+    "should include a link to the Amount Produced page" in {
+      val route: String = routes.AmountProducedController.onSubmit(NormalMode).url
+      document.getElementsByClass(Selectors.body).select("a").attr("href") mustBe route
     }
 
     testBackLink(document)

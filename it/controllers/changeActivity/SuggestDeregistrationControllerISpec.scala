@@ -2,8 +2,7 @@ package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import play.api.i18n.Messages
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.WsTestClient
 
 class SuggestDeregistrationControllerISpec extends ControllerITTestHelper {
@@ -23,11 +22,12 @@ class SuggestDeregistrationControllerISpec extends ControllerITTestHelper {
         whenReady(result1) { res =>
           res.status mustBe 200
           val page = Jsoup.parse(res.body)
-          page.title must include(Messages("changeActivity.suggestDeregistration" + ".title"))
+          page.title mustBe "You need to cancel your Soft Drinks Industry Levy registration - Soft Drinks Industry Levy - GOV.UK"
         }
       }
     }
     testUnauthorisedUser(changeActivityBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + normalRoutePath)
   }
+
 }

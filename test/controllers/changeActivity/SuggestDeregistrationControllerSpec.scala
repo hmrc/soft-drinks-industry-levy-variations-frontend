@@ -17,11 +17,18 @@
 package controllers.changeActivity
 
 import base.SpecBase
+import controllers.changeActivity.routes._
+import navigation._
+import play.api.inject
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.changeActivity.SuggestDeregistrationView
 
 class SuggestDeregistrationControllerSpec extends SpecBase {
+
+  def onwardRoute: Call = Call("GET", "/foo")
+  lazy val suggestDeregistrationRoute: String = SuggestDeregistrationController.onPageLoad().url
 
   "SuggestDeregistration Controller" - {
 
@@ -30,7 +37,7 @@ class SuggestDeregistrationControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.SuggestDeregistrationController.onPageLoad().url)
+        val request = FakeRequest(GET, suggestDeregistrationRoute)
 
         val result = route(application, request).value
 
@@ -38,6 +45,53 @@ class SuggestDeregistrationControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(request, messages(application)).toString
+      }
+    }
+
+
+    "must redirect to the next page when the Cancel your registration button is clicked" in {
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
+          .overrides(
+            inject.bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute))
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, suggestDeregistrationRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+      }
+    }
+
+    "must redirect to Journey Recovery for a GET if no existing data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request = FakeRequest(GET, suggestDeregistrationRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual recoveryCall.url
+      }
+    }
+
+    "must redirect to Journey Recovery for a POST if no existing data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, suggestDeregistrationRoute)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual recoveryCall.url
       }
     }
   }

@@ -27,6 +27,15 @@ trait ControllerITTestHelper extends Specifications with TestConfiguration with 
       .post(json)
   }
 
+  def createClientRequestPOSTNoData(client: WSClient, url: String, body: String): Future[WSResponse] = {
+    client.url(url)
+      .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+      .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
+        "Csrf-Token" -> "nocheck")
+      .withFollowRedirects(false)
+      .post(body)
+  }
+
   def testUnauthorisedUser(url: String, optJson: Option[JsValue] = None): Unit = {
     "the user is unauthenticated" - {
       "redirect to gg-signin" in {

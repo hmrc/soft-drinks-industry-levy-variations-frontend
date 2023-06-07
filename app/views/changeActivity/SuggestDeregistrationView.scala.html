@@ -24,12 +24,17 @@
 
 @()(implicit request: Request[_], messages: Messages)
 
+@deregInfo = {
+ <p class="govuk-body">@messages("changeActivity.suggestDeregistration.para1")<br>@messages("changeActivity.suggestDeregistration.para2")
+  <a href=@{routes.AmountProducedController.onPageLoad(NormalMode)}>@messages("changeActivity.suggestDeregistration.link")</a></p>
+}
+
+
  @layout(pageTitle = titleNoForm(messages("changeActivity.suggestDeregistration.title"))) {
   @formHelper(action = routes.SuggestDeregistrationController.onSubmit(), Symbol("autoComplete") -> "off") {
 
    <h1 class="govuk-heading-m">@messages("changeActivity.suggestDeregistration.title")</h1>
-   <p class="govuk-body">@messages("changeActivity.suggestDeregistration.para1")</p>
-   <p class="govuk-body">@Html(messages("changeActivity.suggestDeregistration.para2", routes.AmountProducedController.onPageLoad(NormalMode)))</p>
+   @deregInfo
 
    @govukButton(
     ButtonViewModel(messages("site.cancelReg"))

@@ -8,6 +8,7 @@ site.yes = Yes
 site.continue = Continue
 site.start = Start now
 site.startAgain = Start again
+site.cancelReg = Cancel your registration
 site.signIn = Sign in
 site.govuk = GOV.UK
 site.saveContinue = Save and continue
@@ -151,4 +152,5 @@ whatDrinksAreExempt.bullet4 = it is infant formula, follow-on formula, baby food
 
 changeActivity.suggestDeregistration.title = You need to cancel your Soft Drinks Industry Levy registration
 changeActivity.suggestDeregistration.para1 = Based on your answers, you are a small producer who does not use a third party to package liable drinks.
-changeActivity.suggestDeregistration.para2 = If you do not think this is right you need to <a href={0}>go back and change your answers</a>
+changeActivity.suggestDeregistration.para2 = If you do not think this is right you need to
+changeActivity.suggestDeregistration.link =  go back and change your answers.
