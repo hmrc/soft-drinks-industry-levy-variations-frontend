@@ -23,7 +23,6 @@ import queries.{Gettable, Settable}
 import services.Encryption
 import uk.gov.hmrc.crypto.EncryptedValue
 import uk.gov.hmrc.crypto.json.CryptoFormats
-import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.Instant
 import scala.util.{Failure, Success, Try}

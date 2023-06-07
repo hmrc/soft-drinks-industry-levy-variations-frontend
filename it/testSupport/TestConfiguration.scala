@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.{configureFor, reset, resetAllScenarios}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import controllers.actions._
+import org.mongodb.scala.bson.BsonDocument
 import org.scalatest.concurrent.{IntegrationPatience, PatienceConfiguration}
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite, TestSuite}
@@ -13,14 +14,16 @@ import play.api.inject._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{CookieHeaderEncoding, MessagesControllerComponents, Session, SessionCookieBaker}
 import play.api.{Application, Environment, Mode}
-import repositories.SessionRepository
+import repositories.{SDILSessionCacheRepository, SessionRepository}
 import testSupport.databases.SessionDatabaseOperations
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
 import uk.gov.hmrc.play.health.HealthController
 
 import java.time.{Clock, ZoneOffset}
-import scala.concurrent.ExecutionContext
+import java.util.concurrent.TimeUnit
+import scala.concurrent.{Await, ExecutionContext}
+import scala.concurrent.duration.Duration
 import scala.jdk.CollectionConverters._
 
 trait TestConfiguration
@@ -64,6 +67,7 @@ trait TestConfiguration
   val sessionAndAuth  = Map("authToken" -> AUTHORIZE_HEADER_VALUE, "sessionId" -> sessionId)
 
   lazy val sessionRespository: SessionRepository = app.injector.instanceOf[SessionRepository]
+  lazy val sdilSessionCacheRepo: SDILSessionCacheRepository = app.injector.instanceOf[SDILSessionCacheRepository]
 
   val authCookie: String = createSessionCookieAsString(authData).substring(5)
   val authAndSessionCookie: String = createSessionCookieAsString(sessionAndAuth).substring(5)
@@ -116,6 +120,8 @@ trait TestConfiguration
   }
 
   override def beforeEach() = {
+    Await.result(sessionRespository.collection.deleteMany(BsonDocument()).toFuture(),Duration(5,TimeUnit.SECONDS))
+    Await.result(sdilSessionCacheRepo.collection.deleteMany(BsonDocument()).toFuture(),Duration(5,TimeUnit.SECONDS))
     resetAllScenarios()
     reset()
   }

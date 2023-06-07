@@ -17,10 +17,11 @@
 package controllers.correctReturn
 
 import base.SpecBase
-import controllers.routes._
 import controllers.correctReturn.routes._
+import controllers.routes._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.SummaryListFluency
 import views.html.correctReturn.CorrectReturnCYAView
 
@@ -38,7 +39,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[CorrectReturnCYAView]
-        val list = SummaryListViewModel(Seq.empty)
+        val list: Seq[(String, SummaryList)] = Seq.empty
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(list)(request, messages(application)).toString

@@ -19,18 +19,23 @@ package controllers.updateRegisteredDetails
 import base.SpecBase
 import controllers.updateRegisteredDetails.routes._
 import controllers.routes._
+import models.updateRegisteredDetails.UpdateContactDetails
+import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.SummaryListFluency
 import views.html.updateRegisteredDetails.UpdateRegisteredDetailsCYAView
+import views.summary.updateRegisteredDetails.UpdateContactDetailsSummary
 
 class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryListFluency {
 
   "Check Your Answers Controller" - {
 
     "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)).build()
+      val contactDetails = UpdateContactDetails("foo", "bar", "wizz", "bang")
+      val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(UpdateContactDetailsPage,contactDetails).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, UpdateRegisteredDetailsCYAController.onPageLoad.url)
@@ -38,19 +43,44 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[UpdateRegisteredDetailsCYAView]
-        val list = SummaryListViewModel(Seq.empty)
+        val list: Seq[(String, SummaryList)] = Seq(UpdateContactDetailsSummary.rows(userAnswers).get)
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(list)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(list, routes.UpdateRegisteredDetailsCYAController.onSubmit)(request, messages(application)).toString
       }
     }
 
     "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
         val request = FakeRequest(GET, UpdateRegisteredDetailsCYAController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must Redirect to next page when data is correct for POST" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)).build()
+
+      running(application) {
+        val request = FakeRequest(POST, UpdateRegisteredDetailsCYAController.onPageLoad.url).withFormUrlEncodedBody()
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual IndexController.onPageLoad.url
+      }
+    }
+    "must redirect to Journey Recovery for a POST if no existing data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request = FakeRequest(POST, UpdateRegisteredDetailsCYAController.onPageLoad.url).withFormUrlEncodedBody()
 
         val result = route(application, request).value
 

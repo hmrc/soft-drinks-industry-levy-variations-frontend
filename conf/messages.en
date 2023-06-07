@@ -85,6 +85,14 @@ selectChange.checkYourAnswersLabel = What do you need to do
 selectChange.error.required = Select what you need to do
 selectChange.change.hidden = SelectChange
 
+updateRegisteredDetails.checkYourAnswers.title = Check your answers before sending your update
+updateRegisteredDetails.checkYourAnswers.heading = Check your answers before sending your update
+updateRegisteredDetails.checkYourAnswers.updateContactDetails.title = Soft Drinks Industry Levy contact
+updateRegisteredDetails.updateContactDetails.change.hidden = Contact Details
+updateRegisteredDetails.checkYourAnswers.submit = Confirm updates and send
+
+
+
 updateRegisteredDetails.updateContactDetails.title = Edit your contact person details
 updateRegisteredDetails.updateContactDetails.heading = Edit your contact person details
 updateRegisteredDetails.updateContactDetails.fullName = Full name

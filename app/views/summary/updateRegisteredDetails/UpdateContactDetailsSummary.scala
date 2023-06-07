@@ -14,38 +14,47 @@
  * limitations under the License.
  */
 
-package viewmodels.summary.updateRegisteredDetails
+package views.summary.updateRegisteredDetails
 
 import controllers.updateRegisteredDetails.routes
 import models.{CheckMode, UserAnswers}
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, Actions, SummaryList, SummaryListRow, Value}
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object UpdateContactDetailsSummary {
 
-  def rows(answers: UserAnswers)(implicit messages: Messages): Seq[SummaryListRow] =
-    answers.get(UpdateContactDetailsPage).fold(Seq.empty[SummaryListRow]) {
-      answer =>
-        Seq(
-          createSummaryListItem("fullName", answer.fullName),
-          createSummaryListItem("position", answer.position),
-          createSummaryListItem("phoneNumber", answer.phoneNumber),
-          createSummaryListItem("email", answer.email)
-        )
-    }
+  def rows(answers: UserAnswers)(implicit messages: Messages): Option[(String, SummaryList)] = {
+
+      answers.get(UpdateContactDetailsPage).fold(Option.empty[(String, SummaryList)]) {
+        answer =>
+          Some(
+            messages("updateRegisteredDetails.checkYourAnswers.updateContactDetails.title") ->
+              SummaryList(
+              rows = Seq(
+            createSummaryListItem("fullName", answer.fullName),
+            createSummaryListItem("position", answer.position),
+            createSummaryListItem("phoneNumber", answer.phoneNumber),
+            createSummaryListItem("email", answer.email)
+          )
+            )
+          )
+      }
+  }
 
   private def createSummaryListItem(fieldName: String, fieldValue: String)
                                    (implicit messages: Messages): SummaryListRow = {
-    SummaryListRowViewModel(
+    SummaryListRow(
       key = s"updateRegisteredDetails.updateContactDetails.$fieldName",
-      value = ValueViewModel(Text(fieldValue)),
-      actions = Seq(
-        ActionItemViewModel("site.change", routes.UpdateContactDetailsController.onPageLoad(CheckMode).url)
-          .withVisuallyHiddenText(messages("updateRegisteredDetails.updateContactDetails.change.hidden"))
+      value = Value(Text(fieldValue)),
+      actions = Some(
+        Actions(
+        items = Seq(ActionItem(routes.UpdateContactDetailsController.onPageLoad(CheckMode).url, "site.change")
+          .withVisuallyHiddenText(messages("updateRegisteredDetails.updateContactDetails.change.hidden")))
+      )
       )
     )
   }
