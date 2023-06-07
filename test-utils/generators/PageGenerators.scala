@@ -26,7 +26,7 @@ trait PageGenerators {
 
 
   implicit lazy val arbitraryCancelRegistrationReasonPage: Arbitrary[ReasonPage.type] =
-
+    Arbitrary(ReasonPage)
   implicit lazy val arbitraryChangeActivityAmountProducedPage: Arbitrary[AmountProducedPage.type] =
     Arbitrary(AmountProducedPage)
 
