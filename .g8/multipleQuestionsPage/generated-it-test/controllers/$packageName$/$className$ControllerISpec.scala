@@ -143,7 +143,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, $packageName$BaseUrl + normalRoutePath, Json.toJson($packageName$$className;format="decap"$Diff)
+              client, $packageName$BaseUrl + normalRoutePath, Json.toJson($packageName$$className$Diff)
             )
 
             whenReady(result) { res =>
