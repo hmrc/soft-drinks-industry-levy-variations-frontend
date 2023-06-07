@@ -39,7 +39,7 @@ class AmountProducedViewSpec extends ViewSpecHelper {
     val radios = "govuk-radios"
     val radiosInput = "govuk-radios__input"
     val radiosItems = "govuk-radios__item"
-    val radiosLables = "govuk-label govuk-radios__label"
+    val radiosLabels = "govuk-label govuk-radios__label"
     val body = "govuk-body"
     val errorSummaryTitle = "govuk-error-summary__title"
     val errorSummaryList = "govuk-list govuk-error-summary__list"
@@ -74,7 +74,7 @@ class AmountProducedViewSpec extends ViewSpecHelper {
             val radio1 = radiobuttons
               .get(index)
             radio1
-              .getElementsByClass(Selectors.radiosLables)
+              .getElementsByClass(Selectors.radiosLabels)
               .text() mustBe Messages("changeActivity.amountProduced." + radio.toString)
             val input = radio1
               .getElementsByClass(Selectors.radiosInput)
@@ -98,7 +98,7 @@ class AmountProducedViewSpec extends ViewSpecHelper {
                 val radiobuttons1 = radiobuttons
                   .get(index)
                 radiobuttons1
-                  .getElementsByClass(Selectors.radiosLables)
+                  .getElementsByClass(Selectors.radiosLabels)
                   .text() mustBe Messages("changeActivity.amountProduced." + radio1.toString)
                 val input = radiobuttons1
                   .getElementsByClass(Selectors.radiosInput)
@@ -110,7 +110,7 @@ class AmountProducedViewSpec extends ViewSpecHelper {
                 val radiobuttons1 = radiobuttons
                   .get(index)
                 radiobuttons1
-                  .getElementsByClass(Selectors.radiosLables)
+                  .getElementsByClass(Selectors.radiosLabels)
                   .text() mustBe Messages("changeActivity.amountProduced." + radio1.toString)
                 val input = radiobuttons1
                   .getElementsByClass(Selectors.radiosInput)
