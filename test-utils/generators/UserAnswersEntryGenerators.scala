@@ -32,9 +32,9 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
   implicit lazy val arbitraryCancelRegistrationReasonUserAnswersEntry: Arbitrary[(ReasonPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[ReasonPage.type]
+        page <- arbitrary[ReasonPage.type]
         value <- arbitrary[String].map(Json.toJson(_))
-
+      }
   implicit lazy val arbitraryChangeActivityAmountProducedUserAnswersEntry: Arbitrary[(AmountProducedPage.type, JsValue)] =
     Arbitrary {
       for {
