@@ -1,8 +1,11 @@
 # change the activity specific routes
 
-GET        /check-your-answers                         controllers.changeActivity.ChangeActivityCYAController.onPageLoad
+GET        /check-your-answers                          controllers.changeActivity.ChangeActivityCYAController.onPageLoad
 
 GET        /amount-produced                             controllers.changeActivity.AmountProducedController.onPageLoad(mode: Mode = NormalMode)
 POST       /amount-produced                             controllers.changeActivity.AmountProducedController.onSubmit(mode: Mode = NormalMode)
 GET        /change-amount-produced                      controllers.changeActivity.AmountProducedController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-amount-produced                      controllers.changeActivity.AmountProducedController.onSubmit(mode: Mode = CheckMode)
+
+GET        /suggest-deregistration                      controllers.changeActivity.SuggestDeregistrationController.onPageLoad()
+POST       /suggest-deregistration                      controllers.changeActivity.SuggestDeregistrationController.onSubmit()

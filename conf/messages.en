@@ -149,3 +149,6 @@ whatDrinksAreExempt.bullet2 = it is a milk-substitute which contains at least 12
 whatDrinksAreExempt.bullet3 = it is an alcohol replacement drink, for example de-alcoholised beer or wine
 whatDrinksAreExempt.bullet4 = it is infant formula, follow-on formula, baby foods, formulated food intended as a total diet replacement or dietary food used for special medical purposes
 
+changeActivity.suggestDeregistration.title = You need to cancel your Soft Drinks Industry Levy registration
+changeActivity.suggestDeregistration.para1 = Based on your answers, you are a small producer who does not use a third party to package liable drinks.
+changeActivity.suggestDeregistration.para2 = If you do not think this is right you need to <a href={0}>go back and change your answers</a>
