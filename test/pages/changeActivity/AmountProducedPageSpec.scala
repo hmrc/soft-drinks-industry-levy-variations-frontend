@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 
-package navigation
+package pages.changeActivity
 
-import controllers.changeActivity.routes
-import models.UserAnswers
-import pages.Page
-import pages.changeActivity.AmountProducedPage
-import play.api.mvc.Call
+import models.changeActivity.AmountProduced
+import pages.behaviours.PageBehaviours
 
-import javax.inject.{Inject, Singleton}
+class AmountProducedSpec extends PageBehaviours {
 
-@Singleton
-class NavigatorForChangeActivity @Inject()() extends Navigator {
+  "AmountProducedPage" - {
 
-  override val normalRoutes: Page => UserAnswers => Call = {
-    case AmountProducedPage => userAnswers => defaultCall
-    case _ => _ => defaultCall
-  }
+    beRetrievable[AmountProduced](AmountProducedPage)
 
-  override val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => routes.ChangeActivityCYAController.onPageLoad
+    beSettable[AmountProduced](AmountProducedPage)
+
+    beRemovable[AmountProduced](AmountProducedPage)
   }
 }
