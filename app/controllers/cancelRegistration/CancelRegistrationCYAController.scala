@@ -20,8 +20,8 @@ import com.google.inject.Inject
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.govuk.summarylist._
 import views.html.cancelRegistration.CancelRegistrationCYAView
 
 class CancelRegistrationCYAController @Inject()(
@@ -36,9 +36,7 @@ class CancelRegistrationCYAController @Inject()(
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val list = SummaryListViewModel(
-        rows = Seq.empty
-      )
+      val list: Seq[(String, SummaryList)] = Seq.empty
 
       Ok(view(list))
   }

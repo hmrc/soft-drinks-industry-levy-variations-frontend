@@ -21,8 +21,8 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.govuk.summarylist._
 import views.html.updateRegisteredDetails.UpdateRegisteredDetailsCYAView
+import views.summary.updateRegisteredDetails.UpdateContactDetailsSummary
 
 class UpdateRegisteredDetailsCYAController @Inject()(
                                             override val messagesApi: MessagesApi,
@@ -33,13 +33,14 @@ class UpdateRegisteredDetailsCYAController @Inject()(
                                             view: UpdateRegisteredDetailsCYAView
                                           ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val list = SummaryListViewModel(
-        rows = Seq.empty
-      )
+      val summaryList = Seq(UpdateContactDetailsSummary.rows(request.userAnswers)).flatten
 
-      Ok(view(list))
+      Ok(view(summaryList, routes.UpdateRegisteredDetailsCYAController.onSubmit))
+  }
+  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData) {
+      Redirect(controllers.routes.IndexController.onPageLoad.url)
   }
 }

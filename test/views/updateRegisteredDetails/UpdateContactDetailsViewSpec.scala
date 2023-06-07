@@ -18,14 +18,14 @@ package views.updateRegisteredDetails
 
 import controllers.updateRegisteredDetails.routes
 import forms.updateRegisteredDetails.UpdateContactDetailsFormProvider
-import models.{CheckMode, NormalMode}
 import models.updateRegisteredDetails.UpdateContactDetails
+import models.{CheckMode, NormalMode}
 import play.api.i18n.Messages
+import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import views.html.updateRegisteredDetails.UpdateContactDetailsView
-import play.api.libs.json.{JsObject, Json}
 import views.ViewSpecHelper
+import views.html.updateRegisteredDetails.UpdateContactDetailsView
 
 
 

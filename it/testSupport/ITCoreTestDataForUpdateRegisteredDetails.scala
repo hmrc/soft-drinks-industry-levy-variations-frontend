@@ -13,5 +13,4 @@ trait ITCoreTestDataForUpdateRegisteredDetails {
 
   def emptyUserAnswersForUpdateRegisteredDetails = UserAnswers(sdilNumber, SelectChange.UpdateRegisteredAccount, Json.obj())
 
-
 }

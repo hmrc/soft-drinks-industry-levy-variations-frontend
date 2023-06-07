@@ -1,6 +1,7 @@
 # update registered account details specific routes
 
 GET         /check-your-answers                          controllers.updateRegisteredDetails.UpdateRegisteredDetailsCYAController.onPageLoad
+POST        /check-your-answers                          controllers.updateRegisteredDetails.UpdateRegisteredDetailsCYAController.onSubmit
 
 GET        /contact-details-add                        controllers.updateRegisteredDetails.UpdateContactDetailsController.onPageLoad(mode: Mode = NormalMode)
 POST       /contact-details-add                        controllers.updateRegisteredDetails.UpdateContactDetailsController.onSubmit(mode: Mode = NormalMode)
