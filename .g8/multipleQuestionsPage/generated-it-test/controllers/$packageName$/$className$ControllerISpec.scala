@@ -16,12 +16,12 @@ class $className$ControllerISpec extends ControllerITTestHelper {
   val normalRoutePath = "/$url$"
   val checkRoutePath = "/change-$url$"
 
-  val $className;format="decap"$JsObject = Json.toJson($className;format="decap"$).as[JsObject].value
+  val $className;format="decap"$JsObject = Json.toJson($packageName$$className$).as[JsObject].value
   val $className;format="decap"$Map: collection.Map[String, String] = {
     $className;format="decap"$JsObject.map { case (fName, fValue) => fName -> fValue.as[String] }
   }
 
-  val userAnswers = emptyUserAnswersFor$packageName;format="cap"$.set($className$Page, $className;format="decap"$).success.value
+  val userAnswers = emptyUserAnswersFor$packageName;format="cap"$.set($className$Page, $packageName$$className$).success.value
 
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
@@ -143,7 +143,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, $packageName$BaseUrl + normalRoutePath, Json.toJson($className;format="decap"$Diff)
+              client, $packageName$BaseUrl + normalRoutePath, Json.toJson($packageName$$className$Diff)
             )
 
             whenReady(result) { res =>
@@ -151,7 +151,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
               res.header(HeaderNames.LOCATION) mustBe Some($nextPage$.url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[$className$]](None)(_.get($className$Page))
               dataStoredForPage.nonEmpty mustBe true
-              dataStoredForPage.get mustBe $className;format="decap"$Diff
+              dataStoredForPage.get mustBe $packageName$$className$Diff
             }
           }
         }
@@ -163,7 +163,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           setAnswers(userAnswers)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, $packageName$BaseUrl + normalRoutePath, Json.toJson($className;format="decap"$Diff)
+              client, $packageName$BaseUrl + normalRoutePath, Json.toJson($packageName$$className$Diff)
             )
 
             whenReady(result) { res =>
@@ -171,7 +171,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
               res.header(HeaderNames.LOCATION) mustBe Some($nextPage$.url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[$className$]](None)(_.get($className$Page))
               dataStoredForPage.nonEmpty mustBe true
-              dataStoredForPage.get mustBe $className;format="decap"$Diff
+              dataStoredForPage.get mustBe $packageName$$className$Diff
             }
           }
         }
@@ -255,7 +255,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, $packageName$BaseUrl + checkRoutePath, Json.toJson($className;format="decap"$Diff)
+              client, $packageName$BaseUrl + checkRoutePath, Json.toJson($packageName$$className$Diff)
             )
 
             whenReady(result) { res =>
@@ -263,7 +263,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
               res.header(HeaderNames.LOCATION) mustBe Some(routes.$packageName;format="cap"$CYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[$className$]](None)(_.get($className$Page))
               dataStoredForPage.nonEmpty mustBe true
-              dataStoredForPage.get mustBe $className;format="decap"$Diff
+              dataStoredForPage.get mustBe $packageName$$className$Diff
             }
           }
         }
@@ -275,7 +275,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
           setAnswers(userAnswers)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, $packageName$BaseUrl + checkRoutePath, Json.toJson($className;format="decap"$Diff)
+              client, $packageName$BaseUrl + checkRoutePath, Json.toJson($packageName$$className$Diff)
             )
 
             whenReady(result) { res =>
@@ -283,7 +283,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
               res.header(HeaderNames.LOCATION) mustBe Some(routes.$packageName;format="cap"$CYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[$className$]](None)(_.get($className$Page))
               dataStoredForPage.nonEmpty mustBe true
-              dataStoredForPage.get mustBe $className;format="decap"$Diff
+              dataStoredForPage.get mustBe $packageName$$className$Diff
             }
           }
         }
