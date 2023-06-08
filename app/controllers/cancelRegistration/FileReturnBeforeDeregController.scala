@@ -20,17 +20,13 @@ import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import controllers.routes
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Results.Redirect
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.ReturnService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.cancelRegistration.FileReturnBeforeDeregView
 import views.summary.cancelRegistration.FileReturnBeforeDeregSummary
 
 import javax.inject.Inject
-import scala.concurrent.{Await, Future}
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration.DurationInt
+import scala.concurrent.ExecutionContext
 import scala.language.postfixOps
 
 class FileReturnBeforeDeregController @Inject()(
@@ -38,11 +34,10 @@ class FileReturnBeforeDeregController @Inject()(
                                                  identify: IdentifierAction,
                                                  getData: DataRetrievalAction,
                                                  requireData: DataRequiredAction,
-                                                 service: ReturnService,
                                                  connector: SoftDrinksIndustryLevyConnector,
                                                  val controllerComponents: MessagesControllerComponents,
                                                  view: FileReturnBeforeDeregView
-                                               ) extends FrontendBaseController with I18nSupport {
+                                               )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
 
 
