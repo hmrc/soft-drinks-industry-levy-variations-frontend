@@ -23,11 +23,19 @@ import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages.SelectChangePage
 import pages.cancelRegistration.ReasonPage
-import pages.changeActivity.AmountProducedPage
+import pages.changeActivity.{AmountProducedPage, OperatePackagingSiteOwnBrandsPage}
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
+  implicit lazy val arbitraryChangeActivityOperatePackagingSiteOwnBrandsUserAnswersEntry: Arbitrary[(OperatePackagingSiteOwnBrandsPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[OperatePackagingSiteOwnBrandsPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryCancelRegistrationReasonUserAnswersEntry: Arbitrary[(ReasonPage.type, JsValue)] =
     Arbitrary {

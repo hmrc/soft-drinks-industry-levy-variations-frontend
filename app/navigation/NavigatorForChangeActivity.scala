@@ -17,9 +17,9 @@
 package navigation
 
 import controllers.changeActivity.routes
-import models.UserAnswers
+import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages.Page
-import pages.changeActivity.AmountProducedPage
+import pages.changeActivity.{AmountProducedPage, HowManyOperatePackagingSiteOwnBrandsPage, OperatePackagingSiteOwnBrandsPage}
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -27,12 +27,25 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class NavigatorForChangeActivity @Inject()() extends Navigator {
 
+  private def navigationForOperatePackagingSiteOwnBrands(userAnswers: UserAnswers, mode: Mode): Call = {
+    if (userAnswers.get(page = OperatePackagingSiteOwnBrandsPage).contains(true)) {
+      routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(mode)
+    } else if(mode == CheckMode){
+        routes.ChangeActivityCYAController.onPageLoad
+    } else {
+        defaultCall
+    }
+  }
+
   override val normalRoutes: Page => UserAnswers => Call = {
+    case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
+    case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => defaultCall
     case AmountProducedPage => userAnswers => defaultCall
     case _ => _ => defaultCall
   }
 
   override val checkRouteMap: Page => UserAnswers => Call = {
+    case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
     case _ => _ => routes.ChangeActivityCYAController.onPageLoad
   }
 }
