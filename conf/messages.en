@@ -154,3 +154,14 @@ changeActivity.suggestDeregistration.title = You need to cancel your Soft Drinks
 changeActivity.suggestDeregistration.para1 = Based on your answers, you are a small producer who does not use a third party to package liable drinks.
 changeActivity.suggestDeregistration.para2 = If you do not think this is right you need to
 changeActivity.suggestDeregistration.link =  go back and change your answers.
+
+changeActivity.operatePackagingSiteOwnBrands.title = Do you operate any packaging sites in the UK to package liable drinks for brands you own?
+changeActivity.operatePackagingSiteOwnBrands.heading = Do you operate any packaging sites in the UK to package liable drinks for brands you own?
+changeActivity.operatePackagingSiteOwnBrands.checkYourAnswersLabel = Package your own brand at your own sites?
+changeActivity.operatePackagingSiteOwnBrands.error.required = Select yes if do you operate any packaging sites in the UK to package liable drinks for brands you own?
+changeActivity.operatePackagingSiteOwnBrands.change.hidden = Change do you operate any packaging sites in the UK to package liable drinks for brands you own?
+howManyOperatePackagingSiteOwnBrands.title = How many litres of your own brands will you package in the next 12 months?
+howManyOperatePackagingSiteOwnBrands.heading = How many litres of your own brands will you package in the next 12 months?
+howManyOperatePackagingSiteOwnBrands.subtext = If you do not have the exact volumes you can enter an estimate.
+operatePackagingSiteOwnBrands.lowband.litres.hidden = change amount of litres in lowband for operatePackagingSiteOwnBrands
+operatePackagingSiteOwnBrands.highband.litres.hidden = change amount of litres in highband for operatePackagingSiteOwnBrands
