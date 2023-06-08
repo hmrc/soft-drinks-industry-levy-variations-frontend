@@ -51,15 +51,15 @@ class HowManyOperatePackagingSiteOwnBrandsViewSpec extends LitresSpecHelper {
         val documentFormErrorsOutOfRange = doc(htmlFormErrorsOutOfRange)
 
         "should have the expected title" in {
-          document.title() must include(Messages("howManyOperatePackagingSiteOwnBrands.title"))
+          document.title() must include(Messages("changeActivity.howManyOperatePackagingSiteOwnBrands.title"))
         }
 
         "should have the expected heading" in {
-          document.getElementsByClass(Selectors.heading).text() mustBe Messages("howManyOperatePackagingSiteOwnBrands.heading")
+          document.getElementsByClass(Selectors.heading).text() mustBe Messages("changeActivity.howManyOperatePackagingSiteOwnBrands.heading")
         }
 
         "should include a govuk body with the expected content" in {
-          document.getElementsByClass(Selectors.body).text() mustBe Messages("howManyOperatePackagingSiteOwnBrands.subtext")
+          document.getElementsByClass(Selectors.body).text() mustBe Messages("changeActivity.howManyOperatePackagingSiteOwnBrands.subtext")
         }
 
         testLitresInBandsNoPrepopulatedData(document)
@@ -68,7 +68,7 @@ class HowManyOperatePackagingSiteOwnBrandsViewSpec extends LitresSpecHelper {
         testAction(document, routes.HowManyOperatePackagingSiteOwnBrandsController.onSubmit(mode).url)
 
         "and the form has errors" - {
-          val errorTitle = "Error: " + Messages("howManyOperatePackagingSiteOwnBrands.title")
+          val errorTitle = "Error: " + Messages("changeActivity.howManyOperatePackagingSiteOwnBrands.title")
           testEmptyFormErrors(documentFormErrorsEmpty, errorTitle)
           testNoNumericFormErrors(documentFormErrorsNoneNumeric, errorTitle)
           testNegativeFormErrors(documentFormErrorsNegative, errorTitle)

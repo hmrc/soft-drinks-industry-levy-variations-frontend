@@ -39,7 +39,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("howManyOperatePackagingSiteOwnBrands" + ".title"))
+              page.title must include(Messages("changeActivity.howManyOperatePackagingSiteOwnBrands" + ".title"))
               testLitresInBandsNoPrepopulatedData(page)
             }
           }
@@ -59,7 +59,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("howManyOperatePackagingSiteOwnBrands" + ".title"))
+              page.title must include(Messages("changeActivity.howManyOperatePackagingSiteOwnBrands" + ".title"))
               testLitresInBandsWithPrepopulatedData(page)
             }
           }
@@ -115,7 +115,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
       }
 
       "should return 400 with required error" - {
-        val errorTitle = "Error: " + Messages("howManyOperatePackagingSiteOwnBrands.title")
+        val errorTitle = "Error: " + Messages("changeActivity.howManyOperatePackagingSiteOwnBrands.title")
 
         "when no questions are answered" in {
           given
