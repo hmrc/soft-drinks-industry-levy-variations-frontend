@@ -165,3 +165,27 @@ changeActivity.howManyOperatePackagingSiteOwnBrands.heading = How many litres of
 changeActivity.howManyOperatePackagingSiteOwnBrands.subtext = If you do not have the exact volumes you can enter an estimate.
 changeActivity.operatePackagingSiteOwnBrands.lowband.litres.hidden = change amount of litres in lowband for operatePackagingSiteOwnBrands
 changeActivity.operatePackagingSiteOwnBrands.highband.litres.hidden = change amount of litres in highband for operatePackagingSiteOwnBrands
+
+cancelRegistration.cancelRegistrationDate.title = What date are you cancelling your registration from?
+cancelRegistration.cancelRegistrationDate.heading = What date are you cancelling your registration from?
+cancelRegistration.cancelRegistrationDate.hint = For example, 12 11 2007
+cancelRegistration.cancelRegistrationDate.checkYourAnswersLabel = What date are you cancelling your registration from?
+cancelRegistration.cancelRegistrationDate.error.required.all = Enter the date you are cancelling your registration
+cancelRegistration.cancelRegistrationDate.error.required.two = The date you are cancelling your registration from must include {0} and {1}
+cancelRegistration.cancelRegistrationDate.error.required = The date you are cancelling your registration from must include {0}
+cancelRegistration.cancelRegistrationDate.error.invalid = The date you are cancelling your registration must be a real date, like 31 7 2020
+cancelRegistration.cancelRegistrationDate.error.registration-date.min=The date you are cancelling your registration must be today or in the future
+cancelRegistration.cancelRegistrationDate.error.registration-date.max=The date you are cancelling your registration from cannot be more than 14 days in the future
+startDate.month.nan = Month must only include numbers
+startDate.year.nan = Year must only include numbers
+startDate.day.nan = Day must only include numbers
+startDate.error.invalid = The date you became liable to register must be a real date, like 31 7 2020
+startDate.error.dayMonth.invalid = The day and month must be part of a real date, like 31 7 2020
+startDate.error.monthYear.invalid = The month and year must be part of a real date, like 31 7 2020
+startDate.error.dayYear.invalid = The day and year must be part of a real date, like 31 7 2020
+cancelRegistration.cancelRegistrationDate.change.hidden = CancelRegistrationDate
+
+
+
+
+

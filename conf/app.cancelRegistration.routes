@@ -6,3 +6,8 @@ GET        /reason                        controllers.cancelRegistration.ReasonC
 POST       /reason                        controllers.cancelRegistration.ReasonController.onSubmit(mode: Mode = NormalMode)
 GET        /change-reason                  controllers.cancelRegistration.ReasonController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-reason                  controllers.cancelRegistration.ReasonController.onSubmit(mode: Mode = CheckMode)
+
+GET        /date                        controllers.cancelRegistration.CancelRegistrationDateController.onPageLoad(mode: Mode = NormalMode)
+POST       /date                        controllers.cancelRegistration.CancelRegistrationDateController.onSubmit(mode: Mode = NormalMode)
+GET        /change-date                  controllers.cancelRegistration.CancelRegistrationDateController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-date                  controllers.cancelRegistration.CancelRegistrationDateController.onSubmit(mode: Mode = CheckMode)

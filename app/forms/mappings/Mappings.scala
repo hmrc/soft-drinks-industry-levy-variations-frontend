@@ -30,8 +30,9 @@ trait Mappings extends Formatters with Constraints {
   protected def int(requiredKey: String = "error.required",
                     wholeNumberKey: String = "error.wholeNumber",
                     nonNumericKey: String = "error.nonNumeric",
+                    invalidLength: String = "error.length",
                     args: Seq[String] = Seq.empty): FieldMapping[Int] =
-    of(intFormatter(requiredKey, wholeNumberKey, nonNumericKey, args))
+    of(intFormatter(requiredKey, wholeNumberKey, nonNumericKey, invalidLength,args))
 
   protected def litres(band: String,
                        args: Seq[String] = Seq.empty): Mapping[Long] =
@@ -54,6 +55,25 @@ trait Mappings extends Formatters with Constraints {
                            allRequiredKey: String,
                            twoRequiredKey: String,
                            requiredKey: String,
-                           args: Seq[String] = Seq.empty): FieldMapping[LocalDate] =
-    of(new LocalDateFormatter(invalidKey, allRequiredKey, twoRequiredKey, requiredKey, args))
+                           invalidDay: String,
+                           invalidDayLength: String,
+                           invalidMonth: String,
+                           invalidMonthLength: String,
+                           invalidYear: String,
+                           invalidYearLength: String,
+                           args: Seq[String] = Seq.empty): FieldMapping[LocalDate] = {
+    of(new LocalDateFormatter(
+      invalidKey,
+      allRequiredKey,
+      twoRequiredKey,
+      requiredKey,
+      invalidDay,
+      invalidDayLength,
+      invalidMonth,
+      invalidMonthLength,
+      invalidYear,
+      invalidYearLength,
+      args))
+  }
+
 }
