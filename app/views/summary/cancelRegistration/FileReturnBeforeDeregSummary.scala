@@ -20,12 +20,17 @@ import models.ReturnPeriod
 import play.api.i18n.Messages
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import views.helpers.ReturnPeriodQuarter
+
+import java.time.format.DateTimeFormatter
 
 object FileReturnBeforeDeregSummary {
 
   def displayMessage(showReturnSize:Option[Int], showReturnDate:Option[List[ReturnPeriod]])(implicit messages: Messages):Html = {
     (showReturnSize,showReturnDate) match {
-      case (None, Some(showReturnDate)) => Html(messages("cancelRegistration.fileReturnBeforeDereg.one-return",showReturnDate))
+      case (None, Some(showReturnDate)) => Html(messages("cancelRegistration.fileReturnBeforeDereg.one-return",
+        showReturnDate.map(date => date.start.format(DateTimeFormatter.ofPattern("MMMM"))).head,
+        showReturnDate.map(date => date.start.format(DateTimeFormatter.ofPattern("MMMM yyyy"))).head))
       case (Some(showReturnSize), None) => Html(messages("cancelRegistration.fileReturnBeforeDereg.many-returns",showReturnSize))
     }
   }
