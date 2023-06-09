@@ -19,6 +19,7 @@ package navigation
 import controllers.cancelRegistration.routes
 import models.UserAnswers
 import pages.Page
+import pages.cancelRegistration.CancelRegistrationDatePage
 import pages.cancelRegistration.ReasonPage
 import play.api.mvc.Call
 
@@ -28,6 +29,7 @@ import javax.inject.{Inject, Singleton}
 class NavigatorForCancelRegistration @Inject()() extends Navigator {
 
   override val normalRoutes: Page => UserAnswers => Call = {
+    case CancelRegistrationDatePage => userAnswers => defaultCall
     case ReasonPage => userAnswers => defaultCall
     case _ => _ => defaultCall
   }
