@@ -28,6 +28,9 @@ trait PageGenerators {
   implicit lazy val arbitraryCancelRegistrationCancelRegistrationDatePage: Arbitrary[CancelRegistrationDatePage.type] =
     Arbitrary(CancelRegistrationDatePage)
 
+  implicit lazy val arbitraryChangeActivityContractPackingPage: Arbitrary[changeActivity.ContractPackingPage.type] =
+    Arbitrary(changeActivity.ContractPackingPage)
+
   implicit lazy val arbitraryChangeActivityImportsPage: Arbitrary[changeActivity.ImportsPage.type] =
     Arbitrary(changeActivity.ImportsPage)
 

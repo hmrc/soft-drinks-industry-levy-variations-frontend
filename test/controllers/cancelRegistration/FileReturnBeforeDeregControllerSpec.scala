@@ -18,7 +18,6 @@ package controllers.cancelRegistration
 
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
-import models.RetrievedSubscription
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
@@ -34,7 +33,7 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
 
   lazy val fileReturnBeforDeregRoute: String = routes.FileReturnBeforeDeregController.onPageLoad().url
 
-  val mockConnector = mock[SoftDrinksIndustryLevyConnector]
+  val mockConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
 
   "FileReturnBeforeDereg Controller" - {
 
@@ -90,8 +89,6 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
         val request = FakeRequest(GET, fileReturnBeforDeregRoute)
 
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[FileReturnBeforeDeregView]
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual recoveryCall.url
