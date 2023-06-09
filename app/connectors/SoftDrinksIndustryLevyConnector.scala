@@ -74,8 +74,11 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     http.GET[List[FinancialLineItem]](s"$sdilUrl/balance/$sdilRef/history/all/$withAssessment")
   }
 
-  def returns_pending(utr: String)(implicit hc: HeaderCarrier): Future[List[ReturnPeriod]] =
-    http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
+  def returns_pending(utr: String)(implicit hc: HeaderCarrier): Future[Option[List[ReturnPeriod]]] =
+    http.GET[Option[List[ReturnPeriod]]](s"$sdilUrl/returns/$utr/pending").map {
+      case Some(a) => Some(a)
+      case _ => None
+    }
 
   def returns_update(utr: String, period: ReturnPeriod, sdilReturn: SdilReturn)(implicit hc: HeaderCarrier): Future[Option[Int]] = {
     val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"

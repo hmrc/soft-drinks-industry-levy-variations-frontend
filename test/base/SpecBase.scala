@@ -161,6 +161,7 @@ trait SpecBase
   )
 
   val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
+  val returnPeriod = List(ReturnPeriod(2018, 1))
   val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(-100))
   val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(-200))
   val financialItemList = List(financialItem1, financialItem2)

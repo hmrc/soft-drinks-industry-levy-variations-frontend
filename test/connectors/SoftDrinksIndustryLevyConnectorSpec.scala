@@ -162,7 +162,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
 
     "return returns-pending successfully" in {
 
-      when(mockHttp.GET[List[ReturnPeriod]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(returnPeriods))
+      when(mockHttp.GET[Option[List[ReturnPeriod]]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(returnPeriods)))
 
       val res = softDrinksIndustryLevyConnector.returns_pending(utr)
 
@@ -170,7 +170,21 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
         res
       ) {
         response =>
-          response mustEqual returnPeriods
+          response mustEqual Some(returnPeriods)
+      }
+    }
+
+    "return None when unsuccessful" in {
+
+      when(mockHttp.GET[Option[List[ReturnPeriod]]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
+
+      val res = softDrinksIndustryLevyConnector.returns_pending(utr)
+
+      whenReady(
+        res
+      ) {
+        response =>
+          response mustEqual None
       }
     }
 

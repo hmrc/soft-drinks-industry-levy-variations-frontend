@@ -1,8 +1,9 @@
 # cancel registration specific routes
 
-GET         /check-your-answers                          controllers.cancelRegistration.CancelRegistrationCYAController.onPageLoad
+GET         /check-your-answers                                                        controllers.cancelRegistration.CancelRegistrationCYAController.onPageLoad
 
-GET        /reason                        controllers.cancelRegistration.ReasonController.onPageLoad(mode: Mode = NormalMode)
-POST       /reason                        controllers.cancelRegistration.ReasonController.onSubmit(mode: Mode = NormalMode)
-GET        /change-reason                  controllers.cancelRegistration.ReasonController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-reason                  controllers.cancelRegistration.ReasonController.onSubmit(mode: Mode = CheckMode)
+GET        /reason                                                                     controllers.cancelRegistration.ReasonController.onPageLoad(mode: Mode = NormalMode)
+POST       /reason                                                                     controllers.cancelRegistration.ReasonController.onSubmit(mode: Mode = NormalMode)
+GET        /change-reason                                                              controllers.cancelRegistration.ReasonController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-reason                                                              controllers.cancelRegistration.ReasonController.onSubmit(mode: Mode = CheckMode)
+GET        /file-return-before-deregistration                                           controllers.cancelRegistration.FileReturnBeforeDeregController.onPageLoad()

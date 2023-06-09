@@ -8,6 +8,7 @@ trait PreconditionHelpers {
       .user.isAuthorisedAndEnrolled
       .sdilBackend.retrieveSubscription("utr","0000001611")
       .sdilBackend.retrieveSubscription("sdil","XKSDIL000000022")
+      .sdilBackend.returns_pending("0000001611")
   }
 
   def unauthorisedPrecondition = {
