@@ -21,7 +21,7 @@ import forms.updateRegisteredDetails.UpdateContactDetailsFormProvider
 import models.updateRegisteredDetails.UpdateContactDetails
 import models.{CheckMode, NormalMode}
 import play.api.i18n.Messages
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import views.ViewSpecHelper
@@ -45,14 +45,14 @@ class UpdateContactDetailsViewSpec extends ViewSpecHelper {
     val form = "form"
   }
 
-  val Updatecontactdetails = UpdateContactDetails("Full Name", "job position", "012345678901", "email@test.com")
-  val UpdatecontactdetailsJsObject = Json.toJson(Updatecontactdetails).as[JsObject].value
+  val Updatecontactdetails: UpdateContactDetails = UpdateContactDetails("Full Name", "job position", "012345678901", "email@test.com")
+  val UpdatecontactdetailsJsObject: collection.Map[String, JsValue] = Json.toJson(Updatecontactdetails).as[JsObject].value
   val UpdatecontactdetailsMap: Map[String, String] = Map("fullName" -> "Full Name",
     "position" -> "job position",
   "phoneNumber" -> "012345678901",
   "email" -> "email@test.com")
 
-  val fieldNameToLabel = Map("fullName" -> "Full name",
+  val fieldNameToLabel: Map[String, String] = Map("fullName" -> "Full name",
     "position" -> "Job title",
     "phoneNumber" -> "Telephone number",
     "email" -> "Email address")
@@ -90,7 +90,7 @@ class UpdateContactDetailsViewSpec extends ViewSpecHelper {
     }
 
     "contain the correct button" - {
-      document.getElementsByClass(Selectors.button).text() mustBe Messages("site.continue")
+      document.getElementsByClass(Selectors.button).text() mustBe Messages("site.saveContinue")
     }
 
     "contains a form with the correct action" - {

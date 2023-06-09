@@ -165,3 +165,12 @@ changeActivity.howManyOperatePackagingSiteOwnBrands.heading = How many litres of
 changeActivity.howManyOperatePackagingSiteOwnBrands.subtext = If you do not have the exact volumes you can enter an estimate.
 changeActivity.operatePackagingSiteOwnBrands.lowband.litres.hidden = change amount of litres in lowband for operatePackagingSiteOwnBrands
 changeActivity.operatePackagingSiteOwnBrands.highband.litres.hidden = change amount of litres in highband for operatePackagingSiteOwnBrands
+
+changeActivity.imports.title = Do you bring liable drinks into the UK from anywhere outside of the UK?
+changeActivity.imports.checkYourAnswersLabel = Do you bring liable drinks into the UK from anywhere outside of the UK?
+changeActivity.imports.error.required = Select yes if do you bring liable drinks into the UK from anywhere outside of the UK
+changeActivity.imports.change.hidden = Change do you bring liable drinks into the UK from anywhere outside of the UK?
+howManyImports.title = How many litres of liable drinks have you brought into the UK from anywhere outside of the UK?
+howManyImports.subtext = Do not include liable drinks from small producers or your own brands if you are a registered small producer.
+imports.lowband.litres.hidden = change amount of litres in lowband for imports
+imports.highband.litres.hidden = change amount of litres in highband for imports

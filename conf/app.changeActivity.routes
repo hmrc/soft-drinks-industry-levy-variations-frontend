@@ -18,3 +18,12 @@ GET        /how-many-packaging-site                        controllers.changeAct
 POST       /how-many-packaging-site                        controllers.changeActivity.HowManyOperatePackagingSiteOwnBrandsController.onSubmit(mode: Mode = NormalMode)
 GET        /change-how-many-packaging-site                  controllers.changeActivity.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-how-many-packaging-site                  controllers.changeActivity.HowManyOperatePackagingSiteOwnBrandsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /imports                        controllers.changeActivity.ImportsController.onPageLoad(mode: Mode = NormalMode)
+POST       /imports                        controllers.changeActivity.ImportsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-imports                  controllers.changeActivity.ImportsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-imports                  controllers.changeActivity.ImportsController.onSubmit(mode: Mode = CheckMode)
+GET        /how-many-imports-next-12-months                        controllers.changeActivity.HowManyImportsController.onPageLoad(mode: Mode = NormalMode)
+POST       /how-many-imports-next-12-months                        controllers.changeActivity.HowManyImportsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-how-many-imports-next-12-months                  controllers.changeActivity.HowManyImportsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-how-many-imports-next-12-months                  controllers.changeActivity.HowManyImportsController.onSubmit(mode: Mode = CheckMode)

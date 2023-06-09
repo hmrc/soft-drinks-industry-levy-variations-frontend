@@ -17,18 +17,19 @@
 package views.changeActivity
 
 import controllers.changeActivity.routes
-import forms.changeActivity.OperatePackagingSiteOwnBrandsFormProvider
+import forms.changeActivity.ImportsFormProvider
 import models.{CheckMode, NormalMode}
+import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import views.html.changeActivity.OperatePackagingSiteOwnBrandsView
 import views.ViewSpecHelper
-class OperatePackagingSiteOwnBrandsViewSpec extends ViewSpecHelper {
+import views.html.changeActivity.ImportsView
+class ImportsViewSpec extends ViewSpecHelper {
 
-  val view = application.injector.instanceOf[OperatePackagingSiteOwnBrandsView]
-  val formProvider = new OperatePackagingSiteOwnBrandsFormProvider
-  val form = formProvider.apply()
+  val view: ImportsView = application.injector.instanceOf[ImportsView]
+  val formProvider = new ImportsFormProvider
+  val form: Form[Boolean] = formProvider.apply()
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
@@ -36,7 +37,7 @@ class OperatePackagingSiteOwnBrandsViewSpec extends ViewSpecHelper {
     val legend = "govuk-fieldset__legend  govuk-fieldset__legend--m"
     val radios = "govuk-radios__item"
     val radioInput = "govuk-radios__input"
-    val radioLables = "govuk-label govuk-radios__label"
+    val radioLabels = "govuk-label govuk-radios__label"
     val body = "govuk-body"
     val errorSummaryTitle = "govuk-error-summary__title"
     val errorSummaryList = "govuk-list govuk-error-summary__list"
@@ -48,13 +49,13 @@ class OperatePackagingSiteOwnBrandsViewSpec extends ViewSpecHelper {
     val html = view(form, NormalMode)(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
-      document.title() must include(Messages("changeActivity.operatePackagingSiteOwnBrands" + ".title"))
+      document.title() mustBe "Do you bring liable drinks into the UK from anywhere outside of the UK? - Soft Drinks Industry Levy - GOV.UK"
     }
 
     "should include a legend with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("changeActivity.operatePackagingSiteOwnBrands.heading")
+      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual "Do you bring liable drinks into the UK from anywhere outside of the UK?"
     }
 
     "when the form is not preoccupied and has no errors" - {
@@ -65,7 +66,7 @@ class OperatePackagingSiteOwnBrandsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -79,7 +80,7 @@ class OperatePackagingSiteOwnBrandsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -100,7 +101,7 @@ class OperatePackagingSiteOwnBrandsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -114,7 +115,7 @@ class OperatePackagingSiteOwnBrandsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -135,7 +136,7 @@ class OperatePackagingSiteOwnBrandsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -149,7 +150,7 @@ class OperatePackagingSiteOwnBrandsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -174,12 +175,12 @@ class OperatePackagingSiteOwnBrandsViewSpec extends ViewSpecHelper {
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
           documentYesSelected.select(Selectors.form)
-            .attr("action") mustEqual routes.OperatePackagingSiteOwnBrandsController.onSubmit(CheckMode).url
+            .attr("action") mustEqual routes.ImportsController.onSubmit(CheckMode).url
         }
 
         "and no is selected" in {
           documentNoSelected.select(Selectors.form)
-            .attr("action") mustEqual routes.OperatePackagingSiteOwnBrandsController.onSubmit(CheckMode).url
+            .attr("action") mustEqual routes.ImportsController.onSubmit(CheckMode).url
         }
       }
 
@@ -191,12 +192,12 @@ class OperatePackagingSiteOwnBrandsViewSpec extends ViewSpecHelper {
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
           documentYesSelected.select(Selectors.form)
-            .attr("action") mustEqual routes.OperatePackagingSiteOwnBrandsController.onSubmit(NormalMode).url
+            .attr("action") mustEqual routes.ImportsController.onSubmit(NormalMode).url
         }
 
         "and no is selected" in {
           documentNoSelected.select(Selectors.form)
-            .attr("action") mustEqual routes.OperatePackagingSiteOwnBrandsController.onSubmit(NormalMode).url
+            .attr("action") mustEqual routes.ImportsController.onSubmit(NormalMode).url
         }
       }
     }
@@ -206,8 +207,7 @@ class OperatePackagingSiteOwnBrandsViewSpec extends ViewSpecHelper {
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
-        val titleMessage = Messages("changeActivity.operatePackagingSiteOwnBrands.title")
-        documentWithErrors.title must include("Error: " + titleMessage)
+        documentWithErrors.title must include("Error: Do you bring liable drinks into the UK from anywhere outside of the UK?")
       }
 
       "contains a message that links to field with error" in {
@@ -217,7 +217,7 @@ class OperatePackagingSiteOwnBrandsViewSpec extends ViewSpecHelper {
         errorSummary
           .select("a")
           .attr("href") mustBe "#value"
-        errorSummary.text() mustBe Messages("changeActivity.operatePackagingSiteOwnBrands.error.required")
+        errorSummary.text() mustBe "Select yes if do you bring liable drinks into the UK from anywhere outside of the UK"
       }
     }
 

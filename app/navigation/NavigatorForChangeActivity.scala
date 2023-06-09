@@ -19,13 +19,23 @@ package navigation
 import controllers.changeActivity.routes
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages.Page
-import pages.changeActivity.{AmountProducedPage, HowManyOperatePackagingSiteOwnBrandsPage, OperatePackagingSiteOwnBrandsPage}
+import pages.changeActivity.{AmountProducedPage, HowManyImportsPage, HowManyOperatePackagingSiteOwnBrandsPage, ImportsPage, OperatePackagingSiteOwnBrandsPage}
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class NavigatorForChangeActivity @Inject()() extends Navigator {
+
+  private def navigationForImports(userAnswers: UserAnswers, mode: Mode): Call = {
+    if (userAnswers.get(page = ImportsPage).contains(true)) {
+      routes.HowManyImportsController.onPageLoad(mode)
+    } else if(mode == CheckMode){
+        routes.ChangeActivityCYAController.onPageLoad
+    } else {
+        defaultCall
+    }
+  }
 
   private def navigationForOperatePackagingSiteOwnBrands(userAnswers: UserAnswers, mode: Mode): Call = {
     if (userAnswers.get(page = OperatePackagingSiteOwnBrandsPage).contains(true)) {
@@ -38,6 +48,8 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
   }
 
   override val normalRoutes: Page => UserAnswers => Call = {
+    case ImportsPage => userAnswers => navigationForImports(userAnswers, NormalMode)
+    case HowManyImportsPage => userAnswers => defaultCall
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => defaultCall
     case AmountProducedPage => userAnswers => defaultCall
@@ -45,6 +57,7 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
   }
 
   override val checkRouteMap: Page => UserAnswers => Call = {
+    case ImportsPage => userAnswers => navigationForImports(userAnswers, CheckMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
     case _ => _ => routes.ChangeActivityCYAController.onPageLoad
   }
