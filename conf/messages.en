@@ -166,6 +166,26 @@ changeActivity.howManyOperatePackagingSiteOwnBrands.subtext = If you do not have
 changeActivity.operatePackagingSiteOwnBrands.lowband.litres.hidden = change amount of litres in lowband for operatePackagingSiteOwnBrands
 changeActivity.operatePackagingSiteOwnBrands.highband.litres.hidden = change amount of litres in highband for operatePackagingSiteOwnBrands
 
+cancelRegistration.cancelRegistrationDate.title = What date are you cancelling your registration from?
+cancelRegistration.cancelRegistrationDate.heading = What date are you cancelling your registration from?
+cancelRegistration.cancelRegistrationDate.hint = For example, 12 11 2007
+cancelRegistration.cancelRegistrationDate.checkYourAnswersLabel = What date are you cancelling your registration from?
+
+
+cancelRegistrationDate.error.invalid = The date you are cancelling your registration must be a real date, like 31 7 2020
+cancelRegistrationDate.error.required.all = Enter the date you are cancelling your registration
+cancelRegistrationDate.error.required.two = The date you are cancelling your registration from must include {0} and {1}
+cancelRegistrationDate.error.required = The date you are cancelling your registration from must include {0}
+cancelRegistrationDate.error.registration-date.min=The date you are cancelling your registration must be today or in the future
+cancelRegistrationDate.error.registration-date.max=The date you are cancelling your registration from cannot be more than 14 days in the future
+cancelRegistrationDate.error.day.nan = Day must only include numbers
+cancelRegistrationDate.error.month.nan = Month must only include numbers
+cancelRegistrationDate.error.year.nan = Year must only include numbers
+cancelRegistrationDate.error.dayMonth.invalid = The day and month must be part of a real date, like 31 7 2020
+cancelRegistrationDate.error.monthYear.invalid = The month and year must be part of a real date, like 31 7 2020
+cancelRegistrationDate.error.dayYear.invalid = The day and year must be part of a real date, like 31 7 2020
+cancelRegistrationDate.change.hidden = CancelRegistrationDate
+
 changeActivity.imports.title = Do you bring liable drinks into the UK from anywhere outside of the UK?
 changeActivity.imports.checkYourAnswersLabel = Do you bring liable drinks into the UK from anywhere outside of the UK?
 changeActivity.imports.error.required = Select yes if do you bring liable drinks into the UK from anywhere outside of the UK

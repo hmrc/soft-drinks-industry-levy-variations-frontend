@@ -21,6 +21,8 @@ import models.changeActivity.AmountProduced
 import models.updateRegisteredDetails.UpdateContactDetails
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
+import pages._
+import pages.cancelRegistration.CancelRegistrationDatePage
 import pages.SelectChangePage
 import pages.cancelRegistration.ReasonPage
 import pages.changeActivity.{AmountProducedPage, OperatePackagingSiteOwnBrandsPage}
@@ -58,6 +60,14 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       for {
         page  <- arbitrary[AmountProducedPage.type]
         value <- arbitrary[AmountProduced].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryCancelRegistrationCancelRegistrationDateUserAnswersEntry: Arbitrary[(CancelRegistrationDatePage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[CancelRegistrationDatePage.type]
+        value <- arbitrary[Int].map(Json.toJson(_))
       } yield (page, value)
     }
 

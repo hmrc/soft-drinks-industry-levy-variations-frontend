@@ -18,11 +18,15 @@ package generators
 
 import org.scalacheck.Arbitrary
 import pages._
+import pages.cancelRegistration.CancelRegistrationDatePage
 import pages.cancelRegistration.ReasonPage
 import pages.changeActivity.{AmountProducedPage, OperatePackagingSiteOwnBrandsPage}
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 
 trait PageGenerators {
+
+  implicit lazy val arbitraryCancelRegistrationCancelRegistrationDatePage: Arbitrary[CancelRegistrationDatePage.type] =
+    Arbitrary(CancelRegistrationDatePage)
 
   implicit lazy val arbitraryChangeActivityImportsPage: Arbitrary[changeActivity.ImportsPage.type] =
     Arbitrary(changeActivity.ImportsPage)

@@ -31,10 +31,16 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
   val form = Form(
     "value" -> localDate(
-      requiredKey    = "error.required",
+      requiredKey = "error.required",
       allRequiredKey = "error.required.all",
       twoRequiredKey = "error.required.two",
-      invalidKey     = "error.invalid"
+      invalidKey = "error.invalid",
+      invalidDay = "error.day.nan",
+      invalidDayLength = "error.day.length",
+      invalidMonth = "error.month.nan",
+      invalidMonthLength = "error.month.length",
+      invalidYear = "error.year.nan",
+      invalidYearLength = "error.year.length"
     )
   )
 
@@ -69,6 +75,42 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
     val result = form.bind(Map.empty[String, String])
 
     result.errors must contain only FormError("value", "error.required.all", List.empty)
+  }
+
+  "must fail to bind a date with a decimal day" in {
+
+        val data = Map(
+          "value.day" -> "1.2",
+          "value.month" -> "1",
+          "value.year" -> "2023"
+        )
+
+        val result = form.bind(data)
+        result.errors must contain only FormError("value", "error.day.nan", List())
+  }
+
+  "must fail to bind a date with a decimal month" in {
+
+    val data = Map(
+      "value.day" -> "1",
+      "value.month" -> "1.2",
+      "value.year" -> "2023"
+    )
+
+    val result = form.bind(data)
+    result.errors must contain only FormError("value", "error.month.nan", List())
+  }
+
+  "must fail to bind a date with a decimal year" in {
+
+    val data = Map(
+      "value.day" -> "1",
+      "value.month" -> "1",
+      "value.year" -> "20.23"
+    )
+
+    val result = form.bind(data)
+    result.errors must contain only FormError("value", "error.year.nan", List())
   }
 
   "must fail to bind a date with a missing day" in {
@@ -106,7 +148,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
         val result = form.bind(data)
 
         result.errors must contain(
-          FormError("value", "error.invalid", List.empty)
+          FormError("value", "error.day.nan", List.empty)
         )
     }
   }
@@ -146,7 +188,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
         val result = form.bind(data)
 
         result.errors must contain(
-          FormError("value", "error.invalid", List.empty)
+          FormError("value", "error.month.nan", List.empty)
         )
     }
   }
@@ -186,7 +228,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
         val result = form.bind(data)
 
         result.errors must contain(
-          FormError("value", "error.invalid", List.empty)
+          FormError("value", "error.year.nan", List.empty)
         )
     }
   }
@@ -279,7 +321,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.invalid", List.empty)
+        result.errors must contain only FormError("value", "value.error.dayMonth.invalid", List.empty)
     }
   }
 
@@ -296,7 +338,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.invalid", List.empty)
+        result.errors must contain only FormError("value", "value.error.dayYear.invalid", List.empty)
     }
   }
 
@@ -313,7 +355,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.invalid", List.empty)
+        result.errors must contain only FormError("value", "value.error.monthYear.invalid", List.empty)
     }
   }
 
@@ -330,7 +372,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
         val result = form.bind(data)
 
-        result.errors must contain only FormError("value", "error.invalid", List.empty)
+        result.errors must contain only FormError("value", "value.error.invalid", List.empty)
     }
   }
 
