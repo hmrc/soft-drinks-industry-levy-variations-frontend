@@ -2,7 +2,7 @@ package testSupport.preConditions
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.backend.{Site, UkAddress}
-import models.{Contact, RetrievedActivity, RetrievedSubscription}
+import models.{Contact, RetrievedActivity, RetrievedSubscription, ReturnPeriod}
 import play.api.libs.json.Json
 
 import java.time.LocalDate
@@ -49,6 +49,25 @@ case class SdilBackendStub()
     deregDate = None
   )
 
+  val returnPeriods: List[ReturnPeriod] = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
+
+  def returns_pending (utr: String) = {
+    stubFor(
+      get(
+        urlPathMatching(s"/returns/$utr/pending"))
+        .willReturn(
+          ok(Json.toJson(returnPeriods).toString())))
+    builder
+  }
+
+  def no_returns_pending (utr: String) = {
+    stubFor(
+      get(
+        urlPathMatching(s"/returns/$utr/pending"))
+        .willReturn(
+          notFound()))
+    builder
+  }
 
   def retrieveSubscription(identifier: String, refNum: String) = {
     stubFor(

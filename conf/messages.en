@@ -92,8 +92,6 @@ updateRegisteredDetails.checkYourAnswers.updateContactDetails.title = Soft Drink
 updateRegisteredDetails.updateContactDetails.change.hidden = Contact Details
 updateRegisteredDetails.checkYourAnswers.submit = Confirm updates and send
 
-
-
 updateRegisteredDetails.updateContactDetails.title = Edit your contact person details
 updateRegisteredDetails.updateContactDetails.heading = Edit your contact person details
 updateRegisteredDetails.updateContactDetails.fullName = Full name
@@ -116,7 +114,6 @@ updateRegisteredDetails.updateContactDetails.fullName.change.hidden = your conta
 updateRegisteredDetails.updateContactDetails.position.change.hidden = your contact person’s job title
 updateRegisteredDetails.updateContactDetails.phoneNumber.change.hidden = your contact person’s telephone
 updateRegisteredDetails.updateContactDetails.email.change.hidden = your contact person’s email address
-
 
 cancelRegistration.reason.title = Why do you need to cancel your registration?
 cancelRegistration.reason.checkYourAnswersLabel = Reason for cancelling
@@ -186,6 +183,13 @@ cancelRegistrationDate.error.monthYear.invalid = The month and year must be part
 cancelRegistrationDate.error.dayYear.invalid = The day and year must be part of a real date, like 31 7 2020
 cancelRegistrationDate.change.hidden = CancelRegistrationDate
 
+cancelRegistration.fileReturnBeforeDereg.title = You cannot cancel your registration while you have returns to send
+cancelRegistration.fileReturnBeforeDereg.heading = You cannot cancel your registration while you have returns to send
+cancelRegistration.fileReturnBeforeDereg.one-return = Before you can cancel your registration, you must send a return for {0} to {1} and make any payments due.
+cancelRegistration.fileReturnBeforeDereg.many-returns = Before you can cancel your registration, you must send {0} returns and make any payments due.
+cancelRegistration.fileReturnBeforeDereg.continue = Go to your account
+
+
 changeActivity.imports.title = Do you bring liable drinks into the UK from anywhere outside of the UK?
 changeActivity.imports.checkYourAnswersLabel = Do you bring liable drinks into the UK from anywhere outside of the UK?
 changeActivity.imports.error.required = Select yes if do you bring liable drinks into the UK from anywhere outside of the UK
@@ -194,3 +198,4 @@ howManyImports.title = How many litres of liable drinks have you brought into th
 howManyImports.subtext = Do not include liable drinks from small producers or your own brands if you are a registered small producer.
 imports.lowband.litres.hidden = change amount of litres in lowband for imports
 imports.highband.litres.hidden = change amount of litres in highband for imports
+
