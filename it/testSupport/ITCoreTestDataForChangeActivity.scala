@@ -7,6 +7,12 @@ import play.api.libs.json.Json
 
 trait ITCoreTestDataForChangeActivity {
 
+  val userAnswersForChangeActivityPackagingSiteDetailsPage: Map[String, UserAnswers] = {
+    val yesSelected = emptyUserAnswersForChangeActivity.set(PackagingSiteDetailsPage, true).success.value
+    val noSelected = emptyUserAnswersForChangeActivity.set(PackagingSiteDetailsPage, false).success.value
+    Map("yes" -> yesSelected, "no" -> noSelected)
+    }
+
   val userAnswersForChangeActivityContractPackingPage: Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForChangeActivity.set(ContractPackingPage, true).success.value
     val noSelected = emptyUserAnswersForChangeActivity.set(ContractPackingPage, false).success.value

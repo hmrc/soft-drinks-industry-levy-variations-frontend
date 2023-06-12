@@ -215,3 +215,9 @@ updateRegisteredDetails.warehouseDetails.subHeading = Do you want to add another
 updateRegisteredDetails.warehouseDetails.checkYourAnswersLabel = Change your UK warehouse details
 updateRegisteredDetails.warehouseDetails.error.required = Select yes if you want to register another UK warehouse
 updateRegisteredDetails.warehouseDetails.remove.hidden = remove UK warehouse
+
+changeActivity.packagingSiteDetails.title = UK packaging site details
+changeActivity.packagingSiteDetails.heading = UK packaging site details
+changeActivity.packagingSiteDetails.checkYourAnswersLabel = UK packaging site details
+changeActivity.packagingSiteDetails.error.required = Select yes if packagingSiteDetails
+changeActivity.packagingSiteDetails.change.hidden = PackagingSiteDetails
