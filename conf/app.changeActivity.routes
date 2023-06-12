@@ -36,3 +36,8 @@ GET        /how-many-contract-packing-next-12-months            controllers.chan
 POST       /how-many-contract-packing-next-12-months            controllers.changeActivity.HowManyContractPackingController.onSubmit(mode: Mode = NormalMode)
 GET        /change-how-many-contract-packing-next-12-months     controllers.changeActivity.HowManyContractPackingController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-how-many-contract-packing-next-12-months     controllers.changeActivity.HowManyContractPackingController.onSubmit(mode: Mode = CheckMode)
+
+GET        /pack-at-business-address                        controllers.changeActivity.PackAtBusinessAddressController.onPageLoad(mode: Mode = NormalMode)
+POST       /pack-at-business-address                        controllers.changeActivity.PackAtBusinessAddressController.onSubmit(mode: Mode = NormalMode)
+GET        /change-pack-at-business-address                  controllers.changeActivity.PackAtBusinessAddressController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-pack-at-business-address                  controllers.changeActivity.PackAtBusinessAddressController.onSubmit(mode: Mode = CheckMode)

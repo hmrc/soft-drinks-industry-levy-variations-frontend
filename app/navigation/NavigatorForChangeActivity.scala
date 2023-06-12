@@ -19,7 +19,7 @@ package navigation
 import controllers.changeActivity.routes
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages.Page
-import pages.changeActivity.{AmountProducedPage, ContractPackingPage, HowManyContractPackingPage, HowManyImportsPage, HowManyOperatePackagingSiteOwnBrandsPage, ImportsPage, OperatePackagingSiteOwnBrandsPage}
+import pages.changeActivity.{AmountProducedPage, ContractPackingPage, HowManyContractPackingPage, HowManyImportsPage, HowManyOperatePackagingSiteOwnBrandsPage, ImportsPage, OperatePackagingSiteOwnBrandsPage, PackAtBusinessAddressPage}
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -58,6 +58,7 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
   }
 
   override val normalRoutes: Page => UserAnswers => Call = {
+    case PackAtBusinessAddressPage => userAnswers => defaultCall
     case ContractPackingPage => userAnswers => navigationForContractPacking(userAnswers, NormalMode)
     case HowManyContractPackingPage => userAnswers => defaultCall
     case ImportsPage => userAnswers => navigationForImports(userAnswers, NormalMode)
