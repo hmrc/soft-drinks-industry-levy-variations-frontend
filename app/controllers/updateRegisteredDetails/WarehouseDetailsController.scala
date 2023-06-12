@@ -61,7 +61,7 @@ class WarehouseDetailsController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val warehouse = Map("1" -> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "32 Rhes Priordy", "31 Rhes Priordy"),"WR53 7CX")))
+      val warehouse = request.userAnswers.warehouseList
 
       val message: Option[SummaryList] = warehouse match {
         case warehouseList  if !warehouseList.isEmpty => Some(SummaryListViewModel(
