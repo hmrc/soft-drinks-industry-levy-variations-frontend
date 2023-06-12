@@ -21,7 +21,7 @@ import controllers.actions._
 import controllers.routes
 import helpers.LoggerHelper
 import models.backend.{Site, UkAddress}
-import models.{Contact, LitresInBands, RetrievedActivity, RetrievedSubscription, ReturnCharge, ReturnPeriod, SelectChange, UserAnswers}
+import models.{Contact, LitresInBands, RetrievedActivity, RetrievedSubscription, ReturnCharge, ReturnPeriod, SelectChange, UserAnswers, Warehouse}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -104,7 +104,10 @@ trait SpecBase
     super.afterEach()
   }
 
+  lazy val warehouse = Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy"),"WR53 7CX"))
+
   val emptyUserAnswersForUpdateRegisteredDetails: UserAnswers = UserAnswers(userAnswersId, SelectChange.UpdateRegisteredAccount)
+  val warehouseAddedToUserAnswersForUpdateRegisteredDetails: UserAnswers = UserAnswers(userAnswersId, SelectChange.UpdateRegisteredAccount, warehouseList = Map("1" -> warehouse))
   val emptyUserAnswersForChangeActivity = UserAnswers(sdilNumber, SelectChange.Changeactivity)
 
   val emptyUserAnswersForCorrectReturn = UserAnswers(sdilNumber, SelectChange.CorrectReturn)

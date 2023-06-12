@@ -7,3 +7,8 @@ GET        /contact-details-add                        controllers.updateRegiste
 POST       /contact-details-add                        controllers.updateRegisteredDetails.UpdateContactDetailsController.onSubmit(mode: Mode = NormalMode)
 GET        /change-contact-details-add                  controllers.updateRegisteredDetails.UpdateContactDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-contact-details-add                  controllers.updateRegisteredDetails.UpdateContactDetailsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /warehouse-details                        controllers.updateRegisteredDetails.WarehouseDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /warehouse-details                        controllers.updateRegisteredDetails.WarehouseDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-warehouse-details                  controllers.updateRegisteredDetails.WarehouseDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-warehouse-details                  controllers.updateRegisteredDetails.WarehouseDetailsController.onSubmit(mode: Mode = CheckMode)
