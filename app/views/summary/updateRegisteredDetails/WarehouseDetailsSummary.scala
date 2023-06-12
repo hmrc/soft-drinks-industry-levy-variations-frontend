@@ -50,8 +50,10 @@ object WarehouseDetailsSummary  {
     warehouseList.map {
           warehouse =>
             SummaryListRow(
-              key     = Key(HtmlContent(AddressFormattingHelper.addressFormatting(warehouse._2.address, warehouse._2.tradingName))),
-              classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds",
+              key     = Key(
+                content = HtmlContent(AddressFormattingHelper.addressFormatting(warehouse._2.address, warehouse._2.tradingName)),
+                classes = "govuk-!-font-weight-regular govuk-!-width-full"
+              ),
               actions = Some(Actions("",Seq(
                 ActionItemViewModel("site.remove", routes.WarehouseDetailsController.onPageLoad(NormalMode).url)
                   .withVisuallyHiddenText(messages("secondaryWarehouseDetails.remove.hidden"))

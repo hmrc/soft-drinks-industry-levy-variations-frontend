@@ -24,7 +24,7 @@ object AddressFormattingHelper {
     val addressFormat = determineAddressFormat(address, tradingName)
 
     val commaFormattedSiteAddress = address.lines.map(line => { if (line.isEmpty) "" else line + ", " })
-    val htmlSiteAddress = HtmlFormat.escape(commaFormattedSiteAddress.mkString(""))
+    val htmlSiteAddress = HtmlFormat.escape(commaFormattedSiteAddress.mkString("").dropRight(2))
     val htmlPostcode = HtmlFormat.escape(address.postCode)
     val htmlTradingName = HtmlFormat.escape(tradingName.getOrElse(""))
     val breakLine = Html("<br>")
@@ -37,12 +37,14 @@ object AddressFormattingHelper {
       ))
       case AddressNoTradingName =>  HtmlFormat.fill(Seq(
         htmlSiteAddress,
+        breakLine,
         htmlPostcode
       ))
       case AddressWithTradingName => HtmlFormat.fill(Seq(
         htmlTradingName,
         breakLine,
         htmlSiteAddress,
+        breakLine,
         htmlPostcode
       ))
       case SeparatePostCodeAddressWithTradingName => HtmlFormat.fill(Seq(
