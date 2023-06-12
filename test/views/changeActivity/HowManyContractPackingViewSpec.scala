@@ -19,56 +19,58 @@ package views.changeActivity
 import config.FrontendAppConfig
 import controllers.changeActivity.routes
 import models.{CheckMode, NormalMode}
-import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import views.html.changeActivity.HowManyOperatePackagingSiteOwnBrandsView
 import views.LitresSpecHelper
-class HowManyOperatePackagingSiteOwnBrandsViewSpec extends LitresSpecHelper {
+import views.html.changeActivity.HowManyContractPackingView
+class HowManyContractPackingViewSpec extends LitresSpecHelper {
 
-  val howManyOperatePackagingSiteOwnBrandsView: HowManyOperatePackagingSiteOwnBrandsView = application.injector.instanceOf[HowManyOperatePackagingSiteOwnBrandsView]
+  val howManyContractPackingView: HowManyContractPackingView = application.injector.instanceOf[HowManyContractPackingView]
 
   implicit val request: Request[_] = FakeRequest()
   implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-  "HowManyOperatePackagingSiteOwnBrandsView" - {
+  "HowManyContractPackingView" - {
     List(NormalMode, CheckMode).foreach { mode =>
       "when in " + mode +" mode" - {
-        val html: HtmlFormat.Appendable = howManyOperatePackagingSiteOwnBrandsView(form, mode)
+        val html: HtmlFormat.Appendable = howManyContractPackingView(form, mode)
         val document = doc(html)
-        val htmlWithValidData: HtmlFormat.Appendable = howManyOperatePackagingSiteOwnBrandsView(formWithHighAndLowBands, mode)
+        val htmlWithValidData: HtmlFormat.Appendable = howManyContractPackingView(formWithHighAndLowBands, mode)
         val documentWithValidData = doc(htmlWithValidData)
-        val htmlFormErrorsEmpty: HtmlFormat.Appendable = howManyOperatePackagingSiteOwnBrandsView(emptyForm, mode)
+        val htmlFormErrorsEmpty: HtmlFormat.Appendable = howManyContractPackingView(emptyForm, mode)
         val documentFormErrorsEmpty = doc(htmlFormErrorsEmpty)
-        val htmlFormErrorsNegative: HtmlFormat.Appendable = howManyOperatePackagingSiteOwnBrandsView(formWithNegativeNumber, mode)
+        val htmlFormErrorsNegative: HtmlFormat.Appendable = howManyContractPackingView(formWithNegativeNumber, mode)
         val documentFormErrorsNegative = doc(htmlFormErrorsNegative)
-        val htmlFormErrorsNoneNumeric: HtmlFormat.Appendable = howManyOperatePackagingSiteOwnBrandsView(formWithNoNumeric, mode)
+        val htmlFormErrorsNoneNumeric: HtmlFormat.Appendable = howManyContractPackingView(formWithNoNumeric, mode)
         val documentFormErrorsNoneNumeric = doc(htmlFormErrorsNoneNumeric)
-        val htmlFormErrorsNotWhole: HtmlFormat.Appendable = howManyOperatePackagingSiteOwnBrandsView(formWithDecimalNumber, mode)
+        val htmlFormErrorsNotWhole: HtmlFormat.Appendable = howManyContractPackingView(formWithDecimalNumber, mode)
         val documentFormErrorsNotWhole = doc(htmlFormErrorsNotWhole)
-        val htmlFormErrorsOutOfRange: HtmlFormat.Appendable = howManyOperatePackagingSiteOwnBrandsView(formWithOutOfRangeNumber, mode)
+        val htmlFormErrorsOutOfRange: HtmlFormat.Appendable = howManyContractPackingView(formWithOutOfRangeNumber, mode)
         val documentFormErrorsOutOfRange = doc(htmlFormErrorsOutOfRange)
 
         "should have the expected title" in {
-          document.title() must include(Messages("changeActivity.howManyOperatePackagingSiteOwnBrands.title"))
+          document.title() mustBe
+          "How many litres will you package as a third party or contract packer in the next 12 months? - Soft Drinks Industry Levy - GOV.UK"
         }
 
         "should have the expected heading" in {
-          document.getElementsByClass(Selectors.heading).text() mustBe Messages("changeActivity.howManyOperatePackagingSiteOwnBrands.heading")
+          document.getElementsByClass(Selectors.heading).text() mustBe
+            "How many litres will you package as a third party or contract packer in the next 12 months?"
         }
 
         "should include a govuk body with the expected content" in {
-          document.getElementsByClass(Selectors.body).text() mustBe Messages("changeActivity.volume.subtext")
+          document.getElementsByClass(Selectors.body).text() mustBe "If you do not have the exact volumes you can enter an estimate."
         }
 
         testLitresInBandsNoPrepopulatedData(document)
         testLitresInBandsWithPrepopulatedData(documentWithValidData)
         testButton(document)
-        testAction(document, routes.HowManyOperatePackagingSiteOwnBrandsController.onSubmit(mode).url)
+        testAction(document, routes.HowManyContractPackingController.onSubmit(mode).url)
 
         "and the form has errors" - {
-          val errorTitle = "Error: " + Messages("changeActivity.howManyOperatePackagingSiteOwnBrands.title")
+          val errorTitle =
+            "Error: How many litres will you package as a third party or contract packer in the next 12 months? - Soft Drinks Industry Levy - GOV.UK"
           testEmptyFormErrors(documentFormErrorsEmpty, errorTitle)
           testNoNumericFormErrors(documentFormErrorsNoneNumeric, errorTitle)
           testNegativeFormErrors(documentFormErrorsNegative, errorTitle)

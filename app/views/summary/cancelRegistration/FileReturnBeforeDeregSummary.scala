@@ -19,8 +19,6 @@ package views.summary.cancelRegistration
 import models.ReturnPeriod
 import play.api.i18n.Messages
 import play.twirl.api.Html
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import views.helpers.ReturnPeriodQuarter
 
 import java.time.format.DateTimeFormatter
 

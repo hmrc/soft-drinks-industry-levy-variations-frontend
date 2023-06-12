@@ -14,35 +14,36 @@
  * limitations under the License.
  *@
 
-@import views.html.helpers._
-@import models._
 @import controllers.changeActivity.routes
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukInput: GovukInput,
-    govukButton: GovukButton,
-    lowAndHighBandInputs: lowAndHighBandInputs,
-    saveAndContinueButton: saveAndContinueButton
+    govukRadios: GovukRadios,
+    govukButton: GovukButton
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("changeActivity.howManyOperatePackagingSiteOwnBrands.title"))) {
+@layout(pageTitle = title(form, messages("changeActivity.contractPacking.title"))) {
 
-    @formHelper(action = routes.HowManyOperatePackagingSiteOwnBrandsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = routes.ContractPackingController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("changeActivity.howManyOperatePackagingSiteOwnBrands.heading")</h1>
-        <p class="govuk-body">@messages("changeActivity.volume.subtext")</p>
+        @govukRadios(
+            RadiosViewModel.yesNo(
+                field = form("value"),
+                legend = LegendViewModel(messages("changeActivity.contractPacking.title")).asPageHeading(),
+                hint = None
+            )
+        )
 
-        @lowAndHighBandInputs(form)(messages)
-        @saveAndContinueButton(messages)
-
+        @govukButton(
+            ButtonViewModel(messages("site.saveContinue"))
+        )
     }
 }

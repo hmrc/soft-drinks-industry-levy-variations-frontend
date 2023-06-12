@@ -27,7 +27,6 @@ import views.summary.cancelRegistration.FileReturnBeforeDeregSummary
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
-import scala.language.postfixOps
 
 class FileReturnBeforeDeregController @Inject()(
                                                  override val messagesApi: MessagesApi,

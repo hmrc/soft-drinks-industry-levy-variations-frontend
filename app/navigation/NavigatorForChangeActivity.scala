@@ -19,13 +19,23 @@ package navigation
 import controllers.changeActivity.routes
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages.Page
-import pages.changeActivity.{AmountProducedPage, HowManyImportsPage, HowManyOperatePackagingSiteOwnBrandsPage, ImportsPage, OperatePackagingSiteOwnBrandsPage}
+import pages.changeActivity.{AmountProducedPage, ContractPackingPage, HowManyContractPackingPage, HowManyImportsPage, HowManyOperatePackagingSiteOwnBrandsPage, ImportsPage, OperatePackagingSiteOwnBrandsPage}
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class NavigatorForChangeActivity @Inject()() extends Navigator {
+
+  private def navigationForContractPacking(userAnswers: UserAnswers, mode: Mode): Call = {
+    if (userAnswers.get(page = ContractPackingPage).contains(true)) {
+      routes.HowManyContractPackingController.onPageLoad(mode)
+    } else if(mode == CheckMode){
+        routes.ChangeActivityCYAController.onPageLoad
+    } else {
+        defaultCall
+    }
+  }
 
   private def navigationForImports(userAnswers: UserAnswers, mode: Mode): Call = {
     if (userAnswers.get(page = ImportsPage).contains(true)) {
@@ -48,6 +58,8 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
   }
 
   override val normalRoutes: Page => UserAnswers => Call = {
+    case ContractPackingPage => userAnswers => navigationForContractPacking(userAnswers, NormalMode)
+    case HowManyContractPackingPage => userAnswers => defaultCall
     case ImportsPage => userAnswers => navigationForImports(userAnswers, NormalMode)
     case HowManyImportsPage => userAnswers => defaultCall
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
@@ -57,6 +69,7 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
   }
 
   override val checkRouteMap: Page => UserAnswers => Call = {
+    case ContractPackingPage => userAnswers => navigationForContractPacking(userAnswers, CheckMode)
     case ImportsPage => userAnswers => navigationForImports(userAnswers, CheckMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
     case _ => _ => routes.ChangeActivityCYAController.onPageLoad
