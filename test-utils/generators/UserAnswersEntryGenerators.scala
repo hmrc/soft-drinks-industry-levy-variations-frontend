@@ -21,10 +21,8 @@ import models.changeActivity.AmountProduced
 import models.updateRegisteredDetails.UpdateContactDetails
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
-import pages._
-import pages.cancelRegistration.CancelRegistrationDatePage
 import pages.SelectChangePage
-import pages.cancelRegistration.ReasonPage
+import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
 import pages.changeActivity.{AmountProducedPage, OperatePackagingSiteOwnBrandsPage}
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.libs.json.{JsValue, Json}

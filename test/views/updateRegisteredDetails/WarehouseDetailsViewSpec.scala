@@ -22,10 +22,9 @@ import models.{CheckMode, NormalMode}
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import views.html.updateRegisteredDetails.WarehouseDetailsView
 import views.ViewSpecHelper
+import views.html.updateRegisteredDetails.WarehouseDetailsView
 class WarehouseDetailsViewSpec extends ViewSpecHelper {
 
   val view = application.injector.instanceOf[WarehouseDetailsView]

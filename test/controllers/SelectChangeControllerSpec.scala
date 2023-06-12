@@ -98,6 +98,31 @@ class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "must redirect to the index controller when no user answers data is submitted" in {
+
+      val mockSessionService = mock[SessionService]
+
+      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+
+      val application =
+        applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[SessionService].toInstance(mockSessionService)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, selectChangeRoute)
+            .withFormUrlEncodedBody(("value", SelectChange.values.head.toString))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.IndexController.onPageLoad.url
+      }
+    }
+
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)).build()
