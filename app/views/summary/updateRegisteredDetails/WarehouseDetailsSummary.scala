@@ -46,10 +46,8 @@ object WarehouseDetailsSummary  {
         )
     }
 
-  def row2(warehouseList: Map[String, Warehouse])(implicit messages: Messages):Object = {
-    warehouseList match {
-      case warehouseList if warehouseList.isEmpty => Html(messages("updateRegisteredDetails.warehouseDetails.subtext"))
-      case warehouseList if !warehouseList.isEmpty => warehouseList.map {
+  def row2(warehouseList: Map[String, Warehouse])(implicit messages: Messages): List[SummaryListRow] = {
+    warehouseList.map {
           warehouse =>
             SummaryListRow(
               key     = Key(HtmlContent(AddressFormattingHelper.addressFormatting(warehouse._2.address, warehouse._2.tradingName))),
@@ -59,7 +57,7 @@ object WarehouseDetailsSummary  {
                   .withVisuallyHiddenText(messages("secondaryWarehouseDetails.remove.hidden"))
               )))
             )
-        }.toList
-      }
+          }.toList
     }
+
 }

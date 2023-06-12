@@ -20,8 +20,9 @@ import utilities.GenericLogger
 import controllers.ControllerHelper
 import controllers.actions._
 import forms.updateRegisteredDetails.WarehouseDetailsFormProvider
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, Warehouse}
 import pages.updateRegisteredDetails.WarehouseDetailsPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -29,9 +30,12 @@ import services.SessionService
 import views.html.updateRegisteredDetails.WarehouseDetailsView
 import views.summary.updateRegisteredDetails.WarehouseDetailsSummary
 import handlers.ErrorHandler
+import models.backend.UkAddress
 
 import scala.concurrent.{ExecutionContext, Future}
 import navigation._
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import viewmodels.govuk.SummaryListFluency
 
 class WarehouseDetailsController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -45,7 +49,7 @@ class WarehouseDetailsController @Inject()(
                                        view: WarehouseDetailsView,
                                        val genericLogger: GenericLogger,
                                        val errorHandler: ErrorHandler
-                                     )(implicit ec: ExecutionContext) extends ControllerHelper {
+                                     )(implicit ec: ExecutionContext) extends ControllerHelper with SummaryListFluency {
 
   val form = formProvider()
 
@@ -57,15 +61,33 @@ class WarehouseDetailsController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode, WarehouseDetailsSummary.row2(request.userAnswers.warehouseList)))
+      val Warehouse = request.userAnswers.warehouseList
+
+      val message: Option[SummaryList] = Warehouse match {
+        case warehouseList  if !warehouseList.isEmpty => Some(SummaryListViewModel(
+          rows = WarehouseDetailsSummary.row2(warehouseList)
+        ))
+        case warehouseList if warehouseList.isEmpty => None
+      }
+
+      Ok(view(preparedForm, mode, message))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
+      val Warehouse = request.userAnswers.warehouseList
+
+      val message: Option[SummaryList] = Warehouse match {
+        case warehouseList  if !warehouseList.isEmpty => Some(SummaryListViewModel(
+          rows = WarehouseDetailsSummary.row2(warehouseList))
+        )
+        case warehouseList if warehouseList.isEmpty => None
+      }
+
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, WarehouseDetailsSummary.row2(request.userAnswers.warehouseList)))),
+          Future.successful(BadRequest(view(formWithErrors, mode, message))),
 
         value => {
           val updatedAnswers = request.userAnswers.set(WarehouseDetailsPage, value)

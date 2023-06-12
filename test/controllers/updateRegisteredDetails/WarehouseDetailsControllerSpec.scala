@@ -17,9 +17,11 @@
 package controllers.updateRegisteredDetails
 
 import base.SpecBase
+import errors.SessionDatabaseInsertError
 import forms.updateRegisteredDetails.WarehouseDetailsFormProvider
-import models.{CheckMode, NormalMode}
+import models.NormalMode
 import navigation._
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -29,20 +31,12 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
-import views.html.updateRegisteredDetails.WarehouseDetailsView
 import utilities.GenericLogger
-import errors.SessionDatabaseInsertError
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import viewmodels.govuk.SummaryListFluency
+import views.html.updateRegisteredDetails.WarehouseDetailsView
+import views.summary.updateRegisteredDetails.WarehouseDetailsSummary
 
 import scala.concurrent.Future
-import org.jsoup.Jsoup
-import play.twirl.api.Html
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key, Value}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import viewmodels.AddressFormattingHelper
-import viewmodels.govuk.SummaryListFluency
 
 class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with SummaryListFluency {
 
@@ -67,7 +61,7 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
         val view = application.injector.instanceOf[WarehouseDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, Html("You don't have any registered warehouses."))(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, None)(request, messages(application)).toString
       }
     }
 
@@ -85,20 +79,15 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, Html("You don't have any registered warehouses."))(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode,  None)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered with a warehouse in the list" in {
 
-      val summaryList = { SummaryListRow(
-        key     = Key(HtmlContent(AddressFormattingHelper.addressFormatting(warehouse.address, warehouse.tradingName))),
-        classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds",
-        actions = Some(Actions("",Seq(
-          ActionItemViewModel("site.remove", routes.WarehouseDetailsController.onPageLoad(NormalMode).url)
-            .withVisuallyHiddenText("secondaryWarehouseDetails.remove.hidden"))
-        )))
-    }
+      val summaryList = Some(SummaryListViewModel(
+        rows = WarehouseDetailsSummary.row2(Map("1" -> warehouse))
+      ))
 
       val userAnswers = warehouseAddedToUserAnswersForUpdateRegisteredDetails.set(WarehouseDetailsPage, true).success.value
 
@@ -158,7 +147,7 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, Html("You don't have any registered warehouses."))(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, None)(request, messages(application)).toString
       }
     }
 

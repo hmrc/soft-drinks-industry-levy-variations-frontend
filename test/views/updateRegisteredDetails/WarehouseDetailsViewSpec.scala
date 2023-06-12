@@ -23,6 +23,7 @@ import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.Html
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import views.html.updateRegisteredDetails.WarehouseDetailsView
 import views.ViewSpecHelper
 class WarehouseDetailsViewSpec extends ViewSpecHelper {
@@ -46,7 +47,7 @@ class WarehouseDetailsViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view(form, NormalMode, Html(""))(request, messages(application))
+    val html = view(form, NormalMode, Some(SummaryList()))(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
       document.title() must include(Messages("updateRegisteredDetails.warehouseDetails" + ".title"))
@@ -93,7 +94,7 @@ class WarehouseDetailsViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with yes and has no errors" - {
-      val html1 = view(form.fill(true), NormalMode, Html(""))(request, messages(application))
+      val html1 = view(form.fill(true), NormalMode, Some(SummaryList()))(request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -128,7 +129,7 @@ class WarehouseDetailsViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with no and has no errors" - {
-      val html1 = view(form.fill(false), NormalMode, Html(""))(request, messages(application))
+      val html1 = view(form.fill(false), NormalMode, Some(SummaryList()))(request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -168,10 +169,10 @@ class WarehouseDetailsViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
       "when in CheckMode" - {
-        val htmlYesSelected = view(form.fill(true), CheckMode, Html(""))(request, messages(application))
+        val htmlYesSelected = view(form.fill(true), CheckMode, Some(SummaryList()))(request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), CheckMode, Html(""))(request, messages(application))
+        val htmlNoSelected = view(form.fill(false), CheckMode, Some(SummaryList()))(request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
           documentYesSelected.select(Selectors.form)
@@ -185,10 +186,10 @@ class WarehouseDetailsViewSpec extends ViewSpecHelper {
       }
 
       "when in NormalMode" - {
-        val htmlYesSelected = view(form.fill(true), NormalMode, Html(""))(request, messages(application))
+        val htmlYesSelected = view(form.fill(true), NormalMode, Some(SummaryList()))(request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), NormalMode, Html(""))(request, messages(application))
+        val htmlNoSelected = view(form.fill(false), NormalMode, Some(SummaryList()))(request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
           documentYesSelected.select(Selectors.form)
@@ -203,7 +204,7 @@ class WarehouseDetailsViewSpec extends ViewSpecHelper {
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode, Html(""))(request, messages(application))
+      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode, Some(SummaryList()))(request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
