@@ -25,8 +25,12 @@ import pages.updateRegisteredDetails.UpdateContactDetailsPage
 
 trait PageGenerators {
 
+
   implicit lazy val arbitraryChangeActivityPackagingSiteDetailsPage: Arbitrary[changeActivity.PackagingSiteDetailsPage.type] =
     Arbitrary(changeActivity.PackagingSiteDetailsPage)
+
+  implicit lazy val arbitraryUpdateRegisteredDetailsRemoveWarehouseDetailsPage: Arbitrary[updateRegisteredDetails.RemoveWarehouseDetailsPage.type] =
+    Arbitrary(updateRegisteredDetails.RemoveWarehouseDetailsPage)
 
   implicit lazy val arbitraryCancelRegistrationCancelRegistrationDatePage: Arbitrary[CancelRegistrationDatePage.type] =
     Arbitrary(CancelRegistrationDatePage)

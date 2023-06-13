@@ -12,8 +12,8 @@ import play.api.test.WsTestClient
 
 class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelper {
 
-  val normalRoutePath = "/packaging-site"
-  val checkRoutePath = "/change-packaging-site"
+  val normalRoutePath = "/operate-packaging-site"
+  val checkRoutePath = "/change-operate-packaging-site"
 
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {

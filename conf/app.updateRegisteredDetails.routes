@@ -12,3 +12,8 @@ GET        /warehouse-details                        controllers.updateRegistere
 POST       /warehouse-details                        controllers.updateRegisteredDetails.WarehouseDetailsController.onSubmit(mode: Mode = NormalMode)
 GET        /change-warehouse-details                  controllers.updateRegisteredDetails.WarehouseDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-warehouse-details                  controllers.updateRegisteredDetails.WarehouseDetailsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /warehouse-details/remove/:index                        controllers.updateRegisteredDetails.RemoveWarehouseDetailsController.onPageLoad(mode: Mode = NormalMode, index: String)
+POST       /warehouse-details/remove/:index                        controllers.updateRegisteredDetails.RemoveWarehouseDetailsController.onSubmit(mode: Mode = NormalMode, index: String)
+GET        /change-warehouse-details/remove/:index                 controllers.updateRegisteredDetails.RemoveWarehouseDetailsController.onPageLoad(mode: Mode = CheckMode, index: String)
+POST       /change-warehouse-details/remove/:index                  controllers.updateRegisteredDetails.RemoveWarehouseDetailsController.onSubmit(mode: Mode = CheckMode, index: String)

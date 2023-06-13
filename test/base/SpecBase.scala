@@ -171,7 +171,6 @@ trait SpecBase
 
   val userDetailsWithSetMethodsReturningFailure: UserAnswers = new UserAnswers("sdilId", SelectChange.UpdateRegisteredAccount) {
     override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
-
     override def setAndRemoveLitresIfReq(page: Settable[Boolean], litresPage: Settable[LitresInBands], value: Boolean)(implicit writes: Writes[Boolean]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
   }
 
