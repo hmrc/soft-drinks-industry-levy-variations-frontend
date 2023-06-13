@@ -214,4 +214,4 @@ updateRegisteredDetails.warehouseDetails.subtext = You don''t have any registere
 updateRegisteredDetails.warehouseDetails.subHeading = Do you want to add another warehouse?
 updateRegisteredDetails.warehouseDetails.checkYourAnswersLabel = Change your UK warehouse details
 updateRegisteredDetails.warehouseDetails.error.required = Select yes if you want to register another UK warehouse
-updateRegisteredDetails.warehouseDetails.change.hidden = Change your UK warehouse details
+updateRegisteredDetails.warehouseDetails.remove.hidden = remove UK warehouse

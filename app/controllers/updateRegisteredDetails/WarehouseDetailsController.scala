@@ -63,22 +63,22 @@ class WarehouseDetailsController @Inject()(
 
       val warehouse = request.userAnswers.warehouseList
 
-      val message: Option[SummaryList] = warehouse match {
+      val summaryList: Option[SummaryList] = warehouse match {
         case warehouseList  if !warehouseList.isEmpty => Some(SummaryListViewModel(
           rows = WarehouseDetailsSummary.row2(warehouseList)
         ))
         case warehouseList if warehouseList.isEmpty => None
       }
 
-      Ok(view(preparedForm, mode, message))
+      Ok(view(preparedForm, mode, summaryList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val Warehouse = request.userAnswers.warehouseList
+      val warehouse = request.userAnswers.warehouseList
 
-      val message: Option[SummaryList] = Warehouse match {
+      val summarylist: Option[SummaryList] = warehouse match {
         case warehouseList  if !warehouseList.isEmpty => Some(SummaryListViewModel(
           rows = WarehouseDetailsSummary.row2(warehouseList))
         )
@@ -87,7 +87,7 @@ class WarehouseDetailsController @Inject()(
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, message))),
+          Future.successful(BadRequest(view(formWithErrors, mode, summarylist))),
 
         value => {
           val updatedAnswers = request.userAnswers.set(WarehouseDetailsPage, value)

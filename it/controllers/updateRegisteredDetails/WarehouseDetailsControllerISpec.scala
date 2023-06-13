@@ -1,7 +1,8 @@
 package controllers.updateRegisteredDetails
 
 import controllers.ControllerITTestHelper
-import models.NormalMode
+import models.Warehouse
+import models.backend.UkAddress
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.updateRegisteredDetails.WarehouseDetailsPage
@@ -16,8 +17,9 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
   val checkRoutePath = "/change-warehouse-details"
 
   "GET " + normalRoutePath - {
-    "when the userAnswers contains no data" - {
-      "should return OK and render the WarehouseDetails page with no data populated" in {
+    "when the userAnswers contains no data (no warehouses)" - {
+      "should return OK and render the WarehouseDetails page with no data populated " +
+        "(with message displaying no warehouses added)" in {
         given
           .commonPrecondition
 
@@ -30,6 +32,8 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
             page.title must include(Messages("updateRegisteredDetails.warehouseDetails" + ".title"))
+            val summaryList = page.getElementsByClass("govuk-caption-m")
+            summaryList.text mustBe "You don't have any registered warehouses."
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -41,9 +45,41 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
       }
     }
 
+    "GET " + normalRoutePath - {
+      "when the userAnswers contains some warehouses" - {
+        "should return OK and render the WarehouseDetails page with no data populated " +
+          "(with message displaying summary list of warehouses)" in {
+          given
+            .commonPrecondition
+
+          setAnswers(emptyUserAnswersForUpdateRegisteredDetails.copy(warehouseList =
+            Map("1" -> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy"), "WR53 7CX")))))
+
+          WsTestClient.withClient { client =>
+            val result1 = createClientRequestGet(client, updateRegisteredDetailsBaseUrl + normalRoutePath)
+
+            whenReady(result1) { res =>
+              res.status mustBe 200
+              val page = Jsoup.parse(res.body)
+              page.title must include(Messages("updateRegisteredDetails.warehouseDetails" + ".title"))
+              val summaryList = page.getElementsByClass("govuk-caption-m")
+              summaryList.text mustBe ("ABC Ltd 33 Rhes Priordy WR53 7CX Remove remove UK warehouse")
+              val radioInputs = page.getElementsByClass("govuk-radios__input")
+              radioInputs.size() mustBe 2
+              radioInputs.get(0).attr("value") mustBe "true"
+              radioInputs.get(0).hasAttr("checked") mustBe false
+              radioInputs.get(1).attr("value") mustBe "false"
+              radioInputs.get(1).hasAttr("checked") mustBe false
+            }
+          }
+        }
+      }
+    }
+
     userAnswersForUpdateRegisteredDetailsWarehouseDetailsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
-        s"should return OK and render the page with " + key + " radio checked" in {
+        s"should return OK and render the page with " + key + " radio checked" +
+        "(with message displaying no warehouses added)" in {
           given
             .commonPrecondition
 
@@ -56,6 +92,8 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
               page.title must include(Messages("updateRegisteredDetails.warehouseDetails" + ".title"))
+              val summaryList = page.getElementsByClass("govuk-caption-m")
+              summaryList.text mustBe "You don't have any registered warehouses."
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -72,7 +110,8 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
   s"GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
-      "should return OK and render the WarehouseDetails page with no data populated" in {
+      "should return OK and render the WarehouseDetails page with no data populated" +
+        "(with message displaying no warehouses added)" in {
         given
           .commonPrecondition
 
@@ -85,6 +124,8 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
             page.title must include(Messages("updateRegisteredDetails.warehouseDetails" + ".title"))
+            val summaryList = page.getElementsByClass("govuk-caption-m")
+            summaryList.text mustBe "You don't have any registered warehouses."
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -98,7 +139,8 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
     userAnswersForUpdateRegisteredDetailsWarehouseDetailsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
-        s"should return OK and render the page with " + key + " radio checked" in {
+        s"should return OK and render the page with " + key + " radio checked" +
+        "(with message displaying no warehouses added)" in {
           given
             .commonPrecondition
 
@@ -111,12 +153,15 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
               page.title must include(Messages("updateRegisteredDetails.warehouseDetails" + ".title"))
+              val summaryList = page.getElementsByClass("govuk-caption-m")
+              summaryList.text mustBe "You don't have any registered warehouses."
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
               radioInputs.get(0).hasAttr("checked") mustBe key == "yes"
               radioInputs.get(1).attr("value") mustBe "false"
               radioInputs.get(1).hasAttr("checked") mustBe key == "no"
+              getAnswers(sdilNumber).map(userAnswers => userAnswers.warehouseList).get mustBe Map.empty
             }
           }
         }

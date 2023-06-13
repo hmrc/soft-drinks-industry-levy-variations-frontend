@@ -56,7 +56,7 @@ object WarehouseDetailsSummary  {
               ),
               actions = Some(Actions("",Seq(
                 ActionItemViewModel("site.remove", routes.WarehouseDetailsController.onPageLoad(NormalMode).url)
-                  .withVisuallyHiddenText(messages("secondaryWarehouseDetails.remove.hidden"))
+                  .withVisuallyHiddenText(messages("updateRegisteredDetails.warehouseDetails.remove.hidden"))
               )))
             )
           }.toList
