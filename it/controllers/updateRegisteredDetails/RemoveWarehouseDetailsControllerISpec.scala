@@ -142,6 +142,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
               .commonPrecondition
 
             setAnswers(userAnswers)
+            getAnswers(userAnswers.id).get.warehouseList.size mustBe 1
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -151,7 +152,13 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(RemoveWarehouseDetailsPage))
+                val userAnswersAfterTest = getAnswers(userAnswers.id)
+                val dataStoredForPage = userAnswersAfterTest.fold[Option[Boolean]](None)(_.get(RemoveWarehouseDetailsPage))
+                if(yesSelected) {
+                  userAnswersAfterTest.get.warehouseList.size mustBe 0
+                } else {
+                  userAnswersAfterTest.get.warehouseList.size mustBe 1
+                }
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe yesSelected
               }
@@ -169,6 +176,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
         setAnswers(
           emptyUserAnswersForUpdateRegisteredDetails
             .copy(warehouseList = Map(indexOfWarehouseToBeRemoved -> Warehouse(None, ukAddress))))
+        getAnswers(emptyUserAnswersForUpdateRegisteredDetails.id).get.warehouseList.size mustBe 1
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, updateRegisteredDetailsBaseUrl + normalRoutePath(indexOfWarehouseToBeRemoved), Json.obj("value" -> "")
@@ -184,6 +192,8 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
               .select("a")
               .attr("href") mustBe "#value"
             errorSummary.text() mustBe Messages("updateRegisteredDetails.removeWarehouseDetails" + ".error.required")
+            page.getElementById("warehouseToRemove").text() mustBe "foo, bar wizz"
+            getAnswers(emptyUserAnswersForUpdateRegisteredDetails.id).get.warehouseList.size mustBe 1
           }
         }
       }
@@ -220,6 +230,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
               .commonPrecondition
 
             setAnswers(userAnswers)
+            getAnswers(userAnswers.id).get.warehouseList.size mustBe 1
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -229,9 +240,15 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(routes.UpdateRegisteredDetailsCYAController.onPageLoad.url)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(RemoveWarehouseDetailsPage))
+                val userAnswersAfterTest = getAnswers(userAnswers.id)
+                val dataStoredForPage = userAnswersAfterTest.fold[Option[Boolean]](None)(_.get(RemoveWarehouseDetailsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe yesSelected
+                if(yesSelected) {
+                  userAnswersAfterTest.get.warehouseList.size mustBe 0
+                } else {
+                  userAnswersAfterTest.get.warehouseList.size mustBe 1
+                }
               }
             }
           }
@@ -247,6 +264,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
         setAnswers(
           emptyUserAnswersForUpdateRegisteredDetails
             .copy(warehouseList = Map(indexOfWarehouseToBeRemoved -> Warehouse(None, ukAddress))))
+        getAnswers(emptyUserAnswersForUpdateRegisteredDetails.id).get.warehouseList.size mustBe 1
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, updateRegisteredDetailsBaseUrl + checkRoutePath(indexOfWarehouseToBeRemoved), Json.obj("value" -> "")
@@ -254,6 +272,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
           whenReady(result) { res =>
             res.status mustBe 400
+            getAnswers(emptyUserAnswersForUpdateRegisteredDetails.id).get.warehouseList.size mustBe 1
             val page = Jsoup.parse(res.body)
             page.title must include("Error: " + Messages("updateRegisteredDetails.removeWarehouseDetails" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
@@ -262,6 +281,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
               .select("a")
               .attr("href") mustBe "#value"
             errorSummary.text() mustBe Messages("updateRegisteredDetails.removeWarehouseDetails" + ".error.required")
+            page.getElementById("warehouseToRemove").text() mustBe "foo, bar wizz"
           }
         }
       }
