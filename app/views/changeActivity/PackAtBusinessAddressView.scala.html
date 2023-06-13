@@ -38,8 +38,8 @@
 
         <h1 class="govuk-heading-m">@messages("changeActivity.packAtBusinessAddress.title")</h1>
 
-        <p class="govuk-body-m"> <span class="govuk-visually-hidden">@messages("changeActivity.packAtBusinessAddress.nameText")</span> @businessName</p>
-        <p class="govuk-body-m"> <span class="govuk-visually-hidden">@messages("changeActivity.packAtBusinessAddress.addressText")</span> @businessAddress.lines.head, @businessAddress.lines.last, @businessAddress.postCode</p>
+        <p class="govuk-body"> <span class="govuk-visually-hidden">@messages("changeActivity.packAtBusinessAddress.nameText")</span> @businessName</p>
+        <p class="govuk-body"> <span class="govuk-visually-hidden">@messages("changeActivity.packAtBusinessAddress.addressText")</span> @businessAddress.lines.head, @businessAddress.lines.last, @businessAddress.postCode</p>
 
         @govukRadios(
             RadiosViewModel.yesNo(
