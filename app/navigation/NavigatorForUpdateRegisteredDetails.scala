@@ -29,6 +29,7 @@ class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
 
   override val normalRoutes: Page => UserAnswers => Call = {
     case WarehouseDetailsPage => userAnswers => defaultCall
+    case RemoveWarehouseDetailsPage => userAnswers => defaultCall
     case UpdateContactDetailsPage => userAnswers => defaultCall
     case _ => _ => defaultCall
   }

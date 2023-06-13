@@ -59,13 +59,11 @@ class WarehouseDetailsController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val warehouse = request.userAnswers.warehouseList
-
-      val summaryList: Option[SummaryList] = warehouse match {
-        case warehouseList  if !warehouseList.isEmpty => Some(SummaryListViewModel(
-          rows = WarehouseDetailsSummary.row2(warehouseList)
-        ))
-        case warehouseList if warehouseList.isEmpty => None
+      val summaryList: Option[SummaryList] = request.userAnswers.warehouseList match {
+        case warehouseList if warehouseList.nonEmpty => Some(SummaryListViewModel(
+          rows = WarehouseDetailsSummary.row2(warehouseList))
+        )
+        case _ => None
       }
 
       Ok(view(preparedForm, mode, summaryList))
@@ -74,18 +72,16 @@ class WarehouseDetailsController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val warehouse = request.userAnswers.warehouseList
-
-      val summarylist: Option[SummaryList] = warehouse match {
-        case warehouseList  if !warehouseList.isEmpty => Some(SummaryListViewModel(
+      val summaryList: Option[SummaryList] = request.userAnswers.warehouseList match {
+        case warehouseList if warehouseList.nonEmpty => Some(SummaryListViewModel(
           rows = WarehouseDetailsSummary.row2(warehouseList))
         )
-        case warehouseList if warehouseList.isEmpty => None
+        case _ => None
       }
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, summarylist))),
+          Future.successful(BadRequest(view(formWithErrors, mode, summaryList))),
 
         value => {
           val updatedAnswers = request.userAnswers.set(WarehouseDetailsPage, value)
