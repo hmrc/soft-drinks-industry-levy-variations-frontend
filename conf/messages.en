@@ -247,3 +247,7 @@ changeActivity.packAtBusinessAddress.heading = Is this address a UK packaging si
 changeActivity.packAtBusinessAddress.checkYourAnswersLabel = Is this address a UK packaging site you operate to produce liable drinks?
 changeActivity.packAtBusinessAddress.error.required = Select yes if your registered business address is a UK packaging site that you operate to produce liable drinks
 changeActivity.packAtBusinessAddress.change.hidden = PackAtBusinessAddress
+changeActivity.packAtBusinessAddress.detailsLink = Why we need these details
+changeActivity.packAtBusinessAddress.detailsContent = Because you changed your business activity, we need to know the addresses of any UK packaging sites you operate.
+changeActivity.packAtBusinessAddress.nameText = The business name is
+changeActivity.packAtBusinessAddress.addressText = The business address is

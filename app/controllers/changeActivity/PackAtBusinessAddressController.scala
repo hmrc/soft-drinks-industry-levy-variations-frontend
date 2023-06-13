@@ -50,21 +50,23 @@ class PackAtBusinessAddressController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-
+      val businessName = request.subscription.orgName
+      val businessAddress = request.subscription.address
       val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode))
+      Ok(view(preparedForm, businessName, businessAddress, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
+      val businessName = request.subscription.orgName
+      val businessAddress = request.subscription.address
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
+          Future.successful(BadRequest(view(formWithErrors, businessName, businessAddress, mode))),
 
         value => {
           val updatedAnswers = request.userAnswers.set(PackAtBusinessAddressPage, value)
