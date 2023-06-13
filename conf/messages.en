@@ -207,3 +207,11 @@ changeActivity.contractPacking.change.hidden = Change do you operate any packagi
 howManyContractPacking.title = How many litres will you package as a third party or contract packer in the next 12 months?
 contractPacking.lowband.litres.hidden = change amount of litres in lowband for contractPacking
 contractPacking.highband.litres.hidden = change amount of litres in highband for contractPacking
+
+updateRegisteredDetails.warehouseDetails.title = Change your UK warehouse details
+updateRegisteredDetails.warehouseDetails.heading = Change your UK warehouse details
+updateRegisteredDetails.warehouseDetails.subtext = You don''t have any registered warehouses.
+updateRegisteredDetails.warehouseDetails.subHeading = Do you want to add another warehouse?
+updateRegisteredDetails.warehouseDetails.checkYourAnswersLabel = Change your UK warehouse details
+updateRegisteredDetails.warehouseDetails.error.required = Select yes if you want to register another UK warehouse
+updateRegisteredDetails.warehouseDetails.remove.hidden = remove UK warehouse
