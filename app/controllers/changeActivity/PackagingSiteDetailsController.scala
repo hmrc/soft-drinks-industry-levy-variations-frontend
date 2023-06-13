@@ -16,26 +16,24 @@
 
 package controllers.changeActivity
 
-import utilities.GenericLogger
 import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.PackagingSiteDetailsFormProvider
-
-import javax.inject.Inject
+import handlers.ErrorHandler
 import models.Mode
+import navigation._
 import pages.changeActivity.PackagingSiteDetailsPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
-import views.html.changeActivity.PackagingSiteDetailsView
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import handlers.ErrorHandler
-import models.backend.{Site, UkAddress}
+import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
-
-import scala.concurrent.{ExecutionContext, Future}
-import navigation._
 import viewmodels.summary.changeActivity.PackagingSiteDetailsSummary
+import views.html.changeActivity.PackagingSiteDetailsView
+
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class PackagingSiteDetailsController @Inject()(
                                        override val messagesApi: MessagesApi,

@@ -2,7 +2,7 @@ package testSupport
 
 import models.{SelectChange, UserAnswers}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
-import pages.changeActivity.{ContractPackingPage, ImportsPage, OperatePackagingSiteOwnBrandsPage}
+import pages.changeActivity.{ContractPackingPage, ImportsPage, OperatePackagingSiteOwnBrandsPage, PackagingSiteDetailsPage}
 import play.api.libs.json.Json
 
 trait ITCoreTestDataForChangeActivity {

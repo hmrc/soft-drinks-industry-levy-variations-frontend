@@ -16,26 +16,24 @@
 
 package controllers.updateRegisteredDetails
 
-import utilities.GenericLogger
 import controllers.ControllerHelper
 import controllers.actions._
 import forms.updateRegisteredDetails.WarehouseDetailsFormProvider
-
-import javax.inject.Inject
-import models.{Mode, Warehouse}
+import handlers.ErrorHandler
+import models.Mode
+import navigation._
 import pages.updateRegisteredDetails.WarehouseDetailsPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import utilities.GenericLogger
+import viewmodels.govuk.SummaryListFluency
 import views.html.updateRegisteredDetails.WarehouseDetailsView
 import views.summary.updateRegisteredDetails.WarehouseDetailsSummary
-import handlers.ErrorHandler
-import models.backend.UkAddress
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import navigation._
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewmodels.govuk.SummaryListFluency
 
 class WarehouseDetailsController @Inject()(
                                        override val messagesApi: MessagesApi,
