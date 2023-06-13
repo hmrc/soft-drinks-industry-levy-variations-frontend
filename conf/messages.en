@@ -215,3 +215,11 @@ updateRegisteredDetails.warehouseDetails.subHeading = Do you want to add another
 updateRegisteredDetails.warehouseDetails.checkYourAnswersLabel = Change your UK warehouse details
 updateRegisteredDetails.warehouseDetails.error.required = Select yes if you want to register another UK warehouse
 updateRegisteredDetails.warehouseDetails.remove.hidden = remove UK warehouse
+
+changeActivity.packagingSiteDetails.title = UK packaging site details
+changeActivity.packagingSiteDetails.heading = UK packaging site details
+changeActivity.packagingSiteDetails.subHeading = Do you want to add another UK packaging site?
+changeActivity.packagingSiteDetails.info = You must tell us about all of the UK packaging sites you operate to produce liable drinks. You must have at least one registered packaging site.
+changeActivity.packagingSiteDetails.checkYourAnswersLabel = UK packaging site details
+changeActivity.packagingSiteDetails.error.required = Select yes if you need to add another packaging site
+changeActivity.packagingSiteDetails.change.hidden = PackagingSiteDetails

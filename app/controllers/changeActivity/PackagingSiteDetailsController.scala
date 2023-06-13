@@ -14,37 +14,37 @@
  * limitations under the License.
  */
 
-package controllers.updateRegisteredDetails
+package controllers.changeActivity
 
 import controllers.ControllerHelper
 import controllers.actions._
-import forms.updateRegisteredDetails.WarehouseDetailsFormProvider
+import forms.changeActivity.PackagingSiteDetailsFormProvider
 import handlers.ErrorHandler
 import models.Mode
 import navigation._
-import pages.updateRegisteredDetails.WarehouseDetailsPage
+import pages.changeActivity.PackagingSiteDetailsPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
-import views.html.updateRegisteredDetails.WarehouseDetailsView
-import views.summary.updateRegisteredDetails.WarehouseDetailsSummary
+import viewmodels.summary.changeActivity.PackagingSiteDetailsSummary
+import views.html.changeActivity.PackagingSiteDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class WarehouseDetailsController @Inject()(
+class PackagingSiteDetailsController @Inject()(
                                        override val messagesApi: MessagesApi,
                                        val sessionService: SessionService,
-                                       val navigator: NavigatorForUpdateRegisteredDetails,
+                                       val navigator: NavigatorForChangeActivity,
                                        identify: IdentifierAction,
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
-                                       formProvider: WarehouseDetailsFormProvider,
+                                       formProvider: PackagingSiteDetailsFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
-                                       view: WarehouseDetailsView,
+                                       view: PackagingSiteDetailsView,
                                        val genericLogger: GenericLogger,
                                        val errorHandler: ErrorHandler
                                      )(implicit ec: ExecutionContext) extends ControllerHelper with SummaryListFluency {
@@ -54,42 +54,32 @@ class WarehouseDetailsController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(WarehouseDetailsPage) match {
+      val preparedForm = request.userAnswers.get(PackagingSiteDetailsPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      val warehouse = request.userAnswers.warehouseList
+      val siteList: SummaryList = SummaryListViewModel(
+        rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList)
+      )
 
-      val summaryList: Option[SummaryList] = warehouse match {
-        case warehouseList  if !warehouseList.isEmpty => Some(SummaryListViewModel(
-          rows = WarehouseDetailsSummary.row2(warehouseList)
-        ))
-        case warehouseList if warehouseList.isEmpty => None
-      }
-
-      Ok(view(preparedForm, mode, summaryList))
+      Ok(view(preparedForm, mode, siteList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val warehouse = request.userAnswers.warehouseList
 
-      val summarylist: Option[SummaryList] = warehouse match {
-        case warehouseList  if !warehouseList.isEmpty => Some(SummaryListViewModel(
-          rows = WarehouseDetailsSummary.row2(warehouseList))
-        )
-        case warehouseList if warehouseList.isEmpty => None
-      }
-
+      val siteList: SummaryList = SummaryListViewModel(
+        rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList)
+      )
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, summarylist))),
+          Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
 
         value => {
-          val updatedAnswers = request.userAnswers.set(WarehouseDetailsPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, WarehouseDetailsPage, mode)
+          val updatedAnswers = request.userAnswers.set(PackagingSiteDetailsPage, value)
+          updateDatabaseAndRedirect(updatedAnswers, PackagingSiteDetailsPage, mode)
         }
       )
   }

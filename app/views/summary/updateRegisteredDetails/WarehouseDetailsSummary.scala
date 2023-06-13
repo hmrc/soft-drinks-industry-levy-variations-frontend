@@ -20,7 +20,6 @@ import controllers.updateRegisteredDetails.routes
 import models.{CheckMode, NormalMode, UserAnswers, Warehouse}
 import pages.updateRegisteredDetails.WarehouseDetailsPage
 import play.api.i18n.Messages
-import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
