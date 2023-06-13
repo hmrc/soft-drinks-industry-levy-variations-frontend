@@ -17,10 +17,11 @@
 package controllers.changeActivity
 
 import base.SpecBase
+import connectors.SoftDrinksIndustryLevyConnector
 import forms.changeActivity.PackAtBusinessAddressFormProvider
-import models.NormalMode
+import models.{NormalMode, RetrievedSubscription}
 import navigation._
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.changeActivity.PackAtBusinessAddressPage
@@ -32,8 +33,11 @@ import services.SessionService
 import views.html.changeActivity.PackAtBusinessAddressView
 import utilities.GenericLogger
 import errors.SessionDatabaseInsertError
+import models.backend.UkAddress
+
 import scala.concurrent.Future
 import org.jsoup.Jsoup
+import play.api.i18n.Messages
 
 class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
@@ -41,6 +45,10 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new PackAtBusinessAddressFormProvider()
   val form = formProvider()
+  val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
+  var usersRetrievedSubscription: RetrievedSubscription = aSubscription
+  val businessName: String = usersRetrievedSubscription.orgName
+  val businessAddress: UkAddress = usersRetrievedSubscription.address
 
   lazy val packAtBusinessAddressRoute = routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url
 
@@ -52,13 +60,15 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request = FakeRequest(GET, packAtBusinessAddressRoute)
-
+        when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
+          Future.successful(Some(aSubscription))
+        }
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[PackAtBusinessAddressView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, businessName, businessAddress, NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -70,13 +80,15 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request = FakeRequest(GET, packAtBusinessAddressRoute)
-
+        when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
+          Future.successful(Some(aSubscription))
+        }
         val view = application.injector.instanceOf[PackAtBusinessAddressView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), businessName, businessAddress, NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -120,9 +132,16 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[PackAtBusinessAddressView]
 
         val result = route(application, request).value
+        val page = Jsoup.parse(contentAsString(result))
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, businessName, businessAddress, NormalMode)(request, messages(application)).toString
+
+        //noinspection ComparingUnrelatedTypes
+        page.getElementsContainingText(usersRetrievedSubscription.orgName).toString == true
+        //noinspection ComparingUnrelatedTypes
+        page.getElementsContainingText(usersRetrievedSubscription.address.toString).`val`() == true
+        page.getElementsByTag("a").text() must include(Messages("changeActivity.packAtBusinessAddress.error.required"))
       }
     }
 
