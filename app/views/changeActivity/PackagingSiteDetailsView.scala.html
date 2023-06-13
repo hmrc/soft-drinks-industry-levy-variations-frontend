@@ -39,6 +39,8 @@
             @messages("changeActivity.packagingSiteDetails.heading")
         </h1>
 
+        <p class="govuk-body">@messages("changeActivity.packagingSiteDetails.info")</p>
+
         <span class="govuk-caption-m">
             @govukSummaryList(packingSite)
         </span>
@@ -46,7 +48,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("changeActivity.packagingSiteDetails.heading")).asPageHeading(),
+                legend = LegendViewModel(messages("changeActivity.packagingSiteDetails.subHeading")).asPageHeading(),
                 hint = None
             )
         )

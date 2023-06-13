@@ -33,7 +33,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
-    val heading = "govuk-fieldset__heading"
+    val heading = "govuk-heading-m"
     val legend = "govuk-fieldset__legend  govuk-fieldset__legend--m"
     val radios = "govuk-radios__item"
     val radioInput = "govuk-radios__input"
@@ -52,10 +52,16 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
       document.title() must include(Messages("changeActivity.packagingSiteDetails" + ".title"))
     }
 
-    "should include a legend with the expected heading" in {
-      val legend = document.getElementsByClass(Selectors.legend)
+    "should include a heading with the expected heading" in {
+      val legend = document.getElementsByClass(Selectors.heading)
       legend.size() mustBe 1
       legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("changeActivity.packagingSiteDetails.heading")
+    }
+
+    "should include a legend with the expected sub-heading" in {
+      val legend = document.getElementsByClass(Selectors.legend)
+      legend.size() mustBe 1
+      legend.get(0).getElementsByClass(Selectors.legend).text() mustEqual Messages("changeActivity.packagingSiteDetails.subHeading")
     }
 
     "when the form is not preoccupied and has no errors" - {

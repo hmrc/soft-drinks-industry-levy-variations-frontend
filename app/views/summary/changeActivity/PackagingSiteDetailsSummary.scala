@@ -50,8 +50,10 @@ object PackagingSiteDetailsSummary  {
     packingSiteList.map {
         packingSite =>
           SummaryListRow(
-            key     = Key(HtmlContent(AddressFormattingHelper.addressFormatting(packingSite._2.address, packingSite._2.tradingName))),
-            classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds",
+            key     = Key(
+              content = HtmlContent(AddressFormattingHelper.addressFormatting(packingSite._2.address, packingSite._2.tradingName)),
+              classes = "govuk-!-font-weight-regular govuk-!-width-full"
+            ),
             actions = if(packingSiteList.size > 1){ Some(Actions("",Seq(
               ActionItemViewModel("site.remove", routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
                 .withVisuallyHiddenText(messages("secondaryWarehouseDetails.remove.hidden"))
