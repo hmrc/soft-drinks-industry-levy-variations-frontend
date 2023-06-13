@@ -21,6 +21,12 @@ trait ITCoreTestDataForUpdateRegisteredDetails {
     Map("yes" -> yesSelected, "no" -> noSelected)
     }
 
+  val userAnswersForUpdateRegisteredDetailsPackingSiteDetailsRemovePage: Map[String, UserAnswers] = {
+    val yesSelected = emptyUserAnswersForUpdateRegisteredDetails.set(PackingSiteDetailsRemovePage, true).success.value
+    val noSelected = emptyUserAnswersForUpdateRegisteredDetails.set(PackingSiteDetailsRemovePage, false).success.value
+    Map("yes" -> yesSelected, "no" -> noSelected)
+    }
+
   val userAnswersForUpdateRegisteredDetailsWarehouseDetailsPage: Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForUpdateRegisteredDetails.set(WarehouseDetailsPage, true).success.value
     val noSelected = emptyUserAnswersForUpdateRegisteredDetails.set(WarehouseDetailsPage, false).success.value
