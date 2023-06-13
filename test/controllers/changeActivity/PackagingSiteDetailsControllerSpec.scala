@@ -17,9 +17,11 @@
 package controllers.changeActivity
 
 import base.SpecBase
+import errors.SessionDatabaseInsertError
 import forms.changeActivity.PackagingSiteDetailsFormProvider
 import models.NormalMode
 import navigation._
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -29,13 +31,14 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
-import views.html.changeActivity.PackagingSiteDetailsView
 import utilities.GenericLogger
-import errors.SessionDatabaseInsertError
-import scala.concurrent.Future
-import org.jsoup.Jsoup
+import viewmodels.govuk.SummaryListFluency
+import viewmodels.summary.changeActivity.PackagingSiteDetailsSummary
+import views.html.changeActivity.PackagingSiteDetailsView
 
-class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar {
+import scala.concurrent.Future
+
+class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  with SummaryListFluency{
 
   def onwardRoute = Call("GET", "/foo")
 
@@ -50,6 +53,10 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
 
+      val summary = SummaryListViewModel(
+        rows = PackagingSiteDetailsSummary.row2(Map.empty)
+      )
+
       running(application) {
         val request = FakeRequest(GET, packagingSiteDetailsRoute)
 
@@ -58,11 +65,15 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[PackagingSiteDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, summary)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
+
+      val summary = SummaryListViewModel(
+        rows = PackagingSiteDetailsSummary.row2(Map.empty)
+      )
 
       val userAnswers = emptyUserAnswersForChangeActivity.set(PackagingSiteDetailsPage, true).success.value
 
@@ -76,7 +87,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, summary)(request, messages(application)).toString
       }
     }
 
@@ -108,6 +119,10 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
+      val summary = SummaryListViewModel(
+        rows = PackagingSiteDetailsSummary.row2(Map.empty)
+      )
+
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
 
       running(application) {
@@ -122,7 +137,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, summary)(request, messages(application)).toString
       }
     }
 

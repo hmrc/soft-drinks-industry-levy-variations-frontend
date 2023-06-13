@@ -56,15 +56,13 @@ class PackagingSiteDetailsController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
-      val packingSite = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), Some("ref1"), Some("super cola"), None))
-
       val preparedForm = request.userAnswers.get(PackagingSiteDetailsPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
       val siteList: SummaryList = SummaryListViewModel(
-        rows = PackagingSiteDetailsSummary.row2(packingSite)
+        rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList)
       )
 
       Ok(view(preparedForm, mode, siteList))
@@ -73,9 +71,9 @@ class PackagingSiteDetailsController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
-      val packingSite = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), Some("ref1"), Some("super cola"), None))
+
       val siteList: SummaryList = SummaryListViewModel(
-        rows = PackagingSiteDetailsSummary.row2(packingSite)
+        rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList)
       )
       form.bindFromRequest().fold(
         formWithErrors =>
