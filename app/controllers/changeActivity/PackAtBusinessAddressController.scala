@@ -20,6 +20,7 @@ import utilities.GenericLogger
 import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.PackAtBusinessAddressFormProvider
+
 import javax.inject.Inject
 import models.Mode
 import pages.changeActivity.PackAtBusinessAddressPage
@@ -31,6 +32,7 @@ import handlers.ErrorHandler
 
 import scala.concurrent.{ExecutionContext, Future}
 import navigation._
+import viewmodels.AddressFormattingHelper
 
 class PackAtBusinessAddressController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -50,23 +52,21 @@ class PackAtBusinessAddressController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
-      val businessName = request.subscription.orgName
-      val businessAddress = request.subscription.address
+      val formattedAddress = AddressFormattingHelper.addressFormatting(request.subscription.address, Option(request.subscription.orgName))
       val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, businessName, businessAddress, mode))
+      Ok(view(preparedForm, mode, formattedAddress))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val businessName = request.subscription.orgName
-      val businessAddress = request.subscription.address
+      val formattedAddress = AddressFormattingHelper.addressFormatting(request.subscription.address, Option(request.subscription.orgName))
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, businessName, businessAddress, mode))),
+          Future.successful(BadRequest(view(formWithErrors, mode, formattedAddress))),
 
         value => {
           val updatedAnswers = request.userAnswers.set(PackAtBusinessAddressPage, value)

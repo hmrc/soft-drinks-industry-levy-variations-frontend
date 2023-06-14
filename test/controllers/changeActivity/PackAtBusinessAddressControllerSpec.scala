@@ -38,6 +38,7 @@ import models.backend.UkAddress
 import scala.concurrent.Future
 import org.jsoup.Jsoup
 import play.api.i18n.Messages
+import viewmodels.AddressFormattingHelper
 
 class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
@@ -68,7 +69,8 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[PackAtBusinessAddressView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, businessName, businessAddress, NormalMode)(request, messages(application)).toString
+        val address = AddressFormattingHelper.addressFormatting(businessAddress, Option(businessName))
+        contentAsString(result) mustEqual view(form, NormalMode, address)(request, messages(application)).toString
       }
     }
 
@@ -88,7 +90,8 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), businessName, businessAddress, NormalMode)(request, messages(application)).toString
+        val address = AddressFormattingHelper.addressFormatting(businessAddress, Option(businessName))
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, address)(request, messages(application)).toString
       }
     }
 
@@ -135,7 +138,8 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         val page = Jsoup.parse(contentAsString(result))
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, businessName, businessAddress, NormalMode)(request, messages(application)).toString
+        val address = AddressFormattingHelper.addressFormatting(businessAddress, Option(businessName))
+        contentAsString(result) mustEqual view(boundForm, NormalMode, address)(request, messages(application)).toString
 
         //noinspection ComparingUnrelatedTypes
         page.getElementsContainingText(usersRetrievedSubscription.orgName).toString == true

@@ -249,5 +249,3 @@ changeActivity.packAtBusinessAddress.error.required = Select yes if your registe
 changeActivity.packAtBusinessAddress.change.hidden = change pack at business address
 changeActivity.packAtBusinessAddress.detailsLink = Why we need these details
 changeActivity.packAtBusinessAddress.detailsContent = Because you changed your business activity, we need to know the addresses of any UK packaging sites you operate.
-changeActivity.packAtBusinessAddress.nameText = The business name is
-changeActivity.packAtBusinessAddress.addressText = The business address is
