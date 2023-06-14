@@ -9,7 +9,6 @@ import play.api.libs.json.Json
 
 trait ITCoreTestDataForUpdateRegisteredDetails {
   val ukAddress = UkAddress(List("foo", "bar"),"wizz", None)
-  val ukAddress = UkAddress(List("foo", "bar"),"wizz", None)
 
   def userAnswersForUpdateRegisteredDetailsRemoveWarehouseDetailsPage(index: String): Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForUpdateRegisteredDetails
