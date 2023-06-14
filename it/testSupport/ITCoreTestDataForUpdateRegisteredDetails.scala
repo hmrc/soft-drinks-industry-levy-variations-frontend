@@ -4,7 +4,7 @@ import models.backend.{Site, UkAddress}
 import models.updateRegisteredDetails.UpdateContactDetails
 import models.{SelectChange, UserAnswers, Warehouse}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
-import pages.updateRegisteredDetails.{RemoveWarehouseDetailsPage, PackingSiteDetailsRemovePage, WarehouseDetailsPage}
+import pages.updateRegisteredDetails.{PackingSiteDetailsRemovePage, PackagingSiteDetailsPage, RemoveWarehouseDetailsPage, WarehouseDetailsPage}
 import play.api.libs.json.Json
 
 trait ITCoreTestDataForUpdateRegisteredDetails {
@@ -37,6 +37,12 @@ trait ITCoreTestDataForUpdateRegisteredDetails {
     val noSelected = emptyUserAnswersForUpdateRegisteredDetails.set(WarehouseDetailsPage, false).success.value
     Map("yes" -> yesSelected, "no" -> noSelected)
     }
+
+  val userAnswersForUpdateRegisteredDetailsPackagingSiteDetailsPage: Map[String, UserAnswers] = {
+    val yesSelected = emptyUserAnswersForUpdateRegisteredDetails.set(PackagingSiteDetailsPage, true).success.value
+    val noSelected = emptyUserAnswersForUpdateRegisteredDetails.set(PackagingSiteDetailsPage, false).success.value
+    Map("yes" -> yesSelected, "no" -> noSelected)
+  }
 
   val updateContactDetails: UpdateContactDetails = UpdateContactDetails("Full Name", "job position", "012345678901", "email@test.com")
   val updateContactDetailsDiff: UpdateContactDetails = UpdateContactDetails("New Name", "new job position", "012345678902", "email1@test.com")

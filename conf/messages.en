@@ -229,6 +229,14 @@ updateRegisteredDetails.removeWarehouseDetails.heading = Are yo sure you want to
 updateRegisteredDetails.removeWarehouseDetails.checkYourAnswersLabel = Are you sure you want to remove this warehouse?
 updateRegisteredDetails.removeWarehouseDetails.error.required = Select yes if you want to remove this warehouse
 
+updateRegisteredDetails.packagingSiteDetails.title = UK packaging site details
+updateRegisteredDetails.packagingSiteDetails.heading = UK packaging site details
+updateRegisteredDetails.packagingSiteDetails.subHeading = Do you want to add another UK packaging site?
+updateRegisteredDetails.packagingSiteDetails.info = You must tell us about all of the UK packaging sites you operate to produce liable drinks. You must have at least one registered packaging site.
+updateRegisteredDetails.packagingSiteDetails.checkYourAnswersLabel = UK packaging site details
+updateRegisteredDetails.packagingSiteDetails.error.required = Select yes if you need to add another packaging site
+updateRegisteredDetails.packagingSiteDetails.change.hidden = PackagingSiteDetails
+
 updateRegisteredDetails.packingSiteDetailsRemove.title = Are you sure you want to remove this warehouse?
 updateRegisteredDetails.packingSiteDetailsRemove.heading = Are you sure you want to remove this warehouse?
 updateRegisteredDetails.packingSiteDetailsRemove.checkYourAnswersLabel = Are you sure you want to remove this warehouse?
