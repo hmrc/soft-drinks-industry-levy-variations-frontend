@@ -21,7 +21,7 @@ import play.api.data.FormError
 
 class PackagingSiteDetailsFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "changeActivity.packagingSiteDetails.error.required"
+  val requiredKey = "updateRegisteredDetails.packagingSiteDetails.error.required"
   val invalidKey = "error.boolean"
 
   val form = new PackagingSiteDetailsFormProvider()()

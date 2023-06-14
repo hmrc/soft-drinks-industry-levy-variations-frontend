@@ -18,19 +18,19 @@ package controllers.updateRegisteredDetails
 
 import controllers.ControllerHelper
 import controllers.actions._
-import forms.changeActivity.PackagingSiteDetailsFormProvider
+import forms.updateRegisteredDetails.PackagingSiteDetailsFormProvider
 import handlers.ErrorHandler
 import models.Mode
 import navigation._
-import pages.changeActivity.PackagingSiteDetailsPage
+import pages.updateRegisteredDetails.PackagingSiteDetailsPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
-import viewmodels.summary.changeActivity.PackagingSiteDetailsSummary
-import views.html.changeActivity.PackagingSiteDetailsView
+import views.summary.updateRegisteredDetails.PackagingSiteDetailsSummary
+import views.html.updateRegisteredDetails.PackagingSiteDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

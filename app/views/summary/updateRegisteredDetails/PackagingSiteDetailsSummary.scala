@@ -16,10 +16,10 @@
 
 package views.summary.updateRegisteredDetails
 
-import controllers.changeActivity.routes
+import controllers.updateRegisteredDetails.routes
 import models.backend.Site
 import models.{CheckMode, NormalMode, UserAnswers}
-import pages.changeActivity.PackagingSiteDetailsPage
+import pages.updateRegisteredDetails.PackagingSiteDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -37,11 +37,11 @@ object PackagingSiteDetailsSummary  {
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = "changeActivity.packagingSiteDetails.checkYourAnswersLabel",
+          key     = "updateRegisteredDetails.packagingSiteDetails.checkYourAnswersLabel",
           value   = ValueViewModel(value),
           actions = Seq(
             ActionItemViewModel("site.change", routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("changeActivity.packagingSiteDetails.change.hidden"))
+              .withVisuallyHiddenText(messages("updateRegisteredDetails.packagingSiteDetails.change.hidden"))
           )
         )
     }

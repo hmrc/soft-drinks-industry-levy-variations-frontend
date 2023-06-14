@@ -25,6 +25,6 @@ class PackagingSiteDetailsFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("changeActivity.packagingSiteDetails.error.required")
+      "value" -> boolean("updateRegisteredDetails.packagingSiteDetails.error.required")
     )
 }

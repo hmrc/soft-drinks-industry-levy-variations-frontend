@@ -23,6 +23,6 @@ case object PackagingSiteDetailsPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ journeyType \ toString
 
-  def journeyType: String = "changeActivity"
+  def journeyType: String = "updateRegisteredDetails"
   override def toString: String = "packagingSiteDetails"
 }

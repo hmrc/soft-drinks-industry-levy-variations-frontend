@@ -3,7 +3,7 @@ package controllers.updateRegisteredDetails
 import controllers.ControllerITTestHelper
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.changeActivity.PackagingSiteDetailsPage
+import pages.updateRegisteredDetails.PackagingSiteDetailsPage
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.Json
@@ -20,7 +20,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, updateRegisteredDetailsBaseUrl + normalRoutePath)
@@ -28,7 +28,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("changeActivity.packagingSiteDetails" + ".title"))
+            page.title must include(Messages("updateRegisteredDetails.packagingSiteDetails" + ".title"))
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -40,7 +40,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
       }
     }
 
-    userAnswersForChangeActivityPackagingSiteDetailsPage.foreach { case (key, userAnswers) =>
+    userAnswersForUpdateRegisteredDetailsPackagingSiteDetailsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
           given
@@ -54,7 +54,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("changeActivity.packagingSiteDetails" + ".title"))
+              page.title must include(Messages("updateRegisteredDetails.packagingSiteDetails" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -75,7 +75,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, updateRegisteredDetailsBaseUrl + checkRoutePath)
@@ -83,7 +83,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("changeActivity.packagingSiteDetails" + ".title"))
+            page.title must include(Messages("updateRegisteredDetails.packagingSiteDetails" + ".title"))
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -95,7 +95,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
       }
     }
 
-    userAnswersForChangeActivityPackagingSiteDetailsPage.foreach { case (key, userAnswers) =>
+    userAnswersForUpdateRegisteredDetailsPackagingSiteDetailsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
           given
@@ -109,7 +109,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("changeActivity.packagingSiteDetails" + ".title"))
+              page.title must include(Messages("updateRegisteredDetails.packagingSiteDetails" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -127,14 +127,14 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
   }
 
   s"POST " + normalRoutePath - {
-    userAnswersForChangeActivityPackagingSiteDetailsPage.foreach { case (key, userAnswers) =>
+    userAnswersForUpdateRegisteredDetailsPackagingSiteDetailsPage.foreach { case (key, userAnswers) =>
       "when the user selects " + key - {
         "should update the session with the new value and redirect to the index controller" - {
           "when the session contains no data for page" in {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForChangeActivity)
+            setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -180,7 +180,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, updateRegisteredDetailsBaseUrl + normalRoutePath, Json.obj("value" -> "")
@@ -189,13 +189,13 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("changeActivity.packagingSiteDetails" + ".title"))
+            page.title must include("Error: " + Messages("updateRegisteredDetails.packagingSiteDetails" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("changeActivity.packagingSiteDetails" + ".error.required")
+            errorSummary.text() mustBe Messages("updateRegisteredDetails.packagingSiteDetails" + ".error.required")
           }
         }
       }
@@ -205,14 +205,14 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
   }
 
   s"POST " + checkRoutePath - {
-    userAnswersForChangeActivityPackagingSiteDetailsPage.foreach { case (key, userAnswers) =>
+    userAnswersForUpdateRegisteredDetailsPackagingSiteDetailsPage.foreach { case (key, userAnswers) =>
       "when the user selects " + key - {
         "should update the session with the new value and redirect to the checkAnswers controller" - {
           "when the session contains no data for page" in {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForChangeActivity)
+            setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -258,7 +258,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, updateRegisteredDetailsBaseUrl + checkRoutePath, Json.obj("value" -> "")
@@ -267,13 +267,13 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("changeActivity.packagingSiteDetails" + ".title"))
+            page.title must include("Error: " + Messages("updateRegisteredDetails.packagingSiteDetails" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("changeActivity.packagingSiteDetails" + ".error.required")
+            errorSummary.text() mustBe Messages("updateRegisteredDetails.packagingSiteDetails" + ".error.required")
           }
         }
       }

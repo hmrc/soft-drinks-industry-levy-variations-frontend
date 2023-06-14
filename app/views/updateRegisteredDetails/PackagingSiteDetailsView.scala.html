@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import controllers.changeActivity.routes
+@import controllers.updateRegisteredDetails.routes
 
 @this(
     layout: templates.Layout,
@@ -27,7 +27,7 @@
 
 @(form: Form[_], mode: Mode, packingSite: SummaryList)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("changeActivity.packagingSiteDetails.title"))) {
+@layout(pageTitle = title(form, messages("updateRegisteredDetails.packagingSiteDetails.title"))) {
 
     @formHelper(action = routes.PackagingSiteDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
@@ -36,10 +36,10 @@
         }
 
         <h1 class="govuk-heading-m">
-            @messages("changeActivity.packagingSiteDetails.heading")
+            @messages("updateRegisteredDetails.packagingSiteDetails.heading")
         </h1>
 
-        <p class="govuk-body">@messages("changeActivity.packagingSiteDetails.info")</p>
+        <p class="govuk-body">@messages("updateRegisteredDetails.packagingSiteDetails.info")</p>
 
         <span class="govuk-caption-m">
             @govukSummaryList(packingSite)
@@ -48,7 +48,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("changeActivity.packagingSiteDetails.subHeading")).asPageHeading(),
+                legend = LegendViewModel(messages("updateRegisteredDetails.packagingSiteDetails.subHeading")).asPageHeading(),
                 hint = None
             )
         )

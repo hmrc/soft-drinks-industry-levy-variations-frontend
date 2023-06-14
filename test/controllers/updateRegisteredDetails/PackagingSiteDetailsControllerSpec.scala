@@ -18,14 +18,14 @@ package controllers.updateRegisteredDetails
 
 import base.SpecBase
 import errors.SessionDatabaseInsertError
-import forms.changeActivity.PackagingSiteDetailsFormProvider
+import forms.updateRegisteredDetails.PackagingSiteDetailsFormProvider
 import models.NormalMode
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.changeActivity.PackagingSiteDetailsPage
+import pages.updateRegisteredDetails.PackagingSiteDetailsPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -33,8 +33,8 @@ import play.api.test.Helpers._
 import services.SessionService
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
-import viewmodels.summary.changeActivity.PackagingSiteDetailsSummary
-import views.html.changeActivity.PackagingSiteDetailsView
+import views.summary.updateRegisteredDetails.PackagingSiteDetailsSummary
+import views.html.updateRegisteredDetails.PackagingSiteDetailsView
 
 import scala.concurrent.Future
 
@@ -51,7 +51,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)).build()
 
       val summary = SummaryListViewModel(
         rows = PackagingSiteDetailsSummary.row2(Map.empty)
@@ -75,7 +75,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
         rows = PackagingSiteDetailsSummary.row2(Map.empty)
       )
 
-      val userAnswers = emptyUserAnswersForChangeActivity.set(PackagingSiteDetailsPage, true).success.value
+      val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(PackagingSiteDetailsPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -98,7 +98,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
           .overrides(
             bind[NavigatorForUpdateRegisteredDetails].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
@@ -123,7 +123,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
         rows = PackagingSiteDetailsSummary.row2(Map.empty)
       )
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)).build()
 
       running(application) {
         val request =
@@ -195,7 +195,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
       when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
           .overrides(
             bind[NavigatorForUpdateRegisteredDetails].toInstance(new FakeNavigatorForUpdateRegisteredDetails (onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)

@@ -16,15 +16,15 @@
 
 package views.updateRegisteredDetails
 
-import controllers.changeActivity.routes
-import forms.changeActivity.PackagingSiteDetailsFormProvider
+import controllers.updateRegisteredDetails.routes
+import forms.updateRegisteredDetails.PackagingSiteDetailsFormProvider
 import models.{CheckMode, NormalMode}
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 import views.ViewSpecHelper
-import views.html.changeActivity.PackagingSiteDetailsView
+import views.html.updateRegisteredDetails.PackagingSiteDetailsView
 
 class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
 
@@ -50,19 +50,19 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
     val html = view(form, NormalMode, SummaryList())(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
-      document.title() must include(Messages("changeActivity.packagingSiteDetails" + ".title"))
+      document.title() must include(Messages("updateRegisteredDetails.packagingSiteDetails" + ".title"))
     }
 
     "should include a heading with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.heading)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("changeActivity.packagingSiteDetails.heading")
+      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("updateRegisteredDetails.packagingSiteDetails.heading")
     }
 
     "should include a legend with the expected sub-heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.legend).text() mustEqual Messages("changeActivity.packagingSiteDetails.subHeading")
+      legend.get(0).getElementsByClass(Selectors.legend).text() mustEqual Messages("updateRegisteredDetails.packagingSiteDetails.subHeading")
     }
 
     "when the form is not preoccupied and has no errors" - {
@@ -214,7 +214,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
-        val titleMessage = Messages("changeActivity.packagingSiteDetails.title")
+        val titleMessage = Messages("updateRegisteredDetails.packagingSiteDetails.title")
         documentWithErrors.title must include("Error: " + titleMessage)
       }
 
@@ -225,7 +225,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
         errorSummary
           .select("a")
           .attr("href") mustBe "#value"
-        errorSummary.text() mustBe Messages("changeActivity.packagingSiteDetails.error.required")
+        errorSummary.text() mustBe Messages("updateRegisteredDetails.packagingSiteDetails.error.required")
       }
     }
 
