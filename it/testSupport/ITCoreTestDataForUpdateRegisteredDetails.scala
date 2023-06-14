@@ -1,13 +1,14 @@
 package testSupport
 
-import models.backend.UkAddress
+import models.backend.{Site, UkAddress}
 import models.updateRegisteredDetails.UpdateContactDetails
 import models.{SelectChange, UserAnswers, Warehouse}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
-import pages.updateRegisteredDetails.{RemoveWarehouseDetailsPage, WarehouseDetailsPage}
+import pages.updateRegisteredDetails.{RemoveWarehouseDetailsPage, PackingSiteDetailsRemovePage, WarehouseDetailsPage}
 import play.api.libs.json.Json
 
 trait ITCoreTestDataForUpdateRegisteredDetails {
+  val ukAddress = UkAddress(List("foo", "bar"),"wizz", None)
   val ukAddress = UkAddress(List("foo", "bar"),"wizz", None)
 
   def userAnswersForUpdateRegisteredDetailsRemoveWarehouseDetailsPage(index: String): Map[String, UserAnswers] = {
@@ -21,9 +22,14 @@ trait ITCoreTestDataForUpdateRegisteredDetails {
     Map("yes" -> yesSelected, "no" -> noSelected)
     }
 
-  val userAnswersForUpdateRegisteredDetailsPackingSiteDetailsRemovePage: Map[String, UserAnswers] = {
-    val yesSelected = emptyUserAnswersForUpdateRegisteredDetails.set(PackingSiteDetailsRemovePage, true).success.value
-    val noSelected = emptyUserAnswersForUpdateRegisteredDetails.set(PackingSiteDetailsRemovePage, false).success.value
+  def userAnswersForUpdateRegisteredDetailsPackingSiteDetailsRemovePage(index: String): Map[String, UserAnswers] = {
+    val yesSelected = emptyUserAnswersForUpdateRegisteredDetails
+      .copy(packagingSiteList = Map(index -> Site(ukAddress, None, None, None)))
+      .set(PackingSiteDetailsRemovePage, true).success.value
+
+    val noSelected = emptyUserAnswersForUpdateRegisteredDetails
+      .copy(packagingSiteList = Map(index -> Site(ukAddress, None, None, None)))
+      .set(PackingSiteDetailsRemovePage, false).success.value
     Map("yes" -> yesSelected, "no" -> noSelected)
     }
 
@@ -39,6 +45,5 @@ trait ITCoreTestDataForUpdateRegisteredDetails {
   def sdilNumber: String
 
   def emptyUserAnswersForUpdateRegisteredDetails = UserAnswers(sdilNumber, SelectChange.UpdateRegisteredAccount, Json.obj())
-
 
 }

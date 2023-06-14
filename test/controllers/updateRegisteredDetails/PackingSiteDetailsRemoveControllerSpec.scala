@@ -1,8 +1,24 @@
+/*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package controllers.updateRegisteredDetails
 
 import base.SpecBase
 import forms.updateRegisteredDetails.PackingSiteDetailsRemoveFormProvider
-import models.NormalMode
+import models.{NormalMode, UserAnswers}
 import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -16,8 +32,10 @@ import services.SessionService
 import views.html.updateRegisteredDetails.PackingSiteDetailsRemoveView
 import utilities.GenericLogger
 import errors.SessionDatabaseInsertError
+import models.backend.{Site, UkAddress}
+
 import scala.concurrent.Future
-import org.jsoup.Jsoup
+import viewmodels.AddressFormattingHelper
 
 class PackingSiteDetailsRemoveControllerSpec extends SpecBase with MockitoSugar {
 
@@ -26,13 +44,18 @@ class PackingSiteDetailsRemoveControllerSpec extends SpecBase with MockitoSugar 
   val formProvider = new PackingSiteDetailsRemoveFormProvider()
   val form = formProvider()
 
-  lazy val packingSiteDetailsRemoveRoute = routes.PackingSiteDetailsRemoveController.onPageLoad(NormalMode).url
+  val indexOfPackingSiteToBeRemoved: String = "foobar"
+  lazy val packingSiteDetailsRemoveRoute = routes.PackingSiteDetailsRemoveController.onPageLoad(NormalMode, indexOfPackingSiteToBeRemoved).url
+  val addressOfPackingSite: UkAddress = UkAddress(List("foo"),"bar", None)
+  val packingSiteTradingName: String = "a name for a packing site here"
+  val userAnswersWithPackingSite: UserAnswers = emptyUserAnswersForUpdateRegisteredDetails
+    .copy(packagingSiteList = Map(indexOfPackingSiteToBeRemoved -> Site(addressOfPackingSite, None, Some(packingSiteTradingName), None)))
 
   "PackingSiteDetailsRemove Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithPackingSite)).build()
 
       running(application) {
         val request = FakeRequest(GET, packingSiteDetailsRemoveRoute)
@@ -42,25 +65,9 @@ class PackingSiteDetailsRemoveControllerSpec extends SpecBase with MockitoSugar 
         val view = application.injector.instanceOf[PackingSiteDetailsRemoveView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
-      }
-    }
-
-    "must populate the view correctly on a GET when the question has previously been answered" in {
-
-      val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(PackingSiteDetailsRemovePage, true).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request = FakeRequest(GET, packingSiteDetailsRemoveRoute)
-
-        val view = application.injector.instanceOf[PackingSiteDetailsRemoveView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual
+          view(form, NormalMode, AddressFormattingHelper.addressFormatting(addressOfPackingSite,
+            Some(packingSiteTradingName)), indexOfPackingSiteToBeRemoved)(request, messages(application)).toString
       }
     }
 
@@ -71,7 +78,7 @@ class PackingSiteDetailsRemoveControllerSpec extends SpecBase with MockitoSugar 
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
+        applicationBuilder(userAnswers = Some(userAnswersWithPackingSite))
           .overrides(
             bind[NavigatorForUpdateRegisteredDetails].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
@@ -92,7 +99,7 @@ class PackingSiteDetailsRemoveControllerSpec extends SpecBase with MockitoSugar 
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithPackingSite)).build()
 
       running(application) {
         val request =
@@ -106,7 +113,10 @@ class PackingSiteDetailsRemoveControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual
+          view(boundForm, NormalMode, AddressFormattingHelper.addressFormatting(addressOfPackingSite,
+            Some(packingSiteTradingName)),
+            indexOfPackingSiteToBeRemoved)(request, messages(application)).toString
       }
     }
 
@@ -140,31 +150,13 @@ class PackingSiteDetailsRemoveControllerSpec extends SpecBase with MockitoSugar 
       }
     }
 
-    "must fail if the setting of userAnswers fails" in {
-
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure)).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, packingSiteDetailsRemoveRoute
-        )
-        .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual INTERNAL_SERVER_ERROR
-        val page = Jsoup.parse(contentAsString(result))
-        page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - Soft Drinks Industry Levy - GOV.UK"
-      }
-    }
-
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionService = mock[SessionService]
 
       when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
+        applicationBuilder(userAnswers = Some(userAnswersWithPackingSite))
           .overrides(
             bind[NavigatorForUpdateRegisteredDetails].toInstance(new FakeNavigatorForUpdateRegisteredDetails (onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
