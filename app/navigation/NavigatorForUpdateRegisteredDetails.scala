@@ -28,6 +28,7 @@ import javax.inject.{Inject, Singleton}
 class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
 
   override val normalRoutes: Page => UserAnswers => Call = {
+    case PackingSiteDetailsRemovePage => userAnswers => defaultCall
     case WarehouseDetailsPage => userAnswers => defaultCall
     case RemoveWarehouseDetailsPage => userAnswers => defaultCall
     case UpdateContactDetailsPage => userAnswers => defaultCall

@@ -1,10 +1,10 @@
 package testSupport
 
-import models.backend.UkAddress
+import models.backend.{Site, UkAddress}
 import models.updateRegisteredDetails.UpdateContactDetails
 import models.{SelectChange, UserAnswers, Warehouse}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
-import pages.updateRegisteredDetails.{RemoveWarehouseDetailsPage, WarehouseDetailsPage}
+import pages.updateRegisteredDetails.{RemoveWarehouseDetailsPage, PackingSiteDetailsRemovePage, WarehouseDetailsPage}
 import play.api.libs.json.Json
 
 trait ITCoreTestDataForUpdateRegisteredDetails {
@@ -21,6 +21,17 @@ trait ITCoreTestDataForUpdateRegisteredDetails {
     Map("yes" -> yesSelected, "no" -> noSelected)
     }
 
+  def userAnswersForUpdateRegisteredDetailsPackingSiteDetailsRemovePage(index: String): Map[String, UserAnswers] = {
+    val yesSelected = emptyUserAnswersForUpdateRegisteredDetails
+      .copy(packagingSiteList = Map(index -> Site(ukAddress, None, None, None)))
+      .set(PackingSiteDetailsRemovePage, true).success.value
+
+    val noSelected = emptyUserAnswersForUpdateRegisteredDetails
+      .copy(packagingSiteList = Map(index -> Site(ukAddress, None, None, None)))
+      .set(PackingSiteDetailsRemovePage, false).success.value
+    Map("yes" -> yesSelected, "no" -> noSelected)
+    }
+
   val userAnswersForUpdateRegisteredDetailsWarehouseDetailsPage: Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForUpdateRegisteredDetails.set(WarehouseDetailsPage, true).success.value
     val noSelected = emptyUserAnswersForUpdateRegisteredDetails.set(WarehouseDetailsPage, false).success.value
@@ -33,6 +44,5 @@ trait ITCoreTestDataForUpdateRegisteredDetails {
   def sdilNumber: String
 
   def emptyUserAnswersForUpdateRegisteredDetails = UserAnswers(sdilNumber, SelectChange.UpdateRegisteredAccount, Json.obj())
-
 
 }

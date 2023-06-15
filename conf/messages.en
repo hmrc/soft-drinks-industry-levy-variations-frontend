@@ -229,3 +229,7 @@ updateRegisteredDetails.removeWarehouseDetails.heading = Are yo sure you want to
 updateRegisteredDetails.removeWarehouseDetails.checkYourAnswersLabel = Are you sure you want to remove this warehouse?
 updateRegisteredDetails.removeWarehouseDetails.error.required = Select yes if you want to remove this warehouse
 
+updateRegisteredDetails.packingSiteDetailsRemove.title = Are you sure you want to remove this warehouse?
+updateRegisteredDetails.packingSiteDetailsRemove.heading = Are you sure you want to remove this warehouse?
+updateRegisteredDetails.packingSiteDetailsRemove.checkYourAnswersLabel = Are you sure you want to remove this warehouse?
+updateRegisteredDetails.packingSiteDetailsRemove.error.required = Select yes if you want to remove this packaging site
