@@ -19,7 +19,7 @@ package controllers.addressLookupFrontend
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.{AddressLookupService, PackingDetails, WarehouseDetails}
+import services.{AddressLookupService, ContactDetails, PackingDetails, WarehouseDetails}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
@@ -49,6 +49,17 @@ class RampOffController @Inject()(identify: IdentifierAction,
       for {
         alfResponse <- addressLookupService.getAddress(alfId)
         updatedUserAnswers = addressLookupService.addAddressUserAnswers(PackingDetails, alfResponse.address, request.userAnswers, sdilId, alfId)
+        _ <- sessionRepository.set(updatedUserAnswers)
+      } yield {
+        Redirect(controllers.routes.IndexController.onPageLoad)
+      }
+  }
+
+  def contactDetailsOffRamp(sdilId: String, alfId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+    implicit request =>
+      for {
+        alfResponse <- addressLookupService.getAddress(alfId)
+        updatedUserAnswers = addressLookupService.addAddressUserAnswers(ContactDetails, alfResponse.address, request.userAnswers, sdilId, alfId)
         _ <- sessionRepository.set(updatedUserAnswers)
       } yield {
         Redirect(controllers.routes.IndexController.onPageLoad)

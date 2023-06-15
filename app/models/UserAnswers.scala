@@ -16,7 +16,7 @@
 
 package models
 
-import models.backend.Site
+import models.backend.{Site, UkAddress}
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json._
 import queries.{Gettable, Settable}
@@ -28,14 +28,15 @@ import java.time.Instant
 import scala.util.{Failure, Success, Try}
 
 case class UserAnswers(
-                              id: String,
-                              journeyType: SelectChange,
-                              data: JsObject = Json.obj(),
-                              smallProducerList: List[SmallProducer] = List.empty,
-                              packagingSiteList: Map[String, Site] = Map.empty,
-                              warehouseList: Map[String, Warehouse] = Map.empty,
-                              submitted:Boolean = false,
-                              lastUpdated: Instant = Instant.now
+                        id: String,
+                        journeyType: SelectChange,
+                        data: JsObject = Json.obj(),
+                        smallProducerList: List[SmallProducer] = List.empty,
+                        packagingSiteList: Map[String, Site] = Map.empty,
+                        warehouseList: Map[String, Warehouse] = Map.empty,
+                        contactAddress: UkAddress = UkAddress(List(""), ""),
+                        submitted:Boolean = false,
+                        lastUpdated: Instant = Instant.now
                             ) {
 
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
@@ -113,6 +114,7 @@ object UserAnswers {
           (__ \ "smallProducerList").read[EncryptedValue] and
           (__ \ "packagingSiteList").read[Map[String, EncryptedValue]] and
           (__ \ "warehouseList").read[Map[String, EncryptedValue]] and
+          (__ \ "contactAddress").read[EncryptedValue] and
           (__ \ "submitted").read[Boolean] and
           (__ \ "lastUpdated").read[Instant]
         )(ModelEncryption.decryptUserAnswers _)
@@ -120,7 +122,8 @@ object UserAnswers {
 
     def writes(implicit encryption: Encryption): OWrites[UserAnswers] = new OWrites[UserAnswers] {
       override def writes(userAnswers: UserAnswers): JsObject = {
-        val encryptedValue: (String, SelectChange, EncryptedValue, EncryptedValue, Map[String, EncryptedValue], Map[String, EncryptedValue], Boolean, Instant) = {
+        val encryptedValue: (String, SelectChange, EncryptedValue, EncryptedValue, Map[String, EncryptedValue],
+          Map[String, EncryptedValue], EncryptedValue, Boolean, Instant) = {
           ModelEncryption.encryptUserAnswers(userAnswers)
         }
         Json.obj(
@@ -130,8 +133,9 @@ object UserAnswers {
           "smallProducerList" -> encryptedValue._4,
           "packagingSiteList" -> encryptedValue._5,
           "warehouseList" -> encryptedValue._6,
-          "submitted" -> encryptedValue._7,
-          "lastUpdated" -> encryptedValue._8
+          "contactAddress" -> encryptedValue._7,
+          "submitted" -> encryptedValue._8,
+          "lastUpdated" -> encryptedValue._9
         )
       }
     }
