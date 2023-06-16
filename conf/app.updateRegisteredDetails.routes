@@ -18,6 +18,11 @@ POST       /warehouse-details/remove/:index                        controllers.u
 GET        /change-warehouse-details/remove/:index                 controllers.updateRegisteredDetails.RemoveWarehouseDetailsController.onPageLoad(mode: Mode = CheckMode, index: String)
 POST       /change-warehouse-details/remove/:index                  controllers.updateRegisteredDetails.RemoveWarehouseDetailsController.onSubmit(mode: Mode = CheckMode, index: String)
 
+GET        /packaging-site-details                        controllers.updateRegisteredDetails.PackagingSiteDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /packaging-site-details                        controllers.updateRegisteredDetails.PackagingSiteDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-packaging-site-details                  controllers.updateRegisteredDetails.PackagingSiteDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-packaging-site-details                  controllers.updateRegisteredDetails.PackagingSiteDetailsController.onSubmit(mode: Mode = CheckMode)
+
 GET        /packaging-site-details/remove/:index                        controllers.updateRegisteredDetails.PackingSiteDetailsRemoveController.onPageLoad(mode: Mode = NormalMode, index: String)
 POST       /packaging-site-details/remove/:index                      controllers.updateRegisteredDetails.PackingSiteDetailsRemoveController.onSubmit(mode: Mode = NormalMode, index: String)
 GET        /change-/packaging-site-details/remove/:index                  controllers.updateRegisteredDetails.PackingSiteDetailsRemoveController.onPageLoad(mode: Mode = CheckMode, index: String)

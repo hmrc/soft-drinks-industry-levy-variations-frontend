@@ -31,6 +31,7 @@ class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
     case PackingSiteDetailsRemovePage => userAnswers => defaultCall
     case WarehouseDetailsPage => userAnswers => defaultCall
     case RemoveWarehouseDetailsPage => userAnswers => defaultCall
+    case PackagingSiteDetailsPage => userAnswers => defaultCall
     case UpdateContactDetailsPage => userAnswers => defaultCall
     case _ => _ => defaultCall
   }
