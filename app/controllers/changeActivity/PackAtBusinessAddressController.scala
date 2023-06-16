@@ -29,6 +29,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
 import views.html.changeActivity.PackAtBusinessAddressView
 import handlers.ErrorHandler
+import models.backend.Site
 
 import scala.concurrent.{ExecutionContext, Future}
 import navigation._
@@ -63,14 +64,59 @@ class PackAtBusinessAddressController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      val formattedAddress = AddressFormattingHelper.addressFormatting(request.subscription.address, Option(request.subscription.orgName))
+//      val businessName = request.subscription.orgName
+//      val businessAddress = request.subscription.address
+//
+//      form.bindFromRequest().fold(
+//        formWithErrors =>
+//          Future.successful(BadRequest(view(formWithErrors, businessName, businessAddress, mode))),
+//
+//        value =>
+//          for {
+//            updatedAnswers <- Future.fromTry(request.userAnswers.set(PackAtBusinessAddressPage, value))
+//            onwardUrl <- if (value) {
+//              updateDatabaseWithoutRedirect(updatedAnswers.copy(packagingSiteList = updatedAnswers.packagingSiteList ++ Map("1" ->
+//                Site(
+//                  address = businessAddress,
+//                  ref = None,
+//                  tradingName = Some(businessName),
+//                  closureDate = None
+//                )
+//              )), PackAtBusinessAddressPage).flatMap(_ =>
+//                Future.successful(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url))
+//            } else {
+//              updateDatabaseWithoutRedirect(updatedAnswers, PackAtBusinessAddressPage).flatMap(_ =>
+//                addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails))
+//            }
+//          } yield {
+//            Redirect(onwardUrl)
+//          }
+//      )
+      val businessName = request.subscription.orgName
+      val businessAddress = request.subscription.address
+      val formattedAddress = AddressFormattingHelper.addressFormatting(businessAddress, Option(businessName))
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, formattedAddress))),
 
         value => {
-          val updatedAnswers = request.userAnswers.set(PackAtBusinessAddressPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, PackAtBusinessAddressPage, mode)
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(PackAtBusinessAddressPage, value))
+            onwardUrl <- if (value) {
+              updateDatabaseAndRedirect(updatedAnswers.copy(packagingSiteList = updatedAnswers.packagingSiteList ++ Map("1" ->
+                Site(
+                  address = businessAddress,
+                  ref = None,
+                  tradingName = Some(businessName),
+                  closureDate = None
+                )
+              )), PackAtBusinessAddressPage, mode)
+            } else {
+              updateDatabaseAndRedirect(updatedAnswers, PackAtBusinessAddressPage, mode)
+            }
+          } yield onwardUrl
+//          val updatedAnswers = request.userAnswers.set(PackAtBusinessAddressPage, value)
+//          updateDatabaseAndRedirect(updatedAnswers, PackAtBusinessAddressPage, mode)
         }
       )
   }
