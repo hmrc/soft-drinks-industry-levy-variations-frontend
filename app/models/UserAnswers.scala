@@ -34,7 +34,7 @@ case class UserAnswers(
                         smallProducerList: List[SmallProducer] = List.empty,
                         packagingSiteList: Map[String, Site] = Map.empty,
                         warehouseList: Map[String, Warehouse] = Map.empty,
-                        contactAddress: UkAddress = UkAddress(List(""), ""),
+                        contactAddress: Option[UkAddress] = None,
                         submitted:Boolean = false,
                         lastUpdated: Instant = Instant.now
                             ) {

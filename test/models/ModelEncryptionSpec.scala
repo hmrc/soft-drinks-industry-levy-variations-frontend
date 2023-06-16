@@ -18,7 +18,7 @@ package models
 
 import base.SpecBase
 import models.backend.{Site, UkAddress}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{JsObject, Json, Reads}
 import repositories.DatedCacheMap
 import services.Encryption
 
@@ -36,6 +36,7 @@ class ModelEncryptionSpec extends SpecBase {
         List(SmallProducer("foo", "bar", (1,1))),
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")),Some("foo"), Some("foo"),Some(LocalDate.now()))),
         Map("foo" -> Warehouse(Some("foo"),UkAddress(List("foo"),"foo", Some("foo")))),
+        Some(UkAddress(List("123 Main Street", "Anytown"), "AB12 C34", alfId = Some("123456"))),
         false,
         Instant.ofEpochSecond(1))
 
@@ -48,8 +49,9 @@ class ModelEncryptionSpec extends SpecBase {
       result._5.head._1 mustBe userAnswers.packagingSiteList.head._1
       Json.parse(encryption.crypto.decrypt(result._6.head._2, userAnswers.id)).as[Warehouse] mustBe userAnswers.warehouseList.head._2
       result._6.head._1 mustBe userAnswers.warehouseList.head._1
-      result._7 mustBe userAnswers.submitted
-      result._8 mustBe userAnswers.lastUpdated
+      Json.fromJson[Option[UkAddress]](Json.parse(encryption.crypto.decrypt(result._7, userAnswers.id)))(Reads.optionWithNull[UkAddress]).get mustBe userAnswers.contactAddress
+      result._8 mustBe userAnswers.submitted
+      result._9 mustBe userAnswers.lastUpdated
     }
   }
   "decryptUserAnswers" - {
@@ -60,6 +62,7 @@ class ModelEncryptionSpec extends SpecBase {
         List(SmallProducer("foo", "bar", (1,1))),
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")),Some("foo"), Some("foo"),Some(LocalDate.now()))),
         Map("foo" -> Warehouse(Some("foo"),UkAddress(List("foo"),"foo", Some("foo")))),
+        Some(UkAddress(List("123 Main Street", "Anytown"), "AB12 C34", alfId = Some("123456"))),
         false,
         Instant.ofEpochSecond(1))
 
@@ -70,6 +73,7 @@ class ModelEncryptionSpec extends SpecBase {
         encryption.crypto.encrypt(Json.toJson(userAnswers.smallProducerList).toString(), userAnswers.id),
         userAnswers.packagingSiteList.map(site => site._1 -> encryption.crypto.encrypt(Json.toJson(site._2).toString(), userAnswers.id)),
         userAnswers.warehouseList.map(warehouse => warehouse._1 -> encryption.crypto.encrypt(Json.toJson(warehouse._2).toString(), userAnswers.id)),
+        encryption.crypto.encrypt(Json.toJson(userAnswers.contactAddress).toString(), userAnswers.id),
         userAnswers.submitted, userAnswers.lastUpdated
       )
       result mustBe userAnswers

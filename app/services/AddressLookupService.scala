@@ -73,7 +73,7 @@ class AddressLookupService @Inject()(
         userAnswers.copy(warehouseList =
           userAnswers.warehouseList.filterNot(_._1 == sdilId) ++ Map(sdilId -> Warehouse(address.organisation, convertedAddress)))
       case ContactDetails =>
-        userAnswers.copy(contactAddress = convertedAddress)
+        userAnswers.copy(contactAddress = Some(convertedAddress))
     }
   }
 

@@ -256,7 +256,7 @@ addressLookupFrontend.packingDetails.editPageLabels.organisationLabel = Packagin
 
 addressLookupFrontend.contactDetails.lookupPageLabels.title = Find UK contact address
 addressLookupFrontend.contactDetails.lookupPageLabels.postcodeLabel = Postcode
-addressLookupFrontend.contactDetails.editPageLabels.title = Update
+addressLookupFrontend.contactDetails.editPageLabels.title = Update your registered business address for the Soft Drinks Industry Levy
 addressLookupFrontend.contactDetails.editPageLabels.line1Label = Address line 1
 addressLookupFrontend.contactDetails.editPageLabels.line2Label = Address line 2
 addressLookupFrontend.contactDetails.editPageLabels.line3Label = Address line 3 (optional)
