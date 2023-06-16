@@ -29,6 +29,9 @@ trait PageGenerators {
   implicit lazy val arbitraryChangeActivityPackagingSiteDetailsPage: Arbitrary[changeActivity.PackagingSiteDetailsPage.type] =
     Arbitrary(changeActivity.PackagingSiteDetailsPage)
 
+  implicit lazy val arbitraryUpdateRegisteredDetailsPackagingSiteDetailsPage: Arbitrary[updateRegisteredDetails.PackagingSiteDetailsPage.type] =
+    Arbitrary(updateRegisteredDetails.PackagingSiteDetailsPage)
+
   implicit lazy val arbitraryUpdateRegisteredDetailsRemoveWarehouseDetailsPage: Arbitrary[updateRegisteredDetails.RemoveWarehouseDetailsPage.type] =
     Arbitrary(updateRegisteredDetails.RemoveWarehouseDetailsPage)
 
