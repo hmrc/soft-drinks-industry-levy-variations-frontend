@@ -180,7 +180,7 @@ cancelRegistrationDate.error.month.nan = Month must only include numbers
 cancelRegistrationDate.error.year.nan = Year must only include numbers
 cancelRegistrationDate.error.dayMonth.invalid = The day and month must be part of a real date, like <span style="white-space: nowrap">31 7 2020</span>
 cancelRegistrationDate.error.monthYear.invalid = The month and year must be part of a real date, like <span style="white-space: nowrap">31 7 2020</span>
-cancelRegistrationDate.error.dayYear.invalid = The day and year must be part of a real date, <span style="white-space: nowrap">31 7 2020</span>
+cancelRegistrationDate.error.dayYear.invalid = The day and year must be part of a real date, like <span style="white-space: nowrap">31 7 2020</span>
 cancelRegistrationDate.change.hidden = CancelRegistrationDate
 
 cancelRegistration.fileReturnBeforeDereg.title = You cannot cancel your registration while you have returns to send
