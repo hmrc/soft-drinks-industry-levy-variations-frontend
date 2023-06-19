@@ -20,6 +20,7 @@ import controllers.updateRegisteredDetails.routes
 import forms.updateRegisteredDetails.UpdateContactDetailsFormProvider
 import models.updateRegisteredDetails.UpdateContactDetails
 import models.{CheckMode, NormalMode}
+import org.jsoup.Jsoup
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, JsValue, Json}
 import play.api.mvc.Request
@@ -160,7 +161,7 @@ class UpdateContactDetailsViewSpec extends ViewSpecHelper {
           errorSummary
             .select("a")
             .attr("href") mustBe "#" + fieldName
-          errorSummary.text() must include(Messages("updateRegisteredDetails.updateContactDetails.error." + fieldName + ".invalid"))
+          errorSummary.text() mustBe Jsoup.parse(Messages("updateRegisteredDetails.updateContactDetails.error." + fieldName + ".invalid")).text()
         }
       }
     }
