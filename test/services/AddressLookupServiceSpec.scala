@@ -324,8 +324,22 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
                 phaseBannerHtml = None
               )),
               selectPageLabels = None,
-              lookupPageLabels = None,
-              editPageLabels = None,
+              lookupPageLabels = Some(
+                LookupPageLabels(
+                  title = Some("Find UK packaging site address"),
+                  heading = Some("Find UK packaging site address"),
+                  postcodeLabel = Some("Postcode"))),
+              editPageLabels = Some(
+                EditPageLabels(
+                  title = Some("Enter the UK packaging site address"),
+                  heading = Some("Enter the UK packaging site address"),
+                  line1Label = Some("Address line 1"),
+                  line2Label = Some("Address line 2"),
+                  line3Label = Some("Address line 3 (optional)"),
+                  townLabel = Some("Address line 4 (optional)"),
+                  postcodeLabel = Some("Postcode"),
+                  organisationLabel = Some("Packaging site name (optional)"))
+              ),
               confirmPageLabels = None,
               countryPickerLabels = None
             ))
@@ -383,8 +397,22 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
                 phaseBannerHtml = None
               )),
               selectPageLabels = None,
-              lookupPageLabels = None,
-              editPageLabels = None,
+              lookupPageLabels = Some(
+                LookupPageLabels(
+                  title = Some("Find UK warehouse site address"),
+                  heading = Some("Find UK warehouse site address"),
+                  postcodeLabel = Some("Postcode"))),
+              editPageLabels = Some(
+                EditPageLabels(
+                  title = Some("Enter the UK warehouse address"),
+                  heading = Some("Enter the UK warehouse address"),
+                  line1Label = Some("Address line 1"),
+                  line2Label = Some("Address line 2"),
+                  line3Label = Some("Address line 3 (optional)"),
+                  townLabel = Some("Address line 4 (optional)"),
+                  postcodeLabel = Some("Postcode"),
+                  organisationLabel = Some("Trading name (optional)"))
+              ),
               confirmPageLabels = None,
               countryPickerLabels = None
             ))
@@ -443,8 +471,22 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
                 phaseBannerHtml = None
               )),
               selectPageLabels = None,
-              lookupPageLabels = None,
-              editPageLabels = None,
+              lookupPageLabels = Some(
+                LookupPageLabels(
+                title = Some("Find UK contact address"),
+                heading = Some("Find UK contact address"),
+                postcodeLabel = Some("Postcode"))),
+              editPageLabels = Some(
+                EditPageLabels(
+                  title = Some("Update your registered business address for the Soft Drinks Industry Levy"),
+                  heading = Some("Update your registered business address for the Soft Drinks Industry Levy"),
+                  line1Label = Some("Address line 1"),
+                  line2Label = Some("Address line 2"),
+                  line3Label = Some("Address line 3 (optional)"),
+                  townLabel = Some("Address line 4 (optional)"),
+                  postcodeLabel = Some("Postcode"),
+                  organisationLabel = None)
+              ),
               confirmPageLabels = None,
               countryPickerLabels = None
             ))
@@ -517,10 +559,12 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
               lookupPageLabels = Some(
                 LookupPageLabels(
                   title = Some("Find UK warehouse address"),
+                  heading = Some("Find UK warehouse address"),
                   postcodeLabel = Some("Postcode"))),
               editPageLabels = Some(
                 EditPageLabels(
                   title = Some("Enter the UK warehouse address"),
+                  heading = Some("Enter the UK warehouse address"),
                   line1Label = Some("Address line 1"),
                   line2Label = Some("Address line 2"),
                   line3Label = Some("Address line 3 (optional)"),
@@ -585,11 +629,14 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
               )),
               selectPageLabels = None,
               lookupPageLabels = Some(
-                LookupPageLabels(Some("Find UK packaging site address"),
+                LookupPageLabels(
+                  title = Some("Find UK packaging site address"),
+                  heading = Some("Find UK packaging site address"),
                 postcodeLabel = Some("Postcode"))),
               editPageLabels = Some(
                 EditPageLabels(
                   title = Some("Enter the UK packaging site address"),
+                  heading = Some("Enter the UK packaging site address"),
                   line1Label = Some("Address line 1"),
                   line2Label = Some("Address line 2"),
                   line3Label = Some("Address line 3 (optional)"),
@@ -610,7 +657,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
     s"should return a journey config for $ContactDetails" in {
       val request = FakeRequest("foo", "bar")
       val exampleSdilIdWeGenerate: String = "wizz"
-      val res = service.createJourneyConfig(WarehouseDetails, exampleSdilIdWeGenerate)(request, implicitly)
+      val res = service.createJourneyConfig(ContactDetails, exampleSdilIdWeGenerate)(request, implicitly)
       val expected = JourneyConfig(
         version = 2,
         options = JourneyOptions(
@@ -656,10 +703,12 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
               lookupPageLabels = Some(
                 LookupPageLabels(
                   title = Some("Find UK contact address"),
+                  heading = Some("Find UK contact address"),
                   postcodeLabel = Some("Postcode"))),
               editPageLabels = Some(
                 EditPageLabels(
                   title = Some("Update your registered business address for the Soft Drinks Industry Levy"),
+                  heading = Some("Update your registered business address for the Soft Drinks Industry Levy"),
                   line1Label = Some("Address line 1"),
                   line2Label = Some("Address line 2"),
                   line3Label = Some("Address line 3 (optional)"),
