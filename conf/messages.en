@@ -165,7 +165,7 @@ changeActivity.volume.subtext = If you do not have the exact volumes you can ent
 
 cancelRegistration.cancelRegistrationDate.title = What date are you cancelling your registration from?
 cancelRegistration.cancelRegistrationDate.heading = What date are you cancelling your registration from?
-cancelRegistration.cancelRegistrationDate.hint = For example, <span style="white-space: nowrap">12 11 2007</span>
+cancelRegistration.cancelRegistrationDate.hint = For example, 12 11 2007
 cancelRegistration.cancelRegistrationDate.checkYourAnswersLabel = What date are you cancelling your registration from?
 
 
