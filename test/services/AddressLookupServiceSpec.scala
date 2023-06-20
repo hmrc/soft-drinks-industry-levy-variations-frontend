@@ -353,6 +353,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
         res => res mustBe "foo"
       }
     }
+
     s"should return Successful future when connector returns success for $WarehouseDetails" in {
       val sdilId = "Foobar"
       val expectedJourneyConfigToBePassedToConnector = JourneyConfig(
@@ -399,8 +400,8 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
               selectPageLabels = None,
               lookupPageLabels = Some(
                 LookupPageLabels(
-                  title = Some("Find UK warehouse site address"),
-                  heading = Some("Find UK warehouse site address"),
+                  title = Some("Find UK warehouse address"),
+                  heading = Some("Find UK warehouse address"),
                   postcodeLabel = Some("Postcode"))),
               editPageLabels = Some(
                 EditPageLabels(

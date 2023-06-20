@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.AddressLookupConnector
 import connectors.httpParsers.ResponseHttpParser.HttpResult
 import controllers.routes
-import models.UserAnswers
+import models.{UserAnswers, Warehouse}
 import models.alf.init._
 import models.alf.{AlfAddress, AlfResponse}
 import models.backend.{Site, UkAddress}
@@ -71,7 +71,7 @@ class AddressLookupService @Inject()(
           userAnswers.packagingSiteList.filterNot(_._1 == sdilId) ++ Map(sdilId -> Site(convertedAddress, None, address.organisation, None)))
       case WarehouseDetails =>
         userAnswers.copy(warehouseList =
-          userAnswers.warehouseList.filterNot(_._1 == sdilId) ++ Map(sdilId -> Site(convertedAddress, None, address.organisation, None)))
+          userAnswers.warehouseList.filterNot(_._1 == sdilId) ++ Map(sdilId -> Warehouse(address.organisation, convertedAddress)))
       case ContactDetails =>
         userAnswers.copy(contactAddress = Some(convertedAddress))
     }
