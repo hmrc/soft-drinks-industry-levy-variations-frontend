@@ -94,8 +94,8 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         contentAsString(result) mustEqual view(form.fill(true), NormalMode, address)(request, messages(application)).toString
       }
     }
-
-    "must redirect to the next page when valid data is submitted" in {
+    
+    "must redirect to the next page when valid data is submitted - true" in {
 
       val mockSessionService = mock[SessionService]
 

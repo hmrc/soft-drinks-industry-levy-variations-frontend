@@ -29,7 +29,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
 import views.html.changeActivity.PackAtBusinessAddressView
 import handlers.ErrorHandler
-import models.backend.Site
+import models.backend.{Site, UkAddress}
 
 import scala.concurrent.{ExecutionContext, Future}
 import navigation._
@@ -74,20 +74,22 @@ class PackAtBusinessAddressController @Inject()(
         value => {
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PackAtBusinessAddressPage, value))
-            onwardUrl <- if (value) {
-              updateDatabaseAndRedirect(updatedAnswers.copy(packagingSiteList = updatedAnswers.packagingSiteList ++ Map("1" ->
-                Site(
-                  address = businessAddress,
-                  ref = None,
-                  tradingName = Some(businessName),
-                  closureDate = None
-                )
-              )), PackAtBusinessAddressPage, mode)
-            } else {
-              updateDatabaseAndRedirect(updatedAnswers, PackAtBusinessAddressPage, mode)
-            }
+            onwardUrl <- updateDatabaseAndRedirect(
+              updatedAnswers.copy(packagingSiteList = updatedPackagingSiteList(updatedAnswers.packagingSiteList, businessAddress, businessName, value)
+            ), PackAtBusinessAddressPage, mode)
           } yield onwardUrl
         }
       )
+  }
+
+  private def updatedPackagingSiteList(packagingSiteList: Map[String, Site],
+                                       businessAddress: UkAddress,
+                                       businessName: String,
+                                       value: Boolean): Map[String, Site] = {
+    if (value) {
+      packagingSiteList ++ Map("1" -> Site(address = businessAddress, ref = None, tradingName = Some(businessName), closureDate = None))
+    } else {
+      packagingSiteList - "1"
+    }
   }
 }
