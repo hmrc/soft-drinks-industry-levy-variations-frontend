@@ -108,7 +108,7 @@ updateRegisteredDetails.updateContactDetails.error.phoneNumber.length = Telephon
 updateRegisteredDetails.updateContactDetails.error.email.length = Email address must be 132 characters or less
 updateRegisteredDetails.updateContactDetails.error.fullName.invalid = Full name must only include letters a to z, apostrophes, hyphens and spaces
 updateRegisteredDetails.updateContactDetails.error.position.invalid = Job title must only include letters a to z, apostrophes, dashes, hyphens and spaces
-updateRegisteredDetails.updateContactDetails.error.phoneNumber.invalid = Enter a telephone number, like 01632 960999 or 07700 900999
+updateRegisteredDetails.updateContactDetails.error.phoneNumber.invalid = Enter a telephone number, like <span style="white-space: nowrap">01632 960999</span> or <span style="white-space: nowrap">07700 900999</span>
 updateRegisteredDetails.updateContactDetails.error.email.invalid = Enter a real email address, like name@example.com
 updateRegisteredDetails.updateContactDetails.fullName.change.hidden = your contact person’s full name
 updateRegisteredDetails.updateContactDetails.position.change.hidden = your contact person’s job title
@@ -165,11 +165,11 @@ changeActivity.volume.subtext = If you do not have the exact volumes you can ent
 
 cancelRegistration.cancelRegistrationDate.title = What date are you cancelling your registration from?
 cancelRegistration.cancelRegistrationDate.heading = What date are you cancelling your registration from?
-cancelRegistration.cancelRegistrationDate.hint = For example, 12 11 2007
+cancelRegistration.cancelRegistrationDate.hint = For example, <span style="white-space: nowrap">12 11 2007</span>
 cancelRegistration.cancelRegistrationDate.checkYourAnswersLabel = What date are you cancelling your registration from?
 
 
-cancelRegistrationDate.error.invalid = The date you are cancelling your registration must be a real date, like 31 7 2020
+cancelRegistrationDate.error.invalid = The date you are cancelling your registration must be a real date, like <span style="white-space: nowrap">31 7 2020</span>
 cancelRegistrationDate.error.required.all = Enter the date you are cancelling your registration
 cancelRegistrationDate.error.required.two = The date you are cancelling your registration from must include {0} and {1}
 cancelRegistrationDate.error.required = The date you are cancelling your registration from must include {0}
@@ -178,9 +178,9 @@ cancelRegistrationDate.error.registration-date.max=The date you are cancelling y
 cancelRegistrationDate.error.day.nan = Day must only include numbers
 cancelRegistrationDate.error.month.nan = Month must only include numbers
 cancelRegistrationDate.error.year.nan = Year must only include numbers
-cancelRegistrationDate.error.dayMonth.invalid = The day and month must be part of a real date, like 31 7 2020
-cancelRegistrationDate.error.monthYear.invalid = The month and year must be part of a real date, like 31 7 2020
-cancelRegistrationDate.error.dayYear.invalid = The day and year must be part of a real date, like 31 7 2020
+cancelRegistrationDate.error.dayMonth.invalid = The day and month must be part of a real date, like <span style="white-space: nowrap">31 7 2020</span>
+cancelRegistrationDate.error.monthYear.invalid = The month and year must be part of a real date, like <span style="white-space: nowrap">31 7 2020</span>
+cancelRegistrationDate.error.dayYear.invalid = The day and year must be part of a real date, like <span style="white-space: nowrap">31 7 2020</span>
 cancelRegistrationDate.change.hidden = CancelRegistrationDate
 
 cancelRegistration.fileReturnBeforeDereg.title = You cannot cancel your registration while you have returns to send

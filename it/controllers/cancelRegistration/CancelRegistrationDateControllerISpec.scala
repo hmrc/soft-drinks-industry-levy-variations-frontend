@@ -303,8 +303,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
             errorSummary
               .select("a")
               .attr("href") mustBe "#cancelRegistrationDate.day"
-            errorSummary.text() mustBe Messages("cancelRegistrationDate" + ".error.invalid"
-            )
+            errorSummary.text() mustBe "The date you are cancelling your registration must be a real date, like 31 7 2020"
           }
         }
       }
@@ -475,8 +474,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
             errorSummary
               .select("a")
               .attr("href") mustBe "#cancelRegistrationDate.day"
-            errorSummary.text() mustBe Messages("cancelRegistrationDate" + ".error.invalid"
-            )
+            errorSummary.text() mustBe "The date you are cancelling your registration must be a real date, like 31 7 2020"
           }
         }
       }
