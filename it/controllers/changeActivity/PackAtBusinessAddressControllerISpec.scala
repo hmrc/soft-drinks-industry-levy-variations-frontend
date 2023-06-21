@@ -1,7 +1,6 @@
 package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
-import models.backend.{Site, UkAddress}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.changeActivity.PackAtBusinessAddressPage
@@ -136,7 +135,6 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
               .commonPrecondition
 
             setAnswers(emptyUserAnswersForChangeActivity)
-            val expectedPackingSiteListDB = Some(Map("1" -> Site(UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX", None), None, Some("Super Lemonade Plc"), None)))
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -146,29 +144,22 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
-                if (key == "yes") {
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
-                  getAnswers(userAnswers.id).map(data => data.packagingSiteList) mustBe expectedPackingSiteListDB
-                  dataStoredForPage.nonEmpty mustBe true
-                  dataStoredForPage.get mustBe yesSelected
-                } else {
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
-                  getAnswers(userAnswers.id).map(data => data.packagingSiteList) mustBe Some(Map())
-                  dataStoredForPage.nonEmpty mustBe true
-                  dataStoredForPage.get mustBe yesSelected
-                }
+                val updatedAnswers = getAnswers(userAnswers.id)
+                val dataStoredForPage = updatedAnswers.fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
+                dataStoredForPage.nonEmpty mustBe true
+                dataStoredForPage.get mustBe yesSelected
+                updatedAnswers.map(data => data.packagingSiteList) mustBe Some(if (yesSelected) packAtBusinessAddressSite else Map())
               }
             }
           }
 
-          userAnswersForChangeActivityPackagingSiteDetailsPage.foreach { case (previousKey, userAnswers1) =>
+          userAnswersForChangeActivityPackagingSiteDetailsPage.foreach { case (previousKey, _) =>
             s"when the session already contains $previousKey data for page" in {
               given
                 .commonPrecondition
 
-              val expectedPackingSiteListDB = Some(Map("1" -> Site(UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX", None), None, Some("Super Lemonade Plc"), None)))
               val userAnswersWithPreviousSelection = if (previousKey == "yes") {
-                userAnswers.copy(packagingSiteList = expectedPackingSiteListDB.get)
+                userAnswers.copy(packagingSiteList = packAtBusinessAddressSite)
               } else {
                 userAnswers
               }
@@ -182,27 +173,11 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
                 whenReady(result) { res =>
                   res.status mustBe 303
                   res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
-                   if (previousKey == "yes" && key == "yes") {
-                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
-                    getAnswers(userAnswers.id).map(data => data.packagingSiteList) mustBe expectedPackingSiteListDB
-                    dataStoredForPage.nonEmpty mustBe true
-                    dataStoredForPage.get mustBe yesSelected
-                  } else if (previousKey == "no" && key == "yes") {
-                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
-                    getAnswers(userAnswers.id).map(data => data.packagingSiteList) mustBe expectedPackingSiteListDB
-                    dataStoredForPage.nonEmpty mustBe true
-                    dataStoredForPage.get mustBe yesSelected
-                  } else if (previousKey == "yes" && key == "no") {
-                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
-                    getAnswers(userAnswers.id).map(data => data.packagingSiteList) mustBe Some(Map())
-                    dataStoredForPage.nonEmpty mustBe true
-                    dataStoredForPage.get mustBe yesSelected
-                  } else if (previousKey == "no" && key == "no") {
-                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
-                    getAnswers(userAnswers.id).map(data => data.packagingSiteList) mustBe Some(Map())
-                    dataStoredForPage.nonEmpty mustBe true
-                    dataStoredForPage.get mustBe yesSelected
-                  }
+                  val updatedAnswers = getAnswers(userAnswers.id)
+                  val dataStoredForPage = updatedAnswers.fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
+                  dataStoredForPage.nonEmpty mustBe true
+                  dataStoredForPage.get mustBe yesSelected
+                  updatedAnswers.map(data => data.packagingSiteList) mustBe Some(if (yesSelected) packAtBusinessAddressSite else Map())
                 }
               }
             }
@@ -249,7 +224,6 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
               .commonPrecondition
 
             setAnswers(emptyUserAnswersForChangeActivity)
-            val expectedPackingSiteListDB = Some(Map("1" -> Site(UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX", None), None, Some("Super Lemonade Plc"), None)))
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -259,29 +233,22 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
-                if (key == "yes") {
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
-                  getAnswers(userAnswers.id).map(data => data.packagingSiteList) mustBe expectedPackingSiteListDB
-                  dataStoredForPage.nonEmpty mustBe true
-                  dataStoredForPage.get mustBe yesSelected
-                } else {
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
-                  getAnswers(userAnswers.id).map(data => data.packagingSiteList) mustBe Some(Map())
-                  dataStoredForPage.nonEmpty mustBe true
-                  dataStoredForPage.get mustBe yesSelected
-                }
+                val updatedAnswers = getAnswers(userAnswers.id)
+                val dataStoredForPage = updatedAnswers.fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
+                dataStoredForPage.nonEmpty mustBe true
+                dataStoredForPage.get mustBe yesSelected
+                updatedAnswers.map(data => data.packagingSiteList) mustBe Some(if (yesSelected) packAtBusinessAddressSite else Map())
               }
             }
           }
 
-          userAnswersForChangeActivityPackagingSiteDetailsPage.foreach { case (previousKey, userAnswers1) =>
+          userAnswersForChangeActivityPackagingSiteDetailsPage.foreach { case (previousKey, _) =>
             s"when the session already contains $previousKey data for page" in {
               given
                 .commonPrecondition
 
-              val expectedPackingSiteListDB = Some(Map("1" -> Site(UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX", None), None, Some("Super Lemonade Plc"), None)))
               val userAnswersWithPreviousSelection = if (previousKey == "yes") {
-                userAnswers.copy(packagingSiteList = expectedPackingSiteListDB.get)
+                userAnswers.copy(packagingSiteList = packAtBusinessAddressSite)
               } else {
                 userAnswers
               }
@@ -295,27 +262,11 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
                 whenReady(result) { res =>
                   res.status mustBe 303
                   res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
-                  if (previousKey == "yes" && key == "yes") {
-                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
-                    getAnswers(userAnswers.id).map(data => data.packagingSiteList) mustBe expectedPackingSiteListDB
-                    dataStoredForPage.nonEmpty mustBe true
-                    dataStoredForPage.get mustBe yesSelected
-                  } else if (previousKey == "no" && key == "yes") {
-                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
-                    getAnswers(userAnswers.id).map(data => data.packagingSiteList) mustBe expectedPackingSiteListDB
-                    dataStoredForPage.nonEmpty mustBe true
-                    dataStoredForPage.get mustBe yesSelected
-                  } else if (previousKey == "yes" && key == "no") {
-                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
-                    getAnswers(userAnswers.id).map(data => data.packagingSiteList) mustBe Some(Map())
-                    dataStoredForPage.nonEmpty mustBe true
-                    dataStoredForPage.get mustBe yesSelected
-                  } else if (previousKey == "no" && key == "no") {
-                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
-                    getAnswers(userAnswers.id).map(data => data.packagingSiteList) mustBe Some(Map())
-                    dataStoredForPage.nonEmpty mustBe true
-                    dataStoredForPage.get mustBe yesSelected
-                  }
+                  val updatedAnswers = getAnswers(userAnswers.id)
+                  val dataStoredForPage = updatedAnswers.fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
+                  dataStoredForPage.nonEmpty mustBe true
+                  dataStoredForPage.get mustBe yesSelected
+                  updatedAnswers.map(data => data.packagingSiteList) mustBe Some(if (yesSelected) packAtBusinessAddressSite else Map())
                 }
               }
             }

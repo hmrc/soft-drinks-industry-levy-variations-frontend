@@ -1,6 +1,7 @@
 package testSupport
 
 import controllers.routes
+import models.backend.{Site, UkAddress}
 import org.scalatest.TryValues
 import play.api.libs.json.Json
 
@@ -29,6 +30,8 @@ trait ITCoreTestData
 
   def sdilNumber = "XKSDIL000000022"
   val producerName = Some("Super Cola Ltd")
+
+  val packAtBusinessAddressSite = Map("1" -> Site(UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX", None), None, Some("Super Lemonade Plc"), None))
 
   implicit val duration = 5.seconds
 
