@@ -25,7 +25,7 @@ import navigation._
 import pages.updateRegisteredDetails.WarehouseDetailsPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.SessionService
+import services.{AddressLookupService, SessionService}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
@@ -43,6 +43,7 @@ class WarehouseDetailsController @Inject()(
                                        getData: DataRetrievalAction,
                                        requireData: DataRequiredAction,
                                        formProvider: WarehouseDetailsFormProvider,
+                                       addressLookupService: AddressLookupService,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: WarehouseDetailsView,
                                        val genericLogger: GenericLogger,
@@ -83,7 +84,19 @@ class WarehouseDetailsController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, summaryList))),
 
-        value => {
+////        for ALF
+//        value =>
+//          for {
+//            updatedAnswers <- Future.fromTry(request.userAnswers.set(WarehouseDetailsPage, value))
+//            _ <- updateDatabaseWithoutRedirect(updatedAnswers, WarehouseDetailsPage)
+//            onwardUrl <- if (value) {
+//              addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails)
+//            } else {
+//              Future.successful(routes.IndexController.onPageLoad.url)
+//            }
+//          } yield Redirect(onwardUrl)
+
+            value => {
           val updatedAnswers = request.userAnswers.set(WarehouseDetailsPage, value)
           updateDatabaseAndRedirect(updatedAnswers, WarehouseDetailsPage, mode)
         }
