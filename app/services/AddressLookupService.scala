@@ -83,7 +83,6 @@ class AddressLookupService @Inject()(
 
   def initJourneyAndReturnOnRampUrl(state: AddressLookupState, sdilId: String = generateId)
                                    (implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages, requestHeader: RequestHeader): Future[String] = {
-    println(Console.YELLOW + "within initJourney" + state + Console.WHITE)
     val journeyConfig: JourneyConfig = createJourneyConfig(state, sdilId)
     initJourney(journeyConfig).map {
       case Right(onRampUrl) => onRampUrl

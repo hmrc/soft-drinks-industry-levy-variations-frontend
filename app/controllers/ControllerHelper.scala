@@ -61,16 +61,4 @@ trait ControllerHelper extends FrontendBaseController with I18nSupport {
         InternalServerError(errorHandler.internalServerErrorTemplate)
     }
   }
-
-  def updateDatabaseWithoutRedirect(updatedAnswers: UserAnswers, page: Page)
-                                   (implicit ec: ExecutionContext): Future[Status] = {
-
-    sessionService.set(updatedAnswers).map {
-      case Right(_) => Ok
-      case Left(_) =>
-        genericLogger.logger.error(sessionRepo500ErrorMessage(page))
-        InternalServerError
-    }
-  }
-
 }
