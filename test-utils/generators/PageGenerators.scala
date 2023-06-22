@@ -24,7 +24,9 @@ import pages.changeActivity.{AmountProducedPage, OperatePackagingSiteOwnBrandsPa
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 
 trait PageGenerators {
-
+  
+  implicit lazy val arbitraryChangeActivityPackAtBusinessAddressPage: Arbitrary[changeActivity.PackAtBusinessAddressPage.type] =
+    Arbitrary(changeActivity.PackAtBusinessAddressPage)
 
   implicit lazy val arbitraryChangeActivityPackagingSiteDetailsPage: Arbitrary[changeActivity.PackagingSiteDetailsPage.type] =
     Arbitrary(changeActivity.PackagingSiteDetailsPage)
