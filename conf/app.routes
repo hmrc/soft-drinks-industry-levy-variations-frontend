@@ -29,3 +29,4 @@ POST       /change-select-change                         controllers.SelectChang
 
 GET       /off-ramp/secondary-warehouses/:sdilId         controllers.addressLookupFrontend.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId: String, id: String)
 GET       /off-ramp/packing-site-details/:sdilId         controllers.addressLookupFrontend.RampOffController.packingSiteDetailsOffRamp(sdilId: String, id: String)
+GET       /off-ramp/business-address/:sdilId             controllers.addressLookupFrontend.RampOffController.contactDetailsOffRamp(sdilId: String, id: String)
