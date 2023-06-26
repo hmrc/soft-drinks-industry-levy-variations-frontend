@@ -224,9 +224,9 @@ changeActivity.packagingSiteDetails.checkYourAnswersLabel = UK packaging site de
 changeActivity.packagingSiteDetails.error.required = Select yes if you need to add another packaging site
 changeActivity.packagingSiteDetails.change.hidden = change UK packaging site details
 
-changeActivity.removePackagingSiteDetails.title = Are you sure you want to remove this warehouse?
-changeActivity.removePackagingSiteDetails.heading = Are you sure you want to remove this warehouse?
-changeActivity.removePackagingSiteDetails.checkYourAnswersLabel = Are you sure you want to remove this warehouse?
+changeActivity.removePackagingSiteDetails.title = Are you sure you want to remove this packaging site?
+changeActivity.removePackagingSiteDetails.heading = Are you sure you want to remove this packaging site?
+changeActivity.removePackagingSiteDetails.checkYourAnswersLabel = Are you sure you want to remove this packaging site?
 changeActivity.removePackagingSiteDetails.error.required = Select yes if you want to remove this packaging site
 
 updateRegisteredDetails.removeWarehouseDetails.title = Are you sure you want to remove this warehouse?
