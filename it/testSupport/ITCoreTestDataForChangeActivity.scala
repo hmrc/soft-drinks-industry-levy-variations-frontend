@@ -1,13 +1,12 @@
 package testSupport
 
-import models.backend.{Site, UkAddress}
+import models.backend.Site
 import models.{SelectChange, UserAnswers}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import pages.changeActivity._
 import play.api.libs.json.Json
 
-trait ITCoreTestDataForChangeActivity {
-  val ukAddress = UkAddress(List("foo", "bar"),"wizz", None)
+trait ITCoreTestDataForChangeActivity extends ITSharedCoreTestData {
 
   val userAnswersForChangeActivityPackAtBusinessAddressPage: Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForChangeActivity.set(PackAtBusinessAddressPage, true).success.value
