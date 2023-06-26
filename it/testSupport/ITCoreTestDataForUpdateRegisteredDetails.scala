@@ -1,14 +1,13 @@
 package testSupport
 
-import models.backend.{Site, UkAddress}
+import models.backend.Site
 import models.updateRegisteredDetails.UpdateContactDetails
 import models.{SelectChange, UserAnswers, Warehouse}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import pages.updateRegisteredDetails.{PackingSiteDetailsRemovePage, PackagingSiteDetailsPage, RemoveWarehouseDetailsPage, WarehouseDetailsPage}
 import play.api.libs.json.Json
 
-trait ITCoreTestDataForUpdateRegisteredDetails {
-  val ukAddress = UkAddress(List("foo", "bar"),"wizz", None)
+trait ITCoreTestDataForUpdateRegisteredDetails extends ITSharedCoreTestData {
 
   def userAnswersForUpdateRegisteredDetailsRemoveWarehouseDetailsPage(index: String): Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForUpdateRegisteredDetails

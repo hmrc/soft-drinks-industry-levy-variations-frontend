@@ -1,11 +1,12 @@
 package testSupport
 
+import models.backend.Site
 import models.{SelectChange, UserAnswers}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
-import pages.changeActivity.{ContractPackingPage, ImportsPage, OperatePackagingSiteOwnBrandsPage, PackagingSiteDetailsPage, PackAtBusinessAddressPage}
+import pages.changeActivity._
 import play.api.libs.json.Json
 
-trait ITCoreTestDataForChangeActivity {
+trait ITCoreTestDataForChangeActivity extends ITSharedCoreTestData {
 
   val userAnswersForChangeActivityPackAtBusinessAddressPage: Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForChangeActivity.set(PackAtBusinessAddressPage, true).success.value
@@ -18,6 +19,17 @@ trait ITCoreTestDataForChangeActivity {
     val noSelected = emptyUserAnswersForChangeActivity.set(PackagingSiteDetailsPage, false).success.value
     Map("yes" -> yesSelected, "no" -> noSelected)
     }
+
+  def userAnswersForChangeActivityRemovePackagingSiteDetailsPage(index: String): Map[String, UserAnswers] = {
+    val yesSelected = emptyUserAnswersForChangeActivity
+      .copy(packagingSiteList = Map(index -> Site(ukAddress, None, None, None)))
+      .set(RemovePackagingSiteDetailsPage, true).success.value
+
+    val noSelected = emptyUserAnswersForChangeActivity
+      .copy(packagingSiteList = Map(index -> Site(ukAddress, None, None, None)))
+      .set(RemovePackagingSiteDetailsPage, false).success.value
+    Map("yes" -> yesSelected, "no" -> noSelected)
+  }
 
   val userAnswersForChangeActivityContractPackingPage: Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForChangeActivity.set(ContractPackingPage, true).success.value

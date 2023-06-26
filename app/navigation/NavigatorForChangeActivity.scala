@@ -60,6 +60,7 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
   override val normalRoutes: Page => UserAnswers => Call = {
     case PackAtBusinessAddressPage => userAnswers => defaultCall
     case PackagingSiteDetailsPage => userAnswers => defaultCall
+    case RemovePackagingSiteDetailsPage => userAnswers => defaultCall
     case ContractPackingPage => userAnswers => navigationForContractPacking(userAnswers, NormalMode)
     case HowManyContractPackingPage => userAnswers => defaultCall
     case ImportsPage => userAnswers => navigationForImports(userAnswers, NormalMode)
