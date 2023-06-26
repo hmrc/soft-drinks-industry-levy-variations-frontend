@@ -42,6 +42,11 @@ POST       /packaging-site-details                              controllers.chan
 GET        /change-packaging-site-details                       controllers.changeActivity.PackagingSiteDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-packaging-site-details                       controllers.changeActivity.PackagingSiteDetailsController.onSubmit(mode: Mode = CheckMode)
 
+GET        /packaging-site-details/remove/:index                controllers.changeActivity.RemovePackagingSiteDetailsController.onPageLoad(mode: Mode = NormalMode, index: String)
+POST       /packaging-site-details/remove/:index                controllers.changeActivity.RemovePackagingSiteDetailsController.onSubmit(mode: Mode = NormalMode, index: String)
+GET        /change-packaging-site-details/remove/:index         controllers.changeActivity.RemovePackagingSiteDetailsController.onPageLoad(mode: Mode = CheckMode, index: String)
+POST       /change-packaging-site-details/remove/:index         controllers.changeActivity.RemovePackagingSiteDetailsController.onSubmit(mode: Mode = CheckMode, index: String)
+
 GET        /pack-at-business-address                            controllers.changeActivity.PackAtBusinessAddressController.onPageLoad(mode: Mode = NormalMode)
 POST       /pack-at-business-address                            controllers.changeActivity.PackAtBusinessAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /change-pack-at-business-address                     controllers.changeActivity.PackAtBusinessAddressController.onPageLoad(mode: Mode = CheckMode)
