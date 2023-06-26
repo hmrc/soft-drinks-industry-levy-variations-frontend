@@ -15,6 +15,8 @@ trait ITCoreTestData
     with ITCoreTestDataForChangeActivity
     with ITCoreTestDataForCorrectReturn {
 
+  override val ukAddress = UkAddress(List("foo", "bar"),"wizz", None)
+
   val year = 2022
   val month = 11
   val day = 10

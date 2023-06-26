@@ -50,7 +50,7 @@ class RemovePackagingSiteDetailsControllerSpec extends SpecBase with MockitoSuga
   val userAnswersWithPackingSite: UserAnswers = emptyUserAnswersForUpdateRegisteredDetails
     .copy(packagingSiteList = Map(indexOfPackingSiteToBeRemoved -> Site(addressOfPackingSite, None, Some(packingSiteTradingName), None)))
 
-  "PackingSiteDetailsRemove Controller" - {
+  "RemovePackagingSiteDetails Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -79,7 +79,7 @@ class RemovePackagingSiteDetailsControllerSpec extends SpecBase with MockitoSuga
       val application =
         applicationBuilder(userAnswers = Some(userAnswersWithPackingSite))
           .overrides(
-            bind[NavigatorForUpdateRegisteredDetails].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
+            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           )
           .build()
@@ -157,7 +157,7 @@ class RemovePackagingSiteDetailsControllerSpec extends SpecBase with MockitoSuga
       val application =
         applicationBuilder(userAnswers = Some(userAnswersWithPackingSite))
           .overrides(
-            bind[NavigatorForUpdateRegisteredDetails].toInstance(new FakeNavigatorForUpdateRegisteredDetails (onwardRoute)),
+            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity (onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           ).build()
 
