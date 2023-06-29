@@ -61,6 +61,7 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
     case PackAtBusinessAddressPage => userAnswers => defaultCall
     case PackagingSiteDetailsPage => userAnswers => defaultCall
     case RemovePackagingSiteDetailsPage => userAnswers => defaultCall
+    case SecondaryWarehouseDetailsPage => userAnswers => defaultCall
     case ContractPackingPage => userAnswers => navigationForContractPacking(userAnswers, NormalMode)
     case HowManyContractPackingPage => userAnswers => defaultCall
     case ImportsPage => userAnswers => navigationForImports(userAnswers, NormalMode)
