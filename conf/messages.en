@@ -229,6 +229,14 @@ changeActivity.removePackagingSiteDetails.heading = Are you sure you want to rem
 changeActivity.removePackagingSiteDetails.checkYourAnswersLabel = Are you sure you want to remove this packaging site?
 changeActivity.removePackagingSiteDetails.error.required = Select yes if you want to remove this packaging site
 
+changeActivity.secondaryWarehouseDetails.title = Change your UK warehouse details
+changeActivity.secondaryWarehouseDetails.heading = Change your UK warehouse details
+changeActivity.secondaryWarehouseDetails.subtext = You don''t have any registered warehouses.
+changeActivity.secondaryWarehouseDetails.subHeading = Do you want to add another warehouse?
+changeActivity.secondaryWarehouseDetails.checkYourAnswersLabel = Change your UK warehouse details
+changeActivity.secondaryWarehouseDetails.error.required = Select yes if you want to register another UK warehouse
+changeActivity.secondaryWarehouseDetails.remove.hidden = remove UK warehouse
+
 updateRegisteredDetails.removeWarehouseDetails.title = Are you sure you want to remove this warehouse?
 updateRegisteredDetails.removeWarehouseDetails.heading = Are yo sure you want to remove this warehouse?
 updateRegisteredDetails.removeWarehouseDetails.checkYourAnswersLabel = Are you sure you want to remove this warehouse?

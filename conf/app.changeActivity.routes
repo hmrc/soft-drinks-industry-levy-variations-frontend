@@ -51,3 +51,8 @@ GET        /pack-at-business-address                            controllers.chan
 POST       /pack-at-business-address                            controllers.changeActivity.PackAtBusinessAddressController.onSubmit(mode: Mode = NormalMode)
 GET        /change-pack-at-business-address                     controllers.changeActivity.PackAtBusinessAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-pack-at-business-address                     controllers.changeActivity.PackAtBusinessAddressController.onSubmit(mode: Mode = CheckMode)
+
+GET        /secondary-warehouse-details                        controllers.changeActivity.SecondaryWarehouseDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /secondary-warehouse-details                        controllers.changeActivity.SecondaryWarehouseDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-secondary-warehouse-details                  controllers.changeActivity.SecondaryWarehouseDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-secondary-warehouse-details                  controllers.changeActivity.SecondaryWarehouseDetailsController.onSubmit(mode: Mode = CheckMode)
