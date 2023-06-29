@@ -16,9 +16,9 @@
 
 package views.summary.changeActivity
 
-import controllers.updateRegisteredDetails.routes
+import controllers.changeActivity.routes
 import models.{CheckMode, NormalMode, UserAnswers, Warehouse}
-import pages.updateRegisteredDetails.WarehouseDetailsPage
+import pages.changeActivity.SecondaryWarehouseDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -30,7 +30,7 @@ import viewmodels.implicits._
 object SecondaryWarehouseDetailsSummary  {
 
   def cyaRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(WarehouseDetailsPage).map {
+    answers.get(SecondaryWarehouseDetailsPage).map {
       answer =>
 
         val value = if (answer) "site.yes" else "site.no"
@@ -39,7 +39,7 @@ object SecondaryWarehouseDetailsSummary  {
           key     = "changeActivity.secondaryWarehouseDetails.checkYourAnswersLabel",
           value   = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.WarehouseDetailsController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("changeActivity.secondaryWarehouseDetails.change.hidden"))
           )
         )
@@ -50,7 +50,7 @@ object SecondaryWarehouseDetailsSummary  {
       None
     } else {
       Some(Actions("", Seq(
-        ActionItemViewModel("site.remove", routes.WarehouseDetailsController.onPageLoad(NormalMode).url)
+        ActionItemViewModel("site.remove", routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
           .withVisuallyHiddenText(messages("changeActivity.secondaryWarehouseDetails.remove.hidden"))
       )))
     }

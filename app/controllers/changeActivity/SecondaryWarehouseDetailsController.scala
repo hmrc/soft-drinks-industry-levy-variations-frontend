@@ -60,7 +60,7 @@ class SecondaryWarehouseDetailsController @Inject()(
         case None => form
         case Some(value) => form.fill(value)
       }
-      
+
       val summaryList: Option[SummaryList] = request.userAnswers.warehouseList match {
         case warehouseList if warehouseList.nonEmpty => Some(SummaryListViewModel(
           rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouseList, noRemoveAction = warehouseList.size == 1))
