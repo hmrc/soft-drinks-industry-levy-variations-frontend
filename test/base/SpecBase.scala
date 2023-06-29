@@ -109,6 +109,7 @@ trait SpecBase
   val emptyUserAnswersForUpdateRegisteredDetails: UserAnswers = UserAnswers(userAnswersId, SelectChange.UpdateRegisteredAccount)
   val warehouseAddedToUserAnswersForUpdateRegisteredDetails: UserAnswers = UserAnswers(userAnswersId, SelectChange.UpdateRegisteredAccount, warehouseList = Map("1" -> warehouse))
   val emptyUserAnswersForChangeActivity = UserAnswers(sdilNumber, SelectChange.Changeactivity)
+  val warehouseAddedToUserAnswersForChangeActivity: UserAnswers = UserAnswers(userAnswersId, SelectChange.Changeactivity, warehouseList = Map("1" -> warehouse))
 
   val emptyUserAnswersForCorrectReturn = UserAnswers(sdilNumber, SelectChange.CorrectReturn)
 
