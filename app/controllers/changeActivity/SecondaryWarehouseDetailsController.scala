@@ -20,7 +20,8 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.SecondaryWarehouseDetailsFormProvider
 import handlers.ErrorHandler
-import models.Mode
+import models.backend.UkAddress
+import models.{Mode, Warehouse}
 import navigation._
 import pages.changeActivity.SecondaryWarehouseDetailsPage
 import play.api.i18n.MessagesApi
@@ -59,10 +60,10 @@ class SecondaryWarehouseDetailsController @Inject()(
         case None => form
         case Some(value) => form.fill(value)
       }
-
+      
       val summaryList: Option[SummaryList] = request.userAnswers.warehouseList match {
         case warehouseList if warehouseList.nonEmpty => Some(SummaryListViewModel(
-          rows = SecondaryWarehouseDetailsSummary.row2(warehouseList))
+          rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouseList, noRemoveAction = warehouseList.size == 1))
         )
         case _ => None
       }
@@ -72,10 +73,9 @@ class SecondaryWarehouseDetailsController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
       val summaryList: Option[SummaryList] = request.userAnswers.warehouseList match {
         case warehouseList if warehouseList.nonEmpty => Some(SummaryListViewModel(
-          rows = SecondaryWarehouseDetailsSummary.row2(warehouseList))
+          rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouseList, noRemoveAction = warehouseList.size == 1))
         )
         case _ => None
       }
