@@ -22,7 +22,8 @@
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton,
-    govukSummaryList: GovukSummaryList
+    govukSummaryList: GovukSummaryList,
+    govukDetails: GovukDetails
 )
 
 @(form: Form[_], mode: Mode, warehouses: Option[SummaryList])(implicit request: Request[_], messages: Messages)
@@ -46,7 +47,6 @@
                     case None => messages("changeActivity.secondaryWarehouseDetails.subtext")
                 }
             }
-
         </span>
 
         <br/>
@@ -56,6 +56,13 @@
                 field = form("value"),
                 legend = LegendViewModel(messages("changeActivity.secondaryWarehouseDetails.subHeading")).asPageHeading(),
                 hint = None
+            )
+        )
+
+        @govukDetails(
+            Details(
+                summary = Text(messages("changeActivity.secondaryWarehouseDetails.detailsLink")),
+                content = Text(messages("changeActivity.secondaryWarehouseDetails.detailsContent"))
             )
         )
 

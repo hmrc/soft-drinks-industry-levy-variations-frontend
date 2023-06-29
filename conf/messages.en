@@ -231,10 +231,12 @@ changeActivity.removePackagingSiteDetails.error.required = Select yes if you wan
 
 changeActivity.secondaryWarehouseDetails.title = Change your UK warehouse details
 changeActivity.secondaryWarehouseDetails.heading = Change your UK warehouse details
-changeActivity.secondaryWarehouseDetails.subtext = You don''t have any registered warehouses.
-changeActivity.secondaryWarehouseDetails.subHeading = Do you want to add another warehouse?
+changeActivity.secondaryWarehouseDetails.subtext = You do not have any registered warehouses.
+changeActivity.secondaryWarehouseDetails.subHeading = Do you want to add a UK warehouse?
+changeActivity.secondaryWarehouseDetails.detailsLink = Why should I register a warehouse?
+changeActivity.secondaryWarehouseDetails.detailsContent = You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register the warehouses you use to store them.
 changeActivity.secondaryWarehouseDetails.checkYourAnswersLabel = Change your UK warehouse details
-changeActivity.secondaryWarehouseDetails.error.required = Select yes if you want to register another UK warehouse
+changeActivity.secondaryWarehouseDetails.error.required = Select yes if you want to add another UK warehouse
 changeActivity.secondaryWarehouseDetails.remove.hidden = remove UK warehouse
 
 updateRegisteredDetails.removeWarehouseDetails.title = Are you sure you want to remove this warehouse?

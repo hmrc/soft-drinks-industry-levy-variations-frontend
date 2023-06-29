@@ -163,6 +163,9 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
       }
     }
 
+    val expectedDetails = Map(Messages("changeActivity.secondaryWarehouseDetails.detailsLink") -> Messages("changeActivity.secondaryWarehouseDetails.detailsContent"))
+    testDetails(document, expectedDetails)
+
     "contain the correct button" - {
       document.getElementsByClass(Selectors.button).text() mustBe Messages("site.continue")
     }
