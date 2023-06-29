@@ -68,7 +68,10 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
                 val summaryList = page.getElementsByClass("govuk-caption-m")
                 val removeText = " Remove remove UK warehouse"
                 summaryList.text mustBe warehouseList.values
-                  .map(warehouse => s"${warehouse.tradingName.get} ${warehouse.address.lines.head} ${warehouse.address.postCode}${if (warehouseList.size > 1) removeText else ""}")
+                  .map(warehouse => {
+                    val formattedAddress = AddressFormattingHelper.addressFormatting(warehouse.address, warehouse.tradingName)
+                    s"${formattedAddress.toString().replace("<br>", " ")}${if (warehouseList.size > 1) removeText else ""}"
+                  })
                   .mkString(" ")
                 val radioInputs = page.getElementsByClass("govuk-radios__input")
                 radioInputs.size() mustBe 2
