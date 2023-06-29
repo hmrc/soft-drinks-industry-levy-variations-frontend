@@ -10,6 +10,7 @@ import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
+import viewmodels.AddressFormattingHelper
 
 class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
@@ -47,30 +48,35 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
     "GET " + normalRoutePath - {
       "when the userAnswers contains some warehouses" - {
-//        TODO: IT for single and multiple
-        "should return OK and render the SecondaryWarehouseDetails page with no data populated " +
-          "(with message displaying summary list of warehouses)" in {
-          given
-            .commonPrecondition
+        val singleWarehouse = Map("1" -> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy"), "WR53 7CX")))
+        val multipleWarehouses = singleWarehouse ++ Map("2" -> Warehouse(Some("ACME Soft Drinks"), UkAddress(List("1 Watch Street"), "DF4 3WE")))
+        List(singleWarehouse, multipleWarehouses).foreach { warehouseList =>
+          "should return OK and render the SecondaryWarehouseDetails page with no data populated " +
+            s"(with message displaying summary list of warehouses) for warehouse list size ${warehouseList.size}" in {
+            given
+              .commonPrecondition
 
-          setAnswers(emptyUserAnswersForChangeActivity.copy(warehouseList =
-            Map("1" -> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy"), "WR53 7CX")))))
+            setAnswers(emptyUserAnswersForChangeActivity.copy(warehouseList = warehouseList))
 
-          WsTestClient.withClient { client =>
-            val result1 = createClientRequestGet(client, changeActivityBaseUrl + normalRoutePath)
+            WsTestClient.withClient { client =>
+              val result1 = createClientRequestGet(client, changeActivityBaseUrl + normalRoutePath)
 
-            whenReady(result1) { res =>
-              res.status mustBe 200
-              val page = Jsoup.parse(res.body)
-              page.title must include(Messages("changeActivity.secondaryWarehouseDetails" + ".title"))
-              val summaryList = page.getElementsByClass("govuk-caption-m")
-              summaryList.text mustBe ("ABC Ltd 33 Rhes Priordy WR53 7CX Remove remove UK warehouse")
-              val radioInputs = page.getElementsByClass("govuk-radios__input")
-              radioInputs.size() mustBe 2
-              radioInputs.get(0).attr("value") mustBe "true"
-              radioInputs.get(0).hasAttr("checked") mustBe false
-              radioInputs.get(1).attr("value") mustBe "false"
-              radioInputs.get(1).hasAttr("checked") mustBe false
+              whenReady(result1) { res =>
+                res.status mustBe 200
+                val page = Jsoup.parse(res.body)
+                page.title must include(Messages("changeActivity.secondaryWarehouseDetails" + ".title"))
+                val summaryList = page.getElementsByClass("govuk-caption-m")
+                val removeText = " Remove remove UK warehouse"
+                summaryList.text mustBe warehouseList.values
+                  .map(warehouse => s"${warehouse.tradingName.get} ${warehouse.address.lines.head} ${warehouse.address.postCode}${if (warehouseList.size > 1) removeText else ""}")
+                  .mkString(" ")
+                val radioInputs = page.getElementsByClass("govuk-radios__input")
+                radioInputs.size() mustBe 2
+                radioInputs.get(0).attr("value") mustBe "true"
+                radioInputs.get(0).hasAttr("checked") mustBe false
+                radioInputs.get(1).attr("value") mustBe "false"
+                radioInputs.get(1).hasAttr("checked") mustBe false
+              }
             }
           }
         }
