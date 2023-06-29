@@ -31,7 +31,7 @@ trait ITCoreTestDataForChangeActivity extends ITSharedCoreTestData {
     Map("yes" -> yesSelected, "no" -> noSelected)
   }
 
-  val userAnswersForUpdateRegisteredDetailsSecondaryWarehouseDetailsPage: Map[String, UserAnswers] = {
+  val userAnswersForChangeActivitySecondaryWarehouseDetailsPage: Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForChangeActivity.set(SecondaryWarehouseDetailsPage, true).success.value
     val noSelected = emptyUserAnswersForChangeActivity.set(SecondaryWarehouseDetailsPage, false).success.value
     Map("yes" -> yesSelected, "no" -> noSelected)

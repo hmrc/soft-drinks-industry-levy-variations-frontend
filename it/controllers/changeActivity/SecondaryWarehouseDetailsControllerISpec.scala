@@ -31,9 +31,9 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("updateRegisteredDetails.warehouseDetails" + ".title"))
+            page.title must include(Messages("changeActivity.secondaryWarehouseDetails" + ".title"))
             val summaryList = page.getElementsByClass("govuk-caption-m")
-            summaryList.text mustBe "You don't have any registered warehouses."
+            summaryList.text mustBe "You do not have any registered warehouses."
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -47,6 +47,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
     "GET " + normalRoutePath - {
       "when the userAnswers contains some warehouses" - {
+//        TODO: IT for single and multiple
         "should return OK and render the SecondaryWarehouseDetails page with no data populated " +
           "(with message displaying summary list of warehouses)" in {
           given
@@ -61,7 +62,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("updateRegisteredDetails.warehouseDetails" + ".title"))
+              page.title must include(Messages("changeActivity.secondaryWarehouseDetails" + ".title"))
               val summaryList = page.getElementsByClass("govuk-caption-m")
               summaryList.text mustBe ("ABC Ltd 33 Rhes Priordy WR53 7CX Remove remove UK warehouse")
               val radioInputs = page.getElementsByClass("govuk-radios__input")
@@ -76,7 +77,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
       }
     }
 
-    userAnswersForUpdateRegisteredDetailsSecondaryWarehouseDetailsPage.foreach { case (key, userAnswers) =>
+    userAnswersForChangeActivitySecondaryWarehouseDetailsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" +
         "(with message displaying no warehouses added)" in {
@@ -91,9 +92,9 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("updateRegisteredDetails.warehouseDetails" + ".title"))
+              page.title must include(Messages("changeActivity.secondaryWarehouseDetails" + ".title"))
               val summaryList = page.getElementsByClass("govuk-caption-m")
-              summaryList.text mustBe "You don't have any registered warehouses."
+              summaryList.text mustBe "You do not have any registered warehouses."
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -123,9 +124,9 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("updateRegisteredDetails.warehouseDetails" + ".title"))
+            page.title must include(Messages("changeActivity.secondaryWarehouseDetails" + ".title"))
             val summaryList = page.getElementsByClass("govuk-caption-m")
-            summaryList.text mustBe "You don't have any registered warehouses."
+            summaryList.text mustBe "You do not have any registered warehouses."
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -137,7 +138,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
       }
     }
 
-    userAnswersForUpdateRegisteredDetailsSecondaryWarehouseDetailsPage.foreach { case (key, userAnswers) =>
+    userAnswersForChangeActivitySecondaryWarehouseDetailsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" +
         "(with message displaying no warehouses added)" in {
@@ -152,9 +153,9 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("updateRegisteredDetails.warehouseDetails" + ".title"))
+              page.title must include(Messages("changeActivity.secondaryWarehouseDetails" + ".title"))
               val summaryList = page.getElementsByClass("govuk-caption-m")
-              summaryList.text mustBe "You don't have any registered warehouses."
+              summaryList.text mustBe "You do not have any registered warehouses."
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -173,7 +174,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
   }
 
   s"POST " + normalRoutePath - {
-    userAnswersForUpdateRegisteredDetailsSecondaryWarehouseDetailsPage.foreach { case (key, userAnswers) =>
+    userAnswersForChangeActivitySecondaryWarehouseDetailsPage.foreach { case (key, userAnswers) =>
       "when the user selects " + key - {
         "should update the session with the new value and redirect to the index controller" - {
           "when the session contains no data for page" in {
@@ -235,13 +236,13 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("updateRegisteredDetails.warehouseDetails" + ".title"))
+            page.title must include("Error: " + Messages("changeActivity.secondaryWarehouseDetails" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("updateRegisteredDetails.warehouseDetails" + ".error.required")
+            errorSummary.text() mustBe Messages("changeActivity.secondaryWarehouseDetails" + ".error.required")
           }
         }
       }
@@ -251,7 +252,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
   }
 
   s"POST " + checkRoutePath - {
-    userAnswersForUpdateRegisteredDetailsSecondaryWarehouseDetailsPage.foreach { case (key, userAnswers) =>
+    userAnswersForChangeActivitySecondaryWarehouseDetailsPage.foreach { case (key, userAnswers) =>
       "when the user selects " + key - {
         "should update the session with the new value and redirect to the checkAnswers controller" - {
           "when the session contains no data for page" in {
@@ -313,13 +314,13 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("updateRegisteredDetails.warehouseDetails" + ".title"))
+            page.title must include("Error: " + Messages("changeActivity.secondaryWarehouseDetails" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("updateRegisteredDetails.warehouseDetails" + ".error.required")
+            errorSummary.text() mustBe Messages("changeActivity.secondaryWarehouseDetails" + ".error.required")
           }
         }
       }
