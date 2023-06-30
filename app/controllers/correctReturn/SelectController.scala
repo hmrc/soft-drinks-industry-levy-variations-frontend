@@ -57,31 +57,22 @@ class SelectController @Inject()(
     }).distinct
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
-      val testReturnPeriod = List(ReturnPeriod(2020, 0), ReturnPeriod(2020, 1), ReturnPeriod(2020, 2), ReturnPeriod(2020, 3),
-                                  ReturnPeriod(2021, 0), ReturnPeriod(2021, 1), ReturnPeriod(2021, 2), ReturnPeriod(2021, 3),
-                                  ReturnPeriod(2022, 0), ReturnPeriod(2022, 1), ReturnPeriod(2022, 2), ReturnPeriod(2022, 3))
 
       val preparedForm = request.userAnswers.get(SelectPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      println(Console.BLUE + seperateReturnYears(testReturnPeriod))
-
-      Ok(view(preparedForm, mode, seperateReturnYears(testReturnPeriod): List[List[ReturnPeriod]]))
-//      connector.returns_variable(request.subscription.utr).flatMap {
-//        case returns if returns.nonEmpty => Future.successful(Ok(view(preparedForm, mode, returns: List[ReturnPeriod])))
-//        case returns if returns.isEmpty => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
-//      }
+      connector.returns_variable(request.subscription.utr).flatMap {
+        case returns if returns.nonEmpty => Future.successful(Ok(view(preparedForm, mode, seperateReturnYears(returns: List[ReturnPeriod]))))
+        case returns if returns.isEmpty => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
-
 
       form.bindFromRequest().fold(
         formWithErrors =>
