@@ -14,25 +14,16 @@
  * limitations under the License.
  */
 
-package navigation
+package pages.correctReturn
 
-import controllers.correctReturn.routes
-import models.UserAnswers
-import pages.Page
-import pages.correctReturn.SelectPage
-import play.api.mvc.Call
+import models.correctReturn.Select
+import play.api.libs.json.JsPath
+import pages.QuestionPage
 
-import javax.inject.{Inject, Singleton}
+case object SelectPage extends QuestionPage[Select] {
 
-@Singleton
-class NavigatorForCorrectReturn @Inject()() extends Navigator {
+  override def path: JsPath = JsPath \ journeyType \ toString
 
-  override val normalRoutes: Page => UserAnswers => Call = {
-    case SelectPage => userAnswers => defaultCall
-    case _ => _ => defaultCall
-  }
-
-  override val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => routes.CorrectReturnCYAController.onPageLoad
-  }
+  def journeyType: String = "correctReturn"
+  override def toString: String = "select"
 }

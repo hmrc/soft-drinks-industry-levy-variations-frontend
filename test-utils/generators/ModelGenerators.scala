@@ -23,6 +23,11 @@ import org.scalacheck.{Arbitrary, Gen}
 import org.scalacheck.Arbitrary._
 trait ModelGenerators {
 
+  implicit lazy val arbitraryCorrectReturnSelect: Arbitrary[correctReturn.Select] =
+    Arbitrary {
+      Gen.oneOf(correctReturn.Select.values)
+    }
+
   implicit lazy val arbitraryChangeActivityAmountProduced: Arbitrary[AmountProduced] =
     Arbitrary {
       Gen.oneOf(AmountProduced.values)

@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
-package navigation
+package forms.correctReturn
 
-import controllers.correctReturn.routes
-import models.UserAnswers
-import pages.Page
-import pages.correctReturn.SelectPage
-import play.api.mvc.Call
+import javax.inject.Inject
 
-import javax.inject.{Inject, Singleton}
+import forms.mappings.Mappings
+import play.api.data.Form
+import models.correctReturn.Select
 
-@Singleton
-class NavigatorForCorrectReturn @Inject()() extends Navigator {
+class SelectFormProvider @Inject() extends Mappings {
 
-  override val normalRoutes: Page => UserAnswers => Call = {
-    case SelectPage => userAnswers => defaultCall
-    case _ => _ => defaultCall
-  }
-
-  override val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => routes.CorrectReturnCYAController.onPageLoad
-  }
+  def apply(): Form[Select] =
+    Form(
+      "value" -> enumerable[Select]("correctReturn.select.error.required")
+    )
 }
