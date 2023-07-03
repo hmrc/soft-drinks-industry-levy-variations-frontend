@@ -40,7 +40,7 @@ object AmountProducedSummary  {
 
         SummaryListRowViewModel(
           key     = "changeActivity.amountProduced.checkYourAnswersLabel",
-          value   = value,
+          value   = value.withCssClass("govuk-!-text-align-right"),
           actions = Seq(
             ActionItemViewModel("site.change", routes.AmountProducedController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("changeActivity.amountProduced.change.hidden"))

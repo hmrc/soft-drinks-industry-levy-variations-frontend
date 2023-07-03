@@ -16,18 +16,29 @@
 
 @this(
     layout: templates.Layout,
-    govukSummaryList: GovukSummaryList
+    govukSummaryList: GovukSummaryList,
+    formHelper: FormWithCSRF,
+    govukButton: GovukButton
 )
 
-@(seqSummaryList: Seq[(String, SummaryList)])(implicit request: Request[_], messages: Messages)
+@(
+    alias: String,
+    returnPeriod: String,
+    seqSummaryList: Seq[(String, SummaryList)],
+    submitCall: Call
+)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
+@layout(pageTitle = titleNoForm(messages("changeActivity.checkYourAnswers.title"))) {
 
-    <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>
+    <span class="govuk-caption-l" id="pre-header-caption"> @alias - @returnPeriod </span>
+    <h1 class="govuk-heading-l">@messages("changeActivity.checkYourAnswers.heading")</h1>
 
+    @for((heading, summaryList) <- seqSummaryList) {
+        <h2 class="govuk-heading-m">@messages(heading)</h2>
+        @govukSummaryList(summaryList)
+    }
 
-   @for((heading, summaryList) <- seqSummaryList) {
-     <h2 class="govuk-heading-m">@heading</h2>
-   @govukSummaryList(summaryList)
-}
+    @formHelper(action = submitCall, Symbol("autoComplete") -> "off") {
+        @govukButton(ButtonViewModel(messages("updateRegisteredDetails.checkYourAnswers.submit")))
+    }
 }

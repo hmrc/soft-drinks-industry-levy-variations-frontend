@@ -42,7 +42,12 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency {
         val list: Seq[(String, SummaryList)] = Seq.empty
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(list)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(
+          "ALIAS",
+          "RETURN PERIOD",
+          list,
+          routes.ChangeActivityCYAController.onSubmit
+        )(request, messages(application)).toString
       }
     }
 

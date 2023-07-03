@@ -86,6 +86,15 @@ selectChange.checkYourAnswersLabel = What do you need to do
 selectChange.error.required = Select what you need to do
 selectChange.change.hidden = SelectChange
 
+changeActivity.checkYourAnswers.title = Check your answers before sending your update
+changeActivity.checkYourAnswers.heading = Check your answers before sending your update
+changeActivity.checkYourAnswers.submit = Confirm updates and send
+changeActivity.checkYourAnswers.amountProducedSection = Packaged globally
+changeActivity.checkYourAnswers.thirdPartyPackagersSection = Third party packagers
+changeActivity.checkYourAnswers.operatePackingSiteOwnBrandsSection = Packaged in the UK
+changeActivity.checkYourAnswers.contractPackingSection = Package for customers
+changeActivity.checkYourAnswers.importsSection = Brought into the UK
+
 updateRegisteredDetails.checkYourAnswers.title = Check your answers before sending your update
 updateRegisteredDetails.checkYourAnswers.heading = Check your answers before sending your update
 updateRegisteredDetails.checkYourAnswers.updateContactDetails.title = Soft Drinks Industry Levy contact
@@ -126,7 +135,7 @@ changeActivity.amountProduced.title = How many litres of your own brands of liab
 changeActivity.amountProduced.large = 1 million litres or more
 changeActivity.amountProduced.small = Less than 1 million litres
 changeActivity.amountProduced.none = None
-changeActivity.amountProduced.checkYourAnswersLabel = Amount Produced
+changeActivity.amountProduced.checkYourAnswersLabel = Own brand packaged in past 12 months?
 changeActivity.amountProduced.error.required = Select how many litres of your own brands of liable drinks have been packaged globally in the past 12 months
 changeActivity.amountProduced.change.hidden = Amount produced
 
@@ -191,7 +200,7 @@ cancelRegistration.fileReturnBeforeDereg.continue = Go to your account
 
 
 changeActivity.imports.title = Do you bring liable drinks into the UK from anywhere outside of the UK?
-changeActivity.imports.checkYourAnswersLabel = Do you bring liable drinks into the UK from anywhere outside of the UK?
+changeActivity.imports.checkYourAnswersLabel = Do you bring liable drinks into the UK?
 changeActivity.imports.error.required = Select yes if do you bring liable drinks into the UK from anywhere outside of the UK
 changeActivity.imports.change.hidden = Change do you bring liable drinks into the UK from anywhere outside of the UK?
 howManyImports.title = How many litres of liable drinks have you brought into the UK from anywhere outside of the UK?
@@ -201,7 +210,7 @@ imports.highband.litres.hidden = change amount of litres in highband for imports
 
 
 changeActivity.contractPacking.title = Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
-changeActivity.contractPacking.checkYourAnswersLabel = Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
+changeActivity.contractPacking.checkYourAnswersLabel = Package for customers at your own sites?
 changeActivity.contractPacking.error.required = Select yes if you operate any packaging sites in the UK to package liable drinks as a third party or contract packer
 changeActivity.contractPacking.change.hidden = Change do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
 howManyContractPacking.title = How many litres will you package as a third party or contract packer in the next 12 months?
