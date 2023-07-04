@@ -3,7 +3,7 @@ package testSupport
 import models.{SelectChange, UserAnswers}
 import play.api.libs.json.Json
 
-trait ITCoreTestDataForCorrectReturn {
+trait ITCoreTestDataForCorrectReturn extends ITSharedCoreTestData  {
 
   def sdilNumber: String
 

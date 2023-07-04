@@ -59,6 +59,7 @@ class SelectController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
+      println("PageLoad Controller")
 
       val preparedForm = request.userAnswers.get(SelectPage) match {
         case None => form
@@ -66,8 +67,10 @@ class SelectController @Inject()(
       }
 
       connector.returns_variable(request.subscription.utr).flatMap {
-        case returns if returns.nonEmpty => Future.successful(Ok(view(preparedForm, mode, seperateReturnYears(returns: List[ReturnPeriod]))))
-        case returns if returns.isEmpty => Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+        case Some(returns) if returns.nonEmpty =>println("Good")
+          Future.successful(Ok(view(preparedForm, mode, seperateReturnYears(returns: List[ReturnPeriod]))))
+        case _ =>println("Bad")
+          Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
       }
   }
 
@@ -76,10 +79,9 @@ class SelectController @Inject()(
 
       form.bindFromRequest().fold(
         formWithErrors =>
-
       connector.returns_variable(request.subscription.utr).flatMap{
-        case returns if returns.nonEmpty =>  Future.successful(BadRequest(view(formWithErrors, mode, seperateReturnYears(returns): List[List[ReturnPeriod]])))
-        case returns if returns.isEmpty =>  Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+        case Some(returns) if returns.nonEmpty =>  Future.successful(BadRequest(view(formWithErrors, mode, seperateReturnYears(returns): List[List[ReturnPeriod]])))
+        case _ =>  Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
       },
 
         value => {

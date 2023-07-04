@@ -26,7 +26,6 @@ object SelectReturn {
 
 
   def options(returns: List[ReturnPeriod])(implicit messages: Messages): Seq[RadioItem] = {
-    returns.last
     returns.zipWithIndex.map {
       case (value, index) =>
         RadioItem(

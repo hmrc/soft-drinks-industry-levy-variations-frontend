@@ -1,7 +1,8 @@
 package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
-import models.NormalMode
+import models.ReturnPeriod
+import models.correctReturn.Select
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.correctReturn.SelectPage
@@ -15,6 +16,11 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
   val normalRoutePath = "/select"
   val checkRoutePath = "/change-select"
+
+  val returnPeriodList: List[ReturnPeriod] = List(ReturnPeriod(2020, 0), ReturnPeriod(2020, 1), ReturnPeriod(2020, 2), ReturnPeriod(2020, 3),
+    ReturnPeriod(2021, 0), ReturnPeriod(2021, 1), ReturnPeriod(2021, 2), ReturnPeriod(2021, 3),
+    ReturnPeriod(2022, 0), ReturnPeriod(2022, 1), ReturnPeriod(2022, 2), ReturnPeriod(2022, 3))
+
 
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
@@ -32,11 +38,25 @@ class SelectControllerISpec extends ControllerITTestHelper {
             val page = Jsoup.parse(res.body)
             page.title must include(Messages("correctReturn.select" + ".title"))
             val radioInputs = page.getElementsByClass("govuk-radios__input")
-            radioInputs.size() mustBe Select.values.size
+            radioInputs.size() mustBe 8
 
             Select.values.zipWithIndex.foreach { case (radio1, index1) =>
-              radioInputs.get(index1).attr("value") mustBe radio1.toString
-              radioInputs.get(index1).hasAttr("checked") mustBe false
+              if (index1 == 0){
+                radioInputs.get(index1).attr("value") mustBe "ReturnPeriod(2022,0)"
+                radioInputs.get(index1).hasAttr("checked") mustBe false
+              }
+              if (index1 == 1){
+                radioInputs.get(index1).attr("value") mustBe "ReturnPeriod(2022,1)"
+                radioInputs.get(index1).hasAttr("checked") mustBe false
+              }
+              if (index1 == 2){
+                radioInputs.get(index1).attr("value") mustBe "ReturnPeriod(2022,2)"
+                radioInputs.get(index1).hasAttr("checked") mustBe false
+              }
+              if (index1 == 3){
+                radioInputs.get(index1).attr("value") mustBe "ReturnPeriod(2022,3)"
+                radioInputs.get(index1).hasAttr("checked") mustBe false
+              }
             }
           }
         }
@@ -61,11 +81,25 @@ class SelectControllerISpec extends ControllerITTestHelper {
               val page = Jsoup.parse(res.body)
               page.title must include(Messages("correctReturn.select" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
-              radioInputs.size() mustBe Select.values.size
+              radioInputs.size() mustBe 8
 
               Select.values.zipWithIndex.foreach { case (radio1, index1) =>
-                radioInputs.get(index1).attr("value") mustBe radio1.toString
-                radioInputs.get(index1).hasAttr("checked") mustBe index == index1
+                if (index1 == 0){
+                  radioInputs.get(index1).attr("value") mustBe "ReturnPeriod(2022,0)"
+                  radioInputs.get(index1).hasAttr("checked") mustBe false
+                }
+                if (index1 == 1){
+                  radioInputs.get(index1).attr("value") mustBe "ReturnPeriod(2022,1)"
+                  radioInputs.get(index1).hasAttr("checked") mustBe false
+                }
+                if (index1 == 2){
+                  radioInputs.get(index1).attr("value") mustBe "ReturnPeriod(2022,2)"
+                  radioInputs.get(index1).hasAttr("checked") mustBe false
+                }
+                if (index1 == 3){
+                  radioInputs.get(index1).attr("value") mustBe "ReturnPeriod(2022,3)"
+                  radioInputs.get(index1).hasAttr("checked") mustBe false
+                }
               }
             }
           }
@@ -92,10 +126,24 @@ class SelectControllerISpec extends ControllerITTestHelper {
             val page = Jsoup.parse(res.body)
             page.title must include(Messages("correctReturn.select" + ".title"))
             val radioInputs = page.getElementsByClass("govuk-radios__input")
-            radioInputs.size() mustBe Select.values.size
-
+            radioInputs.size() mustBe 8
             Select.values.zipWithIndex.foreach { case (radio1, index1) =>
-              radioInputs.get(index1).attr("value") mustBe radio1.toString
+              if (index1 == 0){
+                radioInputs.get(index1).attr("value") mustBe "ReturnPeriod(2022,0)"
+                radioInputs.get(index1).hasAttr("checked") mustBe false
+              }
+              if (index1 == 1){
+                radioInputs.get(index1).attr("value") mustBe "ReturnPeriod(2022,1)"
+                radioInputs.get(index1).hasAttr("checked") mustBe false
+              }
+              if (index1 == 2){
+                radioInputs.get(index1).attr("value") mustBe "ReturnPeriod(2022,2)"
+                radioInputs.get(index1).hasAttr("checked") mustBe false
+              }
+              if (index1 == 3){
+                radioInputs.get(index1).attr("value") mustBe "ReturnPeriod(2022,3)"
+                radioInputs.get(index1).hasAttr("checked") mustBe false
+              }
               radioInputs.get(index1).hasAttr("checked") mustBe false
             }
           }
@@ -122,11 +170,30 @@ class SelectControllerISpec extends ControllerITTestHelper {
               val page = Jsoup.parse(res.body)
               page.title must include(Messages("correctReturn.select" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
-              radioInputs.size() mustBe Select.values.size
+              radioInputs.size() mustBe 8
 
               Select.values.zipWithIndex.foreach { case (radio1, index1) =>
-                radioInputs.get(index1).attr("value") mustBe radio1.toString
-                radioInputs.get(index1).hasAttr("checked") mustBe index == index1
+                if (index1 == 0){
+                  radioInputs.get(index1).hasAttr("checked") mustBe index == true
+                  radioInputs.get(index1).attr("value") mustBe "ReturnPeriod(2022,0)"
+                  radioInputs.get(index1).hasAttr("checked") mustBe false
+                }
+                if (index1 == 1){
+                  radioInputs.get(index1).hasAttr("checked") mustBe index == false
+                  radioInputs.get(index1).attr("value") mustBe "ReturnPeriod(2022,1)"
+                  radioInputs.get(index1).hasAttr("checked") mustBe false
+                }
+                if (index1 == 2){
+                  radioInputs.get(index1).hasAttr("checked") mustBe index == false
+                  radioInputs.get(index1).attr("value") mustBe "ReturnPeriod(2022,2)"
+                  radioInputs.get(index1).hasAttr("checked") mustBe false
+                }
+                if (index1 == 3){
+                  radioInputs.get(index1).hasAttr("checked") mustBe index == false
+                  radioInputs.get(index1).attr("value") mustBe "ReturnPeriod(2022,3)"
+                  radioInputs.get(index1).hasAttr("checked") mustBe false
+                }
+
               }
             }
           }

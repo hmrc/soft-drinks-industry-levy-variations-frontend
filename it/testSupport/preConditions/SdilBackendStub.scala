@@ -49,6 +49,10 @@ case class SdilBackendStub()
     deregDate = None
   )
 
+  val returnPeriodList: List[ReturnPeriod] = List(ReturnPeriod(2020, 0), ReturnPeriod(2020, 1), ReturnPeriod(2020, 2), ReturnPeriod(2020, 3),
+    ReturnPeriod(2021, 0), ReturnPeriod(2021, 1), ReturnPeriod(2021, 2), ReturnPeriod(2021, 3),
+    ReturnPeriod(2022, 0), ReturnPeriod(2022, 1), ReturnPeriod(2022, 2), ReturnPeriod(2022, 3))
+
   val returnPeriods: List[ReturnPeriod] = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
 
   def returns_pending (utr: String) = {
@@ -75,6 +79,15 @@ case class SdilBackendStub()
         urlPathMatching(s"/subscription/$identifier/$refNum"))
         .willReturn(
           ok(Json.toJson(aSubscription).toString())))
+    builder
+  }
+
+  def returns_variable(utr: String) = {
+    stubFor(
+      get(
+        urlPathMatching(s"/returns/$utr/variable"))
+        .willReturn(
+          ok(Json.toJson(returnPeriodList).toString())))
     builder
   }
 

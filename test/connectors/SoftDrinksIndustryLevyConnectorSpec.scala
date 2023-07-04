@@ -188,6 +188,20 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
       }
     }
 
+    "return None when unsuccessful in returns variable" in {
+
+      when(mockHttp.GET[Option[List[ReturnPeriod]]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
+
+      val res = softDrinksIndustryLevyConnector.returns_variable(utr)
+
+      whenReady(
+        res
+      ) {
+        response =>
+          response mustEqual None
+      }
+    }
+
     "post return succesfully" in {
       val period = ReturnPeriod(year = 2022, quarter = 3)
       val sdilReturn: SdilReturn =  SdilReturn(
