@@ -80,7 +80,9 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
     "must redirect When returns is empty for GET" in {
 
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).overrides(
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+      ).build()
 
       running(application) {
 
