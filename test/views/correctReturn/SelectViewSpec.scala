@@ -76,7 +76,6 @@ class SelectViewSpec extends ViewSpecHelper {
               radio1
                 .getElementsByClass(Selectors.radiosLables)
                 .text() mustBe Messages("January to March 2020")
-              println(radio1)
               val input = radio1
                 .getElementsByClass(Selectors.radiosInput)
               input.attr("value") mustBe "ReturnPeriod(2020,0)"
@@ -88,7 +87,6 @@ class SelectViewSpec extends ViewSpecHelper {
               radio1
                 .getElementsByClass(Selectors.radiosLables)
                 .text() mustBe Messages("April to June 2020")
-              println(radio1)
               val input = radio1
                 .getElementsByClass(Selectors.radiosInput)
               input.attr("value") mustBe "ReturnPeriod(2020,1)"
@@ -100,7 +98,7 @@ class SelectViewSpec extends ViewSpecHelper {
               radio1
                 .getElementsByClass(Selectors.radiosLables)
                 .text() mustBe Messages("August to September 2020")
-              println(radio1)
+
               val input = radio1
                 .getElementsByClass(Selectors.radiosInput)
               input.attr("value") mustBe "ReturnPeriod(2020,2)"
@@ -112,7 +110,6 @@ class SelectViewSpec extends ViewSpecHelper {
               radio1
                 .getElementsByClass(Selectors.radiosLables)
                 .text() mustBe Messages("October to December 2020")
-              println(radio1)
               val input = radio1
                 .getElementsByClass(Selectors.radiosInput)
               input.attr("value") mustBe "ReturnPeriod(2020,3)"

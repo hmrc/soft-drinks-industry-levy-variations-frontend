@@ -59,7 +59,6 @@ class SelectController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-      println("PageLoad Controller")
 
       val preparedForm = request.userAnswers.get(SelectPage) match {
         case None => form
@@ -67,9 +66,9 @@ class SelectController @Inject()(
       }
 
       connector.returns_variable(request.subscription.utr).flatMap {
-        case Some(returns) if returns.nonEmpty =>println("Good")
+        case Some(returns) if returns.nonEmpty =>
           Future.successful(Ok(view(preparedForm, mode, seperateReturnYears(returns: List[ReturnPeriod]))))
-        case _ =>println("Bad")
+        case _ =>
           Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
       }
   }
