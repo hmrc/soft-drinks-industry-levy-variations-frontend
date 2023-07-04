@@ -41,45 +41,16 @@
         </h1>
 
 
-        @if(returns.size >= 4){
-            @govukRadios(
-                RadiosViewModel(
-                    field  = form("value"),
-                    legend = LegendViewModel(returns(3).last.start.getYear.toString).asPageHeading(),
-                    items  = SelectReturn.options(returns(3))
-                )
-            )
-        }
-
-        @if(returns.size >= 3){
-            @govukRadios(
-                RadiosViewModel(
-                    field  = form("value"),
-                    legend = LegendViewModel(returns(2).last.start.getYear.toString).asPageHeading(),
-                    items  = SelectReturn.options(returns(2))
-                )
-            )
-        }
-
-        @if(returns.size >= 2){
-             @govukRadios(
-                RadiosViewModel(
-                    field  = form("value"),
-                    legend = LegendViewModel(returns(1).last.start.getYear.toString).asPageHeading(),
-                    items  = SelectReturn.options(returns(1))
-                )
-            )
-        }
-
-        @if(returns.size >= 1){
-            @govukRadios(
-                RadiosViewModel(
-                    field  = form("value"),
-                    legend = LegendViewModel(returns(0).last.start.getYear.toString).asPageHeading(),
-                    items  = SelectReturn.options(returns(0))
-                )
-            )
-        }
+<div @if(form.errors.nonEmpty) { class="govuk-form-group--error"}>
+ @for((r, index) <- returns.zipWithIndex ) {
+   @govukRadios(
+     RadiosViewModel(
+      field  = form("value"),
+      legend = LegendViewModel(r.last.start.getYear.toString).asPageHeading(),
+      items  = SelectReturn.options(r),
+      noErrorRequired = index > 0))
+}
+</div>
 
         @govukDetails(
             Details(

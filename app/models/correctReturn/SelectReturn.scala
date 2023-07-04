@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package models
+package models.correctReturn
 
+import models.ReturnPeriod
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
@@ -40,5 +41,3 @@ object SelectReturn {
     }
   }
 }
-
-

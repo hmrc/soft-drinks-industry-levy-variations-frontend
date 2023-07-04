@@ -16,9 +16,10 @@
 
 package forms.mappings
 
-import models.Enumerable
+import models.{Enumerable, ReturnPeriod}
 import play.api.data.FormError
 import play.api.data.format.Formatter
+import play.api.libs.json.{JsSuccess, Json}
 
 import scala.util.{Failure, Success, Try}
 import scala.util.control.Exception.nonFatalCatch
@@ -36,6 +37,21 @@ trait Formatters {
 
     override def unbind(key: String, value: String): Map[String, String] =
       Map(key -> value)
+  }
+
+  private[mappings] def returnPeriodFormatter(errorKey: String, args: Seq[String] = Seq.empty): Formatter[ReturnPeriod] = new Formatter[ReturnPeriod] {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], ReturnPeriod] = {
+      data.get(key) match {
+        case None => Left(Seq(FormError(key, errorKey, args)))
+        case Some(s) => Try(Json.fromJson[ReturnPeriod](Json.parse(s))) match {
+          case Success(JsSuccess(returnPeriod, _)) => Right(returnPeriod)
+          case _ => Left(Seq(FormError(key, errorKey, args)))
+        }
+      }
+    }
+    override def unbind(key: String, value: ReturnPeriod): Map[String, String] = {
+      Map(key -> Json.toJson(value).toString())
+    }
   }
 
   private[mappings] def booleanFormatter(requiredKey: String, invalidKey: String, args: Seq[String] = Seq.empty): Formatter[Boolean] =
