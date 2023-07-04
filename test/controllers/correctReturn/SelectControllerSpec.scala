@@ -83,6 +83,15 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
 
       running(application) {
+
+        when(mockSdilConnector.retrieveSubscription(any, anyString())(any())).thenReturn {
+          Future.successful(Some(aSubscription))
+        }
+
+        when(mockSdilConnector.returns_variable(any())(any())).thenReturn {
+          Future.successful(None)
+        }
+
         val request = FakeRequest(GET, selectRoute)
 
         val result = route(application, request).value
