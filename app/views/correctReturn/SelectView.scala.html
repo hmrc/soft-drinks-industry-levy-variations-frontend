@@ -62,7 +62,7 @@
         }
 
         @if(returns.size >= 2){
-            govukRadios(
+             @govukRadios(
                 RadiosViewModel(
                     field  = form("value"),
                     legend = LegendViewModel(returns(1).last.start.getYear.toString).asPageHeading(),

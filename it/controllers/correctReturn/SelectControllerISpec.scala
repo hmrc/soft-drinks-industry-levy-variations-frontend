@@ -38,7 +38,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
             val page = Jsoup.parse(res.body)
             page.title must include(Messages("correctReturn.select" + ".title"))
             val radioInputs = page.getElementsByClass("govuk-radios__input")
-            radioInputs.size() mustBe 8
+            radioInputs.size() mustBe returnPeriodList.size
 
             Select.values.zipWithIndex.foreach { case (radio1, index1) =>
               if (index1 == 0){
@@ -81,7 +81,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
               val page = Jsoup.parse(res.body)
               page.title must include(Messages("correctReturn.select" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
-              radioInputs.size() mustBe 8
+              radioInputs.size() mustBe returnPeriodList.size
 
               Select.values.zipWithIndex.foreach { case (radio1, index1) =>
                 if (index1 == 0){
@@ -126,7 +126,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
             val page = Jsoup.parse(res.body)
             page.title must include(Messages("correctReturn.select" + ".title"))
             val radioInputs = page.getElementsByClass("govuk-radios__input")
-            radioInputs.size() mustBe 8
+            radioInputs.size() mustBe returnPeriodList.size
             Select.values.zipWithIndex.foreach { case (radio1, index1) =>
               if (index1 == 0){
                 radioInputs.get(index1).attr("value") mustBe "ReturnPeriod(2022,0)"
@@ -170,7 +170,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
               val page = Jsoup.parse(res.body)
               page.title must include(Messages("correctReturn.select" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
-              radioInputs.size() mustBe 8
+              radioInputs.size() mustBe returnPeriodList.size
 
               Select.values.zipWithIndex.foreach { case (radio1, index1) =>
                 if (index1 == 0){
