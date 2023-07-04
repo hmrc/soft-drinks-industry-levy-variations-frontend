@@ -16,11 +16,12 @@
 
 package pages.correctReturn
 
+import models.ReturnPeriod
 import models.correctReturn.Select
 import play.api.libs.json.JsPath
 import pages.QuestionPage
 
-case object SelectPage extends QuestionPage[Select] {
+case object SelectPage extends QuestionPage[ReturnPeriod] {
 
   override def path: JsPath = JsPath \ journeyType \ toString
 

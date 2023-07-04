@@ -18,7 +18,7 @@ package controllers.correctReturn
 
 import connectors.SoftDrinksIndustryLevyConnector
 import utilities.GenericLogger
-import controllers.ControllerHelper
+import controllers.{ControllerHelper, routes}
 import controllers.actions._
 import forms.correctReturn.SelectFormProvider
 
@@ -33,6 +33,7 @@ import handlers.ErrorHandler
 
 import scala.concurrent.{ExecutionContext, Future}
 import navigation._
+import play.api.libs.json.Json
 
 class SelectController @Inject()(
                                   override val messagesApi: MessagesApi,
@@ -57,7 +58,7 @@ class SelectController @Inject()(
     }).distinct
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(SelectPage) match {
@@ -71,20 +72,31 @@ class SelectController @Inject()(
         case _ =>
           Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
       }
+      val returnPeriodList: List[ReturnPeriod] = List(ReturnPeriod(2020, 0), ReturnPeriod(2020, 1), ReturnPeriod(2020, 2), ReturnPeriod(2020, 3),
+        ReturnPeriod(2021, 0), ReturnPeriod(2021, 1), ReturnPeriod(2021, 2), ReturnPeriod(2021, 3),
+        ReturnPeriod(2022, 0), ReturnPeriod(2022, 1), ReturnPeriod(2022, 2), ReturnPeriod(2022, 3)
+      )
+
+      Ok(view(preparedForm, mode, seperateReturnYears(returnPeriodList: List[ReturnPeriod])))
+
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
-
       form.bindFromRequest().fold(
         formWithErrors =>
-      connector.returns_variable(request.subscription.utr).flatMap{
-        case Some(returns) if returns.nonEmpty =>  Future.successful(BadRequest(view(formWithErrors, mode, seperateReturnYears(returns): List[List[ReturnPeriod]])))
-        case _ =>  Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
-      },
+          Future.successful(BadRequest(view(formWithErrors, mode, seperateReturnYears(List(ReturnPeriod(2020, 0), ReturnPeriod(2020, 1), ReturnPeriod(2020, 2), ReturnPeriod(2020, 3)
+        ,ReturnPeriod(2021, 0), ReturnPeriod(2021, 1), ReturnPeriod(2021, 2), ReturnPeriod(2021, 3),
+        ReturnPeriod(2022, 0), ReturnPeriod(2022, 1), ReturnPeriod(2022, 2), ReturnPeriod(2022, 3)
+        ))))),
+//      connector.returns_variable(request.subscription.utr).flatMap{
+//        case Some(returns) if returns.nonEmpty =>  Future.successful(BadRequest(view(formWithErrors, mode, seperateReturnYears(returns): List[List[ReturnPeriod]])))
+//        case _ =>  Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+//      },
 
         value => {
           val updatedAnswers = request.userAnswers.set(SelectPage, value)
+          println(Console.BLUE + s"Answers -> $updatedAnswers")
           updateDatabaseAndRedirect(updatedAnswers, SelectPage, mode)
         }
       )

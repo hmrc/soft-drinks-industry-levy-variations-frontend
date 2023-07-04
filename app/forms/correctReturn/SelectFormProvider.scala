@@ -17,15 +17,16 @@
 package forms.correctReturn
 
 import javax.inject.Inject
-
 import forms.mappings.Mappings
+import models.ReturnPeriod
 import play.api.data.Form
 import models.correctReturn.Select
+import play.api.libs.json.{JsValue, Json}
 
 class SelectFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Select] =
+  def apply(): Form[ReturnPeriod] =
     Form(
-      "value" -> enumerable[Select]("correctReturn.select.error.required")
+      "value" -> text("correctReturn.select.error.required").transform[ReturnPeriod](s => Json.fromJson[ReturnPeriod](Json.parse(s)).get, j => Json.toJson(j).toString())
     )
 }

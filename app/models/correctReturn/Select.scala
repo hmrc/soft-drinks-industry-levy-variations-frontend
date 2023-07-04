@@ -17,7 +17,8 @@
 package models.correctReturn
 
 import play.api.i18n.Messages
-import models.{Enumerable, WithName}
+import models.{Enumerable, ReturnPeriod, WithName}
+import play.api.libs.json.Json
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
@@ -25,18 +26,20 @@ sealed trait Select
 
 object Select extends Enumerable.Implicits {
 
-  case object Option1 extends WithName("option1") with Select
-  case object Option2 extends WithName("option2") with Select
+  case object Return1 extends WithName("ReturnPeriod(2020,0)") with Select
+  case object Return2 extends WithName("""ReturnPeriod""") with Select
+  case object Return3 extends WithName("""ReturnPeriod""") with Select
+  case object Return4 extends WithName("""ReturnPeriod""") with Select
 
   val values: Seq[Select] = Seq(
-    Option1, Option2
+    Return1, Return2, Return3, Return4
   )
 
-  def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {
+  def options(returnsList: List[ReturnPeriod])( implicit messages: Messages): Seq[RadioItem] = returnsList.zipWithIndex.map {
     case (value, index) =>
       RadioItem(
         content = Text(messages(s"correctReturn.select.${value.toString}")),
-        value   = Some(value.toString),
+        value   = Some(Json.toJson(value).toString),
         id      = Some(s"value_$index")
       )
   }

@@ -17,6 +17,7 @@
 package models
 
 import play.api.i18n.Messages
+import play.api.libs.json.Json
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
@@ -33,7 +34,7 @@ object SelectReturn {
             value.start.format(DateTimeFormatter.ofPattern("MMMM")),
             value.end.format(DateTimeFormatter.ofPattern("MMMM")),
             value.start.getYear.toString)),
-          value   = Some(value.toString),
+          value   = Some(Json.toJson(value).toString),
           id      = Some(s"value_$index")
         )
     }
