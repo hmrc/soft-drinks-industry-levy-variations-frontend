@@ -20,7 +20,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
 
   List(NormalMode, CheckMode).foreach { mode =>
     val (path, redirectLocation) = if(mode == NormalMode) {
-      (normalRoutePath, defaultCall.url)
+      (normalRoutePath, routes.ContractPackingController.onPageLoad(NormalMode).url)
     } else {
       (checkRoutePath, routes.ChangeActivityCYAController.onPageLoad.url)
     }
@@ -39,7 +39,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("changeActivity.howManyOperatePackagingSiteOwnBrands" + ".title"))
+              page.title mustBe "How many litres of your own brands will you package in the next 12 months? - Soft Drinks Industry Levy - GOV.UK"
               testLitresInBandsNoPrepopulatedData(page)
             }
           }
@@ -59,7 +59,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("changeActivity.howManyOperatePackagingSiteOwnBrands" + ".title"))
+              page.title mustBe "How many litres of your own brands will you package in the next 12 months? - Soft Drinks Industry Levy - GOV.UK"
               testLitresInBandsWithPrepopulatedData(page)
             }
           }
@@ -71,7 +71,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
 
     s"POST " + path - {
       "when the user populates all litres fields" - {
-        "should update the session with the new values and redirect to " + redirectLocation - {
+        "should update the session with the new values and redirect to " + "ContractPackaging" - {
           "when the session contains no data for page" in {
             given
               .commonPrecondition
@@ -83,8 +83,9 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
               )
 
               whenReady(result) { res =>
+                println(Console.YELLOW + "In test - result is  " + res + " " + mode + Console.WHITE)
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(redirectLocation)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.ContractPackingController.onPageLoad(NormalMode).url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyOperatePackagingSiteOwnBrandsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBands
@@ -104,7 +105,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(redirectLocation)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.ContractPackingController.onPageLoad(NormalMode).url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyOperatePackagingSiteOwnBrandsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBandsDiff
@@ -115,7 +116,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
       }
 
       "should return 400 with required error" - {
-        val errorTitle = "Error: " + Messages("changeActivity.howManyOperatePackagingSiteOwnBrands.title")
+        val errorTitle = "Error: How many litres of your own brands will you package in the next 12 months? - Soft Drinks Industry Levy - GOV.UK"
 
         "when no questions are answered" in {
           given
