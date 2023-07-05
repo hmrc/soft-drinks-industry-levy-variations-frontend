@@ -21,7 +21,6 @@ import connectors.SoftDrinksIndustryLevyConnector
 import errors.SessionDatabaseInsertError
 import forms.correctReturn.SelectFormProvider
 import models.NormalMode
-import models.correctReturn.Select
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, anyString}
@@ -29,6 +28,7 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.correctReturn.SelectPage
 import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -108,7 +108,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = emptyUserAnswersForCorrectReturn
-      .set(SelectPage, Select.values.head).success.value
+      .set(SelectPage, returnPeriodList.head).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
@@ -130,7 +130,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(Select.values.head), NormalMode, controller.seperateReturnYears(returnPeriodList))(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(returnPeriodList.head), NormalMode, controller.seperateReturnYears(returnPeriodList))(request, messages(application)).toString
       }
     }
 
@@ -144,22 +144,18 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
         Future.successful(Some(returnPeriodList))
       }
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn
-      ) )
-      .overrides(
-        bind[NavigatorForCorrectReturn
-      ].toInstance(new FakeNavigatorForCorrectReturn (onwardRoute)
-      ),
-      bind[SessionService].toInstance(mockSessionService)
-      )
-      .build()
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).overrides(
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector),
+        bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn (onwardRoute)),
+        bind[SessionService].toInstance(mockSessionService)
+      ).build()
 
       running(application) {
         val request =
           FakeRequest(POST, selectRoute
         )
-        .withFormUrlEncodedBody(("value", Select.values.head.toString))
+        .withFormUrlEncodedBody(("value", Json.toJson(returnPeriodList.head).toString))
 
         val result = route(application, request).value
 
@@ -247,7 +243,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
         val request =
           FakeRequest(POST, selectRoute
         )
-        .withFormUrlEncodedBody(("value", Select.values.head.toString))
+        .withFormUrlEncodedBody(("value", Json.toJson(returnPeriodList.head).toString))
 
         val result = route(application, request).value
 
@@ -258,13 +254,17 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure)).build()
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure)) .overrides(
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector),
+        bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn (onwardRoute))
+      )
+        .build()
 
       running(application) {
         val request =
           FakeRequest(POST, selectRoute
         )
-        .withFormUrlEncodedBody(("value", Select.values.head.toString))
+        .withFormUrlEncodedBody(("value", Json.toJson(returnPeriodList.head).toString))
 
         val result = route(application, request).value
 
@@ -281,6 +281,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
           .overrides(
+            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector),
             bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn (onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           )
@@ -291,7 +292,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
           running(application) {
             val request = FakeRequest(POST, selectRoute
             )
-            .withFormUrlEncodedBody(("value", Select.values.head.toString))
+            .withFormUrlEncodedBody(("value", Json.toJson(returnPeriodList.head).toString))
 
             await(route(application, request).value)
             events.collectFirst {

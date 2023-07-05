@@ -16,7 +16,7 @@
 
 package generators
 
-import models.SelectChange
+import models.{ReturnPeriod, SelectChange}
 import models.changeActivity.AmountProduced
 import models.updateRegisteredDetails.UpdateContactDetails
 import org.scalacheck.Arbitrary
@@ -33,7 +33,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[pages.correctReturn.SelectPage.type]
-        value <- arbitrary[models.correctReturn.Select].map(Json.toJson(_))
+        value <- arbitrary[ReturnPeriod].map(Json.toJson(_))
       } yield (page, value)
     }
 

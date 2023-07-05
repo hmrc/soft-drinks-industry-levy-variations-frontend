@@ -20,10 +20,10 @@ import controllers.correctReturn.routes
 import forms.correctReturn.SelectFormProvider
 import models.{CheckMode, NormalMode, ReturnPeriod}
 import play.api.i18n.Messages
+import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import views.html.correctReturn.SelectView
-import models.correctReturn.Select
 import views.ViewSpecHelper
 class SelectViewSpec extends ViewSpecHelper {
 
@@ -68,7 +68,7 @@ class SelectViewSpec extends ViewSpecHelper {
         "should have same amount of items as returns" in {
           radiobuttons.size() mustBe returnPeriodList.size
         }
-        Select.values.zipWithIndex.foreach { case (radio, index) =>
+        returnPeriodList.zipWithIndex.foreach { case (radio, index) =>
           s"that has the " + radio.toString + " to select and is unchecked" in {
             if(index == 0) {
               val radio1 = radiobuttons
@@ -78,7 +78,7 @@ class SelectViewSpec extends ViewSpecHelper {
                 .text() mustBe Messages("January to March 2020")
               val input = radio1
                 .getElementsByClass(Selectors.radiosInput)
-              input.attr("value") mustBe "ReturnPeriod(2020,0)"
+              input.attr("value") mustBe Json.toJson(ReturnPeriod(2020,0)).toString
               input.hasAttr("checked") mustBe false
             }
             if(index == 1) {
@@ -89,7 +89,7 @@ class SelectViewSpec extends ViewSpecHelper {
                 .text() mustBe Messages("April to June 2020")
               val input = radio1
                 .getElementsByClass(Selectors.radiosInput)
-              input.attr("value") mustBe "ReturnPeriod(2020,1)"
+              input.attr("value") mustBe Json.toJson(ReturnPeriod(2020,1)).toString
               input.hasAttr("checked") mustBe false
             }
             if(index == 2) {
@@ -97,11 +97,11 @@ class SelectViewSpec extends ViewSpecHelper {
                 .get(index)
               radio1
                 .getElementsByClass(Selectors.radiosLables)
-                .text() mustBe Messages("August to September 2020")
+                .text() mustBe Messages("July to September 2020")
 
               val input = radio1
                 .getElementsByClass(Selectors.radiosInput)
-              input.attr("value") mustBe "ReturnPeriod(2020,2)"
+              input.attr("value") mustBe Json.toJson(ReturnPeriod(2020,2)).toString
               input.hasAttr("checked") mustBe false
             }
             if(index == 3) {
@@ -112,7 +112,7 @@ class SelectViewSpec extends ViewSpecHelper {
                 .text() mustBe Messages("October to December 2020")
               val input = radio1
                 .getElementsByClass(Selectors.radiosInput)
-              input.attr("value") mustBe "ReturnPeriod(2020,3)"
+              input.attr("value") mustBe Json.toJson(ReturnPeriod(2020,3)).toString
               input.hasAttr("checked") mustBe false
             }
           }
@@ -120,14 +120,14 @@ class SelectViewSpec extends ViewSpecHelper {
       }
     }
 
-    Select.values.foreach { radio =>
+    returnPeriodList.foreach { radio =>
       val html1 = view(form.fill(radio), NormalMode, returns = returnsList)(request, messages(application))
       val document1 = doc(html1)
 
       s"when the form is preoccupied with " + radio.toString + "selected and has no errors" - {
         "should have radiobuttons" - {
           val radiobuttons = document1.getElementsByClass(Selectors.radiosItems)
-          Select.values.zipWithIndex.foreach { case (radio1, index) =>
+          returnPeriodList.zipWithIndex.foreach { case (radio1, index) =>
             if (radio1.toString == radio.toString) {
               s"that has the option to select" + radio1.toString + " and is checked" in {
                 if(index == 1){
@@ -138,18 +138,18 @@ class SelectViewSpec extends ViewSpecHelper {
                     .text() mustBe Messages("April to June 2020")
                   val input = radiobuttons1
                     .getElementsByClass(Selectors.radiosInput)
-                  input.attr("value") mustBe "ReturnPeriod(2020,1)"
-                  input.hasAttr("checked") mustBe false
+                  input.attr("value") mustBe Json.toJson(ReturnPeriod(2020,1)).toString
+                  input.hasAttr("checked") mustBe true
                 }
                 if(index == 2){
                   val radiobuttons1 = radiobuttons
                     .get(index)
                   radiobuttons1
                     .getElementsByClass(Selectors.radiosLables)
-                    .text() mustBe Messages("April to June 2020")
+                    .text() mustBe Messages("July to September 2020")
                   val input = radiobuttons1
                     .getElementsByClass(Selectors.radiosInput)
-                  input.attr("value") mustBe "ReturnPeriod(2020,2)"
+                  input.attr("value") mustBe Json.toJson(ReturnPeriod(2020,2)).toString
                   input.hasAttr("checked") mustBe true
                 }
               }
@@ -163,7 +163,7 @@ class SelectViewSpec extends ViewSpecHelper {
                     .text() mustBe Messages("January to March 2020")
                   val input = radiobuttons1
                     .getElementsByClass(Selectors.radiosInput)
-                  input.attr("value") mustBe "ReturnPeriod(2020,0)"
+                  input.attr("value") mustBe Json.toJson(ReturnPeriod(2020,0)).toString
                   input.hasAttr("checked") mustBe false
                 }
                 if(index == 1) {
@@ -172,7 +172,7 @@ class SelectViewSpec extends ViewSpecHelper {
                     .text() mustBe Messages("April to June 2020")
                   val input = radiobuttons1
                     .getElementsByClass(Selectors.radiosInput)
-                  input.attr("value") mustBe "ReturnPeriod(2020,1)"
+                  input.attr("value") mustBe Json.toJson(ReturnPeriod(2020,1)).toString
                   input.hasAttr("checked") mustBe false
                 }
               }
@@ -188,7 +188,7 @@ class SelectViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
       "when in CheckMode" in {
-        val htmlAllSelected = view(form.fill(Select.values.head), CheckMode, returns = returnsList)(request, messages(application))
+        val htmlAllSelected = view(form.fill(returnPeriodList.head), CheckMode, returns = returnsList)(request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
         documentAllSelected.select(Selectors.form)
@@ -196,7 +196,7 @@ class SelectViewSpec extends ViewSpecHelper {
       }
 
       "when in NormalMode" in {
-        val htmlAllSelected = view(form.fill(Select.values.head), NormalMode, returns = returnsList)(request, messages(application))
+        val htmlAllSelected = view(form.fill(returnPeriodList.head), NormalMode, returns = returnsList)(request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
         documentAllSelected.select(Selectors.form)

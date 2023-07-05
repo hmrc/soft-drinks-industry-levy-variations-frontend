@@ -55,10 +55,10 @@ class SelectController @Inject()(
   def seperateReturnYears(returns:List[ReturnPeriod]): List[List[ReturnPeriod]] ={
     returns.map(aReturn => aReturn.year match {
       case year => returns.filter(_.year == year)
-    }).distinct
+    }).distinct.reverse
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(SelectPage) match {
@@ -67,36 +67,28 @@ class SelectController @Inject()(
       }
 
       connector.returns_variable(request.subscription.utr).flatMap {
-        case Some(returns) if returns.nonEmpty =>
+        case Some(returns) if returns.nonEmpty => println("Good Load")
           Future.successful(Ok(view(preparedForm, mode, seperateReturnYears(returns: List[ReturnPeriod]))))
-        case _ =>
+        case _ => println("Load Page Bad No Returns")
           Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
       }
-      val returnPeriodList: List[ReturnPeriod] = List(ReturnPeriod(2020, 0), ReturnPeriod(2020, 1), ReturnPeriod(2020, 2), ReturnPeriod(2020, 3),
-        ReturnPeriod(2021, 0), ReturnPeriod(2021, 1), ReturnPeriod(2021, 2), ReturnPeriod(2021, 3),
-        ReturnPeriod(2022, 0), ReturnPeriod(2022, 1), ReturnPeriod(2022, 2), ReturnPeriod(2022, 3)
-      )
-
-      Ok(view(preparedForm, mode, seperateReturnYears(returnPeriodList: List[ReturnPeriod])))
-
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
     implicit request =>
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, seperateReturnYears(List(ReturnPeriod(2020, 0), ReturnPeriod(2020, 1), ReturnPeriod(2020, 2), ReturnPeriod(2020, 3)
-        ,ReturnPeriod(2021, 0), ReturnPeriod(2021, 1), ReturnPeriod(2021, 2), ReturnPeriod(2021, 3),
-        ReturnPeriod(2022, 0), ReturnPeriod(2022, 1), ReturnPeriod(2022, 2), ReturnPeriod(2022, 3)
-        ))))),
-//      connector.returns_variable(request.subscription.utr).flatMap{
-//        case Some(returns) if returns.nonEmpty =>  Future.successful(BadRequest(view(formWithErrors, mode, seperateReturnYears(returns): List[List[ReturnPeriod]])))
-//        case _ =>  Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
-//      },
 
+     connector.returns_variable(request.subscription.utr).flatMap{
+       case Some(returns) if returns.nonEmpty =>
+         Future.successful(BadRequest(view(formWithErrors, mode, seperateReturnYears(returns): List[List[ReturnPeriod]])))
+       case Some(returns) if returns.isEmpty =>
+         Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+       case None =>
+         Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+     },
         value => {
           val updatedAnswers = request.userAnswers.set(SelectPage, value)
-          println(Console.BLUE + s"Answers -> $updatedAnswers")
           updateDatabaseAndRedirect(updatedAnswers, SelectPage, mode)
         }
       )

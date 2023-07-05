@@ -16,17 +16,18 @@
 
 package pages.correctReturn
 
-import models.correctReturn.Select
+
+import models.ReturnPeriod
 import pages.behaviours.PageBehaviours
 
 class SelectSpec extends PageBehaviours {
 
   "SelectPage" - {
 
-    beRetrievable[Select](SelectPage)
+    beRetrievable[ReturnPeriod](SelectPage)
 
-    beSettable[Select](SelectPage)
+    beSettable[ReturnPeriod](SelectPage)
 
-    beRemovable[Select](SelectPage)
+    beRemovable[ReturnPeriod](SelectPage)
   }
 }

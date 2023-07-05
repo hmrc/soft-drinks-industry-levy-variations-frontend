@@ -16,6 +16,8 @@
 
 package models.correctReturn
 
+import base.SpecBase
+import models.ReturnPeriod
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.OptionValues
@@ -23,42 +25,26 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, RadioItem}
 
-class SelectSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues {
+class SelectSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with SpecBase{
 
   "Select" - {
 
-    "must deserialise valid values" in {
+    "when i put invalid data in, i get error out" in {
 
-      val gen = Gen.oneOf(Select.values.toSeq)
-
-      forAll(gen) {
-        select =>
-
-          JsString(select.toString).validate[Select].asOpt.value mustEqual select
+          SelectReturn.options(returnPeriodList) mustEqual List(RadioItem(HtmlContent("January to March 2020"), Some("value_0"), Some("""{"year":2020,"quarter":0}"""), None, None, None, false, None, false, Map()),
+                                                                RadioItem(HtmlContent("April to June 2020"), Some("value_1"), Some("""{"year":2020,"quarter":1}"""), None, None, None, false, None, false, Map()),
+                                                                RadioItem(HtmlContent("July to September 2020"), Some("value_2"), Some("""{"year":2020,"quarter":2}"""), None, None, None, false, None, false, Map()),
+                                                                RadioItem(HtmlContent("October to December 2020"), Some("value_3"), Some("""{"year":2020,"quarter":3}"""), None, None, None, false, None, false, Map()),
+                                                                RadioItem(HtmlContent("January to March 2022"), Some("value_4"), Some("""{"year":2022,"quarter":0}"""), None, None, None, false, None, false, Map()),
+                                                                RadioItem(HtmlContent("April to June 2022"), Some("value_5"), Some("""{"year":2022,"quarter":1}"""), None, None, None, false, None, false, Map()),
+                                                                RadioItem(HtmlContent("July to September 2022"), Some("value_6"), Some("""{"year":2022,"quarter":2}"""), None, None, None, false, None, false, Map()),
+                                                                RadioItem(HtmlContent("October to December 2022"), Some("value_7"), Some("""{"year":2022,"quarter":3}"""), None, None, None, false, None, false, Map()))
       }
     }
 
-    "must fail to deserialise invalid values" in {
-
-      val gen = arbitrary[String] suchThat (!Select.values.map(_.toString).contains(_))
-
-      forAll(gen) {
-        invalidValue =>
-
-          JsString(invalidValue).validate[Select] mustEqual JsError("error.invalid")
-      }
+    "When i put no data in i go no data out" in {
+      SelectReturn.options(List()) mustEqual List()
     }
-
-    "must serialise" in {
-
-      val gen = Gen.oneOf(Select.values.toSeq)
-
-      forAll(gen) {
-        select =>
-
-          Json.toJson(select) mustEqual JsString(select.toString)
-      }
-    }
-  }
 }

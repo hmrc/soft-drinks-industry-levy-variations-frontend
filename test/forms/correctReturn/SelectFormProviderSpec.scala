@@ -16,11 +16,14 @@
 
 package forms.correctReturn
 
+import base.SpecBase
 import forms.behaviours.OptionFieldBehaviours
-import models.correctReturn.Select
-import play.api.data.FormError
+import models.ReturnPeriod
+import play.api.data.{Form, FormError}
+import play.api.i18n.Messages
+import play.api.libs.json.Json
 
-class SelectFormProviderSpec extends OptionFieldBehaviours {
+class SelectFormProviderSpec extends OptionFieldBehaviours with SpecBase {
 
   val form = new SelectFormProvider()()
 
@@ -29,17 +32,46 @@ class SelectFormProviderSpec extends OptionFieldBehaviours {
     val fieldName = "value"
     val requiredKey = "correctReturn.select.error.required"
 
-    behave like optionsField[Select](
-      form,
-      fieldName,
-      validValues  = Select.values,
-      invalidError = FormError(fieldName, "error.invalid")
-    )
+    def returnsoptionsField[T](form: Form[_],
+                               fieldName: String,
+                               validValues: Seq[ReturnPeriod],
+                               invalidError: FormError): Unit = {
 
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
+      "bind all valid values" in {
+
+        for (value <- validValues) {
+
+          val result = form.bind(Map(fieldName -> Json.toJson(value).toString)).apply(fieldName)
+          result.value.value mustEqual Json.toJson(value).toString
+          result.errors mustBe empty
+        }
+      }
+
+      "not bind required values" in {
+
+        val generator = stringsExceptSpecificValues(validValues.map(_.toString))
+
+        forAll(generator -> "invalidValue") {
+          value =>
+
+            val result = form.bind(Map(fieldName -> value)).apply(fieldName)
+            result.errors mustEqual  List(FormError("value", List("correctReturn.select.error.required"), List()))
+        }
+      }
+
+    }
+
+      behave like returnsoptionsField[ReturnPeriod](
+        form,
+        fieldName,
+        validValues = returnPeriodList,
+        invalidError = FormError(fieldName, "error.required")
+      )
+
+      behave like mandatoryField(
+        form,
+        fieldName,
+        requiredError = FormError(fieldName, requiredKey)
+      )
   }
 }
