@@ -30,6 +30,7 @@ class ChangeActivityCYAViewSpec extends ViewSpecHelper {
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
+    val PRE_HEADER_CAPTION = "govuk-caption-l"
     val heading = "govuk-heading-l"
     val summaryListHeading = "govuk-heading-m"
     val button = "govuk-button"
@@ -46,8 +47,13 @@ class ChangeActivityCYAViewSpec extends ViewSpecHelper {
       )
     }
     val call = Call("GET","/foo")
-    val html = view("ALIAS", "RETURN PERIOD", summaryList, call)(request, messages(application))
+    val ALIAS = "ALIAS"
+    val RETURN_PERIOD = "RETURN PERIOD"
+    val html = view(ALIAS, RETURN_PERIOD, summaryList, call)(request, messages(application))
     val document = doc(html)
+    "should have the expected pre header caption" in {
+      document.getElementsByClass(Selectors.PRE_HEADER_CAPTION).text() mustEqual s"$ALIAS - $RETURN_PERIOD"
+    }
     "should have the expected heading" in {
       document.getElementsByClass(Selectors.heading).text() mustEqual "Check your answers before sending your update"
     }
