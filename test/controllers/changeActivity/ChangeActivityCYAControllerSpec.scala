@@ -23,15 +23,18 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.SummaryListFluency
+import viewmodels.summary.changeActivity.AmountProducedSummary
 import views.html.changeActivity.ChangeActivityCYAView
+import views.summary.changeActivity.{ContractPackingSummary, ImportsSummary, OperatePackagingSiteOwnBrandsSummary}
 
 class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency {
 
   "Check Your Answers Controller" - {
 
     "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+      
+      val userAnswers = emptyUserAnswersForChangeActivity
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, ChangeActivityCYAController.onPageLoad.url)
@@ -39,11 +42,31 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency {
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[ChangeActivityCYAView]
-        val list: Seq[(String, SummaryList)] = Seq.empty
+//        TODO: This needs to get actual values
+//        val list: Seq[(String, SummaryList)] = Seq.empty
+        val amountProducedSection: Seq[(String, SummaryList)] = Seq(
+          "changeActivity.checkYourAnswers.amountProducedSection" -> SummaryList(Seq(AmountProducedSummary.row(userAnswers)).flatten)
+        )
+        //      TODO: Don't think 3rd party packagers is implemented
+        val thirdPartyPackagersSection: Seq[(String, SummaryList)] = Seq.empty
+        val operatePackingSiteOwnBrandsSection: Seq[(String, SummaryList)] = Seq(
+          "changeActivity.checkYourAnswers.operatePackingSiteOwnBrandsSection" ->
+            OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = false)
+        )
+        val contractPackingSection: Seq[(String, SummaryList)] = Seq(
+          "changeActivity.checkYourAnswers.contractPackingSection" ->
+            ContractPackingSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = false)
+        )
+        val importsSection: Seq[(String, SummaryList)] = Seq(
+          "changeActivity.checkYourAnswers.importsSection" ->
+            ImportsSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = false)
+        )
+        val list = amountProducedSection ++ thirdPartyPackagersSection ++ operatePackingSiteOwnBrandsSection ++ contractPackingSection ++ importsSection
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
-          "ALIAS",
+          aSubscription.orgName,
+//          TODO: Need to fix return period
           "RETURN PERIOD",
           list,
           routes.ChangeActivityCYAController.onSubmit

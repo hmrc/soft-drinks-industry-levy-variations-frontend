@@ -37,7 +37,7 @@ class AmountProducedSummarySpec extends SpecBase {
 
       val amountProducedSummaryRow = AmountProducedSummary.row(userAnswersWithAmountProduced)
 
-      amountProducedSummaryRow.head.key.content.asHtml.toString mustBe "Amount Produced"
+      amountProducedSummaryRow.head.key.content.asHtml.toString mustBe "Own brand packaged in past 12 months?"
       amountProducedSummaryRow.head.value.content.asHtml.toString mustBe "1 million litres or more"
       amountProducedSummaryRow.head.actions.toList.head.items.head.content.asHtml.toString() must include("Change")
     }
