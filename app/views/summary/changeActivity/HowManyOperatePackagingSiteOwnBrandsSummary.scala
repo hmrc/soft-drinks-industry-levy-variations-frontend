@@ -24,6 +24,6 @@ object HowManyOperatePackagingSiteOwnBrandsSummary extends SummaryListRowLitresH
 
   override val actionUrl: String = routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
   override val bandActionIdKey: String = "operatePackagingSiteOwnBrands"
-  override val bandHiddenKey: String = "operatePackagingSiteOwnBrands"
+  override val bandHiddenKey: String = "changeActivity.operatePackagingSiteOwnBrands"
 
 }

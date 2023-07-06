@@ -19,10 +19,8 @@ package controllers.changeActivity
 import base.SpecBase
 import controllers.changeActivity.routes._
 import models.SelectChange.ChangeActivity
-import models.changeActivity.AmountProduced
-import models.changeActivity.AmountProduced.{Large, None => NoneProduced, Small}
-import models.{LitresInBands, UserAnswers}
-import pages.changeActivity._
+import models.UserAnswers
+import generators.ChangeActivityCYAGenerators._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -34,46 +32,6 @@ import views.summary.changeActivity.{ContractPackingSummary, ImportsSummary, Ope
 class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency {
 
   "Check Your Answers Controller" - {
-
-//    TODO: Refactor this if possible
-    def getUserAnswers(
-                        amountProduced: Option[AmountProduced] = None,
-                        thirdPartyPackaging: Option[Boolean] = None,
-                        ownBrands: Option[Boolean] = None,
-                        contract: Option[Boolean] = None,
-                        imports: Option[Boolean] = None
-                      ): UserAnswers = {
-      val initialUserAnswers = emptyUserAnswersForChangeActivity
-      val userAnswersWithAmountProduced = amountProduced match {
-        case Some(Large) => initialUserAnswers.set(AmountProducedPage, Large).success.value
-        case Some(Small) => initialUserAnswers.set(AmountProducedPage, Small).success.value
-        case Some(NoneProduced) => initialUserAnswers.set(AmountProducedPage, NoneProduced).success.value
-        case None => initialUserAnswers
-      }
-      val userAnswersWithThirdPartyPackaging = userAnswersWithAmountProduced
-      val userAnswersWithOwnBrands = ownBrands match {
-        case Some(true) => userAnswersWithThirdPartyPackaging
-          .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-          .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1, 2)).success.value
-        case Some(false) => userAnswersWithThirdPartyPackaging.set(OperatePackagingSiteOwnBrandsPage, false).success.value
-        case None => userAnswersWithThirdPartyPackaging
-      }
-      val userAnswersWithContract = contract match {
-        case Some(true) => userAnswersWithOwnBrands
-          .set(ContractPackingPage, true).success.value
-          .set(HowManyContractPackingPage, LitresInBands(3, 4)).success.value
-        case Some(false) => userAnswersWithOwnBrands.set(ContractPackingPage, false).success.value
-        case None => userAnswersWithOwnBrands
-      }
-      val userAnswersWithImport = imports match {
-        case Some(true) => userAnswersWithContract
-          .set(ImportsPage, true).success.value
-          .set(HowManyImportsPage, LitresInBands(5, 6)).success.value
-        case Some(false) => userAnswersWithContract.set(ImportsPage, false).success.value
-        case None => userAnswersWithContract
-      }
-      userAnswersWithImport
-    }
 
     def getAmountProducedSection(userAnswers: UserAnswers): Seq[(String, SummaryList)] = Seq(
       "changeActivity.checkYourAnswers.amountProducedSection" -> SummaryList(Seq(AmountProducedSummary.row(userAnswers)).flatten)
@@ -96,18 +54,6 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency {
       "changeActivity.checkYourAnswers.importsSection" ->
         ImportsSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = false)
     )
-
-    val amountProducedValues: Map[String, Option[AmountProduced]] = Map(
-      "amount produced large" -> Some(Large),
-      "amount produced small" -> Some(Small),
-      "amount produced none" -> Some(NoneProduced),
-      "" -> None
-    )
-
-    val thirdPartyPackagingValues: Map[String, Option[Boolean]] = Map("" -> None)
-    val ownBrandsValues: Map[String, Option[Boolean]] = Map("producing own brands" -> Some(true), "not producing own brands" -> Some(false), "" -> None)
-    val contractValues: Map[String, Option[Boolean]] = Map("contract packing" -> Some(true), "not contract packing" -> Some(false), "" -> None)
-    val importValues: Map[String, Option[Boolean]] = Map("importing" -> Some(true), "not importing" -> Some(false), "" -> None)
 
 //    TODO: Perhaps only need a selection of these to show behaviour
     val userAnswersMap: Map[String, UserAnswers] =

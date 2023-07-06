@@ -30,6 +30,6 @@ object ContractPackingSummary extends ReturnDetailsSummaryListWithLitres  {
   override val key: String = "changeActivity.contractPacking.checkYourAnswersLabel"
   override val action: String = routes.ContractPackingController.onPageLoad(CheckMode).url
   override val actionId: String = "change-contractPacking"
-  override val hiddenText: String = "contractPacking"
+  override val hiddenText: String = "changeActivity.contractPacking"
 
 }

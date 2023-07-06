@@ -165,11 +165,11 @@ changeActivity.operatePackagingSiteOwnBrands.title = Do you operate any packagin
 changeActivity.operatePackagingSiteOwnBrands.heading = Do you operate any packaging sites in the UK to package liable drinks for brands you own?
 changeActivity.operatePackagingSiteOwnBrands.checkYourAnswersLabel = Package your own brand at your own sites?
 changeActivity.operatePackagingSiteOwnBrands.error.required = Select yes if you operate any packaging sites in the UK to package liable drinks for brands you own
-changeActivity.operatePackagingSiteOwnBrands.change.hidden = Change do you operate any packaging sites in the UK to package liable drinks for brands you own?
+changeActivity.operatePackagingSiteOwnBrands.change.hidden = do you operate any packaging sites in the UK to package liable drinks for brands you own?
 changeActivity.howManyOperatePackagingSiteOwnBrands.title = How many litres of your own brands will you package in the next 12 months?
 changeActivity.howManyOperatePackagingSiteOwnBrands.heading = How many litres of your own brands will you package in the next 12 months?
-changeActivity.operatePackagingSiteOwnBrands.lowband.litres.hidden = change amount of litres in lowband for operatePackagingSiteOwnBrands
-changeActivity.operatePackagingSiteOwnBrands.highband.litres.hidden = change amount of litres in highband for operatePackagingSiteOwnBrands
+changeActivity.operatePackagingSiteOwnBrands.lowband.litres.hidden = amount of litres in low band for own brands packaged at your own site
+changeActivity.operatePackagingSiteOwnBrands.highband.litres.hidden = amount of litres in high band for own brands packaged at your own site
 changeActivity.volume.subtext = If you do not have the exact volumes you can enter an estimate.
 
 cancelRegistration.cancelRegistrationDate.title = What date are you cancelling your registration from?
@@ -202,20 +202,20 @@ cancelRegistration.fileReturnBeforeDereg.continue = Go to your account
 changeActivity.imports.title = Do you bring liable drinks into the UK from anywhere outside of the UK?
 changeActivity.imports.checkYourAnswersLabel = Do you bring liable drinks into the UK?
 changeActivity.imports.error.required = Select yes if do you bring liable drinks into the UK from anywhere outside of the UK
-changeActivity.imports.change.hidden = Change do you bring liable drinks into the UK from anywhere outside of the UK?
+changeActivity.imports.change.hidden = do you bring liable drinks into the UK from anywhere outside of the UK?
 howManyImports.title = How many litres of liable drinks have you brought into the UK from anywhere outside of the UK?
 howManyImports.subtext = Do not include liable drinks from small producers or your own brands if you are a registered small producer.
-imports.lowband.litres.hidden = change amount of litres in lowband for imports
-imports.highband.litres.hidden = change amount of litres in highband for imports
+changeActivity.imports.lowband.litres.hidden = amount of litres in low band for brought into the UK
+changeActivity.imports.highband.litres.hidden = amount of litres in high band for brought into the UK
 
 
 changeActivity.contractPacking.title = Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
 changeActivity.contractPacking.checkYourAnswersLabel = Package for customers at your own sites?
 changeActivity.contractPacking.error.required = Select yes if you operate any packaging sites in the UK to package liable drinks as a third party or contract packer
-changeActivity.contractPacking.change.hidden = Change do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
+changeActivity.contractPacking.change.hidden = do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
 howManyContractPacking.title = How many litres will you package as a third party or contract packer in the next 12 months?
-contractPacking.lowband.litres.hidden = change amount of litres in lowband for contractPacking
-contractPacking.highband.litres.hidden = change amount of litres in highband for contractPacking
+changeActivity.contractPacking.lowband.litres.hidden = amount of litres in low band for contract packed at your own site
+changeActivity.contractPacking.highband.litres.hidden = amount of litres in high band for contract packed at your own site
 
 updateRegisteredDetails.warehouseDetails.title = Change your UK warehouse details
 updateRegisteredDetails.warehouseDetails.heading = Change your UK warehouse details

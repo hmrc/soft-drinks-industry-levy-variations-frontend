@@ -1,7 +1,11 @@
 package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
+import generators.ChangeActivityCYAGenerators._
+import models.CheckMode
+import models.changeActivity.AmountProduced
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import play.api.http.Status.OK
 import play.api.i18n.Messages
@@ -12,6 +16,7 @@ import play.mvc.Http.HeaderNames
 class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
 
   val route = "/change-activity/check-your-answers"
+
   "GET " + routes.ChangeActivityCYAController.onPageLoad.url - {
     "when the userAnswers contains no data" - {
       "should render the page" in {
@@ -32,7 +37,121 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
         }
       }
     }
-//  TODO: Add tests for whether data that is present is seen
+
+//    TODO: TEST VALUES
+
+    def testAmountProducedSection(page: Document, amountProducedValue: Option[AmountProduced]): Unit = {
+      val amountProduced = page.getElementsByClass("govuk-summary-list").first().getElementsByClass("govuk-summary-list__row")
+
+      page.getElementsByTag("h2").first().text() mustBe "Packaged globally"
+//      amountProduced.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe "Yes"
+      amountProduced.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change Amount produced"
+      amountProduced.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "Amount produced"
+      amountProduced.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.AmountProducedController.onPageLoad(CheckMode).url
+    }
+    // TODO: Third party packaging
+    def testThirdPartyPackagingSection(page: Document, thirdPartyPackagingValue: Option[Boolean]): Unit = {
+
+    }
+    def testOwnBrandsSection(page: Document, ownBrandsValue: Option[Boolean]): Unit = {
+      page.getElementsByTag("h2").get(1).text() mustBe "Packaged in the UK"
+      val ownBrands = page.getElementsByClass("govuk-summary-list").get(1).getElementsByClass("govuk-summary-list__row")
+
+//      ownBrands.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe "Yes"
+      ownBrands.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change do you operate any packaging sites in the UK to package liable drinks for brands you own?"
+      ownBrands.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "do you operate any packaging sites in the UK to package liable drinks for brands you own?"
+      ownBrands.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
+
+//      ownBrands.get(1).getElementsByClass("govuk-summary-list__value").first().text() mustBe "1,000"
+      ownBrands.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change amount of litres in low band for own brands packaged at your own site"
+      ownBrands.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "amount of litres in low band for own brands packaged at your own site"
+      ownBrands.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
+
+//      ownBrands.get(2).getElementsByClass("govuk-summary-list__value").first().text() mustBe "2,000"
+      ownBrands.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change amount of litres in high band for own brands packaged at your own site"
+      ownBrands.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "amount of litres in high band for own brands packaged at your own site"
+      ownBrands.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
+    }
+    def testContractSection(page: Document, contractValue: Option[Boolean]): Unit = {
+      page.getElementsByTag("h2").get(2).text() mustBe "Package for customers"
+      val contractPacking = page.getElementsByClass("govuk-summary-list").get(2).getElementsByClass("govuk-summary-list__row")
+
+//      contractPacking.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe "Yes"
+      contractPacking.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?"
+      contractPacking.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?"
+      contractPacking.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.ContractPackingController.onPageLoad(CheckMode).url
+
+//      contractPacking.get(1).getElementsByClass("govuk-summary-list__value").first().text() mustBe "3,000"
+      contractPacking.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change amount of litres in low band for contract packed at your own site"
+      contractPacking.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "amount of litres in low band for contract packed at your own site"
+      contractPacking.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.HowManyContractPackingController.onPageLoad(CheckMode).url
+
+//      contractPacking.get(2).getElementsByClass("govuk-summary-list__value").first().text() mustBe "4,000"
+      contractPacking.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change amount of litres in high band for contract packed at your own site"
+      contractPacking.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "amount of litres in high band for contract packed at your own site"
+      contractPacking.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.HowManyContractPackingController.onPageLoad(CheckMode).url
+    }
+    def testImportSection(page: Document, importValue: Option[Boolean]): Unit = {
+      page.getElementsByTag("h2").get(3).text() mustBe "Brought into the UK"
+      val imports = page.getElementsByClass("govuk-summary-list").get(3).getElementsByClass("govuk-summary-list__row")
+
+//      imports.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe "Yes"
+      imports.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change do you bring liable drinks into the UK from anywhere outside of the UK?"
+      imports.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "do you bring liable drinks into the UK from anywhere outside of the UK?"
+      imports.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.ImportsController.onPageLoad(CheckMode).url
+
+//      imports.get(1).getElementsByClass("govuk-summary-list__value").first().text() mustBe "5,000"
+      imports.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change amount of litres in low band for brought into the UK"
+      imports.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "amount of litres in low band for brought into the UK"
+      imports.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.HowManyImportsController.onPageLoad(CheckMode).url
+
+//      imports.get(2).getElementsByClass("govuk-summary-list__value").first().text() mustBe "6,000"
+      imports.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change amount of litres in high band for brought into the UK"
+      imports.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "amount of litres in high band for brought into the UK"
+      imports.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.HowManyImportsController.onPageLoad(CheckMode).url
+    }
+
+    //    TODO: Perhaps only need a selection of these to show behaviour
+    amountProducedValues.foreach { case (amountProducedKey, amountProducedValue) =>
+      thirdPartyPackagingValues.foreach { case (thirdPartyPackagingKey, thirdPartyPackagingValue) =>
+        ownBrandsValues.foreach { case (ownBrandsKey, ownBrandsValue) =>
+          contractValues.foreach { case (contractKey, contractValue) =>
+            importValues.foreach { case (importKey, importValue) =>
+              val key = List(amountProducedKey, thirdPartyPackagingKey, ownBrandsKey, contractKey, importKey).filterNot(_.isEmpty).mkString(", ")
+              s"when the userAnswers contains $key" - {
+                "should render the page" in {
+                  given
+                    .commonPrecondition
+
+                  val userAnswers = getUserAnswers(amountProducedValue, thirdPartyPackagingValue, ownBrandsValue, contractValue, importValue)
+                  setAnswers(userAnswers)
+
+                  WsTestClient.withClient { client =>
+                    val result = createClientRequestGet(client, baseUrl + route)
+
+                    whenReady(result) { res =>
+                      res.status mustBe OK
+                      val page = Jsoup.parse(res.body)
+                      page.title must include(Messages("changeActivity.checkYourAnswers.title"))
+//                      TODO: Return period
+                      page.getElementsByClass("govuk-caption-l").text() mustBe "Super Lemonade Plc - RETURN PERIOD"
+                      page.getElementsByClass("govuk-summary-list").size() mustBe 4
+                      testAmountProducedSection(page, amountProducedValue)
+                      testThirdPartyPackagingSection(page, thirdPartyPackagingValue)
+                      testOwnBrandsSection(page, ownBrandsValue)
+                      testContractSection(page, contractValue)
+                      testImportSection(page, importValue)
+                      page.getElementsByTag("form").first().attr("action") mustBe routes.ChangeActivityCYAController.onSubmit.url
+                      page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm updates and send"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
     testUnauthorisedUser(baseUrl + route)
     testAuthenticatedUserButNoUserAnswers(baseUrl + route)
   }
