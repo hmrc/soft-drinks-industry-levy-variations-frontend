@@ -20,8 +20,7 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.SecondaryWarehouseDetailsFormProvider
 import handlers.ErrorHandler
-import models.backend.UkAddress
-import models.{Mode, Warehouse}
+import models.Mode
 import navigation._
 import pages.changeActivity.SecondaryWarehouseDetailsPage
 import play.api.i18n.MessagesApi

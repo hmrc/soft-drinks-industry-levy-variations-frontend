@@ -16,7 +16,7 @@
 
 package forms.mappings
 
-import models.Enumerable
+import models.{Enumerable, ReturnPeriod}
 import play.api.data.Forms.of
 import play.api.data.{FieldMapping, Mapping}
 
@@ -26,6 +26,9 @@ trait Mappings extends Formatters with Constraints {
 
   protected def text(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
     of(stringFormatter(errorKey, args))
+
+  protected def returnPeriod(errorKey: String): FieldMapping[ReturnPeriod] =
+    of(returnPeriodFormatter(errorKey))
 
   protected def int(requiredKey: String = "error.required",
                     wholeNumberKey: String = "error.wholeNumber",

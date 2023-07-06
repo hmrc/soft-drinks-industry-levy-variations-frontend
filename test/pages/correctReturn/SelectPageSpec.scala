@@ -14,25 +14,20 @@
  * limitations under the License.
  */
 
-package navigation
+package pages.correctReturn
 
-import controllers.correctReturn.routes
-import models.UserAnswers
-import pages.Page
-import pages.correctReturn.SelectPage
-import play.api.mvc.Call
 
-import javax.inject.{Inject, Singleton}
+import models.ReturnPeriod
+import pages.behaviours.PageBehaviours
 
-@Singleton
-class NavigatorForCorrectReturn @Inject()() extends Navigator {
+class SelectSpec extends PageBehaviours {
 
-  override val normalRoutes: Page => UserAnswers => Call = {
-    case SelectPage => userAnswers => defaultCall
-    case _ => _ => defaultCall
-  }
+  "SelectPage" - {
 
-  override val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => routes.CorrectReturnCYAController.onPageLoad
+    beRetrievable[ReturnPeriod](SelectPage)
+
+    beSettable[ReturnPeriod](SelectPage)
+
+    beRemovable[ReturnPeriod](SelectPage)
   }
 }

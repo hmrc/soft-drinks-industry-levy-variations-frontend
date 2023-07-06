@@ -16,7 +16,7 @@
 
 package generators
 
-import models.SelectChange
+import models.{ReturnPeriod, SelectChange}
 import models.changeActivity.AmountProduced
 import models.updateRegisteredDetails.UpdateContactDetails
 import org.scalacheck.Arbitrary
@@ -28,6 +28,14 @@ import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
+
+  implicit lazy val arbitraryCorrectReturnSelectUserAnswersEntry: Arbitrary[(pages.correctReturn.SelectPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.correctReturn.SelectPage.type]
+        value <- arbitrary[ReturnPeriod].map(Json.toJson(_))
+      } yield (page, value)
+    }
 
   implicit lazy val arbitraryChangeActivityPackAtBusinessAddressUserAnswersEntry: Arbitrary[(pages.changeActivity.PackAtBusinessAddressPage.type, JsValue)] =
     Arbitrary {
