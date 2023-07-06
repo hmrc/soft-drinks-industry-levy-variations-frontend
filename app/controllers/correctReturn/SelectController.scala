@@ -16,6 +16,7 @@
 
 package controllers.correctReturn
 
+import cats.implicits.catsSyntaxPartialOrder
 import connectors.SoftDrinksIndustryLevyConnector
 import utilities.GenericLogger
 import controllers.{ControllerHelper, routes}
@@ -55,7 +56,9 @@ class SelectController @Inject()(
   def seperateReturnYears(returns:List[ReturnPeriod]): List[List[ReturnPeriod]] ={
     returns.map(aReturn => aReturn.year match {
       case year => returns.filter(_.year == year)
-    }).distinct.reverse
+    }).distinct
+      .sortWith(_.map(returnPeriod => returnPeriod.year) > _.map(returnPeriod => returnPeriod.year))
+      .map(returnPeriod => returnPeriod.sortWith(_.quarter > _.quarter).reverse)
   }
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
@@ -67,9 +70,9 @@ class SelectController @Inject()(
       }
 
       connector.returns_variable(request.subscription.utr).flatMap {
-        case Some(returns) if returns.nonEmpty => println("Good Load")
+        case Some(returns) if returns.nonEmpty =>
           Future.successful(Ok(view(preparedForm, mode, seperateReturnYears(returns: List[ReturnPeriod]))))
-        case _ => println("Load Page Bad No Returns")
+        case _ =>
           Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
       }
   }
