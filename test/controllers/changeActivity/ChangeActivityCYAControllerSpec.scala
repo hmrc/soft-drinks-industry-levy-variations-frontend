@@ -55,46 +55,41 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency {
         ImportsSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = false)
     )
 
-//    TODO: Perhaps only need a selection of these to show behaviour
-    val userAnswersMap: Map[String, UserAnswers] =
-      amountProducedValues.flatMap(amountProduced => {
-        thirdPartyPackagingValues.flatMap(thirdPartyPackagingValue => {
-          ownBrandsValues.flatMap(ownBrandsValue => {
-            contractValues.flatMap(contractValue => {
-              importValues.map(importValue => {
-                List(amountProduced._1, thirdPartyPackagingValue._1, ownBrandsValue._1, contractValue._1, importValue._1).filterNot(_.isEmpty).mkString(", ") ->
-                  getUserAnswers(amountProduced._2, thirdPartyPackagingValue._2, ownBrandsValue._2, contractValue._2, importValue._2)
-              })
-            })
-          })
-        })
-      })
+    amountProducedValues.foreach { case (amountProducedKey, amountProducedValue) =>
+      thirdPartyPackagingValues.foreach { case (thirdPartyPackagingKey, thirdPartyPackagingValue) =>
+        ownBrandsValues.foreach { case (ownBrandsKey, ownBrandsValue) =>
+          contractValues.foreach { case (contractKey, contractValue) =>
+            importValues.foreach { case (importKey, importValue) =>
+              val key = List(amountProducedKey, thirdPartyPackagingKey, ownBrandsKey, contractKey, importKey).filterNot(_.isEmpty).mkString(", ")
+              val userAnswers = getUserAnswers(amountProducedValue, thirdPartyPackagingValue, ownBrandsValue, contractValue, importValue)
+              s"must return OK and the correct view for a GET for user answers $key" in {
 
-    userAnswersMap.foreach { case (key, userAnswers) =>
-      s"must return OK and the correct view for a GET for user answers $key" in {
+                val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+                running(application) {
+                  val request = FakeRequest(GET, ChangeActivityCYAController.onPageLoad.url)
 
-        running(application) {
-          val request = FakeRequest(GET, ChangeActivityCYAController.onPageLoad.url)
+                  val result = route(application, request).value
 
-          val result = route(application, request).value
+                  val view = application.injector.instanceOf[ChangeActivityCYAView]
+                  val list = getAmountProducedSection(userAnswers) ++
+                    getThirdPartyPackagersSection(userAnswers) ++
+                    getOperatePackingSiteOwnBrandsSection(userAnswers) ++
+                    getContractPackingSection(userAnswers) ++
+                    getImportsSection(userAnswers)
 
-          val view = application.injector.instanceOf[ChangeActivityCYAView]
-          val list = getAmountProducedSection(userAnswers) ++
-            getThirdPartyPackagersSection(userAnswers) ++
-            getOperatePackingSiteOwnBrandsSection(userAnswers) ++
-            getContractPackingSection(userAnswers) ++
-            getImportsSection(userAnswers)
-
-          status(result) mustEqual OK
-          contentAsString(result) mustEqual view(
-            aSubscription.orgName,
-            //          TODO: Need to fix return period
-            "RETURN PERIOD",
-            list,
-            routes.ChangeActivityCYAController.onSubmit
-          )(request, messages(application)).toString
+                  status(result) mustEqual OK
+                  contentAsString(result) mustEqual view(
+                    aSubscription.orgName,
+                    //          TODO: Need to fix return period
+                    "RETURN PERIOD",
+                    list,
+                    routes.ChangeActivityCYAController.onSubmit
+                  )(request, messages(application)).toString
+                }
+              }
+            }
+          }
         }
       }
     }

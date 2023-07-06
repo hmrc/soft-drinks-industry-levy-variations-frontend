@@ -145,8 +145,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
       }
 
     }
-
-    //    TODO: Perhaps only need a selection of these to show behaviour
+    
     amountProducedValues.foreach { case (amountProducedKey, amountProducedValue) =>
       thirdPartyPackagingValues.foreach { case (thirdPartyPackagingKey, thirdPartyPackagingValue) =>
         ownBrandsValues.foreach { case (ownBrandsKey, ownBrandsValue) =>
