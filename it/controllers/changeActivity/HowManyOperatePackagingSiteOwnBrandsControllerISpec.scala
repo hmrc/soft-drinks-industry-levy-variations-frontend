@@ -1,7 +1,7 @@
 package controllers.changeActivity
 
 import controllers.LitresISpecHelper
-import models.{CheckMode, LitresInBands, NormalMode}
+import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import pages.changeActivity.HowManyOperatePackagingSiteOwnBrandsPage
 import play.api.http.HeaderNames
@@ -16,7 +16,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
   val normalRoutePath = "/how-many-own-brands-next-12-months"
   val checkRoutePath = "/change-how-many-own-brands-next-12-months"
 
-  val userAnswers = emptyUserAnswersForChangeActivity.set(HowManyOperatePackagingSiteOwnBrandsPage, litresInBands).success.value
+  val userAnswers: UserAnswers = emptyUserAnswersForChangeActivity.set(HowManyOperatePackagingSiteOwnBrandsPage, litresInBands).success.value
 
   List(NormalMode, CheckMode).foreach { mode =>
     val (path, redirectLocation) = if(mode == NormalMode) {
@@ -71,7 +71,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
 
     s"POST " + path - {
       "when the user populates all litres fields" - {
-        "should update the session with the new values and redirect to " + "ContractPackaging" - {
+        "should update the session with the new values and redirect to " + redirectLocation - {
           "when the session contains no data for page" in {
             given
               .commonPrecondition
@@ -83,9 +83,8 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
               )
 
               whenReady(result) { res =>
-                println(Console.YELLOW + "In test - result is  " + res + " " + mode + Console.WHITE)
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.ContractPackingController.onPageLoad(NormalMode).url)
+                res.header(HeaderNames.LOCATION) mustBe Some(redirectLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyOperatePackagingSiteOwnBrandsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBands
@@ -105,7 +104,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.ContractPackingController.onPageLoad(NormalMode).url)
+                res.header(HeaderNames.LOCATION) mustBe Some(redirectLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyOperatePackagingSiteOwnBrandsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBandsDiff

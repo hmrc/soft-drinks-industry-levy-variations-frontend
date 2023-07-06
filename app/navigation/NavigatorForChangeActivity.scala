@@ -28,7 +28,6 @@ import javax.inject.{Inject, Singleton}
 class NavigatorForChangeActivity @Inject()() extends Navigator {
 
   private def navigationForContractPacking(userAnswers: UserAnswers, mode: Mode): Call = {
-    println(Console.YELLOW + "Navigator - within NavForContractPacking - User Answers then Mode " + userAnswers + " " + mode + Console.WHITE)
     if (userAnswers.get(page = ContractPackingPage).contains(true)) {
       routes.HowManyContractPackingController.onPageLoad(mode)
     } else if(mode == CheckMode){
@@ -49,24 +48,22 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
   }
 
   private def navigationForOperatePackagingSiteOwnBrands(userAnswers: UserAnswers, mode: Mode): Call = {
-    println(Console.YELLOW + "Navigator - within NavForOpPackSite - User Answers then Mode " + userAnswers + " " + mode + Console.WHITE)
     if (userAnswers.get(page = OperatePackagingSiteOwnBrandsPage).contains(true)) {
       routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(mode)
     } else if(mode == CheckMode){
         routes.ChangeActivityCYAController.onPageLoad
     } else {
-        routes.ContractPackingController.onPageLoad(NormalMode)
+        routes.ContractPackingController.onPageLoad(mode)
     }
   }
 
   private def navigationForHowManyOperatePackagingSiteOwnBrands(userAnswers: UserAnswers, mode: Mode): Call = {
-    println(Console.YELLOW + "Navigator - within NavForOpPackSite - User Answers then Mode " + userAnswers + " " + mode + Console.WHITE)
     if (userAnswers.get(page = HowManyOperatePackagingSiteOwnBrandsPage).nonEmpty) {
       routes.ContractPackingController.onPageLoad(mode)
     } else if (mode == CheckMode) {
       routes.ChangeActivityCYAController.onPageLoad
     } else {
-      routes.ContractPackingController.onPageLoad(NormalMode)
+      routes.ContractPackingController.onPageLoad(mode)
     }
   }
 
