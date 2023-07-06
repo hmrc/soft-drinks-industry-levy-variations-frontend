@@ -33,7 +33,7 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
     } else if(mode == CheckMode){
         routes.ChangeActivityCYAController.onPageLoad
     } else {
-        defaultCall
+        routes.ImportsController.onPageLoad(mode)
     }
   }
 
