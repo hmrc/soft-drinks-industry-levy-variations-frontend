@@ -57,16 +57,6 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
     }
   }
 
-  private def navigationForHowManyOperatePackagingSiteOwnBrands(userAnswers: UserAnswers, mode: Mode): Call = {
-    if (userAnswers.get(page = HowManyOperatePackagingSiteOwnBrandsPage).nonEmpty) {
-      routes.ContractPackingController.onPageLoad(mode)
-    } else if (mode == CheckMode) {
-      routes.ChangeActivityCYAController.onPageLoad
-    } else {
-      routes.ContractPackingController.onPageLoad(mode)
-    }
-  }
-
   override val normalRoutes: Page => UserAnswers => Call = {
     case PackAtBusinessAddressPage => userAnswers => defaultCall
     case PackagingSiteDetailsPage => userAnswers => defaultCall
@@ -86,7 +76,7 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
     case ContractPackingPage => userAnswers => navigationForContractPacking(userAnswers, CheckMode)
     case ImportsPage => userAnswers => navigationForImports(userAnswers, CheckMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
-    case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
+    case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.ChangeActivityCYAController.onPageLoad
     case _ => _ => routes.ChangeActivityCYAController.onPageLoad
   }
 }
