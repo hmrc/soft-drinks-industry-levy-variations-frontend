@@ -16,16 +16,13 @@
 
 package generators
 
-import base.SpecBase
-import models.{LitresInBands, UserAnswers}
+import models.{LitresInBands, SelectChange, UserAnswers}
 import models.changeActivity.AmountProduced
 import models.changeActivity.AmountProduced.{Large, Small, None => NoneProduced}
+import org.scalatest.TryValues
 import pages.changeActivity._
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewmodels.summary.changeActivity.AmountProducedSummary
-import views.summary.changeActivity._
 
-object ChangeActivityCYAGenerators extends SpecBase {
+object ChangeActivityCYAGenerators extends TryValues {
 
   val ownBrandsLitresLowBand = 1000
   val ownBrandsLitresHighBand = 2000
@@ -33,6 +30,9 @@ object ChangeActivityCYAGenerators extends SpecBase {
   val contractLitresHighBand = 4000
   val importLitresLowBand = 5000
   val importLitresHighBand = 6000
+
+  val sdilNumber: String = "XKSDIL000000022"
+  val emptyUserAnswersForChangeActivity = UserAnswers(sdilNumber, SelectChange.Changeactivity)
 
   //    TODO: Refactor this if possible
   def getUserAnswers(
@@ -73,28 +73,6 @@ object ChangeActivityCYAGenerators extends SpecBase {
     }
     userAnswersWithImport
   }
-
-  def getAmountProducedSection(userAnswers: UserAnswers): Seq[(String, SummaryList)] = Seq(
-    "changeActivity.checkYourAnswers.amountProducedSection" -> SummaryList(Seq(AmountProducedSummary.row(userAnswers)).flatten)
-  )
-
-  //      TODO: Don't think 3rd party packagers is implemented
-  def getThirdPartyPackagersSection(userAnswers: UserAnswers): Seq[(String, SummaryList)] = Seq.empty
-
-  def getOperatePackingSiteOwnBrandsSection(userAnswers: UserAnswers): Seq[(String, SummaryList)] = Seq(
-    "changeActivity.checkYourAnswers.operatePackingSiteOwnBrandsSection" ->
-      OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = false)
-  )
-
-  def getContractPackingSection(userAnswers: UserAnswers): Seq[(String, SummaryList)] = Seq(
-    "changeActivity.checkYourAnswers.contractPackingSection" ->
-      ContractPackingSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = false)
-  )
-
-  def getImportsSection(userAnswers: UserAnswers): Seq[(String, SummaryList)] = Seq(
-    "changeActivity.checkYourAnswers.importsSection" ->
-      ImportsSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = false)
-  )
 
   val amountProducedValues: Map[String, Option[AmountProduced]] = Map(
     "amount produced large" -> Some(Large),
