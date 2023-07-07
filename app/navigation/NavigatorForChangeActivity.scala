@@ -33,7 +33,15 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
     } else if(mode == CheckMode){
         routes.ChangeActivityCYAController.onPageLoad
     } else {
-        routes.ImportsController.onPageLoad(mode)
+      routes.ImportsController.onPageLoad(mode)
+    }
+  }
+
+    private def navigationForHowManyContractPacking(userAnswers: UserAnswers, mode: Mode): Call = {
+    if(mode == CheckMode){
+      routes.ChangeActivityCYAController.onPageLoad
+    } else {
+      routes.ImportsController.onPageLoad(mode)
     }
   }
 
@@ -63,7 +71,7 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
     case RemovePackagingSiteDetailsPage => userAnswers => defaultCall
     case SecondaryWarehouseDetailsPage => userAnswers => defaultCall
     case ContractPackingPage => userAnswers => navigationForContractPacking(userAnswers, NormalMode)
-    case HowManyContractPackingPage => userAnswers => defaultCall
+    case HowManyContractPackingPage => userAnswers => navigationForHowManyContractPacking(userAnswers, NormalMode)
     case ImportsPage => userAnswers => navigationForImports(userAnswers, NormalMode)
     case HowManyImportsPage => userAnswers => defaultCall
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)

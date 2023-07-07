@@ -18,7 +18,7 @@ class HowManyContractPackingControllerISpec extends LitresISpecHelper {
 
   List(NormalMode, CheckMode).foreach { mode =>
     val (path, redirectLocation) = if(mode == NormalMode) {
-      (normalRoutePath, defaultCall.url)
+      (normalRoutePath, routes.ImportsController.onPageLoad(NormalMode).url)
     } else {
       (checkRoutePath, routes.ChangeActivityCYAController.onPageLoad.url)
     }
