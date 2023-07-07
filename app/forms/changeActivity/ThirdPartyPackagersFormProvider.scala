@@ -25,6 +25,6 @@ class ThirdPartyPackagersFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("thirdPartyPackagers.error.required")
+      "value" -> boolean("changeActivity.thirdPartyPackagers.error.required")
     )
 }
