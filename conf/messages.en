@@ -294,6 +294,12 @@ addressLookupFrontend.contactDetails.editPageLabels.line3Label = Address line 3 
 addressLookupFrontend.contactDetails.editPageLabels.townLabel = Address line 4 (optional)
 addressLookupFrontend.contactDetails.editPageLabels.postcodeLabel = Postcode
 
+changeActivity.thirdPartyPackagers.title = Do you use any third parties in the UK to package liable drinks on your behalf?
+changeActivity.thirdPartyPackagers.heading = Do you use any third parties in the UK to package liable drinks on your behalf?
+changeActivity.thirdPartyPackagers.checkYourAnswersLabel = Do you use any third parties in the UK to package liable drinks on your behalf?
+changeActivity.thirdPartyPackagers.error.required = Select yes if you use any third parties in the UK to package liable drinks on your behalf
+changeActivity.thirdPartyPackagers.change.hidden = ThirdPartyPackagers
+
 correctReturn.select.title = Which return do you need to correct?
 correctReturn.select.heading = Which return do you need to correct?
 correctReturn.select.returnMessage = {0} to {1} {2}
