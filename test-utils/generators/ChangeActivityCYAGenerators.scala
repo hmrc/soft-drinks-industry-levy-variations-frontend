@@ -22,7 +22,7 @@ import models.changeActivity.AmountProduced.{Large, Small, None => NoneProduced}
 import org.scalatest.TryValues
 import pages.changeActivity._
 
-object ChangeActivityCYAGenerators extends TryValues {
+object ChangeActivityCYAGenerators {
 
   val ownBrandsLitresLowBand = 1000
   val ownBrandsLitresHighBand = 2000
@@ -34,7 +34,55 @@ object ChangeActivityCYAGenerators extends TryValues {
   val sdilNumber: String = "XKSDIL000000022"
   val emptyUserAnswersForChangeActivity = UserAnswers(sdilNumber, SelectChange.Changeactivity)
 
-  //    TODO: Refactor this if possible
+  case class ChangeActivityCYAUserAnswers(userAnswers: UserAnswers) extends TryValues {
+    def withAmountProduced(amountProduced: Option[AmountProduced] = None): ChangeActivityCYAUserAnswers = {
+      val userAnswersWithAmountProduced = amountProduced match {
+        case Some(Large) => userAnswers.set(AmountProducedPage, Large).success.value
+        case Some(Small) => userAnswers.set(AmountProducedPage, Small).success.value
+        case Some(NoneProduced) => userAnswers.set(AmountProducedPage, NoneProduced).success.value
+        case None => userAnswers
+      }
+      ChangeActivityCYAUserAnswers(userAnswersWithAmountProduced)
+    }
+
+    def withThirdPartyPackaging(thirdPartyPackaging: Option[Boolean] = None): ChangeActivityCYAUserAnswers = {
+      ChangeActivityCYAUserAnswers(userAnswers)
+    }
+
+    def withOwnBrands(ownBrands: Option[Boolean] = None): ChangeActivityCYAUserAnswers = {
+      val userAnswersWithOwnBrands = ownBrands match {
+        case Some(true) => userAnswers
+          .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+          .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(ownBrandsLitresLowBand, ownBrandsLitresHighBand)).success.value
+        case Some(false) => userAnswers.set(OperatePackagingSiteOwnBrandsPage, false).success.value
+        case None => userAnswers
+      }
+      ChangeActivityCYAUserAnswers(userAnswersWithOwnBrands)
+    }
+
+    def withContract(contract: Option[Boolean] = None): ChangeActivityCYAUserAnswers = {
+      val userAnswersWithContract = contract match {
+        case Some(true) => userAnswers
+          .set(ContractPackingPage, true).success.value
+          .set(HowManyContractPackingPage, LitresInBands(contractLitresLowBand, contractLitresHighBand)).success.value
+        case Some(false) => userAnswers.set(ContractPackingPage, false).success.value
+        case None => userAnswers
+      }
+      ChangeActivityCYAUserAnswers(userAnswersWithContract)
+    }
+
+    def withImports(imports: Option[Boolean] = None): ChangeActivityCYAUserAnswers = {
+      val userAnswersWithImport = imports match {
+        case Some(true) => userAnswers
+          .set(ImportsPage, true).success.value
+          .set(HowManyImportsPage, LitresInBands(importLitresLowBand, importLitresHighBand)).success.value
+        case Some(false) => userAnswers.set(ImportsPage, false).success.value
+        case None => userAnswers
+      }
+      ChangeActivityCYAUserAnswers(userAnswersWithImport)
+    }
+  }
+
   def getUserAnswers(
                       amountProduced: Option[AmountProduced] = None,
                       thirdPartyPackaging: Option[Boolean] = None,
@@ -42,36 +90,13 @@ object ChangeActivityCYAGenerators extends TryValues {
                       contract: Option[Boolean] = None,
                       imports: Option[Boolean] = None
                     ): UserAnswers = {
-    val initialUserAnswers = emptyUserAnswersForChangeActivity
-    val userAnswersWithAmountProduced = amountProduced match {
-      case Some(Large) => initialUserAnswers.set(AmountProducedPage, Large).success.value
-      case Some(Small) => initialUserAnswers.set(AmountProducedPage, Small).success.value
-      case Some(NoneProduced) => initialUserAnswers.set(AmountProducedPage, NoneProduced).success.value
-      case None => initialUserAnswers
-    }
-    val userAnswersWithThirdPartyPackaging = userAnswersWithAmountProduced
-    val userAnswersWithOwnBrands = ownBrands match {
-      case Some(true) => userAnswersWithThirdPartyPackaging
-        .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-        .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(ownBrandsLitresLowBand, ownBrandsLitresHighBand)).success.value
-      case Some(false) => userAnswersWithThirdPartyPackaging.set(OperatePackagingSiteOwnBrandsPage, false).success.value
-      case None => userAnswersWithThirdPartyPackaging
-    }
-    val userAnswersWithContract = contract match {
-      case Some(true) => userAnswersWithOwnBrands
-        .set(ContractPackingPage, true).success.value
-        .set(HowManyContractPackingPage, LitresInBands(contractLitresLowBand, contractLitresHighBand)).success.value
-      case Some(false) => userAnswersWithOwnBrands.set(ContractPackingPage, false).success.value
-      case None => userAnswersWithOwnBrands
-    }
-    val userAnswersWithImport = imports match {
-      case Some(true) => userAnswersWithContract
-        .set(ImportsPage, true).success.value
-        .set(HowManyImportsPage, LitresInBands(importLitresLowBand, importLitresHighBand)).success.value
-      case Some(false) => userAnswersWithContract.set(ImportsPage, false).success.value
-      case None => userAnswersWithContract
-    }
-    userAnswersWithImport
+    ChangeActivityCYAUserAnswers(emptyUserAnswersForChangeActivity)
+      .withAmountProduced(amountProduced)
+      .withThirdPartyPackaging(thirdPartyPackaging)
+      .withOwnBrands(ownBrands)
+      .withContract(contract)
+      .withImports(imports)
+      .userAnswers
   }
 
   val amountProducedValues: Map[String, Option[AmountProduced]] = Map(
