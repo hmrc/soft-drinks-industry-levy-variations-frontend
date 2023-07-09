@@ -1,7 +1,7 @@
 package controllers.$packageName$
 
 import controllers.LitresISpecHelper
-import models.{CheckMode, LitresInBands, NormalMode}
+import models.{CheckMode, LitresInBands, NormalMode, SelectChange}
 import org.jsoup.Jsoup
 import pages.$packageName$.HowMany$className$Page
 import play.api.http.HeaderNames

@@ -5,6 +5,7 @@ import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import play.api.i18n.Messages
 import play.api.test.WsTestClient
+import models.SelectChange
 
 class $className$ControllerISpec extends ControllerITTestHelper {
 

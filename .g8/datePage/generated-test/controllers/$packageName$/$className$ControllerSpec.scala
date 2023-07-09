@@ -128,7 +128,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
         when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
         val application =
-          applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure))
+          applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(SelectChange.$packageName;format="cap"$)))
             .overrides(
               bind[NavigatorFor$packageName;format="cap"$].toInstance(new FakeNavigatorFor$packageName;format="cap"$(onwardRoute)),
               bind[SessionService].toInstance(mockSessionService)

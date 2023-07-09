@@ -115,7 +115,7 @@ class HowMany$className$ControllerSpec extends SpecBase with MockitoSugar {
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure)).build()
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(SelectChange.$packageName;format="cap"$))).build()
 
       running(application) {
         val request =
