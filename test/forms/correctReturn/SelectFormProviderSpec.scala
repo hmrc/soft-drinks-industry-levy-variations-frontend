@@ -20,7 +20,6 @@ import base.SpecBase
 import forms.behaviours.OptionFieldBehaviours
 import models.ReturnPeriod
 import play.api.data.{Form, FormError}
-import play.api.i18n.Messages
 import play.api.libs.json.Json
 
 class SelectFormProviderSpec extends OptionFieldBehaviours with SpecBase {

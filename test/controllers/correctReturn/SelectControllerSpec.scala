@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import errors.SessionDatabaseInsertError
 import forms.correctReturn.SelectFormProvider
-import models.NormalMode
+import models.{NormalMode, SelectChange}
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, anyString}
@@ -181,10 +181,6 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
           Future.successful(None)
         }
 
-        val boundForm = form.bind(Map("value" -> "invalid value"))
-
-        val view = application.injector.instanceOf[SelectView]
-
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -220,41 +216,13 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
 
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, selectRoute
-        )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual recoveryCall.url
-      }
-    }
-
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, selectRoute
-        )
-        .withFormUrlEncodedBody(("value", Json.toJson(returnPeriodList.head).toString))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual recoveryCall.url
-      }
-    }
+    testInvalidJourneyType(SelectChange.CorrectReturn, selectRoute)
+    testNoUserAnswersError(selectRoute)
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure)) .overrides(
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(SelectChange.CorrectReturn))) .overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector),
         bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn (onwardRoute))
       )

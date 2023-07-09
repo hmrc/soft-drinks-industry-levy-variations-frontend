@@ -17,14 +17,10 @@
 package models.correctReturn
 
 import base.SpecBase
-import models.ReturnPeriod
-import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsError, JsString, Json}
 import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, RadioItem}
 
 class SelectSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with SpecBase{

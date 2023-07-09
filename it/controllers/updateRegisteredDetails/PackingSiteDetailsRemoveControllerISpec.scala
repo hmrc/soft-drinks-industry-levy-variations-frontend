@@ -1,7 +1,7 @@
 package controllers.updateRegisteredDetails
 
 import controllers.ControllerITTestHelper
-import models.{NormalMode, SelectChange}
+import models.SelectChange
 import models.backend.Site
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
