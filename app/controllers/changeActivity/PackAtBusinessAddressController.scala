@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.changeActivity.PackAtBusinessAddressFormProvider
 
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SelectChange}
 import pages.changeActivity.PackAtBusinessAddressPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -39,9 +39,7 @@ class PackAtBusinessAddressController @Inject()(
                                        override val messagesApi: MessagesApi,
                                        val sessionService: SessionService,
                                        val navigator: NavigatorForChangeActivity,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
+                                       controllerActions: ControllerActions,
                                        formProvider: PackAtBusinessAddressFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: PackAtBusinessAddressView,
@@ -51,7 +49,7 @@ class PackAtBusinessAddressController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity) {
     implicit request =>
       val formattedAddress = AddressFormattingHelper.addressFormatting(request.subscription.address, Option(request.subscription.orgName))
       val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
@@ -62,7 +60,7 @@ class PackAtBusinessAddressController @Inject()(
       Ok(view(preparedForm, mode, formattedAddress))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity).async {
     implicit request =>
       val businessName = request.subscription.orgName
       val businessAddress = request.subscription.address

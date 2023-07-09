@@ -1,7 +1,7 @@
 package controllers.cancelRegistration
 
 import controllers.ControllerITTestHelper
-import models.UserAnswers
+import models.{SelectChange, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.cancelRegistration.ReasonPage
@@ -69,6 +69,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(cancelRegistrationBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(cancelRegistrationBaseUrl + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.CancelRegistration, cancelRegistrationBaseUrl + normalRoutePath)
   }
 
   "GET " + checkRoutePath - {
@@ -117,6 +118,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(cancelRegistrationBaseUrl + checkRoutePath)
     testAuthenticatedUserButNoUserAnswers(cancelRegistrationBaseUrl + checkRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.CancelRegistration, cancelRegistrationBaseUrl + checkRoutePath)
   }
 
   s"POST " + normalRoutePath - {
@@ -193,6 +195,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(cancelRegistrationBaseUrl + normalRoutePath, Some(Json.obj("value" -> reasonDiff)))
     testAuthenticatedUserButNoUserAnswers(cancelRegistrationBaseUrl + normalRoutePath, Some(Json.obj("value" -> reasonDiff)))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.CancelRegistration, cancelRegistrationBaseUrl + normalRoutePath, Some(Json.obj("value" -> reasonDiff)))
   }
 
   s"POST " + checkRoutePath - {
@@ -269,5 +272,6 @@ class ReasonControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(cancelRegistrationBaseUrl + checkRoutePath, Some(Json.obj("value" -> reasonDiff)))
     testAuthenticatedUserButNoUserAnswers(cancelRegistrationBaseUrl + checkRoutePath, Some(Json.obj("value" -> reasonDiff)))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.CancelRegistration, cancelRegistrationBaseUrl + checkRoutePath, Some(Json.obj("value" -> reasonDiff)))
   }
 }

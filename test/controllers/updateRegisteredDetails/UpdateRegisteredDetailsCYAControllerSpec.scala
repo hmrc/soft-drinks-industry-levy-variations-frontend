@@ -19,6 +19,7 @@ package controllers.updateRegisteredDetails
 import base.SpecBase
 import controllers.updateRegisteredDetails.routes._
 import controllers.routes._
+import models.SelectChange
 import models.updateRegisteredDetails.UpdateContactDetails
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.test.FakeRequest
@@ -50,19 +51,6 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, UpdateRegisteredDetailsCYAController.onPageLoad.url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual JourneyRecoveryController.onPageLoad().url
-      }
-    }
-
     "must Redirect to next page when data is correct for POST" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)).build()
 
@@ -75,18 +63,7 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
         redirectLocation(result).value mustEqual IndexController.onPageLoad.url
       }
     }
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(POST, UpdateRegisteredDetailsCYAController.onPageLoad.url).withFormUrlEncodedBody()
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual JourneyRecoveryController.onPageLoad().url
-      }
-    }
+    testInvalidJourneyType(SelectChange.UpdateRegisteredDetails, UpdateRegisteredDetailsCYAController.onPageLoad.url)
+    testNoUserAnswersError(UpdateRegisteredDetailsCYAController.onPageLoad.url)
   }
 }

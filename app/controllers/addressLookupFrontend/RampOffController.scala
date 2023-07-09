@@ -16,7 +16,7 @@
 
 package controllers.addressLookupFrontend
 
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.ControllerActions
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{AddressLookupService, ContactDetails, PackingDetails, WarehouseDetails}
@@ -25,15 +25,13 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class RampOffController @Inject()(identify: IdentifierAction,
-                                  getData: DataRetrievalAction,
-                                  requireData: DataRequiredAction,
+class RampOffController @Inject()(controllerActions: ControllerActions,
                                   addressLookupService: AddressLookupService,
                                   sessionRepository: SessionRepository,
                                   val controllerComponents: MessagesControllerComponents)
                                  (implicit val ex: ExecutionContext) extends FrontendBaseController {
 
-  def secondaryWareHouseDetailsOffRamp(sdilId: String, alfId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def secondaryWareHouseDetailsOffRamp(sdilId: String, alfId: String): Action[AnyContent] = controllerActions.withRequiredData.async {
     implicit request =>
       for {
         alfResponse <- addressLookupService.getAddress(alfId)
@@ -44,7 +42,7 @@ class RampOffController @Inject()(identify: IdentifierAction,
       }
   }
 
-  def packingSiteDetailsOffRamp(sdilId: String, alfId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def packingSiteDetailsOffRamp(sdilId: String, alfId: String): Action[AnyContent] = controllerActions.withRequiredData.async {
     implicit request =>
       for {
         alfResponse <- addressLookupService.getAddress(alfId)
@@ -55,7 +53,7 @@ class RampOffController @Inject()(identify: IdentifierAction,
       }
   }
 
-  def contactDetailsOffRamp(sdilId: String, alfId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def contactDetailsOffRamp(sdilId: String, alfId: String): Action[AnyContent] = controllerActions.withRequiredData.async {
     implicit request =>
       for {
         alfResponse <- addressLookupService.getAddress(alfId)

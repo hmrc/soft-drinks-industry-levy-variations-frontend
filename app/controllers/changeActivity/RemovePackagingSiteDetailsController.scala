@@ -21,7 +21,7 @@ import controllers.{ControllerHelper, routes}
 import forms.changeActivity.RemovePackagingSiteDetailsFormProvider
 import handlers.ErrorHandler
 import models.backend.Site
-import models.{Mode, UserAnswers}
+import models.{Mode, SelectChange, UserAnswers}
 import navigation._
 import pages.changeActivity.RemovePackagingSiteDetailsPage
 import play.api.i18n.MessagesApi
@@ -39,9 +39,7 @@ class RemovePackagingSiteDetailsController @Inject()(
                                                       override val messagesApi: MessagesApi,
                                                       val sessionService: SessionService,
                                                       val navigator: NavigatorForChangeActivity,
-                                                      identify: IdentifierAction,
-                                                      getData: DataRetrievalAction,
-                                                      requireData: DataRequiredAction,
+                                                      controllerActions: ControllerActions,
                                                       formProvider: RemovePackagingSiteDetailsFormProvider,
                                                       val controllerComponents: MessagesControllerComponents,
                                                       view: RemovePackagingSiteDetailsView,
@@ -51,7 +49,7 @@ class RemovePackagingSiteDetailsController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: String): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity) {
     implicit request =>
       request.userAnswers.packagingSiteList.get(index) match {
         case Some(site) =>
@@ -63,7 +61,7 @@ class RemovePackagingSiteDetailsController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode, index: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity).async {
     implicit request =>
       val warehouseToRemove: Option[Site] = request.userAnswers.packagingSiteList.get(index)
       warehouseToRemove match {

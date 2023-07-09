@@ -2,7 +2,7 @@ package controllers.$packageName$
 
 import base.SpecBase
 import forms.$packageName$.$className$FormProvider
-import models.NormalMode
+import models.{NormalMode, SelectChange}
 import models.$packageName$.$className$
 import navigation._
 import org.mockito.ArgumentMatchers.any
@@ -122,35 +122,8 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, $className;format="decap"$Route)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual recoveryCall.url
-      }
-    }
-
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, $className;format="decap"$Route)
-            .withFormUrlEncodedBody(("$field1Name$", "value 1"), ("$field2Name$", "value 2"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual recoveryCall.url
-      }
-    }
+    testInvalidJourneyType(SelectChange.$packageName;format="cap"$, $className;format="decap"$Route)
+    testNoUserAnswersError($className;format="decap"$Route)
 
     "must fail if the setting of userAnswers fails" in {
 

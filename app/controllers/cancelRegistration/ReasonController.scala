@@ -16,31 +16,28 @@
 
 package controllers.cancelRegistration
 
-import utilities.GenericLogger
+import controllers.ControllerHelper
 import controllers.actions._
 import forms.cancelRegistration.ReasonFormProvider
-
-import javax.inject.Inject
-import models.Mode
+import handlers.ErrorHandler
+import models.{Mode, SelectChange}
+import navigation._
 import pages.cancelRegistration.ReasonPage
+import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
+import utilities.GenericLogger
 import views.html.cancelRegistration.ReasonView
-import handlers.ErrorHandler
-import controllers.ControllerHelper
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import navigation._
-import play.api.data.Form
 
 class ReasonController @Inject()(
                                        override val messagesApi: MessagesApi,
                                        val sessionService: SessionService,
                                        val navigator: NavigatorForCancelRegistration,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
+                                       controllerActions: ControllerActions,
                                        formProvider: ReasonFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: ReasonView,
@@ -50,7 +47,7 @@ class ReasonController @Inject()(
 
   val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(ReasonPage) match {
@@ -61,7 +58,7 @@ class ReasonController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration).async {
     implicit request =>
 
       form.bindFromRequest().fold(

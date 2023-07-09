@@ -67,6 +67,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser($packageName$BaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.$packageName;format="cap"$, $packageName$BaseUrl + normalRoutePath)
   }
 
   "GET " + checkRoutePath - {
@@ -116,6 +117,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser($packageName$BaseUrl + checkRoutePath)
     testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + checkRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.$packageName;format="cap"$, $packageName$BaseUrl + checkRoutePath)
   }
 
   s"POST " + normalRoutePath - {
@@ -196,6 +198,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser($packageName$BaseUrl + normalRoutePath, Some(Json.obj("value" -> $className;format="decap"$Diff)))
     testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + normalRoutePath, Some(Json.obj("value" -> $className;format="decap"$Diff)))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.$packageName;format="cap"$, $packageName$BaseUrl + normalRoutePath, Some(Json.obj("value" -> $className;format="decap"$Diff)))
   }
 
   s"POST " + checkRoutePath - {
@@ -272,5 +275,6 @@ class $className$ControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser($packageName$BaseUrl + checkRoutePath, Some(Json.obj("value" -> $className;format="decap"$Diff)))
     testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + checkRoutePath, Some(Json.obj("value" -> $className;format="decap"$Diff)))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.$packageName;format="cap"$, $packageName$BaseUrl + checkRoutePath, Some(Json.obj("value" -> $className;format="decap"$Diff)))
   }
 }

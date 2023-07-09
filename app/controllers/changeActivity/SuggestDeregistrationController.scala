@@ -17,7 +17,7 @@
 package controllers.changeActivity
 
 import controllers.actions._
-import models.NormalMode
+import models.{NormalMode, SelectChange}
 import navigation.NavigatorForChangeActivity
 import pages.changeActivity.SuggestDeregistrationPage
 
@@ -29,20 +29,18 @@ import views.html.changeActivity.SuggestDeregistrationView
 
 class SuggestDeregistrationController @Inject()(
                                        override val messagesApi: MessagesApi,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
+                                       controllerActions: ControllerActions,
                                        val navigator: NavigatorForChangeActivity,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: SuggestDeregistrationView
                                      ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity) {
     implicit request =>
       Ok(view())
   }
 
-  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity) {
     implicit request =>
       Redirect(navigator.nextPage(SuggestDeregistrationPage, NormalMode, request.userAnswers))
   }

@@ -21,11 +21,12 @@ import controllers.actions._
 import controllers.routes
 import helpers.LoggerHelper
 import models.backend.{Site, UkAddress}
-import models.{Contact, LitresInBands, RetrievedActivity, RetrievedSubscription, ReturnCharge, ReturnPeriod, SelectChange, UserAnswers, Warehouse}
+import models.{Contact, LitresInBands, NormalMode, RetrievedActivity, RetrievedSubscription, ReturnCharge, ReturnPeriod, SelectChange, UserAnswers, Warehouse}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
+import play.api.http.Status.SEE_OTHER
 import play.api.{Application, Play}
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.bind
@@ -34,6 +35,7 @@ import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Call, MessagesControllerComponents}
 import play.api.test.FakeRequest
 import queries.Settable
+import play.api.test.Helpers._
 
 import java.time.LocalDate
 import scala.util.{Failure, Try}
@@ -114,24 +116,100 @@ trait SpecBase
 
   lazy val warehouse = Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy"),"WR53 7CX"))
 
-  val emptyUserAnswersForUpdateRegisteredDetails: UserAnswers = UserAnswers(userAnswersId, SelectChange.UpdateRegisteredAccount)
-  val warehouseAddedToUserAnswersForUpdateRegisteredDetails: UserAnswers = UserAnswers(userAnswersId, SelectChange.UpdateRegisteredAccount, warehouseList = Map("1" -> warehouse))
-  val emptyUserAnswersForChangeActivity = UserAnswers(sdilNumber, SelectChange.Changeactivity)
-  val warehouseAddedToUserAnswersForChangeActivity: UserAnswers = UserAnswers(userAnswersId, SelectChange.Changeactivity, warehouseList = Map("1" -> warehouse))
+  val emptyUserAnswersForUpdateRegisteredDetails: UserAnswers = UserAnswers(userAnswersId, SelectChange.UpdateRegisteredDetails)
+  val warehouseAddedToUserAnswersForUpdateRegisteredDetails: UserAnswers = UserAnswers(userAnswersId, SelectChange.UpdateRegisteredDetails, warehouseList = Map("1" -> warehouse))
+  val emptyUserAnswersForChangeActivity = UserAnswers(sdilNumber, SelectChange.ChangeActivity)
+  val warehouseAddedToUserAnswersForChangeActivity: UserAnswers = UserAnswers(userAnswersId, SelectChange.ChangeActivity, warehouseList = Map("1" -> warehouse))
 
   val emptyUserAnswersForCorrectReturn = UserAnswers(sdilNumber, SelectChange.CorrectReturn)
 
   val emptyUserAnswersForCancelRegistration = UserAnswers(sdilNumber, SelectChange.CancelRegistration)
+
+  def emptyUserAnswersForSelectChange(selectChange: SelectChange) = UserAnswers(sdilNumber, selectChange)
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   protected def applicationBuilder(
                                     userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
-        bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
       )
+
+  def testInvalidJourneyType(expectedJourneyType: SelectChange, url: String, hasPostMethod: Boolean = true) = {
+    val journeyTypesNotSupported = expectedJourneyType match {
+      case SelectChange.CancelRegistration => SelectChange.values.filter(!List(expectedJourneyType, SelectChange.ChangeActivity).contains(_))
+      case _ => SelectChange.values.filter(_ != expectedJourneyType)
+    }
+    journeyTypesNotSupported.foreach { selectChange =>
+      s"must redirect to select change for a GET if userAnswers select change is for $selectChange" in {
+
+        val application = applicationBuilder(Some(emptyUserAnswersForSelectChange(selectChange))).build()
+
+        running(application) {
+          val request = FakeRequest(GET, url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual selectChangeCall.url
+        }
+      }
+
+      if(hasPostMethod) {
+        s"must redirect to select change for a POST if userAnswers select change is for $selectChange" in {
+
+          val application = applicationBuilder(userAnswers = None).build()
+
+          running(application) {
+            val request =
+              FakeRequest(POST, url)
+                .withFormUrlEncodedBody(("value", "answer"))
+
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustEqual selectChangeCall.url
+          }
+        }
+      }
+    }
+  }
+
+  def testNoUserAnswersError(url: String, hasPostMethod: Boolean = true) = {
+    "must redirect to Select change for a GET if no existing data is found" in {
+
+      val application = applicationBuilder(userAnswers = None).build()
+
+      running(application) {
+        val request = FakeRequest(GET, url
+        )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual selectChangeCall.url
+      }
+    }
+
+    if(hasPostMethod) {
+      "must redirect to Select change for a POST if no existing data is found" in {
+
+        val application = applicationBuilder(userAnswers = None).build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, url)
+              .withFormUrlEncodedBody(("value", ""))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual selectChangeCall.url
+        }
+      }
+    }
+  }
 
   val aSubscription = RetrievedSubscription(
     utr = "0000000022",
@@ -178,11 +256,13 @@ trait SpecBase
   val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(-200))
   val financialItemList = List(financialItem1, financialItem2)
 
-  val userDetailsWithSetMethodsReturningFailure: UserAnswers = new UserAnswers("sdilId", SelectChange.UpdateRegisteredAccount) {
+  def userDetailsWithSetMethodsReturningFailure(selectChange: SelectChange): UserAnswers = new UserAnswers("sdilId", selectChange) {
     override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
     override def setAndRemoveLitresIfReq(page: Settable[Boolean], litresPage: Settable[LitresInBands], value: Boolean)(implicit writes: Writes[Boolean]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
   }
 
   def defaultCall: Call = routes.IndexController.onPageLoad
   def recoveryCall: Call = routes.JourneyRecoveryController.onPageLoad()
+
+  def selectChangeCall: Call = routes.SelectChangeController.onPageLoad(NormalMode)
 }

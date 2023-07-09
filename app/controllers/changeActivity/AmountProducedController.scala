@@ -20,7 +20,7 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.AmountProducedFormProvider
 import handlers.ErrorHandler
-import models.Mode
+import models.{Mode, SelectChange}
 import models.changeActivity.AmountProduced
 import navigation._
 import pages.changeActivity.AmountProducedPage
@@ -38,19 +38,17 @@ class AmountProducedController @Inject()(
                                        override val messagesApi: MessagesApi,
                                        val sessionService: SessionService,
                                        val navigator: NavigatorForChangeActivity,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
+                                       controllerActions: ControllerActions,
                                        formProvider: AmountProducedFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: AmountProducedView,
                                        val genericLogger: GenericLogger,
                                        val errorHandler: ErrorHandler
-                                     )(implicit ec: ExecutionContext) extends ControllerHelper {
+                                     )(implicit val ec: ExecutionContext) extends ControllerHelper {
 
   val form: Form[AmountProduced] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity) {
     implicit request =>
       val preparedForm = request.userAnswers.get(AmountProducedPage) match {
         case None => form
@@ -59,7 +57,7 @@ class AmountProducedController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity).async {
     implicit request =>
 
       form.bindFromRequest().fold(

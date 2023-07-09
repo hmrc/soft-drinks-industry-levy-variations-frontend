@@ -7,6 +7,9 @@ import views.html.$packageName$.$className$View
 
 class $className$ControllerSpec extends SpecBase {
 
+  lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad().url
+
+
   "$className$ Controller" - {
 
     "must return OK and the correct view for a GET" in {
@@ -14,7 +17,7 @@ class $className$ControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswersFor$packageName;format="cap"$)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.$className$Controller.onPageLoad().url)
+        val request = FakeRequest(GET, $className;format="decap"$Route)
 
         val result = route(application, request).value
 
@@ -24,5 +27,8 @@ class $className$ControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view()(request, messages(application)).toString
       }
     }
+
+    testInvalidJourneyType(SelectChange.$packageName;format="cap"$, $className;format="decap"$Route)
+    testNoUserAnswersError($className;format="decap"$Route)
   }
 }

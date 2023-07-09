@@ -48,6 +48,6 @@ trait ITCoreTestDataForUpdateRegisteredDetails extends ITSharedCoreTestData {
 
   def sdilNumber: String
 
-  def emptyUserAnswersForUpdateRegisteredDetails = UserAnswers(sdilNumber, SelectChange.UpdateRegisteredAccount, Json.obj())
+  def emptyUserAnswersForUpdateRegisteredDetails = UserAnswers(sdilNumber, SelectChange.UpdateRegisteredDetails, Json.obj())
 
 }

@@ -31,7 +31,7 @@ class ModelEncryptionSpec extends SpecBase {
   "encryptUserAnswers" - {
     "should encrypt userAnswers" in {
       val userAnswers = UserAnswers("id",
-        SelectChange.UpdateRegisteredAccount,
+        SelectChange.UpdateRegisteredDetails,
         Json.obj("foo" -> "bar"),
         List(SmallProducer("foo", "bar", (1,1))),
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")),Some("foo"), Some("foo"),Some(LocalDate.now()))),
@@ -57,7 +57,7 @@ class ModelEncryptionSpec extends SpecBase {
   "decryptUserAnswers" - {
     "should decrypt userAnswers in tuple form" in {
       val userAnswers = UserAnswers("id",
-        SelectChange.UpdateRegisteredAccount,
+        SelectChange.UpdateRegisteredDetails,
         Json.obj("foo" -> "bar"),
         List(SmallProducer("foo", "bar", (1,1))),
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")),Some("foo"), Some("foo"),Some(LocalDate.now()))),

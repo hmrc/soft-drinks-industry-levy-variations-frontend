@@ -29,5 +29,6 @@ class $className$ControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser($packageName$BaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.$packageName;format="cap"$, $packageName$BaseUrl + normalRoutePath)
   }
 }

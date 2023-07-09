@@ -67,6 +67,7 @@ class HowMany$className$ControllerISpec extends LitresISpecHelper {
       }
       testUnauthorisedUser($packageName$BaseUrl + path)
       testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + path)
+      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.$packageName;format="cap"$, $packageName$BaseUrl + path)
     }
 
     s"POST " + path - {
@@ -210,6 +211,7 @@ class HowMany$className$ControllerISpec extends LitresISpecHelper {
 
       testUnauthorisedUser($packageName$BaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
       testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
+      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.$packageName;format="cap"$, $packageName$BaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
     }
   }
 }

@@ -47,7 +47,7 @@ class SessionRepositoryISpec
 
   ".set" - {
     "must set the last updated time on the supplied user answers to `now`, and save them" in {
-      val userAnswersBefore = UserAnswers("id",SelectChange.UpdateRegisteredAccount, Json.obj("foo" -> "bar"),
+      val userAnswersBefore = UserAnswers("id",SelectChange.UpdateRegisteredDetails, Json.obj("foo" -> "bar"),
         List(), contactAddress = Some(UkAddress(List("123 Main Street", "Anytown"), "AB12 C34", alfId = Some("123456"))), lastUpdated = Instant.ofEpochSecond(1))
       val timeBeforeTest = Instant.now()
       val setResult     = await(repository.set(userAnswersBefore))
@@ -70,7 +70,7 @@ class SessionRepositoryISpec
 
     "correctly encrypt the records data" in {
       val userAnswersBefore = UserAnswers("id",
-        SelectChange.UpdateRegisteredAccount,
+        SelectChange.UpdateRegisteredDetails,
         Json.obj("foo" -> "bar"),
         List(SmallProducer("foo", "bar", (1,1))),
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")),Some("foo"), Some("foo"),Some(LocalDate.now()))),
@@ -119,7 +119,7 @@ class SessionRepositoryISpec
     "when there is a record for this id" - {
 
       "must update the lastUpdated time and get the record" in {
-        val userAnswersBefore = UserAnswers("id", SelectChange.UpdateRegisteredAccount, Json.obj("foo" -> "bar"), List(),
+        val userAnswersBefore = UserAnswers("id", SelectChange.UpdateRegisteredDetails, Json.obj("foo" -> "bar"), List(),
           contactAddress = Some(UkAddress(List("123 Main Street", "Anytown"), "AB12 C34", alfId = Some("123456"))),lastUpdated = Instant.ofEpochSecond(1))
         await(repository.set(userAnswersBefore))
 
@@ -153,7 +153,7 @@ class SessionRepositoryISpec
   ".clear" - {
 
     "must remove a record" in {
-      val userAnswersBefore = UserAnswers("id", SelectChange.UpdateRegisteredAccount, Json.obj("foo" -> "bar"), List(),
+      val userAnswersBefore = UserAnswers("id", SelectChange.UpdateRegisteredDetails, Json.obj("foo" -> "bar"), List(),
         contactAddress = Some(UkAddress(List("123 Main Street", "Anytown"), "AB12 C34", alfId = Some("123456"))), lastUpdated = Instant.ofEpochSecond(1))
       repository.set(userAnswersBefore).futureValue
 
@@ -175,7 +175,7 @@ class SessionRepositoryISpec
     "when there is a record for this id" - {
 
       "must update its lastUpdated to `now` and return true" in {
-        val userAnswersBefore = UserAnswers("id", SelectChange.UpdateRegisteredAccount, Json.obj("foo" -> "bar"), List(),
+        val userAnswersBefore = UserAnswers("id", SelectChange.UpdateRegisteredDetails, Json.obj("foo" -> "bar"), List(),
           contactAddress = Some(UkAddress(List("123 Main Street", "Anytown"), "AB12 C34", alfId = Some("123456"))), lastUpdated = Instant.ofEpochSecond(1))
         await(repository.set(userAnswersBefore))
         val timeBeforeTest = Instant.now()
