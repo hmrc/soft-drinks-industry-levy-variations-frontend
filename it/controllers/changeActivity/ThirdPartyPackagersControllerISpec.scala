@@ -195,7 +195,7 @@ class ThirdPartyPackagersControllerISpec extends ControllerITTestHelper {
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("thirdPartyPackagers" + ".error.required")
+            errorSummary.text() mustBe Messages("changeActivity.thirdPartyPackagers" + ".error.required")
           }
         }
       }
@@ -273,7 +273,7 @@ class ThirdPartyPackagersControllerISpec extends ControllerITTestHelper {
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("thirdPartyPackagers" + ".error.required")
+            errorSummary.text() mustBe Messages("changeActivity.thirdPartyPackagers" + ".error.required")
           }
         }
       }
