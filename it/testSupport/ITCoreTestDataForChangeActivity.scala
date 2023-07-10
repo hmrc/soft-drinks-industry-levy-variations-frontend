@@ -8,6 +8,12 @@ import play.api.libs.json.Json
 
 trait ITCoreTestDataForChangeActivity extends ITSharedCoreTestData {
 
+  val userAnswersForChangeActivityThirdPartyPackagersPage: Map[String, UserAnswers] = {
+    val yesSelected = emptyUserAnswersForChangeActivity.set(ThirdPartyPackagersPage, true).success.value
+    val noSelected = emptyUserAnswersForChangeActivity.set(ThirdPartyPackagersPage, false).success.value
+    Map("yes" -> yesSelected, "no" -> noSelected)
+  }
+
   val userAnswersForChangeActivityPackAtBusinessAddressPage: Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForChangeActivity.set(PackAtBusinessAddressPage, true).success.value
     val noSelected = emptyUserAnswersForChangeActivity.set(PackAtBusinessAddressPage, false).success.value

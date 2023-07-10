@@ -37,6 +37,14 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
+  implicit lazy val arbitraryThirdPartyPackagersUserAnswersEntry: Arbitrary[(pages.changeActivity.ThirdPartyPackagersPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.changeActivity.ThirdPartyPackagersPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryChangeActivityPackAtBusinessAddressUserAnswersEntry: Arbitrary[(pages.changeActivity.PackAtBusinessAddressPage.type, JsValue)] =
     Arbitrary {
       for {
