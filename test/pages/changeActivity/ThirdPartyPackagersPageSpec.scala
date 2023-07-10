@@ -16,17 +16,16 @@
 
 package pages.changeActivity
 
-import models.changeActivity.AmountProduced
 import pages.behaviours.PageBehaviours
 
-class AmountProducedPageSpec extends PageBehaviours {
+class ThirdPartyPackagersPageSpec extends PageBehaviours {
 
-  "AmountProducedPage" - {
+  "ThirdPartyPackagersPage" - {
 
-    beRetrievable[AmountProduced](AmountProducedPage)
+    beRetrievable[Boolean](ThirdPartyPackagersPage)
 
-    beSettable[AmountProduced](AmountProducedPage)
+    beSettable[Boolean](ThirdPartyPackagersPage)
 
-    beRemovable[AmountProduced](AmountProducedPage)
+    beRemovable[Boolean](ThirdPartyPackagersPage)
   }
 }
