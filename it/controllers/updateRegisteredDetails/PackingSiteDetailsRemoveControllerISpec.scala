@@ -1,6 +1,7 @@
 package controllers.updateRegisteredDetails
 
 import controllers.ControllerITTestHelper
+import models.SelectChange
 import models.backend.Site
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
@@ -64,7 +65,9 @@ class PackingSiteDetailsRemoveControllerISpec extends ControllerITTestHelper {
       }
     }
     testUnauthorisedUser(updateRegisteredDetailsBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved))
-    testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved))  }
+    testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved))
+  }
 
   s"GET " + checkRoutePath(indexOfPackingSiteToBeRemoved) - {
     "when the userAnswers contains no data" - {
@@ -114,6 +117,7 @@ class PackingSiteDetailsRemoveControllerISpec extends ControllerITTestHelper {
 
     testUnauthorisedUser(updateRegisteredDetailsBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved))
     testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved))
   }
 
   s"POST " + normalRoutePath(indexOfPackingSiteToBeRemoved) - {
@@ -202,6 +206,7 @@ class PackingSiteDetailsRemoveControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(updateRegisteredDetailsBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved), Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved), Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved), Some(Json.obj("value" -> "true")))
   }
 
   s"POST " + checkRoutePath(indexOfPackingSiteToBeRemoved) - {
@@ -290,5 +295,6 @@ class PackingSiteDetailsRemoveControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(updateRegisteredDetailsBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved), Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved), Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved), Some(Json.obj("value" -> "true")))
   }
 }

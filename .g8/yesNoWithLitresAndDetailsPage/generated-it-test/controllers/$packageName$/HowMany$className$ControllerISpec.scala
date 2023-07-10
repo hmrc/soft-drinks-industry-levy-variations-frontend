@@ -1,7 +1,7 @@
 package controllers.$packageName$
 
 import controllers.LitresISpecHelper
-import models.{CheckMode, LitresInBands, NormalMode}
+import models.{CheckMode, LitresInBands, NormalMode, SelectChange}
 import org.jsoup.Jsoup
 import pages.$packageName$.HowMany$className$Page
 import play.api.http.HeaderNames
@@ -9,7 +9,6 @@ import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-
 
 class HowMany$className$ControllerISpec extends LitresISpecHelper {
 
@@ -67,6 +66,7 @@ class HowMany$className$ControllerISpec extends LitresISpecHelper {
       }
       testUnauthorisedUser($packageName$BaseUrl + path)
       testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + path)
+      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.$packageName;format="cap"$, $packageName$BaseUrl + path)
     }
 
     s"POST " + path - {
@@ -210,6 +210,7 @@ class HowMany$className$ControllerISpec extends LitresISpecHelper {
 
       testUnauthorisedUser($packageName$BaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
       testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
+      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.$packageName;format="cap"$, $packageName$BaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
     }
   }
 }

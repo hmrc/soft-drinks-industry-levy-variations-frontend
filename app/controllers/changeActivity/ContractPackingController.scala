@@ -20,8 +20,9 @@ import utilities.GenericLogger
 import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.ContractPackingFormProvider
+
 import javax.inject.Inject
-import models.Mode
+import models.{Mode, SelectChange}
 import pages.changeActivity.{ContractPackingPage, HowManyContractPackingPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -36,9 +37,7 @@ class ContractPackingController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          val sessionService: SessionService,
                                          val navigator: NavigatorForChangeActivity,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
+                                         controllerActions: ControllerActions,
                                          formProvider: ContractPackingFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: ContractPackingView,
@@ -48,7 +47,7 @@ class ContractPackingController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(ContractPackingPage) match {
@@ -59,7 +58,7 @@ class ContractPackingController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity).async {
     implicit request =>
 
       form.bindFromRequest().fold(

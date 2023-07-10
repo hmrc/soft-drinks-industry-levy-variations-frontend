@@ -1,5 +1,6 @@
 package controllers
 
+import models.{SelectChange, UserAnswers}
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import play.api.http.HeaderNames
 import play.api.libs.json.JsValue
@@ -35,6 +36,9 @@ trait ControllerITTestHelper extends Specifications with TestConfiguration with 
       .withFollowRedirects(false)
       .post(body)
   }
+
+  def emptyUserAnswersForSelectChange(selectChange: SelectChange) = UserAnswers(sdilNumber, selectChange)
+
 
   def testUnauthorisedUser(url: String, optJson: Option[JsValue] = None): Unit = {
     "the user is unauthenticated" - {
@@ -93,7 +97,7 @@ trait ControllerITTestHelper extends Specifications with TestConfiguration with 
 
   def testAuthenticatedUserButNoUserAnswers(url: String, optJson: Option[JsValue] = None): Unit = {
     "the user is authenticated but has no sdil subscription" - {
-      "redirect to journey recover controller" in {
+      "redirect to select change controller" in {
         given.commonPrecondition
 
         remove(sdilNumber)
@@ -106,7 +110,39 @@ trait ControllerITTestHelper extends Specifications with TestConfiguration with 
 
           whenReady(result1) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION).get must include("/there-is-a-problem")
+            res.header(HeaderNames.LOCATION).get must include("/select-change")
+          }
+        }
+      }
+    }
+  }
+
+  def testAuthenticatedWithUserAnswersForUnsupportedJourneyType(currentJourney: SelectChange,
+                                                                url: String,
+                                                                optJson: Option[JsValue] = None): Unit = {
+    val journeyTypesNotSupported = currentJourney match {
+      case SelectChange.CancelRegistration => SelectChange.values.filter(!List(currentJourney, SelectChange.ChangeActivity).contains(_))
+      case _ => SelectChange.values.filter(_ != currentJourney)
+    }
+    "when the user is authenticated with sdilSubscription" - {
+      journeyTypesNotSupported.foreach { unsupportedJourney =>
+        s"and has user answers for $unsupportedJourney" - {
+          "should redirect to select change controller" in {
+            given.commonPrecondition
+
+            setAnswers(emptyUserAnswersForSelectChange(unsupportedJourney))
+
+            WsTestClient.withClient { client =>
+              val result1 = optJson match {
+                case Some(json) => createClientRequestPOST(client, url, json)
+                case _ => createClientRequestGet(client, url)
+              }
+
+              whenReady(result1) { res =>
+                res.status mustBe 303
+                res.header(HeaderNames.LOCATION).get must include("/select-change")
+              }
+            }
           }
         }
       }

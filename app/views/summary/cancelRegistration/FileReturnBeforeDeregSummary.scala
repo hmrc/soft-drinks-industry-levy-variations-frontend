@@ -24,12 +24,14 @@ import java.time.format.DateTimeFormatter
 
 object FileReturnBeforeDeregSummary {
 
-  def displayMessage(showReturnSize:Option[Int], showReturnDate:Option[List[ReturnPeriod]])(implicit messages: Messages):Html = {
-    (showReturnSize,showReturnDate) match {
-      case (None, Some(showReturnDate)) => Html(messages("cancelRegistration.fileReturnBeforeDereg.one-return",
-        showReturnDate.map(date => date.start.format(DateTimeFormatter.ofPattern("MMMM"))).head,
-        showReturnDate.map(date => date.start.format(DateTimeFormatter.ofPattern("MMMM yyyy"))).head))
-      case (Some(showReturnSize), None) => Html(messages("cancelRegistration.fileReturnBeforeDereg.many-returns",showReturnSize))
+  def displayMessage(returns: List[ReturnPeriod])(implicit messages: Messages):Html = {
+    if(returns.size == 1) {
+      val returnPeriod = returns.head
+      Html(messages("cancelRegistration.fileReturnBeforeDereg.one-return",
+        returnPeriod.start.format(DateTimeFormatter.ofPattern("MMMM")),
+        returnPeriod.start.format(DateTimeFormatter.ofPattern("MMMM yyyy"))))
+    } else {
+      Html(messages("cancelRegistration.fileReturnBeforeDereg.many-returns", returns.size))
     }
   }
 }

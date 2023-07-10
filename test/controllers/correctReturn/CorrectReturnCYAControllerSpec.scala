@@ -18,7 +18,7 @@ package controllers.correctReturn
 
 import base.SpecBase
 import controllers.correctReturn.routes._
-import controllers.routes._
+import models.SelectChange
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -31,7 +31,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
 
       running(application) {
         val request = FakeRequest(GET, CorrectReturnCYAController.onPageLoad.url)
@@ -46,18 +46,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, CorrectReturnCYAController.onPageLoad.url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual JourneyRecoveryController.onPageLoad().url
-      }
-    }
+    testInvalidJourneyType(SelectChange.CorrectReturn, CorrectReturnCYAController.onPageLoad.url, false)
+    testNoUserAnswersError(CorrectReturnCYAController.onPageLoad.url, false)
   }
 }

@@ -20,7 +20,7 @@ import java.time.{LocalDate, ZoneOffset}
 import base.SpecBase
 import config.FrontendAppConfig
 import forms.cancelRegistration.CancelRegistrationDateFormProvider
-import models.NormalMode
+import models.{NormalMode, SelectChange}
 import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -135,29 +135,9 @@ class CancelRegistrationDateControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
+    testInvalidJourneyType(SelectChange.CancelRegistration, cancelRegistrationDateRoute)
+    testNoUserAnswersError(cancelRegistrationDateRoute)
 
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val result = route(application, getRequest).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual recoveryCall.url
-      }
-    }
-
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val result = route(application, postRequest).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual recoveryCall.url
-      }
-    }
 
     "must fail if the setting of userAnswers fails" in {
       val mockSessionService = mock[SessionService]
@@ -165,7 +145,7 @@ class CancelRegistrationDateControllerSpec extends SpecBase with MockitoSugar {
         when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
         val application =
-          applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure))
+          applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(SelectChange.CancelRegistration)))
             .overrides(
               bind[NavigatorForCancelRegistration].toInstance(new FakeNavigatorForCancelRegistration(onwardRoute)),
               bind[SessionService].toInstance(mockSessionService)

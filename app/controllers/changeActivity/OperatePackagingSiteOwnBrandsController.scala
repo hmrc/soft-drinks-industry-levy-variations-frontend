@@ -20,9 +20,10 @@ import utilities.GenericLogger
 import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.OperatePackagingSiteOwnBrandsFormProvider
+
 import javax.inject.Inject
-import models.Mode
-import pages.changeActivity.{OperatePackagingSiteOwnBrandsPage, HowManyOperatePackagingSiteOwnBrandsPage}
+import models.{Mode, SelectChange}
+import pages.changeActivity.{HowManyOperatePackagingSiteOwnBrandsPage, OperatePackagingSiteOwnBrandsPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
@@ -36,9 +37,7 @@ class OperatePackagingSiteOwnBrandsController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          val sessionService: SessionService,
                                          val navigator: NavigatorForChangeActivity,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
+                                         controllerActions: ControllerActions,
                                          formProvider: OperatePackagingSiteOwnBrandsFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: OperatePackagingSiteOwnBrandsView,
@@ -48,7 +47,7 @@ class OperatePackagingSiteOwnBrandsController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(OperatePackagingSiteOwnBrandsPage) match {
@@ -59,7 +58,7 @@ class OperatePackagingSiteOwnBrandsController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity).async {
     implicit request =>
 
       form.bindFromRequest().fold(

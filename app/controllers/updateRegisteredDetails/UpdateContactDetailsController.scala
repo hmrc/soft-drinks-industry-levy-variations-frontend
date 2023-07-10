@@ -19,27 +19,24 @@ package controllers.updateRegisteredDetails
 import controllers.ControllerHelper
 import controllers.actions._
 import forms.updateRegisteredDetails.UpdateContactDetailsFormProvider
-
-import javax.inject.Inject
-import models.Mode
+import handlers.ErrorHandler
+import models.{Mode, SelectChange}
+import navigation._
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
-import views.html.updateRegisteredDetails.UpdateContactDetailsView
-import handlers.ErrorHandler
-
-import scala.concurrent.{ExecutionContext, Future}
-import navigation._
 import utilities.GenericLogger
+import views.html.updateRegisteredDetails.UpdateContactDetailsView
+
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class UpdateContactDetailsController @Inject()(
                                        override val messagesApi: MessagesApi,
                                        val sessionService: SessionService,
                                        val navigator: NavigatorForUpdateRegisteredDetails,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
+                                       controllerActions: ControllerActions,
                                        formProvider: UpdateContactDetailsFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: UpdateContactDetailsView,
@@ -49,7 +46,7 @@ class UpdateContactDetailsController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.UpdateRegisteredDetails) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(UpdateContactDetailsPage) match {
@@ -60,7 +57,7 @@ class UpdateContactDetailsController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.UpdateRegisteredDetails).async {
     implicit request =>
 
       form.bindFromRequest().fold(

@@ -5,7 +5,7 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.$packageName$.$className$FormProvider
 import javax.inject.Inject
-import models.Mode
+import models.{SelectChange, Mode}
 import pages.$packageName$.$className$Page
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -20,9 +20,7 @@ class $className$Controller @Inject()(
                                        override val messagesApi: MessagesApi,
                                        val sessionService: SessionService,
                                        val navigator: NavigatorFor$packageName;format="cap"$,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
+                                        controllerActions: ControllerActions,
                                        formProvider: $className$FormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: $className$View,
@@ -32,7 +30,7 @@ class $className$Controller @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.$packageName;format="cap"$) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get($className$Page) match {
@@ -43,7 +41,7 @@ class $className$Controller @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.$packageName;format="cap"$).async {
     implicit request =>
 
       form.bindFromRequest().fold(

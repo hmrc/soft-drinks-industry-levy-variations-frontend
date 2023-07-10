@@ -1,7 +1,7 @@
 package controllers.$packageName$
 
 import controllers.ControllerITTestHelper
-import models.NormalMode
+import models.SelectChange
 import models.$packageName$.$className$
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
@@ -76,6 +76,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser($packageName$BaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.$packageName;format="cap"$, $packageName$BaseUrl + normalRoutePath)
   }
 
   "GET " + checkRoutePath - {
@@ -131,6 +132,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser($packageName$BaseUrl + checkRoutePath)
     testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + checkRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.$packageName;format="cap"$, $packageName$BaseUrl + checkRoutePath)
   }
 
   s"POST " + normalRoutePath - {
@@ -243,6 +245,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
 
     testUnauthorisedUser($packageName$BaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.$packageName;format="cap"$, $packageName$BaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
   }
 
   s"POST " + checkRoutePath - {
@@ -355,4 +358,5 @@ class $className$ControllerISpec extends ControllerITTestHelper {
 
     testUnauthorisedUser($packageName$BaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))  }
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.$packageName;format="cap"$, $packageName$BaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))  }
 }

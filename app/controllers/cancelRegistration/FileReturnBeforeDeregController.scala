@@ -17,8 +17,9 @@
 package controllers.cancelRegistration
 
 import connectors.SoftDrinksIndustryLevyConnector
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.ControllerActions
 import controllers.routes
+import models.SelectChange
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -30,9 +31,7 @@ import scala.concurrent.ExecutionContext
 
 class FileReturnBeforeDeregController @Inject()(
                                                  override val messagesApi: MessagesApi,
-                                                 identify: IdentifierAction,
-                                                 getData: DataRetrievalAction,
-                                                 requireData: DataRequiredAction,
+                                                 controllerActions: ControllerActions,
                                                  connector: SoftDrinksIndustryLevyConnector,
                                                  val controllerComponents: MessagesControllerComponents,
                                                  view: FileReturnBeforeDeregView
@@ -40,12 +39,11 @@ class FileReturnBeforeDeregController @Inject()(
 
 
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration).async {
     implicit request =>
-    connector.returns_pending(request.subscription.utr).map(returns => returns match {
-        case Some(returns)  if returns.size == 1 =>  Ok(view(FileReturnBeforeDeregSummary.displayMessage(showReturnSize = None, showReturnDate = Some(returns))))
-        case Some(returns) if returns.size > 1 => Ok(view(FileReturnBeforeDeregSummary.displayMessage(showReturnSize = Some(returns.size), showReturnDate = None)))
-        case None => Redirect(routes.JourneyRecoveryController.onPageLoad())
-      })
+    connector.returns_pending(request.subscription.utr).map {
+      case Some(returns) if returns.nonEmpty => Ok(view(FileReturnBeforeDeregSummary.displayMessage(returns)))
+      case _ => Redirect(routes.JourneyRecoveryController.onPageLoad())
+    }
   }
 }

@@ -24,7 +24,7 @@ import controllers.actions._
 import forms.correctReturn.SelectFormProvider
 
 import javax.inject.Inject
-import models.{Mode, NormalMode, ReturnPeriod}
+import models.{Mode, NormalMode, ReturnPeriod, SelectChange}
 import pages.correctReturn.SelectPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -40,9 +40,7 @@ class SelectController @Inject()(
                                   override val messagesApi: MessagesApi,
                                   val sessionService: SessionService,
                                   val navigator: NavigatorForCorrectReturn,
-                                  identify: IdentifierAction,
-                                  getData: DataRetrievalAction,
-                                  requireData: DataRequiredAction,
+                                  controllerActions: ControllerActions,
                                   formProvider: SelectFormProvider,
                                   connector: SoftDrinksIndustryLevyConnector,
                                   val controllerComponents: MessagesControllerComponents,
@@ -61,7 +59,7 @@ class SelectController @Inject()(
       .map(returnPeriod => returnPeriod.sortWith(_.quarter > _.quarter).reverse)
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CorrectReturn).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(SelectPage) match {
@@ -77,7 +75,7 @@ class SelectController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CorrectReturn).async {
     implicit request =>
       form.bindFromRequest().fold(
         formWithErrors =>

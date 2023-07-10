@@ -1,7 +1,7 @@
 package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
-import models.{CheckMode, NormalMode}
+import models.{CheckMode, NormalMode, SelectChange}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.changeActivity.OperatePackagingSiteOwnBrandsPage
@@ -69,6 +69,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
     }
     testUnauthorisedUser(changeActivityBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + normalRoutePath)
   }
 
   s"GET " + checkRoutePath - {
@@ -126,6 +127,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
 
     testUnauthorisedUser(changeActivityBaseUrl + checkRoutePath)
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + checkRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + checkRoutePath)
   }
 
   s"POST " + normalRoutePath - {
@@ -214,6 +216,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
     }
     testUnauthorisedUser(changeActivityBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
   }
 
   s"POST " + checkRoutePath - {
@@ -302,5 +305,6 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
     }
     testUnauthorisedUser(changeActivityBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
   }
 }

@@ -4,7 +4,10 @@ import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.$packageName$.$className$View
+import models.SelectChange
 class $className$ControllerSpec extends SpecBase {
+
+  lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad().url
 
   "$className$ Controller" - {
 
@@ -13,7 +16,7 @@ class $className$ControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswersFor$packageName;format="cap"$)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.$className$Controller.onPageLoad().url)
+        val request = FakeRequest(GET, $className;format="decap"$Route)
 
         val result = route(application, request).value
 
@@ -23,5 +26,8 @@ class $className$ControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(emptyUserAnswersFor$packageName;format="cap"$)(request, messages(application)).toString
       }
     }
+
+    testInvalidJourneyType(SelectChange.$packageName;format="cap"$, $className;format="decap"$Route)
+    testNoUserAnswersError($className;format="decap"$Route)
   }
 }
