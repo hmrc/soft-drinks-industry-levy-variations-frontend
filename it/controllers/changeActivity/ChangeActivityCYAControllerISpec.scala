@@ -72,14 +72,12 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
           case Some(true) =>
             ownBrands.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe "Yes"
 
-            //      ownBrands.get(1).getElementsByClass("govuk-summary-list__value").first().text() mustBe "1,000"
-            ownBrands.get(1).getElementsByClass("govuk-summary-list__value").first().text() mustBe ownBrandsLitresLowBand.toString
+            ownBrands.get(1).getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(ownBrandsLitresLowBand)
             ownBrands.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change amount of litres in low band for own brands packaged at your own site"
             ownBrands.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "amount of litres in low band for own brands packaged at your own site"
             ownBrands.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
 
-            //      ownBrands.get(2).getElementsByClass("govuk-summary-list__value").first().text() mustBe "2,000"
-            ownBrands.get(2).getElementsByClass("govuk-summary-list__value").first().text() mustBe ownBrandsLitresHighBand.toString
+            ownBrands.get(2).getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(ownBrandsLitresHighBand)
             ownBrands.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change amount of litres in high band for own brands packaged at your own site"
             ownBrands.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "amount of litres in high band for own brands packaged at your own site"
             ownBrands.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
@@ -100,14 +98,12 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
           case Some(true) =>
             contractPacking.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe "Yes"
 
-            //      contractPacking.get(1).getElementsByClass("govuk-summary-list__value").first().text() mustBe "3,000"
-            contractPacking.get(1).getElementsByClass("govuk-summary-list__value").first().text() mustBe contractLitresLowBand.toString
+            contractPacking.get(1).getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(contractLitresLowBand)
             contractPacking.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change amount of litres in low band for contract packed at your own site"
             contractPacking.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "amount of litres in low band for contract packed at your own site"
             contractPacking.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.HowManyContractPackingController.onPageLoad(CheckMode).url
 
-            //      contractPacking.get(2).getElementsByClass("govuk-summary-list__value").first().text() mustBe "4,000"
-            contractPacking.get(2).getElementsByClass("govuk-summary-list__value").first().text() mustBe contractLitresHighBand.toString
+            contractPacking.get(2).getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(contractLitresHighBand)
             contractPacking.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change amount of litres in high band for contract packed at your own site"
             contractPacking.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "amount of litres in high band for contract packed at your own site"
             contractPacking.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.HowManyContractPackingController.onPageLoad(CheckMode).url
@@ -129,14 +125,12 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
           case Some(true) =>
             imports.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe "Yes"
 
-            //      imports.get(1).getElementsByClass("govuk-summary-list__value").first().text() mustBe "5,000"
-            imports.get(1).getElementsByClass("govuk-summary-list__value").first().text() mustBe importLitresLowBand.toString
+            imports.get(1).getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(importLitresLowBand)
             imports.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change amount of litres in low band for brought into the UK"
             imports.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "amount of litres in low band for brought into the UK"
             imports.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.HowManyImportsController.onPageLoad(CheckMode).url
 
-            //      imports.get(2).getElementsByClass("govuk-summary-list__value").first().text() mustBe "6,000"
-            imports.get(2).getElementsByClass("govuk-summary-list__value").first().text() mustBe importLitresHighBand.toString
+            imports.get(2).getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(importLitresHighBand)
             imports.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change amount of litres in high band for brought into the UK"
             imports.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "amount of litres in high band for brought into the UK"
             imports.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.HowManyImportsController.onPageLoad(CheckMode).url

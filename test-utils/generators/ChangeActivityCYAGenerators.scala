@@ -32,7 +32,7 @@ object ChangeActivityCYAGenerators {
   val importLitresHighBand = 6000
 
   val sdilNumber: String = "XKSDIL000000022"
-  val emptyUserAnswersForChangeActivity = UserAnswers(sdilNumber, SelectChange.Changeactivity)
+  val emptyUserAnswersForChangeActivity = UserAnswers(sdilNumber, SelectChange.ChangeActivity)
 
   case class ChangeActivityCYAUserAnswers(userAnswers: UserAnswers) extends TryValues {
     def withAmountProduced(amountProduced: Option[AmountProduced] = None): ChangeActivityCYAUserAnswers = {
