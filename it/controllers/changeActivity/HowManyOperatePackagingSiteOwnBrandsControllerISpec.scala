@@ -1,7 +1,11 @@
 package controllers.changeActivity
 
 import controllers.LitresISpecHelper
+
+import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
+
 import models.{CheckMode, LitresInBands, NormalMode, SelectChange}
+
 import org.jsoup.Jsoup
 import pages.changeActivity.HowManyOperatePackagingSiteOwnBrandsPage
 import play.api.http.HeaderNames
@@ -16,11 +20,11 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
   val normalRoutePath = "/how-many-own-brands-next-12-months"
   val checkRoutePath = "/change-how-many-own-brands-next-12-months"
 
-  val userAnswers = emptyUserAnswersForChangeActivity.set(HowManyOperatePackagingSiteOwnBrandsPage, litresInBands).success.value
+  val userAnswers: UserAnswers = emptyUserAnswersForChangeActivity.set(HowManyOperatePackagingSiteOwnBrandsPage, litresInBands).success.value
 
   List(NormalMode, CheckMode).foreach { mode =>
     val (path, redirectLocation) = if(mode == NormalMode) {
-      (normalRoutePath, defaultCall.url)
+      (normalRoutePath, routes.ContractPackingController.onPageLoad(NormalMode).url)
     } else {
       (checkRoutePath, routes.ChangeActivityCYAController.onPageLoad.url)
     }
@@ -39,7 +43,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("changeActivity.howManyOperatePackagingSiteOwnBrands" + ".title"))
+              page.title mustBe "How many litres of your own brands will you package in the next 12 months? - Soft Drinks Industry Levy - GOV.UK"
               testLitresInBandsNoPrepopulatedData(page)
             }
           }
@@ -59,7 +63,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("changeActivity.howManyOperatePackagingSiteOwnBrands" + ".title"))
+              page.title mustBe "How many litres of your own brands will you package in the next 12 months? - Soft Drinks Industry Levy - GOV.UK"
               testLitresInBandsWithPrepopulatedData(page)
             }
           }
@@ -116,7 +120,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
       }
 
       "should return 400 with required error" - {
-        val errorTitle = "Error: " + Messages("changeActivity.howManyOperatePackagingSiteOwnBrands.title")
+        val errorTitle = "Error: How many litres of your own brands will you package in the next 12 months? - Soft Drinks Industry Levy - GOV.UK"
 
         "when no questions are answered" in {
           given

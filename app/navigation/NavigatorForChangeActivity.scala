@@ -61,7 +61,7 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
     } else if(mode == CheckMode){
         routes.ChangeActivityCYAController.onPageLoad
     } else {
-        defaultCall
+        routes.ContractPackingController.onPageLoad(mode)
     }
   }
 
@@ -75,7 +75,7 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
     case ImportsPage => userAnswers => navigationForImports(userAnswers, NormalMode)
     case HowManyImportsPage => userAnswers => defaultCall
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
-    case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => defaultCall
+    case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => routes.ContractPackingController.onPageLoad(NormalMode)
     case AmountProducedPage => userAnswers => defaultCall
     case _ => _ => defaultCall
   }
@@ -84,6 +84,7 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
     case ContractPackingPage => userAnswers => navigationForContractPacking(userAnswers, CheckMode)
     case ImportsPage => userAnswers => navigationForImports(userAnswers, CheckMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
+    case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.ChangeActivityCYAController.onPageLoad
     case _ => _ => routes.ChangeActivityCYAController.onPageLoad
   }
 }

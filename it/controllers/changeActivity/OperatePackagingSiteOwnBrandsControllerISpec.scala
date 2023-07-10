@@ -29,7 +29,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("changeActivity.operatePackagingSiteOwnBrands" + ".title"))
+            page.title mustBe "Do you operate any packaging sites in the UK to package liable drinks for brands you own? - Soft Drinks Industry Levy - GOV.UK"
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -55,7 +55,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("changeActivity.operatePackagingSiteOwnBrands" + ".title"))
+              page.title mustBe "Do you operate any packaging sites in the UK to package liable drinks for brands you own? - Soft Drinks Industry Levy - GOV.UK"
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -86,7 +86,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("changeActivity.operatePackagingSiteOwnBrands" + ".title"))
+            page.title mustBe "Do you operate any packaging sites in the UK to package liable drinks for brands you own? - Soft Drinks Industry Levy - GOV.UK"
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -112,7 +112,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("changeActivity.operatePackagingSiteOwnBrands" + ".title"))
+              page.title mustBe "Do you operate any packaging sites in the UK to package liable drinks for brands you own? - Soft Drinks Industry Levy - GOV.UK"
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -150,7 +150,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
                 val expectedLocation = if (yesSelected) {
                   routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
                 } else {
-                  defaultCall.url
+                  routes.ContractPackingController.onPageLoad(NormalMode).url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(OperatePackagingSiteOwnBrandsPage))
@@ -176,7 +176,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
                 val expectedLocation = if (yesSelected) {
                   routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
                 } else {
-                  defaultCall.url
+                  routes.ContractPackingController.onPageLoad(NormalMode).url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(OperatePackagingSiteOwnBrandsPage))
@@ -203,13 +203,14 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("changeActivity.operatePackagingSiteOwnBrands" + ".title"))
+            page.title mustBe
+              "Error: Do you operate any packaging sites in the UK to package liable drinks for brands you own? - Soft Drinks Industry Levy - GOV.UK"
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("changeActivity.operatePackagingSiteOwnBrands" + ".error.required")
+            errorSummary.text() mustBe "Select yes if you operate any packaging sites in the UK to package liable drinks for brands you own"
           }
         }
       }
@@ -292,13 +293,14 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("changeActivity.operatePackagingSiteOwnBrands" + ".title"))
+            page.title mustBe
+              "Error: Do you operate any packaging sites in the UK to package liable drinks for brands you own? - Soft Drinks Industry Levy - GOV.UK"
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("changeActivity.operatePackagingSiteOwnBrands" + ".error.required")
+            errorSummary.text() mustBe "Select yes if you operate any packaging sites in the UK to package liable drinks for brands you own"
           }
         }
       }
