@@ -20,7 +20,7 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.ThirdPartyPackagersFormProvider
 import handlers.ErrorHandler
-import models.Mode
+import models.{Mode, SelectChange}
 import navigation.NavigatorForChangeActivity
 import pages.changeActivity.ThirdPartyPackagersPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -36,9 +36,7 @@ class ThirdPartyPackagersController @Inject()(
                                                override val messagesApi: MessagesApi,
                                                val sessionService: SessionService,
                                                val navigator: NavigatorForChangeActivity,
-                                               identify: IdentifierAction,
-                                               getData: DataRetrievalAction,
-                                               requireData: DataRequiredAction,
+                                               controllerActions: ControllerActions,
                                                formProvider: ThirdPartyPackagersFormProvider,
                                                val controllerComponents: MessagesControllerComponents,
                                                view: ThirdPartyPackagersView,
@@ -48,7 +46,7 @@ class ThirdPartyPackagersController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(ThirdPartyPackagersPage) match {
@@ -59,9 +57,8 @@ class ThirdPartyPackagersController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity).async {
     implicit request =>
-
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),

@@ -80,8 +80,7 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
       case pageAnswers if pageAnswers.contains(Large)  =>
         routes.OperatePackagingSiteOwnBrandsController.onPageLoad(mode)
       case pageAnswers if pageAnswers.contains(Small)  =>
-        routes.OperatePackagingSiteOwnBrandsController.onPageLoad(mode)
-        //routes.ThirdPartyPackagersController.onPageLoad(mode)
+        routes.ThirdPartyPackagersController.onPageLoad(mode)
       case pageAnswers if pageAnswers.contains(None)  =>
         routes.ContractPackingController.onPageLoad(mode)
     }
@@ -99,7 +98,7 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
     case HowManyImportsPage => userAnswers => defaultCall
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => routes.ContractPackingController.onPageLoad(NormalMode)
-    case AmountProducedPage => userAnswers => defaultCall
+    case AmountProducedPage => userAnswers => navigationForAmountProduced(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => defaultCall
     case AmountProducedPage => userAnswers => navigationForAmountProduced(userAnswers, NormalMode)
     case _ => _ => defaultCall
