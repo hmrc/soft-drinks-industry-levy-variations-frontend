@@ -46,8 +46,7 @@ class ImportsSummarySpec extends SpecBase {
 
         res.rows(1).key.content.asHtml mustBe Html("Litres in the low band")
         res.rows(1).key.classes mustBe ""
-        //      res.rows(1).value.content.asHtml mustBe Html("1,000")
-        res.rows(1).value.content.asHtml mustBe Html(lowLitres.toString)
+        res.rows(1).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(lowLitres))
         res.rows(1).value.classes.trim mustBe "govuk-!-text-align-right"
         res.rows(1).actions.head.items.head.href mustBe "/soft-drinks-industry-levy-variations-frontend/change-activity/change-how-many-imports-next-12-months"
         res.rows(1).actions.head.items.head.attributes mustBe Map("id" -> "change-lowband-litreage-imports")
@@ -57,8 +56,7 @@ class ImportsSummarySpec extends SpecBase {
 
         res.rows(highLitresRowIndex).key.content.asHtml mustBe Html("Litres in the high band")
         res.rows(highLitresRowIndex).key.classes mustBe ""
-        //      res.rows(highLitresRowIndex).value.content.asHtml mustBe Html("2,000")
-        res.rows(highLitresRowIndex).value.content.asHtml mustBe Html(highLitres.toString)
+        res.rows(highLitresRowIndex).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(highLitres))
         res.rows(highLitresRowIndex).value.classes.trim mustBe "govuk-!-text-align-right"
         res.rows(highLitresRowIndex).actions.head.items.head.href mustBe "/soft-drinks-industry-levy-variations-frontend/change-activity/change-how-many-imports-next-12-months"
         res.rows(highLitresRowIndex).actions.head.items.head.attributes mustBe Map("id" -> "change-highband-litreage-imports")
@@ -93,8 +91,7 @@ class ImportsSummarySpec extends SpecBase {
 
         res.rows(1).key.content.asHtml mustBe Html("Litres in the low band")
         res.rows(1).key.classes mustBe ""
-        //      res.rows(1).value.content.asHtml mustBe Html("1,000")
-        res.rows(1).value.content.asHtml mustBe Html(lowLitres.toString)
+        res.rows(1).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(lowLitres))
         res.rows(1).value.classes.trim mustBe "govuk-!-text-align-right"
         res.rows(1).actions mustBe None
 
@@ -102,8 +99,7 @@ class ImportsSummarySpec extends SpecBase {
 
         res.rows(highLitresRowIndex).key.content.asHtml mustBe Html("Litres in the high band")
         res.rows(highLitresRowIndex).key.classes mustBe ""
-        //      res.rows(highLitresRowIndex).value.content.asHtml mustBe Html("2,000")
-        res.rows(highLitresRowIndex).value.content.asHtml mustBe Html(highLitres.toString)
+        res.rows(highLitresRowIndex).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(highLitres))
         res.rows(highLitresRowIndex).value.classes.trim mustBe "govuk-!-text-align-right"
         res.rows(highLitresRowIndex).actions mustBe None
 
@@ -141,7 +137,6 @@ class ImportsSummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswersForChangeActivity
 
         val res = ImportsSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = includeLevyRows)
-        //      res.rows.size mustBe 0
         res.rows.size mustBe 1
       }
     })

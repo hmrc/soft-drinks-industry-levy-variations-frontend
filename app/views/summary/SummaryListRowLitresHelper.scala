@@ -54,7 +54,7 @@ trait SummaryListRowLitresHelper {
     } else {
       "litres.highBand"
     }
-    val value = HtmlFormat.escape(litres.toString).toString
+    val value = HtmlFormat.escape(java.text.NumberFormat.getInstance.format(litres)).toString
     SummaryListRow(
       key = key,
       value = ValueViewModel(HtmlContent(value)).withCssClass("govuk-!-text-align-right"),
