@@ -110,8 +110,8 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    testInvalidJourneyType(SelectChange.$packageName;format="cap"$, $className;format="decap"$Route)
-    testNoUserAnswersError($className;format="decap"$Route)
+    testInvalidJourneyType(SelectChange.$packageName;format="cap"$, howMany$className$Route)
+    testNoUserAnswersError(howMany$className$Route)
 
     "must fail if the setting of userAnswers fails" in {
 
