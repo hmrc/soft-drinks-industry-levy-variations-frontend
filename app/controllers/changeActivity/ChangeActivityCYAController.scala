@@ -41,7 +41,6 @@ class ChangeActivityCYAController @Inject()(
       val amountProducedSection: Seq[(String, SummaryList)] = Seq(
         "changeActivity.checkYourAnswers.amountProducedSection" -> SummaryList(Seq(AmountProducedSummary.row(request.userAnswers)).flatten)
       )
-//      TODO: Don't think 3rd party packagers is implemented
       val thirdPartyPackagersSection: Seq[(String, SummaryList)] = Seq.empty
       val operatePackingSiteOwnBrandsSection: Seq[(String, SummaryList)] = Seq(
         "changeActivity.checkYourAnswers.operatePackingSiteOwnBrandsSection" ->
@@ -57,7 +56,7 @@ class ChangeActivityCYAController @Inject()(
       )
 
       val alias: String = request.subscription.orgName
-//      TODO: Is return period required?
+//      TODO: Implement Return Period in DLS-8346
       val returnPeriod: String = "RETURN PERIOD"
       val sections = amountProducedSection ++ thirdPartyPackagersSection ++ operatePackingSiteOwnBrandsSection ++ contractPackingSection ++ importsSection
 

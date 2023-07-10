@@ -37,7 +37,6 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency {
       "changeActivity.checkYourAnswers.amountProducedSection" -> SummaryList(Seq(AmountProducedSummary.row(userAnswers)).flatten)
     )
 
-    //      TODO: Don't think 3rd party packagers is implemented
     def getThirdPartyPackagersSection(userAnswers: UserAnswers): Seq[(String, SummaryList)] = Seq.empty
 
     def getOperatePackingSiteOwnBrandsSection(userAnswers: UserAnswers): Seq[(String, SummaryList)] = Seq(
@@ -81,7 +80,7 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency {
                   status(result) mustEqual OK
                   contentAsString(result) mustEqual view(
                     aSubscription.orgName,
-                    //          TODO: Need to fix return period
+                    //      TODO: Implement Return Period in DLS-8346
                     "RETURN PERIOD",
                     list,
                     routes.ChangeActivityCYAController.onSubmit

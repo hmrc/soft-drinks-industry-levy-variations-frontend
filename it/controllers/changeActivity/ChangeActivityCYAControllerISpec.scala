@@ -55,7 +55,6 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
         amountProduced.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.AmountProducedController.onPageLoad(CheckMode).url
       }
     }
-    // TODO: Third party packaging
     def testThirdPartyPackagingSection(page: Document, thirdPartyPackagingValue: Option[Boolean]): Unit = {
 
     }
@@ -161,7 +160,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
                       res.status mustBe OK
                       val page = Jsoup.parse(res.body)
                       page.title must include(Messages("changeActivity.checkYourAnswers.title"))
-//                      TODO: Return period
+                      //      TODO: Implement Return Period in DLS-8346
                       page.getElementsByClass("govuk-caption-l").text() mustBe "Super Lemonade Plc - RETURN PERIOD"
                       page.getElementsByClass("govuk-summary-list").size() mustBe 4
                       testAmountProducedSection(page, amountProducedValue)
