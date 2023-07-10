@@ -46,7 +46,12 @@ object ChangeActivityCYAGenerators {
     }
 
     def withThirdPartyPackaging(thirdPartyPackaging: Option[Boolean] = None): ChangeActivityCYAUserAnswers = {
-      ChangeActivityCYAUserAnswers(userAnswers)
+      val userAnswersWithThirdPartyPackaging = thirdPartyPackaging match {
+        case Some(true) => userAnswers.set(ThirdPartyPackagersPage, true).success.value
+        case Some(false) => userAnswers.set(ThirdPartyPackagersPage, false).success.value
+        case None => userAnswers
+      }
+      ChangeActivityCYAUserAnswers(userAnswersWithThirdPartyPackaging)
     }
 
     def withOwnBrands(ownBrands: Option[Boolean] = None): ChangeActivityCYAUserAnswers = {
@@ -106,7 +111,7 @@ object ChangeActivityCYAGenerators {
     "" -> None
   )
 
-  val thirdPartyPackagingValues: Map[String, Option[Boolean]] = Map("" -> None)
+  val thirdPartyPackagingValues: Map[String, Option[Boolean]] = Map("using third party packagers" -> Some(true), "not using third party packagers" -> Some(false), "" -> None)
   val ownBrandsValues: Map[String, Option[Boolean]] = Map("producing own brands" -> Some(true), "not producing own brands" -> Some(false), "" -> None)
   val contractValues: Map[String, Option[Boolean]] = Map("contract packing" -> Some(true), "not contract packing" -> Some(false), "" -> None)
   val importValues: Map[String, Option[Boolean]] = Map("importing" -> Some(true), "not importing" -> Some(false), "" -> None)

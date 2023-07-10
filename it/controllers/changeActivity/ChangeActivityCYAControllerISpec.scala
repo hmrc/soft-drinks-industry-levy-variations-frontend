@@ -33,7 +33,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
             res.status mustBe OK
             val page = Jsoup.parse(res.body)
             page.title must include(Messages("changeActivity.checkYourAnswers.title"))
-            page.getElementsByClass("govuk-summary-list").size() mustBe 4
+            page.getElementsByClass("govuk-summary-list").size() mustBe 5
           }
         }
       }
@@ -56,11 +56,23 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
       }
     }
     def testThirdPartyPackagingSection(page: Document, thirdPartyPackagingValue: Option[Boolean]): Unit = {
+      val thirdPartyPackaging = page.getElementsByClass("govuk-summary-list").get(1).getElementsByClass("govuk-summary-list__row")
 
+      page.getElementsByTag("h2").get(1).text() mustBe "Third party packagers"
+      if (thirdPartyPackagingValue.nonEmpty) {
+        val answerToMatch = thirdPartyPackagingValue match {
+          case Some(true) => "Yes"
+          case Some(false) => "No"
+        }
+        thirdPartyPackaging.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe answerToMatch
+        thirdPartyPackaging.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change Third party packagers"
+        thirdPartyPackaging.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "Third party packagers"
+        thirdPartyPackaging.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.ThirdPartyPackagersController.onPageLoad(CheckMode).url
+      }
     }
     def testOwnBrandsSection(page: Document, ownBrandsValue: Option[Boolean]): Unit = {
-      page.getElementsByTag("h2").get(1).text() mustBe "Packaged in the UK"
-      val ownBrands = page.getElementsByClass("govuk-summary-list").get(1).getElementsByClass("govuk-summary-list__row")
+      page.getElementsByTag("h2").get(2).text() mustBe "Packaged in the UK"
+      val ownBrands = page.getElementsByClass("govuk-summary-list").get(2).getElementsByClass("govuk-summary-list__row")
 
       if (ownBrandsValue.nonEmpty) {
         ownBrands.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change do you operate any packaging sites in the UK to package liable drinks for brands you own?"
@@ -85,8 +97,8 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
       }
     }
     def testContractSection(page: Document, contractValue: Option[Boolean]): Unit = {
-      page.getElementsByTag("h2").get(2).text() mustBe "Package for customers"
-      val contractPacking = page.getElementsByClass("govuk-summary-list").get(2).getElementsByClass("govuk-summary-list__row")
+      page.getElementsByTag("h2").get(3).text() mustBe "Package for customers"
+      val contractPacking = page.getElementsByClass("govuk-summary-list").get(3).getElementsByClass("govuk-summary-list__row")
 
       if (contractValue.nonEmpty) {
         contractPacking.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?"
@@ -112,8 +124,8 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
 
     }
     def testImportSection(page: Document, importValue: Option[Boolean]): Unit = {
-      page.getElementsByTag("h2").get(3).text() mustBe "Brought into the UK"
-      val imports = page.getElementsByClass("govuk-summary-list").get(3).getElementsByClass("govuk-summary-list__row")
+      page.getElementsByTag("h2").get(4).text() mustBe "Brought into the UK"
+      val imports = page.getElementsByClass("govuk-summary-list").get(4).getElementsByClass("govuk-summary-list__row")
 
       if (importValue.nonEmpty) {
         imports.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change do you bring liable drinks into the UK from anywhere outside of the UK?"
@@ -162,7 +174,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
                       page.title must include(Messages("changeActivity.checkYourAnswers.title"))
                       //      TODO: Implement Return Period in DLS-8346
                       page.getElementsByClass("govuk-caption-l").text() mustBe "Super Lemonade Plc - RETURN PERIOD"
-                      page.getElementsByClass("govuk-summary-list").size() mustBe 4
+                      page.getElementsByClass("govuk-summary-list").size() mustBe 5
                       testAmountProducedSection(page, amountProducedValue)
                       testThirdPartyPackagingSection(page, thirdPartyPackagingValue)
                       testOwnBrandsSection(page, ownBrandsValue)

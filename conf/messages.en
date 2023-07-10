@@ -307,7 +307,7 @@ changeActivity.thirdPartyPackagers.title = Do you use any third parties in the U
 changeActivity.thirdPartyPackagers.heading = Do you use any third parties in the UK to package liable drinks on your behalf?
 changeActivity.thirdPartyPackagers.checkYourAnswersLabel = Use third party packagers?
 changeActivity.thirdPartyPackagers.error.required = Select yes if you use any third parties in the UK to package liable drinks on your behalf
-changeActivity.thirdPartyPackagers.change.hidden = change third party packagers
+changeActivity.thirdPartyPackagers.change.hidden = Third party packagers
 
 correctReturn.select.title = Which return do you need to correct?
 correctReturn.select.heading = Which return do you need to correct?

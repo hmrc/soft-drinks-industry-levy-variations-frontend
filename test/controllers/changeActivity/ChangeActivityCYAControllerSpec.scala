@@ -27,7 +27,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.SummaryListFluency
 import viewmodels.summary.changeActivity.AmountProducedSummary
 import views.html.changeActivity.ChangeActivityCYAView
-import views.summary.changeActivity.{ContractPackingSummary, ImportsSummary, OperatePackagingSiteOwnBrandsSummary}
+import views.summary.changeActivity.{ContractPackingSummary, ImportsSummary, OperatePackagingSiteOwnBrandsSummary, ThirdPartyPackagersSummary}
 
 class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency {
 
@@ -37,7 +37,9 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency {
       "changeActivity.checkYourAnswers.amountProducedSection" -> SummaryList(Seq(AmountProducedSummary.row(userAnswers)).flatten)
     )
 
-    def getThirdPartyPackagersSection(userAnswers: UserAnswers): Seq[(String, SummaryList)] = Seq.empty
+    def getThirdPartyPackagersSection(userAnswers: UserAnswers): Seq[(String, SummaryList)] = Seq(
+      "changeActivity.checkYourAnswers.thirdPartyPackagersSection" -> SummaryList(Seq(ThirdPartyPackagersSummary.row(userAnswers)).flatten)
+    )
 
     def getOperatePackingSiteOwnBrandsSection(userAnswers: UserAnswers): Seq[(String, SummaryList)] = Seq(
       "changeActivity.checkYourAnswers.operatePackingSiteOwnBrandsSection" ->

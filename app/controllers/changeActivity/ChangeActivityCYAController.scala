@@ -26,7 +26,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.summary.changeActivity.AmountProducedSummary
 import views.html.changeActivity.ChangeActivityCYAView
 import models.SelectChange.ChangeActivity
-import views.summary.changeActivity.{ContractPackingSummary, ImportsSummary, OperatePackagingSiteOwnBrandsSummary}
+import views.summary.changeActivity.{ContractPackingSummary, ImportsSummary, OperatePackagingSiteOwnBrandsSummary, ThirdPartyPackagersSummary}
 
 class ChangeActivityCYAController @Inject()(
                                             override val messagesApi: MessagesApi,
@@ -41,7 +41,9 @@ class ChangeActivityCYAController @Inject()(
       val amountProducedSection: Seq[(String, SummaryList)] = Seq(
         "changeActivity.checkYourAnswers.amountProducedSection" -> SummaryList(Seq(AmountProducedSummary.row(request.userAnswers)).flatten)
       )
-      val thirdPartyPackagersSection: Seq[(String, SummaryList)] = Seq.empty
+      val thirdPartyPackagersSection: Seq[(String, SummaryList)] = Seq(
+        "changeActivity.checkYourAnswers.thirdPartyPackagersSection" -> SummaryList(Seq(ThirdPartyPackagersSummary.row(request.userAnswers)).flatten)
+      )
       val operatePackingSiteOwnBrandsSection: Seq[(String, SummaryList)] = Seq(
         "changeActivity.checkYourAnswers.operatePackingSiteOwnBrandsSection" ->
           OperatePackagingSiteOwnBrandsSummary.summaryList(request.userAnswers, isCheckAnswers = true, includeLevyRows = false)
