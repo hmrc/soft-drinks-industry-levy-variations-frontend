@@ -51,13 +51,13 @@ class ThirdPartyPackagersViewSpec extends ViewSpecHelper {
     val html = view(form, NormalMode)(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
-      document.title() must include(Messages("changeActivity.thirdPartyPackagers" + ".title"))
+      document.title() must include(Messages("Do you use any third parties in the UK to package liable drinks on your behalf?"))
     }
 
     "should include a legend with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("changeActivity.thirdPartyPackagers.heading")
+      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("Do you use any third parties in the UK to package liable drinks on your behalf?")
     }
 
     "when the form is not preoccupied and has no errors" - {
@@ -209,7 +209,7 @@ class ThirdPartyPackagersViewSpec extends ViewSpecHelper {
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
-        val titleMessage = Messages("changeActivity.thirdPartyPackagers.title")
+        val titleMessage = Messages("Do you use any third parties in the UK to package liable drinks on your behalf?")
         documentWithErrors.title must include("Error: " + titleMessage)
       }
 
@@ -220,7 +220,7 @@ class ThirdPartyPackagersViewSpec extends ViewSpecHelper {
         errorSummary
           .select("a")
           .attr("href") mustBe "#value"
-        errorSummary.text() mustBe Messages("changeActivity.thirdPartyPackagers.error.required")
+        errorSummary.text() mustBe Messages("Select yes if you use any third parties in the UK to package liable drinks on your behalf")
       }
     }
 
