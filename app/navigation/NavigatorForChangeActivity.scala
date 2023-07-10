@@ -17,6 +17,7 @@
 package navigation
 
 import controllers.changeActivity.routes
+import models.changeActivity.AmountProduced._
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages.Page
 import pages.changeActivity._
@@ -73,6 +74,18 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
     }
   }
 
+  private def navigationForAmountProduced (userAnswers: UserAnswers, mode: Mode): Call = {
+    val pageAnswers = userAnswers.get(page = AmountProducedPage)
+    pageAnswers match {
+      case pageAnswers if pageAnswers.contains(Large)  =>
+        routes.OperatePackagingSiteOwnBrandsController.onPageLoad(mode)
+      case pageAnswers if pageAnswers.contains(Small)  =>
+        routes.ThirdPartyPackagersController.onPageLoad(mode)
+      case pageAnswers if pageAnswers.contains(None)  =>
+        routes.ContractPackingController.onPageLoad(mode)
+    }
+  }
+
   override val normalRoutes: Page => UserAnswers => Call = {
     case ThirdPartyPackagersPage => _ => navigationForOperateThirdPartyPackagers(NormalMode)
     case PackAtBusinessAddressPage => userAnswers => defaultCall
@@ -85,7 +98,9 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
     case HowManyImportsPage => userAnswers => defaultCall
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => routes.ContractPackingController.onPageLoad(NormalMode)
-    case AmountProducedPage => userAnswers => defaultCall
+    case AmountProducedPage => userAnswers => navigationForAmountProduced(userAnswers, NormalMode)
+    case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => defaultCall
+    case AmountProducedPage => userAnswers => navigationForAmountProduced(userAnswers, NormalMode)
     case _ => _ => defaultCall
   }
 
