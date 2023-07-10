@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package forms.updateRegisteredAccount
+package pages.correctReturn
 
-import javax.inject.Inject
+import models.ReturnPeriod
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import play.api.libs.json.JsPath
+import pages.QuestionPage
 
-class RemoveWarehouseDetailsFormProvider @Inject() extends Mappings {
+case object SelectPage extends QuestionPage[ReturnPeriod] {
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("updateRegisteredAccount.removeWarehouseDetails.error.required")
-    )
+  override def path: JsPath = JsPath \ journeyType \ toString
+
+  def journeyType: String = "correctReturn"
+  override def toString: String = "select"
 }

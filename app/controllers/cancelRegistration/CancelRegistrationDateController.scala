@@ -16,29 +16,27 @@
 
 package controllers.cancelRegistration
 
-import utilities.GenericLogger
 import controllers.ControllerHelper
 import controllers.actions._
 import forms.cancelRegistration.CancelRegistrationDateFormProvider
-import javax.inject.Inject
-import models.Mode
+import handlers.ErrorHandler
+import models.{Mode, SelectChange}
+import navigation._
 import pages.cancelRegistration.CancelRegistrationDatePage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
+import utilities.GenericLogger
 import views.html.cancelRegistration.CancelRegistrationDateView
-import handlers.ErrorHandler
-import navigation._
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class CancelRegistrationDateController @Inject()(
                                        override val messagesApi: MessagesApi,
                                        val sessionService: SessionService,
                                        val navigator: NavigatorForCancelRegistration,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
+                                       controllerActions: ControllerActions,
                                        formProvider: CancelRegistrationDateFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: CancelRegistrationDateView,
@@ -48,7 +46,7 @@ class CancelRegistrationDateController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(CancelRegistrationDatePage) match {
@@ -59,7 +57,7 @@ class CancelRegistrationDateController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration).async {
     implicit request =>
 
       form.bindFromRequest().fold(

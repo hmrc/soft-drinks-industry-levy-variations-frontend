@@ -20,8 +20,7 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.SecondaryWarehouseDetailsFormProvider
 import handlers.ErrorHandler
-import models.backend.UkAddress
-import models.{Mode, Warehouse}
+import models.{Mode, SelectChange}
 import navigation._
 import pages.changeActivity.SecondaryWarehouseDetailsPage
 import play.api.i18n.MessagesApi
@@ -40,9 +39,7 @@ class SecondaryWarehouseDetailsController @Inject()(
                                        override val messagesApi: MessagesApi,
                                        val sessionService: SessionService,
                                        val navigator: NavigatorForChangeActivity,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
+                                       controllerActions: ControllerActions,
                                        formProvider: SecondaryWarehouseDetailsFormProvider,
                                        addressLookupService: AddressLookupService,
                                        val controllerComponents: MessagesControllerComponents,
@@ -53,7 +50,7 @@ class SecondaryWarehouseDetailsController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(SecondaryWarehouseDetailsPage) match {
@@ -71,7 +68,7 @@ class SecondaryWarehouseDetailsController @Inject()(
       Ok(view(preparedForm, mode, summaryList))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity).async {
     implicit request =>
       val summaryList: Option[SummaryList] = request.userAnswers.warehouseList match {
         case warehouseList if warehouseList.nonEmpty => Some(SummaryListViewModel(

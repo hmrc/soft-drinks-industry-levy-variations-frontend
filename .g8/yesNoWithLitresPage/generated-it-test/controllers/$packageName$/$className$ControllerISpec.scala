@@ -1,7 +1,7 @@
 package controllers.$packageName$
 
 import controllers.ControllerITTestHelper
-import models.{CheckMode, NormalMode}
+import models.{CheckMode, NormalMode, SelectChange}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.$packageName$.$className$Page

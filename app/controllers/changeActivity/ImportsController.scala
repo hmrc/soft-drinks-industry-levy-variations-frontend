@@ -20,9 +20,10 @@ import utilities.GenericLogger
 import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.ImportsFormProvider
+
 import javax.inject.Inject
-import models.Mode
-import pages.changeActivity.{ImportsPage, HowManyImportsPage}
+import models.{Mode, SelectChange}
+import pages.changeActivity.{HowManyImportsPage, ImportsPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
@@ -36,9 +37,7 @@ class ImportsController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          val sessionService: SessionService,
                                          val navigator: NavigatorForChangeActivity,
-                                         identify: IdentifierAction,
-                                         getData: DataRetrievalAction,
-                                         requireData: DataRequiredAction,
+                                         controllerActions: ControllerActions,
                                          formProvider: ImportsFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: ImportsView,
@@ -48,7 +47,7 @@ class ImportsController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(ImportsPage) match {
@@ -59,7 +58,7 @@ class ImportsController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity).async {
     implicit request =>
 
       form.bindFromRequest().fold(

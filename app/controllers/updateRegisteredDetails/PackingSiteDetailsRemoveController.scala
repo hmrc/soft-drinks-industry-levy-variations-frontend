@@ -16,33 +16,30 @@
 
 package controllers.updateRegisteredDetails
 
-import utilities.GenericLogger
-import controllers.{ControllerHelper, routes}
 import controllers.actions._
+import controllers.{ControllerHelper, routes}
 import forms.updateRegisteredDetails.PackingSiteDetailsRemoveFormProvider
-
-import javax.inject.Inject
-import models.{Mode, UserAnswers}
+import handlers.ErrorHandler
+import models.backend.Site
+import models.{Mode, SelectChange, UserAnswers}
+import navigation._
 import pages.updateRegisteredDetails.PackingSiteDetailsRemovePage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.SessionService
-import views.html.updateRegisteredDetails.PackingSiteDetailsRemoveView
-import viewmodels.AddressFormattingHelper
-import handlers.ErrorHandler
-import models.backend.Site
-
-import scala.concurrent.{ExecutionContext, Future}
-import navigation._
 import play.twirl.api.Html
+import services.SessionService
+import utilities.GenericLogger
+import viewmodels.AddressFormattingHelper
+import views.html.updateRegisteredDetails.PackingSiteDetailsRemoveView
+
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class PackingSiteDetailsRemoveController @Inject()(
                                        override val messagesApi: MessagesApi,
                                        val sessionService: SessionService,
                                        val navigator: NavigatorForUpdateRegisteredDetails,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
+                                       controllerActions: ControllerActions,
                                        formProvider: PackingSiteDetailsRemoveFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: PackingSiteDetailsRemoveView,
@@ -52,7 +49,7 @@ class PackingSiteDetailsRemoveController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: String): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode, index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.UpdateRegisteredDetails) {
     implicit request =>
       request.userAnswers.packagingSiteList.get(index) match {
         case Some(site) =>
@@ -64,7 +61,7 @@ class PackingSiteDetailsRemoveController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode, index: String): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode, index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.UpdateRegisteredDetails).async {
     implicit request =>
       val warehouseToRemove: Option[Site] = request.userAnswers.packagingSiteList.get(index)
       warehouseToRemove match {

@@ -17,8 +17,8 @@
 package controllers.changeActivity
 
 import base.SpecBase
-import controllers.routes._
 import controllers.changeActivity.routes._
+import models.SelectChange
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -31,7 +31,7 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
 
       running(application) {
         val request = FakeRequest(GET, ChangeActivityCYAController.onPageLoad.url)
@@ -46,18 +46,7 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency {
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, ChangeActivityCYAController.onPageLoad.url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual JourneyRecoveryController.onPageLoad().url
-      }
-    }
+    testInvalidJourneyType(SelectChange.ChangeActivity, ChangeActivityCYAController.onPageLoad.url, false)
+    testNoUserAnswersError(ChangeActivityCYAController.onPageLoad.url, false)
   }
 }

@@ -74,6 +74,14 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     http.GET[List[FinancialLineItem]](s"$sdilUrl/balance/$sdilRef/history/all/$withAssessment")
   }
 
+  def returns_variable(
+                        utr: String
+                      )(implicit hc: HeaderCarrier): Future[Option[List[ReturnPeriod]]] =
+    http.GET[Option[List[ReturnPeriod]]](s"$sdilUrl/returns/$utr/variable").map {
+      case Some(a) => Some(a)
+      case _ => None
+    }
+
   def returns_pending(utr: String)(implicit hc: HeaderCarrier): Future[Option[List[ReturnPeriod]]] =
     http.GET[Option[List[ReturnPeriod]]](s"$sdilUrl/returns/$utr/pending").map {
       case Some(a) => Some(a)

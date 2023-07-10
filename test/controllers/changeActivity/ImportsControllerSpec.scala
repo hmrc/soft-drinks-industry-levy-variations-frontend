@@ -18,7 +18,7 @@ package controllers.changeActivity
 
 import base.SpecBase
 import forms.changeActivity.ImportsFormProvider
-import models.NormalMode
+import models.{NormalMode, SelectChange}
 import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -32,6 +32,7 @@ import services.SessionService
 import views.html.changeActivity.ImportsView
 import utilities.GenericLogger
 import errors.SessionDatabaseInsertError
+
 import scala.concurrent.Future
 import org.jsoup.Jsoup
 
@@ -126,39 +127,12 @@ class ImportsControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, importsRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual recoveryCall.url
-      }
-    }
-
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, importsRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual recoveryCall.url
-      }
-    }
+    testInvalidJourneyType(SelectChange.ChangeActivity, importsRoute)
+    testNoUserAnswersError(importsRoute)
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure)).build()
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(SelectChange.ChangeActivity))).build()
 
       running(application) {
         val request =

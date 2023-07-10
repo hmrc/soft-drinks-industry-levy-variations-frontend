@@ -19,7 +19,7 @@ package controllers.changeActivity
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import forms.changeActivity.PackAtBusinessAddressFormProvider
-import models.{NormalMode, RetrievedSubscription}
+import models.{NormalMode, RetrievedSubscription, SelectChange}
 import navigation._
 import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
 import org.mockito.Mockito.when
@@ -149,35 +149,8 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, packAtBusinessAddressRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual recoveryCall.url
-      }
-    }
-
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, packAtBusinessAddressRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual recoveryCall.url
-      }
-    }
+    testInvalidJourneyType(SelectChange.ChangeActivity, packAtBusinessAddressRoute)
+    testNoUserAnswersError(packAtBusinessAddressRoute)
 
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionService = mock[SessionService]

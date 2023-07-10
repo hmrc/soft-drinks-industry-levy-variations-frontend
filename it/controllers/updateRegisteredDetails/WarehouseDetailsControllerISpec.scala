@@ -1,7 +1,7 @@
 package controllers.updateRegisteredDetails
 
 import controllers.ControllerITTestHelper
-import models.Warehouse
+import models.{SelectChange, Warehouse}
 import models.backend.UkAddress
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
@@ -106,7 +106,9 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
       }
     }
     testUnauthorisedUser(updateRegisteredDetailsBaseUrl + normalRoutePath)
-    testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + normalRoutePath)  }
+    testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl + normalRoutePath)
+  }
 
   s"GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
@@ -170,6 +172,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
     testUnauthorisedUser(updateRegisteredDetailsBaseUrl + checkRoutePath)
     testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + checkRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl + checkRoutePath)
   }
 
   s"POST " + normalRoutePath - {
@@ -248,6 +251,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(updateRegisteredDetailsBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
   }
 
   s"POST " + checkRoutePath - {
@@ -326,5 +330,6 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(updateRegisteredDetailsBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
   }
 }

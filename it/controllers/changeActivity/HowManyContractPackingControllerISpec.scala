@@ -1,7 +1,7 @@
 package controllers.changeActivity
 
 import controllers.LitresISpecHelper
-import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
+import models.{CheckMode, LitresInBands, NormalMode, SelectChange, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import pages.changeActivity.HowManyContractPackingPage
@@ -18,7 +18,7 @@ class HowManyContractPackingControllerISpec extends LitresISpecHelper {
 
   List(NormalMode, CheckMode).foreach { mode =>
     val (path, redirectLocation) = if(mode == NormalMode) {
-      (normalRoutePath, defaultCall.url)
+      (normalRoutePath, routes.ImportsController.onPageLoad(NormalMode).url)
     } else {
       (checkRoutePath, routes.ChangeActivityCYAController.onPageLoad.url)
     }
@@ -67,6 +67,7 @@ class HowManyContractPackingControllerISpec extends LitresISpecHelper {
       }
       testUnauthorisedUser(changeActivityBaseUrl + path)
       testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + path)
+      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + path)
     }
 
     s"POST " + path - {
@@ -211,6 +212,7 @@ class HowManyContractPackingControllerISpec extends LitresISpecHelper {
 
       testUnauthorisedUser(changeActivityBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
       testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
+      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
     }
   }
 }

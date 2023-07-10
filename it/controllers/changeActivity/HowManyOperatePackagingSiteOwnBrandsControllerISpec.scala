@@ -1,7 +1,11 @@
 package controllers.changeActivity
 
 import controllers.LitresISpecHelper
+
 import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
+
+import models.{CheckMode, LitresInBands, NormalMode, SelectChange}
+
 import org.jsoup.Jsoup
 import pages.changeActivity.HowManyOperatePackagingSiteOwnBrandsPage
 import play.api.http.HeaderNames
@@ -67,6 +71,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
       }
       testUnauthorisedUser(changeActivityBaseUrl + path)
       testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + path)
+      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + path)
     }
 
     s"POST " + path - {
@@ -210,6 +215,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
 
       testUnauthorisedUser(changeActivityBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
       testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
+      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
     }
   }
 }

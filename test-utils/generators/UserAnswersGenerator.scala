@@ -31,6 +31,7 @@ trait UserAnswersGenerator extends TryValues {
   self: Generators =>
 
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
+    arbitrary[(correctReturn.SelectPage.type, JsValue)] ::
     arbitrary[(changeActivity.PackAtBusinessAddressPage.type, JsValue)] ::
     arbitrary[(changeActivity.PackagingSiteDetailsPage.type, JsValue)] ::
     arbitrary[(changeActivity.RemovePackagingSiteDetailsPage.type, JsValue)] ::
@@ -62,7 +63,7 @@ trait UserAnswersGenerator extends TryValues {
         }
       } yield UserAnswers (
         id = id,
-        journeyType = SelectChange.UpdateRegisteredAccount,
+        journeyType = SelectChange.UpdateRegisteredDetails,
         data = data.foldLeft(Json.obj()) {
           case (obj, (path, value)) =>
             obj.setObject(path.path, value).get

@@ -20,7 +20,7 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.updateRegisteredDetails.PackagingSiteDetailsFormProvider
 import handlers.ErrorHandler
-import models.Mode
+import models.{Mode, SelectChange}
 import navigation._
 import pages.updateRegisteredDetails.PackagingSiteDetailsPage
 import play.api.i18n.MessagesApi
@@ -29,8 +29,8 @@ import services.SessionService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
-import views.summary.updateRegisteredDetails.PackagingSiteDetailsSummary
 import views.html.updateRegisteredDetails.PackagingSiteDetailsView
+import views.summary.updateRegisteredDetails.PackagingSiteDetailsSummary
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,9 +39,7 @@ class PackagingSiteDetailsController @Inject()(
                                        override val messagesApi: MessagesApi,
                                        val sessionService: SessionService,
                                        val navigator: NavigatorForUpdateRegisteredDetails,
-                                       identify: IdentifierAction,
-                                       getData: DataRetrievalAction,
-                                       requireData: DataRequiredAction,
+                                       controllerActions: ControllerActions,
                                        formProvider: PackagingSiteDetailsFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: PackagingSiteDetailsView,
@@ -51,7 +49,7 @@ class PackagingSiteDetailsController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.UpdateRegisteredDetails) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(PackagingSiteDetailsPage) match {
@@ -66,7 +64,7 @@ class PackagingSiteDetailsController @Inject()(
       Ok(view(preparedForm, mode, siteList))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.UpdateRegisteredDetails).async {
     implicit request =>
 
 

@@ -111,7 +111,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
       val warehouses = Map("1" -> warehouse, "2" -> Warehouse(Some("DEF Ltd"), UkAddress(List("34 Rhes Priordy"),"WR53 7CX")))
       val summaryList = Some(SummaryListViewModel(rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouses)))
 
-      val userAnswers = UserAnswers(userAnswersId, SelectChange.Changeactivity, warehouseList = warehouses)
+      val userAnswers = UserAnswers(userAnswersId, SelectChange.ChangeActivity, warehouseList = warehouses)
         .set(SecondaryWarehouseDetailsPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -200,39 +200,12 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, warehouseDetailsRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual recoveryCall.url
-      }
-    }
-
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, warehouseDetailsRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual recoveryCall.url
-      }
-    }
+    testInvalidJourneyType(SelectChange.ChangeActivity, warehouseDetailsRoute)
+    testNoUserAnswersError(warehouseDetailsRoute)
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure)).build()
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(SelectChange.ChangeActivity))).build()
 
       running(application) {
         val request =

@@ -18,7 +18,7 @@ package controllers.cancelRegistration
 
 import base.SpecBase
 import controllers.cancelRegistration.routes._
-import controllers.routes._
+import models.SelectChange
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -27,14 +27,16 @@ import views.html.cancelRegistration.CancelRegistrationCYAView
 
 class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluency {
 
+  val cyaRoute = CancelRegistrationCYAController.onPageLoad.url
+
   "Check Your Answers Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCancelRegistration)).build()
 
       running(application) {
-        val request = FakeRequest(GET, CancelRegistrationCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, cyaRoute)
 
         val result = route(application, request).value
 
@@ -46,18 +48,7 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, CancelRegistrationCYAController.onPageLoad.url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual JourneyRecoveryController.onPageLoad().url
-      }
-    }
+    testInvalidJourneyType(SelectChange.CancelRegistration, CancelRegistrationCYAController.onPageLoad.url, false)
+    testNoUserAnswersError(CancelRegistrationCYAController.onPageLoad.url, false)
   }
 }

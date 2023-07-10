@@ -33,24 +33,27 @@ trait RadiosFluency {
     def apply(
                field: Field,
                items: Seq[RadioItem],
-               legend: Legend
+               legend: Legend,
+               noErrorRequired: Boolean = false
              )(implicit messages: Messages): Radios =
       apply(
         field    = field,
         items    = items,
-        fieldset = FieldsetViewModel(legend)
+        fieldset = FieldsetViewModel(legend),
+        noError = noErrorRequired
       )
 
     def apply(
                field: Field,
                items: Seq[RadioItem],
-               fieldset: Fieldset
+               fieldset: Fieldset,
+               noError: Boolean
              )(implicit messages: Messages): Radios =
       Radios(
         fieldset     = Some(fieldset),
         name         = field.name,
         items        = items map (item => item copy (checked = field.value.isDefined && field.value == item.value)),
-        errorMessage = errorMessage(field)
+        errorMessage = if(noError) None else {errorMessage(field)}
       )
 
     def yesNo(
@@ -86,13 +89,15 @@ trait RadiosFluency {
         apply(
           field = field,
           fieldset = fieldset,
-          items = items
+          items = items,
+          noError = false
         ).inline().withHint(hint.get)
       } else {
         apply(
           field = field,
           fieldset = fieldset,
-          items = items
+          items = items,
+          noError = false
         ).inline()
       }
 

@@ -1,7 +1,7 @@
 package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
-import models.{CheckMode, NormalMode}
+import models.{CheckMode, NormalMode, SelectChange}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import pages.changeActivity.ContractPackingPage
@@ -70,6 +70,7 @@ class ContractPackingControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(changeActivityBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + normalRoutePath)
   }
 
   s"GET " + checkRoutePath - {
@@ -129,12 +130,13 @@ class ContractPackingControllerISpec extends ControllerITTestHelper {
 
     testUnauthorisedUser(changeActivityBaseUrl + checkRoutePath)
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + checkRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + checkRoutePath)
   }
 
   s"POST " + normalRoutePath - {
     userAnswersForChangeActivityContractPackingPage.foreach { case (key, userAnswers) =>
       "when the user selects " + key - {
-        "should update the session with the new value and redirect to the index controller" - {
+        "should update the session with the new value and redirect to the HowManyContractPacking controller" - {
           "when the session contains no data for page" in {
             given
               .commonPrecondition
@@ -151,7 +153,7 @@ class ContractPackingControllerISpec extends ControllerITTestHelper {
                 val expectedLocation = if (yesSelected) {
                   routes.HowManyContractPackingController.onPageLoad(NormalMode).url
                 } else {
-                  defaultCall.url
+                  routes.ImportsController.onPageLoad(NormalMode).url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ContractPackingPage))
@@ -177,7 +179,7 @@ class ContractPackingControllerISpec extends ControllerITTestHelper {
                 val expectedLocation = if (yesSelected) {
                   routes.HowManyContractPackingController.onPageLoad(NormalMode).url
                 } else {
-                  defaultCall.url
+                  routes.ImportsController.onPageLoad(NormalMode).url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ContractPackingPage))
@@ -219,6 +221,7 @@ class ContractPackingControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(changeActivityBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
   }
 
   s"POST " + checkRoutePath - {
@@ -309,5 +312,6 @@ class ContractPackingControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(changeActivityBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
   }
 }

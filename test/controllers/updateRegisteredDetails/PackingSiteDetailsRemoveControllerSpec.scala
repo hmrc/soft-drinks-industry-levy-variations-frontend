@@ -17,25 +17,24 @@
 package controllers.updateRegisteredDetails
 
 import base.SpecBase
+import errors.SessionDatabaseInsertError
 import forms.updateRegisteredDetails.PackingSiteDetailsRemoveFormProvider
-import models.{NormalMode, UserAnswers}
+import models.backend.{Site, UkAddress}
+import models.{NormalMode, SelectChange, UserAnswers}
 import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.updateRegisteredDetails.PackingSiteDetailsRemovePage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
-import views.html.updateRegisteredDetails.PackingSiteDetailsRemoveView
 import utilities.GenericLogger
-import errors.SessionDatabaseInsertError
-import models.backend.{Site, UkAddress}
+import viewmodels.AddressFormattingHelper
+import views.html.updateRegisteredDetails.PackingSiteDetailsRemoveView
 
 import scala.concurrent.Future
-import viewmodels.AddressFormattingHelper
 
 class PackingSiteDetailsRemoveControllerSpec extends SpecBase with MockitoSugar {
 
@@ -120,35 +119,8 @@ class PackingSiteDetailsRemoveControllerSpec extends SpecBase with MockitoSugar 
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, packingSiteDetailsRemoveRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual recoveryCall.url
-      }
-    }
-
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, packingSiteDetailsRemoveRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual recoveryCall.url
-      }
-    }
+    testInvalidJourneyType(SelectChange.UpdateRegisteredDetails, packingSiteDetailsRemoveRoute)
+    testNoUserAnswersError(packingSiteDetailsRemoveRoute)
 
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionService = mock[SessionService]

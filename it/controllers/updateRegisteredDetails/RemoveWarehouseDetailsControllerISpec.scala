@@ -1,7 +1,7 @@
 package controllers.updateRegisteredDetails
 
 import controllers.ControllerITTestHelper
-import models.{NormalMode, Warehouse}
+import models.Warehouse
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.updateRegisteredDetails.RemoveWarehouseDetailsPage

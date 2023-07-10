@@ -1,6 +1,7 @@
 package controllers.cancelRegistration
 
 import controllers.ControllerITTestHelper
+import models.SelectChange
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.cancelRegistration.CancelRegistrationDatePage
@@ -81,6 +82,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
 
     testUnauthorisedUser(cancelRegistrationBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(cancelRegistrationBaseUrl + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.CancelRegistration, cancelRegistrationBaseUrl + normalRoutePath)
   }
 
   "GET " + checkRoutePath - {
@@ -139,6 +141,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
 
     testUnauthorisedUser(cancelRegistrationBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(cancelRegistrationBaseUrl + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.CancelRegistration, cancelRegistrationBaseUrl + checkRoutePath)
   }
 
   s"POST " + normalRoutePath - {
@@ -310,6 +313,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(cancelRegistrationBaseUrl + normalRoutePath, Some(Json.obj("cancelRegistrationDate" -> "true")))
     testAuthenticatedUserButNoUserAnswers(cancelRegistrationBaseUrl + normalRoutePath, Some(Json.obj("cancelRegistrationDate" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.CancelRegistration, cancelRegistrationBaseUrl + normalRoutePath, Some(Json.obj("cancelRegistrationDate" -> "true")))
   }
 
   s"POST " + checkRoutePath - {
@@ -481,5 +485,6 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(cancelRegistrationBaseUrl + normalRoutePath, Some(Json.obj("cancelRegistrationDate" -> "true")))
     testAuthenticatedUserButNoUserAnswers(cancelRegistrationBaseUrl + normalRoutePath, Some(Json.obj("cancelRegistrationDate" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.CancelRegistration, cancelRegistrationBaseUrl + checkRoutePath, Some(Json.obj("cancelRegistrationDate" -> "true")))
   }
 }

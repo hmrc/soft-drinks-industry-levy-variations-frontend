@@ -32,7 +32,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
       "must go from a page that doesn't exist in the route map to Index" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id", SelectChange.Changeactivity)) mustBe defaultCall
+        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id", SelectChange.ChangeActivity)) mustBe defaultCall
       }
     }
 

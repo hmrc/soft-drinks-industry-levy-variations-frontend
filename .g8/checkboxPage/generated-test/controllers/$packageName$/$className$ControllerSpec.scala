@@ -2,7 +2,7 @@ package controllers.$packageName$
 
 import base.SpecBase
 import forms.$packageName$.$className$FormProvider
-import models.NormalMode
+import models.{NormalMode, SelectChange}
 import models.$packageName$.$className$
 import navigation._
 import org.mockito.ArgumentMatchers.any
@@ -23,8 +23,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  lazy val $className;
-  format = "decap" $Route = routes.$className$Controller.onPageLoad(NormalMode).url
+  lazy val $className;format ="decap"$Route = routes.$className$Controller.onPageLoad(NormalMode).url
 
   val formProvider = new $className$FormProvider()
   val form = formProvider()
@@ -132,43 +131,12 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request = FakeRequest(GET, $className;
-        format = "decap" $Route
-        )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual recoveryCall.url
-      }
-    }
-
-    "must redirect to Journey Recovery for a POST if no existing data is found" in {
-
-      val application = applicationBuilder(userAnswers = None).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, $className;
-        format = "decap" $Route
-        )
-        .withFormUrlEncodedBody(("value[0]", $className$.values.head.toString))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual recoveryCall.url
-      }
-    }
+    testInvalidJourneyType(SelectChange.$packageName;format="cap"$, $className;format="decap"$Route)
+    testNoUserAnswersError($className;format="decap"$Route)
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure)).build()
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(SelectChange.$packageName;format="cap"$))).build()
 
       running(application) {
         val request =

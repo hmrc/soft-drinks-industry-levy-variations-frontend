@@ -103,7 +103,6 @@ trait TestConfiguration
       .configure(config ++ configParams)
       .overrides(
         bind[DataRetrievalAction].to[DataRetrievalActionImpl],
-        bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[AuthenticatedIdentifierAction],
         bind[Clock].toInstance(Clock.systemDefaultZone().withZone(ZoneOffset.UTC))
       )
