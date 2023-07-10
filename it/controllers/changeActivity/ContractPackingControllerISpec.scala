@@ -136,7 +136,7 @@ class ContractPackingControllerISpec extends ControllerITTestHelper {
   s"POST " + normalRoutePath - {
     userAnswersForChangeActivityContractPackingPage.foreach { case (key, userAnswers) =>
       "when the user selects " + key - {
-        "should update the session with the new value and redirect to the index controller" - {
+        "should update the session with the new value and redirect to the HowManyContractPacking controller" - {
           "when the session contains no data for page" in {
             given
               .commonPrecondition
@@ -153,7 +153,7 @@ class ContractPackingControllerISpec extends ControllerITTestHelper {
                 val expectedLocation = if (yesSelected) {
                   routes.HowManyContractPackingController.onPageLoad(NormalMode).url
                 } else {
-                  defaultCall.url
+                  routes.ImportsController.onPageLoad(NormalMode).url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ContractPackingPage))
@@ -179,7 +179,7 @@ class ContractPackingControllerISpec extends ControllerITTestHelper {
                 val expectedLocation = if (yesSelected) {
                   routes.HowManyContractPackingController.onPageLoad(NormalMode).url
                 } else {
-                  defaultCall.url
+                  routes.ImportsController.onPageLoad(NormalMode).url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ContractPackingPage))
