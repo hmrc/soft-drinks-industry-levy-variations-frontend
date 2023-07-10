@@ -21,7 +21,8 @@ import play.api.libs.json.JsPath
 
 case object ThirdPartyPackagersPage extends QuestionPage[Boolean] {
 
-  override def path: JsPath = JsPath \ toString
+  override def path: JsPath = JsPath \ journeyType \ toString
 
+  def journeyType: String = "changeActivity"
   override def toString: String = "thirdPartyPackagers"
 }
