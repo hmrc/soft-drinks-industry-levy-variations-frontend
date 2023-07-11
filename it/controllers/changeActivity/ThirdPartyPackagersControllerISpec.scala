@@ -1,11 +1,11 @@
 package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
-import controllers.changeActivity.routes
 import models.NormalMode
+import models.SelectChange.ChangeActivity
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.changeActivity.{ImportsPage, ThirdPartyPackagersPage}
+import pages.changeActivity.ThirdPartyPackagersPage
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.Json
@@ -68,7 +68,9 @@ class ThirdPartyPackagersControllerISpec extends ControllerITTestHelper {
       }
     }
     testUnauthorisedUser(changeActivityBaseUrl  + normalRoutePath)
-    testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl  + normalRoutePath)  }
+    testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl  + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl  + normalRoutePath)
+  }
 
   s"GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
@@ -125,6 +127,7 @@ class ThirdPartyPackagersControllerISpec extends ControllerITTestHelper {
 
     testUnauthorisedUser(changeActivityBaseUrl  + checkRoutePath)
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl  + checkRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl  + checkRoutePath)
   }
 
   s"POST " + normalRoutePath - {
@@ -202,6 +205,7 @@ class ThirdPartyPackagersControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(changeActivityBaseUrl  + normalRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl  + normalRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl  + normalRoutePath, Some(Json.obj("value" -> "true")))
   }
 
   s"POST " + checkRoutePath - {
@@ -280,5 +284,6 @@ class ThirdPartyPackagersControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(changeActivityBaseUrl  + checkRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl  + checkRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl  + checkRoutePath, Some(Json.obj("value" -> "true")))
   }
 }

@@ -17,9 +17,12 @@
 package controllers.changeActivity
 
 import base.SpecBase
+import errors.SessionDatabaseInsertError
 import forms.changeActivity.OperatePackagingSiteOwnBrandsFormProvider
-import models.{NormalMode, SelectChange}
+import models.NormalMode
+import models.SelectChange.ChangeActivity
 import navigation._
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -29,12 +32,10 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
-import views.html.changeActivity.OperatePackagingSiteOwnBrandsView
 import utilities.GenericLogger
-import errors.SessionDatabaseInsertError
+import views.html.changeActivity.OperatePackagingSiteOwnBrandsView
 
 import scala.concurrent.Future
-import org.jsoup.Jsoup
 
 class OperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with MockitoSugar {
 
@@ -127,12 +128,12 @@ class OperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with MockitoS
       }
     }
 
-    testInvalidJourneyType(SelectChange.ChangeActivity, operatePackagingSiteOwnBrandsRoute)
+    testInvalidJourneyType(ChangeActivity, operatePackagingSiteOwnBrandsRoute)
     testNoUserAnswersError(operatePackagingSiteOwnBrandsRoute)
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(SelectChange.ChangeActivity))).build()
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(ChangeActivity))).build()
 
       running(application) {
         val request =

@@ -1,12 +1,12 @@
 package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
-import models.{CheckMode, NormalMode, SelectChange}
+import models.SelectChange.ChangeActivity
+import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import pages.changeActivity.OperatePackagingSiteOwnBrandsPage
 import play.api.http.HeaderNames
-import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
 
@@ -69,7 +69,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
     }
     testUnauthorisedUser(changeActivityBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + normalRoutePath)
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + normalRoutePath)
   }
 
   s"GET " + checkRoutePath - {
@@ -127,7 +127,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
 
     testUnauthorisedUser(changeActivityBaseUrl + checkRoutePath)
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + checkRoutePath)
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + checkRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + checkRoutePath)
   }
 
   s"POST " + normalRoutePath - {
@@ -217,7 +217,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
     }
     testUnauthorisedUser(changeActivityBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
   }
 
   s"POST " + checkRoutePath - {
@@ -307,6 +307,6 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
     }
     testUnauthorisedUser(changeActivityBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
   }
 }

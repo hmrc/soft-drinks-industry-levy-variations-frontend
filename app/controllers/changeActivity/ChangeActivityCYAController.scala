@@ -18,12 +18,12 @@ package controllers.changeActivity
 
 import com.google.inject.Inject
 import controllers.actions.ControllerActions
-import models.SelectChange
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.changeActivity.ChangeActivityCYAView
+import models.SelectChange.ChangeActivity
 
 class ChangeActivityCYAController @Inject()(
                                             override val messagesApi: MessagesApi,
@@ -32,7 +32,7 @@ class ChangeActivityCYAController @Inject()(
                                             view: ChangeActivityCYAView
                                           ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity) {
+  def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
 
       val list: Seq[(String, SummaryList)] = Seq.empty

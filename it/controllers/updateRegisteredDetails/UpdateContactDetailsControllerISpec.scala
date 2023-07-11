@@ -1,7 +1,7 @@
 package controllers.updateRegisteredDetails
 
 import controllers.ControllerITTestHelper
-import models.SelectChange
+import models.SelectChange.UpdateRegisteredDetails
 import models.updateRegisteredDetails.UpdateContactDetails
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
@@ -82,7 +82,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(baseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(baseUrl + normalRoutePath)
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.UpdateRegisteredDetails, baseUrl + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, baseUrl + normalRoutePath)
   }
 
   "GET " + checkRoutePath - {
@@ -138,7 +138,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(baseUrl + checkRoutePath)
     testAuthenticatedUserButNoUserAnswers(baseUrl + checkRoutePath)
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.UpdateRegisteredDetails, baseUrl + checkRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, baseUrl + checkRoutePath)
   }
 
   s"POST " + normalRoutePath - {
@@ -251,7 +251,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
 
     testUnauthorisedUser(baseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(baseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.UpdateRegisteredDetails, baseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, baseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
   }
 
   s"POST " + checkRoutePath - {
@@ -364,6 +364,6 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
 
     testUnauthorisedUser(baseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(baseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.UpdateRegisteredDetails, baseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, baseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
   }
 }

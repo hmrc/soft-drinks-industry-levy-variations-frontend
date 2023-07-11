@@ -20,7 +20,8 @@ import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import errors.SessionDatabaseInsertError
 import forms.correctReturn.SelectFormProvider
-import models.{NormalMode, SelectChange}
+import models.NormalMode
+import models.SelectChange.CorrectReturn
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, anyString}
@@ -97,8 +98,6 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
         val request = FakeRequest(GET, selectRoute)
 
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[SelectView]
 
         status(result) mustEqual SEE_OTHER
 
@@ -217,12 +216,12 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
     }
 
 
-    testInvalidJourneyType(SelectChange.CorrectReturn, selectRoute)
+    testInvalidJourneyType(CorrectReturn, selectRoute)
     testNoUserAnswersError(selectRoute)
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(SelectChange.CorrectReturn))) .overrides(
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CorrectReturn))) .overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector),
         bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn (onwardRoute))
       )

@@ -18,7 +18,7 @@ package controllers.changeActivity
 
 import base.SpecBase
 import controllers.changeActivity.routes._
-import models.SelectChange
+import models.SelectChange.ChangeActivity
 import navigation._
 import play.api.inject
 import play.api.mvc.Call
@@ -69,7 +69,7 @@ class SuggestDeregistrationControllerSpec extends SpecBase {
       }
     }
 
-    testInvalidJourneyType(SelectChange.ChangeActivity, suggestDeregistrationRoute)
+    testInvalidJourneyType(ChangeActivity, suggestDeregistrationRoute)
     testNoUserAnswersError(suggestDeregistrationRoute)
   }
 }

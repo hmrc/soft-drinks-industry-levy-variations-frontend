@@ -5,7 +5,7 @@ import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import play.api.i18n.Messages
 import play.api.test.WsTestClient
 import controllers.ControllerITTestHelper
-import models.SelectChange
+import models.SelectChange.$packageName;format="cap"$
 class $className$ControllerISpec extends ControllerITTestHelper {
 
   val normalRoutePath = "/$url$"
@@ -29,7 +29,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser($packageName$BaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + normalRoutePath)
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.$packageName;format="cap"$, $packageName$BaseUrl + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType($packageName;format="cap"$, $packageName$BaseUrl + normalRoutePath)
 
   }
 }

@@ -1,7 +1,7 @@
 package controllers.$packageName$
 
 import controllers.ControllerITTestHelper
-import models.SelectChange
+import models.SelectChange.$packageName;format="cap"$
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.$packageName$.$className$Page
@@ -69,7 +69,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser($packageName$BaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + normalRoutePath)
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.$packageName;format="cap"$, $packageName$BaseUrl + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType($packageName;format="cap"$, $packageName$BaseUrl + normalRoutePath)
   }
 
   s"GET " + checkRoutePath - {
@@ -127,7 +127,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
 
     testUnauthorisedUser($packageName$BaseUrl + checkRoutePath)
     testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + checkRoutePath)
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.$packageName;format="cap"$, $packageName$BaseUrl + checkRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType($packageName;format="cap"$, $packageName$BaseUrl + checkRoutePath)
 
   }
 
@@ -207,7 +207,7 @@ class $className$ControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser($packageName$BaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.$packageName;format="cap"$, $packageName$BaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType($packageName;format="cap"$, $packageName$BaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
 
   }
 
@@ -287,6 +287,6 @@ class $className$ControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser($packageName$BaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.$packageName;format="cap"$, $packageName$BaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType($packageName;format="cap"$, $packageName$BaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
   }
 }

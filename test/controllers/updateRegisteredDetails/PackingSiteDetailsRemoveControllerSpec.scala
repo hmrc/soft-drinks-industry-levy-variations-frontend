@@ -19,8 +19,9 @@ package controllers.updateRegisteredDetails
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.updateRegisteredDetails.PackingSiteDetailsRemoveFormProvider
+import models.SelectChange.UpdateRegisteredDetails
 import models.backend.{Site, UkAddress}
-import models.{NormalMode, SelectChange, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -119,7 +120,7 @@ class PackingSiteDetailsRemoveControllerSpec extends SpecBase with MockitoSugar 
       }
     }
 
-    testInvalidJourneyType(SelectChange.UpdateRegisteredDetails, packingSiteDetailsRemoveRoute)
+    testInvalidJourneyType(UpdateRegisteredDetails, packingSiteDetailsRemoveRoute)
     testNoUserAnswersError(packingSiteDetailsRemoveRoute)
 
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {

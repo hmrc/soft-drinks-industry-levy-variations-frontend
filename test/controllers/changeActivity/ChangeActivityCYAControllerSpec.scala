@@ -18,7 +18,7 @@ package controllers.changeActivity
 
 import base.SpecBase
 import controllers.changeActivity.routes._
-import models.SelectChange
+import models.SelectChange.ChangeActivity
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -46,7 +46,7 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency {
       }
     }
 
-    testInvalidJourneyType(SelectChange.ChangeActivity, ChangeActivityCYAController.onPageLoad.url, false)
+    testInvalidJourneyType(ChangeActivity, ChangeActivityCYAController.onPageLoad.url, false)
     testNoUserAnswersError(ChangeActivityCYAController.onPageLoad.url, false)
   }
 }

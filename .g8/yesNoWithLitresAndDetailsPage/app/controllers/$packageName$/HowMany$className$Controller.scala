@@ -5,7 +5,8 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.HowManyLitresFormProvider
 import javax.inject.Inject
-import models.{SelectChange,Mode}
+import models.Mode
+import models.SelectChange.$packageName;format="cap"$
 import pages.$packageName$.HowMany$className$Page
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,7 +31,7 @@ class HowMany$className$Controller @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.$packageName;format="cap"$) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData($packageName;format="cap"$) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(HowMany$className$Page) match {
@@ -41,7 +42,7 @@ class HowMany$className$Controller @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.$packageName;format="cap"$).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData($packageName;format="cap"$).async {
     implicit request =>
 
       form.bindFromRequest().fold(

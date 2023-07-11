@@ -18,7 +18,7 @@ package controllers.updateRegisteredDetails
 
 import com.google.inject.Inject
 import controllers.actions.ControllerActions
-import models.SelectChange
+import models.SelectChange.UpdateRegisteredDetails
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -32,14 +32,14 @@ class UpdateRegisteredDetailsCYAController @Inject()(
                                             view: UpdateRegisteredDetailsCYAView
                                           ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.UpdateRegisteredDetails) {
+  def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
     implicit request =>
 
       val summaryList = Seq(UpdateContactDetailsSummary.rows(request.userAnswers)).flatten
 
       Ok(view(summaryList, routes.UpdateRegisteredDetailsCYAController.onSubmit))
   }
-  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.UpdateRegisteredDetails) {
+  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
       Redirect(controllers.routes.IndexController.onPageLoad.url)
   }
 }

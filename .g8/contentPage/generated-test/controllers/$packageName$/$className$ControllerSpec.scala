@@ -4,7 +4,7 @@ import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.$packageName$.$className$View
-import models.SelectChange
+import models.SelectChange.$packageName;format="cap"$
 class $className$ControllerSpec extends SpecBase {
 
   lazy val $className;format="decap"$Route = routes.$className$Controller.onPageLoad().url
@@ -28,7 +28,7 @@ class $className$ControllerSpec extends SpecBase {
       }
     }
 
-    testInvalidJourneyType(SelectChange.$packageName;format="cap"$, $className;format="decap"$Route)
+    testInvalidJourneyType($packageName;format="cap"$, $className;format="decap"$Route)
     testNoUserAnswersError($className;format="decap"$Route)
   }
 }

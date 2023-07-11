@@ -20,8 +20,9 @@ import controllers.actions._
 import controllers.{ControllerHelper, routes}
 import forms.updateRegisteredDetails.PackingSiteDetailsRemoveFormProvider
 import handlers.ErrorHandler
+import models.SelectChange.UpdateRegisteredDetails
 import models.backend.Site
-import models.{Mode, SelectChange, UserAnswers}
+import models.{Mode, UserAnswers}
 import navigation._
 import pages.updateRegisteredDetails.PackingSiteDetailsRemovePage
 import play.api.i18n.MessagesApi
@@ -49,7 +50,7 @@ class PackingSiteDetailsRemoveController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.UpdateRegisteredDetails) {
+  def onPageLoad(mode: Mode, index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
     implicit request =>
       request.userAnswers.packagingSiteList.get(index) match {
         case Some(site) =>
@@ -61,7 +62,7 @@ class PackingSiteDetailsRemoveController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode, index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.UpdateRegisteredDetails).async {
+  def onSubmit(mode: Mode, index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails).async {
     implicit request =>
       val warehouseToRemove: Option[Site] = request.userAnswers.packagingSiteList.get(index)
       warehouseToRemove match {

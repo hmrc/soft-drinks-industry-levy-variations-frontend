@@ -6,7 +6,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.$packageName$.$className$View
-import models.SelectChange
+import models.SelectChange.$packageName;format="cap"$
 
 class $className$Controller @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -15,7 +15,7 @@ class $className$Controller @Inject()(
                                        view: $className$View
                                      ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.$packageName;format="cap"$) {
+  def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData($packageName;format="cap"$) {
     implicit request =>
       Ok(view(request.userAnswers))
   }

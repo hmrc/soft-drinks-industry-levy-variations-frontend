@@ -19,7 +19,8 @@ package controllers.changeActivity
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.changeActivity.AmountProducedFormProvider
-import models.{NormalMode, SelectChange}
+import models.NormalMode
+import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced
 import navigation._
 import org.jsoup.Jsoup
@@ -132,12 +133,12 @@ class AmountProducedControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    testInvalidJourneyType(SelectChange.ChangeActivity, amountProducedRoute)
+    testInvalidJourneyType(ChangeActivity, amountProducedRoute)
     testNoUserAnswersError(amountProducedRoute)
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(SelectChange.ChangeActivity))).build()
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(ChangeActivity))).build()
 
       running(application) {
         val request =

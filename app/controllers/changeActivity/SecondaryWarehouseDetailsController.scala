@@ -20,7 +20,7 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.SecondaryWarehouseDetailsFormProvider
 import handlers.ErrorHandler
-import models.{Mode, SelectChange}
+import models.Mode
 import navigation._
 import pages.changeActivity.SecondaryWarehouseDetailsPage
 import play.api.i18n.MessagesApi
@@ -34,6 +34,7 @@ import views.summary.changeActivity.SecondaryWarehouseDetailsSummary
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import models.SelectChange.ChangeActivity
 
 class SecondaryWarehouseDetailsController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -50,7 +51,7 @@ class SecondaryWarehouseDetailsController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(SecondaryWarehouseDetailsPage) match {
@@ -68,7 +69,7 @@ class SecondaryWarehouseDetailsController @Inject()(
       Ok(view(preparedForm, mode, summaryList))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
       val summaryList: Option[SummaryList] = request.userAnswers.warehouseList match {
         case warehouseList if warehouseList.nonEmpty => Some(SummaryListViewModel(

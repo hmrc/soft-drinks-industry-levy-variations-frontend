@@ -18,7 +18,7 @@ package controllers.correctReturn
 
 import com.google.inject.Inject
 import controllers.actions.{ControllerActions, IdentifierAction}
-import models.SelectChange
+import models.SelectChange.CorrectReturn
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -33,7 +33,7 @@ class CorrectReturnCYAController @Inject()(
                                             view: CorrectReturnCYAView
                                           ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CorrectReturn) {
+  def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
     implicit request =>
 
       val list: Seq[(String, SummaryList)] = Seq.empty

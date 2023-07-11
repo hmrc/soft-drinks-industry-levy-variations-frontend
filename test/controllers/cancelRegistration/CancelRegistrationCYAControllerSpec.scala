@@ -18,7 +18,7 @@ package controllers.cancelRegistration
 
 import base.SpecBase
 import controllers.cancelRegistration.routes._
-import models.SelectChange
+import models.SelectChange.CancelRegistration
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -48,7 +48,7 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
       }
     }
 
-    testInvalidJourneyType(SelectChange.CancelRegistration, CancelRegistrationCYAController.onPageLoad.url, false)
+    testInvalidJourneyType(CancelRegistration, CancelRegistrationCYAController.onPageLoad.url, false)
     testNoUserAnswersError(CancelRegistrationCYAController.onPageLoad.url, false)
   }
 }

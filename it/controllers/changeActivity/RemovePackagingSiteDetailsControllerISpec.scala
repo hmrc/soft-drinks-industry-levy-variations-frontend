@@ -1,7 +1,7 @@
 package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
-import models.SelectChange
+import models.SelectChange.ChangeActivity
 import models.backend.Site
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
@@ -66,7 +66,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(changeActivityBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved))
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved))
   }
 
   s"GET " + checkRoutePath(indexOfPackingSiteToBeRemoved) - {
@@ -117,7 +117,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
     testUnauthorisedUser(changeActivityBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved))
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved))
   }
 
   s"POST " + normalRoutePath(indexOfPackingSiteToBeRemoved) - {
@@ -206,7 +206,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(changeActivityBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved), Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved), Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved), Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved), Some(Json.obj("value" -> "true")))
   }
 
   s"POST " + checkRoutePath(indexOfPackingSiteToBeRemoved) - {
@@ -295,6 +295,6 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(changeActivityBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved), Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved), Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved), Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved), Some(Json.obj("value" -> "true")))
   }
 }

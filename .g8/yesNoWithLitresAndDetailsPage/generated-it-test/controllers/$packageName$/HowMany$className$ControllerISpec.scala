@@ -1,7 +1,8 @@
 package controllers.$packageName$
 
 import controllers.LitresISpecHelper
-import models.{CheckMode, LitresInBands, NormalMode, SelectChange}
+import models.{CheckMode, LitresInBands, NormalMode}
+import models.SelectChange.$packageName;format="cap"$
 import org.jsoup.Jsoup
 import pages.$packageName$.HowMany$className$Page
 import play.api.http.HeaderNames
@@ -66,7 +67,7 @@ class HowMany$className$ControllerISpec extends LitresISpecHelper {
       }
       testUnauthorisedUser($packageName$BaseUrl + path)
       testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + path)
-      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.$packageName;format="cap"$, $packageName$BaseUrl + path)
+      testAuthenticatedWithUserAnswersForUnsupportedJourneyType($packageName;format="cap"$, $packageName$BaseUrl + path)
     }
 
     s"POST " + path - {
@@ -210,7 +211,7 @@ class HowMany$className$ControllerISpec extends LitresISpecHelper {
 
       testUnauthorisedUser($packageName$BaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
       testAuthenticatedUserButNoUserAnswers($packageName$BaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
-      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.$packageName;format="cap"$, $packageName$BaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
+      testAuthenticatedWithUserAnswersForUnsupportedJourneyType($packageName;format="cap"$, $packageName$BaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
     }
   }
 }

@@ -4,7 +4,7 @@ import utilities.GenericLogger
 import controllers.actions._
 import forms.$packageName$.$className$FormProvider
 import javax.inject.Inject
-import models.{SelectChange, Mode}
+import models.Mode
 import pages.$packageName$.$className$Page
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,7 +30,7 @@ class $className$Controller @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.$packageName;format="cap"$) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData($packageName;format="cap"$) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get($className$Page) match {
@@ -41,7 +41,7 @@ class $className$Controller @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.$packageName;format="cap"$).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData($packageName;format="cap"$).async {
     implicit request =>
 
       form.bindFromRequest().fold(

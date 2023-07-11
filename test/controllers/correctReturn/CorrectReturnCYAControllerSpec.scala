@@ -18,7 +18,7 @@ package controllers.correctReturn
 
 import base.SpecBase
 import controllers.correctReturn.routes._
-import models.SelectChange
+import models.SelectChange.CorrectReturn
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -46,7 +46,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
       }
     }
 
-    testInvalidJourneyType(SelectChange.CorrectReturn, CorrectReturnCYAController.onPageLoad.url, false)
+    testInvalidJourneyType(CorrectReturn, CorrectReturnCYAController.onPageLoad.url, false)
     testNoUserAnswersError(CorrectReturnCYAController.onPageLoad.url, false)
   }
 }

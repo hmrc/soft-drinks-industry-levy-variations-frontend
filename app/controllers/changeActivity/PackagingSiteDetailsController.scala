@@ -20,7 +20,7 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.PackagingSiteDetailsFormProvider
 import handlers.ErrorHandler
-import models.{Mode, SelectChange}
+import models.Mode
 import navigation._
 import pages.changeActivity.PackagingSiteDetailsPage
 import play.api.i18n.MessagesApi
@@ -34,6 +34,7 @@ import views.html.changeActivity.PackagingSiteDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import models.SelectChange.ChangeActivity
 
 class PackagingSiteDetailsController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -49,7 +50,7 @@ class PackagingSiteDetailsController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(PackagingSiteDetailsPage) match {
@@ -64,7 +65,7 @@ class PackagingSiteDetailsController @Inject()(
       Ok(view(preparedForm, mode, siteList))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
 
       val siteList: SummaryList = SummaryListViewModel(

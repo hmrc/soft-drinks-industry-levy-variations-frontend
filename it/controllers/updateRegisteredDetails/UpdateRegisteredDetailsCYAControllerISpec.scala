@@ -1,7 +1,8 @@
 package controllers.updateRegisteredDetails
 
 import controllers.ControllerITTestHelper
-import models.{CheckMode, SelectChange}
+import models.CheckMode
+import models.SelectChange.UpdateRegisteredDetails
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
@@ -75,7 +76,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(baseUrl + route)
     testAuthenticatedUserButNoUserAnswers(baseUrl + route)
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.UpdateRegisteredDetails, baseUrl + route)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, baseUrl + route)
   }
   "POST " + routes.UpdateRegisteredDetailsCYAController.onSubmit.url - {
     "when the userAnswers contains no data" - {
@@ -96,6 +97,6 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(baseUrl + route, Some(Json.obj()))
     testAuthenticatedUserButNoUserAnswers(baseUrl + route, Some(Json.obj()))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.UpdateRegisteredDetails, baseUrl + route, Some(Json.obj()))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, baseUrl + route, Some(Json.obj()))
   }
 }

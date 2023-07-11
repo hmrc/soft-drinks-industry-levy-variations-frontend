@@ -18,7 +18,7 @@ package controllers.cancelRegistration
 
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
-import models.SelectChange
+import models.SelectChange.CancelRegistration
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
@@ -95,7 +95,7 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual recoveryCall.url
       }
     }
-    testInvalidJourneyType(SelectChange.CancelRegistration, fileReturnBeforDeregRoute, false)
+    testInvalidJourneyType(CancelRegistration, fileReturnBeforDeregRoute, false)
     testNoUserAnswersError(fileReturnBeforDeregRoute, false)
 
   }
