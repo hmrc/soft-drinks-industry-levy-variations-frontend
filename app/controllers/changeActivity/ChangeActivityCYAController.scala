@@ -21,7 +21,7 @@ import controllers.actions.ControllerActions
 import config.FrontendAppConfig
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.summary.changeActivity.AmountProducedSummary
 import views.html.changeActivity.ChangeActivityCYAView
@@ -38,31 +38,43 @@ class ChangeActivityCYAController @Inject()(
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
-      val amountProducedSection: Seq[(String, SummaryList)] = Seq(
-        "changeActivity.checkYourAnswers.amountProducedSection" -> SummaryList(Seq(AmountProducedSummary.row(request.userAnswers)).flatten)
-      )
-      val thirdPartyPackagersSection: Seq[(String, SummaryList)] = ThirdPartyPackagersSummary.row(request.userAnswers).map(summary =>
+      val amountProducedSummary: Option[SummaryListRow] = AmountProducedSummary.row(request.userAnswers)
+      val thirdPartyPackagersSummary: Option[SummaryListRow] = ThirdPartyPackagersSummary.row(request.userAnswers)
+      val ownBrandsSummary: SummaryList = OperatePackagingSiteOwnBrandsSummary.summaryList(request.userAnswers, isCheckAnswers = true, includeLevyRows = false)
+      val contractSummary: SummaryList = ContractPackingSummary.summaryList(request.userAnswers, isCheckAnswers = true, includeLevyRows = false)
+      val importsSummary: SummaryList = ImportsSummary.summaryList(request.userAnswers, isCheckAnswers = true, includeLevyRows = false)
+      val amountProducedSection1: Option[(String, SummaryList)] = amountProducedSummary.map(summary => {
+        "changeActivity.checkYourAnswers.amountProducedSection" -> SummaryList(Seq(summary))
+      })
+      val thirdPartyPackagersSection1: Option[(String, SummaryList)] = thirdPartyPackagersSummary.map(summary => {
         "changeActivity.checkYourAnswers.thirdPartyPackagersSection" -> SummaryList(Seq(summary))
-      ).toList
-      val operatePackingSiteOwnBrandsSection: Seq[(String, SummaryList)] = Seq(
-        "changeActivity.checkYourAnswers.operatePackingSiteOwnBrandsSection" ->
-          OperatePackagingSiteOwnBrandsSummary.summaryList(request.userAnswers, isCheckAnswers = true, includeLevyRows = false)
-      )
-      val contractPackingSection: Seq[(String, SummaryList)] = Seq(
-        "changeActivity.checkYourAnswers.contractPackingSection" ->
-          ContractPackingSummary.summaryList(request.userAnswers, isCheckAnswers = true, includeLevyRows = false)
-      )
-      val importsSection: Seq[(String, SummaryList)] = Seq(
-        "changeActivity.checkYourAnswers.importsSection" ->
-          ImportsSummary.summaryList(request.userAnswers, isCheckAnswers = true, includeLevyRows = false)
-      )
+      })
+      val ownBrandsSection1: Option[(String, SummaryList)] = if (ownBrandsSummary.rows.nonEmpty) {
+        Option(
+          "changeActivity.checkYourAnswers.operatePackingSiteOwnBrandsSection" ->
+            OperatePackagingSiteOwnBrandsSummary.summaryList(request.userAnswers, isCheckAnswers = true, includeLevyRows = false)
+        )
+      } else None
+      val contractSection1: Option[(String, SummaryList)] = if (contractSummary.rows.nonEmpty) {
+        Option(
+          "changeActivity.checkYourAnswers.contractPackingSection" ->
+            ContractPackingSummary.summaryList(request.userAnswers, isCheckAnswers = true, includeLevyRows = false)
+        )
+      } else None
+      val importsSection1: Option[(String, SummaryList)] = if (importsSummary.rows.nonEmpty) {
+        Option(
+          "changeActivity.checkYourAnswers.importsSection" ->
+            ImportsSummary.summaryList(request.userAnswers, isCheckAnswers = true, includeLevyRows = false)
+        )
+      } else None
+      val sections1: Seq[(String, SummaryList)] = (amountProducedSection1 ++ thirdPartyPackagersSection1 ++ ownBrandsSection1 ++ contractSection1 ++ importsSection1).toSeq
 
       val alias: String = request.subscription.orgName
 //      TODO: Implement Return Period in DLS-8346
       val returnPeriod: String = "RETURN PERIOD"
-      val sections = amountProducedSection ++ thirdPartyPackagersSection ++ operatePackingSiteOwnBrandsSection ++ contractPackingSection ++ importsSection
+//      val sections = amountProducedSection ++ thirdPartyPackagersSection ++ operatePackingSiteOwnBrandsSection ++ contractPackingSection ++ importsSection
 
-      Ok(view(alias, returnPeriod, sections, routes.ChangeActivityCYAController.onSubmit))
+      Ok(view(alias, returnPeriod, sections1, routes.ChangeActivityCYAController.onSubmit))
   }
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {

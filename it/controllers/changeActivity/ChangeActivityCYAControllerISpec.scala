@@ -4,7 +4,7 @@ import controllers.ControllerITTestHelper
 import generators.ChangeActivityCYAGenerators._
 import models.CheckMode
 import models.changeActivity.AmountProduced
-import models.changeActivity.AmountProduced.{Large, None => NoneProduced, Small}
+import models.changeActivity.AmountProduced.{Large, Small, None => NoneProduced}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
@@ -39,49 +39,50 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
       }
     }
 
-    def testAmountProducedSection(page: Document, amountProducedValue: Option[AmountProduced]): Unit = {
-      page.getElementsByTag("h2").first().text() mustBe "Packaged globally"
-      val amountProduced = page.getElementsByClass("govuk-summary-list").first().getElementsByClass("govuk-summary-list__row")
+    def testAmountProducedSection(page: Document, amountProducedValue: Option[AmountProduced], sectionIndex: Option[Int]): Unit = {
+      amountProducedValue map { amountProducedVal =>
+        sectionIndex map { sectionInd =>
+          page.getElementsByTag("h2").get(sectionInd).text() mustBe "Packaged globally"
+          val amountProduced = page.getElementsByClass("govuk-summary-list").get(sectionInd).getElementsByClass("govuk-summary-list__row")
 
-      if (amountProducedValue.nonEmpty) {
-        val answerToMatch = amountProducedValue match {
-          case Some(Large) => "1 million litres or more"
-          case Some(Small) => "Less than 1 million litres"
-          case Some(NoneProduced) => "None"
+          val answerToMatch = amountProducedVal match {
+            case Large => "1 million litres or more"
+            case Small => "Less than 1 million litres"
+            case NoneProduced => "None"
+          }
+          amountProduced.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe answerToMatch
+          amountProduced.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change how many litres of your own brands have been packaged globally"
+          amountProduced.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "how many litres of your own brands have been packaged globally"
+          amountProduced.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.AmountProducedController.onPageLoad(CheckMode).url
         }
-        amountProduced.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe answerToMatch
-        amountProduced.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change how many litres of your own brands have been packaged globally"
-        amountProduced.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "how many litres of your own brands have been packaged globally"
-        amountProduced.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.AmountProducedController.onPageLoad(CheckMode).url
       }
     }
-    def testThirdPartyPackagingSection(page: Document, thirdPartyPackagingValue: Option[Boolean]): Unit = {
-      if (thirdPartyPackagingValue.nonEmpty) {
-        page.getElementsByTag("h2").get(1).text() mustBe "Third party packagers"
-        val thirdPartyPackaging = page.getElementsByClass("govuk-summary-list").get(1).getElementsByClass("govuk-summary-list__row")
 
-        val answerToMatch = thirdPartyPackagingValue match {
-          case Some(true) => "Yes"
-          case Some(false) => "No"
+    def testThirdPartyPackagingSection(page: Document, thirdPartyPackagingValue: Option[Boolean], sectionIndex: Option[Int]): Unit = {
+      thirdPartyPackagingValue map { thirdPartyPackagingVal =>
+        sectionIndex map { sectionInd =>
+          page.getElementsByTag("h2").get(sectionInd).text() mustBe "Third party packagers"
+          val thirdPartyPackaging = page.getElementsByClass("govuk-summary-list").get(sectionInd).getElementsByClass("govuk-summary-list__row")
+
+          thirdPartyPackaging.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe (if (thirdPartyPackagingVal) "Yes" else "No")
+          thirdPartyPackaging.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change whether you use third party packagers"
+          thirdPartyPackaging.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "whether you use third party packagers"
+          thirdPartyPackaging.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.ThirdPartyPackagersController.onPageLoad(CheckMode).url
         }
-        thirdPartyPackaging.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe answerToMatch
-        thirdPartyPackaging.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change whether you use third party packagers"
-        thirdPartyPackaging.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "whether you use third party packagers"
-        thirdPartyPackaging.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.ThirdPartyPackagersController.onPageLoad(CheckMode).url
       }
     }
-    def testOwnBrandsSection(page: Document, ownBrandsValue: Option[Boolean], decrementSectionIndex: Boolean): Unit = {
-      val sectionIndex = if (decrementSectionIndex) 1 else 2
-      page.getElementsByTag("h2").get(sectionIndex).text() mustBe "Packaged in the UK"
-      val ownBrands = page.getElementsByClass("govuk-summary-list").get(sectionIndex).getElementsByClass("govuk-summary-list__row")
 
-      if (ownBrandsValue.nonEmpty) {
-        ownBrands.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change whether you package your own brands at your own site?"
-        ownBrands.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "whether you package your own brands at your own site?"
-        ownBrands.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
+    def testOwnBrandsSection(page: Document, ownBrandsValue: Option[Boolean], sectionIndex: Option[Int]): Unit = {
+      ownBrandsValue map { ownBrandsVal =>
+        sectionIndex map { sectionInd =>
+          page.getElementsByTag("h2").get(sectionInd).text() mustBe "Packaged in the UK"
+          val ownBrands = page.getElementsByClass("govuk-summary-list").get(sectionInd).getElementsByClass("govuk-summary-list__row")
 
-        ownBrandsValue match {
-          case Some(true) =>
+          ownBrands.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change whether you package your own brands at your own site?"
+          ownBrands.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "whether you package your own brands at your own site?"
+          ownBrands.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
+
+          if (ownBrandsVal) {
             ownBrands.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe "Yes"
 
             ownBrands.get(1).getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(ownBrandsLitresLowBand)
@@ -93,22 +94,24 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
             ownBrands.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change number of litres in high band packaged at your own site"
             ownBrands.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "number of litres in high band packaged at your own site"
             ownBrands.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
-          case Some(false) => ownBrands.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe "No"
+          } else {
+            ownBrands.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe "No"
+          }
         }
       }
     }
-    def testContractSection(page: Document, contractValue: Option[Boolean], decrementSectionIndex: Boolean): Unit = {
-      val sectionIndex = if (decrementSectionIndex) 2 else 3
-      page.getElementsByTag("h2").get(sectionIndex).text() mustBe "Package for customers"
-      val contractPacking = page.getElementsByClass("govuk-summary-list").get(sectionIndex).getElementsByClass("govuk-summary-list__row")
 
-      if (contractValue.nonEmpty) {
-        contractPacking.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change whether you use contract packing at your own site?"
-        contractPacking.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "whether you use contract packing at your own site?"
-        contractPacking.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.ContractPackingController.onPageLoad(CheckMode).url
+    def testContractSection(page: Document, contractValue: Option[Boolean], sectionIndex: Option[Int]): Unit = {
+      contractValue map { contractVal =>
+        sectionIndex map { sectionInd =>
+          page.getElementsByTag("h2").get(sectionInd).text() mustBe "Package for customers"
+          val contractPacking = page.getElementsByClass("govuk-summary-list").get(sectionInd).getElementsByClass("govuk-summary-list__row")
 
-        contractValue match {
-          case Some(true) =>
+          contractPacking.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change whether you use contract packing at your own site?"
+          contractPacking.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "whether you use contract packing at your own site?"
+          contractPacking.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.ContractPackingController.onPageLoad(CheckMode).url
+
+          if (contractVal) {
             contractPacking.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe "Yes"
 
             contractPacking.get(1).getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(contractLitresLowBand)
@@ -120,23 +123,24 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
             contractPacking.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change number of litres in high band contract packed at your own site"
             contractPacking.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "number of litres in high band contract packed at your own site"
             contractPacking.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.HowManyContractPackingController.onPageLoad(CheckMode).url
-          case Some(false) => contractPacking.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe "No"
+          } else {
+            contractPacking.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe "No"
+          }
         }
       }
-
     }
-    def testImportSection(page: Document, importValue: Option[Boolean], decrementSectionIndex: Boolean): Unit = {
-      val sectionIndex = if (decrementSectionIndex) 3 else 4
-      page.getElementsByTag("h2").get(sectionIndex).text() mustBe "Brought into the UK"
-      val imports = page.getElementsByClass("govuk-summary-list").get(sectionIndex).getElementsByClass("govuk-summary-list__row")
 
-      if (importValue.nonEmpty) {
-        imports.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change whether you bring liable drinks into the UK?"
-        imports.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "whether you bring liable drinks into the UK?"
-        imports.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.ImportsController.onPageLoad(CheckMode).url
+    def testImportSection(page: Document, importValue: Option[Boolean], sectionIndex: Option[Int]): Unit = {
+      importValue map { importVal =>
+        sectionIndex map { sectionInd =>
+          page.getElementsByTag("h2").get(sectionInd).text() mustBe "Brought into the UK"
+          val imports = page.getElementsByClass("govuk-summary-list").get(sectionInd).getElementsByClass("govuk-summary-list__row")
 
-        importValue match {
-          case Some(true) =>
+          imports.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change whether you bring liable drinks into the UK?"
+          imports.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "whether you bring liable drinks into the UK?"
+          imports.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.ImportsController.onPageLoad(CheckMode).url
+
+          if (importVal) {
             imports.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe "Yes"
 
             imports.get(1).getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(importLitresLowBand)
@@ -148,10 +152,11 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
             imports.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change number of litres in high band brought into the UK"
             imports.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "number of litres in high band brought into the UK"
             imports.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.HowManyImportsController.onPageLoad(CheckMode).url
-          case Some(false) => imports.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe "No"
+          } else {
+            imports.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe "No"
+          }
         }
       }
-
     }
 
     amountProducedValues.foreach { case (amountProducedKey, amountProducedValue) =>
@@ -177,12 +182,21 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
                       page.title must include(Messages("changeActivity.checkYourAnswers.title"))
                       //      TODO: Implement Return Period in DLS-8346
                       page.getElementsByClass("govuk-caption-l").text() mustBe "Super Lemonade Plc - RETURN PERIOD"
-                      page.getElementsByClass("govuk-summary-list").size() mustBe (if (thirdPartyPackagingValue.isDefined) 5 else 4)
-                      testAmountProducedSection(page, amountProducedValue)
-                      testThirdPartyPackagingSection(page, thirdPartyPackagingValue)
-                      testOwnBrandsSection(page, ownBrandsValue, decrementSectionIndex = thirdPartyPackagingValue.isEmpty)
-                      testContractSection(page, contractValue, decrementSectionIndex = thirdPartyPackagingValue.isEmpty)
-                      testImportSection(page, importValue, decrementSectionIndex = thirdPartyPackagingValue.isEmpty)
+                      val sectionIndexes: Seq[Option[Int]] = List(
+                        amountProducedValue.nonEmpty,
+                        thirdPartyPackagingValue.nonEmpty,
+                        ownBrandsValue.nonEmpty,
+                        contractValue.nonEmpty,
+                        importValue.nonEmpty
+                      ).foldLeft(Seq[Option[Int]]()) { (indexes, sectionDefined) =>
+                        indexes :+ (if (sectionDefined) Option(indexes.filter(_.nonEmpty).flatten.size) else None)
+                      }
+                      page.getElementsByClass("govuk-summary-list").size() mustBe sectionIndexes.filter(_.nonEmpty).flatten.size
+                      testAmountProducedSection(page, amountProducedValue, sectionIndex = sectionIndexes(0))
+                      testThirdPartyPackagingSection(page, thirdPartyPackagingValue, sectionIndex = sectionIndexes(1))
+                      testOwnBrandsSection(page, ownBrandsValue, sectionIndex = sectionIndexes(2))
+                      testContractSection(page, contractValue, sectionIndex = sectionIndexes(3))
+                      testImportSection(page, importValue, sectionIndex = sectionIndexes(4))
                       page.getElementsByTag("form").first().attr("action") mustBe routes.ChangeActivityCYAController.onSubmit.url
                       page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm updates and send"
                     }
