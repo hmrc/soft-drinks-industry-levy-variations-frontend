@@ -1,6 +1,7 @@
 package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
+import models.{CheckMode, NormalMode}
 import models.SelectChange.ChangeActivity
 import models.backend.Site
 import org.jsoup.Jsoup
@@ -157,7 +158,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
                 val userAnswersAfterTest = getAnswers(userAnswers.id)
                 val dataStoredForPage = userAnswersAfterTest.fold[Option[Boolean]](None)(_.get(RemovePackagingSiteDetailsPage))
                 if(yesSelected) {
@@ -246,7 +247,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
                 val userAnswersAfterTest = getAnswers(userAnswers.id)
                 val dataStoredForPage = userAnswersAfterTest.fold[Option[Boolean]](None)(_.get(RemovePackagingSiteDetailsPage))
                 dataStoredForPage.nonEmpty mustBe true
