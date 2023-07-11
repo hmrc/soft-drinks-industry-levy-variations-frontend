@@ -31,7 +31,7 @@
 @layout(pageTitle = titleNoForm(messages("changeActivity.checkYourAnswers.title"))) {
 
     <span class="govuk-caption-l" id="pre-header-caption"> @alias - @returnPeriod </span>
-    <h1 class="govuk-heading-l">@messages("changeActivity.checkYourAnswers.heading")</h1>
+    <h1 class="govuk-heading-m">@messages("changeActivity.checkYourAnswers.heading")</h1>
 
     @for((heading, summaryList) <- seqSummaryList) {
         <h2 class="govuk-heading-m">@messages(heading)</h2>
