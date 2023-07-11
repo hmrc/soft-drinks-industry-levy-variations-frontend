@@ -79,7 +79,7 @@ awk '/class NavigatorFor$packageName;format="cap"$/ {\
 awk '/override val normalRoutes/ {\
     print;\
     print "    case $className$Page => userAnswers => navigationFor$className$(userAnswers, NormalMode)";\
-    print "    case HowMany$className$Page => userAnswers => $nextPage$";\
+    print "    case HowMany$className$Page => _ => $nextPage$";\
     next }1' ../app/navigation/NavigatorFor$packageName;format="cap"$.scala > tmp && mv tmp ../app/navigation/NavigatorFor$packageName;format="cap"$.scala
 
 awk '/override val checkRouteMap/ {\

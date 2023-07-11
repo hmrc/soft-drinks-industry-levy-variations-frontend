@@ -2,7 +2,7 @@ package controllers.$packageName$
 
 import base.SpecBase
 import forms.HowManyLitresFormProvider
-import models.NormalMode, LitresInBands
+import models.{NormalMode, LitresInBands}
 import models.SelectChange.$packageName;format="cap"$
 import navigation._
 import org.mockito.ArgumentMatchers.any
