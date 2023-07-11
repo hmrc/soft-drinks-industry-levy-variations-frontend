@@ -135,9 +135,9 @@ changeActivity.amountProduced.title = How many litres of your own brands of liab
 changeActivity.amountProduced.large = 1 million litres or more
 changeActivity.amountProduced.small = Less than 1 million litres
 changeActivity.amountProduced.none = None
-changeActivity.amountProduced.checkYourAnswersLabel = how many litres of your own brands have been packaged globally?
+changeActivity.amountProduced.checkYourAnswersLabel = Own brand packaged in past 12 months?
 changeActivity.amountProduced.error.required = Select how many litres of your own brands of liable drinks have been packaged globally in the past 12 months
-changeActivity.amountProduced.change.hidden = Amount produced
+changeActivity.amountProduced.change.hidden = how many litres of your own brands have been packaged globally
 
 brandsPackaged.hint = This includes brands you own or have the rights to manufacture.
 whatDoesPackagedMean.summary = What does 'packaged' mean?
