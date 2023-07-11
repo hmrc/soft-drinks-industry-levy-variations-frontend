@@ -41,9 +41,9 @@ class ChangeActivityCYAController @Inject()(
       val amountProducedSection: Seq[(String, SummaryList)] = Seq(
         "changeActivity.checkYourAnswers.amountProducedSection" -> SummaryList(Seq(AmountProducedSummary.row(request.userAnswers)).flatten)
       )
-      val thirdPartyPackagersSection: Seq[(String, SummaryList)] = Seq(
-        "changeActivity.checkYourAnswers.thirdPartyPackagersSection" -> SummaryList(Seq(ThirdPartyPackagersSummary.row(request.userAnswers)).flatten)
-      )
+      val thirdPartyPackagersSection: Seq[(String, SummaryList)] = ThirdPartyPackagersSummary.row(request.userAnswers).map(summary =>
+        "changeActivity.checkYourAnswers.thirdPartyPackagersSection" -> SummaryList(Seq(summary))
+      ).toList
       val operatePackingSiteOwnBrandsSection: Seq[(String, SummaryList)] = Seq(
         "changeActivity.checkYourAnswers.operatePackingSiteOwnBrandsSection" ->
           OperatePackagingSiteOwnBrandsSummary.summaryList(request.userAnswers, isCheckAnswers = true, includeLevyRows = false)

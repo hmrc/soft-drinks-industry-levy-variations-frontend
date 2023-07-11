@@ -33,16 +33,16 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
             res.status mustBe OK
             val page = Jsoup.parse(res.body)
             page.title must include(Messages("changeActivity.checkYourAnswers.title"))
-            page.getElementsByClass("govuk-summary-list").size() mustBe 5
+            page.getElementsByClass("govuk-summary-list").size() mustBe 4
           }
         }
       }
     }
 
     def testAmountProducedSection(page: Document, amountProducedValue: Option[AmountProduced]): Unit = {
+      page.getElementsByTag("h2").first().text() mustBe "Packaged globally"
       val amountProduced = page.getElementsByClass("govuk-summary-list").first().getElementsByClass("govuk-summary-list__row")
 
-      page.getElementsByTag("h2").first().text() mustBe "Packaged globally"
       if (amountProducedValue.nonEmpty) {
         val answerToMatch = amountProducedValue match {
           case Some(Large) => "1 million litres or more"
@@ -56,10 +56,10 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
       }
     }
     def testThirdPartyPackagingSection(page: Document, thirdPartyPackagingValue: Option[Boolean]): Unit = {
-      val thirdPartyPackaging = page.getElementsByClass("govuk-summary-list").get(1).getElementsByClass("govuk-summary-list__row")
-
-      page.getElementsByTag("h2").get(1).text() mustBe "Third party packagers"
       if (thirdPartyPackagingValue.nonEmpty) {
+        page.getElementsByTag("h2").get(1).text() mustBe "Third party packagers"
+        val thirdPartyPackaging = page.getElementsByClass("govuk-summary-list").get(1).getElementsByClass("govuk-summary-list__row")
+
         val answerToMatch = thirdPartyPackagingValue match {
           case Some(true) => "Yes"
           case Some(false) => "No"
@@ -70,9 +70,10 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
         thirdPartyPackaging.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.ThirdPartyPackagersController.onPageLoad(CheckMode).url
       }
     }
-    def testOwnBrandsSection(page: Document, ownBrandsValue: Option[Boolean]): Unit = {
-      page.getElementsByTag("h2").get(2).text() mustBe "Packaged in the UK"
-      val ownBrands = page.getElementsByClass("govuk-summary-list").get(2).getElementsByClass("govuk-summary-list__row")
+    def testOwnBrandsSection(page: Document, ownBrandsValue: Option[Boolean], decrementSectionIndex: Boolean): Unit = {
+      val sectionIndex = if (decrementSectionIndex) 1 else 2
+      page.getElementsByTag("h2").get(sectionIndex).text() mustBe "Packaged in the UK"
+      val ownBrands = page.getElementsByClass("govuk-summary-list").get(sectionIndex).getElementsByClass("govuk-summary-list__row")
 
       if (ownBrandsValue.nonEmpty) {
         ownBrands.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change do you operate any packaging sites in the UK to package liable drinks for brands you own?"
@@ -96,9 +97,10 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
         }
       }
     }
-    def testContractSection(page: Document, contractValue: Option[Boolean]): Unit = {
-      page.getElementsByTag("h2").get(3).text() mustBe "Package for customers"
-      val contractPacking = page.getElementsByClass("govuk-summary-list").get(3).getElementsByClass("govuk-summary-list__row")
+    def testContractSection(page: Document, contractValue: Option[Boolean], decrementSectionIndex: Boolean): Unit = {
+      val sectionIndex = if (decrementSectionIndex) 2 else 3
+      page.getElementsByTag("h2").get(sectionIndex).text() mustBe "Package for customers"
+      val contractPacking = page.getElementsByClass("govuk-summary-list").get(sectionIndex).getElementsByClass("govuk-summary-list__row")
 
       if (contractValue.nonEmpty) {
         contractPacking.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?"
@@ -123,9 +125,10 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
       }
 
     }
-    def testImportSection(page: Document, importValue: Option[Boolean]): Unit = {
-      page.getElementsByTag("h2").get(4).text() mustBe "Brought into the UK"
-      val imports = page.getElementsByClass("govuk-summary-list").get(4).getElementsByClass("govuk-summary-list__row")
+    def testImportSection(page: Document, importValue: Option[Boolean], decrementSectionIndex: Boolean): Unit = {
+      val sectionIndex = if (decrementSectionIndex) 3 else 4
+      page.getElementsByTag("h2").get(sectionIndex).text() mustBe "Brought into the UK"
+      val imports = page.getElementsByClass("govuk-summary-list").get(sectionIndex).getElementsByClass("govuk-summary-list__row")
 
       if (importValue.nonEmpty) {
         imports.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change do you bring liable drinks into the UK from anywhere outside of the UK?"
@@ -174,12 +177,12 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
                       page.title must include(Messages("changeActivity.checkYourAnswers.title"))
                       //      TODO: Implement Return Period in DLS-8346
                       page.getElementsByClass("govuk-caption-l").text() mustBe "Super Lemonade Plc - RETURN PERIOD"
-                      page.getElementsByClass("govuk-summary-list").size() mustBe 5
+                      page.getElementsByClass("govuk-summary-list").size() mustBe (if (thirdPartyPackagingValue.isDefined) 5 else 4)
                       testAmountProducedSection(page, amountProducedValue)
                       testThirdPartyPackagingSection(page, thirdPartyPackagingValue)
-                      testOwnBrandsSection(page, ownBrandsValue)
-                      testContractSection(page, contractValue)
-                      testImportSection(page, importValue)
+                      testOwnBrandsSection(page, ownBrandsValue, decrementSectionIndex = thirdPartyPackagingValue.isEmpty)
+                      testContractSection(page, contractValue, decrementSectionIndex = thirdPartyPackagingValue.isEmpty)
+                      testImportSection(page, importValue, decrementSectionIndex = thirdPartyPackagingValue.isEmpty)
                       page.getElementsByTag("form").first().attr("action") mustBe routes.ChangeActivityCYAController.onSubmit.url
                       page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm updates and send"
                     }

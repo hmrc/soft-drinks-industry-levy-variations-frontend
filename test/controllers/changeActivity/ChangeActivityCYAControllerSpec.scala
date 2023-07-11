@@ -36,10 +36,10 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency {
     def getAmountProducedSection(userAnswers: UserAnswers): Seq[(String, SummaryList)] = Seq(
       "changeActivity.checkYourAnswers.amountProducedSection" -> SummaryList(Seq(AmountProducedSummary.row(userAnswers)).flatten)
     )
-
-    def getThirdPartyPackagersSection(userAnswers: UserAnswers): Seq[(String, SummaryList)] = Seq(
-      "changeActivity.checkYourAnswers.thirdPartyPackagersSection" -> SummaryList(Seq(ThirdPartyPackagersSummary.row(userAnswers)).flatten)
-    )
+    
+    def getThirdPartyPackagersSection(userAnswers: UserAnswers): Seq[(String, SummaryList)] = ThirdPartyPackagersSummary.row(userAnswers).map(summary =>
+      "changeActivity.checkYourAnswers.thirdPartyPackagersSection" -> SummaryList(Seq(summary))
+    ).toList
 
     def getOperatePackingSiteOwnBrandsSection(userAnswers: UserAnswers): Seq[(String, SummaryList)] = Seq(
       "changeActivity.checkYourAnswers.operatePackingSiteOwnBrandsSection" ->
