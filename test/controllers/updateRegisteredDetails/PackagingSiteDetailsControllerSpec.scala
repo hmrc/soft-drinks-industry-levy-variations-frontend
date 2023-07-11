@@ -19,7 +19,7 @@ package controllers.updateRegisteredDetails
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.updateRegisteredDetails.PackagingSiteDetailsFormProvider
-import models.{NormalMode, SelectChange}
+import models.NormalMode
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -33,8 +33,9 @@ import play.api.test.Helpers._
 import services.SessionService
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
-import views.summary.updateRegisteredDetails.PackagingSiteDetailsSummary
 import views.html.updateRegisteredDetails.PackagingSiteDetailsView
+import views.summary.updateRegisteredDetails.PackagingSiteDetailsSummary
+import models.SelectChange.UpdateRegisteredDetails
 
 import scala.concurrent.Future
 
@@ -141,12 +142,12 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
       }
     }
 
-    testInvalidJourneyType(SelectChange.UpdateRegisteredDetails, packagingSiteDetailsRoute)
+    testInvalidJourneyType(UpdateRegisteredDetails, packagingSiteDetailsRoute)
     testNoUserAnswersError(packagingSiteDetailsRoute)
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(SelectChange.UpdateRegisteredDetails))).build()
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(UpdateRegisteredDetails))).build()
 
       running(application) {
         val request =

@@ -19,9 +19,11 @@ package controllers.updateRegisteredDetails
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.updateRegisteredDetails.UpdateContactDetailsFormProvider
-import models.{NormalMode, SelectChange}
+import models.NormalMode
+import models.SelectChange.UpdateRegisteredDetails
 import models.updateRegisteredDetails.UpdateContactDetails
 import navigation._
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -32,11 +34,10 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
+import utilities.GenericLogger
 import views.html.updateRegisteredDetails.UpdateContactDetailsView
 
 import scala.concurrent.Future
-import org.jsoup.Jsoup
-import utilities.GenericLogger
 
 class UpdateContactDetailsControllerSpec extends SpecBase with MockitoSugar {
 
@@ -144,12 +145,12 @@ class UpdateContactDetailsControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    testInvalidJourneyType(SelectChange.UpdateRegisteredDetails, updateContactDetailsRoute)
+    testInvalidJourneyType(UpdateRegisteredDetails, updateContactDetailsRoute)
     testNoUserAnswersError(updateContactDetailsRoute)
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(SelectChange.UpdateRegisteredDetails))).build()
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(UpdateRegisteredDetails))).build()
 
       running(application) {
         val request =

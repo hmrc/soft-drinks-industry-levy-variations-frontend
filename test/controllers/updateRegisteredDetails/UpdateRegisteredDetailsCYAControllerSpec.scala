@@ -17,9 +17,9 @@
 package controllers.updateRegisteredDetails
 
 import base.SpecBase
-import controllers.updateRegisteredDetails.routes._
 import controllers.routes._
-import models.SelectChange
+import controllers.updateRegisteredDetails.routes._
+import models.SelectChange.UpdateRegisteredDetails
 import models.updateRegisteredDetails.UpdateContactDetails
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.test.FakeRequest
@@ -63,7 +63,7 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
         redirectLocation(result).value mustEqual IndexController.onPageLoad.url
       }
     }
-    testInvalidJourneyType(SelectChange.UpdateRegisteredDetails, UpdateRegisteredDetailsCYAController.onPageLoad.url)
+    testInvalidJourneyType(UpdateRegisteredDetails, UpdateRegisteredDetailsCYAController.onPageLoad.url)
     testNoUserAnswersError(UpdateRegisteredDetailsCYAController.onPageLoad.url)
   }
 }

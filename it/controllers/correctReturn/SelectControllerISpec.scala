@@ -1,7 +1,8 @@
 package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
-import models.{ReturnPeriod, SelectChange}
+import models.ReturnPeriod
+import models.SelectChange.CorrectReturn
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.correctReturn.SelectPage
@@ -64,7 +65,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath)
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.CorrectReturn, correctReturnBaseUrl + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath)
   }
 
   s"GET " + checkRoutePath - {
@@ -151,7 +152,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath)
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath)
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.CorrectReturn, correctReturnBaseUrl + checkRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath)
 
   }
 
@@ -231,7 +232,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.CorrectReturn, correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
   }
 
   s"POST " + checkRoutePath - {
@@ -310,6 +311,6 @@ class SelectControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.CorrectReturn, correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
   }
 }

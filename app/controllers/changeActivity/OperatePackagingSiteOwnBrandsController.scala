@@ -16,22 +16,22 @@
 
 package controllers.changeActivity
 
-import utilities.GenericLogger
 import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.OperatePackagingSiteOwnBrandsFormProvider
-
-import javax.inject.Inject
-import models.{Mode, SelectChange}
+import handlers.ErrorHandler
+import models.Mode
+import navigation._
 import pages.changeActivity.{HowManyOperatePackagingSiteOwnBrandsPage, OperatePackagingSiteOwnBrandsPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
+import utilities.GenericLogger
 import views.html.changeActivity.OperatePackagingSiteOwnBrandsView
-import handlers.ErrorHandler
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import navigation._
+import models.SelectChange.ChangeActivity
 
 class OperatePackagingSiteOwnBrandsController @Inject()(
                                          override val messagesApi: MessagesApi,
@@ -47,7 +47,7 @@ class OperatePackagingSiteOwnBrandsController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(OperatePackagingSiteOwnBrandsPage) match {
@@ -58,7 +58,7 @@ class OperatePackagingSiteOwnBrandsController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
 
       form.bindFromRequest().fold(

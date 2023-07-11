@@ -1,8 +1,8 @@
 package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
-import models.{CheckMode, NormalMode}
-import models.SelectChange
+import models.NormalMode
+import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced
 import models.changeActivity.AmountProduced.{Large, Small}
 import org.jsoup.Jsoup
@@ -76,7 +76,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(changeActivityBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + normalRoutePath)
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + normalRoutePath)
   }
 
   s"GET " + checkRoutePath - {
@@ -138,7 +138,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(changeActivityBaseUrl + checkRoutePath)
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + checkRoutePath)
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + checkRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + checkRoutePath)
   }
 
   s"POST " + normalRoutePath - {
@@ -230,7 +230,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(changeActivityBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
   }
 
   s"POST " + checkRoutePath - {
@@ -309,6 +309,6 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(changeActivityBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
   }
 }

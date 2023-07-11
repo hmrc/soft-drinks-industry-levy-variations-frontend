@@ -2,7 +2,8 @@ package controllers.$packageName$
 
 import base.SpecBase
 import forms.HowManyLitresFormProvider
-import models.{NormalMode, LitresInBands, SelectChange}
+import models.{NormalMode, LitresInBands}
+import models.SelectChange.$packageName;format="cap"$
 import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -110,12 +111,12 @@ class HowMany$className$ControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    testInvalidJourneyType(SelectChange.$packageName;format="cap"$, howMany$className$Route)
+    testInvalidJourneyType($packageName;format="cap"$, howMany$className$Route)
     testNoUserAnswersError(howMany$className$Route)
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(SelectChange.$packageName;format="cap"$))).build()
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure($packageName;format="cap"$))).build()
 
       running(application) {
         val request =

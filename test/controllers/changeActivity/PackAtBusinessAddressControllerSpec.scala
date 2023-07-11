@@ -18,27 +18,28 @@ package controllers.changeActivity
 
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
+import errors.SessionDatabaseInsertError
 import forms.changeActivity.PackAtBusinessAddressFormProvider
-import models.{NormalMode, RetrievedSubscription, SelectChange}
+import models.SelectChange.ChangeActivity
+import models.backend.UkAddress
+import models.{NormalMode, RetrievedSubscription}
 import navigation._
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.changeActivity.PackAtBusinessAddressPage
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
-import views.html.changeActivity.PackAtBusinessAddressView
 import utilities.GenericLogger
-import errors.SessionDatabaseInsertError
-import models.backend.UkAddress
+import viewmodels.AddressFormattingHelper
+import views.html.changeActivity.PackAtBusinessAddressView
 
 import scala.concurrent.Future
-import org.jsoup.Jsoup
-import play.api.i18n.Messages
-import viewmodels.AddressFormattingHelper
 
 class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
@@ -149,7 +150,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    testInvalidJourneyType(SelectChange.ChangeActivity, packAtBusinessAddressRoute)
+    testInvalidJourneyType(ChangeActivity, packAtBusinessAddressRoute)
     testNoUserAnswersError(packAtBusinessAddressRoute)
 
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {

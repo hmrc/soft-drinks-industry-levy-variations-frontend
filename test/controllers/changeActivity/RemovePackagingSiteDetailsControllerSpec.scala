@@ -19,8 +19,9 @@ package controllers.changeActivity
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.changeActivity.RemovePackagingSiteDetailsFormProvider
+import models.SelectChange.ChangeActivity
 import models.backend.{Site, UkAddress}
-import models.{NormalMode, SelectChange, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -119,7 +120,7 @@ class RemovePackagingSiteDetailsControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    testInvalidJourneyType(SelectChange.ChangeActivity, packingSiteDetailsRemoveRoute)
+    testInvalidJourneyType(ChangeActivity, packingSiteDetailsRemoveRoute)
     testNoUserAnswersError(packingSiteDetailsRemoveRoute)
 
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {

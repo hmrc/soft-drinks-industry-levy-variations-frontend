@@ -2,7 +2,8 @@ package controllers.$packageName$
 
 import base.SpecBase
 import forms.$packageName$.$className$FormProvider
-import models.{NormalMode, SelectChange}
+import models.NormalMode
+import models.SelectChange.$packageName;format="cap"$
 import models.$packageName$.$className$
 import navigation._
 import org.mockito.ArgumentMatchers.any
@@ -122,12 +123,12 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    testInvalidJourneyType(SelectChange.$packageName;format="cap"$, $className;format="decap"$Route)
+    testInvalidJourneyType($packageName;format="cap"$, $className;format="decap"$Route)
     testNoUserAnswersError($className;format="decap"$Route)
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(SelectChange.$packageName;format="cap"$))).build()
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure($packageName;format="cap"$))).build()
 
       running(application) {
         val request =

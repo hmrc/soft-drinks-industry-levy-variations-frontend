@@ -20,8 +20,9 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.changeActivity.ThirdPartyPackagersFormProvider
 import helpers.LoggerHelper
-import models.{NormalMode, SelectChange}
-import navigation.{FakeNavigatorForChangeActivity, Navigator, NavigatorForChangeActivity}
+import models.NormalMode
+import models.SelectChange.ChangeActivity
+import navigation.{FakeNavigatorForChangeActivity, NavigatorForChangeActivity}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -128,9 +129,12 @@ class ThirdPartyPackagersControllerSpec extends SpecBase with MockitoSugar with 
       }
     }
 
+    testInvalidJourneyType(ChangeActivity, thirdPartyPackagersRoute)
+    testNoUserAnswersError(thirdPartyPackagersRoute)
+
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(SelectChange.ChangeActivity))).build()
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(ChangeActivity))).build()
 
       running(application) {
         val request =

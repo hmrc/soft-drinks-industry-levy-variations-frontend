@@ -20,7 +20,8 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.updateRegisteredDetails.WarehouseDetailsFormProvider
 import handlers.ErrorHandler
-import models.{Mode, SelectChange}
+import models.Mode
+import models.SelectChange.UpdateRegisteredDetails
 import navigation._
 import pages.updateRegisteredDetails.WarehouseDetailsPage
 import play.api.i18n.MessagesApi
@@ -50,7 +51,7 @@ class WarehouseDetailsController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.UpdateRegisteredDetails) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(WarehouseDetailsPage) match {
@@ -68,7 +69,7 @@ class WarehouseDetailsController @Inject()(
       Ok(view(preparedForm, mode, summaryList))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.UpdateRegisteredDetails).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails).async {
     implicit request =>
 
       val summaryList: Option[SummaryList] = request.userAnswers.warehouseList match {

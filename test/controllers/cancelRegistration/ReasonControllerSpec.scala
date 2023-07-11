@@ -17,25 +17,26 @@
 package controllers.cancelRegistration
 
 import base.SpecBase
+import errors.SessionDatabaseInsertError
 import forms.cancelRegistration.ReasonFormProvider
-import models.{NormalMode, SelectChange}
+import models.NormalMode
+import models.SelectChange.CancelRegistration
 import navigation._
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.cancelRegistration.ReasonPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
-import views.html.cancelRegistration.ReasonView
 import utilities.GenericLogger
-import errors.SessionDatabaseInsertError
+import views.html.cancelRegistration.ReasonView
 
 import scala.concurrent.Future
-import org.jsoup.Jsoup
-import play.api.data.Form
 
 class ReasonControllerSpec extends SpecBase with MockitoSugar {
 
@@ -128,13 +129,13 @@ class ReasonControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    testInvalidJourneyType(SelectChange.CancelRegistration, reasonRoute)
+    testInvalidJourneyType(CancelRegistration, reasonRoute)
     testNoUserAnswersError(reasonRoute)
 
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(SelectChange.CancelRegistration))).build()
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CancelRegistration))).build()
 
       running(application) {
         val request =

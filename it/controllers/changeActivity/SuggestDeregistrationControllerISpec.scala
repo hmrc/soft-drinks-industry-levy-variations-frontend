@@ -1,7 +1,7 @@
 package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
-import models.SelectChange
+import models.SelectChange.ChangeActivity
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.WsTestClient
@@ -29,7 +29,7 @@ class SuggestDeregistrationControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(changeActivityBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + normalRoutePath)
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.ChangeActivity, changeActivityBaseUrl + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + normalRoutePath)
   }
 
 }

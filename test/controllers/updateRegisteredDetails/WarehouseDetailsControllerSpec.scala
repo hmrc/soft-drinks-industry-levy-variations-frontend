@@ -19,7 +19,8 @@ package controllers.updateRegisteredDetails
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.updateRegisteredDetails.WarehouseDetailsFormProvider
-import models.{NormalMode, SelectChange}
+import models.NormalMode
+import models.SelectChange.UpdateRegisteredDetails
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -177,12 +178,12 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
       }
     }
 
-    testInvalidJourneyType(SelectChange.UpdateRegisteredDetails, warehouseDetailsRoute)
+    testInvalidJourneyType(UpdateRegisteredDetails, warehouseDetailsRoute)
     testNoUserAnswersError(warehouseDetailsRoute)
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(SelectChange.UpdateRegisteredDetails))).build()
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(UpdateRegisteredDetails))).build()
 
       running(application) {
         val request =

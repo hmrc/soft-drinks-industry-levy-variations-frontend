@@ -21,7 +21,7 @@ import controllers.{ControllerHelper, routes}
 import forms.changeActivity.RemovePackagingSiteDetailsFormProvider
 import handlers.ErrorHandler
 import models.backend.Site
-import models.{Mode, SelectChange, UserAnswers}
+import models.{Mode, UserAnswers}
 import navigation._
 import pages.changeActivity.RemovePackagingSiteDetailsPage
 import play.api.i18n.MessagesApi
@@ -34,6 +34,7 @@ import views.html.changeActivity.RemovePackagingSiteDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import models.SelectChange.ChangeActivity
 
 class RemovePackagingSiteDetailsController @Inject()(
                                                       override val messagesApi: MessagesApi,
@@ -49,7 +50,7 @@ class RemovePackagingSiteDetailsController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity) {
+  def onPageLoad(mode: Mode, index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
       request.userAnswers.packagingSiteList.get(index) match {
         case Some(site) =>
@@ -61,7 +62,7 @@ class RemovePackagingSiteDetailsController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode, index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity).async {
+  def onSubmit(mode: Mode, index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
       val warehouseToRemove: Option[Site] = request.userAnswers.packagingSiteList.get(index)
       warehouseToRemove match {

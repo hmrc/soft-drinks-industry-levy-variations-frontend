@@ -20,7 +20,7 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.ThirdPartyPackagersFormProvider
 import handlers.ErrorHandler
-import models.{Mode, SelectChange}
+import models.Mode
 import navigation.NavigatorForChangeActivity
 import pages.changeActivity.ThirdPartyPackagersPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -28,6 +28,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
 import utilities.GenericLogger
 import views.html.changeActivity.ThirdPartyPackagersView
+import models.SelectChange.ChangeActivity
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -46,7 +47,7 @@ class ThirdPartyPackagersController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(ThirdPartyPackagersPage) match {
@@ -57,7 +58,7 @@ class ThirdPartyPackagersController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
       form.bindFromRequest().fold(
         formWithErrors =>

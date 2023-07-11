@@ -19,7 +19,8 @@ package controllers.changeActivity
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.changeActivity.PackagingSiteDetailsFormProvider
-import models.{NormalMode, SelectChange}
+import models.NormalMode
+import models.SelectChange.ChangeActivity
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -141,12 +142,12 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
       }
     }
 
-    testInvalidJourneyType(SelectChange.ChangeActivity, packagingSiteDetailsRoute)
+    testInvalidJourneyType(ChangeActivity, packagingSiteDetailsRoute)
     testNoUserAnswersError(packagingSiteDetailsRoute)
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(SelectChange.ChangeActivity))).build()
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(ChangeActivity))).build()
 
       running(application) {
         val request =

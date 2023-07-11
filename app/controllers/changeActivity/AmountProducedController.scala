@@ -20,7 +20,7 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.AmountProducedFormProvider
 import handlers.ErrorHandler
-import models.{Mode, SelectChange}
+import models.Mode
 import models.changeActivity.AmountProduced
 import navigation._
 import pages.changeActivity.AmountProducedPage
@@ -33,6 +33,7 @@ import views.html.changeActivity.AmountProducedView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import models.SelectChange.ChangeActivity
 
 class AmountProducedController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -48,7 +49,7 @@ class AmountProducedController @Inject()(
 
   val form: Form[AmountProduced] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
       val preparedForm = request.userAnswers.get(AmountProducedPage) match {
         case None => form
@@ -57,7 +58,7 @@ class AmountProducedController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.ChangeActivity).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
 
       form.bindFromRequest().fold(

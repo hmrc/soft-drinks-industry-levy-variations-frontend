@@ -88,18 +88,18 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
 
   override val normalRoutes: Page => UserAnswers => Call = {
     case ThirdPartyPackagersPage => _ => navigationForOperateThirdPartyPackagers(NormalMode)
-    case PackAtBusinessAddressPage => userAnswers => defaultCall
-    case PackagingSiteDetailsPage => userAnswers => defaultCall
-    case RemovePackagingSiteDetailsPage => userAnswers => defaultCall
-    case SecondaryWarehouseDetailsPage => userAnswers => defaultCall
+    case PackAtBusinessAddressPage => _ => defaultCall
+    case PackagingSiteDetailsPage => _ => defaultCall
+    case RemovePackagingSiteDetailsPage => _ => defaultCall
+    case SecondaryWarehouseDetailsPage => _ => defaultCall
     case ContractPackingPage => userAnswers => navigationForContractPacking(userAnswers, NormalMode)
     case HowManyContractPackingPage => userAnswers => navigationForHowManyContractPacking(userAnswers, NormalMode)
     case ImportsPage => userAnswers => navigationForImports(userAnswers, NormalMode)
-    case HowManyImportsPage => userAnswers => defaultCall
+    case HowManyImportsPage => _ => defaultCall
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
-    case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => routes.ContractPackingController.onPageLoad(NormalMode)
+    case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.ContractPackingController.onPageLoad(NormalMode)
     case AmountProducedPage => userAnswers => navigationForAmountProduced(userAnswers, NormalMode)
-    case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => defaultCall
+    case HowManyOperatePackagingSiteOwnBrandsPage => _ => defaultCall
     case AmountProducedPage => userAnswers => navigationForAmountProduced(userAnswers, NormalMode)
     case _ => _ => defaultCall
   }

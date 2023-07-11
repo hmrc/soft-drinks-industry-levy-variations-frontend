@@ -18,23 +18,22 @@ package controllers.correctReturn
 
 import cats.implicits.catsSyntaxPartialOrder
 import connectors.SoftDrinksIndustryLevyConnector
-import utilities.GenericLogger
-import controllers.{ControllerHelper, routes}
+import controllers.ControllerHelper
 import controllers.actions._
 import forms.correctReturn.SelectFormProvider
-
-import javax.inject.Inject
-import models.{Mode, NormalMode, ReturnPeriod, SelectChange}
+import handlers.ErrorHandler
+import models.SelectChange.CorrectReturn
+import models.{Mode, ReturnPeriod}
+import navigation._
 import pages.correctReturn.SelectPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
+import utilities.GenericLogger
 import views.html.correctReturn.SelectView
-import handlers.ErrorHandler
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import navigation._
-import play.api.libs.json.Json
 
 class SelectController @Inject()(
                                   override val messagesApi: MessagesApi,
@@ -59,7 +58,7 @@ class SelectController @Inject()(
       .map(returnPeriod => returnPeriod.sortWith(_.quarter > _.quarter).reverse)
   }
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CorrectReturn).async {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(SelectPage) match {
@@ -75,7 +74,7 @@ class SelectController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CorrectReturn).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
     implicit request =>
       form.bindFromRequest().fold(
         formWithErrors =>
@@ -85,7 +84,7 @@ class SelectController @Inject()(
          Future.successful(BadRequest(view(formWithErrors, mode, seperateReturnYears(returns): List[List[ReturnPeriod]])))
        case Some(returns) if returns.isEmpty =>
          Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
-       case None =>
+       case _ =>
          Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
      },
         value => {

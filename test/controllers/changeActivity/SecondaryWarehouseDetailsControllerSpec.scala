@@ -19,8 +19,9 @@ package controllers.changeActivity
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.changeActivity.SecondaryWarehouseDetailsFormProvider
+import models.SelectChange.ChangeActivity
 import models.backend.UkAddress
-import models.{NormalMode, SelectChange, UserAnswers, Warehouse}
+import models.{NormalMode, UserAnswers, Warehouse}
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -37,7 +38,6 @@ import viewmodels.govuk.SummaryListFluency
 import views.html.changeActivity.SecondaryWarehouseDetailsView
 import views.summary.changeActivity.SecondaryWarehouseDetailsSummary
 
-import scala.collection.immutable.Map
 import scala.concurrent.Future
 
 class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with SummaryListFluency {
@@ -111,7 +111,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
       val warehouses = Map("1" -> warehouse, "2" -> Warehouse(Some("DEF Ltd"), UkAddress(List("34 Rhes Priordy"),"WR53 7CX")))
       val summaryList = Some(SummaryListViewModel(rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouses)))
 
-      val userAnswers = UserAnswers(userAnswersId, SelectChange.ChangeActivity, warehouseList = warehouses)
+      val userAnswers = UserAnswers(userAnswersId, ChangeActivity, warehouseList = warehouses)
         .set(SecondaryWarehouseDetailsPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -200,12 +200,12 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
       }
     }
 
-    testInvalidJourneyType(SelectChange.ChangeActivity, warehouseDetailsRoute)
+    testInvalidJourneyType(ChangeActivity, warehouseDetailsRoute)
     testNoUserAnswersError(warehouseDetailsRoute)
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(SelectChange.ChangeActivity))).build()
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(ChangeActivity))).build()
 
       running(application) {
         val request =

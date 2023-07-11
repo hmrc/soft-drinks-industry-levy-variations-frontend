@@ -16,12 +16,14 @@
 
 package controllers.cancelRegistration
 
-import java.time.{LocalDate, ZoneOffset}
 import base.SpecBase
 import config.FrontendAppConfig
+import errors.SessionDatabaseInsertError
 import forms.cancelRegistration.CancelRegistrationDateFormProvider
-import models.{NormalMode, SelectChange}
+import models.NormalMode
+import models.SelectChange.CancelRegistration
 import navigation._
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -31,12 +33,11 @@ import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded, Call}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
+import utilities.GenericLogger
 import views.html.cancelRegistration.CancelRegistrationDateView
 
+import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
-import org.jsoup.Jsoup
-import utilities.GenericLogger
-import errors.SessionDatabaseInsertError
 
 class CancelRegistrationDateControllerSpec extends SpecBase with MockitoSugar {
   val appConfig = application.injector.instanceOf[FrontendAppConfig]
@@ -135,7 +136,7 @@ class CancelRegistrationDateControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    testInvalidJourneyType(SelectChange.CancelRegistration, cancelRegistrationDateRoute)
+    testInvalidJourneyType(CancelRegistration, cancelRegistrationDateRoute)
     testNoUserAnswersError(cancelRegistrationDateRoute)
 
 
@@ -145,7 +146,7 @@ class CancelRegistrationDateControllerSpec extends SpecBase with MockitoSugar {
         when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
         val application =
-          applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(SelectChange.CancelRegistration)))
+          applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CancelRegistration)))
             .overrides(
               bind[NavigatorForCancelRegistration].toInstance(new FakeNavigatorForCancelRegistration(onwardRoute)),
               bind[SessionService].toInstance(mockSessionService)

@@ -1,7 +1,7 @@
 package controllers.cancelRegistration
 
 import controllers.ControllerITTestHelper
-import models.SelectChange
+import models.SelectChange.CancelRegistration
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import play.api.i18n.Messages
@@ -46,6 +46,6 @@ class FileReturnBeforeDeregControllerISpec extends ControllerITTestHelper {
 
     testUnauthorisedUser(cancelRegistrationBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(cancelRegistrationBaseUrl + normalRoutePath)
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(SelectChange.CancelRegistration, cancelRegistrationBaseUrl + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CancelRegistration, cancelRegistrationBaseUrl + normalRoutePath)
   }
 }
