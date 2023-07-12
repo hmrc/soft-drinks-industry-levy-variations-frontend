@@ -17,7 +17,7 @@
 package controllers.changeActivity
 
 import controllers.actions._
-import controllers.{ControllerHelper, routes}
+import controllers.ControllerHelper
 import forms.changeActivity.RemovePackagingSiteDetailsFormProvider
 import handlers.ErrorHandler
 import models.backend.Site
@@ -58,18 +58,18 @@ class RemovePackagingSiteDetailsController @Inject()(
           Ok(view(form, mode, formattedAddress, index))
         case _ => genericLogger.logger.warn(s"Packing Site index $index doesn't exist ${request.userAnswers.id} packing site list length:" +
           s"${request.userAnswers.packagingSiteList.size}")
-          Redirect(routes.IndexController.onPageLoad)
+          Redirect(routes.PackagingSiteDetailsController.onPageLoad(mode).url)
       }
   }
 
   def onSubmit(mode: Mode, index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
-      val warehouseToRemove: Option[Site] = request.userAnswers.packagingSiteList.get(index)
-      warehouseToRemove match {
+      val packagingSiteToRemove: Option[Site] = request.userAnswers.packagingSiteList.get(index)
+      packagingSiteToRemove match {
         case None =>
           genericLogger.logger.warn(s"Packing Site index $index doesn't exist ${request.userAnswers.id} packing site list length:" +
             s"${request.userAnswers.packagingSiteList.size}")
-          Future.successful(Redirect(routes.IndexController.onPageLoad))
+          Future.successful(Redirect(routes.PackagingSiteDetailsController.onPageLoad(mode).url))
         case Some(site) =>
           val formattedAddress: Html = AddressFormattingHelper.addressFormatting(site.address, site.tradingName)
           form.bindFromRequest().fold(
