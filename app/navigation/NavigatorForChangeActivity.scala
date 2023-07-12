@@ -17,11 +17,13 @@
 package navigation
 
 import controllers.changeActivity.routes
+import models.changeActivity.AmountProduced
 import models.changeActivity.AmountProduced._
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages.Page
 import pages.changeActivity._
 import play.api.mvc.Call
+import viewmodels.summary.changeActivity.AmountProducedSummary
 
 import javax.inject.{Inject, Singleton}
 
@@ -47,12 +49,25 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
   }
 
   private def navigationForImports(userAnswers: UserAnswers, mode: Mode): Call = {
-    if (userAnswers.get(page = ImportsPage).contains(true)) {
-      routes.HowManyImportsController.onPageLoad(mode)
-    } else if(mode == CheckMode){
-        routes.ChangeActivityCYAController.onPageLoad
-    } else {
-        defaultCall
+    val contractPacker = userAnswers.get(ContractPackingPage).contains(true)
+    val noneProduced = userAnswers.get(AmountProducedPage).contains(AmountProduced.None)
+    val imports = userAnswers.get(page = ImportsPage).contains(true)
+
+    (noneProduced, contractPacker, imports)match {
+      case (_, _, true) => routes.HowManyImportsController.onPageLoad(mode)
+      case (true, true, false) => routes.PackagingSiteDetailsController.onPageLoad(mode)
+      case _ if mode == CheckMode => routes.ChangeActivityCYAController.onPageLoad
+      case _ => defaultCall
+    }
+  }
+  private def navigationForHowManyImports(userAnswers: UserAnswers): Call = {
+    val contractPacker = userAnswers.get(ContractPackingPage).contains(true)
+    val noneProduced = userAnswers.get(AmountProducedPage).contains(AmountProduced.None)
+
+    (contractPacker, noneProduced) match {
+      case (true, true) => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
+      case (false, true) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+      case _ => defaultCall
     }
   }
 
@@ -95,7 +110,7 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
     case ContractPackingPage => userAnswers => navigationForContractPacking(userAnswers, NormalMode)
     case HowManyContractPackingPage => userAnswers => navigationForHowManyContractPacking(userAnswers, NormalMode)
     case ImportsPage => userAnswers => navigationForImports(userAnswers, NormalMode)
-    case HowManyImportsPage => _ => defaultCall
+    case HowManyImportsPage => userAnswers => navigationForHowManyImports(userAnswers)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.ContractPackingController.onPageLoad(NormalMode)
     case AmountProducedPage => userAnswers => navigationForAmountProduced(userAnswers, NormalMode)

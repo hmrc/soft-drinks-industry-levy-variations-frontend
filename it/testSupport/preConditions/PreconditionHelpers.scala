@@ -12,6 +12,15 @@ trait PreconditionHelpers {
       .sdilBackend.returns_pending("0000001611")
   }
 
+  def noReturnPendingPreCondition = {
+    builder
+      .user.isAuthorisedAndEnrolled
+      .sdilBackend.retrieveSubscription("utr", "0000001611")
+      .sdilBackend.retrieveSubscription("sdil", "XKSDIL000000022")
+      .sdilBackend.returns_variable("0000001611")
+      .sdilBackend.no_returns_pending("0000001611")
+  }
+
   def unauthorisedPrecondition = {
     builder
       .user.isNotAuthorised()

@@ -2,10 +2,11 @@ package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.ChangeActivity
+import models.changeActivity.AmountProduced
 import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.changeActivity.ImportsPage
+import pages.changeActivity.{AmountProducedPage, ContractPackingPage, ImportsPage}
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.Json
@@ -129,6 +130,126 @@ class ImportsControllerISpec extends ControllerITTestHelper {
     testUnauthorisedUser(changeActivityBaseUrl + checkRoutePath)
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + checkRoutePath)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + checkRoutePath)
+  }
+
+  "in normal mode when amount produced is none" - {
+    "and client is a contract packer" - {
+      "and user answers no to the imports question and submits their answer" - {
+        "they should be redirected to packaging site details" in {
+
+          given.commonPrecondition
+          setAnswers(emptyUserAnswersForChangeActivity
+            .set(ContractPackingPage, true).success.value
+            .set(AmountProducedPage, AmountProduced.None).success.value)
+
+          WsTestClient.withClient { client =>
+            val result = createClientRequestPOST(
+              client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> false)
+            )
+
+            whenReady(result) { res =>
+              res.status mustBe 303
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
+              val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Boolean]](None)(_.get(ImportsPage))
+              dataStoredForPage.get mustBe false
+            }
+          }
+        }
+      }
+
+      "and answers yes to the imports question and submits their answer" - {
+        "they should be redirected to how many litres imported page" in {
+
+          given.commonPrecondition
+          setAnswers(emptyUserAnswersForChangeActivity
+            .set(ContractPackingPage, true).success.value
+            .set(AmountProducedPage, AmountProduced.None).success.value)
+
+
+          WsTestClient.withClient { client =>
+            val result = createClientRequestPOST(
+              client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> true)
+            )
+
+            whenReady(result) { res =>
+              res.status mustBe 303
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.HowManyImportsController.onPageLoad(NormalMode).url)
+              val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Boolean]](None)(_.get(ImportsPage))
+              dataStoredForPage.get mustBe true
+            }
+          }
+        }
+      }
+    }
+
+    "and client is NOT a contract packer" - {
+      "and answers no to the imports question and submits their answer" - {
+        "they should be redirected to suggest de-registration page if they have no pending returns" in {
+
+          given.noReturnPendingPreCondition
+          setAnswers(emptyUserAnswersForChangeActivity
+            .set(ContractPackingPage, false).success.value
+            .set(AmountProducedPage, AmountProduced.None).success.value)
+
+          WsTestClient.withClient { client =>
+            val result = createClientRequestPOST(
+              client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> false)
+            )
+
+            whenReady(result) { res =>
+              res.status mustBe 303
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.SuggestDeregistrationController.onPageLoad().url)
+              val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Boolean]](None)(_.get(ImportsPage))
+              dataStoredForPage.get mustBe false
+            }
+          }
+        }
+
+        "they should be redirected to packaging file return before de-registration page if they have pending returns" in {
+
+          given.commonPrecondition
+          setAnswers(emptyUserAnswersForChangeActivity
+            .set(ContractPackingPage, false).success.value
+            .set(AmountProducedPage, AmountProduced.None).success.value)
+
+          WsTestClient.withClient { client =>
+            val result = createClientRequestPOST(
+              client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> false)
+            )
+
+            whenReady(result) { res =>
+              res.status mustBe 303
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad().url)
+              val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Boolean]](None)(_.get(ImportsPage))
+              dataStoredForPage.get mustBe false
+            }
+          }
+        }
+      }
+
+      "and answers yes to the imports question and submits their answer" - {
+        "they should be redirected to how many litres imported page" in {
+
+          given.commonPrecondition
+          setAnswers(emptyUserAnswersForChangeActivity
+            .set(ContractPackingPage, false).success.value
+            .set(AmountProducedPage, AmountProduced.None).success.value)
+
+          WsTestClient.withClient { client =>
+            val result = createClientRequestPOST(
+              client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> true)
+            )
+
+            whenReady(result) { res =>
+              res.status mustBe 303
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.HowManyImportsController.onPageLoad(NormalMode).url)
+              val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Boolean]](None)(_.get(ImportsPage))
+              dataStoredForPage.get mustBe true
+            }
+          }
+        }
+      }
+    }
   }
 
   s"POST " + normalRoutePath - {

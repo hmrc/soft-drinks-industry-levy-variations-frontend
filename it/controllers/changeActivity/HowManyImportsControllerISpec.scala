@@ -2,10 +2,11 @@ package controllers.changeActivity
 
 import controllers.LitresISpecHelper
 import models.SelectChange.ChangeActivity
+import models.changeActivity.AmountProduced
 import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.changeActivity.HowManyImportsPage
+import pages.changeActivity.{AmountProducedPage, ContractPackingPage, HowManyImportsPage, ImportsPage}
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.Json
@@ -213,6 +214,57 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       testUnauthorisedUser(changeActivityBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
       testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
       testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
+    }
+  }
+
+
+  "in normal mode when amount produced is none" - {
+    "and client is a contract packer" - {
+      "and adds import litres and submits their answer" - {
+        "they should be redirected to packaging site details" in {
+          given.commonPrecondition
+          setAnswers(emptyUserAnswersForChangeActivity
+            .set(ContractPackingPage, true).success.value
+            .set(AmountProducedPage, AmountProduced.None).success.value)
+
+          WsTestClient.withClient { client =>
+            val result = createClientRequestPOST(
+              client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBands)
+            )
+
+            whenReady(result) { res =>
+              res.status mustBe 303
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
+              val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+              dataStoredForPage.get mustBe litresInBands
+            }
+          }
+        }
+      }
+    }
+
+    "and client is NOT a contract packer" - {
+      "and adds import litres and submits their answer" - {
+        "they should be redirected to secondary warehouse details" in {
+          given.commonPrecondition
+          setAnswers(emptyUserAnswersForChangeActivity
+            .set(ContractPackingPage, false).success.value
+            .set(AmountProducedPage, AmountProduced.None).success.value)
+
+          WsTestClient.withClient { client =>
+            val result = createClientRequestPOST(
+              client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBands)
+            )
+
+            whenReady(result) { res =>
+              res.status mustBe 303
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
+              val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+              dataStoredForPage.get mustBe litresInBands
+            }
+          }
+        }
+      }
     }
   }
 }
