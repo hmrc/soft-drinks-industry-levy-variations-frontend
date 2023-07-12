@@ -78,8 +78,8 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
           page.getElementsByTag("h2").get(sectionInd).text() mustBe "Packaged in the UK"
           val ownBrands = page.getElementsByClass("govuk-summary-list").get(sectionInd).getElementsByClass("govuk-summary-list__row")
 
-          ownBrands.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change whether you package your own brands at your own site?"
-          ownBrands.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "whether you package your own brands at your own site?"
+          ownBrands.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change whether you package your own brands at your own site"
+          ownBrands.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "whether you package your own brands at your own site"
           ownBrands.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
 
           if (ownBrandsVal) {
@@ -107,8 +107,8 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
           page.getElementsByTag("h2").get(sectionInd).text() mustBe "Package for customers"
           val contractPacking = page.getElementsByClass("govuk-summary-list").get(sectionInd).getElementsByClass("govuk-summary-list__row")
 
-          contractPacking.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change whether you use contract packing at your own site?"
-          contractPacking.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "whether you use contract packing at your own site?"
+          contractPacking.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change whether you use contract packing at your own site"
+          contractPacking.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "whether you use contract packing at your own site"
           contractPacking.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.ContractPackingController.onPageLoad(CheckMode).url
 
           if (contractVal) {
@@ -136,8 +136,8 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
           page.getElementsByTag("h2").get(sectionInd).text() mustBe "Brought into the UK"
           val imports = page.getElementsByClass("govuk-summary-list").get(sectionInd).getElementsByClass("govuk-summary-list__row")
 
-          imports.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change whether you bring liable drinks into the UK?"
-          imports.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "whether you bring liable drinks into the UK?"
+          imports.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change whether you bring liable drinks into the UK"
+          imports.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "whether you bring liable drinks into the UK"
           imports.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.ImportsController.onPageLoad(CheckMode).url
 
           if (importVal) {
