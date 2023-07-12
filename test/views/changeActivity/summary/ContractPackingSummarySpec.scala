@@ -137,7 +137,7 @@ class ContractPackingSummarySpec extends SpecBase {
         val userAnswers = emptyUserAnswersForChangeActivity
 
         val res = ContractPackingSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = includeLevyRows)
-        res.rows.size mustBe 1
+        res.rows.size mustBe 0
       }
     })
   }
