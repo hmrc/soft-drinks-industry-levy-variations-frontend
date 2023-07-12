@@ -33,7 +33,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
             res.status mustBe OK
             val page = Jsoup.parse(res.body)
             page.title must include(Messages("changeActivity.checkYourAnswers.title"))
-            page.getElementsByClass("govuk-summary-list").size() mustBe 4
+            page.getElementsByClass("govuk-summary-list").size() mustBe 0
           }
         }
       }
