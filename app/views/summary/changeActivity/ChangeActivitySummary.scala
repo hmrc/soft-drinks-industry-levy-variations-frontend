@@ -35,24 +35,24 @@ object ChangeActivitySummary  {
     val thirdPartyPackagersSection: Option[(String, SummaryList)] = thirdPartyPackagersSummary.map(summary => {
       "changeActivity.checkYourAnswers.thirdPartyPackagersSection" -> SummaryList(Seq(summary))
     })
-    val ownBrandsSection: Option[(String, SummaryList)] = if (ownBrandsSummary.rows.nonEmpty) {
+    val ownBrandsSection: Option[(String, SummaryList)] = if (ownBrandsSummary.rows.isEmpty) None else {
       Option(
         "changeActivity.checkYourAnswers.operatePackingSiteOwnBrandsSection" ->
           OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = false)
       )
-    } else None
-    val contractSection: Option[(String, SummaryList)] = if (contractSummary.rows.nonEmpty) {
+    }
+    val contractSection: Option[(String, SummaryList)] = if (contractSummary.rows.isEmpty) None else {
       Option(
         "changeActivity.checkYourAnswers.contractPackingSection" ->
           ContractPackingSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = false)
       )
-    } else None
-    val importsSection: Option[(String, SummaryList)] = if (importsSummary.rows.nonEmpty) {
+    }
+    val importsSection: Option[(String, SummaryList)] = if (importsSummary.rows.isEmpty) None else {
       Option(
         "changeActivity.checkYourAnswers.importsSection" ->
           ImportsSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = false)
       )
-    } else None
+    }
     (amountProducedSection ++ thirdPartyPackagersSection ++ ownBrandsSection ++ contractSection ++ importsSection).toSeq
   }
 }

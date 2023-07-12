@@ -55,19 +55,19 @@ class ChangeActivityCYAViewSpec extends ViewSpecHelper {
       document.getElementsByClass(Selectors.PRE_HEADER_CAPTION).text() mustEqual s"$ALIAS - $RETURN_PERIOD"
     }
     "should have the expected heading" in {
-      document.getElementsByClass(Selectors.heading).text() mustEqual "Check your answers before sending your update"
+      document.getElementsByTag("h1").text() mustEqual "Check your answers before sending your update"
     }
     "contain the correct button" - {
       document.getElementsByClass(Selectors.button).text() mustBe "Confirm updates and send"
     }
     "contain the correct summary lists" - {
-      document.getElementsByClass(Selectors.summaryListHeading).first().text() mustBe "foo"
+      document.getElementsByClass(Selectors.summaryListHeading).get(1).text() mustBe "foo"
       document.getElementsByClass(Selectors.summaryList)
         .first()
         .getElementsByClass(Selectors.summaryRow)
         .first()
         .getElementsByClass(Selectors.summaryValue).first().text() mustBe "bar"
-      document.getElementsByClass(Selectors.summaryListHeading).last().text() mustBe "wizz"
+      document.getElementsByClass(Selectors.summaryListHeading).get(2).text() mustBe "wizz"
       document.getElementsByClass(Selectors.summaryList)
         .last()
         .getElementsByClass(Selectors.summaryRow)
