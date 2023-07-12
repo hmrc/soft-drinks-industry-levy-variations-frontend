@@ -77,4 +77,20 @@ trait ControllerHelper extends FrontendBaseController with I18nSupport {
       }
     }
   }
+
+  def updateDatabaseWithoutRedirect(updatedAnswers: Try[UserAnswers], page: Page)(success: Future[Result])
+                                   (implicit ec: ExecutionContext, request: Request[AnyContent]): Future[Result] = {
+    updatedAnswers match {
+      case Failure(_) =>
+        genericLogger.logger.error(s"Failed to resolve user answers while on ${page.toString}")
+        Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+      case Success(userAnswers) =>
+        sessionService.set(userAnswers).flatMap {
+          case Right(_) => success
+          case Left(_) =>
+            genericLogger.logger.error(sessionRepo500ErrorMessage(page))
+            Future.successful(InternalServerError)
+        }
+    }
+  }
 }
