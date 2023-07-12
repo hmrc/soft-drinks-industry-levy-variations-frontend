@@ -27,9 +27,9 @@ object OperatePackagingSiteOwnBrandsSummary extends ReturnDetailsSummaryListWith
   override val page: QuestionPage[Boolean] = OperatePackagingSiteOwnBrandsPage
   override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyOperatePackagingSiteOwnBrandsPage)
   override val summaryLitres: SummaryListRowLitresHelper = HowManyOperatePackagingSiteOwnBrandsSummary
-  override val key: String = "reportingoperatePackagingSiteOwnBrands"
+  override val key: String = "changeActivity.operatePackagingSiteOwnBrands.checkYourAnswersLabel"
   override val action: String = routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
   override val actionId: String = "change-operatePackagingSiteOwnBrands"
-  override val hiddenText: String = "operatePackagingSiteOwnBrands"
+  override val hiddenText: String = "changeActivity.operatePackagingSiteOwnBrands"
 
 }

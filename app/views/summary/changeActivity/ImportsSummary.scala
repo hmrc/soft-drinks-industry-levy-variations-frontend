@@ -27,9 +27,9 @@ object ImportsSummary extends ReturnDetailsSummaryListWithLitres  {
   override val page: QuestionPage[Boolean] = ImportsPage
   override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyImportsPage)
   override val summaryLitres: SummaryListRowLitresHelper = HowManyImportsSummary
-  override val key: String = "reportingimports"
+  override val key: String = "changeActivity.imports.checkYourAnswersLabel"
   override val action: String = routes.ImportsController.onPageLoad(CheckMode).url
   override val actionId: String = "change-imports"
-  override val hiddenText: String = "imports"
+  override val hiddenText: String = "changeActivity.imports"
 
 }

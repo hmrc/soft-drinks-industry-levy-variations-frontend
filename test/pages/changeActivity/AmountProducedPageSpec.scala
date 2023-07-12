@@ -19,7 +19,7 @@ package pages.changeActivity
 import models.changeActivity.AmountProduced
 import pages.behaviours.PageBehaviours
 
-class AmountProducedSpec extends PageBehaviours {
+class AmountProducedPageSpec extends PageBehaviours {
 
   "AmountProducedPage" - {
 

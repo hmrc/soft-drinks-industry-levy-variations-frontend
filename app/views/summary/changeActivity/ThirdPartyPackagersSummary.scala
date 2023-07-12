@@ -18,7 +18,7 @@ package views.summary.changeActivity
 
 import controllers.changeActivity.routes
 import models.{CheckMode, UserAnswers}
-import pages.changeActivity.AmountProducedPage
+import pages.changeActivity.ThirdPartyPackagersPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -26,24 +26,19 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object AmountProducedSummary  {
+object ThirdPartyPackagersSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(AmountProducedPage).map {
+    answers.get(ThirdPartyPackagersPage).map {
       answer =>
-
-        val value = ValueViewModel(
-          HtmlContent(
-            HtmlFormat.escape(messages(s"changeActivity.amountProduced.$answer"))
-          )
-        )
+        val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = "changeActivity.amountProduced.checkYourAnswersLabel",
-          value   = value.withCssClass("govuk-!-text-align-right"),
+          key     = "changeActivity.thirdPartyPackagers.checkYourAnswersLabel",
+          value   = ValueViewModel(value).withCssClass("govuk-!-text-align-right"),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.AmountProducedController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("changeActivity.amountProduced.change.hidden"))
+            ActionItemViewModel("site.change", routes.ThirdPartyPackagersController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("changeActivity.thirdPartyPackagers.change.hidden"))
           )
         )
     }

@@ -18,25 +18,33 @@ package controllers.changeActivity
 
 import com.google.inject.Inject
 import controllers.actions.ControllerActions
+import config.FrontendAppConfig
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.changeActivity.ChangeActivityCYAView
 import models.SelectChange.ChangeActivity
+import views.summary.changeActivity.ChangeActivitySummary
 
 class ChangeActivityCYAController @Inject()(
                                             override val messagesApi: MessagesApi,
                                             controllerActions: ControllerActions,
+                                            implicit val config: FrontendAppConfig,
                                             val controllerComponents: MessagesControllerComponents,
                                             view: ChangeActivityCYAView
                                           ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
-
-      val list: Seq[(String, SummaryList)] = Seq.empty
-
-      Ok(view(list))
+      val alias: String = request.subscription.orgName
+//      TODO: Implement Return Period in DLS-8346
+      val returnPeriod: String = "RETURN PERIOD"
+      val sections = ChangeActivitySummary.summaryListsAndHeadings(request.userAnswers)
+      Ok(view(alias, returnPeriod, sections, routes.ChangeActivityCYAController.onSubmit))
   }
+
+  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
+    Redirect(controllers.routes.IndexController.onPageLoad.url)
+  }
+
 }

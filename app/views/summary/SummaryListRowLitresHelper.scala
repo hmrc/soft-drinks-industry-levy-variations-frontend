@@ -38,42 +38,43 @@ trait SummaryListRowLitresHelper {
   val lowBand = "lowband"
   val highBand = "highband"
 
-  def rows(litresInBands: LitresInBands, isCheckAnswers: Boolean)(implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
+  def rows(litresInBands: LitresInBands, isCheckAnswers: Boolean, includeLevyRows: Boolean = true)
+          (implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
     Seq(
-      bandRow(litresInBands.lowBand, lowBand, isCheckAnswers),
-      bandLevyRow(litresInBands.lowBand, config.lowerBandCostPerLitre, lowBand),
-      bandRow(litresInBands.highBand, highBand, isCheckAnswers),
-      bandLevyRow(litresInBands.highBand, config.higherBandCostPerLitre, highBand)
-    )
+      Option(bandRow(litresInBands.lowBand, lowBand, isCheckAnswers, includeLevyRows)),
+      if (includeLevyRows) Option(bandLevyRow(litresInBands.lowBand, config.lowerBandCostPerLitre, lowBand)) else None,
+      Option(bandRow(litresInBands.highBand, highBand, isCheckAnswers, includeLevyRows)),
+      if (includeLevyRows) Option(bandLevyRow(litresInBands.highBand, config.higherBandCostPerLitre, highBand)) else None
+    ).flatten
   }
 
-  private def bandRow(litres: Long, band: String, isCheckAnswers: Boolean)(implicit messages: Messages): SummaryListRow = {
+  private def bandRow(litres: Long, band: String, isCheckAnswers: Boolean, noBorder: Boolean = true)(implicit messages: Messages): SummaryListRow = {
     val key = if (band == lowBand) {
-      "litresInTheLowBand"
+      "litres.lowBand"
     } else {
-      "litresInTheHighBand"
+      "litres.highBand"
     }
-    val value = HtmlFormat.escape(litres.toString).toString
+    val value = HtmlFormat.escape(java.text.NumberFormat.getInstance.format(litres)).toString
     SummaryListRow(
       key = key,
-      value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
-      classes = "govuk-summary-list__row--no-border",
+      value = ValueViewModel(HtmlContent(value)).withCssClass("govuk-!-text-align-right"),
+      classes = if (noBorder) "govuk-summary-list__row--no-border" else "",
       actions = action(isCheckAnswers, band)
     )
 }
 
 private def bandLevyRow(litres: Long, bandCostPerLitre: BigDecimal, band: String)(implicit messages: Messages): SummaryListRow = {
     val key = if (band == lowBand) {
-      "lowBandLevy"
+      "litres.lowBandLevy"
     } else {
-      "highBandLevy"
+      "litres.highBandLevy"
     }
 
     val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy(litres, bandCostPerLitre))).toString
 
     SummaryListRowViewModel(
       key = key,
-      value = ValueViewModel(HtmlContent(value)).withCssClass("align-right"),
+      value = ValueViewModel(HtmlContent(value)).withCssClass("govuk-!-text-align-right"),
       actions = Seq()
     )
   }

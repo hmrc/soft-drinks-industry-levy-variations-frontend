@@ -86,6 +86,15 @@ selectChange.checkYourAnswersLabel = What do you need to do
 selectChange.error.required = Select what you need to do
 selectChange.change.hidden = SelectChange
 
+changeActivity.checkYourAnswers.title = Check your answers before sending your update
+changeActivity.checkYourAnswers.heading = Check your answers before sending your update
+changeActivity.checkYourAnswers.submit = Confirm updates and send
+changeActivity.checkYourAnswers.amountProducedSection = Packaged globally
+changeActivity.checkYourAnswers.thirdPartyPackagersSection = Third party packagers
+changeActivity.checkYourAnswers.operatePackingSiteOwnBrandsSection = Packaged in the UK
+changeActivity.checkYourAnswers.contractPackingSection = Package for customers
+changeActivity.checkYourAnswers.importsSection = Brought into the UK
+
 updateRegisteredDetails.checkYourAnswers.title = Check your answers before sending your update
 updateRegisteredDetails.checkYourAnswers.heading = Check your answers before sending your update
 updateRegisteredDetails.checkYourAnswers.updateContactDetails.title = Soft Drinks Industry Levy contact
@@ -126,9 +135,9 @@ changeActivity.amountProduced.title = How many litres of your own brands of liab
 changeActivity.amountProduced.large = 1 million litres or more
 changeActivity.amountProduced.small = Less than 1 million litres
 changeActivity.amountProduced.none = None
-changeActivity.amountProduced.checkYourAnswersLabel = Amount Produced
+changeActivity.amountProduced.checkYourAnswersLabel = Own brand packaged in past 12 months?
 changeActivity.amountProduced.error.required = Select how many litres of your own brands of liable drinks have been packaged globally in the past 12 months
-changeActivity.amountProduced.change.hidden = Amount produced
+changeActivity.amountProduced.change.hidden = how many litres of your own brands have been packaged globally
 
 brandsPackaged.hint = This includes brands you own or have the rights to manufacture.
 whatDoesPackagedMean.summary = What does 'packaged' mean?
@@ -156,11 +165,11 @@ changeActivity.operatePackagingSiteOwnBrands.title = Do you operate any packagin
 changeActivity.operatePackagingSiteOwnBrands.heading = Do you operate any packaging sites in the UK to package liable drinks for brands you own?
 changeActivity.operatePackagingSiteOwnBrands.checkYourAnswersLabel = Package your own brand at your own sites?
 changeActivity.operatePackagingSiteOwnBrands.error.required = Select yes if you operate any packaging sites in the UK to package liable drinks for brands you own
-changeActivity.operatePackagingSiteOwnBrands.change.hidden = Change do you operate any packaging sites in the UK to package liable drinks for brands you own?
+changeActivity.operatePackagingSiteOwnBrands.change.hidden = whether you package your own brands at your own site
 changeActivity.howManyOperatePackagingSiteOwnBrands.title = How many litres of your own brands will you package in the next 12 months?
 changeActivity.howManyOperatePackagingSiteOwnBrands.heading = How many litres of your own brands will you package in the next 12 months?
-changeActivity.operatePackagingSiteOwnBrands.lowband.litres.hidden = change amount of litres in lowband for operatePackagingSiteOwnBrands
-changeActivity.operatePackagingSiteOwnBrands.highband.litres.hidden = change amount of litres in highband for operatePackagingSiteOwnBrands
+changeActivity.operatePackagingSiteOwnBrands.lowband.litres.hidden = number of litres in low band packaged at your own site
+changeActivity.operatePackagingSiteOwnBrands.highband.litres.hidden = number of litres in high band packaged at your own site
 changeActivity.volume.subtext = If you do not have the exact volumes you can enter an estimate.
 
 cancelRegistration.cancelRegistrationDate.title = What date are you cancelling your registration from?
@@ -191,22 +200,22 @@ cancelRegistration.fileReturnBeforeDereg.continue = Go to your account
 
 
 changeActivity.imports.title = Do you bring liable drinks into the UK from anywhere outside of the UK?
-changeActivity.imports.checkYourAnswersLabel = Do you bring liable drinks into the UK from anywhere outside of the UK?
+changeActivity.imports.checkYourAnswersLabel = Do you bring liable drinks into the UK?
 changeActivity.imports.error.required = Select yes if do you bring liable drinks into the UK from anywhere outside of the UK
-changeActivity.imports.change.hidden = Change do you bring liable drinks into the UK from anywhere outside of the UK?
+changeActivity.imports.change.hidden = whether you bring liable drinks into the UK
 howManyImports.title = How many litres of liable drinks have you brought into the UK from anywhere outside of the UK?
 howManyImports.subtext = Do not include liable drinks from small producers or your own brands if you are a registered small producer.
-imports.lowband.litres.hidden = change amount of litres in lowband for imports
-imports.highband.litres.hidden = change amount of litres in highband for imports
+changeActivity.imports.lowband.litres.hidden = number of litres in low band brought into the UK
+changeActivity.imports.highband.litres.hidden = number of litres in high band brought into the UK
 
 
 changeActivity.contractPacking.title = Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
-changeActivity.contractPacking.checkYourAnswersLabel = Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
+changeActivity.contractPacking.checkYourAnswersLabel = Package for customers at your own sites?
 changeActivity.contractPacking.error.required = Select yes if you operate any packaging sites in the UK to package liable drinks as a third party or contract packer
-changeActivity.contractPacking.change.hidden = Change do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
+changeActivity.contractPacking.change.hidden = whether you use contract packing at your own site
 howManyContractPacking.title = How many litres will you package as a third party or contract packer in the next 12 months?
-contractPacking.lowband.litres.hidden = change amount of litres in lowband for contractPacking
-contractPacking.highband.litres.hidden = change amount of litres in highband for contractPacking
+changeActivity.contractPacking.lowband.litres.hidden = number of litres in low band contract packed at your own site
+changeActivity.contractPacking.highband.litres.hidden = number of litres in high band contract packed at your own site
 
 updateRegisteredDetails.warehouseDetails.title = Change your UK warehouse details
 updateRegisteredDetails.warehouseDetails.heading = Change your UK warehouse details
@@ -296,9 +305,9 @@ addressLookupFrontend.contactDetails.editPageLabels.postcodeLabel = Postcode
 
 changeActivity.thirdPartyPackagers.title = Do you use any third parties in the UK to package liable drinks on your behalf?
 changeActivity.thirdPartyPackagers.heading = Do you use any third parties in the UK to package liable drinks on your behalf?
-changeActivity.thirdPartyPackagers.checkYourAnswersLabel = Do you use any third parties in the UK to package liable drinks on your behalf?
+changeActivity.thirdPartyPackagers.checkYourAnswersLabel = Use third party packagers?
 changeActivity.thirdPartyPackagers.error.required = Select yes if you use any third parties in the UK to package liable drinks on your behalf
-changeActivity.thirdPartyPackagers.change.hidden = ThirdPartyPackagers
+changeActivity.thirdPartyPackagers.change.hidden = whether you use third party packagers
 
 correctReturn.select.title = Which return do you need to correct?
 correctReturn.select.heading = Which return do you need to correct?

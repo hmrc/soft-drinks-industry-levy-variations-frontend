@@ -99,7 +99,7 @@ trait SpecBase
   implicit lazy val messagesAPI = application.injector.instanceOf[MessagesApi]
   implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
   lazy val mcc = application.injector.instanceOf[MessagesControllerComponents]
-  lazy val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+  implicit lazy val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
   override def afterEach(): Unit = {
     Play.stop(application)

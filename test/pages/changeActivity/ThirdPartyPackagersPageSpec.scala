@@ -16,13 +16,16 @@
 
 package pages.changeActivity
 
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-case object ThirdPartyPackagersPage extends QuestionPage[Boolean] {
+class ThirdPartyPackagersPageSpec extends PageBehaviours {
 
-  override def path: JsPath = JsPath \ journeyType \ toString
+  "ThirdPartyPackagersPage" - {
 
-  def journeyType: String = "changeActivity"
-  override def toString: String = "thirdPartyPackagers"
+    beRetrievable[Boolean](ThirdPartyPackagersPage)
+
+    beSettable[Boolean](ThirdPartyPackagersPage)
+
+    beRemovable[Boolean](ThirdPartyPackagersPage)
+  }
 }
