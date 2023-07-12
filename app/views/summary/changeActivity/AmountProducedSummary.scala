@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewmodels.summary.changeActivity
+package views.summary.changeActivity
 
 import controllers.changeActivity.routes
 import models.{CheckMode, UserAnswers}
