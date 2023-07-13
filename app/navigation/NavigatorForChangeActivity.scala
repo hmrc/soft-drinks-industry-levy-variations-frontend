@@ -90,7 +90,7 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
     case ThirdPartyPackagersPage => _ => navigationForOperateThirdPartyPackagers(NormalMode)
     case PackAtBusinessAddressPage => _ => defaultCall
     case PackagingSiteDetailsPage => _ => defaultCall
-    case RemovePackagingSiteDetailsPage => _ => defaultCall
+    case RemovePackagingSiteDetailsPage => _ => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
     case SecondaryWarehouseDetailsPage => _ => defaultCall
     case ContractPackingPage => userAnswers => navigationForContractPacking(userAnswers, NormalMode)
     case HowManyContractPackingPage => userAnswers => navigationForHowManyContractPacking(userAnswers, NormalMode)
@@ -106,6 +106,7 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
 
   override val checkRouteMap: Page => UserAnswers => Call = {
     case ThirdPartyPackagersPage => _ => navigationForOperateThirdPartyPackagers(CheckMode)
+    case RemovePackagingSiteDetailsPage => _ => routes.PackagingSiteDetailsController.onPageLoad(CheckMode)
     case ContractPackingPage => userAnswers => navigationForContractPacking(userAnswers, CheckMode)
     case ImportsPage => userAnswers => navigationForImports(userAnswers, CheckMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
