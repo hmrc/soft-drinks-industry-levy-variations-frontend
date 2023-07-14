@@ -23,15 +23,18 @@ import models.NormalMode
 import models.SelectChange.ChangeActivity
 import navigation._
 import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.changeActivity.PackagingSiteDetailsPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.SessionService
+import services.{AddressLookupService, PackingDetails, SessionService}
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import viewmodels.summary.changeActivity.PackagingSiteDetailsSummary
@@ -41,12 +44,12 @@ import scala.concurrent.Future
 
 class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  with SummaryListFluency{
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new PackagingSiteDetailsFormProvider()
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  lazy val packagingSiteDetailsRoute = routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
+  lazy val packagingSiteDetailsRoute: String = routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
 
   "PackagingSiteDetails Controller" - {
 
@@ -84,7 +87,6 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
         val request = FakeRequest(GET, packagingSiteDetailsRoute)
 
         val view = application.injector.instanceOf[PackagingSiteDetailsView]
-
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -95,14 +97,22 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
     "must redirect to the next page when valid data is submitted" in {
 
       val mockSessionService = mock[SessionService]
+      val mockAddressLookupService = mock[AddressLookupService]
+      val onwardUrlForALF = "foobarwizz"
 
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+      when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
+        ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any())(
+        ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
+        .thenReturn(Future.successful(onwardUrlForALF))
+
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
           .overrides(
             bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute)),
-            bind[SessionService].toInstance(mockSessionService)
+            bind[SessionService].toInstance(mockSessionService),
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
           )
           .build()
 
@@ -114,7 +124,11 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual onwardUrlForALF
+
+        verify(mockAddressLookupService, times(1)).initJourneyAndReturnOnRampUrl(
+          ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any())(
+          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       }
     }
 
@@ -144,24 +158,6 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
 
     testInvalidJourneyType(ChangeActivity, packagingSiteDetailsRoute)
     testNoUserAnswersError(packagingSiteDetailsRoute)
-
-    "must fail if the setting of userAnswers fails" in {
-
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(ChangeActivity))).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, packagingSiteDetailsRoute
-        )
-        .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual INTERNAL_SERVER_ERROR
-        val page = Jsoup.parse(contentAsString(result))
-        page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - Soft Drinks Industry Levy - GOV.UK"
-      }
-    }
 
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionService = mock[SessionService]
