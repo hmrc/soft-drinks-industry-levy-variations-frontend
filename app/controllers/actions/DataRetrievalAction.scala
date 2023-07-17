@@ -28,9 +28,8 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DataRetrievalActionImpl @Inject()(val sessionService: SessionService,
-                                        errorHandler: ErrorHandler,
-                                        val sessionRepository: SessionRepository,
-                                        val sdilSessionCache: SDILSessionCache
+                                        val sdilSessionCache: SDILSessionCache,
+                                        errorHandler: ErrorHandler
                                        )(implicit val executionContext: ExecutionContext) extends DataRetrievalAction {
 
   override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, OptionalDataRequest[A]]] = {
