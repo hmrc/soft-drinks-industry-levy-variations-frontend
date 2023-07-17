@@ -1,7 +1,7 @@
 package controllers.addressLookupFrontend
 
 import controllers.ControllerITTestHelper
-import models.Warehouse
+import models.{NormalMode, Warehouse}
 import models.backend.{Site, UkAddress}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
@@ -121,7 +121,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
             updatedUserAnswers.warehouseList mustBe emptyUserAnswersForUpdateRegisteredDetails.warehouseList
 
             res.status mustBe SEE_OTHER
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+            res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
           }
 
         }
@@ -150,7 +150,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
             updatedUserAnswers.warehouseList mustBe emptyUserAnswersForUpdateRegisteredDetails.warehouseList
 
             res.status mustBe SEE_OTHER
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+            res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
           }
         }
       }
