@@ -53,10 +53,11 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
     val noneProduced = userAnswers.get(AmountProducedPage).contains(AmountProduced.None)
     val imports = userAnswers.get(page = ImportsPage).contains(true)
 
-    (noneProduced, contractPacker, imports)match {
-      case (_, _, true) => routes.HowManyImportsController.onPageLoad(mode)
-      case (true, true, false) => routes.PackagingSiteDetailsController.onPageLoad(mode)
-      case _ if mode == CheckMode => routes.ChangeActivityCYAController.onPageLoad
+    (noneProduced, contractPacker, imports, mode) match {
+      case (_, _, true, NormalMode) => routes.HowManyImportsController.onPageLoad(mode)
+      case (true, true, false, NormalMode) => routes.PackagingSiteDetailsController.onPageLoad(mode)
+      case (_, _, true, CheckMode) => routes.HowManyImportsController.onPageLoad(mode)
+      case (_, _, false, CheckMode) => routes.ChangeActivityCYAController.onPageLoad
       case _ => defaultCall
     }
   }
