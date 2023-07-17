@@ -45,7 +45,6 @@ class PackagingSiteDetailsController @Inject()(
                                        val controllerComponents: MessagesControllerComponents,
                                        view: PackagingSiteDetailsView,
                                        val addressLookupService: AddressLookupService,
-                                       val changeActivityCYA: ChangeActivityCYAController,
                                        val genericLogger: GenericLogger,
                                        val errorHandler: ErrorHandler
                                      )(implicit ec: ExecutionContext) extends ControllerHelper with SummaryListFluency {
