@@ -19,6 +19,11 @@ date.day = Day
 date.month = Month
 date.year = Year
 
+firstQuarter = January to March
+secondQuarter = April to June
+thirdQuarter = July to September
+fourthQuarter = October to December
+
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
 timeout.keepAlive = Stay signed in
