@@ -128,12 +128,12 @@ trait SpecBase
   def emptyUserAnswersForSelectChange(selectChange: SelectChange) = UserAnswers(sdilNumber, selectChange)
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
-  protected def applicationBuilder(
-                                    userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
+  protected def applicationBuilder(userAnswers: Option[UserAnswers] = None,
+                                   returnPeriod: Option[ReturnPeriod] = Some(returnPeriod.head)): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .overrides(
         bind[IdentifierAction].to[FakeIdentifierAction],
-        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
+        bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers, returnPeriod))
       )
 
   def testInvalidJourneyType(expectedJourneyType: SelectChange, url: String, hasPostMethod: Boolean = true) = {

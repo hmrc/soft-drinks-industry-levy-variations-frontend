@@ -39,11 +39,11 @@ class ControllerActions @Inject()(identify: IdentifierAction,
   private def journeyDataRequiredAction(journeyType: SelectChange): ActionRefiner[OptionalDataRequest, DataRequest] =
     new ActionRefiner[OptionalDataRequest, DataRequest] {
       override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
-        request.userAnswers match {
-          case Some(data) if data.journeyType == journeyType =>
-            Future.successful(Right(DataRequest(request.request, request.sdilEnrolment, request.subscription, data)))
-          case Some(data) if journeyType == SelectChange.CancelRegistration && data.journeyType == SelectChange.ChangeActivity =>
-            Future.successful(Right(DataRequest(request.request, request.sdilEnrolment, request.subscription, data)))
+        (request.userAnswers, request.returnPeriod) match {
+          case (Some(data), Some(returnPeriod)) if data.journeyType == journeyType =>
+            Future.successful(Right(DataRequest(request.request, request.sdilEnrolment, request.subscription, data, returnPeriod)))
+          case (Some(data), Some(returnPeriod)) if journeyType == SelectChange.CancelRegistration && data.journeyType == SelectChange.ChangeActivity =>
+            Future.successful(Right(DataRequest(request.request, request.sdilEnrolment, request.subscription, data, returnPeriod)))
           case _ => Future.successful(Left(Redirect(routes.SelectChangeController.onPageLoad(NormalMode))))
         }
       }
@@ -54,9 +54,9 @@ class ControllerActions @Inject()(identify: IdentifierAction,
   private def dataRequiredAction: ActionRefiner[OptionalDataRequest, DataRequest] =
     new ActionRefiner[OptionalDataRequest, DataRequest] {
       override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
-        request.userAnswers match {
-          case Some(data) =>
-            Future.successful(Right(DataRequest(request.request, request.sdilEnrolment, request.subscription, data)))
+        (request.userAnswers, request.returnPeriod) match {
+          case (Some(data), Some(returnPeriod)) =>
+            Future.successful(Right(DataRequest(request.request, request.sdilEnrolment, request.subscription, data, returnPeriod)))
           case _ => Future.successful(Left(Redirect(routes.SelectChangeController.onPageLoad(NormalMode))))
         }
       }

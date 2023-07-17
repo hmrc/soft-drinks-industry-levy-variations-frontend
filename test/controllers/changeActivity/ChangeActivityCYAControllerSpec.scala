@@ -39,7 +39,7 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency {
               val userAnswers = getUserAnswers(amountProducedValue, thirdPartyPackagingValue, ownBrandsValue, contractValue, importValue)
               s"must return OK and the correct view for a GET for user answers $key" in {
 
-                val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+                val application = applicationBuilder(userAnswers = Some(userAnswers), returnPeriod = Option(returnPeriod.head)).build()
 
                 running(application) {
                   val request = FakeRequest(GET, ChangeActivityCYAController.onPageLoad.url)
@@ -51,8 +51,7 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency {
                   status(result) mustEqual OK
                   contentAsString(result) mustEqual view(
                     aSubscription.orgName,
-                    //      TODO: Implement Return Period in DLS-8346
-                    "RETURN PERIOD",
+                    returnPeriod.head,
                     ChangeActivitySummary.summaryListsAndHeadings(userAnswers),
                     routes.ChangeActivityCYAController.onSubmit
                   )(request, messages(application)).toString

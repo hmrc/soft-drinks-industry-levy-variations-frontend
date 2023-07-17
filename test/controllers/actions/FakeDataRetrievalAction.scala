@@ -16,16 +16,16 @@
 
 package controllers.actions
 
-import models.UserAnswers
+import models.{ReturnPeriod, UserAnswers}
 import models.requests.{IdentifierRequest, OptionalDataRequest}
 import play.api.mvc.Result
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class FakeDataRetrievalAction(userAnswers: Option[UserAnswers]) extends DataRetrievalAction {
+class FakeDataRetrievalAction(userAnswers: Option[UserAnswers], returnPeriod: Option[ReturnPeriod]) extends DataRetrievalAction {
 
   override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, OptionalDataRequest[A]]] =
-    Future(Right(OptionalDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers)))
+    Future(Right(OptionalDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers, returnPeriod)))
 
 
   override protected implicit val executionContext: ExecutionContext =

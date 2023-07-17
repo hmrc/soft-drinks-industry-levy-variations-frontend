@@ -22,6 +22,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Value
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import views.ViewSpecHelper
+import views.helpers.ReturnPeriodQuarter
 import views.html.changeActivity.ChangeActivityCYAView
 
 class ChangeActivityCYAViewSpec extends ViewSpecHelper {
@@ -48,11 +49,11 @@ class ChangeActivityCYAViewSpec extends ViewSpecHelper {
     }
     val call = Call("GET","/foo")
     val ALIAS = "ALIAS"
-    val RETURN_PERIOD = "RETURN PERIOD"
+    val RETURN_PERIOD = returnPeriod.head
     val html = view(ALIAS, RETURN_PERIOD, summaryList, call)(request, messages(application))
     val document = doc(html)
     "should have the expected pre header caption" in {
-      document.getElementsByClass(Selectors.PRE_HEADER_CAPTION).text() mustEqual s"$ALIAS - $RETURN_PERIOD"
+      document.getElementsByClass(Selectors.PRE_HEADER_CAPTION).text() mustEqual s"$ALIAS - $ReturnPeriodQuarter.formatted(RETURN_PERIOD)"
     }
     "should have the expected heading" in {
       document.getElementsByTag("h1").text() mustEqual "Check your answers before sending your update"

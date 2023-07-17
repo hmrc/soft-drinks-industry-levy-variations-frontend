@@ -36,11 +36,8 @@ class ChangeActivityCYAController @Inject()(
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
-      val alias: String = request.subscription.orgName
-//      TODO: Implement Return Period in DLS-8346
-      val returnPeriod: String = "RETURN PERIOD"
       val sections = ChangeActivitySummary.summaryListsAndHeadings(request.userAnswers)
-      Ok(view(alias, returnPeriod, sections, routes.ChangeActivityCYAController.onSubmit))
+      Ok(view(request.subscription.orgName, request.returnPeriod, sections, routes.ChangeActivityCYAController.onSubmit))
   }
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {

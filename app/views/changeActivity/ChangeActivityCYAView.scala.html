@@ -14,6 +14,9 @@
  * limitations under the License.
  *@
 
+@import models.ReturnPeriod
+@import views.helpers.ReturnPeriodQuarter
+
 @this(
     layout: templates.Layout,
     govukSummaryList: GovukSummaryList,
@@ -23,14 +26,14 @@
 
 @(
     alias: String,
-    returnPeriod: String,
+    returnPeriod: ReturnPeriod,
     seqSummaryList: Seq[(String, SummaryList)],
     submitCall: Call
 )(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("changeActivity.checkYourAnswers.title"))) {
 
-    <span class="govuk-caption-l" id="pre-header-caption"> @alias - @returnPeriod </span>
+    <span class="govuk-caption-l" id="pre-header-caption"> @alias - @ReturnPeriodQuarter.formatted(returnPeriod) </span>
     <h1 class="govuk-heading-m">@messages("changeActivity.checkYourAnswers.heading")</h1>
 
     @for((heading, summaryList) <- seqSummaryList) {
