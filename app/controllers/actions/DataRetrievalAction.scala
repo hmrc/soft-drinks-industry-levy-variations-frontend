@@ -17,24 +17,35 @@
 package controllers.actions
 
 import handlers.ErrorHandler
+import models.ReturnPeriod
 import models.requests.{IdentifierRequest, OptionalDataRequest}
 import play.api.mvc.Results.InternalServerError
 import play.api.mvc.{ActionRefiner, Result}
+import repositories.{SDILSessionCache, SDILSessionKeys, SessionRepository}
 import services.SessionService
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DataRetrievalActionImpl @Inject()(val sessionService: SessionService,
-                                        errorHandler: ErrorHandler
+                                        errorHandler: ErrorHandler,
+                                        val sessionRepository: SessionRepository,
+                                        val sdilSessionCache: SDILSessionCache
                                        )(implicit val executionContext: ExecutionContext) extends DataRetrievalAction {
 
   override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, OptionalDataRequest[A]]] = {
-
-    sessionService.get(request.sdilEnrolment).map {
-      case Right(userAnsOps) => Right(OptionalDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnsOps))
-      case Left(_) => Left(InternalServerError(errorHandler.internalServerErrorTemplate(request)))
-    }
+    val optionalDataRequest = for {
+      userAnsOps <- sessionRepository.get(request.sdilEnrolment)
+      optReturnPeriod <- sdilSessionCache.fetchEntry[ReturnPeriod](request.sdilEnrolment, SDILSessionKeys.RETURN_PERIOD)
+    } yield OptionalDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnsOps, optReturnPeriod)
+    val result = optionalDataRequest
+      .map(Right(_))
+      .recover { case e: Throwable => Left(InternalServerError(errorHandler.internalServerErrorTemplate(request))) }
+    result
+//    sessionService.get(request.sdilEnrolment).map {
+//      case Right(userAnsOps) => Right(OptionalDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnsOps))
+//      case Left(_) => Left(InternalServerError(errorHandler.internalServerErrorTemplate(request)))
+//    }
   }
 }
 

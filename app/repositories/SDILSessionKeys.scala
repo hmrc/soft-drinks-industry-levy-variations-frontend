@@ -19,5 +19,6 @@ package repositories
 object SDILSessionKeys {
 
   val SUBSCRIPTION = "SUBSCRIPTION"
+  val RETURN_PERIOD = "RETURN_PERIOD"
 
 }

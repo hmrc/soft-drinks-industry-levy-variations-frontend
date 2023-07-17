@@ -16,13 +16,14 @@
 
 package models.requests
 
-import models.{RetrievedSubscription, UserAnswers}
+import models.{RetrievedSubscription, ReturnPeriod, UserAnswers}
 import play.api.mvc.{Request, WrappedRequest}
 
 case class OptionalDataRequest[A] (request: Request[A],
                                    sdilEnrolment: String,
                                    subscription: RetrievedSubscription,
-                                   userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
+                                   userAnswers: Option[UserAnswers],
+                                   returnPeriod: Option[ReturnPeriod] = None) extends WrappedRequest[A](request)
 
 case class DataRequest[A] (request: Request[A],
                            sdilEnrolment: String,
