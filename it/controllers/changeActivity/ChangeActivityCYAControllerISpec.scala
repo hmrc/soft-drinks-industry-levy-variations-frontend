@@ -13,6 +13,7 @@ import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import views.helpers.ReturnPeriodQuarter
 
 class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
 
@@ -180,8 +181,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
                       res.status mustBe OK
                       val page = Jsoup.parse(res.body)
                       page.title must include(Messages("changeActivity.checkYourAnswers.title"))
-                      //      TODO: Implement Return Period in DLS-8346
-                      page.getElementsByClass("govuk-caption-l").text() mustBe "Super Lemonade Plc - RETURN PERIOD"
+                      page.getElementsByClass("govuk-caption-l").text() mustBe s"Super Lemonade Plc - ${ReturnPeriodQuarter.formatted(returnPeriod)}"
                       val sectionIndexes: Seq[Option[Int]] = List(
                         amountProducedValue.nonEmpty,
                         thirdPartyPackagingValue.nonEmpty,

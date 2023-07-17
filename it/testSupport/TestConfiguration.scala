@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.{configureFor, reset, resetAllScenarios}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import controllers.actions._
+import models.ReturnPeriod
 import org.mongodb.scala.bson.BsonDocument
 import org.scalatest.concurrent.{IntegrationPatience, PatienceConfiguration}
 import org.scalatest.time.{Millis, Seconds, Span}
@@ -14,7 +15,7 @@ import play.api.inject._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{CookieHeaderEncoding, MessagesControllerComponents, Session, SessionCookieBaker}
 import play.api.{Application, Environment, Mode}
-import repositories.{SDILSessionCacheRepository, SessionRepository}
+import repositories.{SDILSessionCache, SDILSessionCacheRepository, SessionRepository}
 import testSupport.databases.SessionDatabaseOperations
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
@@ -51,6 +52,8 @@ trait TestConfiguration
   val AUTHORIZE_HEADER_VALUE =
     "Bearer BXQ3/Treo4kQCZvVcCqKPhhpBYpRtQQKWTypn1WBfRHWUopu5V/IFWF5phY/fymAP1FMqQR27MmCJxb50Hi5GD6G3VMjMtSLu7TAAIuqDia6jByIpXJpqOgLQuadi7j0XkyDVkl0Zp/zbKtHiNrxpa0nVHm3+GUC4H2h4Ki8OjP9KwIkeIPK/mMlBESjue4V"
 
+  val returnPeriod: ReturnPeriod = ReturnPeriod(2018, 1)
+
   val sessionBaker: SessionCookieBaker = app.injector.instanceOf[SessionCookieBaker]
   val cookieHeaderEncoding: CookieHeaderEncoding = app.injector.instanceOf[CookieHeaderEncoding]
   val sessionCookieCrypto: SessionCookieCrypto = app.injector.instanceOf[SessionCookieCrypto]
@@ -68,6 +71,7 @@ trait TestConfiguration
 
   lazy val sessionRespository: SessionRepository = app.injector.instanceOf[SessionRepository]
   lazy val sdilSessionCacheRepo: SDILSessionCacheRepository = app.injector.instanceOf[SDILSessionCacheRepository]
+  lazy val sdilSessionCache: SDILSessionCache = app.injector.instanceOf[SDILSessionCache]
 
   val authCookie: String = createSessionCookieAsString(authData).substring(5)
   val authAndSessionCookie: String = createSessionCookieAsString(sessionAndAuth).substring(5)
