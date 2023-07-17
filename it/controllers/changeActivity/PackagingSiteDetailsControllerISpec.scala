@@ -7,7 +7,7 @@ import models.alf.init._
 import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.changeActivity.PackagingSiteDetailsPage
+import pages.changeActivity.{AmountProducedPage, PackagingSiteDetailsPage}
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json}
 import play.api.libs.ws.DefaultWSCookie
@@ -146,7 +146,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
             setAnswers(emptyUserAnswersForChangeActivity)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "no")
+                client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false")
               )
 
               whenReady(result) { res =>
@@ -154,7 +154,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
                 res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
                 dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe "false"
+                dataStoredForPage.get mustBe false
               }
             }
           }
@@ -166,7 +166,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "no")
+                client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false")
               )
 
               whenReady(result) { res =>
@@ -174,7 +174,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
                 res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
                 dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe "false"
+                dataStoredForPage.get mustBe false
               }
             }
           }
@@ -185,11 +185,11 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         val journeyConfigToBePosted: JourneyConfig = JourneyConfig(
           version = 2,
           options = JourneyOptions(
-            continueUrl = s"http://localhost:8703/soft-drinks-industry-levy-returns-frontend/off-ramp/packing-sites/${sdilNumber}",
+            continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/packing-site-details/${sdilNumber}",
             homeNavHref = None,
             signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
             accessibilityFooterUrl = None,
-            phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8703%2Fsoft-drinks-industry-levy-returns-frontend%2Fpackaging-site-details"),
+            phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fpack-site-details"),
             deskProServiceName = None,
             showPhaseBanner = Some(false),
             alphaPhase = Some(false),
@@ -248,26 +248,24 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         )
         val expectedResultInDB: Some[JsObject] = Some(
           Json.obj("imports" -> true, "packagingSiteDetails" -> true)
-          )
+
+          )//Some(UserAnswers(XKSDIL000000022,changeActivity,{"changeActivity":{"packagingSiteDetails":false}},List()
 
         val alfOnRampURL: String = "http://onramp.com"
 
-        setAnswers(UserAnswers(sdilNumber, ChangeActivity, Json.obj("value" -> "true"), List.empty))
+
         given
           .commonPrecondition
           .alf.getSuccessResponseFromALFInit(alfOnRampURL)
+        setAnswers(UserAnswers(sdilNumber, ChangeActivity, Json.obj("imports" -> true), List.empty))
 
         WsTestClient.withClient { client =>
-          val result =
-            client.url(s"$baseUrl/packaging-site-details")
-              .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-              .withHttpHeaders("X-Session-ID" -> "XCSDIL000000069",
-                "Csrf-Token" -> "nocheck")
-              .withFollowRedirects(false)
-              .post(Json.obj("value" -> "true"))
-
+          val result = createClientRequestPOST(
+            client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "true")
+          )
 
           whenReady(result) { res =>
+            println(Console.YELLOW + "result " + res.toString + Console.WHITE)
             res.status mustBe 303
             res.header(HeaderNames.LOCATION) mustBe Some(alfOnRampURL)
             getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResultInDB
