@@ -34,18 +34,15 @@ class DataRetrievalActionImpl @Inject()(val sessionService: SessionService,
                                        )(implicit val executionContext: ExecutionContext) extends DataRetrievalAction {
 
   override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, OptionalDataRequest[A]]] = {
-    val optionalDataRequest = for {
-      userAnsOps <- sessionRepository.get(request.sdilEnrolment)
-      optReturnPeriod <- sdilSessionCache.fetchEntry[ReturnPeriod](request.sdilEnrolment, SDILSessionKeys.RETURN_PERIOD)
-    } yield OptionalDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnsOps, optReturnPeriod)
-    val result = optionalDataRequest
-      .map(Right(_))
-      .recover { case e: Throwable => Left(InternalServerError(errorHandler.internalServerErrorTemplate(request))) }
-    result
-//    sessionService.get(request.sdilEnrolment).map {
-//      case Right(userAnsOps) => Right(OptionalDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnsOps))
-//      case Left(_) => Left(InternalServerError(errorHandler.internalServerErrorTemplate(request)))
-//    }
+//    TODO: Would rather fetch userAnswers first, but does it matter?
+    sdilSessionCache.fetchEntry[ReturnPeriod](request.sdilEnrolment, SDILSessionKeys.RETURN_PERIOD)
+      .map(returnPeriod => {
+        sessionService.get(request.sdilEnrolment).map {
+          case Right(userAnsOps) => Right(OptionalDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnsOps, returnPeriod))
+          case Left(_) => Left(InternalServerError(errorHandler.internalServerErrorTemplate(request)))
+        }
+      })
+      .flatten
   }
 }
 

@@ -53,8 +53,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
         val sdilSessionCache = mock[SDILSessionCache]
         when(sessionService.get("id")) thenReturn Future(Right(None))
         when(sessionRepository.get("id")) thenReturn Future(None)
-//        TODO: Set return period to None
-        when(sdilSessionCache.fetchEntry[ReturnPeriod]("id", SDILSessionKeys.RETURN_PERIOD)) thenReturn Future(Some(returnPeriod.head))
+        when(sdilSessionCache.fetchEntry[ReturnPeriod]("id", SDILSessionKeys.RETURN_PERIOD)) thenReturn Future(None)
         val action = new Harness(sessionService, errorHandler, sessionRepository, sdilSessionCache)
 
         val result = action.callRefine(IdentifierRequest(FakeRequest(), "id", aSubscription)).futureValue
@@ -64,8 +63,6 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
     }
 
     "when there is data in the cache" - {
-
-//      TODO: Test for both return period Some and None
 
       "must build a userAnswers object and add it to the request" in {
 
@@ -84,7 +81,6 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
       }
     }
 
-//    TODO: This no longer works - need to migrate away from use of sessionRepository
     "when a database error occurs" - {
       "must render the internal error page" in {
         val sessionService = mock[SessionService]
@@ -94,7 +90,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
         when(sessionService.get("id")) thenReturn Future(Left(SessionDatabaseGetError))
         when(errorHandler.internalServerErrorTemplate(any())) thenReturn(Html("error"))
         when(sessionRepository.get("id")) thenReturn Future(None)
-        when(sdilSessionCache.fetchEntry[ReturnPeriod]("id", SDILSessionKeys.RETURN_PERIOD)) thenReturn Future(Some(returnPeriod.head))
+        when(sdilSessionCache.fetchEntry[ReturnPeriod]("id", SDILSessionKeys.RETURN_PERIOD)) thenReturn Future(None)
         val action = new Harness(sessionService, errorHandler, sessionRepository, sdilSessionCache)
 
         val result = action.callRefine(new IdentifierRequest(FakeRequest(), "id", aSubscription)).futureValue
