@@ -184,7 +184,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         val journeyConfigToBePosted: JourneyConfig = JourneyConfig(
           version = 2,
           options = JourneyOptions(
-            continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/packing-site-details/${sdilNumber}",
+            continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/packing-site-details/$sdilNumber",
             homeNavHref = None,
             signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
             accessibilityFooterUrl = None,
@@ -351,7 +351,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
       val journeyConfigToBePosted: JourneyConfig = JourneyConfig(
         version = 2,
         options = JourneyOptions(
-          continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/packing-site-details/${sdilNumber}",
+          continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/packing-site-details/$sdilNumber",
           homeNavHref = None,
           signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
           accessibilityFooterUrl = None,

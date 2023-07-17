@@ -22,7 +22,6 @@ import forms.changeActivity.PackagingSiteDetailsFormProvider
 import models.NormalMode
 import models.SelectChange.ChangeActivity
 import navigation._
-import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
