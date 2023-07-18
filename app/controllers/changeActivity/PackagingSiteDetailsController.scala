@@ -80,8 +80,7 @@ class PackagingSiteDetailsController @Inject()(
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PackagingSiteDetailsPage, value))
             _ <- updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage)
             onwardUrl <- if (value) {
-              updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage).flatMap(_ =>
-                addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails))
+              addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails)
             } else if (mode == CheckMode && !value) {
               Future.successful(controllers.changeActivity.routes.ChangeActivityCYAController.onPageLoad.url)
             } else {
