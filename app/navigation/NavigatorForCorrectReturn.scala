@@ -19,7 +19,7 @@ package navigation
 import controllers.correctReturn.routes
 import models.UserAnswers
 import pages.Page
-import pages.correctReturn.SelectPage
+import pages.correctReturn.{HowManyOperatePackagingSiteOwnBrandsPage, OperatePackagingSiteOwnBrandsPage, SelectPage}
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -28,6 +28,8 @@ import javax.inject.{Inject, Singleton}
 class NavigatorForCorrectReturn @Inject()() extends Navigator {
 
   override val normalRoutes: Page => UserAnswers => Call = {
+    case OperatePackagingSiteOwnBrandsPage => userAnswers => defaultCall
+    case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => defaultCall
     case SelectPage => userAnswers => defaultCall
     case _ => _ => defaultCall
   }

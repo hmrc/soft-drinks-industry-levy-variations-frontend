@@ -5,3 +5,12 @@ GET        /select                        controllers.correctReturn.SelectContro
 POST       /select                        controllers.correctReturn.SelectController.onSubmit(mode: Mode = NormalMode)
 GET        /change-select                  controllers.correctReturn.SelectController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-select                  controllers.correctReturn.SelectController.onSubmit(mode: Mode = CheckMode)
+
+GET        /operate-packaging-site                              controllers.correctReturn.OperatePackagingSiteOwnBrandsController.onPageLoad(mode: Mode = NormalMode)
+POST       /operate-packaging-site                              controllers.correctReturn.OperatePackagingSiteOwnBrandsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-operate-packaging-site                       controllers.correctReturn.OperatePackagingSiteOwnBrandsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-operate-packaging-site                       controllers.correctReturn.OperatePackagingSiteOwnBrandsController.onSubmit(mode: Mode = CheckMode)
+GET        /how-many-own-brands-next-12-months                  controllers.correctReturn.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(mode: Mode = NormalMode)
+POST       /how-many-own-brands-next-12-months                  controllers.correctReturn.HowManyOperatePackagingSiteOwnBrandsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-how-many-own-brands-next-12-months           controllers.correctReturn.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-how-many-own-brands-next-12-months           controllers.correctReturn.HowManyOperatePackagingSiteOwnBrandsController.onSubmit(mode: Mode = CheckMode)

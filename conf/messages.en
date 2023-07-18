@@ -317,3 +317,14 @@ correctReturn.select.help.content = If you did not send a return, then it will n
 correctReturn.select.checkYourAnswersLabel = Which return do you need to correct?
 correctReturn.select.error.required = Select which return you need to correct
 correctReturn.select.change.hidden = Select
+
+correctReturn.operatePackagingSiteOwnBrands.title = Do you operate any packaging sites in the UK to package liable drinks for brands you own?
+correctReturn.operatePackagingSiteOwnBrands.heading = Do you operate any packaging sites in the UK to package liable drinks for brands you own?
+correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersLabel = Package your own brand at your own sites?
+correctReturn.operatePackagingSiteOwnBrands.error.required = Select yes if you operate any packaging sites in the UK to package liable drinks for brands you own
+correctReturn.operatePackagingSiteOwnBrands.change.hidden = whether you package your own brands at your own site
+correctReturn.howManyOperatePackagingSiteOwnBrands.title = How many litres of your own brands will you package in the next 12 months?
+correctReturn.howManyOperatePackagingSiteOwnBrands.heading = How many litres of your own brands will you package in the next 12 months?
+correctReturn.operatePackagingSiteOwnBrands.lowband.litres.hidden = number of litres in low band packaged at your own site
+correctReturn.operatePackagingSiteOwnBrands.highband.litres.hidden = number of litres in high band packaged at your own site
+correctReturn.volume.subtext = If you do not have the exact volumes you can enter an estimate.
