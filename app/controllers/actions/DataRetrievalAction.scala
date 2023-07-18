@@ -33,7 +33,6 @@ class DataRetrievalActionImpl @Inject()(val sessionService: SessionService,
                                        )(implicit val executionContext: ExecutionContext) extends DataRetrievalAction {
 
   override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, OptionalDataRequest[A]]] = {
-//    TODO: Would rather fetch userAnswers first, but does it matter?
     sdilSessionCache.fetchEntry[ReturnPeriod](request.sdilEnrolment, SDILSessionKeys.RETURN_PERIOD)
       .map(returnPeriod => {
         sessionService.get(request.sdilEnrolment).map {
