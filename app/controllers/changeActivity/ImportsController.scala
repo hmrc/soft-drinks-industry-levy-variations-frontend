@@ -60,12 +60,13 @@ class ImportsController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
-
+      println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value => {
+          println("***HHHHHH********")
           val updatedAnswers = request.userAnswers.setAndRemoveLitresIfReq(ImportsPage, HowManyImportsPage, value)
           updateDatabaseAndRedirect(updatedAnswers, ImportsPage, mode)
           }

@@ -2,10 +2,11 @@ package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.ChangeActivity
-import models.{CheckMode, NormalMode}
+import models.changeActivity.AmountProduced
+import models.{CheckMode, LitresInBands, NormalMode}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.changeActivity.ImportsPage
+import pages.changeActivity.{AmountProducedPage, ContractPackingPage, HowManyContractPackingPage, HowManyOperatePackagingSiteOwnBrandsPage, ImportsPage, OperatePackagingSiteOwnBrandsPage, ThirdPartyPackagersPage}
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.Json
@@ -132,58 +133,419 @@ class ImportsControllerISpec extends ControllerITTestHelper {
   }
 
   s"POST " + normalRoutePath - {
-    userAnswersForChangeActivityImportsPage.foreach { case (key, userAnswers) =>
-      "when the user selects " + key - {
-        "should update the session with the new value and redirect to the index controller" - {
-          "when the session contains no data for page" in {
+    "when the user selects no" - {
+      "should update the session with the new value" - {
+        "and redirect to pack at business address page" - {
+          "when the user has no packaging sites" - {
+            "and the user has answered previous requied pages" - {
+              "with large producer type, yes for own brands and no for copacker" in {
+                given
+                  .commonPrecondition
+
+                val userAnswers = emptyUserAnswersForChangeActivity
+                  .set(AmountProducedPage, AmountProduced.Large).success.value
+                  .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+                  .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100)).success.value
+                  .set(ContractPackingPage, false).success.value
+                  .set(ThirdPartyPackagersPage, false).success.value
+
+                setAnswers(userAnswers)
+                WsTestClient.withClient { client =>
+                  val result = createClientRequestPOST(
+                    client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false")
+                  )
+
+                  whenReady(result) { res =>
+                    res.status mustBe 303
+                    res.header(HeaderNames.LOCATION) mustBe Some(routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url)
+                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ImportsPage))
+                    dataStoredForPage.nonEmpty mustBe true
+                    dataStoredForPage.get mustBe false
+                  }
+                }
+              }
+
+              "with large producer type, no for own brands and yes for copacker" in {
+                given
+                  .commonPrecondition
+
+                val userAnswers = emptyUserAnswersForChangeActivity
+                  .set(AmountProducedPage, AmountProduced.Large).success.value
+                  .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+                  .set(ContractPackingPage, true).success.value
+                  .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
+                  .set(ThirdPartyPackagersPage, false).success.value
+
+                setAnswers(userAnswers)
+                WsTestClient.withClient { client =>
+                  val result = createClientRequestPOST(
+                    client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false")
+                  )
+
+                  whenReady(result) { res =>
+                    res.status mustBe 303
+                    res.header(HeaderNames.LOCATION) mustBe Some(routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url)
+                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ImportsPage))
+                    dataStoredForPage.nonEmpty mustBe true
+                    dataStoredForPage.get mustBe false
+                  }
+                }
+              }
+
+              "with large producer type, yes for own brands and yes for copacker" in {
+                given
+                  .commonPrecondition
+
+                val userAnswers = emptyUserAnswersForChangeActivity
+                  .set(AmountProducedPage, AmountProduced.Large).success.value
+                  .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+                  .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100)).success.value
+                  .set(ContractPackingPage, true).success.value
+                  .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
+                  .set(ThirdPartyPackagersPage, false).success.value
+
+                setAnswers(userAnswers)
+                WsTestClient.withClient { client =>
+                  val result = createClientRequestPOST(
+                    client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false")
+                  )
+
+                  whenReady(result) { res =>
+                    res.status mustBe 303
+                    res.header(HeaderNames.LOCATION) mustBe Some(routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url)
+                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ImportsPage))
+                    dataStoredForPage.nonEmpty mustBe true
+                    dataStoredForPage.get mustBe false
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        "and redirect to packaging sites page" - {
+          "when the user already packaging sites" - {
+            "and the user has answered previous required pages" - {
+              val userAnswersWithPackagingSite = emptyUserAnswersForChangeActivity.copy(packagingSiteList = packAtBusinessAddressSite)
+              "with large producer type, yes for own brands and no for copacker" in {
+                given
+                  .commonPrecondition
+
+                val userAnswers = userAnswersWithPackagingSite
+                  .set(AmountProducedPage, AmountProduced.Large).success.value
+                  .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+                  .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100)).success.value
+                  .set(ContractPackingPage, false).success.value
+                  .set(ThirdPartyPackagersPage, false).success.value
+
+                setAnswers(userAnswers)
+                WsTestClient.withClient { client =>
+                  val result = createClientRequestPOST(
+                    client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false")
+                  )
+
+                  whenReady(result) { res =>
+                    res.status mustBe 303
+                    res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
+                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ImportsPage))
+                    dataStoredForPage.nonEmpty mustBe true
+                    dataStoredForPage.get mustBe false
+                  }
+                }
+              }
+
+              "with large producer type, no for own brands and yes for copacker" in {
+                given
+                  .commonPrecondition
+
+                val userAnswers = userAnswersWithPackagingSite
+                  .set(AmountProducedPage, AmountProduced.Large).success.value
+                  .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+                  .set(ContractPackingPage, true).success.value
+                  .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
+                  .set(ThirdPartyPackagersPage, false).success.value
+
+                setAnswers(userAnswers)
+                WsTestClient.withClient { client =>
+                  val result = createClientRequestPOST(
+                    client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false")
+                  )
+
+                  whenReady(result) { res =>
+                    res.status mustBe 303
+                    res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
+                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ImportsPage))
+                    dataStoredForPage.nonEmpty mustBe true
+                    dataStoredForPage.get mustBe false
+                  }
+                }
+              }
+
+              "with large producer type, yes for own brands and yes for copacker" in {
+                given
+                  .commonPrecondition
+
+                val userAnswers = userAnswersWithPackagingSite
+                  .set(AmountProducedPage, AmountProduced.Large).success.value
+                  .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+                  .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100)).success.value
+                  .set(ContractPackingPage, true).success.value
+                  .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
+                  .set(ThirdPartyPackagersPage, false).success.value
+
+                setAnswers(userAnswers)
+                WsTestClient.withClient { client =>
+                  val result = createClientRequestPOST(
+                    client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false")
+                  )
+
+                  whenReady(result) { res =>
+                    res.status mustBe 303
+                    res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
+                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ImportsPage))
+                    dataStoredForPage.nonEmpty mustBe true
+                    dataStoredForPage.get mustBe false
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        "and redirect to add secondary warehouse" - {
+          "the user has answered previous required pages" - {
+            "with large producer type, no for own brands and no for copacker" in {
+              given
+                .commonPrecondition
+
+              val userAnswers = emptyUserAnswersForChangeActivity
+                .set(AmountProducedPage, AmountProduced.Large).success.value
+                .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+                .set(ContractPackingPage, false).success.value
+                .set(ThirdPartyPackagersPage, false).success.value
+
+              setAnswers(userAnswers)
+              WsTestClient.withClient { client =>
+                val result = createClientRequestPOST(
+                  client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false")
+                )
+
+                whenReady(result) { res =>
+                  res.status mustBe 303
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
+                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ImportsPage))
+                  dataStoredForPage.nonEmpty mustBe true
+                  dataStoredForPage.get mustBe false
+                }
+              }
+            }
+          }
+        }
+
+        "and redirect to the index controller" - {
+          "when the session contains no data for any pages" in {
             given
               .commonPrecondition
 
             setAnswers(emptyUserAnswersForChangeActivity)
             WsTestClient.withClient { client =>
-              val yesSelected = key == "yes"
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> yesSelected.toString)
+                client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false")
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                val expectedLocation = if (yesSelected) {
-                  routes.HowManyImportsController.onPageLoad(NormalMode).url
-                } else {
-                  defaultCall.url
-                }
-                res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ImportsPage))
+                res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+                val dataStoredForPage = getAnswers(emptyUserAnswersForChangeActivity.id).fold[Option[Boolean]](None)(_.get(ImportsPage))
                 dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe yesSelected
+                dataStoredForPage.get mustBe false
               }
             }
           }
+        }
 
-          "when the session already contains data for page" in {
-            given
-              .commonPrecondition
+        AmountProduced.values.foreach { amountProduced =>
+          if (amountProduced == AmountProduced.Large) {
+            "and redirect to own brands controller" - {
+              s"when the session contains data stating activity type ${amountProduced.toString}, but no other pages" in {
+                given
+                  .commonPrecondition
 
-            setAnswers(userAnswers)
-            WsTestClient.withClient { client =>
-              val yesSelected = key == "yes"
-              val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> yesSelected.toString)
-              )
+                val userAnswers = emptyUserAnswersForChangeActivity
+                  .set(AmountProducedPage, amountProduced).success.value
 
-              whenReady(result) { res =>
-                res.status mustBe 303
-                val expectedLocation = if (yesSelected) {
-                  routes.HowManyImportsController.onPageLoad(NormalMode).url
-                } else {
-                  defaultCall.url
+                setAnswers(userAnswers)
+                WsTestClient.withClient { client =>
+                  val result = createClientRequestPOST(
+                    client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false")
+                  )
+
+                  whenReady(result) { res =>
+                    res.status mustBe 303
+                    res.header(HeaderNames.LOCATION) mustBe Some(routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url)
+                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ImportsPage))
+                    dataStoredForPage.nonEmpty mustBe true
+                    dataStoredForPage.get mustBe false
+                  }
                 }
-                res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ImportsPage))
-                dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe yesSelected
               }
+
+              s"when the session contains data stating activity type ${amountProduced.toString} and copacker" in {
+                given
+                  .commonPrecondition
+
+                val userAnswers = emptyUserAnswersForChangeActivity
+                  .set(AmountProducedPage, amountProduced).success.value
+                  .set(ContractPackingPage, false).success.value
+
+                setAnswers(userAnswers)
+                WsTestClient.withClient { client =>
+                  val result = createClientRequestPOST(
+                    client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false")
+                  )
+
+                  whenReady(result) { res =>
+                    res.status mustBe 303
+                    res.header(HeaderNames.LOCATION) mustBe Some(routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url)
+                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ImportsPage))
+                    dataStoredForPage.nonEmpty mustBe true
+                    dataStoredForPage.get mustBe false
+                  }
+                }
+              }
+            }
+
+            "and redirect to copacker page" - {
+              s"when the session contains data stating activity type ${amountProduced.toString} and own brands" in {
+                given
+                  .commonPrecondition
+
+                val userAnswers = emptyUserAnswersForChangeActivity
+                  .set(AmountProducedPage, amountProduced).success.value
+                  .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+
+                setAnswers(userAnswers)
+                WsTestClient.withClient { client =>
+                  val result = createClientRequestPOST(
+                    client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false")
+                  )
+
+                  whenReady(result) { res =>
+                    res.status mustBe 303
+                    res.header(HeaderNames.LOCATION) mustBe Some(routes.ContractPackingController.onPageLoad(NormalMode).url)
+                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ImportsPage))
+                    dataStoredForPage.nonEmpty mustBe true
+                    dataStoredForPage.get mustBe false
+                  }
+                }
+              }
+            }
+          } else {
+            "redirect to default page" - {
+              s"when the session contains data stating activity type ${amountProduced.toString}, but no other pages" in {
+                given
+                  .commonPrecondition
+
+                val userAnswers = emptyUserAnswersForChangeActivity
+                  .set(AmountProducedPage, amountProduced).success.value
+
+                setAnswers(userAnswers)
+                WsTestClient.withClient { client =>
+                  val result = createClientRequestPOST(
+                    client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false")
+                  )
+
+                  whenReady(result) { res =>
+                    res.status mustBe 303
+                    res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ImportsPage))
+                    dataStoredForPage.nonEmpty mustBe true
+                    dataStoredForPage.get mustBe false
+                  }
+                }
+              }
+
+              s"when the session contains data stating activity type ${amountProduced.toString} and copacker" in {
+                given
+                  .commonPrecondition
+
+                val userAnswers = emptyUserAnswersForChangeActivity
+                  .set(AmountProducedPage, amountProduced).success.value
+                  .set(ContractPackingPage, false).success.value
+
+                setAnswers(userAnswers)
+                WsTestClient.withClient { client =>
+                  val result = createClientRequestPOST(
+                    client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false")
+                  )
+
+                  whenReady(result) { res =>
+                    res.status mustBe 303
+                    res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ImportsPage))
+                    dataStoredForPage.nonEmpty mustBe true
+                    dataStoredForPage.get mustBe false
+                  }
+                }
+              }
+            }
+
+            "and redirect to copacker page" - {
+              s"when the session contains data stating activity type ${amountProduced.toString} and own brands" in {
+                given
+                  .commonPrecondition
+
+                val userAnswers = emptyUserAnswersForChangeActivity
+                  .set(AmountProducedPage, amountProduced).success.value
+                  .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+
+                setAnswers(userAnswers)
+                WsTestClient.withClient { client =>
+                  val result = createClientRequestPOST(
+                    client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false")
+                  )
+
+                  whenReady(result) { res =>
+                    res.status mustBe 303
+                    res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ImportsPage))
+                    dataStoredForPage.nonEmpty mustBe true
+                    dataStoredForPage.get mustBe false
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    "when the user selects yes" - {
+      "should redirect to the howManyImports page" - {
+        "when the session does not contain data for the page" in {
+          given
+            .commonPrecondition
+
+          val userAnswers = emptyUserAnswersForChangeActivity
+            .set(AmountProducedPage, AmountProduced.Large).success.value
+            .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+            .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100)).success.value
+            .set(ContractPackingPage, true).success.value
+            .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
+            .set(ThirdPartyPackagersPage, false).success.value
+
+          setAnswers(userAnswers)
+          WsTestClient.withClient { client =>
+            val result = createClientRequestPOST(
+              client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "true")
+            )
+
+            whenReady(result) { res =>
+              res.status mustBe 303
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.HowManyImportsController.onPageLoad(NormalMode).url)
+              val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ImportsPage))
+              dataStoredForPage.nonEmpty mustBe true
+              dataStoredForPage.get mustBe true
             }
           }
         }
