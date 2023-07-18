@@ -1,7 +1,7 @@
 package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
-import models.SelectChange.ChangeActivity
+import models.SelectChange.CorrectReturn
 import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
@@ -10,7 +10,6 @@ import play.api.http.HeaderNames
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
 
-//TODO: Remove routing tests
 class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelper {
 
   val normalRoutePath = "/operate-packaging-site"
@@ -22,7 +21,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        setAnswers(emptyUserAnswersForCorrectReturn)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
@@ -42,7 +41,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
       }
     }
 
-    userAnswersForChangeActivityOperatePackagingSiteOwnBrandsPage.foreach { case (key, userAnswers) =>
+    userAnswersForCorrectReturnOperatePackagingSiteOwnBrandsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
           given
@@ -70,7 +69,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
     }
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath)
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, correctReturnBaseUrl + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath)
   }
 
   s"GET " + checkRoutePath - {
@@ -79,7 +78,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        setAnswers(emptyUserAnswersForCorrectReturn)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath)
@@ -99,7 +98,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
       }
     }
 
-    userAnswersForChangeActivityOperatePackagingSiteOwnBrandsPage.foreach { case (key, userAnswers) =>
+    userAnswersForCorrectReturnOperatePackagingSiteOwnBrandsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
           given
@@ -128,18 +127,18 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
 
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath)
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath)
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, correctReturnBaseUrl + checkRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath)
   }
 
   s"POST " + normalRoutePath - {
-    userAnswersForChangeActivityOperatePackagingSiteOwnBrandsPage.foreach { case (key, userAnswers) =>
+    userAnswersForCorrectReturnOperatePackagingSiteOwnBrandsPage.foreach { case (key, userAnswers) =>
       "when the user selects " + key - {
         "should update the session with the new value and redirect to the index controller" - {
           "when the session contains no data for page" in {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForChangeActivity)
+            setAnswers(emptyUserAnswersForCorrectReturn)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -149,9 +148,9 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
               whenReady(result) { res =>
                 res.status mustBe 303
                 val expectedLocation = if (yesSelected) {
-                  routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
+                  controllers.routes.IndexController.onPageLoad.url
                 } else {
-                  routes.CorrectReturnCYAController.onPageLoad.url
+                  controllers.routes.IndexController.onPageLoad.url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(OperatePackagingSiteOwnBrandsPage))
@@ -175,9 +174,9 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
               whenReady(result) { res =>
                 res.status mustBe 303
                 val expectedLocation = if (yesSelected) {
-                  routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
+                  controllers.routes.IndexController.onPageLoad.url
                 } else {
-                  routes.CorrectReturnCYAController.onPageLoad.url
+                  controllers.routes.IndexController.onPageLoad.url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(OperatePackagingSiteOwnBrandsPage))
@@ -195,7 +194,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        setAnswers(emptyUserAnswersForCorrectReturn)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> "")
@@ -218,11 +217,11 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
     }
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
   }
 
   s"POST " + checkRoutePath - {
-    userAnswersForChangeActivityOperatePackagingSiteOwnBrandsPage.foreach { case (key, userAnswers) =>
+    userAnswersForCorrectReturnOperatePackagingSiteOwnBrandsPage.foreach { case (key, userAnswers) =>
       "when the user selects " + key - {
         val yesSelected = key == "yes"
         "should update the session with the new value and redirect to the checkAnswers controller" - {
@@ -230,7 +229,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForChangeActivity)
+            setAnswers(emptyUserAnswersForCorrectReturn)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
                 client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> yesSelected.toString)
@@ -239,9 +238,9 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
               whenReady(result) { res =>
                 res.status mustBe 303
                 val expectedLocation = if(yesSelected) {
-                  routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
+                  controllers.routes.IndexController.onPageLoad.url
                 } else {
-                  routes.CorrectReturnCYAController.onPageLoad.url
+                  controllers.routes.IndexController.onPageLoad.url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(OperatePackagingSiteOwnBrandsPage))
@@ -265,9 +264,9 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
               whenReady(result) { res =>
                 res.status mustBe 303
                 val expectedLocation = if (yesSelected) {
-                  routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
+                  controllers.routes.IndexController.onPageLoad.url
                 } else {
-                  routes.CorrectReturnCYAController.onPageLoad.url
+                  controllers.routes.IndexController.onPageLoad.url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(OperatePackagingSiteOwnBrandsPage))
@@ -285,7 +284,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        setAnswers(emptyUserAnswersForCorrectReturn)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> "")
@@ -308,6 +307,6 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
     }
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
   }
 }

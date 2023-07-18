@@ -1,7 +1,7 @@
 package controllers.correctReturn
 
 import controllers.LitresISpecHelper
-import models.SelectChange.ChangeActivity
+import models.SelectChange.CorrectReturn
 import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
@@ -10,19 +10,18 @@ import play.api.http.HeaderNames
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
 
-//TODO: Remove routing tests
 class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHelper {
 
   val normalRoutePath = "/how-many-own-brands-next-12-months"
   val checkRoutePath = "/change-how-many-own-brands-next-12-months"
 
-  val userAnswers: UserAnswers = emptyUserAnswersForChangeActivity.set(HowManyOperatePackagingSiteOwnBrandsPage, litresInBands).success.value
+  val userAnswers: UserAnswers = emptyUserAnswersForCorrectReturn.set(HowManyOperatePackagingSiteOwnBrandsPage, litresInBands).success.value
 
   List(NormalMode, CheckMode).foreach { mode =>
     val (path, redirectLocation) = if(mode == NormalMode) {
-      (normalRoutePath, routes.CorrectReturnCYAController.onPageLoad.url)
+      (normalRoutePath, controllers.routes.IndexController.onPageLoad.url)
     } else {
-      (checkRoutePath, routes.CorrectReturnCYAController.onPageLoad.url)
+      (checkRoutePath, controllers.routes.IndexController.onPageLoad.url)
     }
 
     "GET " + path - {
@@ -31,7 +30,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForChangeActivity)
+          setAnswers(emptyUserAnswersForCorrectReturn)
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, correctReturnBaseUrl + path)
@@ -67,7 +66,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
       }
       testUnauthorisedUser(correctReturnBaseUrl + path)
       testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + path)
-      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, correctReturnBaseUrl + path)
+      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + path)
     }
 
     s"POST " + path - {
@@ -77,7 +76,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForChangeActivity)
+            setAnswers(emptyUserAnswersForCorrectReturn)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
                 client, correctReturnBaseUrl + path, Json.toJson(litresInBands)
@@ -122,7 +121,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForChangeActivity)
+          setAnswers(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + path, emptyJson
@@ -140,7 +139,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForChangeActivity)
+          setAnswers(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + path, jsonWithNoNumeric
@@ -158,7 +157,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForChangeActivity)
+          setAnswers(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + path, jsonWithNegativeNumber
@@ -176,7 +175,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForChangeActivity)
+          setAnswers(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + path, jsonWithDecimalNumber
@@ -194,7 +193,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForChangeActivity)
+          setAnswers(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + path, jsonWithOutOfRangeNumber
@@ -211,7 +210,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
 
       testUnauthorisedUser(correctReturnBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
       testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
-      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, correctReturnBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
+      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
     }
   }
 }

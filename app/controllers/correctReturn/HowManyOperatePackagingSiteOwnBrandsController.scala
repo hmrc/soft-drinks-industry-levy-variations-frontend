@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.HowManyLitresFormProvider
 import handlers.ErrorHandler
 import models.Mode
-import models.SelectChange.ChangeActivity
+import models.SelectChange.CorrectReturn
 import navigation._
 import pages.correctReturn.HowManyOperatePackagingSiteOwnBrandsPage
 import play.api.i18n.MessagesApi
@@ -47,7 +47,7 @@ class HowManyOperatePackagingSiteOwnBrandsController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(HowManyOperatePackagingSiteOwnBrandsPage) match {
@@ -58,7 +58,7 @@ class HowManyOperatePackagingSiteOwnBrandsController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
     implicit request =>
 
       form.bindFromRequest().fold(

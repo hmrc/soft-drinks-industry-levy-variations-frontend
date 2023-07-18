@@ -16,7 +16,6 @@
 
 package navigation
 
-import controllers.correctReturn.routes
 import models.UserAnswers
 import pages.Page
 import pages.correctReturn.{HowManyOperatePackagingSiteOwnBrandsPage, OperatePackagingSiteOwnBrandsPage, SelectPage}
@@ -35,6 +34,6 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   }
 
   override val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => routes.CorrectReturnCYAController.onPageLoad
+    case _ => _ => defaultCall
   }
 }

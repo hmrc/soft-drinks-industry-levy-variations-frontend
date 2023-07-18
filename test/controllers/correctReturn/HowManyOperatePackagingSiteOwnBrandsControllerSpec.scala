@@ -19,7 +19,7 @@ package controllers.correctReturn
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.HowManyLitresFormProvider
-import models.SelectChange.ChangeActivity
+import models.SelectChange.CorrectReturn
 import models.{LitresInBands, NormalMode}
 import navigation._
 import org.jsoup.Jsoup
@@ -50,7 +50,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
 
       running(application) {
         val request = FakeRequest(GET, howManyOperatePackagingSiteOwnBrandsRoute)
@@ -66,7 +66,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswersForChangeActivity.set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 200)).success.value
+      val userAnswers = emptyUserAnswersForCorrectReturn.set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 200)).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -89,7 +89,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
           .overrides(
             bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
@@ -110,7 +110,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
 
       running(application) {
         val request =
@@ -128,12 +128,12 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
       }
     }
 
-    testInvalidJourneyType(ChangeActivity, howManyOperatePackagingSiteOwnBrandsRoute)
+    testInvalidJourneyType(CorrectReturn, howManyOperatePackagingSiteOwnBrandsRoute)
     testNoUserAnswersError(howManyOperatePackagingSiteOwnBrandsRoute)
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(ChangeActivity))).build()
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CorrectReturn))).build()
 
       running(application) {
         val request =
@@ -154,7 +154,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
       when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
           .overrides(
             bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
