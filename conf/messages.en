@@ -316,4 +316,12 @@ correctReturn.select.help.header = I cannot find the return I’m looking for
 correctReturn.select.help.content = If you did not send a return, then it will not be listed here. You can correct returns up to 4 years after the end of the tax year the return is in. You cannot correct a return if we estimated how much levy you need to pay.
 correctReturn.select.checkYourAnswersLabel = Which return do you need to correct?
 correctReturn.select.error.required = Select which return you need to correct
-correctReturn.select.change.hidden = Select
+correctReturn.select.change.hidden = which return you need to correct
+
+correctReturn.correctionReason.title = Why do you need to correct this return?
+correctReturn.correctionReason.checkYourAnswersLabel = Reason for correcting this return
+correctReturn.correctionReason.hint = Enter up to 255 characters
+correctReturn.correctionReason.detail = Make sure you provide as much detail as you can.  We may get in touch with your contact person to discuss this.
+correctReturn.correctionReason.error.required = Enter a reason for correcting your return
+correctReturn.correctionReason.error.length = Reason for correcting the return must be 255 characters or less
+correctReturn.correctionReason.change.hidden = the reason you are correcting this return

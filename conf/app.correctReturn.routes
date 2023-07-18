@@ -5,3 +5,8 @@ GET        /select                        controllers.correctReturn.SelectContro
 POST       /select                        controllers.correctReturn.SelectController.onSubmit(mode: Mode = NormalMode)
 GET        /change-select                  controllers.correctReturn.SelectController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-select                  controllers.correctReturn.SelectController.onSubmit(mode: Mode = CheckMode)
+
+GET        /correction-reason                        controllers.correctReturn.CorrectionReasonController.onPageLoad(mode: Mode = NormalMode)
+POST       /correction-reason                        controllers.correctReturn.CorrectionReasonController.onSubmit(mode: Mode = NormalMode)
+GET        /change-correction-reason                  controllers.correctReturn.CorrectionReasonController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-correction-reason                  controllers.correctReturn.CorrectionReasonController.onSubmit(mode: Mode = CheckMode)

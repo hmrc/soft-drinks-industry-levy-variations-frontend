@@ -25,6 +25,9 @@ import pages.updateRegisteredDetails.UpdateContactDetailsPage
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryCorrectReturnCorrectionReasonPage: Arbitrary[correctReturn.CorrectionReasonPage.type] =
+    Arbitrary(correctReturn.CorrectionReasonPage)
+
   implicit lazy val arbitraryThirdPartyPackagersPage: Arbitrary[changeActivity.ThirdPartyPackagersPage.type] =
     Arbitrary(changeActivity.ThirdPartyPackagersPage)
 
