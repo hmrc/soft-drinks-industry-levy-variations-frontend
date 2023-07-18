@@ -100,5 +100,13 @@ case class SdilBackendStub()
     builder
   }
 
+  def retrieveSubscriptionToModify(identifier: String, refNum: String, retrievedSubscription: RetrievedSubscription): PreconditionBuilder = {
+    stubFor(
+      get(
+        urlPathMatching(s"/subscription/$identifier/$refNum"))
+        .willReturn(
+          ok(Json.toJson(retrievedSubscription).toString())))
+    builder
+  }
 }
 

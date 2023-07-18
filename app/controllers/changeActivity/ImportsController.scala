@@ -74,19 +74,26 @@ class ImportsController @Inject()(
         value => {
           val updatedAnswers = userAnswers.setAndRemoveLitresIfReq(ImportsPage, HowManyImportsPage, value)
           val contractPacker = userAnswers.get(ContractPackingPage).contains(true)
+          val hasPackagingSites = request.subscription.productionSites.nonEmpty
           val noneProduced = userAnswers.get(AmountProducedPage).contains(AmountProduced.None)
 
-          if(noneProduced && !contractPacker && !value) {
-            updateDatabaseWithoutRedirect(updatedAnswers, ImportsPage)(
-              connector.returns_pending(request.subscription.utr).map {
-                case Some(returns) if returns.nonEmpty =>
-                  Redirect(controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad())
-                case _ =>
-                  Redirect(routes.SuggestDeregistrationController.onPageLoad())
-              })
-          } else {
-            updateDatabaseAndRedirect(updatedAnswers, ImportsPage, mode)
+          (noneProduced, contractPacker, hasPackagingSites, value) match {
+            case(true, false, _, false) =>
+              updateDatabaseWithoutRedirect(updatedAnswers, ImportsPage)(
+                connector.returns_pending(request.subscription.utr).map {
+                  case Some(returns) if returns.nonEmpty =>
+                    Redirect(controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad())
+                  case _ =>
+                    Redirect(routes.SuggestDeregistrationController.onPageLoad())
+                }
+              )
+            case (true, true, false, false) =>
+              updateDatabaseWithoutRedirect(updatedAnswers, ImportsPage)(
+                Future.successful(Redirect(routes.PackAtBusinessAddressController.onPageLoad(mode)))
+              )
+            case _ => updateDatabaseAndRedirect(updatedAnswers, ImportsPage, mode)
           }
+
         }
       )
   }

@@ -360,6 +360,55 @@ class ImportsControllerISpec extends ControllerITTestHelper with LitresISpecHelp
       }
     }
 
+    "and client is a contract packer but has no production sites" - {
+      "and user answers no to the imports question and submits their answer" - {
+        "they should be redirected to pack at business address" in {
+
+          given.commonPreconditionChangeSubscription(aSubscription)
+          setAnswers(emptyUserAnswersForChangeActivity
+            .set(ContractPackingPage, true).success.value
+            .set(AmountProducedPage, AmountProduced.None).success.value)
+
+          WsTestClient.withClient { client =>
+            val result = createClientRequestPOST(
+              client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> false)
+            )
+
+            whenReady(result) { res =>
+              res.status mustBe 303
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url)
+              val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Boolean]](None)(_.get(ImportsPage))
+              dataStoredForPage.get mustBe false
+            }
+          }
+        }
+      }
+
+      "and answers yes to the imports question and submits their answer" - {
+        "they should be redirected to how many litres imported page" in {
+
+          given.commonPreconditionChangeSubscription(aSubscription)
+          setAnswers(emptyUserAnswersForChangeActivity
+            .set(ContractPackingPage, true).success.value
+            .set(AmountProducedPage, AmountProduced.None).success.value)
+
+
+          WsTestClient.withClient { client =>
+            val result = createClientRequestPOST(
+              client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> true)
+            )
+
+            whenReady(result) { res =>
+              res.status mustBe 303
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.HowManyImportsController.onPageLoad(NormalMode).url)
+              val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Boolean]](None)(_.get(ImportsPage))
+              dataStoredForPage.get mustBe true
+            }
+          }
+        }
+      }
+    }
+
     "and client is NOT a contract packer" - {
       "and answers no to the imports question and submits their answer" - {
         "they should be redirected to suggest de-registration page if they have no pending returns" in {
@@ -538,7 +587,7 @@ class ImportsControllerISpec extends ControllerITTestHelper with LitresISpecHelp
         }
       }
 
-      "aand user changes a previous no answer to imports to yes" - {
+      "and user changes a previous no answer to imports to yes" - {
         "they should be redirected to how many litres imported page" in {
 
           given.commonPrecondition

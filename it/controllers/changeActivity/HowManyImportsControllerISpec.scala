@@ -21,10 +21,10 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
   val userAnswers: UserAnswers = emptyUserAnswersForChangeActivity.set(HowManyImportsPage, litresInBands).success.value
 
   List(NormalMode, CheckMode).foreach { mode =>
-    val (path) = if(mode == NormalMode) {
-      (normalRoutePath)
+    val path = if(mode == NormalMode) {
+      normalRoutePath
     } else {
-      (checkRoutePath)
+      checkRoutePath
     }
 
     "GET " + path - {
@@ -174,7 +174,6 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
     }
   }
 
-
   "in normal mode when amount produced is none" - {
     "and client is a contract packer" - {
       "and adds import litres and submits their answer" - {
@@ -193,6 +192,31 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             whenReady(result) { res =>
               res.status mustBe 303
               res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
+              val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+              dataStoredForPage.get mustBe litresInBands
+            }
+          }
+        }
+      }
+    }
+
+    "and client is a contract packer but has no packaging sites" - {
+      "and adds import litres and submits their answer" - {
+        "they should be redirected to pack at business address" in {
+          given.commonPreconditionChangeSubscription(aSubscription)
+          setAnswers(emptyUserAnswersForChangeActivity
+            .set(ContractPackingPage, true).success.value
+            .set(ImportsPage, true).success.value
+            .set(AmountProducedPage, AmountProduced.None).success.value)
+
+          WsTestClient.withClient { client =>
+            val result = createClientRequestPOST(
+              client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBands)
+            )
+
+            whenReady(result) { res =>
+              res.status mustBe 303
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
               dataStoredForPage.get mustBe litresInBands
             }
@@ -245,7 +269,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
               dataStoredForPage.get mustBe litresInBands
             }
@@ -268,7 +292,56 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+              val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+              dataStoredForPage.get mustBe litresInBands
+            }
+          }
+        }
+      }
+    }
+
+    "and client is a contract packer but has no packaging sites" - {
+      "and changes existing import litres and submits their answer" - {
+        "they should be redirected to check your answers" in {
+          given.commonPreconditionChangeSubscription(aSubscription)
+          setAnswers(emptyUserAnswersForChangeActivity
+            .set(ContractPackingPage, true).success.value
+            .set(ImportsPage, true).success.value
+            .set(AmountProducedPage, AmountProduced.None).success.value
+            .set(HowManyImportsPage, LitresInBands(2L, 2L)).success.value)
+
+          WsTestClient.withClient { client =>
+            val result = createClientRequestPOST(
+              client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBands)
+            )
+
+            whenReady(result) { res =>
+              res.status mustBe 303
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+              val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+              dataStoredForPage.get mustBe litresInBands
+            }
+          }
+        }
+      }
+
+      "and adds import litres (with no previous data) and submits their answer" - {
+        "they should be redirected to check your answers" in {
+          given.commonPreconditionChangeSubscription(aSubscription)
+          setAnswers(emptyUserAnswersForChangeActivity
+            .set(ContractPackingPage, true).success.value
+            .set(ImportsPage, true).success.value
+            .set(AmountProducedPage, AmountProduced.None).success.value)
+
+          WsTestClient.withClient { client =>
+            val result = createClientRequestPOST(
+              client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBands)
+            )
+
+            whenReady(result) { res =>
+              res.status mustBe 303
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
               dataStoredForPage.get mustBe litresInBands
             }

@@ -66,12 +66,12 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     }
   }
   private def navigationForHowManyImports(userAnswers: UserAnswers, mode: Mode): Call = {
-    val contractPacker = userAnswers.get(ContractPackingPage).contains(true)
+    val contractPacker = userAnswers.get(ContractPackingPage).getOrElse(false)
     val noneProduced = userAnswers.get(AmountProducedPage).contains(AmountProduced.None)
 
     (contractPacker, noneProduced, mode) match {
-      case (true, true, _) => routes.PackagingSiteDetailsController.onPageLoad(mode)
-      case (false, true, NormalMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+      case (true, true, NormalMode) => routes.PackagingSiteDetailsController.onPageLoad(mode)
+      case (false, true, NormalMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
       case _ => routes.ChangeActivityCYAController.onPageLoad
     }
   }
