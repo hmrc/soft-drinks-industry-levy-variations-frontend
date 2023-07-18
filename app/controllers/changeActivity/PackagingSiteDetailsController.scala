@@ -23,18 +23,20 @@ import handlers.ErrorHandler
 import models.{CheckMode, Mode, NormalMode}
 import navigation._
 import pages.changeActivity.PackagingSiteDetailsPage
-import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
 import services.{AddressLookupService, PackingDetails, SessionService}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import viewmodels.summary.changeActivity.PackagingSiteDetailsSummary
 import views.html.changeActivity.PackagingSiteDetailsView
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import models.SelectChange.ChangeActivity
 import play.api.data.Form
+import uk.gov.hmrc.http.HeaderCarrier
 
 class PackagingSiteDetailsController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -76,19 +78,23 @@ class PackagingSiteDetailsController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
 
         value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(PackagingSiteDetailsPage, value))
-            _ <- updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage)
-            onwardUrl <- if (value) {
-              addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails)
-            } else if (mode == CheckMode && !value) {
-              Future.successful(controllers.changeActivity.routes.ChangeActivityCYAController.onPageLoad.url)
-            } else {
-              Future.successful(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(mode).url)
-            }
-          } yield {
-            Redirect(onwardUrl)
+          updateDatabaseWithoutRedirect(request.userAnswers.set(PackagingSiteDetailsPage, value), PackagingSiteDetailsPage).flatMap {
+            case true => getOnwardUrl(value, mode).map(Redirect(_))
+            case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
           }
+
       )
+  }
+
+  private def getOnwardUrl(addPackagingSite: Boolean, mode: Mode)
+    (implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages, requestHeader: RequestHeader): Future[String] = {
+
+    if(addPackagingSite) {
+      addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails)(hc, ec, messages, requestHeader)
+    } else if(mode == CheckMode) {
+      Future.successful(controllers.changeActivity.routes.ChangeActivityCYAController.onPageLoad.url)
+    } else {
+      Future.successful(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(mode).url)
+    }
   }
 }
