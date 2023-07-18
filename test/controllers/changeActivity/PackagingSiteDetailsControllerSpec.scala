@@ -174,7 +174,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request =
             FakeRequest(POST, packagingSiteDetailsRoute)
-          .withFormUrlEncodedBody(("value", "true"))
+          .withFormUrlEncodedBody(("value", "false"))
 
           await(route(application, request).value)
           events.collectFirst {
