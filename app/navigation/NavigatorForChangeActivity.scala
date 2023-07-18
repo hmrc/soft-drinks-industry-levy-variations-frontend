@@ -90,18 +90,9 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     }
   }
 
-  private def navigationForPackagingSiteDetails(userAnswers: UserAnswers, mode: Mode): Call = {
-    if (mode == CheckMode && userAnswers.get(page = PackagingSiteDetailsPage).contains(false)) {
-      routes.ChangeActivityCYAController.onPageLoad
-    } else {
-      routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
-    }
-  }
-
   override val normalRoutes: Page => UserAnswers => Call = {
     case ThirdPartyPackagersPage => _ => navigationForOperateThirdPartyPackagers(NormalMode)
     case PackAtBusinessAddressPage => _ => defaultCall
-    case PackagingSiteDetailsPage => userAnswers => navigationForPackagingSiteDetails(userAnswers, NormalMode)
     case RemovePackagingSiteDetailsPage => _ => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
     case SecondaryWarehouseDetailsPage => _ => defaultCall
     case ContractPackingPage => userAnswers => navigationForContractPacking(userAnswers, NormalMode)
@@ -123,7 +114,6 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     case ImportsPage => userAnswers => navigationForImports(userAnswers, CheckMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.ChangeActivityCYAController.onPageLoad
-    case PackagingSiteDetailsPage => userAnswers => navigationForPackagingSiteDetails(userAnswers, CheckMode)
     case _ => _ => routes.ChangeActivityCYAController.onPageLoad
   }
 }

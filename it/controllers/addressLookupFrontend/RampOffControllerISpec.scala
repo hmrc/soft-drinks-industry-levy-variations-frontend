@@ -97,6 +97,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
       }
     }
   }
+
   s"ramp off $PackingDetails should" - {
     "redirect to next page when request is valid and address is returned from ALF when" - {
       "no address exists in DB currently for SDILID provided" in {
@@ -121,40 +122,70 @@ class RampOffControllerISpec extends ControllerITTestHelper {
             updatedUserAnswers.warehouseList mustBe emptyUserAnswersForUpdateRegisteredDetails.warehouseList
 
             res.status mustBe SEE_OTHER
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
+            res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
           }
-
         }
       }
-      "an address already exists in DB currently for SDILID provided" in {
-        val sdilId: String = "foo"
-        val alfId: String = "bar"
-        val userAnswersBefore = emptyUserAnswersForUpdateRegisteredDetails.copy(
-          packagingSiteList = Map(sdilId -> Site(UkAddress(List.empty, "foo", Some("wizz")), None, None, None)))
-        given
-          .commonPrecondition
-          .alf.getAddress(alfId)
-        setAnswers(userAnswersBefore)
 
-        WsTestClient.withClient { client =>
-          val result = createClientRequestGet(client, s"$baseUrl/off-ramp/packing-site-details/$sdilId?id=$alfId")
+      "redirect to next page when request is valid and address is returned from ALF when in the ChangeActivity journey" - {
+        "no address exists in DB currently for SDILID provided" in {
+          val sdilId: String = "foo"
+          val alfId: String = "bar"
+          given
+            .commonPrecondition
+            .alf.getAddress(alfId)
+          setAnswers(emptyUserAnswersForChangeActivity)
 
-          whenReady(result) { res =>
-            val updatedUserAnswers = getAnswers(emptyUserAnswersForUpdateRegisteredDetails.id).get
-            updatedUserAnswers.id mustBe emptyUserAnswersForUpdateRegisteredDetails.id
-            updatedUserAnswers.data mustBe emptyUserAnswersForUpdateRegisteredDetails.data
-            updatedUserAnswers.packagingSiteList mustBe Map(sdilId ->
-              Site(UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), None, Some("soft drinks ltd"), None))
-            updatedUserAnswers.submitted mustBe emptyUserAnswersForUpdateRegisteredDetails.submitted
-            updatedUserAnswers.smallProducerList mustBe emptyUserAnswersForUpdateRegisteredDetails.smallProducerList
-            updatedUserAnswers.warehouseList mustBe emptyUserAnswersForUpdateRegisteredDetails.warehouseList
+          WsTestClient.withClient { client =>
+            val result = createClientRequestGet(client, s"$baseUrl/off-ramp/packing-site-details/$sdilId?id=$alfId")
 
-            res.status mustBe SEE_OTHER
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
+            whenReady(result) { res =>
+              val updatedUserAnswers = getAnswers(emptyUserAnswersForChangeActivity.id).get
+              updatedUserAnswers.id mustBe emptyUserAnswersForChangeActivity.id
+              updatedUserAnswers.data mustBe emptyUserAnswersForChangeActivity.data
+              updatedUserAnswers.packagingSiteList mustBe Map(sdilId ->
+                Site(UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), None, Some("soft drinks ltd"), None))
+              updatedUserAnswers.submitted mustBe emptyUserAnswersForChangeActivity.submitted
+              updatedUserAnswers.smallProducerList mustBe emptyUserAnswersForChangeActivity.smallProducerList
+              updatedUserAnswers.warehouseList mustBe emptyUserAnswersForChangeActivity.warehouseList
+
+              res.status mustBe SEE_OTHER
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
+            }
+          }
+        }
+
+        "an address already exists in DB currently for SDILID provided" in {
+          val sdilId: String = "foo"
+          val alfId: String = "bar"
+          val userAnswersBefore = emptyUserAnswersForUpdateRegisteredDetails.copy(
+            packagingSiteList = Map(sdilId -> Site(UkAddress(List.empty, "foo", Some("wizz")), None, None, None)))
+          given
+            .commonPrecondition
+            .alf.getAddress(alfId)
+          setAnswers(userAnswersBefore)
+
+          WsTestClient.withClient { client =>
+            val result = createClientRequestGet(client, s"$baseUrl/off-ramp/packing-site-details/$sdilId?id=$alfId")
+
+            whenReady(result) { res =>
+              val updatedUserAnswers = getAnswers(emptyUserAnswersForUpdateRegisteredDetails.id).get
+              updatedUserAnswers.id mustBe emptyUserAnswersForUpdateRegisteredDetails.id
+              updatedUserAnswers.data mustBe emptyUserAnswersForUpdateRegisteredDetails.data
+              updatedUserAnswers.packagingSiteList mustBe Map(sdilId ->
+                Site(UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), None, Some("soft drinks ltd"), None))
+              updatedUserAnswers.submitted mustBe emptyUserAnswersForUpdateRegisteredDetails.submitted
+              updatedUserAnswers.smallProducerList mustBe emptyUserAnswersForUpdateRegisteredDetails.smallProducerList
+              updatedUserAnswers.warehouseList mustBe emptyUserAnswersForUpdateRegisteredDetails.warehouseList
+
+              res.status mustBe SEE_OTHER
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+            }
           }
         }
       }
     }
+
     s"return $INTERNAL_SERVER_ERROR when" - {
       "alf returns error" in {
         val sdilId: String = "foo"
