@@ -21,7 +21,7 @@ import pages.behaviours.PageBehaviours
 
 class HowManyOperatePackagingSiteOwnBrandsPageSpec extends PageBehaviours {
 
-  "HowManyImportsPage" - {
+  "HowManyOperatePackagingSiteOwnBrandsPage" - {
 
     beRetrievable[LitresInBands](HowManyOperatePackagingSiteOwnBrandsPage)
 

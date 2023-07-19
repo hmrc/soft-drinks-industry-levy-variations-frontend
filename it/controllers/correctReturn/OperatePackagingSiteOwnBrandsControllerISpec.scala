@@ -2,7 +2,7 @@ package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.CorrectReturn
-import models.{CheckMode, NormalMode}
+import models.NormalMode
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import pages.correctReturn.OperatePackagingSiteOwnBrandsPage
@@ -148,7 +148,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
               whenReady(result) { res =>
                 res.status mustBe 303
                 val expectedLocation = if (yesSelected) {
-                  controllers.routes.IndexController.onPageLoad.url
+                  routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
                 } else {
                   controllers.routes.IndexController.onPageLoad.url
                 }
@@ -174,7 +174,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
               whenReady(result) { res =>
                 res.status mustBe 303
                 val expectedLocation = if (yesSelected) {
-                  controllers.routes.IndexController.onPageLoad.url
+                  routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
                 } else {
                   controllers.routes.IndexController.onPageLoad.url
                 }

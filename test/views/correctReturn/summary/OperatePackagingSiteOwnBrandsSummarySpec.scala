@@ -31,7 +31,7 @@ class OperatePackagingSiteOwnBrandsSummarySpec extends SpecBase {
     val includeLevyRowsOptions = List(true, false)
     includeLevyRowsOptions.foreach(includeLevyRows => {
       s"should return correct elements when passed in with TRUE and litres provided and check answers is true and include levy rows $includeLevyRows" in {
-        val userAnswers = emptyUserAnswersForChangeActivity
+        val userAnswers = emptyUserAnswersForCorrectReturn
           .set(OperatePackagingSiteOwnBrandsPage, true).success.value
           .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(lowLitres, highLitres)).success.value
 
@@ -78,7 +78,7 @@ class OperatePackagingSiteOwnBrandsSummarySpec extends SpecBase {
         res.rows.size mustBe (if (includeLevyRows) 5 else 3)
       }
       s"should return correct elements when passed in with TRUE and litres provided and check answers is false and include levy rows $includeLevyRows" in {
-        val userAnswers = emptyUserAnswersForChangeActivity
+        val userAnswers = emptyUserAnswersForCorrectReturn
           .set(OperatePackagingSiteOwnBrandsPage, true).success.value
           .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(lowLitres, highLitres)).success.value
 
@@ -119,7 +119,7 @@ class OperatePackagingSiteOwnBrandsSummarySpec extends SpecBase {
         res.rows.size mustBe (if (includeLevyRows) 5 else 3)
       }
       s"should return correct elements when passed in with FALSE and NO litres provided and include levy rows $includeLevyRows" in {
-        val userAnswers = emptyUserAnswersForChangeActivity
+        val userAnswers = emptyUserAnswersForCorrectReturn
           .set(OperatePackagingSiteOwnBrandsPage, false).success.value
 
         val res = OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = includeLevyRows)
@@ -134,7 +134,7 @@ class OperatePackagingSiteOwnBrandsSummarySpec extends SpecBase {
         res.rows.size mustBe 1
       }
       s"should return correct elements when no elements provided and include levy rows $includeLevyRows" in {
-        val userAnswers = emptyUserAnswersForChangeActivity
+        val userAnswers = emptyUserAnswersForCorrectReturn
 
         val res = OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = includeLevyRows)
         res.rows.size mustBe 0
