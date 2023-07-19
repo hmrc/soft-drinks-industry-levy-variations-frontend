@@ -13,8 +13,8 @@ import play.api.test.WsTestClient
 
 class PackagedAsContractPackerControllerISpec extends ControllerITTestHelper {
 
-  val normalRoutePath = "/<ul class="list list-bullet">\"
-  val checkRoutePath = "/change-<ul class="list list-bullet">\"
+  val normalRoutePath = "/packaged-as-contract-packer"
+  val checkRoutePath = "/change-packaged-as-contract-packer"
 
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {

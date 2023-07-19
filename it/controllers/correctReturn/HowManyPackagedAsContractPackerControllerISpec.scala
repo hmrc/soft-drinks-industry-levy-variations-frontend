@@ -13,8 +13,8 @@ import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 
 class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
 
-  val normalRoutePath = "/how-many-<ul class="list list-bullet">\"
-  val checkRoutePath = "/change-how-many-<ul class="list list-bullet">\"
+  val normalRoutePath = "/how-many-packaged-as-contract-packer"
+  val checkRoutePath = "/change-how-many-packaged-as-contract-packer"
 
   val userAnswers = emptyUserAnswersForCorrectReturn.set(HowManyPackagedAsContractPackerPage, litresInBands).success.value
 
@@ -39,7 +39,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("howManyPackagedAsContractPacker" + ".title"))
+              page.title must include(Messages("correctReturn.howManyPackagedAsContractPacker" + ".title"))
               testLitresInBandsNoPrepopulatedData(page)
             }
           }
@@ -59,7 +59,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("howManyPackagedAsContractPacker" + ".title"))
+              page.title must include(Messages("correctReturn.howManyPackagedAsContractPacker" + ".title"))
               testLitresInBandsWithPrepopulatedData(page)
             }
           }
@@ -116,7 +116,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
       }
 
       "should return 400 with required error" - {
-        val errorTitle = "Error: " + Messages("howManyPackagedAsContractPacker.title")
+        val errorTitle = "Error: " + Messages("correctReturn.howManyPackagedAsContractPacker.title")
 
         "when no questions are answered" in {
           given

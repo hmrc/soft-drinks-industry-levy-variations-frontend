@@ -2,7 +2,7 @@ package testSupport
 
 import models.{SelectChange, UserAnswers}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
-import pages.correctReturn.OperatePackagingSiteOwnBrandsPage
+import pages.correctReturn.{PackagedAsContractPackerPage, OperatePackagingSiteOwnBrandsPage}
 import play.api.libs.json.Json
 
 trait ITCoreTestDataForCorrectReturn extends ITSharedCoreTestData  {
