@@ -55,8 +55,8 @@ object PackagingSiteDetailsSummary  {
               classes = "govuk-!-font-weight-regular govuk-!-width-full"
             ),
             actions = if(packingSiteList.size > 1){ Some(Actions("",Seq(
-              ActionItemViewModel("site.remove", routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
-                .withVisuallyHiddenText(messages("secondaryWarehouseDetails.remove.hidden"))
+              ActionItemViewModel("site.remove", controllers.changeActivity.routes.RemovePackagingSiteDetailsController.onPageLoad(NormalMode, packingSite._1).url)
+                .withVisuallyHiddenText(messages("packagingSiteDetails.remove.hidden"))
             )))} else None
           )
       }.toList
