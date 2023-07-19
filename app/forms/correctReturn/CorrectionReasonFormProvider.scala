@@ -25,7 +25,7 @@ class CorrectionReasonFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text()
+      "value" -> text("correctReturn.correctionReason.error.required")
         .verifying(maxLength(255, "correctReturn.correctionReason.error.length"))
     )
 }

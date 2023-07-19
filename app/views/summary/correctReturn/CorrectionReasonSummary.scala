@@ -14,30 +14,29 @@
  * limitations under the License.
  */
 
-// package viewmodels.summary.correctReturn
-//
-//import controllers.correctReturn.routes
-//import models.{CheckMode, UserAnswers}
-//import pages.correctReturn.CorrectionReasonPage
-//import play.api.i18n.Messages
-//import play.twirl.api.HtmlFormat
-//import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-//import viewmodels.govuk.summarylist._
-//import viewmodels.implicits._
-//
-//object CorrectionReasonSummary  {
-//
-//  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-//    answers.get(CorrectionReasonPage).map {
-//      answer =>
-//
-//        SummaryListRowViewModel(
-//          key     = "correctReturn.correctionReason.checkYourAnswersLabel",
-//          value   = ValueViewModel(HtmlFormat.escape(answer).toString),
-//          actions = Seq(
-//            ActionItemViewModel("site.change", routes.CorrectionReasonController.onPageLoad(CheckMode).url)
-//              .withVisuallyHiddenText(messages("correctReturn.correctionReason.change.hidden"))
-//          )
-//        )
-//    }
-//}
+package views.summary.correctReturn
+
+import controllers.correctReturn.routes
+import models.{CheckMode, UserAnswers}
+import pages.correctReturn.CorrectionReasonPage
+import play.api.i18n.Messages
+import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import viewmodels.govuk.summarylist._
+import viewmodels.implicits._
+
+object CorrectionReasonSummary  {
+
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+    answers.get(CorrectionReasonPage).map {
+      answer =>
+        SummaryListRowViewModel(
+          key     = "correctReturn.correctionReason.checkYourAnswersLabel",
+          value   = ValueViewModel(HtmlFormat.escape(answer).toString),
+          actions = Seq(
+            ActionItemViewModel("site.change", routes.CorrectionReasonController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("correctReturn.correctionReason.change.hidden"))
+          )
+        )
+    }
+}

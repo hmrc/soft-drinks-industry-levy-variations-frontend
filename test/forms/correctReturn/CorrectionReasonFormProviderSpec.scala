@@ -36,6 +36,12 @@ class CorrectionReasonFormProviderSpec extends StringFieldBehaviours {
       stringsWithMaxLength(maxLength)
     )
 
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, "correctReturn.correctionReason.error.required")
+    )
+
     behave like fieldWithMaxLength(
       form,
       fieldName,
