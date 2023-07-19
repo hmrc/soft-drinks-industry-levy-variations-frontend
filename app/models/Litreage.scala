@@ -23,5 +23,8 @@ case class Litreage(atLowRate: BigDecimal, atHighRate: BigDecimal) {
 }
 
 object Litreage {
+  def apply(litresInBands: LitresInBands): Litreage = {
+    Litreage(litresInBands.lowBand,litresInBands.highBand)
+  }
   implicit val format: OFormat[Litreage] = Json.format[Litreage]
 }
