@@ -68,9 +68,9 @@ class HowManyImportsController @Inject()(
         value => {
           val updatedAnswers = request.userAnswers.set(HowManyImportsPage, value)
           val contractPacker = request.userAnswers.get(ContractPackingPage).getOrElse(false)
-          val hasPackagingSites = request.subscription.productionSites.nonEmpty
+          val hasProductionSites = request.subscription.productionSites.nonEmpty
 
-          (contractPacker, hasPackagingSites, mode) match {
+          (contractPacker, hasProductionSites, mode) match {
             case(true, false, NormalMode) =>
               updateDatabaseWithoutRedirect(updatedAnswers, HowManyImportsPage).flatMap {
                 case true => Future.successful(Redirect(routes.PackAtBusinessAddressController.onPageLoad(mode)))

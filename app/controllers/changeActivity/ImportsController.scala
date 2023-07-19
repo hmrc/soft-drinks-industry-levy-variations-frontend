@@ -74,10 +74,10 @@ class ImportsController @Inject()(
         value => {
           val updatedAnswers = userAnswers.setAndRemoveLitresIfReq(ImportsPage, HowManyImportsPage, value)
           val contractPacker = userAnswers.get(ContractPackingPage).contains(true)
-          val hasPackagingSites = request.subscription.productionSites.nonEmpty
+          val hasProductionSites = request.subscription.productionSites.nonEmpty
           val noneProduced = userAnswers.get(AmountProducedPage).contains(AmountProduced.None)
 
-          (noneProduced, contractPacker, hasPackagingSites, value) match {
+          (noneProduced, contractPacker, hasProductionSites, value) match {
 
             case(true, false, _, false) =>
               updateDatabaseWithoutRedirect(updatedAnswers, ImportsPage).flatMap {
@@ -91,7 +91,6 @@ class ImportsController @Inject()(
                 case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
               }
 
-
             case (true, true, false, false) =>
               updateDatabaseWithoutRedirect(updatedAnswers, ImportsPage).flatMap {
                 case true => Future.successful(Redirect(routes.PackAtBusinessAddressController.onPageLoad(mode)))
@@ -100,7 +99,6 @@ class ImportsController @Inject()(
 
             case _ => updateDatabaseAndRedirect(updatedAnswers, ImportsPage, mode)
           }
-
         }
       )
   }
