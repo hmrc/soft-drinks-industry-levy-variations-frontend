@@ -230,7 +230,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
             val updatedUserAnswersNoContactDetails = getAnswers(emptyUserAnswersForUpdateRegisteredDetails.id).get
             updatedUserAnswersNoContactDetails.id mustBe emptyUserAnswersForUpdateRegisteredDetails.id
             updatedUserAnswersNoContactDetails.data mustBe emptyUserAnswersForUpdateRegisteredDetails.data
-            updatedUserAnswersNoContactDetails.contactAddress mustBe Some(UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", Some("bar")))
+            updatedUserAnswersNoContactDetails.contactAddress mustBe UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", Some("bar"))
             updatedUserAnswersNoContactDetails.packagingSiteList mustBe emptyUserAnswersForUpdateRegisteredDetails.packagingSiteList
             updatedUserAnswersNoContactDetails.submitted mustBe emptyUserAnswersForUpdateRegisteredDetails.submitted
             updatedUserAnswersNoContactDetails.smallProducerList mustBe emptyUserAnswersForUpdateRegisteredDetails.smallProducerList
@@ -246,7 +246,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
         val sdilId: String = "foo"
         val alfId: String = "bar"
         val userAnswersBefore = emptyUserAnswersForUpdateRegisteredDetails.copy(
-          contactAddress = Some(UkAddress(List.empty, "foo", Some("wizz"))))
+          contactAddress = UkAddress(List.empty, "foo", Some("wizz")))
         given
           .commonPrecondition
           .alf.getAddress(alfId)
@@ -259,7 +259,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
             val updatedUserAnswers = getAnswers(emptyUserAnswersForUpdateRegisteredDetails.id).get
             updatedUserAnswers.id mustBe emptyUserAnswersForUpdateRegisteredDetails.id
             updatedUserAnswers.data mustBe emptyUserAnswersForUpdateRegisteredDetails.data
-            updatedUserAnswers.contactAddress mustBe Some(UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)))
+            updatedUserAnswers.contactAddress mustBe UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId))
             updatedUserAnswers.packagingSiteList mustBe emptyUserAnswersForUpdateRegisteredDetails.packagingSiteList
             updatedUserAnswers.submitted mustBe emptyUserAnswersForUpdateRegisteredDetails.submitted
             updatedUserAnswers.smallProducerList mustBe emptyUserAnswersForUpdateRegisteredDetails.smallProducerList

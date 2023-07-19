@@ -22,7 +22,7 @@ import models.updateRegisteredDetails.UpdateContactDetails
 import models.{CheckMode, SelectChange, UserAnswers}
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, Actions, SummaryList, SummaryListRow, Value}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import viewmodels.govuk.all.FluentActionItem
 import viewmodels.implicits._
 import views.summary.updateRegisteredDetails.UpdateContactDetailsSummary
@@ -31,13 +31,13 @@ class UpdateContactDetailsSummarySpec extends SpecBase {
 
   "rows" - {
     "should return nothing when user answers is empty" in {
-      UpdateContactDetailsSummary.rows(UserAnswers("", SelectChange.UpdateRegisteredDetails)) mustBe None
+      UpdateContactDetailsSummary.rows(UserAnswers("", SelectChange.UpdateRegisteredDetails, contactAddress = contactAddress)) mustBe None
     }
 
     s"should return correct rows when $UpdateContactDetailsPage is present" in {
       val contactDetails = UpdateContactDetails("foo","bar", "wizz", "bang")
       val res = UpdateContactDetailsSummary.rows(
-        UserAnswers("", SelectChange.UpdateRegisteredDetails).set(UpdateContactDetailsPage, contactDetails).success.value).get
+        UserAnswers("", SelectChange.UpdateRegisteredDetails, contactAddress = contactAddress).set(UpdateContactDetailsPage, contactDetails).success.value).get
       res._1 mustBe "Soft Drinks Industry Levy contact"
 
       res._2 mustBe SummaryList(

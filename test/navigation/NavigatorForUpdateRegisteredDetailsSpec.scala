@@ -32,7 +32,7 @@ class NavigatorForUpdateRegisteredDetailsSpec extends SpecBase {
       "must go from a page that doesn't exist in the route map to Index" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id", SelectChange.UpdateRegisteredDetails)) mustBe defaultCall
+        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id", SelectChange.UpdateRegisteredDetails, contactAddress = contactAddress)) mustBe defaultCall
       }
     }
 
@@ -41,7 +41,7 @@ class NavigatorForUpdateRegisteredDetailsSpec extends SpecBase {
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", SelectChange.UpdateRegisteredDetails)) mustBe routes.UpdateRegisteredDetailsCYAController.onPageLoad
+        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", SelectChange.UpdateRegisteredDetails, contactAddress = contactAddress)) mustBe routes.UpdateRegisteredDetailsCYAController.onPageLoad
       }
     }
   }

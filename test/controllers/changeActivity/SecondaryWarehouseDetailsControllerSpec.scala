@@ -111,7 +111,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
       val warehouses = Map("1" -> warehouse, "2" -> Warehouse(Some("DEF Ltd"), UkAddress(List("34 Rhes Priordy"),"WR53 7CX")))
       val summaryList = Some(SummaryListViewModel(rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouses)))
 
-      val userAnswers = UserAnswers(userAnswersId, ChangeActivity, warehouseList = warehouses)
+      val userAnswers = UserAnswers(userAnswersId, ChangeActivity, warehouseList = warehouses, contactAddress = contactAddress)
         .set(SecondaryWarehouseDetailsPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
