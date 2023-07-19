@@ -1,5 +1,7 @@
 package testSupport.preConditions
 
+import models.RetrievedSubscription
+
 trait PreconditionHelpers {
   implicit val builder: PreconditionBuilder
 
@@ -10,6 +12,22 @@ trait PreconditionHelpers {
       .sdilBackend.retrieveSubscription("sdil","XKSDIL000000022")
       .sdilBackend.returns_variable("0000001611")
       .sdilBackend.returns_pending("0000001611")
+  }
+
+  def commonPreconditionChangeSubscription(retrievedSubscription: RetrievedSubscription): PreconditionBuilder = {
+    builder
+      .user.isAuthorisedAndEnrolled
+      .sdilBackend.retrieveSubscriptionToModify("utr", "0000001611", retrievedSubscription)
+      .sdilBackend.returns_pending("0000001611")
+  }
+
+  def noReturnPendingPreCondition = {
+    builder
+      .user.isAuthorisedAndEnrolled
+      .sdilBackend.retrieveSubscription("utr", "0000001611")
+      .sdilBackend.retrieveSubscription("sdil", "XKSDIL000000022")
+      .sdilBackend.returns_variable("0000001611")
+      .sdilBackend.no_returns_pending("0000001611")
   }
 
   def unauthorisedPrecondition = {

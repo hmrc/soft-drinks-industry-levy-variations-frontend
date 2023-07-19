@@ -16,13 +16,14 @@
 
 package controllers.changeActivity
 
+import connectors.SoftDrinksIndustryLevyConnector
 import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.ImportsFormProvider
 import handlers.ErrorHandler
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation._
-import pages.changeActivity.{HowManyImportsPage, ImportsPage}
+import pages.changeActivity.{AmountProducedPage, ContractPackingPage, HowManyImportsPage, ImportsPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
@@ -32,6 +33,8 @@ import views.html.changeActivity.ImportsView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import models.SelectChange.ChangeActivity
+import models.changeActivity.AmountProduced
+import views.summary.cancelRegistration.FileReturnBeforeDeregSummary
 
 class ImportsController @Inject()(
                                          override val messagesApi: MessagesApi,
@@ -39,6 +42,7 @@ class ImportsController @Inject()(
                                          val navigator: NavigatorForChangeActivity,
                                          controllerActions: ControllerActions,
                                          formProvider: ImportsFormProvider,
+                                         connector: SoftDrinksIndustryLevyConnector,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: ImportsView,
                                           val genericLogger: GenericLogger,
@@ -61,14 +65,43 @@ class ImportsController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
 
+      val userAnswers = request.userAnswers
+
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value => {
-          val updatedAnswers = request.userAnswers.setAndRemoveLitresIfReq(ImportsPage, HowManyImportsPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, ImportsPage, mode)
+          val updatedAnswers = userAnswers.setAndRemoveLitresIfReq(ImportsPage, HowManyImportsPage, value)
+          val contractPacker = userAnswers.get(ContractPackingPage).contains(true)
+          val hasPackagingSites = request.subscription.productionSites.nonEmpty
+          val noneProduced = userAnswers.get(AmountProducedPage).contains(AmountProduced.None)
+
+          (noneProduced, contractPacker, hasPackagingSites, value) match {
+
+            case(true, false, _, false) =>
+              updateDatabaseWithoutRedirect(updatedAnswers, ImportsPage).flatMap {
+                case true =>
+                  connector.returns_pending(request.subscription.utr).map {
+                    case Some(returns) if returns.nonEmpty =>
+                      Redirect(controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad())
+                    case _ =>
+                      Redirect(routes.SuggestDeregistrationController.onPageLoad())
+                  }
+                case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+              }
+
+
+            case (true, true, false, false) =>
+              updateDatabaseWithoutRedirect(updatedAnswers, ImportsPage).flatMap {
+                case true => Future.successful(Redirect(routes.PackAtBusinessAddressController.onPageLoad(mode)))
+                case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+              }
+
+            case _ => updateDatabaseAndRedirect(updatedAnswers, ImportsPage, mode)
           }
+
+        }
       )
   }
 }

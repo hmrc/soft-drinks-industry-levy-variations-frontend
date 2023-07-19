@@ -77,4 +77,5 @@ trait ControllerHelper extends FrontendBaseController with I18nSupport {
       }
     }
   }
+
 }
