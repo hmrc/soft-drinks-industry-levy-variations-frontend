@@ -35,10 +35,10 @@ object Activity {
 
     override def reads(json: JsValue): JsResult[Litreage] =
       for {
-        low  <- (json \ "lower").validate[BigDecimal]
-        high <- (json \ "upper").validate[BigDecimal]
+        atLowRate  <- (json \ "lower").validate[BigDecimal]
+        atHighRate <- (json \ "upper").validate[BigDecimal]
       } yield {
-        Litreage(low, high)
+        Litreage(atLowRate, atHighRate)
       }
   }
 
