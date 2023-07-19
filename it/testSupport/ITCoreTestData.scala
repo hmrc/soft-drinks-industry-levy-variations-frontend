@@ -1,6 +1,7 @@
 package testSupport
 
 import controllers.routes
+import models.{Contact, RetrievedActivity, RetrievedSubscription}
 import models.backend.{Site, UkAddress}
 import org.scalatest.TryValues
 import play.api.libs.json.Json
@@ -36,4 +37,17 @@ trait ITCoreTestData
   implicit val duration = 5.seconds
 
   val defaultCall = routes.IndexController.onPageLoad
+
+  val aSubscription = RetrievedSubscription(
+    utr = "0000001611",
+    sdilRef = "XKSDIL000000022",
+    orgName = "Super Lemonade Plc",
+    address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
+    activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = false),
+    liabilityDate = LocalDate.of(2018, 4, 19),
+    productionSites = List(),
+    warehouseSites = List(),
+    contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
+    deregDate = None
+  )
 }

@@ -21,13 +21,9 @@ import models.changeActivity.AmountProduced._
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages.Page
 import pages.changeActivity._
-import play.api.i18n.Messages
-import play.api.mvc.{Call, RequestHeader}
-import services.{AddressLookupService, PackingDetails}
-import uk.gov.hmrc.http.HeaderCarrier
+import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class NavigatorForChangeActivity @Inject() extends Navigator {
@@ -51,12 +47,26 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
   }
 
   private def navigationForImports(userAnswers: UserAnswers, mode: Mode): Call = {
-    if (userAnswers.get(page = ImportsPage).contains(true)) {
-      routes.HowManyImportsController.onPageLoad(mode)
-    } else if(mode == CheckMode){
-        routes.ChangeActivityCYAController.onPageLoad
-    } else {
-        defaultCall
+    val contractPacker = userAnswers.get(ContractPackingPage).contains(true)
+    val noneProduced = userAnswers.get(AmountProducedPage).contains(None)
+    val imports = userAnswers.get(page = ImportsPage).contains(true)
+
+    (noneProduced, contractPacker, imports, mode) match {
+      case (_, _, true, NormalMode) => routes.HowManyImportsController.onPageLoad(mode)
+      case (true, true, false, NormalMode) => routes.PackagingSiteDetailsController.onPageLoad(mode)
+      case (_, _, true, CheckMode) => routes.HowManyImportsController.onPageLoad(mode)
+      case (_, _, false, CheckMode) => routes.ChangeActivityCYAController.onPageLoad
+      case _ => defaultCall
+    }
+  }
+  private def navigationForHowManyImports(userAnswers: UserAnswers, mode: Mode): Call = {
+    val contractPacker = userAnswers.get(ContractPackingPage).getOrElse(false)
+    val noneProduced = userAnswers.get(AmountProducedPage).contains(None)
+
+    (contractPacker, noneProduced, mode) match {
+      case (true, true, NormalMode) => routes.PackagingSiteDetailsController.onPageLoad(mode)
+      case (false, true, NormalMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
+      case _ => routes.ChangeActivityCYAController.onPageLoad
     }
   }
 
@@ -93,12 +103,13 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
   override val normalRoutes: Page => UserAnswers => Call = {
     case ThirdPartyPackagersPage => _ => navigationForOperateThirdPartyPackagers(NormalMode)
     case PackAtBusinessAddressPage => _ => defaultCall
+    case PackagingSiteDetailsPage => _ => defaultCall
     case RemovePackagingSiteDetailsPage => _ => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
     case SecondaryWarehouseDetailsPage => _ => defaultCall
     case ContractPackingPage => userAnswers => navigationForContractPacking(userAnswers, NormalMode)
     case HowManyContractPackingPage => userAnswers => navigationForHowManyContractPacking(userAnswers, NormalMode)
     case ImportsPage => userAnswers => navigationForImports(userAnswers, NormalMode)
-    case HowManyImportsPage => _ => defaultCall
+    case HowManyImportsPage => userAnswers => navigationForHowManyImports(userAnswers, NormalMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.ContractPackingController.onPageLoad(NormalMode)
     case AmountProducedPage => userAnswers => navigationForAmountProduced(userAnswers, NormalMode)
@@ -112,6 +123,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     case RemovePackagingSiteDetailsPage => _ => routes.PackagingSiteDetailsController.onPageLoad(CheckMode)
     case ContractPackingPage => userAnswers => navigationForContractPacking(userAnswers, CheckMode)
     case ImportsPage => userAnswers => navigationForImports(userAnswers, CheckMode)
+    case HowManyImportsPage => userAnswers => navigationForHowManyImports(userAnswers, CheckMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.ChangeActivityCYAController.onPageLoad
     case _ => _ => routes.ChangeActivityCYAController.onPageLoad
