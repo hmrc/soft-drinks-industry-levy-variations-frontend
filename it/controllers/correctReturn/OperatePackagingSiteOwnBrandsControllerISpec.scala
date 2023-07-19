@@ -12,8 +12,8 @@ import play.api.test.WsTestClient
 
 class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelper {
 
-  val normalRoutePath = "/operate-packaging-site"
-  val checkRoutePath = "/change-operate-packaging-site"
+  val normalRoutePath = "/own-brands-packaged-at-own-sites"
+  val checkRoutePath = "/change-own-brands-packaged-at-own-sites"
 
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
@@ -29,7 +29,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title mustBe "Do you operate any packaging sites in the UK to package liable drinks for brands you own? - Soft Drinks Industry Levy - GOV.UK"
+            page.title mustBe "Are you reporting your own brands of liable drinks packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -55,7 +55,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title mustBe "Do you operate any packaging sites in the UK to package liable drinks for brands you own? - Soft Drinks Industry Levy - GOV.UK"
+              page.title mustBe "Are you reporting your own brands of liable drinks packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -86,7 +86,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title mustBe "Do you operate any packaging sites in the UK to package liable drinks for brands you own? - Soft Drinks Industry Levy - GOV.UK"
+            page.title mustBe "Are you reporting your own brands of liable drinks packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -112,7 +112,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title mustBe "Do you operate any packaging sites in the UK to package liable drinks for brands you own? - Soft Drinks Industry Levy - GOV.UK"
+              page.title mustBe "Are you reporting your own brands of liable drinks packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -204,13 +204,13 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
             page.title mustBe
-              "Error: Do you operate any packaging sites in the UK to package liable drinks for brands you own? - Soft Drinks Industry Levy - GOV.UK"
+              "Error: Are you reporting your own brands of liable drinks packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe "Select yes if you operate any packaging sites in the UK to package liable drinks for brands you own"
+            errorSummary.text() mustBe "Select yes if you are reporting your own brands of liable drinks packaged at UK sites you operate"
           }
         }
       }
@@ -294,13 +294,13 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
             page.title mustBe
-              "Error: Do you operate any packaging sites in the UK to package liable drinks for brands you own? - Soft Drinks Industry Levy - GOV.UK"
+              "Error: Are you reporting your own brands of liable drinks packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe "Select yes if you operate any packaging sites in the UK to package liable drinks for brands you own"
+            errorSummary.text() mustBe "Select yes if you are reporting your own brands of liable drinks packaged at UK sites you operate"
           }
         }
       }

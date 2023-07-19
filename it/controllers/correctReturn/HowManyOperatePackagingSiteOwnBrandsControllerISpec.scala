@@ -12,8 +12,8 @@ import play.api.test.WsTestClient
 
 class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHelper {
 
-  val normalRoutePath = "/how-many-own-brands-next-12-months"
-  val checkRoutePath = "/change-how-many-own-brands-next-12-months"
+  val normalRoutePath = "/how-many-own-brands-packaged-at-own-sites"
+  val checkRoutePath = "/change-how-many-own-brands-packaged-at-own-sites"
 
   val userAnswers: UserAnswers = emptyUserAnswersForCorrectReturn.set(HowManyOperatePackagingSiteOwnBrandsPage, litresInBands).success.value
 
@@ -38,7 +38,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title mustBe "How many litres of your own brands will you package in the next 12 months? - Soft Drinks Industry Levy - GOV.UK"
+              page.title mustBe "How many litres of liable drinks have you packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
               testLitresInBandsNoPrepopulatedData(page)
             }
           }
@@ -58,7 +58,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title mustBe "How many litres of your own brands will you package in the next 12 months? - Soft Drinks Industry Levy - GOV.UK"
+              page.title mustBe "How many litres of liable drinks have you packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
               testLitresInBandsWithPrepopulatedData(page)
             }
           }
@@ -115,7 +115,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
       }
 
       "should return 400 with required error" - {
-        val errorTitle = "Error: How many litres of your own brands will you package in the next 12 months? - Soft Drinks Industry Levy - GOV.UK"
+        val errorTitle = "Error: How many litres of liable drinks have you packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
 
         "when no questions are answered" in {
           given

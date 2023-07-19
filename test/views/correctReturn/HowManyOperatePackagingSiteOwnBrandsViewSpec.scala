@@ -59,7 +59,7 @@ class HowManyOperatePackagingSiteOwnBrandsViewSpec extends LitresSpecHelper {
         }
 
         "should include a govuk body with the expected content" in {
-          document.getElementsByClass(Selectors.body).text() mustBe Messages("correctReturn.volume.subtext")
+          document.getElementsByClass(Selectors.body).text() mustBe Messages("correctReturn.howManyOperatePackagingSiteOwnBrands.hint")
         }
 
         testLitresInBandsNoPrepopulatedData(document)
