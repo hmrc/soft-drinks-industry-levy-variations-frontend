@@ -21,12 +21,16 @@ import models.changeActivity.AmountProduced._
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages.Page
 import pages.changeActivity._
-import play.api.mvc.Call
+import play.api.i18n.Messages
+import play.api.mvc.{Call, RequestHeader}
+import services.{AddressLookupService, PackingDetails}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
+import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class NavigatorForChangeActivity @Inject()() extends Navigator {
+class NavigatorForChangeActivity @Inject() extends Navigator {
 
   private def navigationForContractPacking(userAnswers: UserAnswers, mode: Mode): Call = {
     if (userAnswers.get(page = ContractPackingPage).contains(true)) {
@@ -89,7 +93,6 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
   override val normalRoutes: Page => UserAnswers => Call = {
     case ThirdPartyPackagersPage => _ => navigationForOperateThirdPartyPackagers(NormalMode)
     case PackAtBusinessAddressPage => _ => defaultCall
-    case PackagingSiteDetailsPage => _ => defaultCall
     case RemovePackagingSiteDetailsPage => _ => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
     case SecondaryWarehouseDetailsPage => _ => defaultCall
     case ContractPackingPage => userAnswers => navigationForContractPacking(userAnswers, NormalMode)

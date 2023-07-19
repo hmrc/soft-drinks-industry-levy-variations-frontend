@@ -26,6 +26,12 @@ trait ITCoreTestDataForChangeActivity extends ITSharedCoreTestData {
     Map("yes" -> yesSelected, "no" -> noSelected)
     }
 
+  val filledUserAnswersForChangeActivityPackagingSiteDetailsPage: UserAnswers = {
+    emptyUserAnswersForChangeActivity
+      .set(PackagingSiteDetailsPage, true).success.value
+      .copy(packagingSiteList = Map("1" -> Site(ukAddress, None, None, None), "123456" -> Site(ukAddress, None, Some("Site two trading name"), None)))
+  }
+
   def userAnswersForChangeActivityRemovePackagingSiteDetailsPage(index: String): Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForChangeActivity
       .copy(packagingSiteList = Map(index -> Site(ukAddress, None, None, None)))

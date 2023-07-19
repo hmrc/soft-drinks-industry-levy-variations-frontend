@@ -20,12 +20,12 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.PackagingSiteDetailsFormProvider
 import handlers.ErrorHandler
-import models.Mode
+import models.{CheckMode, Mode, NormalMode}
 import navigation._
 import pages.changeActivity.PackagingSiteDetailsPage
-import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.SessionService
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
+import services.{AddressLookupService, PackingDetails, SessionService}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
@@ -35,6 +35,8 @@ import views.html.changeActivity.PackagingSiteDetailsView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import models.SelectChange.ChangeActivity
+import play.api.data.Form
+import uk.gov.hmrc.http.HeaderCarrier
 
 class PackagingSiteDetailsController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -44,11 +46,12 @@ class PackagingSiteDetailsController @Inject()(
                                        formProvider: PackagingSiteDetailsFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: PackagingSiteDetailsView,
+                                       val addressLookupService: AddressLookupService,
                                        val genericLogger: GenericLogger,
                                        val errorHandler: ErrorHandler
                                      )(implicit ec: ExecutionContext) extends ControllerHelper with SummaryListFluency {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
@@ -67,7 +70,6 @@ class PackagingSiteDetailsController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
-
       val siteList: SummaryList = SummaryListViewModel(
         rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList)
       )
@@ -75,10 +77,24 @@ class PackagingSiteDetailsController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
 
-        value => {
-          val updatedAnswers = request.userAnswers.set(PackagingSiteDetailsPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, PackagingSiteDetailsPage, mode)
-        }
+        value =>
+          updateDatabaseWithoutRedirect(request.userAnswers.set(PackagingSiteDetailsPage, value), PackagingSiteDetailsPage).flatMap {
+            case true => getOnwardUrl(value, mode).map(Redirect(_))
+            case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+          }
+
       )
+  }
+
+  private def getOnwardUrl(addPackagingSite: Boolean, mode: Mode)
+    (implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages, requestHeader: RequestHeader): Future[String] = {
+
+    if(addPackagingSite) {
+      addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails)(hc, ec, messages, requestHeader)
+    } else if(mode == CheckMode) {
+      Future.successful(controllers.changeActivity.routes.ChangeActivityCYAController.onPageLoad.url)
+    } else {
+      Future.successful(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(mode).url)
+    }
   }
 }
