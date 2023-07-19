@@ -78,19 +78,26 @@ class ImportsController @Inject()(
           val noneProduced = userAnswers.get(AmountProducedPage).contains(AmountProduced.None)
 
           (noneProduced, contractPacker, hasPackagingSites, value) match {
+
             case(true, false, _, false) =>
-              updateDatabaseWithoutRedirect(updatedAnswers, ImportsPage)(
-                connector.returns_pending(request.subscription.utr).map {
-                  case Some(returns) if returns.nonEmpty =>
-                    Redirect(controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad())
-                  case _ =>
-                    Redirect(routes.SuggestDeregistrationController.onPageLoad())
-                }
-              )
+              updateDatabaseWithoutRedirect(updatedAnswers, ImportsPage).flatMap {
+                case true =>
+                  connector.returns_pending(request.subscription.utr).map {
+                    case Some(returns) if returns.nonEmpty =>
+                      Redirect(controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad())
+                    case _ =>
+                      Redirect(routes.SuggestDeregistrationController.onPageLoad())
+                  }
+                case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+              }
+
+
             case (true, true, false, false) =>
-              updateDatabaseWithoutRedirect(updatedAnswers, ImportsPage)(
-                Future.successful(Redirect(routes.PackAtBusinessAddressController.onPageLoad(mode)))
-              )
+              updateDatabaseWithoutRedirect(updatedAnswers, ImportsPage).flatMap {
+                case true => Future.successful(Redirect(routes.PackAtBusinessAddressController.onPageLoad(mode)))
+                case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+              }
+
             case _ => updateDatabaseAndRedirect(updatedAnswers, ImportsPage, mode)
           }
 
