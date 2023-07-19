@@ -22,14 +22,8 @@ import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages.Page
 import pages.changeActivity._
 import play.api.mvc.Call
-import viewmodels.summary.changeActivity.AmountProducedSummary
-import play.api.i18n.Messages
-import play.api.mvc.{Call, RequestHeader}
-import services.{AddressLookupService, PackingDetails}
-import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class NavigatorForChangeActivity @Inject() extends Navigator {
@@ -54,7 +48,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
 
   private def navigationForImports(userAnswers: UserAnswers, mode: Mode): Call = {
     val contractPacker = userAnswers.get(ContractPackingPage).contains(true)
-    val noneProduced = userAnswers.get(AmountProducedPage).contains(AmountProduced.None)
+    val noneProduced = userAnswers.get(AmountProducedPage).contains(None)
     val imports = userAnswers.get(page = ImportsPage).contains(true)
 
     (noneProduced, contractPacker, imports, mode) match {
@@ -67,7 +61,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
   }
   private def navigationForHowManyImports(userAnswers: UserAnswers, mode: Mode): Call = {
     val contractPacker = userAnswers.get(ContractPackingPage).getOrElse(false)
-    val noneProduced = userAnswers.get(AmountProducedPage).contains(AmountProduced.None)
+    val noneProduced = userAnswers.get(AmountProducedPage).contains(None)
 
     (contractPacker, noneProduced, mode) match {
       case (true, true, NormalMode) => routes.PackagingSiteDetailsController.onPageLoad(mode)
