@@ -28,7 +28,7 @@ import java.time.LocalDate
 @Singleton
 class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Configuration) {
 
-  val variationsBaseUrl: String    = servicesConfig.baseUrl("soft-drinks-industry-levy-variations-frontend"))
+  val variationsBaseUrl: String    = servicesConfig.baseUrl("soft-drinks-industry-levy-variations-frontend")
   val appName: String = servicesConfig.getString("appName")
 
   private val contactHost = servicesConfig.getString("contact-frontend.host")
