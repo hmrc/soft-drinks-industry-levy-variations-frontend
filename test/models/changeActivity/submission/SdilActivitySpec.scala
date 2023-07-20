@@ -228,6 +228,7 @@ class SdilActivitySpec extends SpecBase {
 
   "writes" - {
     "should convert to json correctly" in {
+      val date: LocalDate = LocalDate.parse("2023-07-19")
       val activity = SdilActivity(
         activity = Some(
           Activity(
@@ -241,7 +242,7 @@ class SdilActivitySpec extends SpecBase {
         usesContractPacker = Some(false),
         voluntarilyRegistered = Some(false),
         reasonForAmendment = None,
-        taxObligationStartDate = Some(localDate))
+        taxObligationStartDate = Some(date))
       Json.toJson(activity) mustBe Json.parse(
         """
           |{"activity":{"Imported":{"lower":5,"upper":5},
