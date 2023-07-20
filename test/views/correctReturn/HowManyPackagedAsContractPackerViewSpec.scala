@@ -51,28 +51,28 @@ class HowManyPackagedAsContractPackerViewSpec extends LitresSpecHelper {
         val documentFormErrorsOutOfRange = doc(htmlFormErrorsOutOfRange)
 
         "should have the expected title" in {
-          document.title() must include(Messages("correctReturn.howManyPackagedAsContractPacker.title"))
+          document.title() must include(Messages("How many litres of liable drinks have you packaged as a third party or contract packer at UK sites you operate?"))
         }
 
         "should have the expected heading" in {
-          document.getElementsByClass(Selectors.heading).text() mustBe Messages("correctReturn.howManyPackagedAsContractPacker.heading")
+          document.getElementsByClass(Selectors.heading).text() mustBe Messages("How many litres of liable drinks have you packaged as a third party or contract packer at UK sites you operate?")
         }
 
         "should include a govuk body with the expected content" in {
-          document.getElementsByClass(Selectors.body).first().text() mustBe Messages("correctReturn.howManyPackagedAsContractPacker.subtext")
+          document.getElementsByClass(Selectors.body).first().text() mustBe Messages("Do not include liable drinks you have packaged for registered small producers.")
         }
 
         testLitresInBandsNoPrepopulatedData(document)
         testLitresInBandsWithPrepopulatedData(documentWithValidData)
 
         val expectedDetails = Map(
-          Messages("correctReturn.packagedAsContractPacker.detailsLink") -> Messages ("correctReturn.packagedAsContractPacker.detailsContent") )
+          Messages("What is a small producer?") -> Messages ("A business is a small producer if it:") )
         testButton(document)
         testAction(document, routes.HowManyPackagedAsContractPackerController.onSubmit(mode).url)
 
 
         "and the form has errors" - {
-          val errorTitle = "Error: " + Messages("correctReturn.howManyPackagedAsContractPacker.title")
+          val errorTitle = "Error: " + Messages("How many litres of liable drinks have you packaged as a third party or contract packer at UK sites you operate?")
           testEmptyFormErrors(documentFormErrorsEmpty, errorTitle)
           testNoNumericFormErrors(documentFormErrorsNoneNumeric, errorTitle)
           testNegativeFormErrors(documentFormErrorsNegative, errorTitle)

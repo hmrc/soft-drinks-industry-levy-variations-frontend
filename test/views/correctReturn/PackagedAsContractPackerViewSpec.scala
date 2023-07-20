@@ -48,13 +48,13 @@ class PackagedAsContractPackerViewSpec extends ViewSpecHelper {
     val html = view(form, NormalMode)(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
-      document.title() must include(Messages("correctReturn.packagedAsContractPacker" + ".title"))
+      document.title() must include(Messages("Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?"))
     }
 
     "should include a legend with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("correctReturn.packagedAsContractPacker.heading")
+      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?")
     }
 
     "when the form is not preoccupied and has no errors" - {
@@ -202,7 +202,7 @@ class PackagedAsContractPackerViewSpec extends ViewSpecHelper {
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
-        val titleMessage = Messages("correctReturn.packagedAsContractPacker.title")
+        val titleMessage = Messages("Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?")
         documentWithErrors.title must include("Error: " + titleMessage)
       }
 
@@ -213,7 +213,7 @@ class PackagedAsContractPackerViewSpec extends ViewSpecHelper {
         errorSummary
           .select("a")
           .attr("href") mustBe "#value"
-        errorSummary.text() mustBe Messages("correctReturn.packagedAsContractPacker.error.required")
+        errorSummary.text() mustBe Messages("Select yes if are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?")
       }
     }
 
