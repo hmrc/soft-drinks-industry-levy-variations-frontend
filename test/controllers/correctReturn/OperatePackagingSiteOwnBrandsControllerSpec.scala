@@ -14,51 +14,50 @@
  * limitations under the License.
  */
 
-package controllers.changeActivity
+package controllers.correctReturn
 
 import base.SpecBase
 import errors.SessionDatabaseInsertError
-import forms.changeActivity.ImportsFormProvider
+import forms.correctReturn.OperatePackagingSiteOwnBrandsFormProvider
 import models.NormalMode
-import models.SelectChange.ChangeActivity
-import models.changeActivity.AmountProduced
+import models.SelectChange.CorrectReturn
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.changeActivity.{AmountProducedPage, ContractPackingPage, ImportsPage}
+import pages.correctReturn.OperatePackagingSiteOwnBrandsPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
 import utilities.GenericLogger
-import views.html.changeActivity.ImportsView
+import views.html.correctReturn.OperatePackagingSiteOwnBrandsView
 
 import scala.concurrent.Future
 
-class ImportsControllerSpec extends SpecBase with MockitoSugar {
+class OperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new ImportsFormProvider()
+  val formProvider = new OperatePackagingSiteOwnBrandsFormProvider()
   val form = formProvider()
 
-  lazy val importsRoute = routes.ImportsController.onPageLoad(NormalMode).url
+  lazy val operatePackagingSiteOwnBrandsRoute = routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
 
-  "Imports Controller" - {
+  "OperatePackagingSiteOwnBrands Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
 
       running(application) {
-        val request = FakeRequest(GET, importsRoute)
+        val request = FakeRequest(GET, operatePackagingSiteOwnBrandsRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[ImportsView]
+        val view = application.injector.instanceOf[OperatePackagingSiteOwnBrandsView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
@@ -67,14 +66,14 @@ class ImportsControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswersForChangeActivity.set(ImportsPage, true).success.value
+      val userAnswers = emptyUserAnswersForCorrectReturn.set(OperatePackagingSiteOwnBrandsPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, importsRoute)
+        val request = FakeRequest(GET, operatePackagingSiteOwnBrandsRoute)
 
-        val view = application.injector.instanceOf[ImportsView]
+        val view = application.injector.instanceOf[OperatePackagingSiteOwnBrandsView]
 
         val result = route(application, request).value
 
@@ -90,16 +89,16 @@ class ImportsControllerSpec extends SpecBase with MockitoSugar {
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
           .overrides(
-            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute)),
+            bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           )
           .build()
 
       running(application) {
         val request =
-          FakeRequest(POST, importsRoute)
+          FakeRequest(POST, operatePackagingSiteOwnBrandsRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -111,16 +110,16 @@ class ImportsControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
 
       running(application) {
         val request =
-          FakeRequest(POST, importsRoute)
+          FakeRequest(POST, operatePackagingSiteOwnBrandsRoute)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[ImportsView]
+        val view = application.injector.instanceOf[OperatePackagingSiteOwnBrandsView]
 
         val result = route(application, request).value
 
@@ -129,16 +128,16 @@ class ImportsControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    testInvalidJourneyType(ChangeActivity, importsRoute)
-    testNoUserAnswersError(importsRoute)
+    testInvalidJourneyType(CorrectReturn, operatePackagingSiteOwnBrandsRoute)
+    testNoUserAnswersError(operatePackagingSiteOwnBrandsRoute)
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(ChangeActivity))).build()
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CorrectReturn))).build()
 
       running(application) {
         val request =
-          FakeRequest(POST, importsRoute
+          FakeRequest(POST, operatePackagingSiteOwnBrandsRoute
         )
         .withFormUrlEncodedBody(("value", "true"))
 
@@ -150,63 +149,29 @@ class ImportsControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "when not a contract packer it should log an error message when internal server error is returned when user answers are not set in session repository" in {
+    "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionService = mock[SessionService]
-      val answers = emptyUserAnswersForChangeActivity
-        .set(ContractPackingPage, false).success.value
-        .set(AmountProducedPage, AmountProduced.None).success.value
 
       when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
       val application =
-        applicationBuilder(userAnswers = Some(answers),Some(aSubscription.copy(productionSites = List.empty)))
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
           .overrides(
-            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity (onwardRoute)),
+            bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn (onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           ).build()
 
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request =
-            FakeRequest(POST, importsRoute)
-          .withFormUrlEncodedBody(("value", "false"))
+            FakeRequest(POST, operatePackagingSiteOwnBrandsRoute)
+          .withFormUrlEncodedBody(("value", "true"))
 
           await(route(application, request).value)
           events.collectFirst {
             case event =>
               event.getLevel.levelStr mustBe "ERROR"
-              event.getMessage mustEqual "Failed to set value in session repository while attempting set on imports"
-          }.getOrElse(fail("No logging captured"))
-        }
-      }
-    }
-
-    "when a contract packer it should log an error message when internal server error is returned when user answers are not set in session repository" in {
-      val mockSessionService = mock[SessionService]
-      val answers = emptyUserAnswersForChangeActivity
-        .set(ContractPackingPage, true).success.value
-        .set(AmountProducedPage, AmountProduced.None).success.value
-
-      when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
-
-      val application =
-        applicationBuilder(userAnswers = Some(answers), Some(aSubscription.copy(productionSites = List.empty)))
-          .overrides(
-            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute)),
-            bind[SessionService].toInstance(mockSessionService)
-          ).build()
-
-      running(application) {
-        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
-          val request =
-            FakeRequest(POST, importsRoute)
-              .withFormUrlEncodedBody(("value", "false"))
-
-          await(route(application, request).value)
-          events.collectFirst {
-            case event =>
-              event.getLevel.levelStr mustBe "ERROR"
-              event.getMessage mustEqual "Failed to set value in session repository while attempting set on imports"
+              event.getMessage mustEqual "Failed to set value in session repository while attempting set on operatePackagingSiteOwnBrands"
           }.getOrElse(fail("No logging captured"))
         }
       }

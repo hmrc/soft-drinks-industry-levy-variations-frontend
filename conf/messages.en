@@ -317,3 +317,13 @@ correctReturn.select.help.content = If you did not send a return, then it will n
 correctReturn.select.checkYourAnswersLabel = Which return do you need to correct?
 correctReturn.select.error.required = Select which return you need to correct
 correctReturn.select.change.hidden = Select
+
+correctReturn.operatePackagingSiteOwnBrands.title = Are you reporting your own brands of liable drinks packaged at UK sites you operate?
+correctReturn.operatePackagingSiteOwnBrands.heading = Are you reporting your own brands of liable drinks packaged at UK sites you operate?
+correctReturn.operatePackagingSiteOwnBrands.hint = This includes brands you own or have the rights to manufacture.
+correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersLabel = Package your own brand at your own sites?
+correctReturn.operatePackagingSiteOwnBrands.error.required = Select yes if you are reporting your own brands of liable drinks packaged at UK sites you operate
+correctReturn.operatePackagingSiteOwnBrands.change.hidden = whether you package your own brands at your own site
+correctReturn.howManyOperatePackagingSiteOwnBrands.title = How many litres of liable drinks have you packaged at UK sites you operate?
+correctReturn.howManyOperatePackagingSiteOwnBrands.heading = How many litres of liable drinks have you packaged at UK sites you operate?
+correctReturn.howManyOperatePackagingSiteOwnBrands.hint = This includes brands you own or have the rights to manufacture.

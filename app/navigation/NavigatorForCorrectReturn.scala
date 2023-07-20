@@ -17,9 +17,9 @@
 package navigation
 
 import controllers.correctReturn.routes
-import models.UserAnswers
+import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages.Page
-import pages.correctReturn.SelectPage
+import pages.correctReturn.{HowManyOperatePackagingSiteOwnBrandsPage, OperatePackagingSiteOwnBrandsPage, SelectPage}
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -27,12 +27,24 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class NavigatorForCorrectReturn @Inject()() extends Navigator {
 
+  private def navigationForOperatePackagingSiteOwnBrands(userAnswers: UserAnswers, mode: Mode): Call = {
+    if (userAnswers.get(page = OperatePackagingSiteOwnBrandsPage).contains(true)) {
+      routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(mode)
+    } else if (mode == CheckMode) {
+      routes.CorrectReturnCYAController.onPageLoad
+    } else {
+      controllers.routes.IndexController.onPageLoad
+    }
+  }
+
   override val normalRoutes: Page => UserAnswers => Call = {
+    case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
+    case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => defaultCall
     case SelectPage => userAnswers => defaultCall
     case _ => _ => defaultCall
   }
 
   override val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => routes.CorrectReturnCYAController.onPageLoad
+    case _ => _ => defaultCall
   }
 }

@@ -51,12 +51,26 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
   }
 
   private def navigationForImports(userAnswers: UserAnswers, mode: Mode): Call = {
-    if (userAnswers.get(page = ImportsPage).contains(true)) {
-      routes.HowManyImportsController.onPageLoad(mode)
-    } else if(mode == CheckMode){
-        routes.ChangeActivityCYAController.onPageLoad
-    } else {
-        defaultCall
+    val contractPacker = userAnswers.get(ContractPackingPage).contains(true)
+    val noneProduced = userAnswers.get(AmountProducedPage).contains(None)
+    val imports = userAnswers.get(page = ImportsPage).contains(true)
+
+    (noneProduced, contractPacker, imports, mode) match {
+      case (_, _, true, NormalMode) => routes.HowManyImportsController.onPageLoad(mode)
+      case (true, true, false, NormalMode) => routes.PackagingSiteDetailsController.onPageLoad(mode)
+      case (_, _, true, CheckMode) => routes.HowManyImportsController.onPageLoad(mode)
+      case (_, _, false, CheckMode) => routes.ChangeActivityCYAController.onPageLoad
+      case _ => defaultCall
+    }
+  }
+  private def navigationForHowManyImports(userAnswers: UserAnswers, mode: Mode): Call = {
+    val contractPacker = userAnswers.get(ContractPackingPage).getOrElse(false)
+    val noneProduced = userAnswers.get(AmountProducedPage).contains(None)
+
+    (contractPacker, noneProduced, mode) match {
+      case (true, true, NormalMode) => routes.PackagingSiteDetailsController.onPageLoad(mode)
+      case (false, true, NormalMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
+      case _ => routes.ChangeActivityCYAController.onPageLoad
     }
   }
 
@@ -107,11 +121,9 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     case ContractPackingPage => userAnswers => navigationForContractPacking(userAnswers, NormalMode)
     case HowManyContractPackingPage => userAnswers => navigationForHowManyContractPacking(userAnswers, NormalMode)
     case ImportsPage => userAnswers => navigationForImports(userAnswers, NormalMode)
-    case HowManyImportsPage => _ => defaultCall
+    case HowManyImportsPage => userAnswers => navigationForHowManyImports(userAnswers, NormalMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.ContractPackingController.onPageLoad(NormalMode)
-    case AmountProducedPage => userAnswers => navigationForAmountProduced(userAnswers, NormalMode)
-    case HowManyOperatePackagingSiteOwnBrandsPage => _ => defaultCall
     case AmountProducedPage => userAnswers => navigationForAmountProduced(userAnswers, NormalMode)
     case _ => _ => defaultCall
   }
@@ -121,6 +133,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     case RemovePackagingSiteDetailsPage => _ => routes.PackagingSiteDetailsController.onPageLoad(CheckMode)
     case ContractPackingPage => userAnswers => navigationForContractPacking(userAnswers, CheckMode)
     case ImportsPage => userAnswers => navigationForImports(userAnswers, CheckMode)
+    case HowManyImportsPage => userAnswers => navigationForHowManyImports(userAnswers, CheckMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.ChangeActivityCYAController.onPageLoad
     case PackagingSiteDetailsPage => userAnswers => navigationForPackagingSiteDetails(userAnswers, CheckMode)

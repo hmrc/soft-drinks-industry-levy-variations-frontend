@@ -23,7 +23,6 @@ import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages.SelectChangePage
 import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
-import pages.changeActivity.{AmountProducedPage, OperatePackagingSiteOwnBrandsPage}
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.libs.json.{JsValue, Json}
 
@@ -125,10 +124,18 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryChangeActivityOperatePackagingSiteOwnBrandsUserAnswersEntry: Arbitrary[(OperatePackagingSiteOwnBrandsPage.type, JsValue)] =
+  implicit lazy val arbitraryChangeActivityOperatePackagingSiteOwnBrandsUserAnswersEntry: Arbitrary[(pages.changeActivity.OperatePackagingSiteOwnBrandsPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[OperatePackagingSiteOwnBrandsPage.type]
+        page  <- arbitrary[pages.changeActivity.OperatePackagingSiteOwnBrandsPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryCorrectReturnOperatePackagingSiteOwnBrandsUserAnswersEntry: Arbitrary[(pages.correctReturn.OperatePackagingSiteOwnBrandsPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page <- arbitrary[pages.correctReturn.OperatePackagingSiteOwnBrandsPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -141,10 +148,10 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
-  implicit lazy val arbitraryChangeActivityAmountProducedUserAnswersEntry: Arbitrary[(AmountProducedPage.type, JsValue)] =
+  implicit lazy val arbitraryChangeActivityAmountProducedUserAnswersEntry: Arbitrary[(pages.changeActivity.AmountProducedPage.type, JsValue)] =
     Arbitrary {
       for {
-        page  <- arbitrary[AmountProducedPage.type]
+        page  <- arbitrary[pages.changeActivity.AmountProducedPage.type]
         value <- arbitrary[AmountProduced].map(Json.toJson(_))
       } yield (page, value)
     }

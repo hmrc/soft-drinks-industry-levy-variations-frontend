@@ -17,7 +17,8 @@
 package controllers.addressLookupFrontend
 
 import controllers.actions.ControllerActions
-import models.NormalMode
+import models.SelectChange.ChangeActivity
+import models.{NormalMode, SelectChange}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{AddressLookupService, ContactDetails, PackingDetails, WarehouseDetails}
@@ -50,7 +51,11 @@ class RampOffController @Inject()(controllerActions: ControllerActions,
         updatedUserAnswers = addressLookupService.addAddressUserAnswers(PackingDetails, alfResponse.address, request.userAnswers, sdilId, alfId)
         _ <- sessionRepository.set(updatedUserAnswers)
       } yield {
-        Redirect(controllers.changeActivity.routes.PackagingSiteDetailsController.onPageLoad(NormalMode))
+        val redirectUrl = updatedUserAnswers.journeyType match {
+          case SelectChange.ChangeActivity => controllers.changeActivity.routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
+          case _ => controllers.routes.IndexController.onPageLoad
+        }
+        Redirect(redirectUrl)
       }
   }
 

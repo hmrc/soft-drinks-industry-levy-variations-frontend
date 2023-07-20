@@ -177,6 +177,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
           .withFormUrlEncodedBody(("value", "false"))
 
           await(route(application, request).value)
+
           events.collectFirst {
             case event =>
               event.getLevel.levelStr mustBe "ERROR"

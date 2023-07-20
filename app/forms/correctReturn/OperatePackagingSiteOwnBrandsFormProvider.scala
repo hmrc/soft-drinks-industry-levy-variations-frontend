@@ -14,17 +14,17 @@
  * limitations under the License.
  */
 
-package models
+package forms.correctReturn
 
-import play.api.libs.json.{Json, OFormat}
+import forms.mappings.Mappings
+import play.api.data.Form
 
-case class Litreage(atLowRate: BigDecimal, atHighRate: BigDecimal) {
-  val total: BigDecimal = atLowRate + atHighRate
-}
+import javax.inject.Inject
 
-object Litreage {
-  def apply(litresInBands: LitresInBands): Litreage = {
-    Litreage(litresInBands.lowBand,litresInBands.highBand)
-  }
-  implicit val format: OFormat[Litreage] = Json.format[Litreage]
+class OperatePackagingSiteOwnBrandsFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("correctReturn.operatePackagingSiteOwnBrands.error.required")
+    )
 }

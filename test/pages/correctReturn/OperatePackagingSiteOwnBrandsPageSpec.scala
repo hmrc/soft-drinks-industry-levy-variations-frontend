@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package models
+package pages.correctReturn
 
-import play.api.libs.json.{Json, OFormat}
+import pages.behaviours.PageBehaviours
 
-case class Litreage(atLowRate: BigDecimal, atHighRate: BigDecimal) {
-  val total: BigDecimal = atLowRate + atHighRate
-}
+class OperatePackagingSiteOwnBrandsPageSpec extends PageBehaviours {
 
-object Litreage {
-  def apply(litresInBands: LitresInBands): Litreage = {
-    Litreage(litresInBands.lowBand,litresInBands.highBand)
+  "OperatePackagingSiteOwnBrandsPage" - {
+
+    beRetrievable[Boolean](OperatePackagingSiteOwnBrandsPage)
+
+    beSettable[Boolean](OperatePackagingSiteOwnBrandsPage)
+
+    beRemovable[Boolean](OperatePackagingSiteOwnBrandsPage)
   }
-  implicit val format: OFormat[Litreage] = Json.format[Litreage]
 }

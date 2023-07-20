@@ -23,7 +23,6 @@ import org.scalatest.TryValues
 import pages._
 import pages.cancelRegistration.CancelRegistrationDatePage
 import pages.cancelRegistration.ReasonPage
-import pages.changeActivity.{AmountProducedPage, OperatePackagingSiteOwnBrandsPage}
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.libs.json.{JsValue, Json}
 
@@ -44,9 +43,10 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(changeActivity.ContractPackingPage.type, JsValue)] ::
     arbitrary[(updateRegisteredDetails.WarehouseDetailsPage.type, JsValue)] ::
     arbitrary[(changeActivity.ImportsPage.type, JsValue)] ::
-    arbitrary[(OperatePackagingSiteOwnBrandsPage.type, JsValue)] ::
+    arbitrary[(changeActivity.OperatePackagingSiteOwnBrandsPage.type, JsValue)] ::
+    arbitrary[(correctReturn.OperatePackagingSiteOwnBrandsPage.type, JsValue)] ::
     arbitrary[(ReasonPage.type, JsValue)] ::
-    arbitrary[(AmountProducedPage.type, JsValue)] ::
+    arbitrary[(changeActivity.AmountProducedPage.type, JsValue)] ::
     arbitrary[(UpdateContactDetailsPage.type, JsValue)] ::
     arbitrary[(SelectChangePage.type, JsValue)] ::
     Nil

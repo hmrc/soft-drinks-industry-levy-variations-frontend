@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package models
+package views.summary.correctReturn
 
-import play.api.libs.json.{Json, OFormat}
+import controllers.correctReturn.routes
+import models.CheckMode
+import views.summary.SummaryListRowLitresHelper
 
-case class Litreage(atLowRate: BigDecimal, atHighRate: BigDecimal) {
-  val total: BigDecimal = atLowRate + atHighRate
-}
+object HowManyOperatePackagingSiteOwnBrandsSummary extends SummaryListRowLitresHelper {
 
-object Litreage {
-  def apply(litresInBands: LitresInBands): Litreage = {
-    Litreage(litresInBands.lowBand,litresInBands.highBand)
-  }
-  implicit val format: OFormat[Litreage] = Json.format[Litreage]
+  override val actionUrl: String = routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
+  override val bandActionIdKey: String = "operatePackagingSiteOwnBrands"
+  override val bandHiddenKey: String = "correctReturn.operatePackagingSiteOwnBrands"
+
 }
