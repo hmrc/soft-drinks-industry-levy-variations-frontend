@@ -20,10 +20,10 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.HowManyLitresFormProvider
 import handlers.ErrorHandler
-import models.Mode
 import models.SelectChange.ChangeActivity
+import models.{Mode, NormalMode}
 import navigation._
-import pages.changeActivity.HowManyImportsPage
+import pages.changeActivity.{ContractPackingPage, HowManyImportsPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
@@ -67,7 +67,17 @@ class HowManyImportsController @Inject()(
 
         value => {
           val updatedAnswers = request.userAnswers.set(HowManyImportsPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, HowManyImportsPage, mode)
+          val contractPacker = request.userAnswers.get(ContractPackingPage).getOrElse(false)
+          val hasPackagingSites = request.subscription.productionSites.nonEmpty
+
+          (contractPacker, hasPackagingSites, mode) match {
+            case(true, false, NormalMode) =>
+              updateDatabaseWithoutRedirect(updatedAnswers, HowManyImportsPage).flatMap {
+                case true => Future.successful(Redirect(routes.PackAtBusinessAddressController.onPageLoad(mode)))
+                case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+              }
+            case _ => updateDatabaseAndRedirect(updatedAnswers, HowManyImportsPage, mode)
+          }
         }
       )
   }
