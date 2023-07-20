@@ -20,7 +20,7 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.correctReturn.RepaymentMethodFormProvider
 import models.NormalMode
-import models.SelectChange.ChangeActivity
+import models.SelectChange.CorrectReturn
 import models.correctReturn.RepaymentMethod
 import navigation._
 import org.jsoup.Jsoup
@@ -133,12 +133,12 @@ class RepaymentMethodControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    testInvalidJourneyType(ChangeActivity, repaymentMethodRoute)
+    testInvalidJourneyType(CorrectReturn, repaymentMethodRoute)
     testNoUserAnswersError(repaymentMethodRoute)
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(ChangeActivity))).build()
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CorrectReturn))).build()
 
       running(application) {
         val request =
