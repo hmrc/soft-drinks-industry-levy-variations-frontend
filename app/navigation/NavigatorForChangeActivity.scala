@@ -113,8 +113,6 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.ContractPackingController.onPageLoad(NormalMode)
     case AmountProducedPage => userAnswers => navigationForAmountProduced(userAnswers, NormalMode)
-    case HowManyOperatePackagingSiteOwnBrandsPage => _ => defaultCall
-    case AmountProducedPage => userAnswers => navigationForAmountProduced(userAnswers, NormalMode)
     case _ => _ => defaultCall
   }
 
