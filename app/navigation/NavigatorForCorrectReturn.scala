@@ -60,6 +60,6 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
 
   override val checkRouteMap: Page => UserAnswers => Call = {
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, CheckMode)
-    case _ => _ => routes.CorrectReturnCYAController.onPageLoad
+    case _ => _ => defaultCall
   }
 }

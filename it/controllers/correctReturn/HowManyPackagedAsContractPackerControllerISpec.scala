@@ -1,6 +1,6 @@
 package controllers.correctReturn
 
-import controllers.LitresISpecHelper
+import controllers.{LitresISpecHelper, routes}
 import models.{CheckMode, LitresInBands, NormalMode}
 import models.SelectChange.CorrectReturn
 import org.jsoup.Jsoup
@@ -22,7 +22,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
     val (path, redirectLocation) = if(mode == NormalMode) {
       (normalRoutePath, defaultCall.url)
     } else {
-      (checkRoutePath, routes.CorrectReturnCYAController.onPageLoad.url)
+      (checkRoutePath, routes.IndexController.onPageLoad.url)
     }
 
     "GET " + path - {

@@ -30,7 +30,7 @@ class PackagedAsContractPackerControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("correctReturn.packagedAsContractPacker" + ".title"))
+            page.title mustBe "Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
