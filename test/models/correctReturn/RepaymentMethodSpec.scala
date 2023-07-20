@@ -33,9 +33,9 @@ class RepaymentMethodSpec extends AnyFreeSpec with Matchers with ScalaCheckPrope
       val gen = Gen.oneOf(RepaymentMethod.values.toSeq)
 
       forAll(gen) {
-        amountProduced =>
+        repaymentMethod =>
 
-          JsString(amountProduced.toString).validate[RepaymentMethod].asOpt.value mustEqual amountProduced
+          JsString(repaymentMethod.toString).validate[RepaymentMethod].asOpt.value mustEqual repaymentMethod
       }
     }
 
@@ -55,9 +55,9 @@ class RepaymentMethodSpec extends AnyFreeSpec with Matchers with ScalaCheckPrope
       val gen = Gen.oneOf(RepaymentMethod.values.toSeq)
 
       forAll(gen) {
-        amountProduced =>
+        repaymentMethod =>
 
-          Json.toJson(amountProduced) mustEqual JsString(amountProduced.toString)
+          Json.toJson(repaymentMethod) mustEqual JsString(repaymentMethod.toString)
       }
     }
   }
