@@ -134,6 +134,23 @@ class VariationsContactSpec extends AnyFreeSpec with Matchers with ScalaCheckPro
                  "emailAddress" -> "email@test.com"
           )
       }
+
+      "when submitted (with no telephone number or email address) json is formed correctly" in {
+        Json.toJson(VariationsContact(
+          Some(emptyUserAnswersForUpdateRegisteredDetails.contactAddress),
+          None,
+          None
+        )
+        ) mustBe Json.obj(
+          "addressLine1" -> "19 Rhes Priordy",
+          "addressLine2" -> "East London",
+          "addressLine3" -> "",
+          "addressLine4" -> "",
+          "postCode" -> "E73 2RP",
+          "telephoneNumber" -> None,
+          "emailAddress" -> None
+        )
+      }
     }
   }
 }
