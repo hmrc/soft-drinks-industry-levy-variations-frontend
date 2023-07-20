@@ -28,7 +28,7 @@ import java.time.LocalDate
 @Singleton
 class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration: Configuration) {
 
-  val host: String    = servicesConfig.getConfString("soft-drinks-industry-levy-variations-frontend.host", throw new Exception("missing config soft-drinks-industry-levy-variations-frontend.host"))
+  val variationsBaseUrl: String    = servicesConfig.baseUrl("soft-drinks-industry-levy-variations-frontend"))
   val appName: String = servicesConfig.getString("appName")
 
   private val contactHost = servicesConfig.getString("contact-frontend.host")
@@ -39,7 +39,7 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
 
 
   def feedbackUrl(implicit request: RequestHeader): String =
-    s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
+    s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(variationsBaseUrl + request.uri).encodedUrl}"
 
   val basGatewayBaseUrl: String = servicesConfig.baseUrl("bas-gateway")
   val sdilFrontendBaseUrl: String = servicesConfig.baseUrl("soft-drinks-industry-levy-frontend")
@@ -76,19 +76,19 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
     object WarehouseDetails {
 
       def offRampUrl(sdilId: String): String = {
-        s"$host${controllers.addressLookupFrontend.routes.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
+        s"$variationsBaseUrl${controllers.addressLookupFrontend.routes.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
       }
     }
 
     object PackingDetails {
       def offRampUrl(sdilId: String): String = {
-        s"$host${controllers.addressLookupFrontend.routes.RampOffController.packingSiteDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
+        s"$variationsBaseUrl${controllers.addressLookupFrontend.routes.RampOffController.packingSiteDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
       }
     }
 
     object ContactDetails {
       def offRampUrl(sdilId: String): String = {
-        s"$host${controllers.addressLookupFrontend.routes.RampOffController.contactDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
+        s"$variationsBaseUrl${controllers.addressLookupFrontend.routes.RampOffController.contactDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
       }
     }
   }
