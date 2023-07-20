@@ -18,6 +18,7 @@ package generators
 
 import models._
 import models.changeActivity.AmountProduced
+import models.correctReturn.RepaymentMethod
 import models.updateRegisteredDetails.UpdateContactDetails
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalacheck.Arbitrary._
@@ -36,6 +37,11 @@ trait ModelGenerators {
   implicit lazy val arbitraryChangeActivityAmountProduced: Arbitrary[AmountProduced] =
     Arbitrary {
       Gen.oneOf(AmountProduced.values)
+    }
+
+  implicit lazy val arbitraryCorrectReturnRepaymentMethod: Arbitrary[RepaymentMethod] =
+    Arbitrary {
+      Gen.oneOf(RepaymentMethod.values)
     }
 
   implicit lazy val arbitraryUpdateRegisteredDetailsUpdateContactDetails: Arbitrary[UpdateContactDetails] =
