@@ -14,43 +14,43 @@
  * limitations under the License.
  */
 
-package controllers.changeActivity
+package controllers.correctReturn
 
+import utilities.GenericLogger
 import controllers.ControllerHelper
 import controllers.actions._
-import forms.HowManyLitresFormProvider
-import handlers.ErrorHandler
+import forms.correctReturn.PackagedAsContractPackerFormProvider
+import javax.inject.Inject
 import models.Mode
-import models.SelectChange.ChangeActivity
-import navigation._
-import pages.changeActivity.HowManyImportsPage
+import models.SelectChange.CorrectReturn
+import pages.correctReturn.{PackagedAsContractPackerPage, HowManyPackagedAsContractPackerPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
-import utilities.GenericLogger
-import views.html.changeActivity.HowManyImportsView
+import views.html.correctReturn.PackagedAsContractPackerView
+import handlers.ErrorHandler
 
-import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import navigation._
 
-class HowManyImportsController @Inject()(
+class PackagedAsContractPackerController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          val sessionService: SessionService,
-                                         val navigator: NavigatorForChangeActivity,
+                                         val navigator: NavigatorForCorrectReturn,
                                          controllerActions: ControllerActions,
-                                         formProvider: HowManyLitresFormProvider,
+                                         formProvider: PackagedAsContractPackerFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
-                                         view: HowManyImportsView,
-                                         val genericLogger: GenericLogger,
-                                         val errorHandler: ErrorHandler
+                                         view: PackagedAsContractPackerView,
+                                          val genericLogger: GenericLogger,
+                                          val errorHandler: ErrorHandler
                                  )(implicit ec: ExecutionContext) extends ControllerHelper {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(HowManyImportsPage) match {
+      val preparedForm = request.userAnswers.get(PackagedAsContractPackerPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -58,7 +58,7 @@ class HowManyImportsController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -66,9 +66,9 @@ class HowManyImportsController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value => {
-          val updatedAnswers = request.userAnswers.set(HowManyImportsPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, HowManyImportsPage, mode)
-        }
+          val updatedAnswers = request.userAnswers.setAndRemoveLitresIfReq(PackagedAsContractPackerPage, HowManyPackagedAsContractPackerPage, value)
+          updateDatabaseAndRedirect(updatedAnswers, PackagedAsContractPackerPage, mode)
+          }
       )
   }
 }

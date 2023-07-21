@@ -18,6 +18,7 @@ package generators
 
 import models.{ReturnPeriod, SelectChange}
 import models.changeActivity.AmountProduced
+import models.correctReturn.RepaymentMethod
 import models.updateRegisteredDetails.UpdateContactDetails
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
@@ -28,11 +29,35 @@ import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
+  implicit lazy val arbitraryCorrectReturnCorrectionReasonUserAnswersEntry: Arbitrary[(pages.correctReturn.CorrectionReasonPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.correctReturn.CorrectionReasonPage.type]
+        value <- arbitrary[String].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryCorrectReturnPackagedAsContractPackerUserAnswersEntry: Arbitrary[(pages.correctReturn.PackagedAsContractPackerPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.correctReturn.PackagedAsContractPackerPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryCorrectReturnSelectUserAnswersEntry: Arbitrary[(pages.correctReturn.SelectPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[pages.correctReturn.SelectPage.type]
         value <- arbitrary[ReturnPeriod].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryCorrectReturnRepaymentMethodUserAnswersEntry: Arbitrary[(pages.correctReturn.RepaymentMethodPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page <- arbitrary[pages.correctReturn.RepaymentMethodPage.type]
+        value <- arbitrary[RepaymentMethod].map(Json.toJson(_))
       } yield (page, value)
     }
 

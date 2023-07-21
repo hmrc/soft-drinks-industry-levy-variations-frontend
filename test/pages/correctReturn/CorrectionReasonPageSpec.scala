@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package models
+package pages.correctReturn
 
-import models.backend.{Site, UkAddress}
-import play.api.libs.json.{Format, Json}
+import pages.behaviours.PageBehaviours
 
-case class Warehouse(tradingName: Option[String],
-                     address: UkAddress)
 
-object Warehouse {
-  implicit val format: Format[Warehouse] = Json.format[Warehouse]
+class CorrectionReasonPageSpec extends PageBehaviours {
 
-  def fromSite(site: Site): Warehouse = {
-    Warehouse(site.tradingName, site.address)
+  "CorrectionReasonPage" - {
+
+    beRetrievable[String](CorrectionReasonPage)
+
+    beSettable[String](CorrectionReasonPage)
+
+    beRemovable[String](CorrectionReasonPage)
   }
 }

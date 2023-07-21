@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package models
+package pages.correctReturn
 
-import models.backend.{Site, UkAddress}
-import play.api.libs.json.{Format, Json}
+import models.correctReturn.RepaymentMethod
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-case class Warehouse(tradingName: Option[String],
-                     address: UkAddress)
+case object RepaymentMethodPage extends QuestionPage[RepaymentMethod] {
 
-object Warehouse {
-  implicit val format: Format[Warehouse] = Json.format[Warehouse]
+  override def path: JsPath = JsPath \ journeyType \ toString
 
-  def fromSite(site: Site): Warehouse = {
-    Warehouse(site.tradingName, site.address)
-  }
+  def journeyType: String = "correctReturn"
+  override def toString: String = "repaymentMethod"
 }

@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package models
+package views.summary.correctReturn
 
-import models.backend.{Site, UkAddress}
-import play.api.libs.json.{Format, Json}
+import controllers.correctReturn.routes
+import models.CheckMode
+import views.summary.SummaryListRowLitresHelper
 
-case class Warehouse(tradingName: Option[String],
-                     address: UkAddress)
+object HowManyPackagedAsContractPackerSummary extends SummaryListRowLitresHelper {
 
-object Warehouse {
-  implicit val format: Format[Warehouse] = Json.format[Warehouse]
+  override val actionUrl: String = routes.HowManyPackagedAsContractPackerController.onPageLoad(CheckMode).url
+  override val bandActionIdKey: String = "packagedAsContractPacker"
+  override val bandHiddenKey: String = "packagedAsContractPacker"
 
-  def fromSite(site: Site): Warehouse = {
-    Warehouse(site.tradingName, site.address)
-  }
 }

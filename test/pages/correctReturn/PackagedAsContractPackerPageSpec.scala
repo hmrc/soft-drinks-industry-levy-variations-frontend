@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package models
+package pages.correctReturn
 
-import models.backend.{Site, UkAddress}
-import play.api.libs.json.{Format, Json}
+import pages.behaviours.PageBehaviours
 
-case class Warehouse(tradingName: Option[String],
-                     address: UkAddress)
+class PackagedAsContractPackerPageSpec extends PageBehaviours {
 
-object Warehouse {
-  implicit val format: Format[Warehouse] = Json.format[Warehouse]
+  "PackagedAsContractPackerPage" - {
 
-  def fromSite(site: Site): Warehouse = {
-    Warehouse(site.tradingName, site.address)
+    beRetrievable[Boolean](PackagedAsContractPackerPage)
+
+    beSettable[Boolean](PackagedAsContractPackerPage)
+
+    beRemovable[Boolean](PackagedAsContractPackerPage)
   }
 }

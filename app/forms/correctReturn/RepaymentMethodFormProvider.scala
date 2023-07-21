@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package models
+package forms.correctReturn
 
-import models.backend.{Site, UkAddress}
-import play.api.libs.json.{Format, Json}
+import forms.mappings.Mappings
+import models.correctReturn.RepaymentMethod
+import play.api.data.Form
 
-case class Warehouse(tradingName: Option[String],
-                     address: UkAddress)
+import javax.inject.Inject
 
-object Warehouse {
-  implicit val format: Format[Warehouse] = Json.format[Warehouse]
+class RepaymentMethodFormProvider @Inject() extends Mappings {
 
-  def fromSite(site: Site): Warehouse = {
-    Warehouse(site.tradingName, site.address)
-  }
+  def apply(): Form[RepaymentMethod] =
+    Form(
+      "value" -> enumerable[RepaymentMethod]("correctReturn.repaymentMethod.error.required")
+    )
 }

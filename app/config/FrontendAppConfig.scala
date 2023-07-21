@@ -62,6 +62,7 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
   val higherBandCostPerLitre: BigDecimal = BigDecimal(servicesConfig.getString("higherBandCostPerLitre"))
   val addressLookupService: String  = servicesConfig.baseUrl("address-lookup-frontend")
   val addressLookUpFrontendTestEnabled: Boolean = servicesConfig.getBoolean("addressLookupFrontendTest.enabled")
+  val addressLookupOffRampUrl: String  = servicesConfig.getString("addressLookupOffRampUrl")
 
   object AddressLookupConfig {
 
@@ -77,19 +78,19 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
     object WarehouseDetails {
 
       def offRampUrl(sdilId: String): String = {
-        s"$variationsBaseUrl${controllers.addressLookupFrontend.routes.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
+        s"$addressLookupOffRampUrl${controllers.addressLookupFrontend.routes.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
       }
     }
 
     object PackingDetails {
       def offRampUrl(sdilId: String): String = {
-        s"$variationsBaseUrl${controllers.addressLookupFrontend.routes.RampOffController.packingSiteDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
+        s"$addressLookupOffRampUrl${controllers.addressLookupFrontend.routes.RampOffController.packingSiteDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
       }
     }
 
     object ContactDetails {
       def offRampUrl(sdilId: String): String = {
-        s"$variationsBaseUrl${controllers.addressLookupFrontend.routes.RampOffController.contactDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
+        s"$addressLookupOffRampUrl${controllers.addressLookupFrontend.routes.RampOffController.contactDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
       }
     }
   }

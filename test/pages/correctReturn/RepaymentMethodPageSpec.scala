@@ -14,18 +14,19 @@
  * limitations under the License.
  */
 
-package models
+package pages.correctReturn
 
-import models.backend.{Site, UkAddress}
-import play.api.libs.json.{Format, Json}
+import models.correctReturn.RepaymentMethod
+import pages.behaviours.PageBehaviours
 
-case class Warehouse(tradingName: Option[String],
-                     address: UkAddress)
+class RepaymentMethodPageSpec extends PageBehaviours {
 
-object Warehouse {
-  implicit val format: Format[Warehouse] = Json.format[Warehouse]
+  "RepaymentMethodPage" - {
 
-  def fromSite(site: Site): Warehouse = {
-    Warehouse(site.tradingName, site.address)
+    beRetrievable[RepaymentMethod](RepaymentMethodPage)
+
+    beSettable[RepaymentMethod](RepaymentMethodPage)
+
+    beRemovable[RepaymentMethod](RepaymentMethodPage)
   }
 }

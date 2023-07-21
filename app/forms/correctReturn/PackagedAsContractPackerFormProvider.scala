@@ -14,18 +14,17 @@
  * limitations under the License.
  */
 
-package models
+package forms.correctReturn
 
-import models.backend.{Site, UkAddress}
-import play.api.libs.json.{Format, Json}
+import javax.inject.Inject
 
-case class Warehouse(tradingName: Option[String],
-                     address: UkAddress)
+import forms.mappings.Mappings
+import play.api.data.Form
 
-object Warehouse {
-  implicit val format: Format[Warehouse] = Json.format[Warehouse]
+class PackagedAsContractPackerFormProvider @Inject() extends Mappings {
 
-  def fromSite(site: Site): Warehouse = {
-    Warehouse(site.tradingName, site.address)
-  }
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("correctReturn.packagedAsContractPacker.error.required")
+    )
 }

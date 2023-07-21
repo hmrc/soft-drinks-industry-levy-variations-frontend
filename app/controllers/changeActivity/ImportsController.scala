@@ -21,22 +21,20 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.ImportsFormProvider
 import handlers.ErrorHandler
-import models.{Mode, NormalMode, UserAnswers}
+import models.SelectChange.ChangeActivity
+import models.changeActivity.AmountProduced
+import models.{Mode, UserAnswers}
 import navigation._
 import pages.changeActivity.{AmountProducedPage, ContractPackingPage, HowManyImportsPage, ImportsPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import services.SessionService
+import uk.gov.hmrc.http.HeaderCarrier
 import utilities.GenericLogger
 import views.html.changeActivity.ImportsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import models.SelectChange.{ChangeActivity, values}
-import models.changeActivity.AmountProduced
-import uk.gov.hmrc.http.HeaderCarrier
-import views.summary.cancelRegistration.FileReturnBeforeDeregSummary
-
 import scala.util.Try
 
 class ImportsController @Inject()(
