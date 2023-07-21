@@ -24,3 +24,5 @@ object SessionDatabaseDeleteError extends VariationsErrors
 
 object SessionDatabaseGetError extends VariationsErrors
 
+object MissingPageError extends VariationsErrors
+

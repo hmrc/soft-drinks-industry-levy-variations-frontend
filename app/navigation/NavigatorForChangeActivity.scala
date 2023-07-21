@@ -27,7 +27,7 @@ import play.api.mvc.Call
 import javax.inject.{Inject, Singleton}
 
 @Singleton
-class NavigatorForChangeActivity @Inject()() extends Navigator {
+class NavigatorForChangeActivity @Inject() extends Navigator {
 
   private def navigationForContractPacking(userAnswers: UserAnswers, mode: Mode): Call = {
     if (userAnswers.get(page = ContractPackingPage).contains(true)) {
@@ -116,9 +116,22 @@ class NavigatorForChangeActivity @Inject()() extends Navigator {
   private def navigationFollowingImports(userAnswers: UserAnswers): Call = {
     userAnswers.get(AmountProducedPage) match {
       case Some(AmountProduced.Large) => navigateForLargeAmountProducedFollowingImports(userAnswers)
-      case _ => defaultCall
+      case Some(AmountProduced.None) => navigateForAmountProducedNoneFollowingImports(userAnswers)
+      case Some(AmountProduced.Small) => defaultCall
+      case _ => routes.AmountProducedController.onPageLoad(NormalMode)
     }
   }
+
+  private def navigateForAmountProducedNoneFollowingImports(userAnswers: UserAnswers): Call =
+    userAnswers.get(ContractPackingPage)
+    match {
+      case Some(true) if userAnswers.packagingSiteList.isEmpty =>
+        routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
+      case Some(true) =>
+        routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
+      case Some(false) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+      case _ => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+    }
 
   private def navigateForLargeAmountProducedFollowingImports(userAnswers: UserAnswers): Call =
     (userAnswers.get(OperatePackagingSiteOwnBrandsPage), userAnswers.get(ContractPackingPage)) match {

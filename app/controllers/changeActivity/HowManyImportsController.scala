@@ -20,9 +20,9 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.HowManyLitresFormProvider
 import handlers.ErrorHandler
-import models.Mode
+import models.{Mode, NormalMode}
 import navigation._
-import pages.changeActivity.HowManyImportsPage
+import pages.changeActivity.{ContractPackingPage, HowManyImportsPage, ImportsPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
