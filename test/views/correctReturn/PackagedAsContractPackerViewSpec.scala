@@ -197,6 +197,9 @@ class PackagedAsContractPackerViewSpec extends ViewSpecHelper {
       }
     }
 
+    val expectedDetails = Map(Messages("What is a small producer?") -> Messages("A business is a small producer if it: has had less than 1 million litres of its own brands of liable drinks packaged globally in the past 12 months will not have more than 1 million litres of its own brands of liable drinks packaged globally in the next 30 days"))
+    testDetails(document, expectedDetails)
+
     "when there are form errors" - {
       val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode)(request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
