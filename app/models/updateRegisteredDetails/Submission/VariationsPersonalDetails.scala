@@ -32,8 +32,8 @@ object VariationsPersonalDetails {
 
   def apply(userAnswers : UserAnswers, subscription : RetrievedSubscription):Option[VariationsPersonalDetails] = {
     userAnswers.get(UpdateContactDetailsPage).flatMap{ answers =>
-      val name = if(answers.fullName == subscription.contact.name.getOrElse(None)){None} else {Some(answers.fullName)}
-      val position = if(answers.position == subscription.contact.positionInCompany.getOrElse(None)){None} else {Some(answers.position)}
+      val name = if(answers.fullName == subscription.contact.name.getOrElse("")){None} else {Some(answers.fullName)}
+      val position = if(answers.position == subscription.contact.positionInCompany.getOrElse("")){None} else {Some(answers.position)}
       val telephoneNumber = if(answers.phoneNumber == subscription.contact.phoneNumber){None} else {Some(answers.phoneNumber)}
       val emailAddress = if(answers.email == subscription.contact.email){None} else {Some(answers.email)}
       (name, position, telephoneNumber, emailAddress) match {
