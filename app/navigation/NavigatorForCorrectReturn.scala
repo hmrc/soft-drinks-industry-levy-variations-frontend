@@ -19,14 +19,23 @@ package navigation
 import controllers.correctReturn.routes
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages.Page
-import pages.correctReturn.{HowManyOperatePackagingSiteOwnBrandsPage, CorrectionReasonPage, OperatePackagingSiteOwnBrandsPage, RepaymentMethodPage, SelectPage}
-
+import pages.correctReturn.{HowManyPackagedAsContractPackerPage, CorrectionReasonPage, PackagedAsContractPackerPage, HowManyOperatePackagingSiteOwnBrandsPage, OperatePackagingSiteOwnBrandsPage, RepaymentMethodPage, SelectPage}
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class NavigatorForCorrectReturn @Inject()() extends Navigator {
+
+  private def navigationForPackagedAsContractPacker(userAnswers: UserAnswers, mode: Mode): Call = {
+    if (userAnswers.get(page = PackagedAsContractPackerPage).contains(true)) {
+      routes.HowManyPackagedAsContractPackerController.onPageLoad(mode)
+    } else if(mode == CheckMode){
+        routes.CorrectReturnCYAController.onPageLoad
+    } else {
+        defaultCall
+    }
+  }
 
   private def navigationForOperatePackagingSiteOwnBrands(userAnswers: UserAnswers, mode: Mode): Call = {
     if (userAnswers.get(page = OperatePackagingSiteOwnBrandsPage).contains(true)) {
@@ -39,16 +48,18 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   }
 
   override val normalRoutes: Page => UserAnswers => Call = {
-
     case CorrectionReasonPage => _ => defaultCall
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => defaultCall
     case RepaymentMethodPage => userAnswers => defaultCall
+    case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, NormalMode)
+    case HowManyPackagedAsContractPackerPage => _ => defaultCall
     case SelectPage => userAnswers => defaultCall
     case _ => _ => defaultCall
   }
 
   override val checkRouteMap: Page => UserAnswers => Call = {
+    case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, CheckMode)
     case _ => _ => defaultCall
   }
 }

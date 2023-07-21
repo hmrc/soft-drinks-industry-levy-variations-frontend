@@ -37,6 +37,14 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
+  implicit lazy val arbitraryCorrectReturnPackagedAsContractPackerUserAnswersEntry: Arbitrary[(pages.correctReturn.PackagedAsContractPackerPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.correctReturn.PackagedAsContractPackerPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryCorrectReturnSelectUserAnswersEntry: Arbitrary[(pages.correctReturn.SelectPage.type, JsValue)] =
     Arbitrary {
       for {

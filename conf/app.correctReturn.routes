@@ -26,3 +26,12 @@ GET        /how-many-own-brands-packaged-at-own-sites           controllers.corr
 POST       /how-many-own-brands-packaged-at-own-sites           controllers.correctReturn.HowManyOperatePackagingSiteOwnBrandsController.onSubmit(mode: Mode = NormalMode)
 GET        /change-how-many-own-brands-packaged-at-own-sites    controllers.correctReturn.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-how-many-own-brands-packaged-at-own-sites    controllers.correctReturn.HowManyOperatePackagingSiteOwnBrandsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /packaged-as-contract-packer                         controllers.correctReturn.PackagedAsContractPackerController.onPageLoad(mode: Mode = NormalMode)
+POST       /packaged-as-contract-packer                         controllers.correctReturn.PackagedAsContractPackerController.onSubmit(mode: Mode = NormalMode)
+GET        /change-packaged-as-contract-packer                  controllers.correctReturn.PackagedAsContractPackerController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-packaged-as-contract-packer                  controllers.correctReturn.PackagedAsContractPackerController.onSubmit(mode: Mode = CheckMode)
+GET        /how-many-packaged-as-contract-packer                controllers.correctReturn.HowManyPackagedAsContractPackerController.onPageLoad(mode: Mode = NormalMode)
+POST       /how-many-packaged-as-contract-packer                controllers.correctReturn.HowManyPackagedAsContractPackerController.onSubmit(mode: Mode = NormalMode)
+GET        /change-how-many-packaged-as-contract-packer         controllers.correctReturn.HowManyPackagedAsContractPackerController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-how-many-packaged-as-contract-packer         controllers.correctReturn.HowManyPackagedAsContractPackerController.onSubmit(mode: Mode = CheckMode)

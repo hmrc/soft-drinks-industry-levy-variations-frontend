@@ -342,3 +342,19 @@ correctReturn.operatePackagingSiteOwnBrands.change.hidden = whether you package 
 correctReturn.howManyOperatePackagingSiteOwnBrands.title = How many litres of liable drinks have you packaged at UK sites you operate?
 correctReturn.howManyOperatePackagingSiteOwnBrands.heading = How many litres of liable drinks have you packaged at UK sites you operate?
 correctReturn.howManyOperatePackagingSiteOwnBrands.hint = This includes brands you own or have the rights to manufacture.
+
+correctReturn.packagedAsContractPacker.title = Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?
+correctReturn.packagedAsContractPacker.heading = Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?
+correctReturn.packagedAsContractPacker.checkYourAnswersLabel = Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?
+correctReturn.packagedAsContractPacker.detailsLink = What is a small producer?
+correctReturn.packagedAsContractPacker.detailsContent = A business is a small producer if it:
+correctReturn.packagedAsContractPacker.bullet1 = has had less than 1 million litres of its own brands of liable drinks packaged globally in the past 12 months
+correctReturn.packagedAsContractPacker.bullet2 = will not have more than 1 million litres of its own brands of liable drinks packaged globally in the next 30 days
+correctReturn.packagedAsContractPacker.error.required = Select yes if are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?
+correctReturn.packagedAsContractPacker.change.hidden = whether you use contract packing at your own site
+correctReturn.packagedAsContractPacker.lowband.litres.hidden = number of litres in low band contract packed at your own site
+correctReturn.packagedAsContractPacker.highband.litres.hidden = number of litres in high band contract packed at your own site
+
+correctReturn.howManyPackagedAsContractPacker.title = How many litres of liable drinks have you packaged as a third party or contract packer at UK sites you operate?
+correctReturn.howManyPackagedAsContractPacker.heading = How many litres of liable drinks have you packaged as a third party or contract packer at UK sites you operate?
+correctReturn.howManyPackagedAsContractPacker.subtext = Do not include liable drinks you have packaged for registered small producers.
