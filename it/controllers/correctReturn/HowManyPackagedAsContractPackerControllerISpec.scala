@@ -39,7 +39,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("correctReturn.howManyPackagedAsContractPacker" + ".title"))
+              page.title mustBe "How many litres of liable drinks have you packaged as a third party or contract packer at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
               testLitresInBandsNoPrepopulatedData(page)
             }
           }
@@ -59,7 +59,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("correctReturn.howManyPackagedAsContractPacker" + ".title"))
+              page.title mustBe "How many litres of liable drinks have you packaged as a third party or contract packer at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
               testLitresInBandsWithPrepopulatedData(page)
             }
           }
@@ -116,7 +116,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
       }
 
       "should return 400 with required error" - {
-        val errorTitle = "Error: " + Messages("correctReturn.howManyPackagedAsContractPacker.title")
+        val errorTitle = "Error: " + "How many litres of liable drinks have you packaged as a third party or contract packer at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
 
         "when no questions are answered" in {
           given

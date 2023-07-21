@@ -56,7 +56,7 @@ class PackagedAsContractPackerControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("correctReturn.packagedAsContractPacker" + ".title"))
+              page.title mustBe "Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -87,7 +87,7 @@ class PackagedAsContractPackerControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("correctReturn.packagedAsContractPacker" + ".title"))
+            page.title mustBe "Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -113,7 +113,7 @@ class PackagedAsContractPackerControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("correctReturn.packagedAsContractPacker" + ".title"))
+                page.title mustBe "Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -204,13 +204,13 @@ class PackagedAsContractPackerControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("correctReturn.packagedAsContractPacker" + ".title"))
+            page.title must include("Error: " + "Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK")
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("correctReturn.packagedAsContractPacker" + ".error.required")
+            errorSummary.text() mustBe "Select yes if are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?"
           }
         }
       }
@@ -293,13 +293,13 @@ class PackagedAsContractPackerControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("correctReturn.packagedAsContractPacker" + ".title"))
+            page.title must include("Error: " + "Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK")
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("correctReturn.packagedAsContractPacker" + ".error.required")
+            errorSummary.text() mustBe Messages("Select yes if are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?")
           }
         }
       }
