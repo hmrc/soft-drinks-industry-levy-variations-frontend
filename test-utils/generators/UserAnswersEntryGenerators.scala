@@ -18,6 +18,7 @@ package generators
 
 import models.{ReturnPeriod, SelectChange}
 import models.changeActivity.AmountProduced
+import models.correctReturn.RepaymentMethod
 import models.updateRegisteredDetails.UpdateContactDetails
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
@@ -41,6 +42,14 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       for {
         page  <- arbitrary[pages.correctReturn.SelectPage.type]
         value <- arbitrary[ReturnPeriod].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryCorrectReturnRepaymentMethodUserAnswersEntry: Arbitrary[(pages.correctReturn.RepaymentMethodPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page <- arbitrary[pages.correctReturn.RepaymentMethodPage.type]
+        value <- arbitrary[RepaymentMethod].map(Json.toJson(_))
       } yield (page, value)
     }
 
