@@ -52,9 +52,9 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     if (userAnswers.get(page = BroughtIntoUKPage).contains(true)) {
       routes.HowManyBroughtIntoUKController.onPageLoad(mode)
     } else if(mode == CheckMode){
-        routes.CorrectReturnCYAController.onPageLoad
+      routes.CorrectReturnCYAController.onPageLoad
     } else {
-        defaultCall
+      defaultCall
     }
   }
 
@@ -62,9 +62,9 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     if (userAnswers.get(page = PackagedAsContractPackerPage).contains(true)) {
       routes.HowManyPackagedAsContractPackerController.onPageLoad(mode)
     } else if(mode == CheckMode){
-        routes.CorrectReturnCYAController.onPageLoad
+      routes.CorrectReturnCYAController.onPageLoad
     } else {
-        defaultCall
+      defaultCall
     }
   }
 
@@ -108,6 +108,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case RepaymentMethodPage => userAnswers => defaultCall
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, NormalMode)
     case HowManyPackagedAsContractPackerPage => _ => defaultCall
+    case AddASmallProducerPage => userAnswers => defaultCall
     case SelectPage => userAnswers => defaultCall
     case _ => _ => defaultCall
   }

@@ -17,10 +17,10 @@
 package generators
 
 import java.time.{Instant, LocalDate, ZoneOffset}
-
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._
 import org.scalacheck.{Gen, Shrink}
+import wolfendale.scalacheck.regexp.RegexpGen
 
 trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators {
 
@@ -75,6 +75,15 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
   def intsOutsideRange(min: Int, max: Int): Gen[Int] =
     arbitrary[Int] suchThat(x => x < min || x > max)
 
+  def longInRangeWithCommas(min: Long, max: Long): Gen[String] = {
+    val numberGen = choose[Long](min, max).map(_.toString)
+    genIntersperseString(numberGen, ",")
+  }
+
+  def longAboveValue(value: Long): Gen[Long] = {
+    arbitrary[Long].suchThat(_ >= value)
+  }
+
   def nonBooleans: Gen[String] =
     arbitrary[String]
       .suchThat (_.nonEmpty)
@@ -116,5 +125,9 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       millis =>
         Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).toLocalDate
     }
+  }
+
+  def badSdilReferences: Gen[String] = {
+    RegexpGen.from("^X[A-Z]INVALID000[0-9]{6}$")
   }
 }
