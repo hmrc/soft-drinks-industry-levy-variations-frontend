@@ -10,3 +10,12 @@ GET        /correction-reason                        controllers.correctReturn.C
 POST       /correction-reason                        controllers.correctReturn.CorrectionReasonController.onSubmit(mode: Mode = NormalMode)
 GET        /change-correction-reason                  controllers.correctReturn.CorrectionReasonController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-correction-reason                  controllers.correctReturn.CorrectionReasonController.onSubmit(mode: Mode = CheckMode)
+
+GET        /own-brands-packaged-at-own-sites                    controllers.correctReturn.OperatePackagingSiteOwnBrandsController.onPageLoad(mode: Mode = NormalMode)
+POST       /own-brands-packaged-at-own-sites                    controllers.correctReturn.OperatePackagingSiteOwnBrandsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-own-brands-packaged-at-own-sites             controllers.correctReturn.OperatePackagingSiteOwnBrandsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-own-brands-packaged-at-own-sites             controllers.correctReturn.OperatePackagingSiteOwnBrandsController.onSubmit(mode: Mode = CheckMode)
+GET        /how-many-own-brands-packaged-at-own-sites           controllers.correctReturn.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(mode: Mode = NormalMode)
+POST       /how-many-own-brands-packaged-at-own-sites           controllers.correctReturn.HowManyOperatePackagingSiteOwnBrandsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-how-many-own-brands-packaged-at-own-sites    controllers.correctReturn.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-how-many-own-brands-packaged-at-own-sites    controllers.correctReturn.HowManyOperatePackagingSiteOwnBrandsController.onSubmit(mode: Mode = CheckMode)

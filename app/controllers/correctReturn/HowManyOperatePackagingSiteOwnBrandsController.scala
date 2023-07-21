@@ -14,43 +14,43 @@
  * limitations under the License.
  */
 
-package controllers.changeActivity
+package controllers.correctReturn
 
 import controllers.ControllerHelper
 import controllers.actions._
 import forms.HowManyLitresFormProvider
 import handlers.ErrorHandler
-import models.{Mode, NormalMode}
+import models.Mode
+import models.SelectChange.CorrectReturn
 import navigation._
-import pages.changeActivity.{ContractPackingPage, HowManyImportsPage, ImportsPage}
+import pages.correctReturn.HowManyOperatePackagingSiteOwnBrandsPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
 import utilities.GenericLogger
-import views.html.changeActivity.HowManyImportsView
+import views.html.correctReturn.HowManyOperatePackagingSiteOwnBrandsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import models.SelectChange.ChangeActivity
 
-class HowManyImportsController @Inject()(
+class HowManyOperatePackagingSiteOwnBrandsController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          val sessionService: SessionService,
-                                         val navigator: NavigatorForChangeActivity,
+                                         val navigator: NavigatorForCorrectReturn,
                                          controllerActions: ControllerActions,
                                          formProvider: HowManyLitresFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
-                                         view: HowManyImportsView,
+                                         view: HowManyOperatePackagingSiteOwnBrandsView,
                                          val genericLogger: GenericLogger,
                                          val errorHandler: ErrorHandler
                                  )(implicit ec: ExecutionContext) extends ControllerHelper {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(HowManyImportsPage) match {
+      val preparedForm = request.userAnswers.get(HowManyOperatePackagingSiteOwnBrandsPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -58,7 +58,7 @@ class HowManyImportsController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
     implicit request =>
 
       form.bindFromRequest().fold(
@@ -66,19 +66,8 @@ class HowManyImportsController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value => {
-          val updatedAnswers = request.userAnswers.set(HowManyImportsPage, value)
-          val contractPacker = request.userAnswers.get(ContractPackingPage).getOrElse(false)
-          val hasProductionSites = request.subscription.productionSites.nonEmpty
-
-          (contractPacker, hasProductionSites, mode) match {
-
-            case(true, false, NormalMode) =>
-              updateDatabaseWithoutRedirect(updatedAnswers, HowManyImportsPage).flatMap {
-                case true => Future.successful(Redirect(routes.PackAtBusinessAddressController.onPageLoad(mode)))
-                case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
-              }
-            case _ => updateDatabaseAndRedirect(updatedAnswers, HowManyImportsPage, mode)
-          }
+          val updatedAnswers = request.userAnswers.set(HowManyOperatePackagingSiteOwnBrandsPage, value)
+          updateDatabaseAndRedirect(updatedAnswers, HowManyOperatePackagingSiteOwnBrandsPage, mode)
         }
       )
   }

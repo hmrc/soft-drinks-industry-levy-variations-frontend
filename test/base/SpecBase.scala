@@ -129,12 +129,15 @@ trait SpecBase
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   protected def applicationBuilder(
-                                    userAnswers: Option[UserAnswers] = None): GuiceApplicationBuilder =
+                                    userAnswers: Option[UserAnswers] = None,
+                                    subscription: Option[RetrievedSubscription] = None): GuiceApplicationBuilder = {
+    val bodyParsers = stubControllerComponents().parsers.defaultBodyParser
     new GuiceApplicationBuilder()
       .overrides(
-        bind[IdentifierAction].to[FakeIdentifierAction],
+        bind[IdentifierAction].toInstance(new FakeIdentifierAction(subscription, bodyParsers)),
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers))
       )
+  }
 
   def testInvalidJourneyType(expectedJourneyType: SelectChange, url: String, hasPostMethod: Boolean = true) = {
     val journeyTypesNotSupported = expectedJourneyType match {

@@ -20,7 +20,6 @@ import org.scalacheck.Arbitrary
 import pages._
 import pages.cancelRegistration.CancelRegistrationDatePage
 import pages.cancelRegistration.ReasonPage
-import pages.changeActivity.{AmountProducedPage, OperatePackagingSiteOwnBrandsPage}
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 
 trait PageGenerators {
@@ -67,14 +66,17 @@ trait PageGenerators {
   implicit lazy val arbitraryChangeActivityImportsPage: Arbitrary[changeActivity.ImportsPage.type] =
     Arbitrary(changeActivity.ImportsPage)
 
-  implicit lazy val arbitraryChangeActivityOperatePackagingSiteOwnBrandsPage: Arbitrary[OperatePackagingSiteOwnBrandsPage.type] =
-    Arbitrary(OperatePackagingSiteOwnBrandsPage)
+  implicit lazy val arbitraryChangeActivityOperatePackagingSiteOwnBrandsPage: Arbitrary[changeActivity.OperatePackagingSiteOwnBrandsPage.type] =
+    Arbitrary(changeActivity.OperatePackagingSiteOwnBrandsPage)
 
+  implicit lazy val arbitraryCorrectReturnOperatePackagingSiteOwnBrandsPage: Arbitrary[correctReturn.OperatePackagingSiteOwnBrandsPage.type] =
+    Arbitrary(correctReturn.OperatePackagingSiteOwnBrandsPage)
 
   implicit lazy val arbitraryCancelRegistrationReasonPage: Arbitrary[ReasonPage.type] =
     Arbitrary(ReasonPage)
-  implicit lazy val arbitraryChangeActivityAmountProducedPage: Arbitrary[AmountProducedPage.type] =
-    Arbitrary(AmountProducedPage)
+
+  implicit lazy val arbitraryChangeActivityAmountProducedPage: Arbitrary[changeActivity.AmountProducedPage.type] =
+    Arbitrary(changeActivity.AmountProducedPage)
 
   implicit lazy val arbitraryUpdateRegisteredDetailsUpdateContactDetailsPage: Arbitrary[UpdateContactDetailsPage.type] =
     Arbitrary(UpdateContactDetailsPage)

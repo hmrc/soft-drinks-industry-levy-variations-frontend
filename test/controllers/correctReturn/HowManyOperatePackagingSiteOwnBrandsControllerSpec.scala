@@ -14,50 +14,50 @@
  * limitations under the License.
  */
 
-package controllers.changeActivity
+package controllers.correctReturn
 
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.HowManyLitresFormProvider
-import models.SelectChange.ChangeActivity
+import models.SelectChange.CorrectReturn
 import models.{LitresInBands, NormalMode}
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.changeActivity.{ContractPackingPage, HowManyImportsPage}
+import pages.correctReturn.HowManyOperatePackagingSiteOwnBrandsPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
 import utilities.GenericLogger
-import views.html.changeActivity.HowManyImportsView
+import views.html.correctReturn.HowManyOperatePackagingSiteOwnBrandsView
 
 import scala.concurrent.Future
 
-class HowManyImportsControllerSpec extends SpecBase with MockitoSugar {
+class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
   val formProvider = new HowManyLitresFormProvider
   val form = formProvider()
 
-  lazy val howManyImportsRoute = routes.HowManyImportsController.onPageLoad(NormalMode).url
+  lazy val howManyOperatePackagingSiteOwnBrandsRoute = routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
 
-  "HowManyImports Controller" - {
+  "HowManyOperatePackagingSiteOwnBrands Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
 
       running(application) {
-        val request = FakeRequest(GET, howManyImportsRoute)
+        val request = FakeRequest(GET, howManyOperatePackagingSiteOwnBrandsRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[HowManyImportsView]
+        val view = application.injector.instanceOf[HowManyOperatePackagingSiteOwnBrandsView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
@@ -66,14 +66,14 @@ class HowManyImportsControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswersForChangeActivity.set(HowManyImportsPage, LitresInBands(100, 200)).success.value
+      val userAnswers = emptyUserAnswersForCorrectReturn.set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 200)).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, howManyImportsRoute)
+        val request = FakeRequest(GET, howManyOperatePackagingSiteOwnBrandsRoute)
 
-        val view = application.injector.instanceOf[HowManyImportsView]
+        val view = application.injector.instanceOf[HowManyOperatePackagingSiteOwnBrandsView]
 
         val result = route(application, request).value
 
@@ -89,16 +89,16 @@ class HowManyImportsControllerSpec extends SpecBase with MockitoSugar {
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
           .overrides(
-            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute)),
+            bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           )
           .build()
 
       running(application) {
         val request =
-          FakeRequest(POST, howManyImportsRoute)
+          FakeRequest(POST, howManyOperatePackagingSiteOwnBrandsRoute)
             .withFormUrlEncodedBody(("lowBand", "1000"), ("highBand", "2000"))
 
         val result = route(application, request).value
@@ -110,16 +110,16 @@ class HowManyImportsControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
 
       running(application) {
         val request =
-          FakeRequest(POST, howManyImportsRoute)
+          FakeRequest(POST, howManyOperatePackagingSiteOwnBrandsRoute)
             .withFormUrlEncodedBody(("lowBand", ""), ("highBand", ""))
 
         val boundForm = form.bind(Map("lowBand" -> "", "highBand" -> ""))
 
-        val view = application.injector.instanceOf[HowManyImportsView]
+        val view = application.injector.instanceOf[HowManyOperatePackagingSiteOwnBrandsView]
 
         val result = route(application, request).value
 
@@ -128,16 +128,16 @@ class HowManyImportsControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    testInvalidJourneyType(ChangeActivity, howManyImportsRoute)
-    testNoUserAnswersError(howManyImportsRoute)
+    testInvalidJourneyType(CorrectReturn, howManyOperatePackagingSiteOwnBrandsRoute)
+    testNoUserAnswersError(howManyOperatePackagingSiteOwnBrandsRoute)
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(ChangeActivity))).build()
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CorrectReturn))).build()
 
       running(application) {
         val request =
-          FakeRequest(POST, howManyImportsRoute)
+          FakeRequest(POST, howManyOperatePackagingSiteOwnBrandsRoute)
         .withFormUrlEncodedBody(("lowBand", "1000"), ("highBand", "2000"))
 
         val result = route(application, request).value
@@ -150,27 +150,27 @@ class HowManyImportsControllerSpec extends SpecBase with MockitoSugar {
 
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionService = mock[SessionService]
-      val answers = emptyUserAnswersForChangeActivity.set(ContractPackingPage, true).success.value
+
       when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
       val application =
-        applicationBuilder(userAnswers = Some(answers),Some(aSubscription.copy(productionSites = List.empty)))
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
           .overrides(
-            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity (onwardRoute)),
+            bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           ).build()
 
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request =
-            FakeRequest(POST, howManyImportsRoute)
+            FakeRequest(POST, howManyOperatePackagingSiteOwnBrandsRoute)
           .withFormUrlEncodedBody(("lowBand", "1000"), ("highBand", "2000"))
 
           await(route(application, request).value)
           events.collectFirst {
             case event =>
               event.getLevel.levelStr mustBe "ERROR"
-              event.getMessage mustEqual "Failed to set value in session repository while attempting set on howManyImports"
+              event.getMessage mustEqual "Failed to set value in session repository while attempting set on howManyOperatePackagingSiteOwnBrands"
           }.getOrElse(fail("No logging captured"))
         }
       }

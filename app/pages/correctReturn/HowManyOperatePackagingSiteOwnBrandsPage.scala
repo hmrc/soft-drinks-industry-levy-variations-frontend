@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-package models
+package pages.correctReturn
 
-import play.api.libs.json.{Json, OFormat}
+import models.LitresInBands
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-case class Litreage(atLowRate: BigDecimal, atHighRate: BigDecimal) {
-  val total: BigDecimal = atLowRate + atHighRate
-}
+case object HowManyOperatePackagingSiteOwnBrandsPage extends QuestionPage[LitresInBands] {
 
-object Litreage {
-  def apply(litresInBands: LitresInBands): Litreage = {
-    Litreage(litresInBands.lowBand,litresInBands.highBand)
-  }
-  implicit val format: OFormat[Litreage] = Json.format[Litreage]
+  override def path: JsPath = JsPath \ journeyType \ toString
+
+  def journeyType: String = "correctReturn"
+  override def toString: String = "howManyOperatePackagingSiteOwnBrands"
 }
