@@ -6,10 +6,17 @@ POST       /select                        controllers.correctReturn.SelectContro
 GET        /change-select                  controllers.correctReturn.SelectController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-select                  controllers.correctReturn.SelectController.onSubmit(mode: Mode = CheckMode)
 
+
+GET        /correction-reason                        controllers.correctReturn.CorrectionReasonController.onPageLoad(mode: Mode = NormalMode)
+POST       /correction-reason                        controllers.correctReturn.CorrectionReasonController.onSubmit(mode: Mode = NormalMode)
+GET        /change-correction-reason                  controllers.correctReturn.CorrectionReasonController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-correction-reason                  controllers.correctReturn.CorrectionReasonController.onSubmit(mode: Mode = CheckMode)
+
 GET        /repayment-method                             controllers.correctReturn.RepaymentMethodController.onPageLoad(mode: Mode = NormalMode)
 POST       /repayment-method                             controllers.correctReturn.RepaymentMethodController.onSubmit(mode: Mode = NormalMode)
 GET        /change-repayment-method                      controllers.correctReturn.RepaymentMethodController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-repayment-method                      controllers.correctReturn.RepaymentMethodController.onSubmit(mode: Mode = CheckMode)
+
 
 GET        /own-brands-packaged-at-own-sites                    controllers.correctReturn.OperatePackagingSiteOwnBrandsController.onPageLoad(mode: Mode = NormalMode)
 POST       /own-brands-packaged-at-own-sites                    controllers.correctReturn.OperatePackagingSiteOwnBrandsController.onSubmit(mode: Mode = NormalMode)

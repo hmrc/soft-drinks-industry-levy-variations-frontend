@@ -18,32 +18,24 @@ package views.summary.correctReturn
 
 import controllers.correctReturn.routes
 import models.{CheckMode, UserAnswers}
-import pages.correctReturn.SelectPage
+import pages.correctReturn.CorrectionReasonPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object SelectSummary  {
+object CorrectionReasonSummary  {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SelectPage).map {
+    answers.get(CorrectionReasonPage).map {
       answer =>
-
-        val value = ValueViewModel(
-          HtmlContent(
-            HtmlFormat.escape(messages(s"correctReturn.select.$answer"))
-          )
-        )
-
         SummaryListRowViewModel(
-          key     = "correctReturn.select.checkYourAnswersLabel",
-          value   = value,
+          key     = "correctReturn.correctionReason.checkYourAnswersLabel",
+          value   = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.SelectController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("correctReturn.select.change.hidden"))
+            ActionItemViewModel("site.change", routes.CorrectionReasonController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("correctReturn.correctionReason.change.hidden"))
           )
         )
     }

@@ -79,6 +79,7 @@ class ImportsController @Inject()(
 
           (noneProduced, contractPacker, hasProductionSites, value) match {
 
+
             case(true, false, _, false) =>
               updateDatabaseWithoutRedirect(updatedAnswers, ImportsPage).flatMap {
                 case true =>

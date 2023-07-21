@@ -71,6 +71,7 @@ class HowManyImportsController @Inject()(
           val hasProductionSites = request.subscription.productionSites.nonEmpty
 
           (contractPacker, hasProductionSites, mode) match {
+
             case(true, false, NormalMode) =>
               updateDatabaseWithoutRedirect(updatedAnswers, HowManyImportsPage).flatMap {
                 case true => Future.successful(Redirect(routes.PackAtBusinessAddressController.onPageLoad(mode)))
