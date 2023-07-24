@@ -17,7 +17,6 @@
 package controllers.addressLookupFrontend
 
 import controllers.actions.ControllerActions
-import models.SelectChange.ChangeActivity
 import models.{NormalMode, SelectChange}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
