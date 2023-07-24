@@ -29,10 +29,14 @@
         suffix = Some(PrefixOrSuffix(
         content = Text(messages("litres.text"))
         )),
-        errorMessage = if (form("lowBand").hasErrors) {
-            Some(ErrorMessage(content = Text(messages(s"${form.errors.head.message}"))))
-        } else None,
-        value = form.data.get("lowBand")
+        errorMessage =
+        form.error("lowBand").map{ e =>
+            ErrorMessage(
+                content = Text(messages(s"${e.messages.headOption.get}")),
+                visuallyHiddenText = Some(messages("Error"))
+            )
+        },
+        value = form("lowBand").value
     )
         .withHint(Hint(content = Text(messages("litres.lowBandHint"))))
         .withAttribute("inputmode" -> "numeric")
