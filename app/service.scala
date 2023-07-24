@@ -14,18 +14,13 @@
  * limitations under the License.
  */
 
-package models
+import cats.data.EitherT
+import errors.VariationsErrors
 
-import models.backend.{Site, UkAddress}
-import play.api.libs.json.{Format, Json}
+import scala.concurrent.Future
 
-case class Warehouse(tradingName: Option[String],
-                     address: UkAddress)
+package object service {
 
-object Warehouse {
-  implicit val format: Format[Warehouse] = Json.format[Warehouse]
-
-  def fromSite(site: Site): Warehouse = {
-    Warehouse(site.tradingName, site.address)
-  }
+  type EitherF[A, B] = EitherT[Future, A, B]
+  type VariationResult[T] = EitherF[VariationsErrors, T]
 }
