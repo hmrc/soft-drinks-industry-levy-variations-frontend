@@ -17,7 +17,6 @@
 package navigation
 
 import base.SpecBase
-import controllers.routes
 import models._
 import pages._
 
@@ -41,7 +40,7 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", SelectChange.CorrectReturn)) mustBe routes.IndexController.onPageLoad
+        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", SelectChange.CorrectReturn)) mustBe controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad
       }
     }
   }

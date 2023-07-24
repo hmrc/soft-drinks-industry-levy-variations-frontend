@@ -215,7 +215,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[String]](None)(_.get(CorrectionReasonPage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe correctionReasonDiff
@@ -235,7 +235,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[String]](None)(_.get(CorrectionReasonPage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe correctionReasonDiff

@@ -1,32 +1,33 @@
 package controllers.correctReturn
 
-import controllers.{LitresISpecHelper, routes}
-import models.SelectChange.CorrectReturn
+import controllers.LitresISpecHelper
 import models.{CheckMode, LitresInBands, NormalMode}
+import models.SelectChange.CorrectReturn
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import pages.correctReturn.HowManyPackagedAsContractPackerPage
+import pages.correctReturn.HowManyBroughtIntoUKPage
 import play.api.http.HeaderNames
+import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
+import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 
-class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
+class HowManyBroughtIntoUKControllerISpec extends LitresISpecHelper {
 
-  val normalRoutePath = "/how-many-packaged-as-contract-packer"
-  val checkRoutePath = "/change-how-many-packaged-as-contract-packer"
+  val normalRoutePath = "/how-many-brought-into-uk"
+  val checkRoutePath = "/change-how-many-brought-into-uk"
 
-  val userAnswers = emptyUserAnswersForCorrectReturn.set(HowManyPackagedAsContractPackerPage, litresInBands).success.value
+  val userAnswers = emptyUserAnswersForCorrectReturn.set(HowManyBroughtIntoUKPage, litresInBands).success.value
 
   List(NormalMode, CheckMode).foreach { mode =>
     val (path, redirectLocation) = if(mode == NormalMode) {
       (normalRoutePath, defaultCall.url)
     } else {
-      (checkRoutePath, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+      (checkRoutePath, routes.CorrectReturnCYAController.onPageLoad.url)
     }
 
     "GET " + path - {
       "when the userAnswers contains no data" - {
-        "should return OK and render the litres page for PackagedAsContractPacker with no data populated" in {
+        "should return OK and render the litres page for BroughtIntoUK with no data populated" in {
           given
             .commonPrecondition
 
@@ -38,7 +39,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title mustBe "How many litres of liable drinks have you packaged as a third party or contract packer at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
+              page.title must include(Messages("correctReturn.howManyBroughtIntoUK" + ".title"))
               testLitresInBandsNoPrepopulatedData(page)
             }
           }
@@ -58,7 +59,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title mustBe "How many litres of liable drinks have you packaged as a third party or contract packer at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
+              page.title must include(Messages("correctReturn.howManyBroughtIntoUK" + ".title"))
               testLitresInBandsWithPrepopulatedData(page)
             }
           }
@@ -85,7 +86,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(redirectLocation)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyPackagedAsContractPackerPage))
+                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyBroughtIntoUKPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBands
               }
@@ -105,7 +106,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(redirectLocation)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyPackagedAsContractPackerPage))
+                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyBroughtIntoUKPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBandsDiff
               }
@@ -115,7 +116,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
       }
 
       "should return 400 with required error" - {
-        val errorTitle = "Error: " + "How many litres of liable drinks have you packaged as a third party or contract packer at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
+        val errorTitle = "Error: " + Messages("correctReturn.howManyBroughtIntoUK.title")
 
         "when no questions are answered" in {
           given

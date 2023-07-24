@@ -39,7 +39,7 @@ class HowMany$className$ControllerISpec extends LitresISpecHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("howMany$className$" + ".title"))
+              page.title must include(Messages("$packageName$.howMany$className$" + ".title"))
               testLitresInBandsNoPrepopulatedData(page)
             }
           }
@@ -59,7 +59,7 @@ class HowMany$className$ControllerISpec extends LitresISpecHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("howMany$className$" + ".title"))
+              page.title must include(Messages("$packageName$.howMany$className$" + ".title"))
               testLitresInBandsWithPrepopulatedData(page)
             }
           }
@@ -116,7 +116,7 @@ class HowMany$className$ControllerISpec extends LitresISpecHelper {
       }
 
       "should return 400 with required error" - {
-        val errorTitle = "Error: " + Messages("howMany$className$.title")
+        val errorTitle = "Error: " + Messages("$packageName$.howMany$className$.title")
 
         "when no questions are answered" in {
           given

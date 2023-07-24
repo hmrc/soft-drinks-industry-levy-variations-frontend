@@ -1,24 +1,24 @@
 package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
+import models.{CheckMode, NormalMode}
 import models.SelectChange.CorrectReturn
-import models.correctReturn.RepaymentMethod
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.correctReturn.RepaymentMethodPage
+import pages.correctReturn.BroughtIntoUKPage
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
 
-class RepaymentMethodControllerISpec extends ControllerITTestHelper {
+class BroughtIntoUKControllerISpec extends ControllerITTestHelper {
 
-  val normalRoutePath = "/repayment-method"
-  val checkRoutePath = "/change-repayment-method"
+  val normalRoutePath = "/brought-into-uk"
+  val checkRoutePath = "/change-brought-into-uk"
 
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
-      "should return OK and render the RepaymentMethod page with no data populated" in {
+      "should return OK and render the BroughtIntoUK page with no data populated" in {
         given
           .commonPrecondition
 
@@ -30,26 +30,23 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("correctReturn.repaymentMethod" + ".title"))
+            page.title must include(Messages("correctReturn.broughtIntoUK" + ".title"))
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
-
-            RepaymentMethod.values.zipWithIndex.foreach { case (radio1, index1) =>
-              radioInputs.get(index1).attr("value") mustBe radio1.toString
-              radioInputs.get(index1).hasAttr("checked") mustBe false
-            }
+            radioInputs.get(0).attr("value") mustBe "true"
+            radioInputs.get(0).hasAttr("checked") mustBe false
+            radioInputs.get(1).attr("value") mustBe "false"
+            radioInputs.get(1).hasAttr("checked") mustBe false
           }
         }
       }
     }
 
-    RepaymentMethod.values.zipWithIndex.foreach { case (radio, index) =>
-      s"when the userAnswers contains data for the page with " + radio.toString + " selected" - {
-        s"should return OK and render the page with " + radio.toString + " radio checked" in {
+    userAnswersForCorrectReturnBroughtIntoUKPage.foreach { case (key, userAnswers) =>
+      s"when the userAnswers contains data for the page with " + key + " selected" - {
+        s"should return OK and render the page with " + key + " radio checked" in {
           given
             .commonPrecondition
-
-          val userAnswers = emptyUserAnswersForCorrectReturn.set(RepaymentMethodPage, radio).success.value
 
           setAnswers(userAnswers)
 
@@ -59,14 +56,13 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("correctReturn.repaymentMethod" + ".title"))
+              page.title must include(Messages("correctReturn.broughtIntoUK" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
-              radioInputs.size() mustBe RepaymentMethod.values.size
-
-              RepaymentMethod.values.zipWithIndex.foreach { case (radio1, index1) =>
-                radioInputs.get(index1).attr("value") mustBe radio1.toString
-                radioInputs.get(index1).hasAttr("checked") mustBe index == index1
-              }
+              radioInputs.size() mustBe 2
+              radioInputs.get(0).attr("value") mustBe "true"
+              radioInputs.get(0).hasAttr("checked") mustBe key == "yes"
+              radioInputs.get(1).attr("value") mustBe "false"
+              radioInputs.get(1).hasAttr("checked") mustBe key == "no"
             }
           }
         }
@@ -79,7 +75,7 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
 
   s"GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
-      "should return OK and render the RepaymentMethod page with no data populated" in {
+      "should return OK and render the BroughtIntoUK page with no data populated" in {
         given
           .commonPrecondition
 
@@ -91,27 +87,23 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("correctReturn.repaymentMethod" + ".title"))
+            page.title must include(Messages("correctReturn.broughtIntoUK" + ".title"))
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
-
-            RepaymentMethod.values.zipWithIndex.foreach { case (radio1, index1) =>
-              radioInputs.get(index1).attr("value") mustBe radio1.toString
-              radioInputs.get(index1).hasAttr("checked") mustBe false
-            }
+            radioInputs.get(0).attr("value") mustBe "true"
+            radioInputs.get(0).hasAttr("checked") mustBe false
+            radioInputs.get(1).attr("value") mustBe "false"
+            radioInputs.get(1).hasAttr("checked") mustBe false
           }
         }
       }
     }
 
-    RepaymentMethod.values.zipWithIndex.foreach { case (radio, index) =>
-      s"when the userAnswers contains data for the page with " + radio.toString + " selected" - {
-        s"should return OK and render the page with " + radio.toString + " radio checked" in {
+    userAnswersForCorrectReturnBroughtIntoUKPage.foreach { case (key, userAnswers) =>
+      s"when the userAnswers contains data for the page with " + key + " selected" - {
+        s"should return OK and render the page with " + key + " radio checked" in {
           given
             .commonPrecondition
-
-          val userAnswers = emptyUserAnswersForCorrectReturn.set(RepaymentMethodPage, radio).success.value
-
 
           setAnswers(userAnswers)
 
@@ -121,27 +113,27 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("correctReturn.repaymentMethod" + ".title"))
+              page.title must include(Messages("correctReturn.broughtIntoUK" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
-
-              RepaymentMethod.values.zipWithIndex.foreach { case (radio1, index1) =>
-                radioInputs.get(index1).attr("value") mustBe radio1.toString
-                radioInputs.get(index1).hasAttr("checked") mustBe index == index1
-              }
+              radioInputs.get(0).attr("value") mustBe "true"
+              radioInputs.get(0).hasAttr("checked") mustBe key == "yes"
+              radioInputs.get(1).attr("value") mustBe "false"
+              radioInputs.get(1).hasAttr("checked") mustBe key == "no"
             }
           }
         }
       }
     }
+
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath)
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath)
   }
 
   s"POST " + normalRoutePath - {
-    RepaymentMethod.values.foreach { case radio =>
-      "when the user selects " + radio.toString - {
+    userAnswersForCorrectReturnBroughtIntoUKPage.foreach { case (key, userAnswers) =>
+      "when the user selects " + key - {
         "should update the session with the new value and redirect to the index controller" - {
           "when the session contains no data for page" in {
             given
@@ -149,16 +141,22 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
 
             setAnswers(emptyUserAnswersForCorrectReturn)
             WsTestClient.withClient { client =>
+              val yesSelected = key == "yes"
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> radio)
+                client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> yesSelected.toString)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
-                val dataStoredForPage = getAnswers(sdilNumber).fold[Option[RepaymentMethod]](None)(_.get(RepaymentMethodPage))
+                val expectedLocation = if (yesSelected) {
+                  routes.HowManyBroughtIntoUKController.onPageLoad(NormalMode).url
+                } else {
+                  defaultCall.url
+                }
+                res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
+                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(BroughtIntoUKPage))
                 dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe radio
+                dataStoredForPage.get mustBe yesSelected
               }
             }
           }
@@ -167,20 +165,24 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            val userAnswers = emptyUserAnswersForCorrectReturn.set(RepaymentMethodPage, radio).success.value
-
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
+              val yesSelected = key == "yes"
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> radio)
+                client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> yesSelected.toString)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[RepaymentMethod]](None)(_.get(RepaymentMethodPage))
+                val expectedLocation = if (yesSelected) {
+                  routes.HowManyBroughtIntoUKController.onPageLoad(NormalMode).url
+                } else {
+                  defaultCall.url
+                }
+                res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
+                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(BroughtIntoUKPage))
                 dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe radio
+                dataStoredForPage.get mustBe yesSelected
               }
             }
           }
@@ -188,7 +190,7 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
       }
     }
 
-    "when the user does not select an option" - {
+    "when the user does not select yes or no" - {
       "should return 400 with required error" in {
         given
           .commonPrecondition
@@ -202,13 +204,13 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("correctReturn.repaymentMethod" + ".title"))
+            page.title must include("Error: " + Messages("correctReturn.broughtIntoUK" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
-              .attr("href") mustBe "#value_0"
-            errorSummary.text() mustBe "Select how you want the credit to be repaid"
+              .attr("href") mustBe "#value"
+            errorSummary.text() mustBe Messages("correctReturn.broughtIntoUK" + ".error.required")
           }
         }
       }
@@ -219,8 +221,9 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
   }
 
   s"POST " + checkRoutePath - {
-    RepaymentMethod.values.foreach { case radio =>
-      "when the user selects " + radio.toString - {
+    userAnswersForCorrectReturnBroughtIntoUKPage.foreach { case (key, userAnswers) =>
+      "when the user selects " + key - {
+        val yesSelected = key == "yes"
         "should update the session with the new value and redirect to the checkAnswers controller" - {
           "when the session contains no data for page" in {
             given
@@ -229,15 +232,20 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
             setAnswers(emptyUserAnswersForCorrectReturn)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> Json.toJson(radio))
+                client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> yesSelected.toString)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
-                val dataStoredForPage = getAnswers(sdilNumber).fold[Option[RepaymentMethod]](None)(_.get(RepaymentMethodPage))
+                val expectedLocation = if(yesSelected) {
+                  routes.HowManyBroughtIntoUKController.onPageLoad(CheckMode).url
+                } else {
+                  routes.CorrectReturnCYAController.onPageLoad.url
+                }
+                res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
+                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(BroughtIntoUKPage))
                 dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe radio
+                dataStoredForPage.get mustBe yesSelected
               }
             }
           }
@@ -246,20 +254,24 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            val userAnswers = emptyUserAnswersForCorrectReturn.set(RepaymentMethodPage, radio).success.value
-
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
+              val yesSelected = key == "yes"
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> Json.toJson(radio))
+                client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> yesSelected.toString)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[RepaymentMethod]](None)(_.get(RepaymentMethodPage))
+                val expectedLocation = if (yesSelected) {
+                  routes.HowManyBroughtIntoUKController.onPageLoad(CheckMode).url
+                } else {
+                  routes.CorrectReturnCYAController.onPageLoad.url
+                }
+                res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
+                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(BroughtIntoUKPage))
                 dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe radio
+                dataStoredForPage.get mustBe yesSelected
               }
             }
           }
@@ -267,7 +279,7 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
       }
     }
 
-    "when the user does not select an option" - {
+    "when the user does not select yes or no" - {
       "should return 400 with required error" in {
         given
           .commonPrecondition
@@ -281,13 +293,13 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("correctReturn.repaymentMethod" + ".title"))
+            page.title must include("Error: " + Messages("correctReturn.broughtIntoUK" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
-              .attr("href") mustBe "#value_0"
-            errorSummary.text() mustBe "Select how you want the credit to be repaid"
+              .attr("href") mustBe "#value"
+            errorSummary.text() mustBe Messages("correctReturn.broughtIntoUK" + ".error.required")
           }
         }
       }
