@@ -21,7 +21,7 @@ import forms.SelectChangeFormProvider
 import handlers.ErrorHandler
 import models.backend.Site
 import models.requests.OptionalDataRequest
-import models.{Mode, NormalMode, RetrievedSubscription, SelectChange, UserAnswers, Warehouse}
+import models.{Mode, NormalMode, SelectChange, UserAnswers, Warehouse}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
@@ -29,7 +29,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.SelectChangeView
 
 import javax.inject.Inject
-import scala.Predef.->
 import scala.concurrent.{ExecutionContext, Future}
 
 class SelectChangeController @Inject()(
@@ -62,8 +61,10 @@ class SelectChangeController @Inject()(
         value => {
           val defaultUserAnswers = generateDefaultUserAnswers(value)
           sessionService.set(defaultUserAnswers).map {
-            case Right(_) if value == SelectChange.ChangeActivity => Redirect(changeActivity.routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode))
-            case Right(_) => Redirect(routes.IndexController.onPageLoad)
+            case Right(_) if value == SelectChange.ChangeActivity =>
+              Redirect(changeActivity.routes.AmountProducedController.onPageLoad(NormalMode))
+            case Right(_) =>
+              Redirect(routes.IndexController.onPageLoad)
             case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
           }
         }
