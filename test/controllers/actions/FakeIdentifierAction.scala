@@ -17,12 +17,11 @@
 package controllers.actions
 
 import base.SpecBase.aSubscription
-import models.{RetrievedSubscription, ReturnPeriod}
-
-import javax.inject.Inject
 import models.requests.IdentifierRequest
+import models.{RetrievedSubscription, ReturnPeriod}
 import play.api.mvc._
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class FakeIdentifierAction @Inject()(subscription: Option[RetrievedSubscription],

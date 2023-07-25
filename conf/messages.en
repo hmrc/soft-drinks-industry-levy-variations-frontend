@@ -358,6 +358,7 @@ correctReturn.packagedAsContractPacker.highband.litres.hidden = number of litres
 correctReturn.howManyPackagedAsContractPacker.title = How many litres of liable drinks have you packaged as a third party or contract packer at UK sites you operate?
 correctReturn.howManyPackagedAsContractPacker.heading = How many litres of liable drinks have you packaged as a third party or contract packer at UK sites you operate?
 correctReturn.howManyPackagedAsContractPacker.subtext = Do not include liable drinks you have packaged for registered small producers.
+
 correctReturn.broughtIntoUK.title = Are you reporting liable drinks you have brought into the UK from anywhere outside of the UK?
 correctReturn.broughtIntoUK.heading = Are you reporting liable drinks you have brought into the UK from anywhere outside of the UK?
 correctReturn.broughtIntoUK.checkYourAnswersLabel = Brought into the UK
@@ -368,6 +369,13 @@ correctReturn.howManyBroughtIntoUK.title = How many litres of liable drinks have
 correctReturn.howManyBroughtIntoUK.heading = How many litres of liable drinks have you brought into the UK from anywhere outside of the UK?
 correctReturn.broughtIntoUK.lowband.litres.hidden = change amount of litres in lowband for broughtIntoUK
 correctReturn.broughtIntoUK.highband.litres.hidden = change amount of litres in highband for broughtIntoUK
+
+correctReturn.exemptionsForSmallProducers.title = Do you need to claim an exemption for any of the liable drinks you have packaged for registered small producers?
+correctReturn.exemptionsForSmallProducers.heading = Do you need to claim an exemption for any of the liable drinks you have packaged for registered small producers?
+correctReturn.exemptionsForSmallProducers.yes = Yes
+correctReturn.exemptionsForSmallProducers.no = No
+correctReturn.exemptionsForSmallProducers.checkYourAnswersLabel = Do you need to claim an exemption for any of the liable drinks you have packaged for registered small producers?
+correctReturn.exemptionsForSmallProducers.error.required = Select yes if you need to claim an exemption for any of the liable drinks you have packaged for registered small producers
 
 whatIsASmallProducer.detailsLink = What is a small producer?
 whatIsASmallProducer.detailsContent1 = A business is a small producer if it:

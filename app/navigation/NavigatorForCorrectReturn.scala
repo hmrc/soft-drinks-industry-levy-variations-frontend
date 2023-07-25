@@ -60,6 +60,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   override val normalRoutes: Page => UserAnswers => Call = {
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, NormalMode)
     case HowManyBroughtIntoUKPage => _ => defaultCall
+    case ExemptionsForSmallProducersPage => _ => defaultCall
     case CorrectionReasonPage => _ => defaultCall
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => defaultCall
@@ -72,6 +73,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
 
   override val checkRouteMap: Page => UserAnswers => Call = {
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, CheckMode)
+    case ExemptionsForSmallProducersPage => _ =>  routes.CorrectReturnCYAController.onPageLoad
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, CheckMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
     case _ => _ => routes.CorrectReturnCYAController.onPageLoad
