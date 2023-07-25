@@ -20,7 +20,7 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.correctReturn.AddASmallProducerFormProvider
 import handlers.ErrorHandler
-import models.Mode
+import models.{Mode, SmallProducer, UserAnswers}
 import models.SelectChange.CorrectReturn
 import models.correctReturn.AddASmallProducer
 import navigation._
@@ -34,6 +34,7 @@ import views.html.correctReturn.AddASmallProducerView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 class AddASmallProducerController @Inject()(
                                              override val messagesApi: MessagesApi,
@@ -68,9 +69,23 @@ class AddASmallProducerController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value => {
-          val updatedAnswers = request.userAnswers.set(AddASmallProducerPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, AddASmallProducerPage, mode)
+          updateDatabase(value, request.userAnswers).map(updatedAnswersFinal =>
+            Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal)))
         }
       )
+  }
+
+  private def smallProducerInfoFormatted(data: AddASmallProducer): SmallProducer = {
+    SmallProducer(data.producerName.getOrElse(""), data.referenceNumber, (data.lowBand, data.highBand))
+  }
+
+  private def updateDatabase(addSmallProducer: AddASmallProducer, userAnswers: UserAnswers): Future[UserAnswers] = {
+    for {
+      updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, addSmallProducer))
+      updatedAnswersFinal = updatedAnswers.copy(smallProducerList = smallProducerInfoFormatted(addSmallProducer) :: updatedAnswers.smallProducerList)
+      _ <- updateDatabaseWithoutRedirect(Try(updatedAnswersFinal), AddASmallProducerPage)
+    } yield {
+      updatedAnswersFinal
+    }
   }
 }
