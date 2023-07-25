@@ -24,6 +24,9 @@ import pages.updateRegisteredDetails.UpdateContactDetailsPage
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryCorrectReturnBroughtIntoUKPage: Arbitrary[correctReturn.BroughtIntoUKPage.type] =
+    Arbitrary(correctReturn.BroughtIntoUKPage)
+
   implicit lazy val arbitraryCorrectReturnPackagedAsContractPackerPage: Arbitrary[correctReturn.PackagedAsContractPackerPage.type] =
     Arbitrary(correctReturn.PackagedAsContractPackerPage)
 

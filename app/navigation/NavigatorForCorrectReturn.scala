@@ -19,13 +19,23 @@ package navigation
 import controllers.correctReturn.routes
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages.Page
-import pages.correctReturn.{HowManyPackagedAsContractPackerPage, CorrectionReasonPage, PackagedAsContractPackerPage, HowManyOperatePackagingSiteOwnBrandsPage, OperatePackagingSiteOwnBrandsPage, RepaymentMethodPage, SelectPage}
+import pages.correctReturn._
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
 
 @Singleton
 class NavigatorForCorrectReturn @Inject()() extends Navigator {
+
+  private def navigationForBroughtIntoUK(userAnswers: UserAnswers, mode: Mode): Call = {
+    if (userAnswers.get(page = BroughtIntoUKPage).contains(true)) {
+      routes.HowManyBroughtIntoUKController.onPageLoad(mode)
+    } else if(mode == CheckMode){
+        routes.CorrectReturnCYAController.onPageLoad
+    } else {
+        defaultCall
+    }
+  }
 
   private def navigationForPackagedAsContractPacker(userAnswers: UserAnswers, mode: Mode): Call = {
     if (userAnswers.get(page = PackagedAsContractPackerPage).contains(true)) {
@@ -48,6 +58,8 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   }
 
   override val normalRoutes: Page => UserAnswers => Call = {
+    case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, NormalMode)
+    case HowManyBroughtIntoUKPage => _ => defaultCall
     case CorrectionReasonPage => _ => defaultCall
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => defaultCall
@@ -59,7 +71,9 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   }
 
   override val checkRouteMap: Page => UserAnswers => Call = {
+    case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, CheckMode)
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, CheckMode)
-    case _ => _ => defaultCall
+    case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
+    case _ => _ => routes.CorrectReturnCYAController.onPageLoad
   }
 }

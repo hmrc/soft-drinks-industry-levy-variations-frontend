@@ -51,24 +51,25 @@ class HowMany$className$ViewSpec extends LitresSpecHelper {
         val documentFormErrorsOutOfRange = doc(htmlFormErrorsOutOfRange)
 
         "should have the expected title" in {
-          document.title() must include(Messages("howMany$className$.title"))
+          document.title() mustEqual "$litresTitle$ - Soft Drinks Industry Levy - GOV.UK"
         }
 
         "should have the expected heading" in {
-          document.getElementsByClass(Selectors.heading).text() mustBe Messages("howMany$className$.heading")
+          document.getElementsByClass(Selectors.heading).text() mustBe "$litresHeading$"
         }
 
         "should include a govuk body with the expected content" in {
-          document.getElementsByClass(Selectors.body).text() mustBe Messages("howMany$className$.subtext")
+          document.getElementsByClass(Selectors.body).text() mustBe "$subText$"
         }
 
         testLitresInBandsNoPrepopulatedData(document)
         testLitresInBandsWithPrepopulatedData(documentWithValidData)
+
         testButton(document)
         testAction(document, routes.HowMany$className$Controller.onSubmit(mode).url)
 
         "and the form has errors" - {
-          val errorTitle = "Error: " + Messages("howMany$className$.title")
+          val errorTitle = "Error: $litresTitle$ - Soft Drinks Industry Levy - GOV.UK"
           testEmptyFormErrors(documentFormErrorsEmpty, errorTitle)
           testNoNumericFormErrors(documentFormErrorsNoneNumeric, errorTitle)
           testNegativeFormErrors(documentFormErrorsNegative, errorTitle)

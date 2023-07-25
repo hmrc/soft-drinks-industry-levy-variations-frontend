@@ -14,20 +14,20 @@
  * limitations under the License.
  */
 
-package views.$packageName$
+package views.correctReturn
 
-import controllers.$packageName$.routes
-import forms.$packageName$.$className$FormProvider
+import controllers.correctReturn.routes
+import forms.correctReturn.BroughtIntoUKFormProvider
 import models.{CheckMode, NormalMode}
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import views.html.$packageName$.$className$View
+import views.html.correctReturn.BroughtIntoUKView
 import views.ViewSpecHelper
-class $className$ViewSpec extends ViewSpecHelper {
+class BroughtIntoUKViewSpec extends ViewSpecHelper {
 
-  val view = application.injector.instanceOf[$className$View]
-  val formProvider = new $className$FormProvider
+  val view = application.injector.instanceOf[BroughtIntoUKView]
+  val formProvider = new BroughtIntoUKFormProvider
   val form = formProvider.apply()
   implicit val request: Request[_] = FakeRequest()
 
@@ -48,19 +48,19 @@ class $className$ViewSpec extends ViewSpecHelper {
     val html = view(form, NormalMode)(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
-      document.title() mustBe "$yesNoTitle$ - Soft Drinks Industry Levy - GOV.UK"
+      document.title() mustBe "Are you reporting liable drinks you have brought into the UK from anywhere outside of the UK? - Soft Drinks Industry Levy - GOV.UK"
     }
 
     "should include a legend with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual "$yesNoHeading$"
+      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual "Are you reporting liable drinks you have brought into the UK from anywhere outside of the UK?"
     }
 
     "should include the expected hint text" in {
       val hint = document.getElementById("value-hint")
       hint.className() mustBe "govuk-hint"
-      hint.text() mustBe "$subText$"
+      hint.text() mustBe "Do not include liable drinks from small producers or your own brands if you are a registered small producer."
     }
 
     "when the form is not preoccupied and has no errors" - {
@@ -167,6 +167,14 @@ class $className$ViewSpec extends ViewSpecHelper {
       }
     }
 
+    val expectedDetailsContent = "A business is a small producer if it: " +
+      "has had less than 1 million litres of its own brands of liable drinks packaged globally in the" +
+      " past 12 months will not have more than 1 million litres of its own brands of liable drinks packaged globally in the next 30 days"
+
+    val expectedDetails = Map(
+      "What is a small producer?" -> expectedDetailsContent)
+    testDetails(document, expectedDetails)
+
     "contain the correct button" - {
       document.getElementsByClass(Selectors.button).text() mustBe Messages("site.continue")
     }
@@ -180,12 +188,12 @@ class $className$ViewSpec extends ViewSpecHelper {
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
           documentYesSelected.select(Selectors.form)
-            .attr("action") mustEqual routes.$className$Controller.onSubmit(CheckMode).url
+            .attr("action") mustEqual routes.BroughtIntoUKController.onSubmit(CheckMode).url
         }
 
         "and no is selected" in {
           documentNoSelected.select(Selectors.form)
-            .attr("action") mustEqual routes.$className$Controller.onSubmit(CheckMode).url
+            .attr("action") mustEqual routes.BroughtIntoUKController.onSubmit(CheckMode).url
         }
       }
 
@@ -197,12 +205,12 @@ class $className$ViewSpec extends ViewSpecHelper {
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
           documentYesSelected.select(Selectors.form)
-            .attr("action") mustEqual routes.$className$Controller.onSubmit(NormalMode).url
+            .attr("action") mustEqual routes.BroughtIntoUKController.onSubmit(NormalMode).url
         }
 
         "and no is selected" in {
           documentNoSelected.select(Selectors.form)
-            .attr("action") mustEqual routes.$className$Controller.onSubmit(NormalMode).url
+            .attr("action") mustEqual routes.BroughtIntoUKController.onSubmit(NormalMode).url
         }
       }
     }
@@ -212,7 +220,7 @@ class $className$ViewSpec extends ViewSpecHelper {
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
-        documentWithErrors.title must include("Error: $yesNoTitle$ - Soft Drinks Industry Levy - GOV.UK")
+        documentWithErrors.title must include("Error: Are you reporting liable drinks you have brought into the UK from anywhere outside of the UK? - Soft Drinks Industry Levy - GOV.UK")
       }
 
       "contains a message that links to field with error" in {
@@ -222,7 +230,7 @@ class $className$ViewSpec extends ViewSpecHelper {
         errorSummary
           .select("a")
           .attr("href") mustBe "#value"
-        errorSummary.text() mustBe "Select yes if $yesNoHeading;format="decap"$"
+        errorSummary.text() mustBe "Select yes if are you reporting liable drinks you have brought into the UK from anywhere outside of the UK?"
       }
     }
 

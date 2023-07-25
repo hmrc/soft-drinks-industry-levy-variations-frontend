@@ -22,7 +22,7 @@
             RadiosViewModel.yesNo(
                 field = form("value"),
                 legend = LegendViewModel(messages("$packageName$.$className;format="decap"$.heading")).asPageHeading(),
-                hint = None
+                hint = Some(Hint(content = Text(messages("$packageName$.$className;format="decap"$.subtext"))))
             )
         )
 

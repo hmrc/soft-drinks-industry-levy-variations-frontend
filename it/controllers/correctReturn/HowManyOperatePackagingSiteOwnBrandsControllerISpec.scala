@@ -21,7 +21,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
     val (path, redirectLocation) = if(mode == NormalMode) {
       (normalRoutePath, controllers.routes.IndexController.onPageLoad.url)
     } else {
-      (checkRoutePath, controllers.routes.IndexController.onPageLoad.url)
+      (checkRoutePath, routes.CorrectReturnCYAController.onPageLoad.url)
     }
 
     "GET " + path - {

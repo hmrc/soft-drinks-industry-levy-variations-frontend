@@ -16,7 +16,6 @@
 
 package controllers.actions
 
-import base.SpecBase
 import base.SpecBase.aSubscription
 import models.{RetrievedSubscription, ReturnPeriod}
 
