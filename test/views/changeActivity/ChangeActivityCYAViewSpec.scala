@@ -48,11 +48,10 @@ class ChangeActivityCYAViewSpec extends ViewSpecHelper {
     }
     val call = Call("GET","/foo")
     val ALIAS = "ALIAS"
-    val RETURN_PERIOD = "RETURN PERIOD"
-    val html = view(ALIAS, RETURN_PERIOD, summaryList, call)(request, messages(application))
+    val html = view(ALIAS, summaryList, call)(request, messages(application))
     val document = doc(html)
     "should have the expected pre header caption" in {
-      document.getElementsByClass(Selectors.PRE_HEADER_CAPTION).text() mustEqual s"$ALIAS - $RETURN_PERIOD"
+      document.getElementsByClass(Selectors.PRE_HEADER_CAPTION).text() mustEqual ALIAS
     }
     "should have the expected heading" in {
       document.getElementsByTag("h1").text() mustEqual "Check your answers before sending your update"

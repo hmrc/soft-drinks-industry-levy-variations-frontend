@@ -51,8 +51,6 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency {
                   status(result) mustEqual OK
                   contentAsString(result) mustEqual view(
                     aSubscription.orgName,
-                    //      TODO: Implement Return Period in DLS-8346
-                    "RETURN PERIOD",
                     ChangeActivitySummary.summaryListsAndHeadings(userAnswers),
                     routes.ChangeActivityCYAController.onSubmit
                   )(request, messages(application)).toString

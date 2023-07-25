@@ -180,8 +180,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
                       res.status mustBe OK
                       val page = Jsoup.parse(res.body)
                       page.title must include(Messages("changeActivity.checkYourAnswers.title"))
-                      //      TODO: Implement Return Period in DLS-8346
-                      page.getElementsByClass("govuk-caption-l").text() mustBe "Super Lemonade Plc - RETURN PERIOD"
+                      page.getElementsByClass("govuk-caption-l").text() mustBe "Super Lemonade Plc"
                       val sectionIndexes: Seq[Option[Int]] = List(
                         amountProducedValue.nonEmpty,
                         thirdPartyPackagingValue.nonEmpty,
