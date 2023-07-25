@@ -27,6 +27,16 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class NavigatorForCorrectReturn @Inject()() extends Navigator {
 
+  private def navigationForBroughtIntoUkFromSmallProducers(userAnswers: UserAnswers, mode: Mode): Call = {
+    if (userAnswers.get(page = BroughtIntoUkFromSmallProducersPage).contains(true)) {
+      routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(mode)
+    } else if(mode == CheckMode){
+        routes.CorrectReturnCYAController.onPageLoad
+    } else {
+        defaultCall
+    }
+  }
+
   private def navigationForBroughtIntoUK(userAnswers: UserAnswers, mode: Mode): Call = {
     if (userAnswers.get(page = BroughtIntoUKPage).contains(true)) {
       routes.HowManyBroughtIntoUKController.onPageLoad(mode)
@@ -58,6 +68,8 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   }
 
   override val normalRoutes: Page => UserAnswers => Call = {
+    case BroughtIntoUkFromSmallProducersPage => userAnswers => navigationForBroughtIntoUkFromSmallProducers(userAnswers, NormalMode)
+    case HowManyBroughtIntoUkFromSmallProducersPage => _ => defaultCall
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, NormalMode)
     case HowManyBroughtIntoUKPage => _ => defaultCall
     case ExemptionsForSmallProducersPage => _ => defaultCall
@@ -73,6 +85,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   }
 
   override val checkRouteMap: Page => UserAnswers => Call = {
+    case BroughtIntoUkFromSmallProducersPage => userAnswers => navigationForBroughtIntoUkFromSmallProducers(userAnswers, CheckMode)
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, CheckMode)
     case ExemptionsForSmallProducersPage => _ =>  routes.CorrectReturnCYAController.onPageLoad
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, CheckMode)

@@ -52,5 +52,14 @@ POST       /exemptions-for-small-producers                        controllers.co
 GET        /change-exemptions-for-small-producers                  controllers.correctReturn.ExemptionsForSmallProducersController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-exemptions-for-small-producers                  controllers.correctReturn.ExemptionsForSmallProducersController.onSubmit(mode: Mode = CheckMode)
 
+GET        /brought-into-uk-from-small-producers                        controllers.correctReturn.BroughtIntoUkFromSmallProducersController.onPageLoad(mode: Mode = NormalMode)
+POST       /brought-into-uk-from-small-producers                        controllers.correctReturn.BroughtIntoUkFromSmallProducersController.onSubmit(mode: Mode = NormalMode)
+GET        /change-brought-into-uk-from-small-producers                  controllers.correctReturn.BroughtIntoUkFromSmallProducersController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-brought-into-uk-from-small-producers                  controllers.correctReturn.BroughtIntoUkFromSmallProducersController.onSubmit(mode: Mode = CheckMode)
+GET        /how-many-into-uk-small-producers                        controllers.correctReturn.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(mode: Mode = NormalMode)
+POST       /how-many-into-uk-small-producers                        controllers.correctReturn.HowManyBroughtIntoUkFromSmallProducersController.onSubmit(mode: Mode = NormalMode)
+GET        /change-how-many-into-uk-small-producers                  controllers.correctReturn.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-how-many-into-uk-small-producers                  controllers.correctReturn.HowManyBroughtIntoUkFromSmallProducersController.onSubmit(mode: Mode = CheckMode)
+
 GET        /remove-small-producer-confirm/:sdil                  controllers.correctReturn.RemoveSmallProducerConfirmController.onPageLoad(mode: Mode = NormalMode, sdil: String)
 POST       /remove-small-producer-confirm/:sdil                  controllers.correctReturn.RemoveSmallProducerConfirmController.onSubmit(mode: Mode = NormalMode, sdil: String)
