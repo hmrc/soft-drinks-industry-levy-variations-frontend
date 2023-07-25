@@ -32,6 +32,7 @@ import play.api.libs.json.{JsValue, Json}
 trait UserAnswersGenerator extends TryValues {
   self: Generators =>
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
+    arbitrary[(correctReturn.RemoveSmallProducerConfirmPage.type, JsValue)] ::
     arbitrary[(correctReturn.BroughtIntoUKPage.type, JsValue)] ::
     arbitrary[(correctReturn.ExemptionsForSmallProducersPage.type, JsValue)] ::
     arbitrary[(correctReturn.CorrectionReasonPage.type, JsValue)] ::

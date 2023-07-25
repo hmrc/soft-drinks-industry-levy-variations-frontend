@@ -29,6 +29,9 @@ trait PageGenerators {
   implicit lazy val arbitraryCorrectReturnExemptionsForSmallProducersPage: Arbitrary[correctReturn.ExemptionsForSmallProducersPage.type] =
     Arbitrary(correctReturn.ExemptionsForSmallProducersPage)
 
+  implicit lazy val arbitraryCorrectReturnRemoveSmallProducerConfirmPage: Arbitrary[correctReturn.RemoveSmallProducerConfirmPage.type] =
+    Arbitrary(correctReturn.RemoveSmallProducerConfirmPage)
+
   implicit lazy val arbitraryCorrectReturnPackagedAsContractPackerPage: Arbitrary[correctReturn.PackagedAsContractPackerPage.type] =
     Arbitrary(correctReturn.PackagedAsContractPackerPage)
 
