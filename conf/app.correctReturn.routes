@@ -37,7 +37,7 @@ GET        /how-many-packaged-as-contract-packer                controllers.corr
 POST       /how-many-packaged-as-contract-packer                controllers.correctReturn.HowManyPackagedAsContractPackerController.onSubmit(mode: Mode = NormalMode)
 GET        /change-how-many-packaged-as-contract-packer         controllers.correctReturn.HowManyPackagedAsContractPackerController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-how-many-packaged-as-contract-packer         controllers.correctReturn.HowManyPackagedAsContractPackerController.onSubmit(mode: Mode = CheckMode)
-<<<<<<< HEAD
+
 GET        /brought-into-uk                        controllers.correctReturn.BroughtIntoUKController.onPageLoad(mode: Mode = NormalMode)
 POST       /brought-into-uk                        controllers.correctReturn.BroughtIntoUKController.onSubmit(mode: Mode = NormalMode)
 GET        /change-brought-into-uk                  controllers.correctReturn.BroughtIntoUKController.onPageLoad(mode: Mode = CheckMode)
@@ -46,10 +46,9 @@ GET        /how-many-brought-into-uk                        controllers.correctR
 POST       /how-many-brought-into-uk                        controllers.correctReturn.HowManyBroughtIntoUKController.onSubmit(mode: Mode = NormalMode)
 GET        /change-how-many-brought-into-uk                  controllers.correctReturn.HowManyBroughtIntoUKController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-how-many-brought-into-uk                  controllers.correctReturn.HowManyBroughtIntoUKController.onSubmit(mode: Mode = CheckMode)
-=======
 
 GET        /exemptions-for-small-producers                        controllers.correctReturn.ExemptionsForSmallProducersController.onPageLoad(mode: Mode = NormalMode)
 POST       /exemptions-for-small-producers                        controllers.correctReturn.ExemptionsForSmallProducersController.onSubmit(mode: Mode = NormalMode)
 GET        /change-exemptions-for-small-producers                  controllers.correctReturn.ExemptionsForSmallProducersController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-exemptions-for-small-producers                  controllers.correctReturn.ExemptionsForSmallProducersController.onSubmit(mode: Mode = CheckMode)
->>>>>>> 8cb080a (DLS-8417 added in exemptions for small producers)
+
