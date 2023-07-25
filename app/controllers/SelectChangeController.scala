@@ -59,11 +59,6 @@ class SelectChangeController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value => {
-          val updatedAnswers = request
-            .userAnswers
-            .fold(UserAnswers(id = request.sdilEnrolment, journeyType = value, contactAddress = request.subscription.address))(_.copy(journeyType = value))
-          sessionService.set(updatedAnswers).map {
-            case Right(_) => Redirect(routes.IndexController.onPageLoad)
           val defaultUserAnswers = generateDefaultUserAnswers(value)
           sessionService.set(defaultUserAnswers).map {
             case Right(_) if value == SelectChange.ChangeActivity =>
@@ -85,6 +80,6 @@ class SelectChangeController @Inject()(
       .map {
         case (site, index) => (index.toString, Warehouse.fromSite(site))
       }.toMap[String, Warehouse]
-    UserAnswers(id = request.sdilEnrolment, journeyType = value, packagingSiteList = currentPackagingSites, warehouseList = currentWarehouses)
+    UserAnswers(id = request.sdilEnrolment, journeyType = value,contactAddress = request.subscription.address, packagingSiteList = currentPackagingSites, warehouseList = currentWarehouses)
   }
 }
