@@ -32,7 +32,7 @@ class NavigatorForCancelRegistrationSpec extends SpecBase {
       "must go from a page that doesn't exist in the route map to Index" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id", SelectChange.CancelRegistration)) mustBe defaultCall
+        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id", SelectChange.CancelRegistration, contactAddress = contactAddress)) mustBe defaultCall
       }
     }
 
@@ -41,7 +41,7 @@ class NavigatorForCancelRegistrationSpec extends SpecBase {
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", SelectChange.CorrectReturn)) mustBe routes.CancelRegistrationCYAController.onPageLoad
+        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress = contactAddress)) mustBe routes.CancelRegistrationCYAController.onPageLoad
       }
     }
   }

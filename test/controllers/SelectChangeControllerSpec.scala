@@ -57,7 +57,7 @@ class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = UserAnswers(sdilNumber, SelectChange.values.head)
+      val userAnswers = UserAnswers(sdilNumber, SelectChange.values.head, contactAddress = contactAddress)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 

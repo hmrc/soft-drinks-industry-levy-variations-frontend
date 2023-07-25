@@ -73,7 +73,7 @@ object ModelEncryption {
       smallProducerList = Json.parse(encryption.crypto.decrypt(smallProducerList, id)).as[List[SmallProducer]],
       packagingSiteList = packagingSiteList.map(site => site._1 -> Json.parse(encryption.crypto.decrypt(site._2, id)).as[Site]),
       warehouseList = warehouseList.map(warehouse => warehouse._1 -> Json.parse(encryption.crypto.decrypt(warehouse._2, id)).as[Warehouse]),
-      contactAddress = Json.fromJson[Option[UkAddress]](Json.parse(encryption.crypto.decrypt(contactAddress, id)))(Reads.optionWithNull[UkAddress]).get,
+      contactAddress = Json.parse(encryption.crypto.decrypt(contactAddress, id)).as[UkAddress],
       submitted = submitted,
       lastUpdated = lastUpdated
     )

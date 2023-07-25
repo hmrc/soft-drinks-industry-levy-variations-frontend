@@ -27,7 +27,7 @@ trait ITCoreTestDataForCorrectReturn extends ITSharedCoreTestData  {
 
   def sdilNumber: String
 
-  def emptyUserAnswersForCorrectReturn = UserAnswers(sdilNumber, SelectChange.CorrectReturn, Json.obj())
+  def emptyUserAnswersForCorrectReturn = UserAnswers(sdilNumber, SelectChange.CorrectReturn, Json.obj(), contactAddress = ukAddress)
 
 
 }

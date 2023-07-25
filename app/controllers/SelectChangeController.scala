@@ -80,6 +80,6 @@ class SelectChangeController @Inject()(
       .map {
         case (site, index) => (index.toString, Warehouse.fromSite(site))
       }.toMap[String, Warehouse]
-    UserAnswers(id = request.sdilEnrolment, journeyType = value, packagingSiteList = currentPackagingSites, warehouseList = currentWarehouses)
+    UserAnswers(id = request.sdilEnrolment, journeyType = value,contactAddress = request.subscription.address, packagingSiteList = currentPackagingSites, warehouseList = currentWarehouses)
   }
 }
