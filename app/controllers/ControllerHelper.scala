@@ -17,12 +17,11 @@
 package controllers
 
 import handlers.ErrorHandler
-import models.{Mode, RetrievedSubscription, SdilReturn, UserAnswers}
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.Page
 import play.api.i18n.I18nSupport
 import play.api.mvc.{AnyContent, Request, Result}
-import repositories.SessionRepository
 import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilities.GenericLogger

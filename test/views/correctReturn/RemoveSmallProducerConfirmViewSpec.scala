@@ -18,12 +18,12 @@ package views.correctReturn
 
 import controllers.correctReturn.routes
 import forms.correctReturn.RemoveSmallProducerConfirmFormProvider
-import models.{CheckMode, NormalMode}
+import models.NormalMode
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import views.html.correctReturn.RemoveSmallProducerConfirmView
 import views.ViewSpecHelper
+import views.html.correctReturn.RemoveSmallProducerConfirmView
 class RemoveSmallProducerConfirmViewSpec extends ViewSpecHelper {
 
   val view = application.injector.instanceOf[RemoveSmallProducerConfirmView]

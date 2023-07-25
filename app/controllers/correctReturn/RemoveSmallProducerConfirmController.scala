@@ -16,23 +16,22 @@
 
 package controllers.correctReturn
 
-import utilities.GenericLogger
-import controllers.{ControllerHelper, routes}
 import controllers.actions._
+import controllers.{ControllerHelper, routes}
 import forms.correctReturn.RemoveSmallProducerConfirmFormProvider
-
-import javax.inject.Inject
-import models.{Mode, SmallProducer}
+import handlers.ErrorHandler
+import models.Mode
 import models.SelectChange.CorrectReturn
+import navigation._
 import pages.correctReturn.RemoveSmallProducerConfirmPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
+import utilities.GenericLogger
 import views.html.correctReturn.RemoveSmallProducerConfirmView
-import handlers.ErrorHandler
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import navigation._
 
 class RemoveSmallProducerConfirmController @Inject()(
                                        override val messagesApi: MessagesApi,
