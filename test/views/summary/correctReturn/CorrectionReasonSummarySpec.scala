@@ -32,7 +32,7 @@ class CorrectionReasonSummarySpec extends SpecBase {
 
     "should return a summary list row with the appropriate cancellation reason if an answer has been added" in {
       val userAnswersWithCorrectionReason = UserAnswers(sdilNumber, SelectChange.CorrectReturn,
-        Json.obj("correctReturn" -> Json.obj("correctionReason" -> "I was not paying close enough attention and I entered the wrong value")))
+        Json.obj("correctReturn" -> Json.obj("correctionReason" -> "I was not paying close enough attention and I entered the wrong value")), contactAddress = contactAddress)
 
       val correctionReasonSummaryRow = CorrectionReasonSummary.row(userAnswersWithCorrectionReason)
 

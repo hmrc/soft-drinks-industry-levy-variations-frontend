@@ -4,7 +4,7 @@ import models.backend.Site
 import models.updateRegisteredDetails.UpdateContactDetails
 import models.{SelectChange, UserAnswers, Warehouse}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
-import pages.updateRegisteredDetails.{PackingSiteDetailsRemovePage, PackagingSiteDetailsPage, RemoveWarehouseDetailsPage, WarehouseDetailsPage}
+import pages.updateRegisteredDetails.{PackagingSiteDetailsPage, PackingSiteDetailsRemovePage, RemoveWarehouseDetailsPage, WarehouseDetailsPage}
 import play.api.libs.json.Json
 
 trait ITCoreTestDataForUpdateRegisteredDetails extends ITSharedCoreTestData {
@@ -48,6 +48,6 @@ trait ITCoreTestDataForUpdateRegisteredDetails extends ITSharedCoreTestData {
 
   def sdilNumber: String
 
-  def emptyUserAnswersForUpdateRegisteredDetails = UserAnswers(sdilNumber, SelectChange.UpdateRegisteredDetails, Json.obj())
+  def emptyUserAnswersForUpdateRegisteredDetails = UserAnswers(sdilNumber, SelectChange.UpdateRegisteredDetails, Json.obj(), contactAddress = ukAddress)
 
 }

@@ -33,7 +33,7 @@ class ThirdPartyPackagersSummarySpec extends SpecBase {
 
     "should return a summary list row with the selected answer if thirdPartyPackagers page has been answered" in {
       val userAnswersWithThirdPartyPackagers = UserAnswers(sdilNumber, SelectChange.ChangeActivity, Json.obj(
-        "changeActivity" -> Json.obj("thirdPartyPackagers" -> true)))
+        "changeActivity" -> Json.obj("thirdPartyPackagers" -> true)), contactAddress = contactAddress)
 
       val thirdPartyPackagersSummaryRow = ThirdPartyPackagersSummary.row(userAnswersWithThirdPartyPackagers)
 

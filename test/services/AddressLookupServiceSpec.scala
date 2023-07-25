@@ -203,8 +203,8 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       val addressLookupState = ContactDetails
       val sdilId: String = "foo"
       val alfId: String = "bar"
-      val contactAddress = Some(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"))
-      val updatedContactAddress = Some(UkAddress(List(addressLine1, addressLine2), postcode, Some(alfId)))
+      val contactAddress = UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")
+      val updatedContactAddress = UkAddress(List(addressLine1, addressLine2), postcode, Some(alfId))
       val contactAddressSomeLines: AlfAddress = AlfAddress(
         Some(organisation),
         List(addressLine1, addressLine2),
@@ -225,8 +225,8 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       val addressLookupState = ContactDetails
       val sdilId: String = "foo"
       val alfId: String = "bar"
-      val contactAddress = Some(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"))
-      val updatedContactAddress = Some(UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode, Some(alfId)))
+      val contactAddress = UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")
+      val updatedContactAddress = UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode, Some(alfId))
       val contactAddress4Lines: AlfAddress = AlfAddress(
         Some(organisation),
         List(addressLine1, addressLine2, addressLine3, addressLine4),

@@ -33,7 +33,7 @@ class AmountProducedSummarySpec extends SpecBase {
 
     "should return a summary list row with the selected answer if amountProduced page has been answered" in {
       val userAnswersWithAmountProduced = UserAnswers(sdilNumber, SelectChange.ChangeActivity, Json.obj(
-        "changeActivity" -> Json.obj("amountProduced" -> "large")))
+        "changeActivity" -> Json.obj("amountProduced" -> "large")), contactAddress = contactAddress)
 
       val amountProducedSummaryRow = AmountProducedSummary.row(userAnswersWithAmountProduced)
 

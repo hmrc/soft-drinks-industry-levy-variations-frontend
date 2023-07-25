@@ -33,7 +33,7 @@ class ReasonSummarySpec extends SpecBase {
 
     "should return a summary list row with the appropriate cancellation reason if an answer has been added" in {
       val userAnswersWithCancelReason = UserAnswers(sdilNumber, SelectChange.CancelRegistration,
-        Json.obj("cancelRegistration" -> Json.obj("reason" -> "incorrectly registered")))
+        Json.obj("cancelRegistration" -> Json.obj("reason" -> "incorrectly registered")), contactAddress = contactAddress)
 
       val cancelReasonSummaryRow = ReasonSummary.row(userAnswersWithCancelReason)
 
