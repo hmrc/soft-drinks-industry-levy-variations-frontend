@@ -68,7 +68,6 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         whenReady(result) { res =>
           res.status mustBe 303
           res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
-//          TODO: Save data correctly
           getAnswers(sdilNumber).map(userAnswers => userAnswers.smallProducerList) mustBe expectedResult
         }
 
