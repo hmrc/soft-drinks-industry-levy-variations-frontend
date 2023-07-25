@@ -31,6 +31,12 @@ trait ITCoreTestDataForCorrectReturn extends ITSharedCoreTestData  {
     Map("yes" -> yesSelected, "no" -> noSelected)
   }
 
+  val userAnswersForCorrectReturnClaimCreditsForLostDamagedPage: Map[String, UserAnswers] = {
+    val yesSelected = emptyUserAnswersForCorrectReturn.set(ClaimCreditsForLostDamagedPage, true).success.value
+    val noSelected = emptyUserAnswersForCorrectReturn.set(ClaimCreditsForLostDamagedPage, false).success.value
+    Map("yes" -> yesSelected, "no" -> noSelected)
+  }
+
   def sdilNumber: String
 
   def emptyUserAnswersForCorrectReturn = UserAnswers(sdilNumber, SelectChange.CorrectReturn, Json.obj(), contactAddress = ukAddress)

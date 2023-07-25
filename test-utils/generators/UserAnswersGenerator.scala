@@ -53,6 +53,7 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(changeActivity.ImportsPage.type, JsValue)] ::
     arbitrary[(changeActivity.OperatePackagingSiteOwnBrandsPage.type, JsValue)] ::
     arbitrary[(correctReturn.OperatePackagingSiteOwnBrandsPage.type, JsValue)] ::
+    arbitrary[(correctReturn.ClaimCreditsForLostDamagedPage.type, JsValue)] ::
     arbitrary[(ReasonPage.type, JsValue)] ::
     arbitrary[(changeActivity.AmountProducedPage.type, JsValue)] ::
     arbitrary[(UpdateContactDetailsPage.type, JsValue)] ::

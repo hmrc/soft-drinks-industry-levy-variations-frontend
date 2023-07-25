@@ -17,6 +17,15 @@ POST       /repayment-method                             controllers.correctRetu
 GET        /change-repayment-method                      controllers.correctReturn.RepaymentMethodController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-repayment-method                      controllers.correctReturn.RepaymentMethodController.onSubmit(mode: Mode = CheckMode)
 
+GET        /claim-credits-for-lost-damaged                      controllers.correctReturn.ClaimCreditsForLostDamagedController.onPageLoad(mode: Mode = NormalMode)
+POST       /claim-credits-for-lost-damaged                      controllers.correctReturn.ClaimCreditsForLostDamagedController.onSubmit(mode: Mode = NormalMode)
+GET        /change-claim-credits-for-lost-damaged               controllers.correctReturn.ClaimCreditsForLostDamagedController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-claim-credits-for-lost-damaged               controllers.correctReturn.ClaimCreditsForLostDamagedController.onSubmit(mode: Mode = CheckMode)
+
+GET        /how-many-credits-for-lost-damaged                   controllers.correctReturn.HowManyCreditsForLostDamagedController.onPageLoad(mode: Mode = NormalMode)
+POST       /how-many-credits-for-lost-damaged                   controllers.correctReturn.HowManyCreditsForLostDamagedController.onSubmit(mode: Mode = NormalMode)
+GET        /change-how-many-credits-for-lost-damaged            controllers.correctReturn.HowManyCreditsForLostDamagedController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-how-many-credits-for-lost-damaged            controllers.correctReturn.HowManyCreditsForLostDamagedController.onSubmit(mode: Mode = CheckMode)
 
 GET        /own-brands-packaged-at-own-sites                    controllers.correctReturn.OperatePackagingSiteOwnBrandsController.onPageLoad(mode: Mode = NormalMode)
 POST       /own-brands-packaged-at-own-sites                    controllers.correctReturn.OperatePackagingSiteOwnBrandsController.onSubmit(mode: Mode = NormalMode)

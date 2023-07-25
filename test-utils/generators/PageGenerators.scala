@@ -86,6 +86,9 @@ trait PageGenerators {
   implicit lazy val arbitraryCorrectReturnOperatePackagingSiteOwnBrandsPage: Arbitrary[correctReturn.OperatePackagingSiteOwnBrandsPage.type] =
     Arbitrary(correctReturn.OperatePackagingSiteOwnBrandsPage)
 
+  implicit lazy val arbitraryCorrectReturnClaimCreditsForLostDamagedPage: Arbitrary[correctReturn.ClaimCreditsForLostDamagedPage.type] =
+    Arbitrary(correctReturn.ClaimCreditsForLostDamagedPage)
+
   implicit lazy val arbitraryCancelRegistrationReasonPage: Arbitrary[ReasonPage.type] =
     Arbitrary(ReasonPage)
 
