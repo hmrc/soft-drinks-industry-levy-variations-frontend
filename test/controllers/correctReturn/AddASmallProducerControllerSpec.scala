@@ -17,9 +17,8 @@
 package controllers.correctReturn
 
 import base.SpecBase
-import errors.SessionDatabaseInsertError
 import forms.correctReturn.AddASmallProducerFormProvider
-import models.NormalMode
+import models.{NormalMode, SmallProducer}
 import models.SelectChange.CorrectReturn
 import models.correctReturn.AddASmallProducer
 import navigation._
@@ -28,12 +27,12 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.correctReturn.AddASmallProducerPage
+import play.api.data.FormError
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
-import utilities.GenericLogger
 import views.html.correctReturn.AddASmallProducerView
 
 import scala.concurrent.Future
@@ -124,6 +123,36 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
+
+        val view = application.injector.instanceOf[AddASmallProducerView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+      }
+    }
+
+    "must return a Bad Request and errors when data matching an already added small producer is submitted" in {
+      val smallProducerSDILRef = "XCSDIL000456789"
+      val smallProducerList: List[SmallProducer] = List(SmallProducer("MY SMALL PRODUCER", smallProducerSDILRef, (1L, 2L)))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducerList))).build()
+
+      running(application) {
+        val request = FakeRequest(POST, addASmallProducerRoute)
+          .withFormUrlEncodedBody(
+            ("producerName", "PRODUCER"),
+            ("referenceNumber", smallProducerSDILRef),
+            ("lowBand", "10"),
+            ("highBand", "20")
+          )
+
+        val boundForm = form.bind(Map(
+          "producerName" -> "PRODUCER",
+          "referenceNumber" -> smallProducerSDILRef,
+          "lowBand" -> "10",
+          "highBand" -> "20"
+        )).withError(FormError("referenceNumber", "correctReturn.addASmallProducer.error.referenceNumber.exists"))
 
         val view = application.injector.instanceOf[AddASmallProducerView]
 

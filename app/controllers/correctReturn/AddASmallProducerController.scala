@@ -20,12 +20,12 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.correctReturn.AddASmallProducerFormProvider
 import handlers.ErrorHandler
-import models.{Mode, UserAnswers}
+import models.{Mode, SmallProducer, UserAnswers}
 import models.SelectChange.CorrectReturn
 import models.correctReturn.AddASmallProducer
 import navigation._
 import pages.correctReturn.AddASmallProducerPage
-import play.api.data.Form
+import play.api.data.{Form, FormError}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
@@ -67,12 +67,21 @@ class AddASmallProducerController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
-
         value => {
-          val userAnswersSetPage: Try[UserAnswers] = request.userAnswers.set(AddASmallProducerPage, value)
-          val updatedAnswers: Try[UserAnswers] = userAnswersSetPage
-            .map(userAnswers => userAnswers.copy(smallProducerList = AddASmallProducer.toSmallProducer(value) :: userAnswers.smallProducerList))
-          updateDatabaseAndRedirect(updatedAnswers, AddASmallProducerPage, mode)
+          val smallProducerList: List[SmallProducer] = request.userAnswers.smallProducerList
+          val smallProducerOpt: Option[SmallProducer] = smallProducerList.find(smallProducer => smallProducer.sdilRef == value.referenceNumber)
+          smallProducerOpt match {
+            case Some(_) =>
+              val preparedForm = form.fill(value)
+              Future.successful(
+                BadRequest(view(preparedForm.withError(FormError("referenceNumber", "correctReturn.addASmallProducer.error.referenceNumber.exists")), mode))
+              )
+            case _ =>
+              val userAnswersSetPage: Try[UserAnswers] = request.userAnswers.set(AddASmallProducerPage, value)
+              val updatedAnswers: Try[UserAnswers] = userAnswersSetPage
+                .map(userAnswers => userAnswers.copy(smallProducerList = AddASmallProducer.toSmallProducer(value) :: userAnswers.smallProducerList))
+              updateDatabaseAndRedirect(updatedAnswers, AddASmallProducerPage, mode)
+          }
         }
       )
   }
