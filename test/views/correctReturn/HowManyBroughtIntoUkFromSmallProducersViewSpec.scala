@@ -19,12 +19,11 @@ package views.correctReturn
 import config.FrontendAppConfig
 import controllers.correctReturn.routes
 import models.{CheckMode, NormalMode}
-import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import views.html.correctReturn.HowManyBroughtIntoUkFromSmallProducersView
 import views.LitresSpecHelper
+import views.html.correctReturn.HowManyBroughtIntoUkFromSmallProducersView
 class HowManyBroughtIntoUkFromSmallProducersViewSpec extends LitresSpecHelper {
 
   val howManyBroughtIntoUkFromSmallProducersView: HowManyBroughtIntoUkFromSmallProducersView = application.injector.instanceOf[HowManyBroughtIntoUkFromSmallProducersView]

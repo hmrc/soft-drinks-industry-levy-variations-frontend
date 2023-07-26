@@ -23,9 +23,6 @@ import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.TryValues
 import pages._
 import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
-import pages.changeActivity.{AmountProducedPage, OperatePackagingSiteOwnBrandsPage}
-
-
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.libs.json.{JsValue, Json}
 
