@@ -9,6 +9,8 @@ trait ITCoreTestDataForCorrectReturn extends ITSharedCoreTestData  {
   val userAnswersForCorrectReturnSmallProducerDetailsPage: Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForCorrectReturn.set(SmallProducerDetailsPage, true).success.value
     val noSelected = emptyUserAnswersForCorrectReturn.set(SmallProducerDetailsPage, false).success.value
+    Map("yes" -> yesSelected, "no" -> noSelected)
+  }
 
   val userAnswersForCorrectReturnRemoveSmallProducerConfirmPage: Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForCorrectReturn.set(RemoveSmallProducerConfirmPage, true).success.value
