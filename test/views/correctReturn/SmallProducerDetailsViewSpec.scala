@@ -36,12 +36,14 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
     val legend = "govuk-fieldset__legend  govuk-fieldset__legend--m"
     val radios = "govuk-radios__item"
     val radioInput = "govuk-radios__input"
-    val radioLables = "govuk-label govuk-radios__label"
+    val radioLabels = "govuk-label govuk-radios__label"
     val body = "govuk-body"
     val errorSummaryTitle = "govuk-error-summary__title"
     val errorSummaryList = "govuk-list govuk-error-summary__list"
     val button = "govuk-button"
     val form = "form"
+    val summaryListItems = "govuk-summary-list__actions-list-item"
+    val hidden = "govuk-visually-hidden"
   }
 
   override val smallProducerList: List[SmallProducer] = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", (20, 10)))
@@ -77,7 +79,7 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -91,7 +93,7 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -112,7 +114,7 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -126,7 +128,7 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -147,7 +149,7 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -161,7 +163,7 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -240,7 +242,7 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
     validateAccessibilityStatementLinkPresent(document)
   }
 
-  "View should contain the correct heading based on a boolean value" - {
+  "View should contain the correct heading and summary row details" - {
     val html1 = view(form.fill(true), NormalMode, smallProducerList = List.empty)(request, messages(application))
     val document1 = doc(html1)
     val heading1 = document1.getElementsByClass("govuk-heading-m").get(0).text()
@@ -261,6 +263,24 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
 
     "when the list has multiple small producers the heading should be pluralised" in {
       heading3 mustBe "You added 2 small producers"
+    }
+
+    "when there is 1 small producer the summary list should display the correct small producer information" in {
+      val listItems = document2.getElementsByClass(Selectors.summaryListItems)
+
+      listItems.size mustBe 2
+      listItems.get(0).text() mustBe "Edit Super Cola Plc reference number XCSDIL000000069"
+      listItems.get(1).text() mustBe "Remove Super Cola Plc reference number XCSDIL000000069"
+    }
+
+    "when there are 2 small producers the summary list should display the correct small producer information" in {
+      val listItems = document3.getElementsByClass(Selectors.summaryListItems)
+
+      listItems.size mustBe 4
+      listItems.get(0).text() mustBe "Edit Super Cola Plc reference number XCSDIL000000069"
+      listItems.get(1).text() mustBe "Remove Super Cola Plc reference number XCSDIL000000069"
+      listItems.get(2).text() mustBe "Edit Soft Juice reference number XMSDIL000000113"
+      listItems.get(3).text() mustBe "Remove Soft Juice reference number XMSDIL000000113"
     }
   }
 
