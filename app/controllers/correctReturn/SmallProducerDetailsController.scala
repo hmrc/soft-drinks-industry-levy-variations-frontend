@@ -52,32 +52,26 @@ class SmallProducerDetailsController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
     implicit request =>
       val smallProducerList:List[SmallProducer] = request.userAnswers.smallProducerList
-      val plural = usePlural(smallProducerList)
       val preparedForm = request.userAnswers.get(SmallProducerDetailsPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode, smallProducerList, plural))
+      Ok(view(preparedForm, mode, smallProducerList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
     implicit request =>
       val smallProducerList:List[SmallProducer] = request.userAnswers.smallProducerList
-      val plural = usePlural(smallProducerList)
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, smallProducerList, plural))),
+          Future.successful(BadRequest(view(formWithErrors, mode, smallProducerList))),
 
         value => {
           val updatedAnswers = request.userAnswers.set(SmallProducerDetailsPage, value)
           updateDatabaseAndRedirect(updatedAnswers, SmallProducerDetailsPage, mode)
         }
       )
-  }
-
-  private def usePlural(smallProducerList: List[SmallProducer]): Boolean = {
-   if (smallProducerList.size == 1) false else true
   }
 
 }

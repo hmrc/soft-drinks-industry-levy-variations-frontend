@@ -47,8 +47,6 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar {
 
   override val smallProducerList: List[SmallProducer] = List.empty
 
-  val plural = true
-
   lazy val smallProducerDetailsRoute: String = routes.SmallProducerDetailsController.onPageLoad(NormalMode).url
 
   "SmallProducerDetails Controller" - {
@@ -65,7 +63,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[SmallProducerDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, smallProducerList, plural)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, smallProducerList)(request, messages(application)).toString
       }
     }
 
@@ -83,7 +81,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, smallProducerList, plural)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, smallProducerList)(request, messages(application)).toString
       }
     }
 
@@ -129,7 +127,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, smallProducerList, plural)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, smallProducerList)(request, messages(application)).toString
       }
     }
 
