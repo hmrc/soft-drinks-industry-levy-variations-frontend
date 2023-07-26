@@ -2,10 +2,16 @@ package testSupport
 
 import models.{SelectChange, UserAnswers}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
-import pages.correctReturn.{PackagedAsContractPackerPage, OperatePackagingSiteOwnBrandsPage}
+import pages.correctReturn.{OperatePackagingSiteOwnBrandsPage, PackagedAsContractPackerPage, SmallProducerDetailsPage}
 import play.api.libs.json.Json
 
 trait ITCoreTestDataForCorrectReturn extends ITSharedCoreTestData  {
+
+  val userAnswersForCorrectReturnSmallProducerDetailsPage: Map[String, UserAnswers] = {
+    val yesSelected = emptyUserAnswersForCorrectReturn.set(SmallProducerDetailsPage, true).success.value
+    val noSelected = emptyUserAnswersForCorrectReturn.set(SmallProducerDetailsPage, false).success.value
+    Map("yes" -> yesSelected, "no" -> noSelected)
+    }
 
   val userAnswersForCorrectReturnPackagedAsContractPackerPage: Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForCorrectReturn.set(PackagedAsContractPackerPage, true).success.value

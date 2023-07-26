@@ -35,3 +35,7 @@ GET        /how-many-packaged-as-contract-packer                controllers.corr
 POST       /how-many-packaged-as-contract-packer                controllers.correctReturn.HowManyPackagedAsContractPackerController.onSubmit(mode: Mode = NormalMode)
 GET        /change-how-many-packaged-as-contract-packer         controllers.correctReturn.HowManyPackagedAsContractPackerController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-how-many-packaged-as-contract-packer         controllers.correctReturn.HowManyPackagedAsContractPackerController.onSubmit(mode: Mode = CheckMode)
+GET        /small-producer-details                        controllers.correctReturn.SmallProducerDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /small-producer-details                        controllers.correctReturn.SmallProducerDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-small-producer-details                  controllers.correctReturn.SmallProducerDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-small-producer-details                  controllers.correctReturn.SmallProducerDetailsController.onSubmit(mode: Mode = CheckMode)
