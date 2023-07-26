@@ -67,6 +67,16 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     }
   }
 
+  private def navigationForCreditsForLostDamaged(userAnswers: UserAnswers, mode: Mode): Call = {
+    if (userAnswers.get(page = ClaimCreditsForLostDamagedPage).contains(true)) {
+      routes.HowManyCreditsForLostDamagedController.onPageLoad(mode)
+    } else if (mode == CheckMode) {
+      routes.CorrectReturnCYAController.onPageLoad
+    } else {
+      controllers.routes.IndexController.onPageLoad
+    }
+  }
+
   override val normalRoutes: Page => UserAnswers => Call = {
     case BroughtIntoUkFromSmallProducersPage => userAnswers => navigationForBroughtIntoUkFromSmallProducers(userAnswers, NormalMode)
     case HowManyBroughtIntoUkFromSmallProducersPage => _ => defaultCall
@@ -77,6 +87,8 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case CorrectionReasonPage => _ => defaultCall
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => defaultCall
+    case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamaged(userAnswers, NormalMode)
+    case HowManyCreditsForLostDamagedPage => userAnswers => defaultCall
     case RepaymentMethodPage => userAnswers => defaultCall
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, NormalMode)
     case HowManyPackagedAsContractPackerPage => _ => defaultCall
@@ -90,6 +102,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case ExemptionsForSmallProducersPage => _ =>  routes.CorrectReturnCYAController.onPageLoad
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, CheckMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
+    case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamaged(userAnswers, CheckMode)
     case _ => _ => routes.CorrectReturnCYAController.onPageLoad
   }
 }
