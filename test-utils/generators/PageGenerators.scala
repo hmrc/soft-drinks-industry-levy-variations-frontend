@@ -29,6 +29,9 @@ trait PageGenerators {
   implicit lazy val arbitraryCorrectReturnBroughtIntoUkFromSmallProducersPage: Arbitrary[correctReturn.BroughtIntoUkFromSmallProducersPage.type] =
     Arbitrary(correctReturn.BroughtIntoUkFromSmallProducersPage)
 
+  implicit lazy val arbitraryCorrectReturnClaimCreditsForExportsPage: Arbitrary[correctReturn.ClaimCreditsForExportsPage.type] =
+    Arbitrary(correctReturn.ClaimCreditsForExportsPage)
+
   implicit lazy val arbitraryCorrectReturnBroughtIntoUKPage: Arbitrary[correctReturn.BroughtIntoUKPage.type] =
     Arbitrary(correctReturn.BroughtIntoUKPage)
 
