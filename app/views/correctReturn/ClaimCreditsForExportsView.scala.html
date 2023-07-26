@@ -35,7 +35,7 @@
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
-            }
+        }
 
         <h1 class="govuk-heading-m">@messages("correctReturn.claimCreditsForExports.heading2")</h1>
 
@@ -53,8 +53,6 @@
             )
 
         @exportedWhatCanIClaimCreditFor(form)(messages)
-        @govukButton(
-            ButtonViewModel(messages("site.saveContinue"))
-            )
+        @govukButton(ButtonViewModel(messages("site.saveContinue")))
     }
 }

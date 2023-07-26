@@ -56,7 +56,7 @@ class ClaimCreditsForExportsViewSpec extends ViewSpecHelper {
       hint.className() mustBe "govuk-hint"
       hint.text() mustBe "You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them."
     }
-    "should include a legend with the expected heading (the oldest year within the returns)" in {
+    "should include a legend with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
       legend.text() mustBe "Do you want to claim a credit for liable drinks that have been exported?"
