@@ -44,7 +44,7 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
     val form = "form"
   }
 
-  val smallProducerList: List[SmallProducer] = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", (20, 10)))
+  override val smallProducerList: List[SmallProducer] = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", (20, 10)))
   lazy val smallProducerListWithTwoProducers: List[SmallProducer] = List(
     SmallProducer("Super Cola Plc", "XCSDIL000000069", (20, 10)),
     SmallProducer("Soft Juice", "XMSDIL000000113", (25, 80))
