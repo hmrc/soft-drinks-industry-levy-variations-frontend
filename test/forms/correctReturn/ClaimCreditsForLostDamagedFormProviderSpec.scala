@@ -24,7 +24,7 @@ class ClaimCreditsForLostDamagedFormProviderSpec extends BooleanFieldBehaviours 
   val requiredKey = "correctReturn.claimCreditsForLostDamaged.error.required"
   val invalidKey = "error.boolean"
 
-  val form = new OperatePackagingSiteOwnBrandsFormProvider()()
+  val form = new ClaimCreditsForLostDamagedFormProvider()()
 
   ".value" - {
 

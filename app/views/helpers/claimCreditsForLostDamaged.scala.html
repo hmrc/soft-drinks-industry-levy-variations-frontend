@@ -19,21 +19,21 @@
 @(form: Form[_])(implicit messages: Messages)
 
 @htmlContent = {
- <p class ="govuk-body">@messages("claimCreditsForLostDamaged.detailsContent1")</p>
+ <p class ="govuk-body">@messages("correctReturn.claimCreditsForLostDamaged.detailsContent1")</p>
  <ul class="govuk-list govuk-list--bullet">
-  <li>@messages("claimCreditsForLostDamaged.detailsContent2")</li>
-  <li>@messages("claimCreditsForLostDamaged.detailsContent3")</li>
-  <li>@messages("claimCreditsForLostDamaged.detailsContent4")</li>
-  <li>@messages("claimCreditsForLostDamaged.detailsContent5")</li>
-  <li>@messages("claimCreditsForLostDamaged.detailsContent6")</li>
-  <li>@messages("claimCreditsForLostDamaged.detailsContent7")</li>
+  <li>@messages("correctReturn.claimCreditsForLostDamaged.detailsContent2")</li>
+  <li>@messages("correctReturn.claimCreditsForLostDamaged.detailsContent3")</li>
+  <li>@messages("correctReturn.claimCreditsForLostDamaged.detailsContent4")</li>
+  <li>@messages("correctReturn.claimCreditsForLostDamaged.detailsContent5")</li>
+  <li>@messages("correctReturn.claimCreditsForLostDamaged.detailsContent6")</li>
+  <li>@messages("correctReturn.claimCreditsForLostDamaged.detailsContent7")</li>
  </ul>
- <p class ="govuk-body">@messages("claimCreditsForLostDamaged.detailsContent8")</p>
+ <p class ="govuk-body">@messages("correctReturn.claimCreditsForLostDamaged.detailsContent8")</p>
 }
 
 @govukDetails(
  Details(
-  summary = Text(messages("whatCanIClaimCreditForDetailsLink")),
+  summary = Text(messages("correctReturn.claimCreditsForLostDamaged.whatCanIClaimCreditForDetailsLink")),
   content = HtmlContent(htmlContent)
  )
 )

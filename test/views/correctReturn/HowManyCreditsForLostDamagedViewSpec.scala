@@ -60,7 +60,7 @@ class HowManyCreditsForLostDamagedViewSpec extends LitresSpecHelper {
         }
 
         "should include a govuk body with the expected content" in {
-          document.getElementsByClass(Selectors.body).text() mustBe Messages("correctReturn.howManyCreditsForLostDamaged.hint")
+          document.getElementsByClass(Selectors.body).first().text() mustBe Messages("correctReturn.howManyCreditsForLostDamaged.hint")
         }
 
         testLitresInBandsNoPrepopulatedData(document)

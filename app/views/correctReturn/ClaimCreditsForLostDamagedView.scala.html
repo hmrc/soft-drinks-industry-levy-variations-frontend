@@ -33,11 +33,11 @@
 
 @layout(pageTitle = title(form, messages("correctReturn.claimCreditsForLostDamaged.title"))) {
 
-    <h1 class="govuk-heading-m">@messages("correctReturn.claimCreditsForLostDamaged.heading1")</h1>
+    <h1 class="govuk-heading-m">@messages("correctReturn.claimCreditsForLostDamaged.warningHeading")</h1>
 
     @govukWarningText(WarningText(
-    iconFallbackText = Some("Warning"),
-    content = Text(messages("correctReturn.claimCreditsForLostDamaged.warning"))
+        iconFallbackText = Some("Warning"),
+        content = Text(messages("correctReturn.claimCreditsForLostDamaged.warningHint"))
     ))
 
     @formHelper(action = routes.ClaimCreditsForLostDamagedController.onSubmit(mode), Symbol("autoComplete") -> "off") {
@@ -46,12 +46,11 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("correctReturn.claimCreditsForLostDamaged.title")</h1>
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("correctReturn.claimCreditsForLostDamaged.subHeading")),
-                hint = None
+                legend = LegendViewModel(messages("correctReturn.claimCreditsForLostDamaged.heading")).asPageHeading(),
+                hint = Some(Hint(content = Text(messages("correctReturn.claimCreditsForLostDamaged.hint"))))
             )
         )
         @claimCreditsForLostDamaged(form)(messages)

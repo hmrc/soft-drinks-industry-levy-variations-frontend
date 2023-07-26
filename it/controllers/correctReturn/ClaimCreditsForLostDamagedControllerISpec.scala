@@ -12,9 +12,8 @@ import play.api.test.WsTestClient
 
 class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
 
-//  TODO: Correct routes
-  val normalRoutePath = "/own-brands-packaged-at-own-sites"
-  val checkRoutePath = "/change-own-brands-packaged-at-own-sites"
+  val normalRoutePath = "/claim-credits-for-lost-damaged"
+  val checkRoutePath = "/change-claim-credits-for-lost-damaged"
 
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
@@ -30,7 +29,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title mustBe "Are you reporting your own brands of liable drinks packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
+            page.title mustBe "Do you want to claim a credit for liable drinks which have been lost or destroyed? - Soft Drinks Industry Levy - GOV.UK"
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -56,7 +55,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title mustBe "Are you reporting your own brands of liable drinks packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
+              page.title mustBe "Do you want to claim a credit for liable drinks which have been lost or destroyed? - Soft Drinks Industry Levy - GOV.UK"
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -87,7 +86,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title mustBe "Are you reporting your own brands of liable drinks packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
+            page.title mustBe "Do you want to claim a credit for liable drinks which have been lost or destroyed? - Soft Drinks Industry Levy - GOV.UK"
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -113,7 +112,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title mustBe "Are you reporting your own brands of liable drinks packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
+              page.title mustBe "Do you want to claim a credit for liable drinks which have been lost or destroyed? - Soft Drinks Industry Levy - GOV.UK"
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -205,13 +204,13 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
             page.title mustBe
-              "Error: Are you reporting your own brands of liable drinks packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
+              "Error: Do you want to claim a credit for liable drinks which have been lost or destroyed? - Soft Drinks Industry Levy - GOV.UK"
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe "Select yes if you are reporting your own brands of liable drinks packaged at UK sites you operate"
+            errorSummary.text() mustBe "Select yes if you want to claim a credit for any liable drinks that has been lost or destroyed"
           }
         }
       }
@@ -295,13 +294,13 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
             page.title mustBe
-              "Error: Are you reporting your own brands of liable drinks packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
+              "Error: Do you want to claim a credit for liable drinks which have been lost or destroyed? - Soft Drinks Industry Levy - GOV.UK"
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe "Select yes if you are reporting your own brands of liable drinks packaged at UK sites you operate"
+            errorSummary.text() mustBe "Select yes if you want to claim a credit for any liable drinks that has been lost or destroyed"
           }
         }
       }

@@ -12,9 +12,8 @@ import play.api.test.WsTestClient
 
 class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
 
-//  TODO: Correct routes
-  val normalRoutePath = "/how-many-own-brands-packaged-at-own-sites"
-  val checkRoutePath = "/change-how-many-own-brands-packaged-at-own-sites"
+  val normalRoutePath = "/how-many-credits-for-lost-damaged"
+  val checkRoutePath = "/change-how-many-credits-for-lost-damaged"
 
   val userAnswers: UserAnswers = emptyUserAnswersForCorrectReturn.set(HowManyCreditsForLostDamagedPage, litresInBands).success.value
 
@@ -39,7 +38,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title mustBe "How many litres of liable drinks have you packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
+              page.title mustBe "How many credits do you want to claim for liable drinks which have been lost or destroyed? - Soft Drinks Industry Levy - GOV.UK"
               testLitresInBandsNoPrepopulatedData(page)
             }
           }
@@ -59,7 +58,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title mustBe "How many litres of liable drinks have you packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
+              page.title mustBe "How many credits do you want to claim for liable drinks which have been lost or destroyed? - Soft Drinks Industry Levy - GOV.UK"
               testLitresInBandsWithPrepopulatedData(page)
             }
           }
@@ -116,7 +115,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
       }
 
       "should return 400 with required error" - {
-        val errorTitle = "Error: How many litres of liable drinks have you packaged at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
+        val errorTitle = "Error: How many credits do you want to claim for liable drinks which have been lost or destroyed? - Soft Drinks Industry Levy - GOV.UK"
 
         "when no questions are answered" in {
           given
