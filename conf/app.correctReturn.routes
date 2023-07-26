@@ -47,6 +47,11 @@ POST       /how-many-packaged-as-contract-packer                controllers.corr
 GET        /change-how-many-packaged-as-contract-packer         controllers.correctReturn.HowManyPackagedAsContractPackerController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-how-many-packaged-as-contract-packer         controllers.correctReturn.HowManyPackagedAsContractPackerController.onSubmit(mode: Mode = CheckMode)
 
+GET        /small-producer-details                        controllers.correctReturn.SmallProducerDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /small-producer-details                        controllers.correctReturn.SmallProducerDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-small-producer-details                  controllers.correctReturn.SmallProducerDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-small-producer-details                  controllers.correctReturn.SmallProducerDetailsController.onSubmit(mode: Mode = CheckMode)
+
 GET        /brought-into-uk                        controllers.correctReturn.BroughtIntoUKController.onPageLoad(mode: Mode = NormalMode)
 POST       /brought-into-uk                        controllers.correctReturn.BroughtIntoUKController.onSubmit(mode: Mode = NormalMode)
 GET        /change-brought-into-uk                  controllers.correctReturn.BroughtIntoUKController.onPageLoad(mode: Mode = CheckMode)
@@ -72,3 +77,4 @@ POST       /change-how-many-into-uk-small-producers                  controllers
 
 GET        /remove-small-producer-confirm/:sdil                  controllers.correctReturn.RemoveSmallProducerConfirmController.onPageLoad(mode: Mode = NormalMode, sdil: String)
 POST       /remove-small-producer-confirm/:sdil                  controllers.correctReturn.RemoveSmallProducerConfirmController.onSubmit(mode: Mode = NormalMode, sdil: String)
+

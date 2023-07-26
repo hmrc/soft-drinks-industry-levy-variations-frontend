@@ -2,6 +2,7 @@ service.name = Soft Drinks Industry Levy
 
 site.back = Back
 site.remove = Remove
+site.edit = Edit
 site.change = Change
 site.no = No
 site.yes = Yes
@@ -378,6 +379,16 @@ correctReturn.packagedAsContractPacker.highband.litres.hidden = number of litres
 correctReturn.howManyPackagedAsContractPacker.title = How many litres of liable drinks have you packaged as a third party or contract packer at UK sites you operate?
 correctReturn.howManyPackagedAsContractPacker.heading = How many litres of liable drinks have you packaged as a third party or contract packer at UK sites you operate?
 correctReturn.howManyPackagedAsContractPacker.subtext = Do not include liable drinks you have packaged for registered small producers.
+
+
+correctReturn.smallProducerDetails.title = Do you want to add another small producer?
+correctReturn.smallProducerDetails.heading = You added {0} small producers
+correctReturn.smallProducerDetails.headingSingle = You added 1 small producer
+correctReturn.smallProducerDetails.checkYourAnswersLabel = Small producer details
+correctReturn.smallProducerDetails.error.required = Select yes if you want to add another small producer
+correctReturn.smallProducerDetails.change.hidden = Do you want to add another small producer?
+correctReturn.smallProducerDetails.edit.hidden = {0} reference number {1}
+correctReturn.smallProducerDetails.remove.hidden = {0} reference number {1}
 
 correctReturn.broughtIntoUK.title = Are you reporting liable drinks you have brought into the UK from anywhere outside of the UK?
 correctReturn.broughtIntoUK.heading = Are you reporting liable drinks you have brought into the UK from anywhere outside of the UK?
