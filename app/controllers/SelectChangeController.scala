@@ -19,7 +19,9 @@ package controllers
 import controllers.actions._
 import forms.SelectChangeFormProvider
 import handlers.ErrorHandler
-import models.{Mode, UserAnswers}
+import models.backend.Site
+import models.requests.OptionalDataRequest
+import models.{Mode, NormalMode, SelectChange, UserAnswers, Warehouse}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
@@ -57,14 +59,27 @@ class SelectChangeController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value => {
-          val updatedAnswers = request
-            .userAnswers
-            .fold(UserAnswers(id = request.sdilEnrolment, journeyType = value))(_.copy(journeyType = value))
-          sessionService.set(updatedAnswers).map {
-            case Right(_) => Redirect(routes.IndexController.onPageLoad)
+          val defaultUserAnswers = generateDefaultUserAnswers(value)
+          sessionService.set(defaultUserAnswers).map {
+            case Right(_) if value == SelectChange.ChangeActivity =>
+              Redirect(changeActivity.routes.AmountProducedController.onPageLoad(NormalMode))
+            case Right(_) =>
+              Redirect(routes.IndexController.onPageLoad)
             case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
           }
         }
       )
+  }
+
+  private def generateDefaultUserAnswers(value: SelectChange)(implicit request: OptionalDataRequest[AnyContent]): UserAnswers = {
+    val subscription = request.subscription
+    val currentPackagingSites = subscription.productionSites.zipWithIndex
+      .map{case(site, index) => (index.toString, site)}
+      .toMap[String, Site]
+    val currentWarehouses = subscription.warehouseSites.zipWithIndex
+      .map {
+        case (site, index) => (index.toString, Warehouse.fromSite(site))
+      }.toMap[String, Warehouse]
+    UserAnswers(id = request.sdilEnrolment, journeyType = value,contactAddress = request.subscription.address, packagingSiteList = currentPackagingSites, warehouseList = currentWarehouses)
   }
 }

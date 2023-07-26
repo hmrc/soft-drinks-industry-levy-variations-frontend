@@ -21,20 +21,21 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.ImportsFormProvider
 import handlers.ErrorHandler
+import models.SelectChange.ChangeActivity
+import models.changeActivity.AmountProduced
 import models.{Mode, UserAnswers}
 import navigation._
 import pages.changeActivity.{AmountProducedPage, ContractPackingPage, HowManyImportsPage, ImportsPage}
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import services.SessionService
+import uk.gov.hmrc.http.HeaderCarrier
 import utilities.GenericLogger
 import views.html.changeActivity.ImportsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import models.SelectChange.ChangeActivity
-import models.changeActivity.AmountProduced
-import views.summary.cancelRegistration.FileReturnBeforeDeregSummary
+import scala.util.Try
 
 class ImportsController @Inject()(
                                          override val messagesApi: MessagesApi,
@@ -66,41 +67,39 @@ class ImportsController @Inject()(
     implicit request =>
 
       val userAnswers = request.userAnswers
-
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value => {
           val updatedAnswers = userAnswers.setAndRemoveLitresIfReq(ImportsPage, HowManyImportsPage, value)
-          val contractPacker = userAnswers.get(ContractPackingPage).contains(true)
-          val hasProductionSites = request.subscription.productionSites.nonEmpty
-          val noneProduced = userAnswers.get(AmountProducedPage).contains(AmountProduced.None)
-
-          (noneProduced, contractPacker, hasProductionSites, value) match {
-
-
-            case(true, false, _, false) =>
-              updateDatabaseWithoutRedirect(updatedAnswers, ImportsPage).flatMap {
-                case true =>
-                  connector.returns_pending(request.subscription.utr).map {
-                    case Some(returns) if returns.nonEmpty =>
-                      Redirect(controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad())
-                    case _ =>
-                      Redirect(routes.SuggestDeregistrationController.onPageLoad())
-                  }
-                case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
-              }
-
-            case (true, true, false, false) =>
-              updateDatabaseWithoutRedirect(updatedAnswers, ImportsPage).flatMap {
-                case true => Future.successful(Redirect(routes.PackAtBusinessAddressController.onPageLoad(mode)))
-                case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
-              }
-
-            case _ => updateDatabaseAndRedirect(updatedAnswers, ImportsPage, mode)
+          if(value || ifStillLiableForLevy(userAnswers)) {
+            updateDatabaseAndRedirect(updatedAnswers, ImportsPage, mode)
+          } else {
+            handleUserWhoIsNoLongerLiableForLevy(updatedAnswers, request.subscription.utr)
           }
         }
       )
   }
+
+  def ifStillLiableForLevy(userAnswers: UserAnswers): Boolean = {
+    val hasAmountProducedNone = userAnswers.get(AmountProducedPage).contains(AmountProduced.None)
+    val isContractPacker = userAnswers.get(ContractPackingPage).getOrElse(false)
+    !hasAmountProducedNone || isContractPacker
+  }
+
+  def handleUserWhoIsNoLongerLiableForLevy(updatedAnswers: Try[UserAnswers], utr: String)
+                                          (implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[AnyContent]) = {
+    updateDatabaseWithoutRedirect(updatedAnswers, ImportsPage).flatMap {
+      case true =>
+        connector.returns_pending(utr).map {
+          case Some(returns) if returns.nonEmpty =>
+            Redirect(controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad())
+          case _ =>
+            Redirect(routes.SuggestDeregistrationController.onPageLoad())
+        }
+      case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+    }
+  }
+
 }

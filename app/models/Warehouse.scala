@@ -16,7 +16,7 @@
 
 package models
 
-import models.backend.UkAddress
+import models.backend.{Site, UkAddress}
 import play.api.libs.json.{Format, Json}
 
 case class Warehouse(tradingName: Option[String],
@@ -24,4 +24,8 @@ case class Warehouse(tradingName: Option[String],
 
 object Warehouse {
   implicit val format: Format[Warehouse] = Json.format[Warehouse]
+
+  def fromSite(site: Site): Warehouse = {
+    Warehouse(site.tradingName, site.address)
+  }
 }

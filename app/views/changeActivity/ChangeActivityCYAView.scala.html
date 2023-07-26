@@ -23,14 +23,13 @@
 
 @(
     alias: String,
-    returnPeriod: String,
     seqSummaryList: Seq[(String, SummaryList)],
     submitCall: Call
 )(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("changeActivity.checkYourAnswers.title"))) {
 
-    <span class="govuk-caption-l" id="pre-header-caption"> @alias - @returnPeriod </span>
+    <span class="govuk-caption-l" id="pre-header-caption">@alias</span>
     <h1 class="govuk-heading-m">@messages("changeActivity.checkYourAnswers.heading")</h1>
 
     @for((heading, summaryList) <- seqSummaryList) {

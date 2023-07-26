@@ -2,7 +2,7 @@ package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.CorrectReturn
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import pages.correctReturn.OperatePackagingSiteOwnBrandsPage
@@ -238,9 +238,9 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
               whenReady(result) { res =>
                 res.status mustBe 303
                 val expectedLocation = if(yesSelected) {
-                  controllers.routes.IndexController.onPageLoad.url
+                  routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
                 } else {
-                  controllers.routes.IndexController.onPageLoad.url
+                  routes.CorrectReturnCYAController.onPageLoad.url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(OperatePackagingSiteOwnBrandsPage))
@@ -264,9 +264,9 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
               whenReady(result) { res =>
                 res.status mustBe 303
                 val expectedLocation = if (yesSelected) {
-                  controllers.routes.IndexController.onPageLoad.url
+                  routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
                 } else {
-                  controllers.routes.IndexController.onPageLoad.url
+                  routes.CorrectReturnCYAController.onPageLoad.url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(OperatePackagingSiteOwnBrandsPage))

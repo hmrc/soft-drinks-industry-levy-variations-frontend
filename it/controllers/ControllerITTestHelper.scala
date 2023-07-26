@@ -37,7 +37,7 @@ trait ControllerITTestHelper extends Specifications with TestConfiguration with 
       .post(body)
   }
 
-  def emptyUserAnswersForSelectChange(selectChange: SelectChange) = UserAnswers(sdilNumber, selectChange)
+  def emptyUserAnswersForSelectChange(selectChange: SelectChange) = UserAnswers(sdilNumber, selectChange, contactAddress = ukAddress)
 
 
   def testUnauthorisedUser(url: String, optJson: Option[JsValue] = None): Unit = {

@@ -255,7 +255,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
           .alf.getSuccessResponseFromALFInit(alfOnRampURL)
-        setAnswers(UserAnswers(sdilNumber, ChangeActivity, Json.obj("imports" -> true), List.empty))
+        setAnswers(UserAnswers(sdilNumber, ChangeActivity, Json.obj("imports" -> true), List.empty, contactAddress = ukAddress))
 
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
@@ -422,7 +422,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
       given
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
-      setAnswers(UserAnswers(sdilNumber, ChangeActivity, Json.obj("imports" -> true), List.empty))
+      setAnswers(UserAnswers(sdilNumber, ChangeActivity, Json.obj("imports" -> true), List.empty, contactAddress = ukAddress))
 
       WsTestClient.withClient { client =>
         val result = createClientRequestPOST(

@@ -20,13 +20,16 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.PackagingSiteDetailsFormProvider
 import handlers.ErrorHandler
-import models.{CheckMode, Mode, NormalMode}
+import models.SelectChange.ChangeActivity
+import models.{CheckMode, Mode}
 import navigation._
 import pages.changeActivity.PackagingSiteDetailsPage
+import play.api.data.Form
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
 import services.{AddressLookupService, PackingDetails, SessionService}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import uk.gov.hmrc.http.HeaderCarrier
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import viewmodels.summary.changeActivity.PackagingSiteDetailsSummary
@@ -34,9 +37,6 @@ import views.html.changeActivity.PackagingSiteDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import models.SelectChange.ChangeActivity
-import play.api.data.Form
-import uk.gov.hmrc.http.HeaderCarrier
 
 class PackagingSiteDetailsController @Inject()(
                                        override val messagesApi: MessagesApi,

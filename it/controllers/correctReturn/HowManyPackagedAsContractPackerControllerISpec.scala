@@ -1,15 +1,14 @@
 package controllers.correctReturn
 
 import controllers.{LitresISpecHelper, routes}
-import models.{CheckMode, LitresInBands, NormalMode}
 import models.SelectChange.CorrectReturn
+import models.{CheckMode, LitresInBands, NormalMode}
 import org.jsoup.Jsoup
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import pages.correctReturn.HowManyPackagedAsContractPackerPage
 import play.api.http.HeaderNames
-import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 
 class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
 
@@ -22,7 +21,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
     val (path, redirectLocation) = if(mode == NormalMode) {
       (normalRoutePath, defaultCall.url)
     } else {
-      (checkRoutePath, routes.IndexController.onPageLoad.url)
+      (checkRoutePath, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
     }
 
     "GET " + path - {

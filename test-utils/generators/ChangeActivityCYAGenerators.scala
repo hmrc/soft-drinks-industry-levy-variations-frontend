@@ -16,6 +16,7 @@
 
 package generators
 
+import models.backend.UkAddress
 import models.{LitresInBands, SelectChange, UserAnswers}
 import models.changeActivity.AmountProduced
 import models.changeActivity.AmountProduced.{Large, Small, None => NoneProduced}
@@ -32,7 +33,8 @@ object ChangeActivityCYAGenerators {
   val importLitresHighBand = 6000
 
   val sdilNumber: String = "XKSDIL000000022"
-  val emptyUserAnswersForChangeActivity = UserAnswers(sdilNumber, SelectChange.ChangeActivity)
+  lazy val contactAddress = UkAddress(List("19 Rhes Priordy", "East London"), "E73 2RP")
+  val emptyUserAnswersForChangeActivity = UserAnswers(sdilNumber, SelectChange.ChangeActivity, contactAddress = contactAddress)
 
   case class ChangeActivityCYAUserAnswers(userAnswers: UserAnswers) extends TryValues {
     def withAmountProduced(amountProduced: Option[AmountProduced] = None): ChangeActivityCYAUserAnswers = {

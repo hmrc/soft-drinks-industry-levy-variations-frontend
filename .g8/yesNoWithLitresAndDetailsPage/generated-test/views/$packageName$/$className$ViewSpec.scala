@@ -48,13 +48,19 @@ class $className$ViewSpec extends ViewSpecHelper {
     val html = view(form, NormalMode)(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
-      document.title() must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
+      document.title() mustBe "$yesNoTitle$ - Soft Drinks Industry Levy - GOV.UK"
     }
 
     "should include a legend with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("$packageName$.$className;format="decap"$.heading")
+      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual "$yesNoHeading$"
+    }
+
+    "should include the expected hint text" in {
+      val hint = document.getElementById("value-hint")
+      hint.className() mustBe "govuk-hint"
+      hint.text() mustBe "$subText$"
     }
 
     "when the form is not preoccupied and has no errors" - {
@@ -162,7 +168,7 @@ class $className$ViewSpec extends ViewSpecHelper {
     }
 
     val expectedDetails = Map(
-      Messages("$className;format="decap"$.detailsLink") -> Messages ("$className;format="decap"$.detailsContent"))
+      "$detailsLinkText$" -> "$detailsContent$")
 
     testDetails(document, expectedDetails)
 
@@ -211,8 +217,7 @@ class $className$ViewSpec extends ViewSpecHelper {
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
-        val titleMessage = Messages("$packageName$.$className;format="decap"$.title")
-        documentWithErrors.title must include("Error: " + titleMessage)
+        documentWithErrors.title must include("Error: $yesNoTitle$ - Soft Drinks Industry Levy - GOV.UK")
       }
 
       "contains a message that links to field with error" in {
@@ -222,7 +227,7 @@ class $className$ViewSpec extends ViewSpecHelper {
         errorSummary
           .select("a")
           .attr("href") mustBe "#value"
-        errorSummary.text() mustBe Messages("$packageName$.$className;format="decap"$.error.required")
+        errorSummary.text() mustBe "Select yes if $yesNoHeading;format="decap"$"
       }
     }
 

@@ -10,8 +10,8 @@ import uk.gov.hmrc.test.sdil.pages.generic.BasePage
 
 object Variations_$packageName;format="cap"$_HowMany$className$Page extends BasePage {
 
-  override val url: String = TestConfiguration.url("variations-frontend", $packageName$) + "/$litresUrl$"
-  override val title = "$litresTitle$"
+  override val url: String = TestConfiguration.url("variations-frontend", "$packageName$") + "/$litresUrl$"
+  override val title = "$litresTitle$ - Soft Drinks Industry Levy - GOV.UK"
   override val header = "$litresHeading$"
 
 }

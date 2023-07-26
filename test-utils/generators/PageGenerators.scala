@@ -18,14 +18,25 @@ package generators
 
 import org.scalacheck.Arbitrary
 import pages._
-import pages.cancelRegistration.CancelRegistrationDatePage
-import pages.cancelRegistration.ReasonPage
+import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 
 trait PageGenerators {
 
   implicit lazy val arbitraryCorrectReturnSmallProducerDetailsPage: Arbitrary[correctReturn.SmallProducerDetailsPage.type] =
     Arbitrary(correctReturn.SmallProducerDetailsPage)
+
+  implicit lazy val arbitraryCorrectReturnBroughtIntoUkFromSmallProducersPage: Arbitrary[correctReturn.BroughtIntoUkFromSmallProducersPage.type] =
+    Arbitrary(correctReturn.BroughtIntoUkFromSmallProducersPage)
+
+  implicit lazy val arbitraryCorrectReturnBroughtIntoUKPage: Arbitrary[correctReturn.BroughtIntoUKPage.type] =
+    Arbitrary(correctReturn.BroughtIntoUKPage)
+
+  implicit lazy val arbitraryCorrectReturnExemptionsForSmallProducersPage: Arbitrary[correctReturn.ExemptionsForSmallProducersPage.type] =
+    Arbitrary(correctReturn.ExemptionsForSmallProducersPage)
+
+  implicit lazy val arbitraryCorrectReturnRemoveSmallProducerConfirmPage: Arbitrary[correctReturn.RemoveSmallProducerConfirmPage.type] =
+    Arbitrary(correctReturn.RemoveSmallProducerConfirmPage)
 
   implicit lazy val arbitraryCorrectReturnPackagedAsContractPackerPage: Arbitrary[correctReturn.PackagedAsContractPackerPage.type] =
     Arbitrary(correctReturn.PackagedAsContractPackerPage)

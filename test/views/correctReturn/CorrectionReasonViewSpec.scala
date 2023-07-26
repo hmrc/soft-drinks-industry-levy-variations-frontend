@@ -20,13 +20,12 @@ import controllers.correctReturn.routes
 import forms.correctReturn.CorrectionReasonFormProvider
 import models.{CheckMode, NormalMode}
 import play.api.data.Form
-import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
+import views.ViewSpecHelper
 import views.html.correctReturn.CorrectionReasonView
 
 import scala.util.Random
-import views.ViewSpecHelper
 
 class CorrectionReasonViewSpec extends ViewSpecHelper {
 

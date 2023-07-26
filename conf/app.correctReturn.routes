@@ -22,6 +22,7 @@ GET        /own-brands-packaged-at-own-sites                    controllers.corr
 POST       /own-brands-packaged-at-own-sites                    controllers.correctReturn.OperatePackagingSiteOwnBrandsController.onSubmit(mode: Mode = NormalMode)
 GET        /change-own-brands-packaged-at-own-sites             controllers.correctReturn.OperatePackagingSiteOwnBrandsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-own-brands-packaged-at-own-sites             controllers.correctReturn.OperatePackagingSiteOwnBrandsController.onSubmit(mode: Mode = CheckMode)
+
 GET        /how-many-own-brands-packaged-at-own-sites           controllers.correctReturn.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(mode: Mode = NormalMode)
 POST       /how-many-own-brands-packaged-at-own-sites           controllers.correctReturn.HowManyOperatePackagingSiteOwnBrandsController.onSubmit(mode: Mode = NormalMode)
 GET        /change-how-many-own-brands-packaged-at-own-sites    controllers.correctReturn.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(mode: Mode = CheckMode)
@@ -31,11 +32,40 @@ GET        /packaged-as-contract-packer                         controllers.corr
 POST       /packaged-as-contract-packer                         controllers.correctReturn.PackagedAsContractPackerController.onSubmit(mode: Mode = NormalMode)
 GET        /change-packaged-as-contract-packer                  controllers.correctReturn.PackagedAsContractPackerController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-packaged-as-contract-packer                  controllers.correctReturn.PackagedAsContractPackerController.onSubmit(mode: Mode = CheckMode)
+
 GET        /how-many-packaged-as-contract-packer                controllers.correctReturn.HowManyPackagedAsContractPackerController.onPageLoad(mode: Mode = NormalMode)
 POST       /how-many-packaged-as-contract-packer                controllers.correctReturn.HowManyPackagedAsContractPackerController.onSubmit(mode: Mode = NormalMode)
 GET        /change-how-many-packaged-as-contract-packer         controllers.correctReturn.HowManyPackagedAsContractPackerController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-how-many-packaged-as-contract-packer         controllers.correctReturn.HowManyPackagedAsContractPackerController.onSubmit(mode: Mode = CheckMode)
+
 GET        /small-producer-details                        controllers.correctReturn.SmallProducerDetailsController.onPageLoad(mode: Mode = NormalMode)
 POST       /small-producer-details                        controllers.correctReturn.SmallProducerDetailsController.onSubmit(mode: Mode = NormalMode)
 GET        /change-small-producer-details                  controllers.correctReturn.SmallProducerDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-small-producer-details                  controllers.correctReturn.SmallProducerDetailsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /brought-into-uk                        controllers.correctReturn.BroughtIntoUKController.onPageLoad(mode: Mode = NormalMode)
+POST       /brought-into-uk                        controllers.correctReturn.BroughtIntoUKController.onSubmit(mode: Mode = NormalMode)
+GET        /change-brought-into-uk                  controllers.correctReturn.BroughtIntoUKController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-brought-into-uk                  controllers.correctReturn.BroughtIntoUKController.onSubmit(mode: Mode = CheckMode)
+GET        /how-many-brought-into-uk                        controllers.correctReturn.HowManyBroughtIntoUKController.onPageLoad(mode: Mode = NormalMode)
+POST       /how-many-brought-into-uk                        controllers.correctReturn.HowManyBroughtIntoUKController.onSubmit(mode: Mode = NormalMode)
+GET        /change-how-many-brought-into-uk                  controllers.correctReturn.HowManyBroughtIntoUKController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-how-many-brought-into-uk                  controllers.correctReturn.HowManyBroughtIntoUKController.onSubmit(mode: Mode = CheckMode)
+
+GET        /exemptions-for-small-producers                        controllers.correctReturn.ExemptionsForSmallProducersController.onPageLoad(mode: Mode = NormalMode)
+POST       /exemptions-for-small-producers                        controllers.correctReturn.ExemptionsForSmallProducersController.onSubmit(mode: Mode = NormalMode)
+GET        /change-exemptions-for-small-producers                  controllers.correctReturn.ExemptionsForSmallProducersController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-exemptions-for-small-producers                  controllers.correctReturn.ExemptionsForSmallProducersController.onSubmit(mode: Mode = CheckMode)
+
+GET        /brought-into-uk-from-small-producers                        controllers.correctReturn.BroughtIntoUkFromSmallProducersController.onPageLoad(mode: Mode = NormalMode)
+POST       /brought-into-uk-from-small-producers                        controllers.correctReturn.BroughtIntoUkFromSmallProducersController.onSubmit(mode: Mode = NormalMode)
+GET        /change-brought-into-uk-from-small-producers                  controllers.correctReturn.BroughtIntoUkFromSmallProducersController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-brought-into-uk-from-small-producers                  controllers.correctReturn.BroughtIntoUkFromSmallProducersController.onSubmit(mode: Mode = CheckMode)
+GET        /how-many-into-uk-small-producers                        controllers.correctReturn.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(mode: Mode = NormalMode)
+POST       /how-many-into-uk-small-producers                        controllers.correctReturn.HowManyBroughtIntoUkFromSmallProducersController.onSubmit(mode: Mode = NormalMode)
+GET        /change-how-many-into-uk-small-producers                  controllers.correctReturn.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-how-many-into-uk-small-producers                  controllers.correctReturn.HowManyBroughtIntoUkFromSmallProducersController.onSubmit(mode: Mode = CheckMode)
+
+GET        /remove-small-producer-confirm/:sdil                  controllers.correctReturn.RemoveSmallProducerConfirmController.onPageLoad(mode: Mode = NormalMode, sdil: String)
+POST       /remove-small-producer-confirm/:sdil                  controllers.correctReturn.RemoveSmallProducerConfirmController.onSubmit(mode: Mode = NormalMode, sdil: String)
+

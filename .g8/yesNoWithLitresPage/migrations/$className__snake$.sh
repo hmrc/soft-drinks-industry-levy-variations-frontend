@@ -22,15 +22,15 @@ echo "Adding messages to conf.messages"
 echo "" >> ../conf/messages.en
 echo "$packageName$.$className;format="decap"$.title = $yesNoTitle$" >> ../conf/messages.en
 echo "$packageName$.$className;format="decap"$.heading = $yesNoHeading$" >> ../conf/messages.en
+echo "$packageName$.$className;format="decap"$.subtext = $subText$" >> ../conf/messages.en
 echo "$packageName$.$className;format="decap"$.checkYourAnswersLabel = $checkYourAnswersLabel$" >> ../conf/messages.en
 echo "$packageName$.$className;format="decap"$.error.required = Select yes if $yesNoHeading;format="decap"$" >> ../conf/messages.en
 echo "$packageName$.$className;format="decap"$.change.hidden = Change $yesNoHeading;format="decap"$" >> ../conf/messages.en
 
-echo "howMany$className$.title = $litresTitle$" >> ../conf/messages.en
-echo "howMany$className$.heading = $litresHeading$" >> ../conf/messages.en
-echo "howMany$className$.subtext = $litresSubText$" >> ../conf/messages.en
-echo "$className;format="decap"$.lowband.litres.hidden = change amount of litres in lowband for $className;format="decap"$" >> ../conf/messages.en
-echo "$className;format="decap"$.highband.litres.hidden = change amount of litres in highband for $className;format="decap"$" >> ../conf/messages.en
+echo "$packageName$.howMany$className$.title = $litresTitle$" >> ../conf/messages.en
+echo "$packageName$.howMany$className$.heading = $litresHeading$" >> ../conf/messages.en
+echo "$packageName$.$className;format="decap"$.lowband.litres.hidden = change amount of litres in lowband for $className;format="decap"$" >> ../conf/messages.en
+echo "$packageName$.$className;format="decap"$.highband.litres.hidden = change amount of litres in highband for $className;format="decap"$" >> ../conf/messages.en
 
 echo "Adding to UserAnswersEntryGenerators"
 awk '/trait UserAnswersEntryGenerators/ {\
