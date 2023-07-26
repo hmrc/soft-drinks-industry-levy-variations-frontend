@@ -21,7 +21,7 @@ import controllers.actions._
 import controllers.routes
 import helpers.LoggerHelper
 import models.backend.{Site, UkAddress}
-import models.{Contact, LitresInBands, NormalMode, RetrievedActivity, RetrievedSubscription, ReturnCharge, ReturnPeriod, SelectChange, UserAnswers, Warehouse}
+import models.{Contact, LitresInBands, NormalMode, RetrievedActivity, RetrievedSubscription, ReturnCharge, ReturnPeriod, SelectChange, SmallProducer, UserAnswers, Warehouse}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -261,6 +261,14 @@ trait SpecBase
     contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
     deregDate = None
   )
+
+  val producerName = "Super Cola Plc"
+  val sdilReference = "XCSDIL000000069"
+  val producerNameParty = "Soft Juice"
+  val sdilReferenceParty = "XMSDIL000000113"
+  val bandMax: Long = 100000000000000L
+  val litres: Long = bandMax - 1
+  val smallProducerList: List[SmallProducer] = List(SmallProducer(producerNameParty, sdilReferenceParty, (litres, litres)))
 
   val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
   val returnPeriod = List(ReturnPeriod(2018, 1))

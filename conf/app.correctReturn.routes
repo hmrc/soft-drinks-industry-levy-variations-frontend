@@ -52,3 +52,5 @@ POST       /exemptions-for-small-producers                        controllers.co
 GET        /change-exemptions-for-small-producers                  controllers.correctReturn.ExemptionsForSmallProducersController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-exemptions-for-small-producers                  controllers.correctReturn.ExemptionsForSmallProducersController.onSubmit(mode: Mode = CheckMode)
 
+GET        /remove-small-producer-confirm/:sdil                  controllers.correctReturn.RemoveSmallProducerConfirmController.onPageLoad(mode: Mode = NormalMode, sdil: String)
+POST       /remove-small-producer-confirm/:sdil                  controllers.correctReturn.RemoveSmallProducerConfirmController.onSubmit(mode: Mode = NormalMode, sdil: String)

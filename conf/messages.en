@@ -381,3 +381,9 @@ whatIsASmallProducer.detailsLink = What is a small producer?
 whatIsASmallProducer.detailsContent1 = A business is a small producer if it:
 whatIsASmallProducer.detailsContent2 = has had less than 1 million litres of its own brands of liable drinks packaged globally in the past 12 months
 whatIsASmallProducer.detailsContent3 = will not have more than 1 million litres of its own brands of liable drinks packaged globally in the next 30 days
+
+correctReturn.removeSmallProducerConfirm.title = Are you sure you want to remove this small producer?
+correctReturn.removeSmallProducerConfirm.heading = Are you sure you want to remove this small producer?
+correctReturn.removeSmallProducerConfirm.checkYourAnswersLabel = Are you sure you want to remove this small producer?
+correctReturn.removeSmallProducerConfirm.error.required = Select yes if you want to remove this small producer
+correctReturn.removeSmallProducerConfirm.change.hidden = Select yes if you want to remove this small producer

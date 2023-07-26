@@ -7,6 +7,12 @@ import play.api.libs.json.Json
 
 trait ITCoreTestDataForCorrectReturn extends ITSharedCoreTestData  {
 
+  val userAnswersForCorrectReturnRemoveSmallProducerConfirmPage: Map[String, UserAnswers] = {
+    val yesSelected = emptyUserAnswersForCorrectReturn.set(RemoveSmallProducerConfirmPage, true).success.value
+    val noSelected = emptyUserAnswersForCorrectReturn.set(RemoveSmallProducerConfirmPage, false).success.value
+    Map("yes" -> yesSelected, "no" -> noSelected)
+    }
+
   val userAnswersForCorrectReturnBroughtIntoUKPage: Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForCorrectReturn.set(BroughtIntoUKPage, true).success.value
     val noSelected = emptyUserAnswersForCorrectReturn.set(BroughtIntoUKPage, false).success.value
