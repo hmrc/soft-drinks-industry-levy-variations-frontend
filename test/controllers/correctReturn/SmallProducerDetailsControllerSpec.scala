@@ -45,7 +45,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar {
   val formProvider = new SmallProducerDetailsFormProvider()
   val form: Form[Boolean] = formProvider()
 
-  val smallProducerList: List[SmallProducer] = List.empty
+  override val smallProducerList: List[SmallProducer] = List.empty
 
   val plural = true
 

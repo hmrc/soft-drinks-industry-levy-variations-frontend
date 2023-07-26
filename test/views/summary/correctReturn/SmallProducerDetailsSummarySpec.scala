@@ -17,12 +17,15 @@
 package views.summary.correctReturn
 
 import base.SpecBase
+import models.backend.UkAddress
 import models.{SelectChange, SmallProducer, UserAnswers}
 import play.api.libs.json.Json
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 
+import java.time.Instant
+
 class SmallProducerDetailsSummarySpec extends SpecBase {
-  val smallProducerList: List[SmallProducer] = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", (20, 10)))
+  override val smallProducerList: List[SmallProducer] = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", (20, 10)))
 
   "row" - {
 
@@ -33,8 +36,7 @@ class SmallProducerDetailsSummarySpec extends SpecBase {
     }
 
     "should return a summary list row with the correct information and action links" in {
-      val userAnswersWithSmallProducers = UserAnswers(sdilNumber, SelectChange.CorrectReturn,
-        Json.obj("correctReturn" -> Json.obj()), smallProducerList)
+      val userAnswersWithSmallProducers = emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducerList)
 
       val smallProducerDetailsSummaryRow = SmallProducerDetailsSummary.producerList(userAnswersWithSmallProducers.smallProducerList)
 
