@@ -49,7 +49,7 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
   override val smallProducerList: List[SmallProducer] = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", (20, 10)))
   lazy val smallProducerListWithTwoProducers: List[SmallProducer] = List(
     SmallProducer("Super Cola Plc", "XCSDIL000000069", (20, 10)),
-    SmallProducer("Soft Juice", "XMSDIL000000113", (25, 80))
+    SmallProducer("", "XMSDIL000000113", (25, 80))
   )
 
   "View" - {
@@ -279,8 +279,8 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
       listItems.size mustBe 4
       listItems.get(0).text() mustBe "Edit Super Cola Plc reference number XCSDIL000000069"
       listItems.get(1).text() mustBe "Remove Super Cola Plc reference number XCSDIL000000069"
-      listItems.get(2).text() mustBe "Edit Soft Juice reference number XMSDIL000000113"
-      listItems.get(3).text() mustBe "Remove Soft Juice reference number XMSDIL000000113"
+      listItems.get(2).text() mustBe "Edit reference number XMSDIL000000113"
+      listItems.get(3).text() mustBe "Remove reference number XMSDIL000000113"
     }
   }
 

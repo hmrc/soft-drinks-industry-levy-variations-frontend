@@ -48,21 +48,15 @@ object SmallProducerDetailsSummary extends SummaryListRowLitresHelper {
             HtmlFormat.escape(smallProducer.alias)
           )
         )
-        val smallProducerHiddenRef =
-          if (smallProducer.alias.isEmpty) {
-            "reference number " + smallProducer.sdilRef
-        } else {
-            smallProducer.alias + " reference number " + smallProducer.sdilRef
-          }
 
         SummaryListRowViewModel(
           key = smallProducer.sdilRef,
           value = value,
           actions = Seq(
             ActionItemViewModel("site.edit", controllers.routes.IndexController.onPageLoad.url)
-              .withVisuallyHiddenText(messages("correctReturn.smallProducerDetails.edit.hidden", smallProducerHiddenRef)),
+              .withVisuallyHiddenText(messages("correctReturn.smallProducerDetails.edit.hidden", smallProducer.alias, smallProducer.sdilRef)),
             ActionItemViewModel("site.remove", controllers.routes.IndexController.onPageLoad.url)
-              .withVisuallyHiddenText(messages("correctReturn.smallProducerDetails.remove.hidden", smallProducerHiddenRef))
+              .withVisuallyHiddenText(messages("correctReturn.smallProducerDetails.remove.hidden", smallProducer.alias, smallProducer.sdilRef))
           )
         )
     }
