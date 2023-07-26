@@ -27,6 +27,7 @@ timeout.keepAlive = Stay signed in
 timeout.signOut = Sign out
 
 litres.lowBand = Litres in the low band
+litres.lowBand.visuallyHidden = Error
 litres.lowBandHint = At least 5 grams of sugar per 100 millilitres
 litres.highBand = Litres in the high band
 litres.text = litres

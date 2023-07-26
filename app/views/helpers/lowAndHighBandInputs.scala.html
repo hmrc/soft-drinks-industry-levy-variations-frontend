@@ -33,7 +33,7 @@
         form.error("lowBand").map{ e =>
             ErrorMessage(
                 content = Text(messages(s"${e.messages.headOption.get}")),
-                visuallyHiddenText = Some(messages("Error"))
+                visuallyHiddenText = Some(messages("litres.lowBand.visuallyHidden"))
             )
         },
         value = form("lowBand").value
