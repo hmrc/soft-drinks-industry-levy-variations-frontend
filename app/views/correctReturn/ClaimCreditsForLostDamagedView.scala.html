@@ -49,7 +49,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("correctReturn.claimCreditsForLostDamaged.heading")).asPageHeading(),
+                legend = LegendViewModel(messages("correctReturn.claimCreditsForLostDamaged.legend")).withCssClass("govuk-fieldset__legend--m"),
                 hint = Some(Hint(content = Text(messages("correctReturn.claimCreditsForLostDamaged.hint"))))
             )
         )

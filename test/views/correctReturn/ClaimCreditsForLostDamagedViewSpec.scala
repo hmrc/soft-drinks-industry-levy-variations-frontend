@@ -33,7 +33,7 @@ class ClaimCreditsForLostDamagedViewSpec extends ViewSpecHelper {
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
-    val heading = "govuk-fieldset__heading"
+    val HEADING = "govuk-heading-m"
     val legend = "govuk-fieldset__legend  govuk-fieldset__legend--m"
     val radios = "govuk-radios__item"
     val radioInput = "govuk-radios__input"
@@ -49,13 +49,19 @@ class ClaimCreditsForLostDamagedViewSpec extends ViewSpecHelper {
     val html = view(form, NormalMode)(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
-      document.title() must include(Messages("correctReturn.claimCreditsForLostDamaged" + ".title"))
+      document.title() must include(Messages("correctReturn.claimCreditsForLostDamaged.title"))
     }
 
-    "should include a legend with the expected heading" in {
+    "should include the expected heading" in {
+      val heading = document.getElementsByClass(Selectors.HEADING)
+      heading.size() mustBe 1
+      heading.get(0).text() mustEqual Messages("correctReturn.claimCreditsForLostDamaged.warningHeading")
+    }
+
+    "should include a expected legend" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("correctReturn.claimCreditsForLostDamaged.heading")
+      legend.get(0).text() mustEqual Messages("correctReturn.claimCreditsForLostDamaged.legend")
     }
 
     "when the form is not preoccupied and has no errors" - {
