@@ -464,3 +464,10 @@ whatCanIClaimCreditForDetailsContent3= supplier or consigner
 whatCanIClaimCreditForDetailsContent4 = customer and destination the liable drinks are supplied to
 whatCanIClaimCreditForDetailsContent5 = method of delivery
 whatCanIClaimCreditForDetailsContent6 = If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.
+
+correctReturn.returnChangeRegistration.title = You changed your soft drinks business activity
+correctReturn.returnChangeRegistration.heading = You changed your soft drinks business activity
+correctReturn.returnChangeRegistration.subtext1 = In this return, you told us that you have packaged liable drinks in the UK.
+correctReturn.returnChangeRegistration.subtext2 = This is different to your registered business activity, so we will update your registration.
+correctReturn.returnChangeRegistration.subtext3 = If you made a mistake, you need to <a href={0}>go back and change your answers</a>.
+correctReturn.returnChangeRegistration.subtext4 = If you’re happy with the change, select Update Registration.

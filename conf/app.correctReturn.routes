@@ -85,3 +85,5 @@ GET        /how-many-credits-for-exports                        controllers.corr
 POST       /how-many-credits-for-exports                        controllers.correctReturn.HowManyClaimCreditsForExportsController.onSubmit(mode: Mode = NormalMode)
 GET        /change-how-many-credits-for-exports                  controllers.correctReturn.HowManyClaimCreditsForExportsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-how-many-credits-for-exports                  controllers.correctReturn.HowManyClaimCreditsForExportsController.onSubmit(mode: Mode = CheckMode)
+
+GET        /return-change-registration                       controllers.correctReturn.ReturnChangeRegistrationController.onPageLoad()
