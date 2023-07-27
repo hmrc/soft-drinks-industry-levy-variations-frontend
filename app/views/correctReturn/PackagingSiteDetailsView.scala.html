@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import controllers.correctReturn.routes
 @import models.backend.Site
 @import views.summary.correctReturn.PackagingSiteDetailsSummary
 
@@ -28,14 +27,9 @@
 )
 
 
-@(form: Form[_], mode: Mode, packagingSites: SummaryList)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, packagingSites: Map[String, Site])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("correctReturn.packagingSiteDetails.title"))) {
-    if (packagingSites.rows.size == 1) {
-        <h1 class="govuk-heading-m">@messages("correctReturn.packagingSiteDetails.heading1")</h1>
-    } else {
-        <h1 class="govuk-heading-m">@messages("correctReturn.packagingSiteDetails.heading", packagingSites.rows.size)</h1>
-    }
 
     @formHelper(action = controllers.correctReturn.routes.PackagingSiteDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
@@ -43,16 +37,23 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        changeActivity.packagingSiteDetails.info
-        @govukSummaryList(packagingSites)
+    @if(packagingSites.size == 1) {
+        <h1 class="govuk-heading-m">@messages("correctReturn.packagingSiteDetails.heading1")</h1>
+        } else {
+            <h1 class="govuk-heading-m">@messages("correctReturn.packagingSiteDetails.heading", packagingSites.size)</h1>
+        }
 
-        @govukRadios(
-            RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = LegendViewModel(messages("correctReturn.packagingSiteDetails.title")).withCssClass("govuk-fieldset__legend--m"),
-                hint = None
-            )
+        <p class="govuk-body">@messages("changeActivity.packagingSiteDetails.info")</p>
+
+    @govukSummaryList(PackagingSiteDetailsSummary.summaryList(packagingSites))
+
+    @govukRadios(
+        RadiosViewModel.yesNo(
+            field = form("value"),
+            legend = LegendViewModel(messages("correctReturn.packagingSiteDetails.title")).withCssClass("govuk-fieldset__legend--m"),
+            hint = None
         )
+    )
 
         @govukButton(
             ButtonViewModel(messages("site.saveContinue"))

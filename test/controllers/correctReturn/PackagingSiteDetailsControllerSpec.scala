@@ -33,17 +33,19 @@ import services.SessionService
 import views.html.correctReturn.PackagingSiteDetailsView
 import utilities.GenericLogger
 import errors.SessionDatabaseInsertError
+
 import scala.concurrent.Future
 import org.jsoup.Jsoup
+import play.api.data.Form
 
 class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new PackagingSiteDetailsFormProvider()
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  lazy val packagingSiteDetailsRoute = routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
+  lazy val packagingSiteDetailsRoute: String = routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
 
   "PackagingSiteDetails Controller" - {
 
@@ -59,7 +61,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[PackagingSiteDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, packagingSites = Map.empty)(request, messages(application)).toString
       }
     }
 
@@ -77,7 +79,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, packagingSites = Map.empty)(request, messages(application)).toString
       }
     }
 
@@ -123,7 +125,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, packagingSites = Map.empty)(request, messages(application)).toString
       }
     }
 

@@ -21,7 +21,7 @@ import models.{CheckMode, NormalMode, UserAnswers}
 import pages.correctReturn.PackagingSiteDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, HtmlContent, Key}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import viewmodels.AddressFormattingHelper
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
@@ -44,6 +44,12 @@ object PackagingSiteDetailsSummary  {
         )
     }
 
+  def summaryList(packagingSiteList: Map[String, Site])(implicit messages: Messages): SummaryList = {
+    SummaryListViewModel(
+      rows = row2(packagingSiteList)
+    )
+  }
+
   def row2(packagingSiteList: Map[String, Site])(implicit messages: Messages): List[SummaryListRow] = {
     packagingSiteList.map {
       packagingSite =>
@@ -55,7 +61,7 @@ object PackagingSiteDetailsSummary  {
           actions = if (packagingSiteList.size > 1) {
             Some(Actions("", Seq(
               ActionItemViewModel("site.remove", controllers.routes.IndexController.onPageLoad.url)
-                .withVisuallyHiddenText(messages("packagingSiteDetails.remove.hidden", packagingSite._2.tradingName, packagingSite._2.address))
+                .withVisuallyHiddenText(messages("correctReturn.packagingSiteDetails.remove.hidden", packagingSite._2.tradingName.getOrElse(""), packagingSite._2.address.lines.head))
             )))
           } else None
         )

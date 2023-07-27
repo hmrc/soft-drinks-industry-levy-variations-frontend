@@ -16,27 +16,25 @@
 
 package controllers.correctReturn
 
-import utilities.GenericLogger
 import controllers.ControllerHelper
 import controllers.actions._
 import forms.correctReturn.PackagingSiteDetailsFormProvider
-
-import javax.inject.Inject
+import handlers.ErrorHandler
 import models.Mode
 import models.SelectChange.CorrectReturn
+import models.backend.{Site, UkAddress}
+import navigation._
 import pages.correctReturn.PackagingSiteDetailsPage
+import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
+import utilities.GenericLogger
 import views.html.correctReturn.PackagingSiteDetailsView
-import handlers.ErrorHandler
-import viewmodels.govuk.SummaryListFluency
 
+import java.time.LocalDate
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import navigation._
-import play.api.data.Form
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
-import views.summary.updateRegisteredDetails.PackagingSiteDetailsSummary
 
 class PackagingSiteDetailsController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -60,9 +58,16 @@ class PackagingSiteDetailsController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val packagingSites: SummaryList = SummaryListViewModel(
-        rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList)
-      )
+
+//
+//        lazy val pSite = Site(
+//        UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
+//        Some("88"),
+//        Some("Wild Lemonade Group"),
+//        Some(LocalDate.of(2018, 2, 26)))
+//    lazy val packagingSites = Map("000001" -> pSite, "00002" -> pSite)
+
+      val packagingSites: Map[String, Site] = request.userAnswers.packagingSiteList
 
       Ok(view(preparedForm, mode, packagingSites))
   }
@@ -70,9 +75,7 @@ class PackagingSiteDetailsController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
     implicit request =>
 
-      val packagingSites: SummaryList = SummaryListViewModel(
-        rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList)
-      )
+      val packagingSites: Map[String, Site] = request.userAnswers.packagingSiteList
 
       form.bindFromRequest().fold(
         formWithErrors =>
