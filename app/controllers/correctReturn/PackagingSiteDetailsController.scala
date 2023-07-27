@@ -30,6 +30,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
 import views.html.correctReturn.PackagingSiteDetailsView
 import handlers.ErrorHandler
+import viewmodels.govuk.SummaryListFluency
 
 import scala.concurrent.{ExecutionContext, Future}
 import navigation._
