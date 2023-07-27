@@ -32,10 +32,6 @@
   mode: Mode,
   sdilReference: Option[String] = None)(implicit request: Request[_], messages: Messages)
 
-@htmlContent = {
-    <label class="govuk-label govuk-!-font-weight-bold">@messages("correctReturn.addASmallProducer.referenceNumber")</label>
-}
-
 @layout(pageTitle = title(form, messages("correctReturn.addASmallProducer.title"))) {
     @formHelper(action = routes.AddASmallProducerController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
@@ -62,7 +58,9 @@
             .withCssClass("govuk-!-font-weight-bold")
         )
         .withWidth(Fixed10)
+        .withCssClass("govuk-input--extra-letter-spacing")
         .withHint(Hint(content = Text(messages("correctReturn.addASmallProducer.hint2"))))
+        .withSpellcheck(false)
         )
 
         @lowAndHighBandInputs(form)(messages)
