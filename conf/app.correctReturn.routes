@@ -119,3 +119,8 @@ GET        /remove-warehouse-confirm/:index                        controllers.c
 POST       /remove-warehouse-confirm/:index                        controllers.correctReturn.RemoveWarehouseDetailsController.onSubmit(mode: Mode = NormalMode, index: String)
 GET        /change-remove-warehouse-confirm/:index                 controllers.correctReturn.RemoveWarehouseDetailsController.onPageLoad(mode: Mode = CheckMode, index: String)
 POST       /change-remove-warehouse-confirm/:index                  controllers.correctReturn.RemoveWarehouseDetailsController.onSubmit(mode: Mode = CheckMode, index: String)
+
+GET        /ask-secondary-warehouses-in-return                        controllers.correctReturn.AskSecondaryWarehouseInReturnController.onPageLoad(mode: Mode = NormalMode)
+POST       /ask-secondary-warehouses-in-return                        controllers.correctReturn.AskSecondaryWarehouseInReturnController.onSubmit(mode: Mode = NormalMode)
+GET        /change-ask-secondary-warehouses-in-return                  controllers.correctReturn.AskSecondaryWarehouseInReturnController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-ask-secondary-warehouses-in-return                  controllers.correctReturn.AskSecondaryWarehouseInReturnController.onSubmit(mode: Mode = CheckMode)

@@ -524,3 +524,12 @@ updateRegisteredDetails.contactDetails.name.change.hidden = contact person''s fu
 updateRegisteredDetails.contactDetails.position.change.hidden = contact person''s job title
 updateRegisteredDetails.contactDetails.phoneNumber.change.hidden = contact person''s telephone number
 updateRegisteredDetails.contactDetails.email.change.hidden = contact person''s email address
+
+correctReturn.askSecondaryWarehouseInReturn.title = Do you want to register any UK warehouses you use to store liable drinks?
+correctReturn.askSecondaryWarehouseInReturn.heading = Do you want to register any UK warehouses you use to store liable drinks?
+correctReturn.askSecondaryWarehouseInReturn.checkYourAnswersLabel = Do you want to register any UK warehouses you use to store liable drinks?
+correctReturn.askSecondaryWarehouseInReturn.error.required = Select yes if you want to register any UK warehouses you use to store liable drinks
+correctReturn.askSecondaryWarehouseInReturn.change.hidden = AskSecondaryWarehouseInReturn
+correctReturn.askSecondaryWarehouseInReturn.detailsLink = Why should I register a warehouse?
+correctReturn.askSecondaryWarehouseInReturn.detailsContent1 = You can delay when you have to report liable drinks in your quarterly return and pay the levy on them if you register the warehouses you use to store them.
+correctReturn.askSecondaryWarehouseInReturn.detailsContent2 = Because you changed your business activity, you can choose to register any of the UK warehouses you use to store liable drinks.

@@ -32,6 +32,9 @@ trait PageGenerators {
   implicit lazy val arbitraryCorrectReturnRemoveWarehouseConfirmPage: Arbitrary[correctReturn.RemoveWarehouseDetailsPage.type] =
     Arbitrary(correctReturn.RemoveWarehouseDetailsPage)
 
+  implicit lazy val arbitraryCorrectReturnAskSecondaryWarehouseInReturnPage: Arbitrary[correctReturn.AskSecondaryWarehouseInReturnPage.type] =
+    Arbitrary(correctReturn.AskSecondaryWarehouseInReturnPage)
+
   implicit lazy val arbitraryCorrectReturnSmallProducerDetailsPage: Arbitrary[correctReturn.SmallProducerDetailsPage.type] =
     Arbitrary(correctReturn.SmallProducerDetailsPage)
 
