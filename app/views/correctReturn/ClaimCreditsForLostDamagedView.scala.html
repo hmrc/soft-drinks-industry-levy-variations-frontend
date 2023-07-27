@@ -33,18 +33,18 @@
 
 @layout(pageTitle = title(form, messages("correctReturn.claimCreditsForLostDamaged.title"))) {
 
+    @formHelper(action = routes.ClaimCreditsForLostDamagedController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+
+        @if(form.errors.nonEmpty) {
+        @govukErrorSummary(ErrorSummaryViewModel(form))
+    }
+
     <h1 class="govuk-heading-m">@messages("correctReturn.claimCreditsForLostDamaged.warningHeading")</h1>
 
     @govukWarningText(WarningText(
         iconFallbackText = Some("Warning"),
         content = Text(messages("correctReturn.claimCreditsForLostDamaged.warningHint"))
     ))
-
-    @formHelper(action = routes.ClaimCreditsForLostDamagedController.onSubmit(mode), Symbol("autoComplete") -> "off") {
-
-        @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
-        }
 
         @govukRadios(
             RadiosViewModel.yesNo(
