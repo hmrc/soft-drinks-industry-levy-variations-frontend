@@ -15,7 +15,8 @@
  *@
 
 @import controllers.correctReturn.routes
-@import viewmodels.summary.correctReturn.PackagingSiteDetailsSummary
+@import models.backend.Site
+@import views.summary.correctReturn.PackagingSiteDetailsSummary
 
 @this(
     layout: templates.Layout,
@@ -26,13 +27,14 @@
     govukSummaryList: GovukSummaryList
 )
 
-@(form: Form[_], mode: Mode, packagingSites)(implicit request: Request[_], messages: Messages)
+
+@(form: Form[_], mode: Mode, packagingSites: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("correctReturn.packagingSiteDetails.title"))) {
     if (packagingSites.size == 1) {
         <h1 class="govuk-heading-m">@messages("correctReturn.packagingSiteDetails.heading1")</h1>
     } else {
-        <h1 class="govuk-heading-m">@messages("correctReturn.packagingSiteDetails.heading", packagingSites.length)</h1>
+        <h1 class="govuk-heading-m">@messages("correctReturn.packagingSiteDetails.heading", packagingSites.size)</h1>
     }
 
     @formHelper(action = routes.PackagingSiteDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
@@ -42,7 +44,8 @@
         }
 
         changeActivity.packagingSiteDetails.info
-        @govukSummaryList(PackagingSiteDetailsSummary.producerList(packagingSites))
+        @govukSummaryList(packagingSites)
+
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),

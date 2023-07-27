@@ -20,6 +20,7 @@ import utilities.GenericLogger
 import controllers.ControllerHelper
 import controllers.actions._
 import forms.correctReturn.PackagingSiteDetailsFormProvider
+
 import javax.inject.Inject
 import models.Mode
 import models.SelectChange.CorrectReturn
@@ -32,6 +33,9 @@ import handlers.ErrorHandler
 
 import scala.concurrent.{ExecutionContext, Future}
 import navigation._
+import play.api.data.Form
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import views.summary.updateRegisteredDetails.PackagingSiteDetailsSummary
 
 class PackagingSiteDetailsController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -45,7 +49,7 @@ class PackagingSiteDetailsController @Inject()(
                                        val errorHandler: ErrorHandler
                                      )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
     implicit request =>
@@ -55,15 +59,23 @@ class PackagingSiteDetailsController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      Ok(view(preparedForm, mode))
+      val packagingSites: SummaryList = SummaryListViewModel(
+        rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList)
+      )
+
+      Ok(view(preparedForm, mode, packagingSites))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
     implicit request =>
 
+      val packagingSites: SummaryList = SummaryListViewModel(
+        rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList)
+      )
+
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
+          Future.successful(BadRequest(view(formWithErrors, mode, packagingSites))),
 
         value => {
           val updatedAnswers = request.userAnswers.set(PackagingSiteDetailsPage, value)

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewmodels.summary.correctReturn
+package views.summary.correctReturn
 
 import controllers.correctReturn.routes
 import models.{CheckMode, UserAnswers}
@@ -33,12 +33,30 @@ object PackagingSiteDetailsSummary  {
         val value = if (answer) "site.yes" else "site.no"
 
         SummaryListRowViewModel(
-          key     = "correctReturn.packagingSiteDetails.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
+          key = "correctReturn.packagingSiteDetails.checkYourAnswersLabel",
+          value = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", controllers.correctReturn.routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("correctReturn.packagingSiteDetails.change.hidden"))
           )
         )
     }
+
+  def row2(packingSiteList: Map[String, Site])(implicit messages: Messages): List[SummaryListRow] = {
+    packingSiteList.map {
+      packingSite =>
+        SummaryListRow(
+          key = Key(
+            content = HtmlContent(AddressFormattingHelper.addressFormatting(packingSite._2.address, packingSite._2.tradingName)),
+            classes = "govuk-!-font-weight-regular govuk-!-width-full"
+          ),
+          actions = if (packingSiteList.size > 1) {
+            Some(Actions("", Seq(
+              ActionItemViewModel("site.remove", controllers.changeActivity.routes.RemovePackagingSiteDetailsController.onPageLoad(NormalMode, packingSite._1).url)
+                .withVisuallyHiddenText(messages("packagingSiteDetails.remove.hidden"))
+            )))
+          } else None
+        )
+    }.toList
+  }
 }
