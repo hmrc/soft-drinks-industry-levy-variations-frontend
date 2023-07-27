@@ -19,11 +19,10 @@ package views.correctReturn
 import controllers.correctReturn.routes
 import forms.correctReturn.ClaimCreditsForExportsFormProvider
 import models.{CheckMode, NormalMode}
-import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import views.html.correctReturn.ClaimCreditsForExportsView
 import views.ViewSpecHelper
+import views.html.correctReturn.ClaimCreditsForExportsView
 class ClaimCreditsForExportsViewSpec extends ViewSpecHelper {
 
   val view = application.injector.instanceOf[ClaimCreditsForExportsView]
