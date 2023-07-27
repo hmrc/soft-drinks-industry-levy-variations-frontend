@@ -6,7 +6,7 @@ import models.changeActivity.AmountProduced
 import models.{CheckMode, LitresInBands, NormalMode}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.changeActivity.{AmountProducedPage, ContractPackingPage, HowManyContractPackingPage, HowManyImportsPage, HowManyOperatePackagingSiteOwnBrandsPage, ImportsPage, OperatePackagingSiteOwnBrandsPage, ThirdPartyPackagersPage}
+import pages.changeActivity._
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.Json

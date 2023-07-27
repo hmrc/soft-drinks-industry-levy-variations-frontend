@@ -28,9 +28,19 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class NavigatorForCorrectReturn @Inject()() extends Navigator {
 
+
   private def navigationForBroughtIntoUkFromSmallProducers(userAnswers: UserAnswers, mode: Mode): Call = {
     if (userAnswers.get(page = BroughtIntoUkFromSmallProducersPage).contains(true)) {
       routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(mode)
+    } else if (mode == CheckMode) {
+      routes.CorrectReturnCYAController.onPageLoad
+    } else {
+      defaultCall
+    }
+  }
+  private def navigationForClaimCreditsForExports(userAnswers: UserAnswers, mode: Mode): Call = {
+    if (userAnswers.get(page = ClaimCreditsForExportsPage).contains(true)) {
+      routes.HowManyClaimCreditsForExportsController.onPageLoad(mode)
     } else if(mode == CheckMode){
         routes.CorrectReturnCYAController.onPageLoad
     } else {
@@ -82,6 +92,8 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case SmallProducerDetailsPage => _ => defaultCall
     case BroughtIntoUkFromSmallProducersPage => userAnswers => navigationForBroughtIntoUkFromSmallProducers(userAnswers, NormalMode)
     case HowManyBroughtIntoUkFromSmallProducersPage => _ => defaultCall
+    case ClaimCreditsForExportsPage => userAnswers => navigationForClaimCreditsForExports(userAnswers, NormalMode)
+    case HowManyClaimCreditsForExportsPage => _ => defaultCall
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, NormalMode)
     case HowManyBroughtIntoUKPage => _ => defaultCall
     case ExemptionsForSmallProducersPage => _ => defaultCall
@@ -100,6 +112,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
 
   override val checkRouteMap: Page => UserAnswers => Call = {
     case BroughtIntoUkFromSmallProducersPage => userAnswers => navigationForBroughtIntoUkFromSmallProducers(userAnswers, CheckMode)
+    case ClaimCreditsForExportsPage => userAnswers => navigationForClaimCreditsForExports(userAnswers, CheckMode)
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, CheckMode)
     case ExemptionsForSmallProducersPage => _ =>  routes.CorrectReturnCYAController.onPageLoad
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, CheckMode)

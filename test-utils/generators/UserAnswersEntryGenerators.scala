@@ -54,6 +54,15 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       } yield (page, value)
     }
 
+  implicit lazy val arbitraryCorrectReturnClaimCreditsForExportsUserAnswersEntry: Arbitrary[(pages.correctReturn.ClaimCreditsForExportsPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.correctReturn.ClaimCreditsForExportsPage.type]
+
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryCorrectReturnBroughtIntoUKUserAnswersEntry: Arbitrary[(pages.correctReturn.BroughtIntoUKPage.type, JsValue)] =
     Arbitrary {
       for {

@@ -6,7 +6,6 @@ POST       /select                        controllers.correctReturn.SelectContro
 GET        /change-select                  controllers.correctReturn.SelectController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-select                  controllers.correctReturn.SelectController.onSubmit(mode: Mode = CheckMode)
 
-
 GET        /correction-reason                        controllers.correctReturn.CorrectionReasonController.onPageLoad(mode: Mode = NormalMode)
 POST       /correction-reason                        controllers.correctReturn.CorrectionReasonController.onSubmit(mode: Mode = NormalMode)
 GET        /change-correction-reason                  controllers.correctReturn.CorrectionReasonController.onPageLoad(mode: Mode = CheckMode)
@@ -78,3 +77,11 @@ POST       /change-how-many-into-uk-small-producers                  controllers
 GET        /remove-small-producer-confirm/:sdil                  controllers.correctReturn.RemoveSmallProducerConfirmController.onPageLoad(mode: Mode = NormalMode, sdil: String)
 POST       /remove-small-producer-confirm/:sdil                  controllers.correctReturn.RemoveSmallProducerConfirmController.onSubmit(mode: Mode = NormalMode, sdil: String)
 
+GET        /claim-credits-for-exports                        controllers.correctReturn.ClaimCreditsForExportsController.onPageLoad(mode: Mode = NormalMode)
+POST       /claim-credits-for-exports                        controllers.correctReturn.ClaimCreditsForExportsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-claim-credits-for-exports                  controllers.correctReturn.ClaimCreditsForExportsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-claim-credits-for-exports                  controllers.correctReturn.ClaimCreditsForExportsController.onSubmit(mode: Mode = CheckMode)
+GET        /how-many-credits-for-exports                        controllers.correctReturn.HowManyClaimCreditsForExportsController.onPageLoad(mode: Mode = NormalMode)
+POST       /how-many-credits-for-exports                        controllers.correctReturn.HowManyClaimCreditsForExportsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-how-many-credits-for-exports                  controllers.correctReturn.HowManyClaimCreditsForExportsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-how-many-credits-for-exports                  controllers.correctReturn.HowManyClaimCreditsForExportsController.onSubmit(mode: Mode = CheckMode)

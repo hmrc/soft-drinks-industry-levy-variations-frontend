@@ -28,6 +28,8 @@ timeout.signOut = Sign out
 litres.lowBand = Litres in the low band
 litres.lowBandHint = At least 5 grams of sugar per 100 millilitres
 litres.highBand = Litres in the high band
+litres.text = litres
+litres.highBand.visuallyHidden = Error
 litres.highBandHint = At least 8 grams of sugar per 100 millilitres
 litres.error.lowBand.required = Enter the number of litres in the low band
 litres.error.highBand.required = Enter the number of litres in the high band
@@ -380,7 +382,6 @@ correctReturn.howManyPackagedAsContractPacker.title = How many litres of liable 
 correctReturn.howManyPackagedAsContractPacker.heading = How many litres of liable drinks have you packaged as a third party or contract packer at UK sites you operate?
 correctReturn.howManyPackagedAsContractPacker.subtext = Do not include liable drinks you have packaged for registered small producers.
 
-
 correctReturn.smallProducerDetails.title = Do you want to add another small producer?
 correctReturn.smallProducerDetails.heading = You added {0} small producers
 correctReturn.smallProducerDetails.headingSingle = You added 1 small producer
@@ -435,3 +436,31 @@ correctReturn.howManyBroughtIntoUkFromSmallProducers.title = How many litres of 
 correctReturn.howManyBroughtIntoUkFromSmallProducers.heading = How many litres of liable drinks have you brought into the UK from small producers?
 correctReturn.broughtIntoUkFromSmallProducers.lowband.litres.hidden = change amount of litres in lowband for broughtIntoUkFromSmallProducers
 correctReturn.broughtIntoUkFromSmallProducers.highband.litres.hidden = change amount of litres in highband for broughtIntoUkFromSmallProducers
+
+correctReturn.claimCreditsForExports.heading2 = Exported drinks
+correctReturn.claimCreditsForExports.title = Do you want to claim a credit for liable drinks that have been exported?
+correctReturn.claimCreditsForExports.subHeading = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
+correctReturn.claimCreditsForExports.warning = You can only claim credit if you’ve registered for the levy and paid it directly to HMRC. Claiming credits you’re not entitled to is a criminal offence.
+correctReturn.claimCreditsForExports.detailsLink = What can I claim a credit for?
+correctReturn.claimCreditsForExports.detailsContent1 = You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the:
+correctReturn.claimCreditsForExports.detailsContent2 = brand of the liable drinks
+correctReturn.claimCreditsForExports.detailsContent3 = supplier or consigner
+correctReturn.claimCreditsForExports.detailsContent4 = customer and destination the liable drinks are supplied to
+correctReturn.claimCreditsForExports.detailsContent5 = method of delivery
+correctReturn.claimCreditsForExports.detailsContent6 = If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.
+correctReturn.claimCreditsForExports.error.required = Select yes if you want to claim a credit for liable drinks that has been exported
+correctReturn.claimCreditsForExports.warningFallBack = Warning
+correctReturn.claimCreditsForExports.change.hidden = whether you want to claim credits for exported liable drinks
+correctReturn.claimCreditsForExports.lowband.litres.hidden = change amount of litres in lowband for claimCreditsForExports
+correctReturn.claimCreditsForExports.highband.litres.hidden = change amount of litres in highband for claimCreditsForExports
+
+correctReturn.howManyCreditsForExport.title = How many credits do you want to claim for liable drinks that have been exported?
+correctReturn.howManyCreditsForExport.subtext = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
+
+whatCanIClaimCreditForDetailsLink = What can I claim a credit for?
+whatCanIClaimCreditForDetailsContent1 = You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the:
+whatCanIClaimCreditForDetailsContent2 = brand of the liable drinks
+whatCanIClaimCreditForDetailsContent3= supplier or consigner
+whatCanIClaimCreditForDetailsContent4 = customer and destination the liable drinks are supplied to
+whatCanIClaimCreditForDetailsContent5 = method of delivery
+whatCanIClaimCreditForDetailsContent6 = If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.
