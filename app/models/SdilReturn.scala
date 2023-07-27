@@ -18,7 +18,7 @@ package models
 
 import cats.implicits.{catsSyntaxSemigroup, toFoldableOps}
 
-import java.time.{LocalDate, Instant}
+import java.time.{Instant, LocalDate}
 import cats.implicits._
 import play.api.libs.json.Json
 
