@@ -17,6 +17,7 @@
 package controllers.correctReturn
 
 import base.SpecBase
+import connectors.SoftDrinksIndustryLevyConnector
 import forms.correctReturn.AddASmallProducerFormProvider
 import models.{NormalMode, SmallProducer}
 import models.SelectChange.CorrectReturn
@@ -26,7 +27,7 @@ import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.correctReturn.AddASmallProducerPage
+import pages.correctReturn.{AddASmallProducerPage, SelectPage}
 import play.api.data.FormError
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -88,12 +89,15 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       val mockSessionService = mock[SessionService]
 
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.set(SelectPage, returnPeriod.head).success.value))
       .overrides(
         bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
-      bind[SessionService].toInstance(mockSessionService)
+        bind[SessionService].toInstance(mockSessionService),
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
       )
       .build()
 
@@ -163,12 +167,77 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "must redirect to the Index controller when valid data without a return period is submitted" in {
+
+      val mockSessionService = mock[SessionService]
+
+      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+          .overrides(
+            bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
+            bind[SessionService].toInstance(mockSessionService)
+          )
+          .build()
+
+      running(application) {
+        val request = FakeRequest(POST, addASmallProducerRoute)
+          .withFormUrlEncodedBody(
+            ("producerName", "PRODUCER"),
+            ("referenceNumber", "XKSDIL000000023"),
+            ("lowBand", "10"),
+            ("highBand", "20")
+          )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
+      }
+    }
+
+    "must return a Bad Request and errors when data with small producer status false is submitted" in {
+      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(false))
+      val smallProducerList: List[SmallProducer] = List(SmallProducer("MY SMALL PRODUCER", "XCSDIL000456789", (1L, 2L)))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducerList)
+        .set(SelectPage, returnPeriod.head).success.value)
+      ).overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+
+      running(application) {
+        val request = FakeRequest(POST, addASmallProducerRoute)
+          .withFormUrlEncodedBody(
+            ("producerName", "PRODUCER"),
+            ("referenceNumber", "XKSDIL000000023"),
+            ("lowBand", "10"),
+            ("highBand", "20")
+          )
+
+        val boundForm = form.bind(Map(
+          "producerName" -> "PRODUCER",
+          "referenceNumber" -> "XKSDIL000000023",
+          "lowBand" -> "10",
+          "highBand" -> "20"
+        )).withError(FormError("referenceNumber", "correctReturn.addASmallProducer.error.referenceNumber.notASmallProducer"))
+
+        val view = application.injector.instanceOf[AddASmallProducerView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+      }
+    }
+
     testInvalidJourneyType(CorrectReturn, addASmallProducerRoute)
     testNoUserAnswersError(addASmallProducerRoute)
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CorrectReturn))).build()
+//      TODO: Need to set it before it returns failure - additional helper method required
+      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CorrectReturn)
+        .set(SelectPage, returnPeriod.head).success.value)).build()
 
       running(application) {
         val request = FakeRequest(POST, addASmallProducerRoute)
