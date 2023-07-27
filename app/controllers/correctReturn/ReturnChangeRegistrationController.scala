@@ -26,29 +26,25 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.correctReturn.ReturnChangeRegistrationView
 import models.SelectChange.CorrectReturn
-import utilities.UserTypeCheck
+import navigation.NavigatorForCorrectReturn
+import pages.correctReturn.ReturnChangeRegistrationPage
 
 class ReturnChangeRegistrationController @Inject()(
                                                     override val messagesApi: MessagesApi,
                                                     controllerActions: ControllerActions,
                                                     val controllerComponents: MessagesControllerComponents,
+                                                    navigator: NavigatorForCorrectReturn,
                                                     view: ReturnChangeRegistrationView
                                                   ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
     implicit request =>
-      if (UserTypeCheck.isNewImporter(SdilReturn.apply(request.userAnswers), request.subscription) &&
-        !UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), request.subscription) ) {
-        Ok(view(routes.BroughtIntoUKController.onPageLoad(NormalMode).url))
-      } else {
-        Ok(view(routes.PackagedContractPackerController.onPageLoad(NormalMode).url))
-      }
+        Ok(view(routes.IndexController.onPageLoad.url))
   }
 
   def onSubmit(): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
     implicit request =>
-      Redirect(navigator.nextPage(ReturnChangeRegistrationPage, NormalMode, request.userAnswers,
-        Some(SdilReturn.apply(request.userAnswers)),Some(request.subscription) ))
+      Redirect(navigator.nextPage(ReturnChangeRegistrationPage, NormalMode, request.userAnswers))
   }
 
 }

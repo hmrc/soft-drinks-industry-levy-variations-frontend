@@ -17,7 +17,7 @@
 package navigation
 
 import controllers.correctReturn.routes
-import models.{CheckMode, Mode, NormalMode, UserAnswers}
+import models.{CheckMode, Mode, NormalMode, RetrievedSubscription, SdilReturn, UserAnswers}
 import pages.Page
 import pages.correctReturn._
 
@@ -94,6 +94,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case HowManyBroughtIntoUkFromSmallProducersPage => _ => defaultCall
     case ClaimCreditsForExportsPage => userAnswers => navigationForClaimCreditsForExports(userAnswers, NormalMode)
     case HowManyClaimCreditsForExportsPage => _ => defaultCall
+    case ReturnChangeRegistrationPage => _ => defaultCall
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, NormalMode)
     case HowManyBroughtIntoUKPage => _ => defaultCall
     case ExemptionsForSmallProducersPage => _ => defaultCall

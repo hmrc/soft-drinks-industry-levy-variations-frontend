@@ -14,6 +14,7 @@
  * limitations under the License.
  *@
 
+@import models.correctReturn._
 @import controllers.correctReturn.routes
 
 @this(
@@ -24,14 +25,14 @@
 
 @(urlLink: String)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("returnChangeRegistration.title"))) {
+@layout(pageTitle = titleNoForm(messages("correctReturn.returnChangeRegistration.title"))) {
   @formHelper(action = routes.ReturnChangeRegistrationController.onSubmit(), Symbol("autoComplete") -> "off") {
 
-  <h1 class="govuk-heading-m">@messages("returnChangeRegistration.heading")</h1>
-  <p class="govuk-body">@messages("returnChangeRegistration.subtext1")</p>
-  <p class="govuk-body">@messages("returnChangeRegistration.subtext2")</p>
-  <p class="govuk-body">@Html(messages("returnChangeRegistration.subtext3", urlLink))</p>
-  <p class="govuk-body">@messages("returnChangeRegistration.subtext4")</p>
+  <h1 class="govuk-heading-m">@messages("correctReturn.returnChangeRegistration.heading")</h1>
+  <p class="govuk-body">@messages("correctReturn.returnChangeRegistration.subtext1")</p>
+  <p class="govuk-body">@messages("correctReturn.returnChangeRegistration.subtext2")</p>
+  <p class="govuk-body">@Html(messages("correctReturn.returnChangeRegistration.subtext3", urlLink))</p>
+  <p class="govuk-body">@messages("correctReturn.returnChangeRegistration.subtext4")</p>
 
   @govukButton(
     ButtonViewModel(messages("site.updateReg"))

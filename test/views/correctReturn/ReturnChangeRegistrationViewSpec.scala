@@ -16,8 +16,9 @@
 
 package views.correctReturn
 
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.Messages
-import play.api.mvc.Request
+import play.api.mvc.{Call, Request}
 import play.api.test.FakeRequest
 import views.html.correctReturn.ReturnChangeRegistrationView
 import views.ViewSpecHelper
@@ -32,14 +33,14 @@ class ReturnChangeRegistrationViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view()(request, messages(application))
+    val html = view("")(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
-      document.title() must include(Messages("correctReturn.returnChangeRegistration" + ".title"))
+      document.title() must include(Messages("You changed your soft drinks business activity"))
     }
 
     "should have the expected heading" in {
-      document.getElementsByClass(Selectors.heading).text() mustEqual Messages("correctReturn.returnChangeRegistration" + ".heading")
+      document.getElementsByClass(Selectors.heading).text() mustEqual Messages("You changed your soft drinks business activity")
     }
 
     testBackLink(document)
