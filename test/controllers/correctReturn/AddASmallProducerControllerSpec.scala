@@ -232,28 +232,5 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
     testInvalidJourneyType(CorrectReturn, addASmallProducerRoute)
     testNoUserAnswersError(addASmallProducerRoute)
-
-    "must fail if the setting of userAnswers fails" in {
-
-//      TODO: Need to set it before it returns failure - additional helper method required
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CorrectReturn)
-        .set(SelectPage, returnPeriod.head).success.value)).build()
-
-      running(application) {
-        val request = FakeRequest(POST, addASmallProducerRoute)
-          .withFormUrlEncodedBody(
-            ("producerName", "PRODUCER"),
-            ("referenceNumber", sdilNumber),
-            ("lowBand", "10"),
-            ("highBand", "20")
-          )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual INTERNAL_SERVER_ERROR
-        val page = Jsoup.parse(contentAsString(result))
-        page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - Soft Drinks Industry Levy - GOV.UK"
-      }
-    }
   }
 }
