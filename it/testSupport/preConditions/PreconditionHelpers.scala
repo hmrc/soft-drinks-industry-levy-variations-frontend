@@ -1,6 +1,6 @@
 package testSupport.preConditions
 
-import models.RetrievedSubscription
+import models.{RetrievedSubscription, ReturnPeriod}
 
 trait PreconditionHelpers {
   implicit val builder: PreconditionBuilder
@@ -45,5 +45,11 @@ trait PreconditionHelpers {
       .user.isAuthorisedAndEnrolled
       .sdilBackend.retrieveSubscriptionNone("utr", "0000001611")
       .sdilBackend.retrieveSubscriptionNone("sdil", "XKSDIL000000022")  }
+
+  def smallProducerStatus(sdilRef: String, period: ReturnPeriod, smallProducerStatus: Boolean): PreconditionBuilder = {
+    builder
+      .user.isAuthorisedAndEnrolled
+      .sdilBackend.checkSmallProducerStatus(sdilRef, period, smallProducerStatus)
+  }
 
 }
