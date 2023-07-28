@@ -137,6 +137,7 @@ trait Formatters {
         baseFormatter
           .bind(key, data)
           .map(_.replace(",", ""))
+          .map(_.replace(" ", ""))
           .flatMap {
             case s if s.matches(numberRegexp) =>
               nonFatalCatch
