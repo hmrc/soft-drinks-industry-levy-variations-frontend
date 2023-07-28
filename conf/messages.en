@@ -477,3 +477,11 @@ correctReturn.removePackagingSiteConfirm.heading = Are you sure you want to remo
 correctReturn.removePackagingSiteConfirm.checkYourAnswersLabel = Are you sure you want to remove this packaging site?
 correctReturn.removePackagingSiteConfirm.error.required = Select yes if you want to remove this packaging site
 
+
+correctReturn.packagingSiteDetails.title = Do you want to add another UK packaging site?
+correctReturn.packagingSiteDetails.heading = You added {0} UK packaging sites
+correctReturn.packagingSiteDetails.heading1 = You added 1 UK packaging site
+correctReturn.packagingSiteDetails.checkYourAnswersLabel = UK packaging sites
+correctReturn.packagingSiteDetails.error.required = Select yes if you want to add another UK packaging site
+correctReturn.packagingSiteDetails.change.hidden = your UK packaging site details
+correctReturn.packagingSiteDetails.remove.hidden = packaging site
