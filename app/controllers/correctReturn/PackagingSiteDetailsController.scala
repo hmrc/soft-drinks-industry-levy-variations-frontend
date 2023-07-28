@@ -22,7 +22,7 @@ import forms.correctReturn.PackagingSiteDetailsFormProvider
 import handlers.ErrorHandler
 import models.Mode
 import models.SelectChange.CorrectReturn
-import models.backend.{Site, UkAddress}
+import models.backend.Site
 import navigation._
 import pages.correctReturn.PackagingSiteDetailsPage
 import play.api.data.Form
@@ -32,7 +32,6 @@ import services.SessionService
 import utilities.GenericLogger
 import views.html.correctReturn.PackagingSiteDetailsView
 
-import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -57,15 +56,6 @@ class PackagingSiteDetailsController @Inject()(
         case None => form
         case Some(value) => form.fill(value)
       }
-
-
-//
-//        lazy val pSite = Site(
-//        UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-//        Some("88"),
-//        Some("Wild Lemonade Group"),
-//        Some(LocalDate.of(2018, 2, 26)))
-//    lazy val packagingSites = Map("000001" -> pSite, "00002" -> pSite)
 
       val packagingSites: Map[String, Site] = request.userAnswers.packagingSiteList
 
