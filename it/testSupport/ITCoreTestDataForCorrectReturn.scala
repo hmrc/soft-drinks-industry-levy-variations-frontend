@@ -1,11 +1,24 @@
 package testSupport
 
+import models.backend.Site
 import models.{SelectChange, UserAnswers}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import pages.correctReturn._
 import play.api.libs.json.Json
 
 trait ITCoreTestDataForCorrectReturn extends ITSharedCoreTestData  {
+
+  def userAnswersForCorrectReturnRemovePackagingSiteConfirmPage(index: String): Map[String, UserAnswers] = {
+    val yesSelected = emptyUserAnswersForCorrectReturn
+      .copy(packagingSiteList = Map(index -> Site(ukAddress, None, None, None)))
+      .set(RemovePackagingSiteConfirmPage, true).success.value
+
+    val noSelected = emptyUserAnswersForCorrectReturn
+      .copy(packagingSiteList = Map(index -> Site(ukAddress, None, None, None)))
+      .set(RemovePackagingSiteConfirmPage, false).success.value
+    Map("yes" -> yesSelected, "no" -> noSelected)
+  }
+
   val userAnswersForCorrectReturnSmallProducerDetailsPage: Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForCorrectReturn.set(SmallProducerDetailsPage, true).success.value
     val noSelected = emptyUserAnswersForCorrectReturn.set(SmallProducerDetailsPage, false).success.value

@@ -239,7 +239,6 @@ changeActivity.packagingSiteDetails.change.hidden = change UK packaging site det
 
 changeActivity.removePackagingSiteDetails.title = Are you sure you want to remove this packaging site?
 changeActivity.removePackagingSiteDetails.heading = Are you sure you want to remove this packaging site?
-changeActivity.removePackagingSiteDetails.checkYourAnswersLabel = Are you sure you want to remove this packaging site?
 changeActivity.removePackagingSiteDetails.error.required = Select yes if you want to remove this packaging site
 
 changeActivity.secondaryWarehouseDetails.title = Change your UK warehouse details
@@ -472,3 +471,9 @@ correctReturn.returnChangeRegistration.subtext1 = In this return, you told us th
 correctReturn.returnChangeRegistration.subtext2 = This is different to your registered business activity, so we will update your registration.
 correctReturn.returnChangeRegistration.subtext3 = If you made a mistake, you need to <a href={0}>go back and change your answers</a>.
 correctReturn.returnChangeRegistration.subtext4 = If you’re happy with the change, select Update Registration.
+
+correctReturn.removePackagingSiteConfirm.title = Are you sure you want to remove this packaging site?
+correctReturn.removePackagingSiteConfirm.heading = Are you sure you want to remove this packaging site?
+correctReturn.removePackagingSiteConfirm.checkYourAnswersLabel = Are you sure you want to remove this packaging site?
+correctReturn.removePackagingSiteConfirm.error.required = Select yes if you want to remove this packaging site
+

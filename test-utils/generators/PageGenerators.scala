@@ -23,6 +23,9 @@ import pages.updateRegisteredDetails.UpdateContactDetailsPage
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryCorrectReturnRemovePackagingSiteConfirmPage: Arbitrary[correctReturn.RemovePackagingSiteConfirmPage.type] =
+    Arbitrary(correctReturn.RemovePackagingSiteConfirmPage)
+
   implicit lazy val arbitraryCorrectReturnSmallProducerDetailsPage: Arbitrary[correctReturn.SmallProducerDetailsPage.type] =
     Arbitrary(correctReturn.SmallProducerDetailsPage)
 

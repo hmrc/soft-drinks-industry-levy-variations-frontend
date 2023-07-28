@@ -21,35 +21,27 @@
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton,
-    govukDetails: GovukDetails,
-    govukSummaryList: GovukSummaryList
+    govukButton: GovukButton
 )
 
-@(form: Form[_], mode: Mode, sdilNumber: String, smallProducerName: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], mode: Mode, address: Html, index: String)(implicit request: Request[_], messages: Messages)
 
-@hintContent = {
-<span class="govuk-!-font-weight-bold">@sdilNumber </span> @smallProducerName
-}
+@layout(pageTitle = title(form, messages("correctReturn.removePackagingSiteConfirm.title"))) {
 
-@layout(pageTitle = title(form, messages("correctReturn.removeSmallProducerConfirm.title"))) {
-
-    @formHelper(action = routes.RemoveSmallProducerConfirmController.onSubmit(sdilNumber), Symbol("autoComplete") -> "off") {
+    @formHelper(action = routes.RemovePackagingSiteConfirmController.onSubmit(mode, index), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-         @govukErrorSummary(ErrorSummaryViewModel(form))
+            @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
         @govukRadios(
             RadiosViewModel.yesNo(
-                field = form("value"),
-                legend = LegendViewModel(messages("correctReturn.removeSmallProducerConfirm.heading")).asPageHeading(),
-                hint = Some(Hint(content = HtmlContent(hintContent)))
+            field = form("value"),
+            legend = LegendViewModel(messages("correctReturn.removePackagingSiteConfirm.title")).asPageHeading(),
+            hint = Some(Hint(content = HtmlContent(address)).withCssClass("govuk-body-m"))
             )
         )
 
-        @govukButton(
-            ButtonViewModel(messages("site.saveContinue"))
-        )
+        @govukButton(ButtonViewModel(messages("site.continue")))
     }
 }
