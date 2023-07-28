@@ -64,7 +64,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
           Future.successful(Some(aSubscription))
         }
 
-        when(mockSdilConnector.returns_variable(any())(any())).thenReturn {
+        when(mockSdilConnector.returnsVariable(any())(any())).thenReturn {
           Future.successful(Some(returnPeriodList))
         }
 
@@ -91,7 +91,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
           Future.successful(Some(aSubscription))
         }
 
-        when(mockSdilConnector.returns_variable(any())(any())).thenReturn {
+        when(mockSdilConnector.returnsVariable(any())(any())).thenReturn {
           Future.successful(None)
         }
 
@@ -120,7 +120,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
           Future.successful(Some(aSubscription))
         }
 
-        when(mockSdilConnector.returns_variable(any())(any())).thenReturn {
+        when(mockSdilConnector.returnsVariable(any())(any())).thenReturn {
           Future.successful(Some(returnPeriodList))
         }
 
@@ -139,7 +139,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
 
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
-      when(mockSdilConnector.returns_variable(any())(any())).thenReturn {
+      when(mockSdilConnector.returnsVariable(any())(any())).thenReturn {
         Future.successful(Some(returnPeriodList))
       }
 
@@ -176,7 +176,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
           Future.successful(Some(aSubscription))
         }
 
-        when(mockSdilConnector.returns_variable(any())(any())).thenReturn {
+        when(mockSdilConnector.returnsVariable(any())(any())).thenReturn {
           Future.successful(None)
         }
 
@@ -200,7 +200,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
           Future.successful(Some(aSubscription))
         }
 
-        when(mockSdilConnector.returns_variable(any())(any())).thenReturn {
+        when(mockSdilConnector.returnsVariable(any())(any())).thenReturn {
           Future.successful(Some(returnPeriodList))
         }
 

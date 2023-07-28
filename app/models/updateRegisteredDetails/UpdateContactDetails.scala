@@ -16,10 +16,20 @@
 
 package models.updateRegisteredDetails
 
+import models.Contact
 import play.api.libs.json._
 
 case class UpdateContactDetails (fullName: String, position: String, phoneNumber: String, email: String)
 
 object UpdateContactDetails {
   implicit val format = Json.format[UpdateContactDetails]
+
+  def fromContact(contact: Contact): UpdateContactDetails = {
+    UpdateContactDetails(
+      fullName = contact.name.getOrElse(""),
+      position = contact.positionInCompany.getOrElse(""),
+      phoneNumber = contact.phoneNumber,
+      email = contact.email
+    )
+  }
 }

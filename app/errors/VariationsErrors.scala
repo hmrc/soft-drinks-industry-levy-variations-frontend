@@ -24,5 +24,10 @@ object SessionDatabaseDeleteError extends VariationsErrors
 
 object SessionDatabaseGetError extends VariationsErrors
 
-object MissingPageError extends VariationsErrors
+object ReturnsStillPending extends VariationsErrors
+
+object FailedToAddDataToUserAnswers extends VariationsErrors
+
+object UnexpectedResponseFromSDIL extends VariationsErrors
+
 

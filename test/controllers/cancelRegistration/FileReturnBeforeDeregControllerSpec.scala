@@ -44,7 +44,7 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
         inject.bind[SoftDrinksIndustryLevyConnector].toInstance(mockConnector)
       ).build()
 
-      when(mockConnector.returns_pending(any())(any())).thenReturn(Future.successful(Some(returnPeriods)))
+      when(mockConnector.returnsPending(any())(any())).thenReturn(Future.successful(Some(returnPeriods)))
 
       running(application) {
         val request = FakeRequest(GET, fileReturnBeforDeregRoute)
@@ -64,7 +64,7 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
         inject.bind[SoftDrinksIndustryLevyConnector].toInstance(mockConnector)
       ).build()
 
-      when(mockConnector.returns_pending(any())(any())).thenReturn(Future.successful(Some(returnPeriod)))
+      when(mockConnector.returnsPending(any())(any())).thenReturn(Future.successful(Some(returnPeriod)))
 
       running(application) {
         val request = FakeRequest(GET, fileReturnBeforDeregRoute)
@@ -84,7 +84,7 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
         inject.bind[SoftDrinksIndustryLevyConnector].toInstance(mockConnector)
       ).build()
 
-      when(mockConnector.returns_pending(any())(any())).thenReturn(Future.successful(None))
+      when(mockConnector.returnsPending(any())(any())).thenReturn(Future.successful(None))
 
       running(application) {
         val request = FakeRequest(GET, fileReturnBeforDeregRoute)

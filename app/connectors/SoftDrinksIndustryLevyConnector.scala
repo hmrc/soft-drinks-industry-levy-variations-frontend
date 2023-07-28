@@ -16,9 +16,12 @@
 
 package connectors
 
+import cats.data.EitherT
 import config.FrontendAppConfig
+import errors.UnexpectedResponseFromSDIL
 import models.{FinancialLineItem, RetrievedSubscription, ReturnPeriod, SdilReturn}
 import repositories.{SDILSessionCache, SDILSessionKeys}
+import service.VariationResult
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
 import javax.inject.Inject
@@ -74,19 +77,33 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     http.GET[List[FinancialLineItem]](s"$sdilUrl/balance/$sdilRef/history/all/$withAssessment")
   }
 
-  def returns_variable(
-                        utr: String
-                      )(implicit hc: HeaderCarrier): Future[Option[List[ReturnPeriod]]] =
-    http.GET[Option[List[ReturnPeriod]]](s"$sdilUrl/returns/$utr/variable").map {
-      case Some(a) => Some(a)
-      case _ => None
+  def returnsVariable(utr: String, sdilRef: String)(implicit hc: HeaderCarrier): VariationResult[List[ReturnPeriod]] = EitherT {
+    sdilSessionCache.fetchEntry[List[ReturnPeriod]](sdilRef, SDILSessionKeys.VARIABLE_RETURNS).flatMap {
+      case Some(variableReturns) => Future.successful(Right(variableReturns))
+      case None =>
+        http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/variable").flatMap { variableReturns =>
+            sdilSessionCache.save(sdilRef, SDILSessionKeys.VARIABLE_RETURNS, variableReturns)
+              .map { _ => Right(variableReturns)
+            }
+        }.recover {
+          case _ => Left(UnexpectedResponseFromSDIL)
+        }
     }
+  }
 
-  def returns_pending(utr: String)(implicit hc: HeaderCarrier): Future[Option[List[ReturnPeriod]]] =
-    http.GET[Option[List[ReturnPeriod]]](s"$sdilUrl/returns/$utr/pending").map {
-      case Some(a) => Some(a)
-      case _ => None
+  def returnsPending(utr: String, sdilRef: String)(implicit hc: HeaderCarrier): VariationResult[List[ReturnPeriod]] = EitherT {
+    sdilSessionCache.fetchEntry[List[ReturnPeriod]](sdilRef, SDILSessionKeys.RETURNS_PENDING).flatMap {
+      case Some(variableReturns) => Future.successful(Right(variableReturns))
+      case None =>
+        http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending").flatMap { variableReturns =>
+          sdilSessionCache.save(sdilRef, SDILSessionKeys.RETURNS_PENDING, variableReturns)
+            .map { _ => Right(variableReturns)
+            }
+        }.recover {
+          case _ => Left(UnexpectedResponseFromSDIL)
+        }
     }
+  }
 
   def returns_update(utr: String, period: ReturnPeriod, sdilReturn: SdilReturn)(implicit hc: HeaderCarrier): Future[Option[Int]] = {
     val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"

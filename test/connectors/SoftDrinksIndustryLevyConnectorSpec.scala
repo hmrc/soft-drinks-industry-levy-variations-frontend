@@ -164,7 +164,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
 
       when(mockHttp.GET[Option[List[ReturnPeriod]]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(returnPeriods)))
 
-      val res = softDrinksIndustryLevyConnector.returns_pending(utr)
+      val res = softDrinksIndustryLevyConnector.returnsPending(utr)
 
       whenReady(
         res
@@ -178,7 +178,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
 
       when(mockHttp.GET[Option[List[ReturnPeriod]]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
 
-      val res = softDrinksIndustryLevyConnector.returns_pending(utr)
+      val res = softDrinksIndustryLevyConnector.returnsPending(utr)
 
       whenReady(
         res
@@ -192,7 +192,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
 
       when(mockHttp.GET[Option[List[ReturnPeriod]]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
 
-      val res = softDrinksIndustryLevyConnector.returns_variable(utr)
+      val res = softDrinksIndustryLevyConnector.returnsVariable(utr)
 
       whenReady(
         res

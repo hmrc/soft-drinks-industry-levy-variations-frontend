@@ -33,13 +33,19 @@ object SelectChange extends Enumerable.Implicits {
     UpdateRegisteredDetails, ChangeActivity, CancelRegistration, CorrectReturn
   )
 
-  def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {
-    case (value, index) =>
-      RadioItem(
-        content = Text(messages(s"selectChange.${value.toString}")),
-        value   = Some(value.toString),
-        id      = Some(s"value_$index")
-      )
+  val valuesWithOutCorrectReturns: Seq[SelectChange] = values.filterNot(_ == CorrectReturn)
+
+
+  def options(withoutCorrectReturns: Boolean)(implicit messages: Messages): Seq[RadioItem] = {
+    val valuesList = if (withoutCorrectReturns) valuesWithOutCorrectReturns else values
+    valuesList.zipWithIndex.map {
+      case (value, index) =>
+        RadioItem(
+          content = Text(messages(s"selectChange.${value.toString}")),
+          value = Some(value.toString),
+          id = Some(s"value_$index")
+        )
+    }
   }
 
   implicit val enumerable: Enumerable[SelectChange] =
