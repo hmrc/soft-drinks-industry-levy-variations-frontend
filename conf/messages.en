@@ -485,5 +485,3 @@ correctReturn.packagingSiteDetails.checkYourAnswersLabel = UK packaging sites
 correctReturn.packagingSiteDetails.error.required = Select yes if you want to add another UK packaging site
 correctReturn.packagingSiteDetails.change.hidden = your UK packaging site details
 correctReturn.packagingSiteDetails.remove.hidden = {0} site address {1}
-
-
