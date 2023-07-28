@@ -35,7 +35,7 @@
         value = form.data.get("lowBand")
     )
         .withHint(Hint(content = Text(messages("litres.lowBandHint"))))
-        .withAttribute("input" -> "numeric")
+        .withAttribute("inputmode" -> "numeric")
 
 )
 @govukInput(
@@ -58,5 +58,5 @@
 
     )
         .withHint(Hint(content = Text(messages("litres.highBandHint"))))
-        .withAttribute("input" -> "numeric")
+        .withAttribute("inputmode" -> "numeric")
 )
