@@ -27,35 +27,13 @@ import javax.inject.Inject
 
 class AddASmallProducerFormProvider @Inject() extends Mappings {
 
-  def apply(userAnswers: UserAnswers  ) = {
-
-    def checkSDILReference(): Constraint[String] = {
-
-      val validFormatPattern = "^X[A-Z]SDIL000[0-9]{6}$"
-
-      Constraint {
-        case sdilReference if !sdilReference.matches(validFormatPattern) =>
-          Invalid("correctReturn.addASmallProducer.error.referenceNumber.invalid")
-        case sdilReference if sdilReference == userAnswers.id =>
-          Invalid("correctReturn.addASmallProducer.error.referenceNumber.same")
-        case _ =>
-          Valid
-      }
-    }
-
+  def apply(userAnswers: UserAnswers) = {
     Form(
       mapping(
-        "producerName" -> optional(text(
-        ).verifying(
-          maxLength(160,"correctReturn.addASmallProducer.error.producerName.maxLength"))),
-        "referenceNumber" -> text(
-          "correctReturn.addASmallProducer.error.referenceNumber.required"
-        ).verifying(
-            checkSDILReference()),
-        "lowBand" -> litres (
-          "lowBand"),
-        "highBand" -> litres (
-          "highBand")
+        "producerName" -> optional(text().verifying(maxLength(160,"correctReturn.addASmallProducer.error.producerName.maxLength"))),
+        "referenceNumber" -> sdilReference("correctReturn.addASmallProducer.error.referenceNumber.required", userAnswers.id),
+        "lowBand" -> litres("lowBand"),
+        "highBand" -> litres("highBand")
       )(AddASmallProducer.apply)(AddASmallProducer.unapply)
     )
   }
