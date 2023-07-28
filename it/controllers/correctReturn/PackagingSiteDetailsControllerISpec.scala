@@ -277,7 +277,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe "Select yes if you want like to add another UK packaging site"
+            errorSummary.text() mustBe "Select yes if you want to add another UK packaging site"
           }
         }
       }
