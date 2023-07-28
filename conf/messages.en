@@ -235,7 +235,7 @@ changeActivity.packagingSiteDetails.subHeading = Do you want to add another UK p
 changeActivity.packagingSiteDetails.info = You must tell us about all of the UK packaging sites you operate to produce liable drinks. You must have at least one registered packaging site.
 changeActivity.packagingSiteDetails.checkYourAnswersLabel = UK packaging site details
 changeActivity.packagingSiteDetails.error.required = Select yes if you need to add another packaging site
-changeActivity.packagingSiteDetails.change.hidden = change UK packaging site details
+changeActivity.packagingSiteDetails.change.hidden = {0} site address {1}
 
 changeActivity.removePackagingSiteDetails.title = Are you sure you want to remove this packaging site?
 changeActivity.removePackagingSiteDetails.heading = Are you sure you want to remove this packaging site?
