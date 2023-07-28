@@ -26,7 +26,6 @@
     govukSummaryList: GovukSummaryList
 )
 
-
 @(form: Form[_], mode: Mode, packagingSites: Map[String, Site])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("correctReturn.packagingSiteDetails.title"))) {
@@ -37,26 +36,26 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-    @if(packagingSites.size == 1) {
-        <h1 class="govuk-heading-m">@messages("correctReturn.packagingSiteDetails.heading1")</h1>
-        } else {
-            <h1 class="govuk-heading-m">@messages("correctReturn.packagingSiteDetails.heading", packagingSites.size)</h1>
-        }
+        @if(packagingSites.size == 1) {
+            <h1 class="govuk-heading-m">@messages("correctReturn.packagingSiteDetails.heading1")</h1>
+            } else {
+                <h1 class="govuk-heading-m">@messages("correctReturn.packagingSiteDetails.heading", packagingSites.size)</h1>
+            }
 
-        <p class="govuk-body">@messages("changeActivity.packagingSiteDetails.info")</p>
+            <p class="govuk-body">@messages("changeActivity.packagingSiteDetails.info")</p>
 
-    @govukSummaryList(PackagingSiteDetailsSummary.summaryList(packagingSites))
+        @govukSummaryList(PackagingSiteDetailsSummary.summaryList(packagingSites))
 
-    @govukRadios(
-        RadiosViewModel.yesNo(
-            field = form("value"),
-            legend = LegendViewModel(messages("correctReturn.packagingSiteDetails.title")).withCssClass("govuk-fieldset__legend--m"),
-            hint = None
+        @govukRadios(
+            RadiosViewModel.yesNo(
+                field = form("value"),
+                legend = LegendViewModel(messages("correctReturn.packagingSiteDetails.title")).withCssClass("govuk-fieldset__legend--m"),
+                hint = None
+            )
         )
-    )
 
-        @govukButton(
-            ButtonViewModel(messages("site.saveContinue"))
-        )
+            @govukButton(
+                ButtonViewModel(messages("site.saveContinue"))
+            )
     }
 }

@@ -17,10 +17,9 @@
 package navigation
 
 import controllers.correctReturn.routes
-import models.{CheckMode, Mode, NormalMode, RetrievedSubscription, SdilReturn, UserAnswers}
+import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages.Page
 import pages.correctReturn._
-
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
