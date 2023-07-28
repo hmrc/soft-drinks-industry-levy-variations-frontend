@@ -400,8 +400,8 @@ correctReturn.broughtIntoUK.error.required = Select yes if are you reporting lia
 correctReturn.broughtIntoUK.change.hidden = Change are you reporting liable drinks you have brought into the UK from anywhere outside of the UK?
 correctReturn.howManyBroughtIntoUK.title = How many litres of liable drinks have you brought into the UK from anywhere outside of the UK?
 correctReturn.howManyBroughtIntoUK.heading = How many litres of liable drinks have you brought into the UK from anywhere outside of the UK?
-correctReturn.broughtIntoUK.lowband.litres.hidden = change amount of litres in lowband for broughtIntoUK
-correctReturn.broughtIntoUK.highband.litres.hidden = change amount of litres in highband for broughtIntoUK
+correctReturn.broughtIntoUK.lowband.litres.hidden = number of litres in low band brought into the UK
+correctReturn.broughtIntoUK.highband.litres.hidden = number of litres in high band brought into the UK
 
 correctReturn.exemptionsForSmallProducers.title = Do you need to claim an exemption for any of the liable drinks you have packaged for registered small producers?
 correctReturn.exemptionsForSmallProducers.heading = Do you need to claim an exemption for any of the liable drinks you have packaged for registered small producers?
@@ -435,8 +435,8 @@ correctReturn.broughtIntoUkFromSmallProducers.error.required = Select yes if are
 correctReturn.broughtIntoUkFromSmallProducers.change.hidden = Change are you reporting liable drinks you have brought into the UK from small producers?
 correctReturn.howManyBroughtIntoUkFromSmallProducers.title = How many litres of liable drinks have you brought into the UK from small producers?
 correctReturn.howManyBroughtIntoUkFromSmallProducers.heading = How many litres of liable drinks have you brought into the UK from small producers?
-correctReturn.broughtIntoUkFromSmallProducers.lowband.litres.hidden = change amount of litres in lowband for broughtIntoUkFromSmallProducers
-correctReturn.broughtIntoUkFromSmallProducers.highband.litres.hidden = change amount of litres in highband for broughtIntoUkFromSmallProducers
+correctReturn.broughtIntoUkFromSmallProducers.lowband.litres.hidden = number of litres in low band brought into the UK from a small producer
+correctReturn.broughtIntoUkFromSmallProducers.highband.litres.hidden = number of litres in high band brought into the UK from a small producer 
 
 correctReturn.claimCreditsForExports.heading2 = Exported drinks
 correctReturn.claimCreditsForExports.title = Do you want to claim a credit for liable drinks that have been exported?
@@ -449,11 +449,11 @@ correctReturn.claimCreditsForExports.detailsContent3 = supplier or consigner
 correctReturn.claimCreditsForExports.detailsContent4 = customer and destination the liable drinks are supplied to
 correctReturn.claimCreditsForExports.detailsContent5 = method of delivery
 correctReturn.claimCreditsForExports.detailsContent6 = If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.
-correctReturn.claimCreditsForExports.error.required = Select yes if you want to claim a credit for liable drinks that has been exported
+correctReturn.claimCreditsForExports.error.required = Select yes if you want to claim a credit for liable drinks that have been exported
 correctReturn.claimCreditsForExports.warningFallBack = Warning
 correctReturn.claimCreditsForExports.change.hidden = whether you want to claim credits for exported liable drinks
-correctReturn.claimCreditsForExports.lowband.litres.hidden = change amount of litres in lowband for claimCreditsForExports
-correctReturn.claimCreditsForExports.highband.litres.hidden = change amount of litres in highband for claimCreditsForExports
+correctReturn.claimCreditsForExports.lowband.litres.hidden = number of litres in the low band for exported liable drinks
+correctReturn.claimCreditsForExports.highband.litres.hidden = number of litres in the high band for exported liable drinks
 
 correctReturn.howManyCreditsForExport.title = How many credits do you want to claim for liable drinks that have been exported?
 correctReturn.howManyCreditsForExport.subtext = You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them.
