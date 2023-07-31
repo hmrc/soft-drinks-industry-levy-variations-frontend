@@ -32,6 +32,27 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
   private def userAnswersWithSmallProducersSet = emptyUserAnswersForCorrectReturn
     .copy(smallProducerList = List(SmallProducer(aliasSuperCola, sdilRefSuperCola, (100, 200))))
 
+  def testReturnPeriodNotSetForCorrectReturn(url: String): Unit = {
+    "the return period has not been selected" - {
+      "redirect to Index controller" in {
+        setAnswers(emptyUserAnswersForCorrectReturn)
+        given.commonPreconditionChangeSubscription(aSubscription)
+
+        WsTestClient.withClient { client =>
+          val result1 = client.url(url)
+            .withFollowRedirects(false)
+            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+            .get()
+
+          whenReady(result1) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION).get mustBe controllers.routes.IndexController.onPageLoad.url
+          }
+        }
+      }
+    }
+  }
+
   "GET " + normalRoutePath - {
     "Ask user to input a registered small producer's details" in {
       val userAnswers = userAnswersWithReturnPeriodSet
@@ -50,6 +71,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
       }
     }
+    testReturnPeriodNotSetForCorrectReturn(correctReturnBaseUrl + normalRoutePath)
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath)
@@ -72,6 +94,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
       }
     }
+    testReturnPeriodNotSetForCorrectReturn(correctReturnBaseUrl + checkRoutePath)
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath)
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath)

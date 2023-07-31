@@ -51,7 +51,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
+      val userAnswers = emptyUserAnswersForCorrectReturn.set(SelectPage, returnPeriod.head).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, addASmallProducerRoute)
@@ -65,10 +66,27 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "must redirect to Index controller when return period has not been selected" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, addASmallProducerRoute)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[AddASmallProducerView]
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
+      }
+    }
+
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val smallProducer: AddASmallProducer = AddASmallProducer(Some("PRODUCER"), sdilNumber, 10, 20)
-      val userAnswers = emptyUserAnswersForCorrectReturn.set(AddASmallProducerPage, smallProducer).success.value
+      val userAnswers = emptyUserAnswersForCorrectReturn
+        .set(SelectPage, returnPeriod.head).success.value
+        .set(AddASmallProducerPage, smallProducer).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 

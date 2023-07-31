@@ -53,13 +53,19 @@ class AddASmallProducerController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
     implicit request =>
 
-      val form: Form[AddASmallProducer] = formProvider(request.userAnswers)
-      val preparedForm = request.userAnswers.get(AddASmallProducerPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+      request.userAnswers.get(SelectPage) match {
+        case Some(_) =>
+          val form: Form[AddASmallProducer] = formProvider(request.userAnswers)
+          val preparedForm = request.userAnswers.get(AddASmallProducerPage) match {
+            case None => form
+            case Some(value) => form.fill(value)
+          }
 
-      Ok(view(preparedForm, mode))
+          Ok(view(preparedForm, mode))
+        case _ =>
+          genericLogger.logger.warn(s"Return period has not been set for correct return journey for ${request.userAnswers.id}")
+          Redirect(controllers.routes.IndexController.onPageLoad.url)
+      }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
