@@ -435,7 +435,7 @@ correctReturn.broughtIntoUkFromSmallProducers.change.hidden = Change are you rep
 correctReturn.howManyBroughtIntoUkFromSmallProducers.title = How many litres of liable drinks have you brought into the UK from small producers?
 correctReturn.howManyBroughtIntoUkFromSmallProducers.heading = How many litres of liable drinks have you brought into the UK from small producers?
 correctReturn.broughtIntoUkFromSmallProducers.lowband.litres.hidden = number of litres in low band brought into the UK from a small producer
-correctReturn.broughtIntoUkFromSmallProducers.highband.litres.hidden = number of litres in high band brought into the UK from a small producer 
+correctReturn.broughtIntoUkFromSmallProducers.highband.litres.hidden = number of litres in high band brought into the UK from a small producer
 
 correctReturn.claimCreditsForExports.heading2 = Exported drinks
 correctReturn.claimCreditsForExports.title = Do you want to claim a credit for liable drinks that have been exported?
@@ -477,6 +477,11 @@ correctReturn.removePackagingSiteConfirm.heading = Are you sure you want to remo
 correctReturn.removePackagingSiteConfirm.checkYourAnswersLabel = Are you sure you want to remove this packaging site?
 correctReturn.removePackagingSiteConfirm.error.required = Select yes if you want to remove this packaging site
 
+correctReturn.secondaryWarehouseDetails.title = Do you want to add another UK warehouse?
+correctReturn.secondaryWarehouseDetails.heading = You added {0} UK warehouse{1}
+correctReturn.secondaryWarehouseDetails.checkYourAnswersLabel = Do you want to add another UK warehouse?
+correctReturn.secondaryWarehouseDetails.error.required = Select yes if you want to add another UK warehouse
+correctReturn.secondaryWarehouseDetails.change.hidden = SecondaryWarehouseDetails
 
 correctReturn.packagingSiteDetails.title = Do you want to add another UK packaging site?
 correctReturn.packagingSiteDetails.heading = You added {0} UK packaging sites
