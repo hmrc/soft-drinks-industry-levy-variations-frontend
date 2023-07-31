@@ -102,6 +102,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case HowManyBroughtIntoUKPage => _ => defaultCall
     case ExemptionsForSmallProducersPage => _ => defaultCall
     case RemoveSmallProducerConfirmPage => _ => defaultCall
+    case RemoveWarehouseDetailsPage => userAnswers => defaultCall
     case CorrectionReasonPage => _ => defaultCall
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => defaultCall

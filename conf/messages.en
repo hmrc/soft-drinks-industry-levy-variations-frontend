@@ -432,6 +432,12 @@ correctReturn.removeSmallProducerConfirm.checkYourAnswersLabel = Are you sure yo
 correctReturn.removeSmallProducerConfirm.error.required = Select yes if you want to remove this small producer
 correctReturn.removeSmallProducerConfirm.change.hidden = Select yes if you want to remove this small producer
 
+correctReturn.removeWarehouseDetails.title = Are you sure you want to remove this warehouse?
+correctReturn.removeWarehouseDetails.heading = Are yo sure you want to remove this warehouse?
+correctReturn.removeWarehouseDetails.checkYourAnswersLabel = Are you sure you want to remove this warehouse?
+correctReturn.removeWarehouseDetails.error.required = Select yes if you want to remove this warehouse
+correctReturn.removeWarehouseDetails.change.hidden = Select yes if you want to remove this warehouse
+
 correctReturn.broughtIntoUkFromSmallProducers.title = Are you reporting liable drinks you have brought into the UK from small producers?
 correctReturn.broughtIntoUkFromSmallProducers.heading = Are you reporting liable drinks you have brought into the UK from small producers?
 correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersLabel = Are you reporting liable drinks you have brought into the UK from small producers?
