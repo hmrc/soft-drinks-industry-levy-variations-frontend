@@ -14,54 +14,56 @@
  * limitations under the License.
  */
 
-package views.changeActivity
+package views.correctReturn
 
-import controllers.changeActivity.routes
-import forms.changeActivity.PackagingSiteDetailsFormProvider
+import controllers.correctReturn.routes
+import forms.correctReturn.PackagingSiteDetailsFormProvider
+import models.backend.{Site, UkAddress}
 import models.{CheckMode, NormalMode}
-import play.api.i18n.Messages
+import play.api.data.Form
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
-import views.html.changeActivity.PackagingSiteDetailsView
 import views.ViewSpecHelper
+import views.html.correctReturn.PackagingSiteDetailsView
+import java.time.LocalDate
+
 class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
 
-  val view = application.injector.instanceOf[PackagingSiteDetailsView]
+  val view: PackagingSiteDetailsView = application.injector.instanceOf[PackagingSiteDetailsView]
   val formProvider = new PackagingSiteDetailsFormProvider
-  val form = formProvider.apply()
+  val form: Form[Boolean] = formProvider.apply()
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
-    val heading = "govuk-heading-m"
     val legend = "govuk-fieldset__legend  govuk-fieldset__legend--m"
     val radios = "govuk-radios__item"
     val radioInput = "govuk-radios__input"
-    val radioLables = "govuk-label govuk-radios__label"
+    val radioLabels = "govuk-label govuk-radios__label"
     val body = "govuk-body"
     val errorSummaryTitle = "govuk-error-summary__title"
     val errorSummaryList = "govuk-list govuk-error-summary__list"
     val button = "govuk-button"
     val form = "form"
+    val summaryListActions = "govuk-summary-list__actions"
   }
 
-  "View" - {
-    val html = view(form, NormalMode, SummaryList())(request, messages(application))
+  "Correct Returns, Packaging Site Details View" - {
+    val html = view(form, NormalMode, packagingSites = Map.empty)(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
-      document.title() must include(Messages("changeActivity.packagingSiteDetails" + ".title"))
+      document.title() mustBe "Do you want to add another UK packaging site? - Soft Drinks Industry Levy - GOV.UK"
     }
 
-    "should include a heading with the expected heading" in {
-      val legend = document.getElementsByClass(Selectors.heading)
-      legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("changeActivity.packagingSiteDetails.heading")
-    }
-
-    "should include a legend with the expected sub-heading" in {
+    "should include a legend with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.legend).text() mustEqual Messages("changeActivity.packagingSiteDetails.subHeading")
+      legend.get(0).text() mustBe "Do you want to add another UK packaging site?"
+    }
+
+    "should include the expected heading" in {
+      val heading = document.getElementsByClass("govuk-heading-m")
+      heading.size() mustBe 1
+      heading.text() mustBe "You added 0 UK packaging sites"
     }
 
     "when the form is not preoccupied and has no errors" - {
@@ -72,7 +74,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -86,7 +88,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -99,7 +101,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with yes and has no errors" - {
-      val html1 = view(form.fill(true), NormalMode, SummaryList())(request, messages(application))
+      val html1 = view(form.fill(true), NormalMode, packagingSites = Map.empty)(request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -107,7 +109,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -121,7 +123,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -134,7 +136,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with no and has no errors" - {
-      val html1 = view(form.fill(false), NormalMode, SummaryList())(request, messages(application))
+      val html1 = view(form.fill(false), NormalMode, packagingSites = Map.empty)(request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -142,7 +144,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -156,7 +158,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -174,10 +176,10 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
       "when in CheckMode" - {
-        val htmlYesSelected = view(form.fill(true), CheckMode, SummaryList())(request, messages(application))
+        val htmlYesSelected = view(form.fill(true), CheckMode, packagingSites = Map.empty)(request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), CheckMode, SummaryList())(request, messages(application))
+        val htmlNoSelected = view(form.fill(false), CheckMode, packagingSites = Map.empty)(request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
           documentYesSelected.select(Selectors.form)
@@ -191,10 +193,10 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
       }
 
       "when in NormalMode" - {
-        val htmlYesSelected = view(form.fill(true), NormalMode, SummaryList())(request, messages(application))
+        val htmlYesSelected = view(form.fill(true), NormalMode, packagingSites = Map.empty)(request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), NormalMode, SummaryList())(request, messages(application))
+        val htmlNoSelected = view(form.fill(false), NormalMode, packagingSites = Map.empty)(request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
           documentYesSelected.select(Selectors.form)
@@ -209,12 +211,11 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode, SummaryList())(request, messages(application))
+      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode, packagingSites = Map.empty)(request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
-        val titleMessage = Messages("changeActivity.packagingSiteDetails.title")
-        documentWithErrors.title must include("Error: " + titleMessage)
+        documentWithErrors.title mustBe "Error: Do you want to add another UK packaging site? - Soft Drinks Industry Levy - GOV.UK"
       }
 
       "contains a message that links to field with error" in {
@@ -224,7 +225,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
         errorSummary
           .select("a")
           .attr("href") mustBe "#value"
-        errorSummary.text() mustBe Messages("changeActivity.packagingSiteDetails.error.required")
+        errorSummary.text() mustBe "Select yes if you want to add another UK packaging site"
       }
     }
 
@@ -232,6 +233,60 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
     validateTimeoutDialog(document)
     validateTechnicalHelpLinkPresent(document)
     validateAccessibilityStatementLinkPresent(document)
+  }
+
+  "View should contain the correct heading and summary row details" - {
+    lazy val pSite = Site(
+      UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
+      Some("88"),
+      Some("Wild Lemonade Group"),
+      Some(LocalDate.of(2018, 2, 26)))
+    lazy val pSite2 = Site(
+      UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
+      Some("88"),
+      None,
+      Some(LocalDate.of(2018, 2, 26)))
+    lazy val packagingSites2 = Map("000001" -> pSite, "00002" -> pSite2)
+    lazy val packagingSites = Map("00213" -> pSite)
+
+    val html1 = view(form.fill(true), NormalMode, packagingSites = Map.empty)(request, messages(application))
+    val document1 = doc(html1)
+    val heading1 = document1.getElementsByClass("govuk-heading-m").get(0).text()
+    val html2 = view(form.fill(true), NormalMode, packagingSites)(request, messages(application))
+    val document2 = doc(html2)
+    val heading2 = document2.getElementsByClass("govuk-heading-m").get(0).text()
+    val html3 = view(form.fill(true), NormalMode, packagingSites2)(request, messages(application))
+    val document3 = doc(html3)
+    val heading3 = document3.getElementsByClass("govuk-heading-m").get(0).text()
+
+    "when the list is empty the heading should be pluralised" in {
+      heading1 mustBe "You added 0 UK packaging sites"
+    }
+
+    "when the list has one it should be singular" in {
+      heading2 mustBe "You added 1 UK packaging site"
+    }
+
+    "when the list has multiple packaging sites the heading should be pluralised" in {
+      heading3 mustBe "You added 2 UK packaging sites"
+    }
+
+    "when there is 1 packaging site the summary list should display the correct packaging site information and the remove link should not be present" in {
+      val listItems = document2.getElementsByClass(Selectors.summaryListActions)
+      val summaryListKey = document2.getElementsByClass("govuk-summary-list__key")
+
+      listItems.text() mustBe ""
+      summaryListKey.size mustBe 1
+    }
+
+    "when there are 2 packaging sites the summary list should display the correct packaging site information" in {
+      val listItems = document3.getElementsByClass(Selectors.summaryListActions)
+      val summaryListKey = document3.getElementsByClass("govuk-summary-list__key")
+
+      summaryListKey.size mustBe 2
+      listItems.get(0).text() mustBe "Remove Wild Lemonade Group site address 33 Rhes Priordy"
+      listItems.get(1).text() mustBe "Remove site address 33 Rhes Priordy"
+    }
   }
 
 }

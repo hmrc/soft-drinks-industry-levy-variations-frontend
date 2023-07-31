@@ -1,0 +1,61 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.backend.Site
+@import views.summary.correctReturn.PackagingSiteDetailsSummary
+
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukRadios: GovukRadios,
+    govukButton: GovukButton,
+    govukSummaryList: GovukSummaryList
+)
+
+@(form: Form[_], mode: Mode, packagingSites: Map[String, Site])(implicit request: Request[_], messages: Messages)
+
+@layout(pageTitle = title(form, messages("correctReturn.packagingSiteDetails.title"))) {
+
+    @formHelper(action = controllers.correctReturn.routes.PackagingSiteDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
+
+        @if(packagingSites.size == 1) {
+            <h1 class="govuk-heading-m">@messages("correctReturn.packagingSiteDetails.heading1")</h1>
+            } else {
+                <h1 class="govuk-heading-m">@messages("correctReturn.packagingSiteDetails.heading", packagingSites.size)</h1>
+            }
+
+            <p class="govuk-body">@messages("changeActivity.packagingSiteDetails.info")</p>
+
+        @govukSummaryList(PackagingSiteDetailsSummary.summaryList(packagingSites))
+
+        @govukRadios(
+            RadiosViewModel.yesNo(
+                field = form("value"),
+                legend = LegendViewModel(messages("correctReturn.packagingSiteDetails.title")).withCssClass("govuk-fieldset__legend--m"),
+                hint = None
+            )
+        )
+
+            @govukButton(
+                ButtonViewModel(messages("site.saveContinue"))
+            )
+    }
+}
