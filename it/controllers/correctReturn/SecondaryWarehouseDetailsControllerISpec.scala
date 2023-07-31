@@ -12,8 +12,8 @@ import play.api.test.WsTestClient
 
 class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
-  val normalRoutePath = "/secondary-warehouse-details"
-  val checkRoutePath = "/change-secondary-warehouse-details"
+  val normalRoutePath = "/ask-secondary-warehouses-in-return"
+  val checkRoutePath = "/change-ask-secondary-warehouses-in-return"
 
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
