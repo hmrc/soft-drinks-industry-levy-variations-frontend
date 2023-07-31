@@ -508,3 +508,11 @@ correctReturn.packagingSiteDetails.checkYourAnswersLabel = UK packaging sites
 correctReturn.packagingSiteDetails.error.required = Select yes if you want to add another UK packaging site
 correctReturn.packagingSiteDetails.change.hidden = your UK packaging site details
 correctReturn.packagingSiteDetails.remove.hidden = {0} site address {1}
+
+updateRegisteredDetails.contactDetails.title = Change person''s details
+updateRegisteredDetails.contactDetails.heading = Change person''s details
+updateRegisteredDetails.contactDetails.legend = This is the person we will contact about the Soft Drinks Industry Levy, if we need to.
+updateRegisteredDetails.contactDetails.name.change.hidden = contact person''s full name
+updateRegisteredDetails.contactDetails.position.change.hidden = contact person''s job title
+updateRegisteredDetails.contactDetails.phoneNumber.change.hidden = contact person''s telephone number
+updateRegisteredDetails.contactDetails.email.change.hidden = contact person''s email address
