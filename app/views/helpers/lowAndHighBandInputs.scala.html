@@ -33,7 +33,7 @@
         form.error("lowBand").map{ e =>
             ErrorMessage(
                 content = Text(messages(s"${e.messages.headOption.get}")),
-                visuallyHiddenText = Some(messages("litres.lowBand.visuallyHidden"))
+                visuallyHiddenText = Some(messages("site.error"))
             )
         },
         value = form("lowBand").value
@@ -55,7 +55,7 @@
         form.error("highBand").map{ e =>
           ErrorMessage(
               content = Text(messages(s"${e.messages.headOption.get}")),
-              visuallyHiddenText = Some(messages("litres.highBand.visuallyHidden"))
+              visuallyHiddenText = Some(messages("site.error"))
           )
         },
         value = form("highBand").value
