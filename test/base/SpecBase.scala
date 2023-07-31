@@ -38,9 +38,21 @@ import queries.Settable
 import play.api.test.Helpers._
 
 import java.time.LocalDate
+import scala.collection.immutable.Map
 import scala.util.{Failure, Try}
 
 object SpecBase {
+  lazy val contactAddress = UkAddress(List("19 Rhes Priordy", "East London"), "E73 2RP")
+
+  val sdilNumber: String = "XKSDIL000000022"
+
+  val twoWarehouses: Map[String,Warehouse] = Map(
+    "1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
+    "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"))
+  )
+
+  val userAnswerTwoWarehouses : UserAnswers = UserAnswers(sdilNumber,SelectChange.CorrectReturn, contactAddress = contactAddress, data = Json.obj(), warehouseList = twoWarehouses)
+
   val aSubscription = RetrievedSubscription(
     utr = "0000000022",
     sdilRef = "XKSDIL000000022",

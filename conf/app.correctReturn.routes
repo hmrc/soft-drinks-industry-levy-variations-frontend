@@ -95,6 +95,11 @@ POST       /packaging-site-details/remove/:index                       controlle
 GET        /change-packaging-site-details/remove/:index                controllers.correctReturn.RemovePackagingSiteConfirmController.onPageLoad(mode: Mode = CheckMode, index: String)
 POST       /change-packaging-site-details/remove/:index                  controllers.correctReturn.RemovePackagingSiteConfirmController.onSubmit(mode: Mode = CheckMode, index: String)
 
+GET        /ask-secondary-warehouses-in-return                                   controllers.correctReturn.SecondaryWarehouseDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /ask-secondary-warehouses-in-return                                   controllers.correctReturn.SecondaryWarehouseDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-ask-secondary-warehouses-in-return                  controllers.correctReturn.SecondaryWarehouseDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-ask-secondary-warehouses-in-return                  controllers.correctReturn.SecondaryWarehouseDetailsController.onSubmit(mode: Mode = CheckMode)
+
 GET        /packaging-site-details                        controllers.correctReturn.PackagingSiteDetailsController.onPageLoad(mode: Mode = NormalMode)
 POST       /packaging-site-details                        controllers.correctReturn.PackagingSiteDetailsController.onSubmit(mode: Mode = NormalMode)
 GET        /change-packaging-site-details                  controllers.correctReturn.PackagingSiteDetailsController.onPageLoad(mode: Mode = CheckMode)
