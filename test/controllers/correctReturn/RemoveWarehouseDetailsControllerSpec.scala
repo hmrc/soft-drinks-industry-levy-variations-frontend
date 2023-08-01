@@ -70,6 +70,28 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
+    "must redirect to Index controller when warehouse index does not exist on warehouse list on GET" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
+
+      running(application) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          val request = FakeRequest(GET, removeWarehouseDetailsRoute)
+
+          val result = route(application, request).value
+
+          await(route(application, request).value)
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustBe "WARN"
+              event.getMessage mustEqual s"Warehouse index $indexOfWarehouseToBeRemoved doesn't exist ${emptyUserAnswersForCorrectReturn.id} warehouse list length:0"
+          }.getOrElse(fail("No logging captured"))
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
+        }
+      }
+    }
+
     "must redirect to the next page when valid data is submitted" in {
 
       val mockSessionService = mock[SessionService]
@@ -114,6 +136,30 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual
           view(boundForm, NormalMode, AddressFormattingHelper.addressFormatting(addressOfWarehouse, Some(warehouseTradingName)), indexOfWarehouseToBeRemoved)(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to Index controller when warehouse index does not exist on warehouse list on POST" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
+
+      running(application) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          val request =
+            FakeRequest(POST, removeWarehouseDetailsRoute)
+              .withFormUrlEncodedBody(("value", "true"))
+
+          val result = route(application, request).value
+
+          await(route(application, request).value)
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustBe "WARN"
+              event.getMessage mustEqual s"Warehouse index $indexOfWarehouseToBeRemoved doesn't exist ${emptyUserAnswersForCorrectReturn.id} warehouse list length:0"
+          }.getOrElse(fail("No logging captured"))
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
+        }
       }
     }
 
