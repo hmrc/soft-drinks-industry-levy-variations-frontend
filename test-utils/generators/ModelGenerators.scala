@@ -18,7 +18,7 @@ package generators
 
 import models._
 import models.changeActivity.AmountProduced
-import models.correctReturn.RepaymentMethod
+import models.correctReturn.{AddASmallProducer, RepaymentMethod}
 import models.updateRegisteredDetails.UpdateContactDetails
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalacheck.Arbitrary._
@@ -47,6 +47,16 @@ trait ModelGenerators {
   implicit lazy val arbitraryCorrectReturnRepaymentMethod: Arbitrary[RepaymentMethod] =
     Arbitrary {
       Gen.oneOf(RepaymentMethod.values)
+    }
+
+  implicit lazy val arbitraryCorrectReturnAddASmallProducer: Arbitrary[AddASmallProducer] =
+    Arbitrary {
+      for {
+        producerName <- arbitrary[Option[String]]
+        referenceNumber <- arbitrary[String]
+        lowBand <- arbitrary[Long]
+        highBand <- arbitrary[Long]
+      } yield AddASmallProducer(producerName, referenceNumber, lowBand, highBand)
     }
 
   implicit lazy val arbitraryUpdateRegisteredDetailsUpdateContactDetails: Arbitrary[UpdateContactDetails] =

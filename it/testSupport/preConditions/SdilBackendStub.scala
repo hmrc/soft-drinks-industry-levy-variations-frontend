@@ -108,5 +108,13 @@ case class SdilBackendStub()
           ok(Json.toJson(retrievedSubscription).toString())))
     builder
   }
+
+  def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod, smallProducerStatus: Boolean): PreconditionBuilder = {
+    stubFor(
+      get(
+        urlPathMatching(s"/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"))
+        .willReturn(ok(Json.toJson(smallProducerStatus).toString())))
+    builder
+  }
 }
 

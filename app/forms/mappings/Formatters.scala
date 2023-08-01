@@ -137,6 +137,7 @@ trait Formatters {
         baseFormatter
           .bind(key, data)
           .map(_.replace(",", ""))
+          .map(_.replace(" ", ""))
           .flatMap {
             case s if s.matches(numberRegexp) =>
               nonFatalCatch
@@ -157,4 +158,19 @@ trait Formatters {
       override def unbind(key: String, value: Long) =
         baseFormatter.unbind(key, value.toString)
     }
+
+  def sdilReferenceFormatter(requiredKey: String, args: Seq[String]): Formatter[String] = {
+    new Formatter[String] {
+      private val baseFormatter = stringFormatter(requiredKey, args)
+
+      override def bind(key: String, data: Map[String, String]) =
+        baseFormatter
+          .bind(key, data)
+          .map(_.replace(" ", ""))
+          .map(_.toUpperCase)
+
+      override def unbind(key: String, value: String) =
+        baseFormatter.unbind(key, value)
+    }
+  }
 }
