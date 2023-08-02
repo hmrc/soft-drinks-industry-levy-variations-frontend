@@ -16,7 +16,6 @@
 
 package controllers.updateRegisteredDetails
 
-import akka.actor.Status.Success
 import controllers.ControllerHelper
 import controllers.actions._
 import handlers.ErrorHandler
@@ -42,7 +41,7 @@ class ContactDetailsController @Inject()(
                                        val errorHandler: ErrorHandler,
                                        val navigator: NavigatorForUpdateRegisteredDetails,
                                        val sessionService: SessionService,
-                                       val genericLogger: GenericLogger,
+                                       val genericLogger: GenericLogger
                                      ) (implicit ec: ExecutionContext) extends ControllerHelper {
 
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails).async {
