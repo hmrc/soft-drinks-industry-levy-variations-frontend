@@ -17,8 +17,10 @@
 package controllers
 
 import base.SpecBase
+import errors.UnexpectedResponseFromSDIL
 import forms.SelectChangeFormProvider
 import models.{NormalMode, SelectChange, UserAnswers}
+import orchestrators.SelectChangeOrchestrator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -32,69 +34,106 @@ import scala.concurrent.Future
 
 class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
 
-  lazy val selectChangeRoute = routes.SelectChangeController.onPageLoad(NormalMode).url
+  lazy val selectChangeRoute = routes.SelectChangeController.onPageLoad.url
+
+  val mockOrchestrator = mock[SelectChangeOrchestrator]
 
   val formProvider = new SelectChangeFormProvider()
   val form = formProvider()
 
   "OwnBrands Controller" - {
+    List(true, false).foreach { hasVariableReturns =>
+      if(hasVariableReturns) {
+        "when there are pending returns"
+      } else {
+        "when no pending returns"
+      } - {
+        "must return OK and the correct view for a GET" in {
 
-    "must return OK and the correct view for a GET" in {
+          val application = applicationBuilder(userAnswers = None)
+            .overrides(bind[SelectChangeOrchestrator].toInstance(mockOrchestrator))
+            .build()
 
-      val application = applicationBuilder(userAnswers = None).build()
+          running(application) {
+            when(mockOrchestrator.hasReturnsToCorrect(any())(any(), any())) thenReturn createSuccessVariationResult(hasVariableReturns)
+
+            val request = FakeRequest(GET, selectChangeRoute)
+
+            val result = route(application, request).value
+
+            val view = application.injector.instanceOf[SelectChangeView]
+
+            status(result) mustEqual OK
+            contentAsString(result) mustEqual view(form, hasVariableReturns)(request, messages(application)).toString
+          }
+        }
+
+        "must populate the view correctly on a GET when the question has previously been answered" in {
+
+          val userAnswers = UserAnswers(sdilNumber, SelectChange.values.head, contactAddress = contactAddress)
+
+          val application = applicationBuilder(userAnswers = Some(userAnswers))
+            .overrides(bind[SelectChangeOrchestrator].toInstance(mockOrchestrator))
+            .build()
+
+          running(application) {
+            when(mockOrchestrator.hasReturnsToCorrect(any())(any(), any())) thenReturn createSuccessVariationResult(hasVariableReturns)
+            val request = FakeRequest(GET, selectChangeRoute)
+
+            val view = application.injector.instanceOf[SelectChangeView]
+
+            val result = route(application, request).value
+
+            status(result) mustEqual OK
+            contentAsString(result) mustEqual view(form.fill(SelectChange.values.head), hasVariableReturns)(request, messages(application)).toString
+          }
+        }
+      }
+    }
+
+    "when an error occurs when calling the backend" - {
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(bind[SelectChangeOrchestrator].toInstance(mockOrchestrator))
+        .build()
 
       running(application) {
+        when(mockOrchestrator.hasReturnsToCorrect(any())(any(), any())) thenReturn createFailureVariationResult(UnexpectedResponseFromSDIL)
+
         val request = FakeRequest(GET, selectChangeRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[SelectChangeView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        status(result) mustEqual INTERNAL_SERVER_ERROR
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    SelectChange.values.foreach { selectChangeValue =>
 
-      val userAnswers = UserAnswers(sdilNumber, SelectChange.values.head, contactAddress = contactAddress)
+      s"must redirect to the next page when ${selectChangeValue.toString} selected" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        val application =
+          applicationBuilder(userAnswers = None)
+            .overrides(bind[SelectChangeOrchestrator].toInstance(mockOrchestrator))
+            .build()
 
-      running(application) {
-        val request = FakeRequest(GET, selectChangeRoute)
+        running(application) {
+          when(mockOrchestrator.createUserAnswersAndSaveToDatabase(any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
 
-        val view = application.injector.instanceOf[SelectChangeView]
+          val request =
+            FakeRequest(POST, selectChangeRoute)
+              .withFormUrlEncodedBody(("value", selectChangeValue.toString))
 
-        val result = route(application, request).value
+          val result = route(application, request).value
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(SelectChange.values.head), NormalMode)(request, messages(application)).toString
-      }
-    }
-
-    "must redirect to the next page when valid data is submitted" in {
-
-      val mockSessionService = mock[SessionService]
-
-      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
-          .overrides(
-            bind[SessionService].toInstance(mockSessionService)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, selectChangeRoute)
-            .withFormUrlEncodedBody(("value", SelectChange.values.head.toString))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.IndexController.onPageLoad.url
+          status(result) mustEqual SEE_OTHER
+          val expectedNextPage = selectChangeValue match {
+            case SelectChange.ChangeActivity => changeActivity.routes.AmountProducedController.onPageLoad(NormalMode)
+            case SelectChange.CorrectReturn => correctReturn.routes.SelectController.onPageLoad(NormalMode)
+            case SelectChange.CancelRegistration => cancelRegistration.routes.ReasonController.onPageLoad(NormalMode)
+            case _ => routes.IndexController.onPageLoad
+          }
+          redirectLocation(result).value mustEqual expectedNextPage.url
+        }
       }
     }
 
@@ -106,9 +145,7 @@ class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
 
       val application =
         applicationBuilder(userAnswers = None)
-          .overrides(
-            bind[SessionService].toInstance(mockSessionService)
-          )
+          .overrides(bind[SelectChangeOrchestrator].toInstance(mockOrchestrator))
           .build()
 
       running(application) {
@@ -125,7 +162,9 @@ class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
+        .overrides(bind[SelectChangeOrchestrator].toInstance(mockOrchestrator))
+        .build()
 
       running(application) {
         val request =
@@ -139,7 +178,7 @@ class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm)(request, messages(application)).toString
       }
     }
   }

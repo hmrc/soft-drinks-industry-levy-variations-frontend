@@ -28,8 +28,6 @@ import play.api.test.Helpers._
 import play.twirl.api.Html
 import views.html.cancelRegistration.FileReturnBeforeDeregView
 
-import scala.concurrent.Future
-
 class FileReturnBeforeDeregControllerSpec extends SpecBase {
 
   lazy val fileReturnBeforDeregRoute: String = routes.FileReturnBeforeDeregController.onPageLoad().url
@@ -44,7 +42,7 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
         inject.bind[SoftDrinksIndustryLevyConnector].toInstance(mockConnector)
       ).build()
 
-      when(mockConnector.returnsPending(any())(any())).thenReturn(Future.successful(Some(returnPeriods)))
+      when(mockConnector.returnsPending(any(), any())(any())).thenReturn(createSuccessVariationResult(returnPeriods))
 
       running(application) {
         val request = FakeRequest(GET, fileReturnBeforDeregRoute)
@@ -64,7 +62,7 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
         inject.bind[SoftDrinksIndustryLevyConnector].toInstance(mockConnector)
       ).build()
 
-      when(mockConnector.returnsPending(any())(any())).thenReturn(Future.successful(Some(returnPeriod)))
+      when(mockConnector.returnsPending(any(), any())(any())).thenReturn(createSuccessVariationResult(returnPeriod))
 
       running(application) {
         val request = FakeRequest(GET, fileReturnBeforDeregRoute)
@@ -84,7 +82,7 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
         inject.bind[SoftDrinksIndustryLevyConnector].toInstance(mockConnector)
       ).build()
 
-      when(mockConnector.returnsPending(any())(any())).thenReturn(Future.successful(None))
+      when(mockConnector.returnsPending(any(), any())(any())).thenReturn(createSuccessVariationResult(List.empty))
 
       running(application) {
         val request = FakeRequest(GET, fileReturnBeforDeregRoute)
@@ -92,7 +90,7 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual recoveryCall.url
+        redirectLocation(result).value mustEqual selectChangeCall.url
       }
     }
     testInvalidJourneyType(CancelRegistration, fileReturnBeforDeregRoute, false)

@@ -23,12 +23,11 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import repositories.SessionRepository
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class SessionServiceSpec extends SpecBase with MockitoSugar {
 
   val mockSessionRepository: SessionRepository = mock[SessionRepository]
-  implicit val ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
 
   val sessionService = new SessionService(mockSessionRepository)
 

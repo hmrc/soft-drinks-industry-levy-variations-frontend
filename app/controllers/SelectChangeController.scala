@@ -52,7 +52,7 @@ class SelectChangeController @Inject()(
         case None => form
       }
       selectChangeOrchestrator.hasReturnsToCorrect(request.subscription).value.map {
-        case Right(hasVariableReturns) => Ok(view(preparedForm, !hasVariableReturns))
+        case Right(hasVariableReturns) => Ok(view(preparedForm, hasVariableReturns))
         case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
       }
 
@@ -63,7 +63,7 @@ class SelectChangeController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors => selectChangeOrchestrator.hasReturnsToCorrect(request.subscription).value
           .map{
-            case Right(hasVariableReturns) => BadRequest(view(formWithErrors, !hasVariableReturns))
+            case Right(hasVariableReturns) => BadRequest(view(formWithErrors, hasVariableReturns))
             case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
           },
         value => {

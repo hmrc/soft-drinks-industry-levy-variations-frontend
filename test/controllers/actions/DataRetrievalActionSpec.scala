@@ -19,8 +19,8 @@ package controllers.actions
 import base.SpecBase
 import errors.SessionDatabaseGetError
 import handlers.ErrorHandler
-import models.{SelectChange, UserAnswers}
 import models.requests.{IdentifierRequest, OptionalDataRequest}
+import models.{SelectChange, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -30,7 +30,6 @@ import play.api.test.FakeRequest
 import play.twirl.api.Html
 import services.SessionService
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class DataRetrievalActionSpec extends SpecBase with MockitoSugar {

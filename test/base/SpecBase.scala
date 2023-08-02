@@ -16,28 +16,34 @@
 
 package base
 
+import cats.data.EitherT
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.routes
+import errors.VariationsErrors
 import helpers.LoggerHelper
 import models.backend.{Site, UkAddress}
-import models.{Contact, LitresInBands, NormalMode, RetrievedActivity, RetrievedSubscription, ReturnCharge, ReturnPeriod, SelectChange, SmallProducer, UserAnswers, Warehouse}
+import models._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
 import play.api.http.Status.SEE_OTHER
-import play.api.{Application, Play}
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{Json, Writes}
 import play.api.mvc.{Call, MessagesControllerComponents}
 import play.api.test.FakeRequest
-import queries.Settable
 import play.api.test.Helpers._
+import play.api.{Application, Play}
+import queries.Settable
+import service.VariationResult
+import cats.implicits._
+import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
+import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
 object SpecBase {
@@ -100,6 +106,14 @@ trait SpecBase
   implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
   lazy val mcc = application.injector.instanceOf[MessagesControllerComponents]
   implicit lazy val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+  implicit lazy val hc: HeaderCarrier = HeaderCarrier()
+  implicit lazy val ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
+
+  def createSuccessVariationResult[T](result: T): VariationResult[T] =
+    EitherT.right[VariationsErrors](Future.successful(result))
+
+  def createFailureVariationResult[T](error: VariationsErrors): VariationResult[T] =
+    EitherT.left(Future.successful(error))
 
   override def afterEach(): Unit = {
     Play.stop(application)
@@ -284,5 +298,5 @@ trait SpecBase
   def defaultCall: Call = routes.IndexController.onPageLoad
   def recoveryCall: Call = routes.JourneyRecoveryController.onPageLoad()
 
-  def selectChangeCall: Call = routes.SelectChangeController.onPageLoad(NormalMode)
+  def selectChangeCall: Call = routes.SelectChangeController.onPageLoad
 }

@@ -17,6 +17,7 @@
 package connectors
 
 import base.SpecBase
+import errors.UnexpectedResponseFromSDIL
 import models.{FinancialLineItem, RetrievedSubscription, ReturnPeriod, SdilReturn}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -25,9 +26,8 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status.OK
 import play.api.libs.json.{JsValue, Json}
 import repositories.{CacheMap, SDILSessionCache}
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 
 class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar with ScalaFutures {
@@ -37,8 +37,6 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
   val mockHttp = mock[HttpClient]
   val mockSDILSessionCache = mock[SDILSessionCache]
   val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http =mockHttp, frontendAppConfig, mockSDILSessionCache)
-
-  implicit val hc = HeaderCarrier()
 
   val utr: String = "1234567891"
 
@@ -160,45 +158,128 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
       }
     }
 
-    "return returns-pending successfully" in {
+    "returnsPending" - {
+      "when the cache contains returns periods" - {
+        "should return the pending returns from cache" in {
+          when(mockSDILSessionCache.fetchEntry[List[ReturnPeriod]](any(), any())(any())).thenReturn(Future.successful(Some(returnPeriods)))
 
-      when(mockHttp.GET[Option[List[ReturnPeriod]]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(returnPeriods)))
 
-      val res = softDrinksIndustryLevyConnector.returnsPending(utr)
+          val res = softDrinksIndustryLevyConnector.returnsPending(utr, sdilReference)
 
-      whenReady(
-        res
-      ) {
-        response =>
-          response mustEqual Some(returnPeriods)
+          whenReady(res.value) {
+            response =>
+              response mustEqual Right(returnPeriods)
+          }
+        }
+      }
+      "when the cache does not contain return periods" - {
+        "must call the backend and " - {
+          "return returns-pending when the call was successful and there are pending returns" in {
+
+            when(mockSDILSessionCache.fetchEntry[List[ReturnPeriod]](
+              any(), any())(any())).thenReturn(Future.successful(None))
+
+            when(mockHttp.GET[List[ReturnPeriod]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(returnPeriods))
+
+            val res = softDrinksIndustryLevyConnector.returnsPending(utr, sdilReference)
+
+            whenReady(res.value) {
+              response =>
+                response mustEqual Right(returnPeriods)
+            }
+          }
+
+          "return error when unsuccessful" in {
+
+            when(mockSDILSessionCache.fetchEntry[List[ReturnPeriod]](
+              any(), any())(any())).thenReturn(Future.successful(None))
+            when(mockHttp.GET[List[ReturnPeriod]](any(), any(), any())(any(), any(), any())).thenReturn(Future.failed(new Exception("error")))
+
+            val res = softDrinksIndustryLevyConnector.returnsPending(utr, sdilReference)
+
+            whenReady(res.value) {
+              response =>
+                response mustEqual Left(UnexpectedResponseFromSDIL)
+            }
+          }
+
+          "return an empty list when no returns pending" in {
+
+            when(mockSDILSessionCache.fetchEntry[List[ReturnPeriod]](
+              any(), any())(any())).thenReturn(Future.successful(None))
+            when(mockHttp.GET[List[ReturnPeriod]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(List.empty))
+
+            val res = softDrinksIndustryLevyConnector.returnsPending(utr, sdilReference)
+
+            whenReady(res.value) {
+              response =>
+                response mustEqual Right(List.empty)
+            }
+          }
+        }
       }
     }
 
-    "return None when unsuccessful" in {
 
-      when(mockHttp.GET[Option[List[ReturnPeriod]]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
+    "returnsVariable" - {
+      "when the cache contains returns periods" - {
+        "should return the variable returns from cache" in {
+          when(mockSDILSessionCache.fetchEntry[List[ReturnPeriod]](any(), any())(any())).thenReturn(Future.successful(Some(returnPeriods)))
 
-      val res = softDrinksIndustryLevyConnector.returnsPending(utr)
 
-      whenReady(
-        res
-      ) {
-        response =>
-          response mustEqual None
+          val res = softDrinksIndustryLevyConnector.returnsVariable(utr, sdilReference)
+
+          whenReady(res.value) {
+            response =>
+              response mustEqual Right(returnPeriods)
+          }
+        }
       }
-    }
+      "when the cache does not contain return periods" - {
+        "must call the backend and " - {
+          "return returns-variable when the call was successful and there are variable returns" in {
 
-    "return None when unsuccessful in returns variable" in {
+            when(mockSDILSessionCache.fetchEntry[List[ReturnPeriod]](
+              any(), any())(any())).thenReturn(Future.successful(None))
 
-      when(mockHttp.GET[Option[List[ReturnPeriod]]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
+            when(mockHttp.GET[List[ReturnPeriod]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(returnPeriods))
 
-      val res = softDrinksIndustryLevyConnector.returnsVariable(utr)
+            val res = softDrinksIndustryLevyConnector.returnsVariable(utr, sdilReference)
 
-      whenReady(
-        res
-      ) {
-        response =>
-          response mustEqual None
+            whenReady(res.value) {
+              response =>
+                response mustEqual Right(returnPeriods)
+            }
+          }
+
+          "return error when unsuccessful" in {
+
+            when(mockSDILSessionCache.fetchEntry[List[ReturnPeriod]](
+              any(), any())(any())).thenReturn(Future.successful(None))
+            when(mockHttp.GET[List[ReturnPeriod]](any(), any(), any())(any(), any(), any())).thenReturn(Future.failed(new Exception("error")))
+
+            val res = softDrinksIndustryLevyConnector.returnsVariable(utr, sdilReference)
+
+            whenReady(res.value) {
+              response =>
+                response mustEqual Left(UnexpectedResponseFromSDIL)
+            }
+          }
+
+          "return an empty list when no returns variable" in {
+
+            when(mockSDILSessionCache.fetchEntry[List[ReturnPeriod]](
+              any(), any())(any())).thenReturn(Future.successful(None))
+            when(mockHttp.GET[List[ReturnPeriod]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(List.empty))
+
+            val res = softDrinksIndustryLevyConnector.returnsVariable(utr, sdilReference)
+
+            whenReady(res.value) {
+              response =>
+                response mustEqual Right(List.empty)
+            }
+          }
+        }
       }
     }
 

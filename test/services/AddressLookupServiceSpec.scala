@@ -27,16 +27,13 @@ import models.core.ErrorModel
 import org.mockito.ArgumentMatchers
 import org.mockito.MockitoSugar.{mock, when}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest, FutureAwaits}
-import uk.gov.hmrc.http.HeaderCarrier
 
-import scala.concurrent.ExecutionContext.Implicits._
 import scala.concurrent.Future
 
 class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAwaitTimeout {
 
   val mockALFConnector: AddressLookupConnector = mock[AddressLookupConnector]
   val service = new AddressLookupService(mockALFConnector, frontendAppConfig)
-  implicit val hc: HeaderCarrier = HeaderCarrier()
   val organisation = "soft drinks ltd"
   val addressLine1 = "line 1"
   val addressLine2 = "line 2"
@@ -505,7 +502,8 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
     "should return Exception if connector returns left" in {
       when(mockALFConnector.initJourney(ArgumentMatchers.any())(ArgumentMatchers.any(), ArgumentMatchers.any()))
         .thenReturn(Future.successful(Left(ErrorModel(1, "foo"))))
-      val res = intercept[Exception](await(service.initJourneyAndReturnOnRampUrl(PackingDetails)(implicitly, implicitly, implicitly, FakeRequest("foo", "bar"))))
+      val res = intercept[Exception](await(service.initJourneyAndReturnOnRampUrl(PackingDetails)
+      (implicitly, implicitly, implicitly, FakeRequest("foo", "bar"))))
       res.getMessage mustBe "Failed to init ALF foo with status 1 for None"
     }
   }
