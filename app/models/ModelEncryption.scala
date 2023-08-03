@@ -53,6 +53,7 @@ object ModelEncryption {
       userAnswers.packagingSiteList.map(site => site._1 -> encryption.crypto.encrypt(Json.toJson(site._2).toString(), userAnswers.id)),
       userAnswers.warehouseList.map(warehouse => warehouse._1 -> encryption.crypto.encrypt(Json.toJson(warehouse._2).toString(), userAnswers.id)),
       encryption.crypto.encrypt(Json.toJson(userAnswers.contactAddress).toString(), userAnswers.id),
+      encryption.crypto.encrypt(Json.toJson(userAnswers.businessAddress).toString(), userAnswers.id),
       userAnswers.submitted, userAnswers.lastUpdated
     )
   }
@@ -64,6 +65,7 @@ object ModelEncryption {
                          packagingSiteList: Map[String, EncryptedValue],
                          warehouseList: Map[String, EncryptedValue],
                          contactAddress: EncryptedValue,
+                         businessAddress: EncryptedValue,
                          submitted: Boolean,
                          lastUpdated: Instant)(implicit encryption: Encryption): UserAnswers = {
     UserAnswers(
@@ -74,6 +76,7 @@ object ModelEncryption {
       packagingSiteList = packagingSiteList.map(site => site._1 -> Json.parse(encryption.crypto.decrypt(site._2, id)).as[Site]),
       warehouseList = warehouseList.map(warehouse => warehouse._1 -> Json.parse(encryption.crypto.decrypt(warehouse._2, id)).as[Warehouse]),
       contactAddress = Json.parse(encryption.crypto.decrypt(contactAddress, id)).as[UkAddress],
+      businessAddress = Json.parse(encryption.crypto.decrypt(businessAddress, id)).as[UkAddress],
       submitted = submitted,
       lastUpdated = lastUpdated
     )

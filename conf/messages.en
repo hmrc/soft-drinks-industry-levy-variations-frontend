@@ -516,3 +516,6 @@ updateRegisteredDetails.contactDetails.name.change.hidden = contact person''s fu
 updateRegisteredDetails.contactDetails.position.change.hidden = contact person''s job title
 updateRegisteredDetails.contactDetails.phoneNumber.change.hidden = contact person''s telephone number
 updateRegisteredDetails.contactDetails.email.change.hidden = contact person''s email address
+
+updateRegisteredDetails.businessAddress.title = Your business address for the Soft Drinks Industry Levy
+updateRegisteredDetails.businessAddress.heading = Your business address for the Soft Drinks Industry Levy

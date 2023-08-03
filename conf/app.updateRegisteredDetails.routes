@@ -29,3 +29,5 @@ GET        /change-packaging-site-details/remove/:index                  control
 POST       /change-packaging-site-details/remove/:index                  controllers.updateRegisteredDetails.PackingSiteDetailsRemoveController.onSubmit(mode: Mode = CheckMode, index: String)
 
 GET        /contact-details                       controllers.updateRegisteredDetails.ContactDetailsController.onPageLoad()
+
+GET        /business-address                       controllers.updateRegisteredDetails.BusinessAddressController.onPageLoad()
