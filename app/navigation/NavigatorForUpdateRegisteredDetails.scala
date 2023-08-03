@@ -17,7 +17,7 @@
 package navigation
 
 import controllers.updateRegisteredDetails.routes
-import models.UserAnswers
+import models.{CheckMode, NormalMode, UserAnswers}
 import pages.Page
 import pages.updateRegisteredDetails._
 import play.api.mvc.Call
@@ -28,15 +28,16 @@ import javax.inject.{Inject, Singleton}
 class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
 
   override val normalRoutes: Page => UserAnswers => Call = {
-    case PackingSiteDetailsRemovePage => userAnswers => defaultCall
     case WarehouseDetailsPage => userAnswers => defaultCall
     case RemoveWarehouseDetailsPage => userAnswers => defaultCall
     case PackagingSiteDetailsPage => userAnswers => defaultCall
+    case PackingSiteDetailsRemovePage => _ => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
     case UpdateContactDetailsPage => userAnswers => defaultCall
     case _ => _ => defaultCall
   }
 
   override val checkRouteMap: Page => UserAnswers => Call = {
+    case PackingSiteDetailsRemovePage => _ => routes.PackagingSiteDetailsController.onPageLoad(CheckMode)
     case _ => _ => routes.UpdateRegisteredDetailsCYAController.onPageLoad
   }
 }
