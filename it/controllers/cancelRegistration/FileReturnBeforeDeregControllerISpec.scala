@@ -1,6 +1,6 @@
 package controllers.cancelRegistration
 
-import controllers.ControllerITTestHelper
+import controllers.{ControllerITTestHelper, routes}
 import models.NormalMode
 import models.SelectChange.CancelRegistration
 import org.jsoup.Jsoup
@@ -31,7 +31,7 @@ class FileReturnBeforeDeregControllerISpec extends ControllerITTestHelper {
       }
     }
 
-    "should redirect when no returns pending are found" in {
+    "should redirect when no returns are pending" in {
       given.commonPreconditionEmptyReturn
 
       setAnswers(emptyUserAnswersForCancelRegistration)
@@ -42,6 +42,21 @@ class FileReturnBeforeDeregControllerISpec extends ControllerITTestHelper {
         whenReady(result) { res =>
           res.status mustBe 303
           res.header(HeaderNames.LOCATION) mustBe Some(controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode).url)
+        }
+      }
+    }
+
+    "should redirect when check returns returns Not Found" in {
+      given.returnPendingNotFoundPreCondition
+
+      setAnswers(emptyUserAnswersForCancelRegistration)
+
+      WsTestClient.withClient { client =>
+        val result = createClientRequestGet(client, cancelRegistrationBaseUrl + normalRoutePath)
+
+        whenReady(result) { res =>
+          res.status mustBe 303
+          res.header(HeaderNames.LOCATION) mustBe Some(routes.JourneyRecoveryController.onPageLoad().url)
         }
       }
     }
