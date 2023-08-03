@@ -1,9 +1,11 @@
 package controllers.cancelRegistration
 
 import controllers.ControllerITTestHelper
+import models.NormalMode
 import models.SelectChange.CancelRegistration
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.test.WsTestClient
 
@@ -31,15 +33,16 @@ class FileReturnBeforeDeregControllerISpec extends ControllerITTestHelper {
 
     "should redirect when no returns pending are found" in {
       given
-        .commonPrecondition.sdilBackend.no_returns_pending("0000001611")
+        .noReturnPendingPreCondition
 
       setAnswers(emptyUserAnswersForCancelRegistration)
 
       WsTestClient.withClient { client =>
-        val result1 = createClientRequestGet(client, cancelRegistrationBaseUrl + normalRoutePath)
+        val result = createClientRequestGet(client, cancelRegistrationBaseUrl + normalRoutePath)
 
-        whenReady(result1) { res =>
+        whenReady(result) { res =>
           res.status mustBe 303
+          res.header(HeaderNames.LOCATION) mustBe Some(controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode).url)
         }
       }
     }

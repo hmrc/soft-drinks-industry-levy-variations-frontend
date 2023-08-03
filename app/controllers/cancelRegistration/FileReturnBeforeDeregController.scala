@@ -19,7 +19,7 @@ package controllers.cancelRegistration
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.ControllerActions
 import controllers.routes
-import models.SelectChange
+import models.{Mode, NormalMode, SelectChange}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -42,7 +42,13 @@ class FileReturnBeforeDeregController @Inject()(
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration).async {
     implicit request =>
     connector.returns_pending(request.subscription.utr).map {
-      case Some(returns) if returns.nonEmpty => Ok(view(FileReturnBeforeDeregSummary.displayMessage(returns)))
+
+      case Some(returns) if returns.nonEmpty =>
+        println(Console.YELLOW + "Returns is not empty: " + returns + Console.WHITE)
+        Ok(view(FileReturnBeforeDeregSummary.displayMessage(returns)))
+      case Some(returns) => println(Console.YELLOW + "Returns is empty " + returns + Console.WHITE)
+        Redirect(controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode))
+
       case _ => Redirect(routes.JourneyRecoveryController.onPageLoad())
     }
   }

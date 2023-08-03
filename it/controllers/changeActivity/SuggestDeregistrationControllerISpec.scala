@@ -1,9 +1,12 @@
 package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
+import models.NormalMode
 import models.SelectChange.ChangeActivity
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.http.HeaderNames
+import play.api.libs.json.Json
 import play.api.test.WsTestClient
 
 class SuggestDeregistrationControllerISpec extends ControllerITTestHelper {
@@ -31,5 +34,24 @@ class SuggestDeregistrationControllerISpec extends ControllerITTestHelper {
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + normalRoutePath)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + normalRoutePath)
   }
+
+  s"POST " + normalRoutePath - {
+    "should redirect to the File returns controller when the user has un-filed returns" in {
+        given
+          .commonPrecondition
+
+
+        setAnswers(emptyUserAnswersForChangeActivity)
+        WsTestClient.withClient { client =>
+          val result = createClientRequestPOST(
+            client, changeActivityBaseUrl + normalRoutePath, Json.obj()
+          )
+          whenReady(result) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION) mustBe Some(controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad().url)
+          }
+        }
+      }
+    }
 
 }
