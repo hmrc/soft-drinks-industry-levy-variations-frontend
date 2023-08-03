@@ -32,8 +32,7 @@ class FileReturnBeforeDeregControllerISpec extends ControllerITTestHelper {
     }
 
     "should redirect when no returns pending are found" in {
-      given
-        .noReturnPendingPreCondition
+      given.commonPreconditionEmptyReturn
 
       setAnswers(emptyUserAnswersForCancelRegistration)
 

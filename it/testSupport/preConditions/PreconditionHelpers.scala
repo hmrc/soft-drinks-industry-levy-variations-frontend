@@ -14,6 +14,15 @@ trait PreconditionHelpers {
       .sdilBackend.returns_pending("0000001611")
   }
 
+  def commonPreconditionEmptyReturn = {
+    builder
+      .user.isAuthorisedAndEnrolled
+      .sdilBackend.retrieveSubscription("utr","0000001611")
+      .sdilBackend.retrieveSubscription("sdil","XKSDIL000000022")
+      .sdilBackend.returns_variable("0000001611")
+      .sdilBackend.returns_pending_empty("0000001611")
+  }
+
   def commonPreconditionChangeSubscription(retrievedSubscription: RetrievedSubscription): PreconditionBuilder = {
     builder
       .user.isAuthorisedAndEnrolled
@@ -21,13 +30,13 @@ trait PreconditionHelpers {
       .sdilBackend.returns_pending("0000001611")
   }
 
-  def noReturnPendingPreCondition = {
+  def returnPendingNotFoundPreCondition = {
     builder
       .user.isAuthorisedAndEnrolled
       .sdilBackend.retrieveSubscription("utr", "0000001611")
       .sdilBackend.retrieveSubscription("sdil", "XKSDIL000000022")
       .sdilBackend.returns_variable("0000001611")
-      .sdilBackend.no_returns_pending("0000001611")
+      .sdilBackend.returns_pending_not_found("0000001611")
   }
 
   def unauthorisedPrecondition = {

@@ -44,12 +44,11 @@ class FileReturnBeforeDeregController @Inject()(
     connector.returns_pending(request.subscription.utr).map {
 
       case Some(returns) if returns.nonEmpty =>
-        println(Console.YELLOW + "Returns is not empty: " + returns + Console.WHITE)
         Ok(view(FileReturnBeforeDeregSummary.displayMessage(returns)))
-      case Some(returns) => println(Console.YELLOW + "Returns is empty " + returns + Console.WHITE)
+      case Some(returns) =>
         Redirect(controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode))
-
-      case _ => Redirect(routes.JourneyRecoveryController.onPageLoad())
+      case _ =>
+        Redirect(routes.JourneyRecoveryController.onPageLoad())
     }
   }
 }
