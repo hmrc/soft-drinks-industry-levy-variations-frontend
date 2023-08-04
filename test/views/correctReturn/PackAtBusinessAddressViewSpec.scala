@@ -182,7 +182,7 @@ class PackAtBusinessAddressViewSpec extends ViewSpecHelper {
     }
 
     "contain the correct button" - {
-      document.getElementsByClass(Selectors.button).text() mustBe Messages("site.continue")
+      document.getElementsByClass(Selectors.button).text() mustBe Messages("site.saveContinue")
     }
 
     "contains a form with the correct action" - {

@@ -20,7 +20,7 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.correctReturn.PackAtBusinessAddressFormProvider
 import handlers.ErrorHandler
-import models.Mode
+import models.{Mode, UserAnswers}
 import models.SelectChange.CorrectReturn
 import models.backend.{Site, UkAddress}
 import navigation._
@@ -34,6 +34,7 @@ import views.html.correctReturn.PackAtBusinessAddressView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 class PackAtBusinessAddressController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -70,12 +71,10 @@ class PackAtBusinessAddressController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode, formattedAddress))),
 
         value => {
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(PackAtBusinessAddressPage, value))
-            onwardUrl <- updateDatabaseAndRedirect(
-              updatedAnswers.copy(packagingSiteList = updatedPackagingSiteList(updatedAnswers.packagingSiteList, businessAddress, businessName, value)
-            ), PackAtBusinessAddressPage, mode)
-          } yield onwardUrl
+          val userAnswersSetPage: Try[UserAnswers] = request.userAnswers.set(PackAtBusinessAddressPage, value)
+          val updatedAnswers: Try[UserAnswers] = userAnswersSetPage
+            .map(updatedAnswers => updatedAnswers.copy(packagingSiteList = updatedPackagingSiteList(updatedAnswers.packagingSiteList, businessAddress, businessName, value)))
+          updateDatabaseAndRedirect(updatedAnswers, PackAtBusinessAddressPage, mode)
         }
       )
   }
