@@ -16,46 +16,37 @@
 
 package views.summary.updateRegisteredDetails
 
-import controllers.updateRegisteredDetails.routes
 import models.backend.UkAddress
-import models.{CheckMode, NormalMode, UserAnswers, Warehouse}
-import pages.updateRegisteredDetails.BusinessAddressPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import viewmodels.AddressFormattingHelper
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object BusinessAddressSummary  {
 
-//  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-//    answers.get(BusinessAddressPage).map {
-//      answer =>
-//
-//        SummaryListRowViewModel(
-//          key     = "updateRegisteredDetails.warehouseDetails.checkYourAnswersLabel",
-//          value   = ValueViewModel(""),
-//          actions = Seq(
-//            ActionItemViewModel("site.change", routes.BusinessAddressController.onPageLoad(CheckMode).url)
-//              .withVisuallyHiddenText(messages("updateRegisteredDetails.warehouseDetails.change.hidden"))
-//          )
-//        )
-//  }
-
-
-  def row(businessAddress: UkAddress)(implicit messages: Messages): SummaryListRow = {
-    SummaryListRow(
-      key     = Key(
-        content = HtmlContent(AddressFormattingHelper.addressFormatting(businessAddress, None)),
-        classes = "govuk-!-font-weight-regular govuk-!-width-full"
-      ),
-      actions = Some(Actions("",Seq(
-        ActionItemViewModel("site.change", controllers.routes.IndexController.onPageLoad.url)
-          .withVisuallyHiddenText(messages("updateRegisteredDetails.warehouseDetails.remove.hidden"))
-      )))
+  def summaryList(baList: List[UkAddress])(implicit messages: Messages): SummaryList = {
+    SummaryListViewModel(
+      rows = row2(baList)
     )
+  }
+
+  def row2(baList: List[UkAddress])(implicit messages: Messages): List[SummaryListRow] = {
+    baList.map {
+      businessAddress =>
+        SummaryListRow(
+          key = Key(
+            content = HtmlContent(AddressFormattingHelper.addressFormatting(businessAddress, None)),
+            classes = "govuk-!-font-weight-regular govuk-!-width-full"
+          ),
+          actions = Some(Actions("", Seq(
+            ActionItemViewModel("site.change", controllers.routes.IndexController.onPageLoad.url)
+              .withVisuallyHiddenText(messages("updateRegisteredDetails.businessAddress.change.hidden"))
+          )))
+        )
+    }
   }
 
 }

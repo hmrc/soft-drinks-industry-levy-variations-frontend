@@ -45,8 +45,7 @@ object ModelEncryption {
   }
 
   def encryptUserAnswers(userAnswers: UserAnswers)(implicit encryption: Encryption):
-  (String, SelectChange, EncryptedValue, EncryptedValue, Map[String, EncryptedValue], Map[String, EncryptedValue],
-    EncryptedValue, EncryptedValue, Boolean, Instant) = {
+  (String, SelectChange, EncryptedValue, EncryptedValue, Map[String, EncryptedValue], Map[String, EncryptedValue], EncryptedValue, Boolean, Instant) = {
     ( userAnswers.id,
       userAnswers.journeyType,
       encryption.crypto.encrypt(userAnswers.data.toString(), userAnswers.id),

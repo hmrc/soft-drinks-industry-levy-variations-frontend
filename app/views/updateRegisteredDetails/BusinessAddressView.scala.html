@@ -15,7 +15,7 @@
  *@
 
 @import models.backend.UkAddress
-@import viewmodels.summaryList.SummaryListRow
+@import views.summary.updateRegisteredDetails.BusinessAddressSummary
 
 @this(
         layout: templates.Layout,
@@ -23,13 +23,16 @@
         govukSummaryList: GovukSummaryList
 )
 
-@(mode: Mode, summaryListRow: SummaryListRow)(implicit request: Request[_], messages: Messages)
+@(mode: Mode, businessAddressList: List[UkAddress])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("updateRegisteredDetails.businessAddress.title"))) {
 
     <h1 class="govuk-heading-l">@messages("updateRegisteredDetails.businessAddress.title")</h1>
 
-    @govukSummaryList(summaryListRow)
+    <span class="govuk-caption-m">
+    @govukSummaryList(BusinessAddressSummary.summaryList(businessAddressList))
+    </span>
+
     @govukButton(
         ButtonViewModel(messages("site.saveContinue"))
     )
