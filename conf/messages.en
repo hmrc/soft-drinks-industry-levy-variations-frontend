@@ -518,4 +518,4 @@ updateRegisteredDetails.contactDetails.phoneNumber.change.hidden = contact perso
 updateRegisteredDetails.contactDetails.email.change.hidden = contact person''s email address
 
 updateRegisteredDetails.businessAddress.title = Your business address for the Soft Drinks Industry Levy
-updateRegisteredDetails.businessAddress.heading = Your business address for the Soft Drinks Industry Levy
+updateRegisteredDetails.businessAddress.change.hidden = business address {0}

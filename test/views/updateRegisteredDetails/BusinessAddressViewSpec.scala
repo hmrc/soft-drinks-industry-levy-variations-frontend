@@ -16,6 +16,7 @@
 
 package views.updateRegisteredDetails
 
+import models.backend.UkAddress
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -26,20 +27,37 @@ class BusinessAddressViewSpec extends ViewSpecHelper {
 
   val view = application.injector.instanceOf[BusinessAddressView]
   implicit val request: Request[_] = FakeRequest()
+  lazy val businessAddress: UkAddress = UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")
 
   object Selectors {
-    val heading = "govuk-heading-m"
+    val heading = "govuk-heading-l"
+    val button = "govuk-button"
+    val summaryListActions = "govuk-summary-list__actions"
   }
 
   "View" - {
-    val html = view()(request, messages(application))
+    val html = view(List(businessAddress))(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
-      document.title() must include(Messages("updateRegisteredDetails.businessAddress" + ".title"))
+      document.title() mustBe "Your business address for the Soft Drinks Industry Levy - Soft Drinks Industry Levy - GOV.UK"
     }
 
     "should have the expected heading" in {
-      document.getElementsByClass(Selectors.heading).text() mustEqual Messages("updateRegisteredDetails.businessAddress" + ".heading")
+      document.getElementsByClass(Selectors.heading).text() mustBe "Your business address for the Soft Drinks Industry Levy"
+    }
+
+    "contain the correct button" - {
+      document.getElementsByClass(Selectors.button).text() mustBe "Save and continue"
+    }
+
+    "View should contain the correct heading and summary row details" in {
+      val html1 = view(List(businessAddress))(request, messages(application))
+      val document1 = doc(html1)
+      val listItems = document1.getElementsByClass(Selectors.summaryListActions)
+      val summaryListKey = document1.getElementsByClass("govuk-summary-list__key")
+
+      summaryListKey.size mustBe 1
+      listItems.get(0).text() mustBe "Change business address 33 Rhes Priordy"
     }
 
     testBackLink(document)
@@ -47,5 +65,4 @@ class BusinessAddressViewSpec extends ViewSpecHelper {
     validateTechnicalHelpLinkPresent(document)
     validateAccessibilityStatementLinkPresent(document)
   }
-
 }

@@ -27,14 +27,14 @@ import viewmodels.implicits._
 
 object BusinessAddressSummary  {
 
-  def summaryList(baList: List[UkAddress])(implicit messages: Messages): SummaryList = {
+  def summaryList(businessAddressList: List[UkAddress])(implicit messages: Messages): SummaryList = {
     SummaryListViewModel(
-      rows = row2(baList)
+      rows = row(businessAddressList)
     )
   }
 
-  def row2(baList: List[UkAddress])(implicit messages: Messages): List[SummaryListRow] = {
-    baList.map {
+  def row(businessAddressList: List[UkAddress])(implicit messages: Messages): List[SummaryListRow] = {
+    businessAddressList.map {
       businessAddress =>
         SummaryListRow(
           key = Key(
@@ -43,7 +43,7 @@ object BusinessAddressSummary  {
           ),
           actions = Some(Actions("", Seq(
             ActionItemViewModel("site.change", controllers.routes.IndexController.onPageLoad.url)
-              .withVisuallyHiddenText(messages("updateRegisteredDetails.businessAddress.change.hidden"))
+              .withVisuallyHiddenText(messages("updateRegisteredDetails.businessAddress.change.hidden", businessAddress.lines.head))
           )))
         )
     }

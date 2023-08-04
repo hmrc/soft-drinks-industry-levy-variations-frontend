@@ -17,9 +17,7 @@
 package controllers.updateRegisteredDetails
 
 import controllers.actions._
-import models.Mode
 import models.SelectChange.UpdateRegisteredDetails
-import models.backend.UkAddress
 import navigation.NavigatorForUpdateRegisteredDetails
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -36,12 +34,10 @@ class BusinessAddressController @Inject()(
                                            view: BusinessAddressView
                                      ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
+  def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
     implicit request =>
 
-      val businessAddressList: List[UkAddress] = List(request.userAnswers.contactAddress)
-
-      Ok(view(mode, businessAddressList))
+      Ok(view(List(request.userAnswers.contactAddress)))
   }
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {

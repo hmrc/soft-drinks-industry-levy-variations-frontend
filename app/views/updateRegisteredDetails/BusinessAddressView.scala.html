@@ -16,24 +16,28 @@
 
 @import models.backend.UkAddress
 @import views.summary.updateRegisteredDetails.BusinessAddressSummary
+@import controllers.updateRegisteredDetails.routes
 
 @this(
         layout: templates.Layout,
         govukButton: GovukButton,
+        formHelper: FormWithCSRF,
         govukSummaryList: GovukSummaryList
 )
 
-@(mode: Mode, businessAddressList: List[UkAddress])(implicit request: Request[_], messages: Messages)
+@(businessAddressList: List[UkAddress])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("updateRegisteredDetails.businessAddress.title"))) {
+    @formHelper(action = routes.BusinessAddressController.onSubmit(), Symbol("autoComplete") -> "off") {
 
-    <h1 class="govuk-heading-l">@messages("updateRegisteredDetails.businessAddress.title")</h1>
+        <h1 class="govuk-heading-l">@messages("updateRegisteredDetails.businessAddress.title")</h1>
 
-    <span class="govuk-caption-m">
-    @govukSummaryList(BusinessAddressSummary.summaryList(businessAddressList))
-    </span>
+        <span class="govuk-caption-m">
+        @govukSummaryList(BusinessAddressSummary.summaryList(businessAddressList))
+        </span>
 
-    @govukButton(
-        ButtonViewModel(messages("site.saveContinue"))
-    )
+        @govukButton(
+            ButtonViewModel(messages("site.saveContinue"))
+        )
+    }
 }

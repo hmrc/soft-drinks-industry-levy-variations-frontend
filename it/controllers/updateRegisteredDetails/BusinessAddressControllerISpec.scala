@@ -24,10 +24,11 @@ class BusinessAddressControllerISpec extends ControllerITTestHelper {
         whenReady(result1) { res =>
           res.status mustBe 200
           val page = Jsoup.parse(res.body)
-          page.title must include(Messages("updateRegisteredDetails.businessAddress" + ".title"))
+          page.title  mustBe "Your business address for the Soft Drinks Industry Levy - Soft Drinks Industry Levy - GOV.UK"
         }
       }
     }
+
     testUnauthorisedUser(updateRegisteredDetailsBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + normalRoutePath)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl + normalRoutePath)
