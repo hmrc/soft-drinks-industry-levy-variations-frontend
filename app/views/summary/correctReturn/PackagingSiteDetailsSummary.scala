@@ -17,7 +17,7 @@
 package views.summary.correctReturn
 
 import models.backend.Site
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{CheckMode, UserAnswers}
 import pages.correctReturn.PackagingSiteDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, HtmlContent, Key}
@@ -63,7 +63,9 @@ object PackagingSiteDetailsSummary  {
               ActionItemViewModel("site.remove", controllers.routes.IndexController.onPageLoad.url)
                 .withVisuallyHiddenText(messages("correctReturn.packagingSiteDetails.remove.hidden", packagingSite._2.tradingName.getOrElse(""), packagingSite._2.address.lines.head))
             )))
-          } else None
+          } else {
+            None
+          }
         )
     }.toList
   }

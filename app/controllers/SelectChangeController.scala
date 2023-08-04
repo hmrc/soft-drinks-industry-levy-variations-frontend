@@ -17,23 +17,24 @@
 package controllers
 
 import controllers.actions._
+import errors.ReturnsStillPending
 import forms.SelectChangeFormProvider
 import handlers.ErrorHandler
-import models.backend.Site
-import models.requests.OptionalDataRequest
-import models.{Mode, NormalMode, SelectChange, UserAnswers, Warehouse}
+import models.{NormalMode, SelectChange}
+import orchestrators.SelectChangeOrchestrator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.SelectChangeView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class SelectChangeController @Inject()(
                                         override val messagesApi: MessagesApi,
-                                        val sessionService: SessionService,
+                                        selectChangeOrchestrator: SelectChangeOrchestrator,
+                                        sessionService: SessionService,
                                         identify: IdentifierAction,
                                         getData: DataRetrievalAction,
                                         formProvider: SelectChangeFormProvider,
@@ -44,42 +45,44 @@ class SelectChangeController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData) {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
       val preparedForm = request.userAnswers match {
         case Some(userAnswers) => form.fill(userAnswers.journeyType)
         case None => form
       }
-      Ok(view(preparedForm, mode))
+      selectChangeOrchestrator.hasReturnsToCorrect(request.subscription).value.map {
+        case Right(hasVariableReturns) => Ok(view(preparedForm, hasVariableReturns))
+        case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
+      }
 
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData).async {
+  def onSubmit: Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
       form.bindFromRequest().fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+        formWithErrors => selectChangeOrchestrator.hasReturnsToCorrect(request.subscription).value
+          .map{
+            case Right(hasVariableReturns) => BadRequest(view(formWithErrors, hasVariableReturns))
+            case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
+          },
         value => {
-          val defaultUserAnswers = generateDefaultUserAnswers(value)
-          sessionService.set(defaultUserAnswers).map {
-            case Right(_) if value == SelectChange.ChangeActivity =>
-              Redirect(changeActivity.routes.AmountProducedController.onPageLoad(NormalMode))
-            case Right(_) =>
-              Redirect(routes.IndexController.onPageLoad)
+          selectChangeOrchestrator.createUserAnswersAndSaveToDatabase(value, request.subscription).value.map{
+            case Right(_) => Redirect(getRedirectUrl(value))
+            case Left(ReturnsStillPending) => Redirect(cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad())
             case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
           }
         }
       )
   }
 
-  private def generateDefaultUserAnswers(value: SelectChange)(implicit request: OptionalDataRequest[AnyContent]): UserAnswers = {
-    val subscription = request.subscription
-    val currentPackagingSites = subscription.productionSites.zipWithIndex
-      .map{case(site, index) => (index.toString, site)}
-      .toMap[String, Site]
-    val currentWarehouses = subscription.warehouseSites.zipWithIndex
-      .map {
-        case (site, index) => (index.toString, Warehouse.fromSite(site))
-      }.toMap[String, Warehouse]
-    UserAnswers(id = request.sdilEnrolment, journeyType = value,contactAddress = request.subscription.address, packagingSiteList = currentPackagingSites, warehouseList = currentWarehouses)
+  private def getRedirectUrl(value: SelectChange): Call = {
+    value match {
+      case SelectChange.ChangeActivity => changeActivity.routes.AmountProducedController.onPageLoad(NormalMode)
+      case SelectChange.CorrectReturn => correctReturn.routes.SelectController.onPageLoad(NormalMode)
+      case SelectChange.CancelRegistration => cancelRegistration.routes.ReasonController.onPageLoad(NormalMode)
+      case _ => routes.IndexController.onPageLoad
+    }
   }
+
 }

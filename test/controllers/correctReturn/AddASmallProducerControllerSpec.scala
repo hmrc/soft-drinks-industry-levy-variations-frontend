@@ -19,11 +19,10 @@ package controllers.correctReturn
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import forms.correctReturn.AddASmallProducerFormProvider
-import models.{NormalMode, SmallProducer}
 import models.SelectChange.CorrectReturn
 import models.correctReturn.AddASmallProducer
+import models.{NormalMode, SmallProducer}
 import navigation._
-import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar

@@ -21,7 +21,6 @@ import models.UserAnswers
 import models.correctReturn.AddASmallProducer
 import play.api.data.Form
 import play.api.data.Forms._
-import play.api.data.validation.{Constraint, Invalid, Valid}
 
 import javax.inject.Inject
 

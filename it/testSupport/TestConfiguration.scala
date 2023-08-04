@@ -115,6 +115,8 @@ trait TestConfiguration
   override def beforeAll() = {
     wireMockServer.stop()
     wireMockServer.start()
+    Await.result(sessionRespository.collection.deleteMany(BsonDocument()).toFuture(), Duration(5, TimeUnit.SECONDS))
+    Await.result(sdilSessionCacheRepo.collection.deleteMany(BsonDocument()).toFuture(), Duration(5, TimeUnit.SECONDS))
     configureFor(wiremockHost, wiremockPort)
   }
 

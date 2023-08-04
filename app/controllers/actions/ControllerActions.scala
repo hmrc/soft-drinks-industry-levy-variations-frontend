@@ -18,8 +18,8 @@ package controllers.actions
 
 import com.google.inject.Inject
 import controllers.routes
+import models.SelectChange
 import models.requests.{DataRequest, OptionalDataRequest}
-import models.{NormalMode, SelectChange}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionBuilder, ActionRefiner, AnyContent, Result}
 
@@ -44,7 +44,7 @@ class ControllerActions @Inject()(identify: IdentifierAction,
             Future.successful(Right(DataRequest(request.request, request.sdilEnrolment, request.subscription, data)))
           case Some(data) if journeyType == SelectChange.CancelRegistration && data.journeyType == SelectChange.ChangeActivity =>
             Future.successful(Right(DataRequest(request.request, request.sdilEnrolment, request.subscription, data)))
-          case _ => Future.successful(Left(Redirect(routes.SelectChangeController.onPageLoad(NormalMode))))
+          case _ => Future.successful(Left(Redirect(routes.SelectChangeController.onPageLoad)))
         }
       }
 
@@ -57,7 +57,7 @@ class ControllerActions @Inject()(identify: IdentifierAction,
         request.userAnswers match {
           case Some(data) =>
             Future.successful(Right(DataRequest(request.request, request.sdilEnrolment, request.subscription, data)))
-          case _ => Future.successful(Left(Redirect(routes.SelectChangeController.onPageLoad(NormalMode))))
+          case _ => Future.successful(Left(Redirect(routes.SelectChangeController.onPageLoad)))
         }
       }
 

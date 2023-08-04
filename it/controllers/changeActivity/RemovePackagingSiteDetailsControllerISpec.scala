@@ -59,7 +59,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
               radioInputs.get(0).hasAttr("checked") mustBe false
               radioInputs.get(1).attr("value") mustBe "false"
               radioInputs.get(1).hasAttr("checked") mustBe false
-              page.getElementById("value-hint").text() mustBe "foo, bar wizz"
+              page.getElementById("value-hint").text() mustBe s"${ukAddress.lines.mkString(", ")} ${ukAddress.postCode}"
             }
           }
         }
@@ -199,7 +199,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
               .select("a")
               .attr("href") mustBe "#value"
             errorSummary.text() mustBe Messages("changeActivity.removePackagingSiteDetails" + ".error.required")
-            page.getElementById("value-hint").text() mustBe "foo, bar wizz"
+            page.getElementById("value-hint").text() mustBe s"${ukAddress.lines.mkString(", ")} ${ukAddress.postCode}"
             getAnswers(emptyUserAnswersForChangeActivity.id).get.packagingSiteList.size mustBe 1
           }
         }
@@ -289,7 +289,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
               .select("a")
               .attr("href") mustBe "#value"
             errorSummary.text() mustBe Messages("changeActivity.removePackagingSiteDetails" + ".error.required")
-            page.getElementById("value-hint").text() mustBe "foo, bar wizz"
+            page.getElementById("value-hint").text() mustBe s"${ukAddress.lines.mkString(", ")} ${ukAddress.postCode}"
           }
         }
       }

@@ -21,7 +21,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        setAnswers(emptyUserAnswersForChangeActivity.copy(packagingSiteList = Map.empty))
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, changeActivityBaseUrl + normalRoutePath)
@@ -78,7 +78,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        setAnswers(emptyUserAnswersForChangeActivity.copy(packagingSiteList = Map.empty))
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, changeActivityBaseUrl + checkRoutePath)
@@ -138,7 +138,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForChangeActivity)
+            setAnswers(emptyUserAnswersForChangeActivity.copy(packagingSiteList = Map.empty))
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -165,7 +165,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
               val userAnswersWithPreviousSelection = if (previousKey == "yes") {
                 userAnswers.copy(packagingSiteList = packAtBusinessAddressSite)
               } else {
-                userAnswers
+                userAnswers.copy(packagingSiteList = Map.empty)
               }
               setAnswers(userAnswersWithPreviousSelection)
               WsTestClient.withClient { client =>
@@ -195,7 +195,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        setAnswers(emptyUserAnswersForChangeActivity.copy(packagingSiteList = Map.empty))
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "")
@@ -228,7 +228,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForChangeActivity)
+            setAnswers(emptyUserAnswersForChangeActivity.copy(packagingSiteList = Map.empty))
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -255,7 +255,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
               val userAnswersWithPreviousSelection = if (previousKey == "yes") {
                 userAnswers.copy(packagingSiteList = packAtBusinessAddressSite)
               } else {
-                userAnswers
+                userAnswers.copy(packagingSiteList = Map.empty)
               }
               setAnswers(userAnswersWithPreviousSelection)
               WsTestClient.withClient { client =>

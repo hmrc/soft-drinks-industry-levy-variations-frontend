@@ -33,6 +33,7 @@ object AmountProduced extends Enumerable.Implicits {
     Large, Small, None
   )
 
+
   def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {
     case (value, index) =>
       RadioItem(

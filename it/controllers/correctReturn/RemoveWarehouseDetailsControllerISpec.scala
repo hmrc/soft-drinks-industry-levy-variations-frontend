@@ -56,7 +56,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
               radioInputs.get(0).hasAttr("checked") mustBe false
               radioInputs.get(1).attr("value") mustBe "false"
               radioInputs.get(1).hasAttr("checked") mustBe false
-              page.getElementById("warehouseToRemove").text() mustBe "foo, bar wizz"
+              page.getElementById("warehouseToRemove").text() mustBe s"${ukAddress.lines.mkString(", ")} ${ukAddress.postCode}"
             }
           }
         }
@@ -196,7 +196,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
               .select("a")
               .attr("href") mustBe "#value"
             errorSummary.text() mustBe Messages("correctReturn.removeWarehouseDetails" + ".error.required")
-            page.getElementById("warehouseToRemove").text() mustBe "foo, bar wizz"
+            page.getElementById("warehouseToRemove").text() mustBe s"${ukAddress.lines.mkString(", ")} ${ukAddress.postCode}"
             getAnswers(emptyUserAnswersForCorrectReturn.id).get.warehouseList.size mustBe 1
           }
         }
@@ -286,7 +286,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
               .select("a")
               .attr("href") mustBe "#value"
             errorSummary.text() mustBe Messages("correctReturn.removeWarehouseDetails" + ".error.required")
-            page.getElementById("warehouseToRemove").text() mustBe "foo, bar wizz"
+            page.getElementById("warehouseToRemove").text() mustBe s"${ukAddress.lines.mkString(", ")} ${ukAddress.postCode}"
           }
         }
       }

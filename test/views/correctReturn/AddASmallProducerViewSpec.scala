@@ -28,7 +28,7 @@ import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
-import views.{LitresSpecHelper, ViewSpecHelper}
+import views.ViewSpecHelper
 import views.html.correctReturn.AddASmallProducerView
 
 class AddASmallProducerViewSpec extends ViewSpecHelper {

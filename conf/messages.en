@@ -79,7 +79,7 @@ signedOut.guidance = We did not save your answers.
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
-selectChange.title = What do you need to do
+selectChange.title = What do you need to do?
 selectChange.heading = What do you need to do?
 selectChange.hint = Changes can take up to 15 working days to process.
 selectChange.updateRegisteredDetails = Update contact, packaging site or warehouse details

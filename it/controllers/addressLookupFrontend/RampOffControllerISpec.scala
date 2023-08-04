@@ -106,7 +106,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
           .alf.getAddress(alfId)
-        setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
+        setAnswers(emptyUserAnswersForUpdateRegisteredDetails.copy(packagingSiteList = Map.empty))
 
         WsTestClient.withClient { client =>
           val result = createClientRequestGet(client, s"$baseUrl/off-ramp/packing-site-details/$sdilId?id=$alfId")
@@ -134,7 +134,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
             .alf.getAddress(alfId)
-          setAnswers(emptyUserAnswersForChangeActivity)
+          setAnswers(emptyUserAnswersForChangeActivity.copy(packagingSiteList = Map.empty))
 
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, s"$baseUrl/off-ramp/packing-site-details/$sdilId?id=$alfId")

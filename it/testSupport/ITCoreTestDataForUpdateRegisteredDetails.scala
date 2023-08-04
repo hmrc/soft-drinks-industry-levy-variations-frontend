@@ -46,8 +46,14 @@ trait ITCoreTestDataForUpdateRegisteredDetails extends ITSharedCoreTestData {
   val updateContactDetails: UpdateContactDetails = UpdateContactDetails("Full Name", "job position", "012345678901", "email@test.com")
   val updateContactDetailsDiff: UpdateContactDetails = UpdateContactDetails("New Name", "new job position", "012345678902", "email1@test.com")
 
+  def subscriptionContactDetails = UpdateContactDetails("Ava Adams", "Chief Infrastructure Agent", "04495 206189", "Adeline.Greene@gmail.com")
   def sdilNumber: String
 
-  def emptyUserAnswersForUpdateRegisteredDetails = UserAnswers(sdilNumber, SelectChange.UpdateRegisteredDetails, Json.obj(), contactAddress = ukAddress)
+  def emptyUserAnswersForUpdateRegisteredDetails = UserAnswers(sdilNumber,
+    SelectChange.UpdateRegisteredDetails,
+    Json.obj(("updateRegisteredDetails", Json.obj("updateContactDetails" -> Json.toJson(subscriptionContactDetails)))),
+    packagingSiteList = packagingSitesFromSubscription,
+    contactAddress = ukAddress
+  )
 
 }

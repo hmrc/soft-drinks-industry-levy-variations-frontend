@@ -16,12 +16,11 @@
 
 package views.correctReturn
 
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.Messages
-import play.api.mvc.{Call, Request}
+import play.api.mvc.Request
 import play.api.test.FakeRequest
-import views.html.correctReturn.ReturnChangeRegistrationView
 import views.ViewSpecHelper
+import views.html.correctReturn.ReturnChangeRegistrationView
 
 class ReturnChangeRegistrationViewSpec extends ViewSpecHelper {
 
