@@ -63,7 +63,9 @@ object PackagingSiteDetailsSummary  {
               ActionItemViewModel("site.remove", controllers.routes.IndexController.onPageLoad.url)
                 .withVisuallyHiddenText(messages("correctReturn.packagingSiteDetails.remove.hidden", packagingSite._2.tradingName.getOrElse(""), packagingSite._2.address.lines.head))
             )))
-          } else None
+          } else {
+            None
+          }
         )
     }.toList
   }
