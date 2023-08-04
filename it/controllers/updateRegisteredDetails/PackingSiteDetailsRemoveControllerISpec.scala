@@ -58,7 +58,7 @@ class PackingSiteDetailsRemoveControllerISpec extends ControllerITTestHelper {
               radioInputs.get(0).hasAttr("checked") mustBe false
               radioInputs.get(1).attr("value") mustBe "false"
               radioInputs.get(1).hasAttr("checked") mustBe false
-              page.getElementById("packingSiteToRemove").text() mustBe "foo, bar wizz"
+              page.getElementById("packingSiteToRemove").text() mustBe s"${ukAddress.lines.mkString(", ")} ${ukAddress.postCode}"
             }
           }
         }
@@ -198,7 +198,7 @@ class PackingSiteDetailsRemoveControllerISpec extends ControllerITTestHelper {
               .select("a")
               .attr("href") mustBe "#value"
             errorSummary.text() mustBe Messages("updateRegisteredDetails.packingSiteDetailsRemove" + ".error.required")
-            page.getElementById("packingSiteToRemove").text() mustBe "foo, bar wizz"
+            page.getElementById("packingSiteToRemove").text() mustBe s"${ukAddress.lines.mkString(", ")} ${ukAddress.postCode}"
             getAnswers(emptyUserAnswersForUpdateRegisteredDetails.id).get.packagingSiteList.size mustBe 1
           }
         }
@@ -288,7 +288,7 @@ class PackingSiteDetailsRemoveControllerISpec extends ControllerITTestHelper {
               .select("a")
               .attr("href") mustBe "#value"
             errorSummary.text() mustBe Messages("updateRegisteredDetails.packingSiteDetailsRemove" + ".error.required")
-            page.getElementById("packingSiteToRemove").text() mustBe "foo, bar wizz"
+            page.getElementById("packingSiteToRemove").text() mustBe s"${ukAddress.lines.mkString(", ")} ${ukAddress.postCode}"
           }
         }
       }

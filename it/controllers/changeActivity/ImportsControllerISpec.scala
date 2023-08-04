@@ -143,6 +143,7 @@ class ImportsControllerISpec extends ControllerITTestHelper with LitresISpecHelp
                   .commonPrecondition
 
                 val userAnswers = emptyUserAnswersForChangeActivity
+                  .copy(packagingSiteList = Map.empty)
                   .set(AmountProducedPage, AmountProduced.Large).success.value
                   .set(OperatePackagingSiteOwnBrandsPage, true).success.value
                   .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100)).success.value
@@ -170,6 +171,7 @@ class ImportsControllerISpec extends ControllerITTestHelper with LitresISpecHelp
                   .commonPrecondition
 
                 val userAnswers = emptyUserAnswersForChangeActivity
+                  .copy(packagingSiteList = Map.empty)
                   .set(AmountProducedPage, AmountProduced.Large).success.value
                   .set(OperatePackagingSiteOwnBrandsPage, false).success.value
                   .set(ContractPackingPage, true).success.value
@@ -197,6 +199,7 @@ class ImportsControllerISpec extends ControllerITTestHelper with LitresISpecHelp
                   .commonPrecondition
 
                 val userAnswers = emptyUserAnswersForChangeActivity
+                  .copy(packagingSiteList = Map.empty)
                   .set(AmountProducedPage, AmountProduced.Large).success.value
                   .set(OperatePackagingSiteOwnBrandsPage, true).success.value
                   .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100)).success.value
@@ -225,6 +228,7 @@ class ImportsControllerISpec extends ControllerITTestHelper with LitresISpecHelp
                   .commonPrecondition
 
                 val userAnswers = emptyUserAnswersForChangeActivity
+                  .copy(packagingSiteList = Map.empty)
                   .set(AmountProducedPage, AmountProduced.None).success.value
                   .set(ContractPackingPage, true).success.value
                   .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value

@@ -30,7 +30,11 @@ trait UserAnswersGenerator extends TryValues {
   self: Generators =>
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
 
+    arbitrary[(correctReturn.RemovePackagingSiteConfirmPage.type, JsValue)] ::
+    arbitrary[(correctReturn.SecondaryWarehouseDetailsPage.type, JsValue)] ::
+    arbitrary[(correctReturn.RemoveWarehouseDetailsPage.type, JsValue)] ::
     arbitrary[(correctReturn.SmallProducerDetailsPage.type, JsValue)] ::
+    arbitrary[(correctReturn.PackagingSiteDetailsPage.type, JsValue)] ::
     arbitrary[(correctReturn.RemoveSmallProducerConfirmPage.type, JsValue)] ::
     arbitrary[(correctReturn.BroughtIntoUkFromSmallProducersPage.type, JsValue)] ::
     arbitrary[(correctReturn.ClaimCreditsForExportsPage.type, JsValue)] ::
@@ -39,6 +43,7 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(correctReturn.CorrectionReasonPage.type, JsValue)] ::
     arbitrary[(correctReturn.PackagedAsContractPackerPage.type, JsValue)] ::
     arbitrary[(correctReturn.SelectPage.type, JsValue)] ::
+    arbitrary[(correctReturn.AddASmallProducerPage.type, JsValue)] ::
     arbitrary[(correctReturn.RepaymentMethodPage.type, JsValue)] ::
     arbitrary[(changeActivity.ThirdPartyPackagersPage.type, JsValue)] ::
     arbitrary[(changeActivity.PackAtBusinessAddressPage.type, JsValue)] ::

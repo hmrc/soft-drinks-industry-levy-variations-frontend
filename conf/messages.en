@@ -3,6 +3,7 @@ service.name = Soft Drinks Industry Levy
 site.back = Back
 site.remove = Remove
 site.edit = Edit
+site.error = Error
 site.change = Change
 site.no = No
 site.yes = Yes
@@ -30,7 +31,6 @@ litres.lowBand = Litres in the low band
 litres.lowBandHint = At least 5 grams of sugar per 100 millilitres
 litres.highBand = Litres in the high band
 litres.text = litres
-litres.highBand.visuallyHidden = Error
 litres.highBandHint = At least 8 grams of sugar per 100 millilitres
 litres.error.lowBand.required = Enter the number of litres in the low band
 litres.error.highBand.required = Enter the number of litres in the high band
@@ -79,7 +79,7 @@ signedOut.guidance = We did not save your answers.
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
-selectChange.title = What do you need to do
+selectChange.title = What do you need to do?
 selectChange.heading = What do you need to do?
 selectChange.hint = Changes can take up to 15 working days to process.
 selectChange.updateRegisteredDetails = Update contact, packaging site or warehouse details
@@ -235,11 +235,10 @@ changeActivity.packagingSiteDetails.subHeading = Do you want to add another UK p
 changeActivity.packagingSiteDetails.info = You must tell us about all of the UK packaging sites you operate to produce liable drinks. You must have at least one registered packaging site.
 changeActivity.packagingSiteDetails.checkYourAnswersLabel = UK packaging site details
 changeActivity.packagingSiteDetails.error.required = Select yes if you need to add another packaging site
-changeActivity.packagingSiteDetails.change.hidden = change UK packaging site details
+changeActivity.packagingSiteDetails.change.hidden = {0} site address {1}
 
 changeActivity.removePackagingSiteDetails.title = Are you sure you want to remove this packaging site?
 changeActivity.removePackagingSiteDetails.heading = Are you sure you want to remove this packaging site?
-changeActivity.removePackagingSiteDetails.checkYourAnswersLabel = Are you sure you want to remove this packaging site?
 changeActivity.removePackagingSiteDetails.error.required = Select yes if you want to remove this packaging site
 
 changeActivity.secondaryWarehouseDetails.title = Change your UK warehouse details
@@ -337,6 +336,18 @@ correctReturn.repaymentMethod.bankAccount = Paid into the bank account for this 
 correctReturn.repaymentMethod.sdilAccount = Credited to our Soft Drinks Industry Levy account
 correctReturn.repaymentMethod.error.required = Select how you want the credit to be repaid
 
+correctReturn.addASmallProducer.title = Enter the registered small producer’s details
+correctReturn.addASmallProducer.hint1 = Small producer name (optional)
+correctReturn.addASmallProducer.referenceNumber = Soft Drinks Industry Levy reference number
+correctReturn.addASmallProducer.hint2 = This is 6 letters then 9 numbers, like XCSDIL123456789
+correctReturn.addASmallProducer.checkYourAnswersLabel = AddASmallProducer
+correctReturn.addASmallProducer.error.referenceNumber.required = Enter the small producer’s reference number
+correctReturn.addASmallProducer.error.referenceNumber.invalid = Small producer reference number must be 6 letters and 9 numbers
+correctReturn.addASmallProducer.error.referenceNumber.same = Small producer reference number must be different to your own Soft Drinks Industry Levy reference number
+correctReturn.addASmallProducer.error.referenceNumber.exists = Small producer reference number must be different to a small producer reference number you have already added
+correctReturn.addASmallProducer.error.referenceNumber.notASmallProducer = Small producer reference number does not match a business that is currently registered as a small producer. Check and try again.
+correctReturn.addASmallProducer.error.producerName.maxLength = Small producer name must be 160 characters or less
+
 correctReturn.claimCreditsForLostDamaged.title = Do you want to claim a credit for liable drinks which have been lost or destroyed?
 correctReturn.claimCreditsForLostDamaged.warningHeading = Lost or destroyed drinks
 correctReturn.claimCreditsForLostDamaged.warningHint = You can only claim credit if you’ve registered for the levy and paid it directly to HMRC. Claiming credits you’re not entitled to is a criminal offence.
@@ -421,6 +432,12 @@ correctReturn.removeSmallProducerConfirm.checkYourAnswersLabel = Are you sure yo
 correctReturn.removeSmallProducerConfirm.error.required = Select yes if you want to remove this small producer
 correctReturn.removeSmallProducerConfirm.change.hidden = Select yes if you want to remove this small producer
 
+correctReturn.removeWarehouseDetails.title = Are you sure you want to remove this warehouse?
+correctReturn.removeWarehouseDetails.heading = Are yo sure you want to remove this warehouse?
+correctReturn.removeWarehouseDetails.checkYourAnswersLabel = Are you sure you want to remove this warehouse?
+correctReturn.removeWarehouseDetails.error.required = Select yes if you want to remove this warehouse
+correctReturn.removeWarehouseDetails.change.hidden = Select yes if you want to remove this warehouse
+
 correctReturn.broughtIntoUkFromSmallProducers.title = Are you reporting liable drinks you have brought into the UK from small producers?
 correctReturn.broughtIntoUkFromSmallProducers.heading = Are you reporting liable drinks you have brought into the UK from small producers?
 correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersLabel = Are you reporting liable drinks you have brought into the UK from small producers?
@@ -436,7 +453,7 @@ correctReturn.broughtIntoUkFromSmallProducers.change.hidden = Change are you rep
 correctReturn.howManyBroughtIntoUkFromSmallProducers.title = How many litres of liable drinks have you brought into the UK from small producers?
 correctReturn.howManyBroughtIntoUkFromSmallProducers.heading = How many litres of liable drinks have you brought into the UK from small producers?
 correctReturn.broughtIntoUkFromSmallProducers.lowband.litres.hidden = number of litres in low band brought into the UK from a small producer
-correctReturn.broughtIntoUkFromSmallProducers.highband.litres.hidden = number of litres in high band brought into the UK from a small producer 
+correctReturn.broughtIntoUkFromSmallProducers.highband.litres.hidden = number of litres in high band brought into the UK from a small producer
 
 correctReturn.claimCreditsForExports.heading2 = Exported drinks
 correctReturn.claimCreditsForExports.title = Do you want to claim a credit for liable drinks that have been exported?
@@ -472,3 +489,22 @@ correctReturn.returnChangeRegistration.subtext1 = In this return, you told us th
 correctReturn.returnChangeRegistration.subtext2 = This is different to your registered business activity, so we will update your registration.
 correctReturn.returnChangeRegistration.subtext3 = If you made a mistake, you need to <a href={0}>go back and change your answers</a>.
 correctReturn.returnChangeRegistration.subtext4 = If you’re happy with the change, select Update Registration.
+
+correctReturn.removePackagingSiteConfirm.title = Are you sure you want to remove this packaging site?
+correctReturn.removePackagingSiteConfirm.heading = Are you sure you want to remove this packaging site?
+correctReturn.removePackagingSiteConfirm.checkYourAnswersLabel = Are you sure you want to remove this packaging site?
+correctReturn.removePackagingSiteConfirm.error.required = Select yes if you want to remove this packaging site
+
+correctReturn.secondaryWarehouseDetails.title = Do you want to add another UK warehouse?
+correctReturn.secondaryWarehouseDetails.heading = You added {0} UK warehouse{1}
+correctReturn.secondaryWarehouseDetails.checkYourAnswersLabel = Do you want to add another UK warehouse?
+correctReturn.secondaryWarehouseDetails.error.required = Select yes if you want to add another UK warehouse
+correctReturn.secondaryWarehouseDetails.change.hidden = SecondaryWarehouseDetails
+
+correctReturn.packagingSiteDetails.title = Do you want to add another UK packaging site?
+correctReturn.packagingSiteDetails.heading = You added {0} UK packaging sites
+correctReturn.packagingSiteDetails.heading1 = You added 1 UK packaging site
+correctReturn.packagingSiteDetails.checkYourAnswersLabel = UK packaging sites
+correctReturn.packagingSiteDetails.error.required = Select yes if you want to add another UK packaging site
+correctReturn.packagingSiteDetails.change.hidden = your UK packaging site details
+correctReturn.packagingSiteDetails.remove.hidden = {0} site address {1}

@@ -48,13 +48,13 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("changeActivity.packagingSiteDetails.subHeading")).asPageHeading(),
+                legend = LegendViewModel(messages("changeActivity.packagingSiteDetails.subHeading")).withCssClass("govuk-fieldset__legend--m"),
                 hint = None
             )
         )
 
         @govukButton(
-            ButtonViewModel(messages("site.continue"))
+            ButtonViewModel(messages("site.saveContinue"))
         )
     }
 }

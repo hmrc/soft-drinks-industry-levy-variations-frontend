@@ -59,14 +59,14 @@ trait LitresSpecHelper extends ViewSpecHelper {
         "that includes 2 input fields" in {
           formGroups.size() mustEqual 2
         }
-        "that includes a field for low band that is not populated" in {
+        "that includes a field for low band that is populated" in {
           val lowBandGroup = formGroups.get(0)
           lowBandGroup.getElementsByClass(Selectors.label).text() mustBe Messages("litres.lowBand")
           lowBandGroup.getElementById("lowBand-hint").text() mustBe Messages("litres.lowBandHint")
           lowBandGroup.getElementById("lowBand").hasAttr("value") mustBe true
           lowBandGroup.getElementById("lowBand").attr("value") mustBe lowBandValue.toString
         }
-        "that includes a field for high band that is not populated" in {
+        "that includes a field for high band that is populated" in {
           val highBandGroup = formGroups.get(1)
           highBandGroup.getElementsByClass(Selectors.label).text() mustBe Messages("litres.highBand")
           highBandGroup.getElementById("highBand-hint").text() mustBe Messages("litres.highBandHint")

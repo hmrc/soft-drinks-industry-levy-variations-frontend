@@ -17,7 +17,7 @@
 package generators
 
 import models.changeActivity.AmountProduced
-import models.correctReturn.RepaymentMethod
+import models.correctReturn.{AddASmallProducer, RepaymentMethod}
 import models.updateRegisteredDetails.UpdateContactDetails
 import models.{ReturnPeriod, SelectChange}
 import org.scalacheck.Arbitrary
@@ -29,10 +29,42 @@ import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
+  implicit lazy val arbitraryCorrectReturnRemovePackagingSiteConfirmUserAnswersEntry: Arbitrary[(pages.correctReturn.RemovePackagingSiteConfirmPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.correctReturn.RemovePackagingSiteConfirmPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryCorrectReturnSecondaryWarehouseDetailsUserAnswersEntry: Arbitrary[(pages.correctReturn.SecondaryWarehouseDetailsPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.correctReturn.SecondaryWarehouseDetailsPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryCorrectReturnRemoveWarehouseConfirmUserAnswersEntry: Arbitrary[(pages.correctReturn.RemoveWarehouseDetailsPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page <- arbitrary[pages.correctReturn.RemoveWarehouseDetailsPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
   implicit lazy val arbitraryCorrectReturnSmallProducerDetailsUserAnswersEntry: Arbitrary[(pages.correctReturn.SmallProducerDetailsPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[pages.correctReturn.SmallProducerDetailsPage.type]
+        value <- arbitrary[Boolean].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryCorrectReturnPackagingSiteDetailsUserAnswersEntry: Arbitrary[(pages.correctReturn.PackagingSiteDetailsPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page  <- arbitrary[pages.correctReturn.PackagingSiteDetailsPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
@@ -100,6 +132,14 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       for {
         page  <- arbitrary[pages.correctReturn.SelectPage.type]
         value <- arbitrary[ReturnPeriod].map(Json.toJson(_))
+      } yield (page, value)
+    }
+
+  implicit lazy val arbitraryCorrectReturnAddASmallProducerUserAnswersEntry: Arbitrary[(pages.correctReturn.AddASmallProducerPage.type, JsValue)] =
+    Arbitrary {
+      for {
+        page <- arbitrary[pages.correctReturn.AddASmallProducerPage.type]
+        value <- arbitrary[AddASmallProducer].map(Json.toJson(_))
       } yield (page, value)
     }
 

@@ -51,9 +51,9 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     if (userAnswers.get(page = BroughtIntoUKPage).contains(true)) {
       routes.HowManyBroughtIntoUKController.onPageLoad(mode)
     } else if(mode == CheckMode){
-        routes.CorrectReturnCYAController.onPageLoad
+      routes.CorrectReturnCYAController.onPageLoad
     } else {
-        defaultCall
+      defaultCall
     }
   }
 
@@ -61,9 +61,9 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     if (userAnswers.get(page = PackagedAsContractPackerPage).contains(true)) {
       routes.HowManyPackagedAsContractPackerController.onPageLoad(mode)
     } else if(mode == CheckMode){
-        routes.CorrectReturnCYAController.onPageLoad
+      routes.CorrectReturnCYAController.onPageLoad
     } else {
-        defaultCall
+      defaultCall
     }
   }
 
@@ -88,7 +88,11 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   }
 
   override val normalRoutes: Page => UserAnswers => Call = {
+
+    case RemovePackagingSiteConfirmPage => _ => defaultCall
+    case SecondaryWarehouseDetailsPage => _ => defaultCall
     case SmallProducerDetailsPage => _ => defaultCall
+    case PackagingSiteDetailsPage => _ => defaultCall
     case BroughtIntoUkFromSmallProducersPage => userAnswers => navigationForBroughtIntoUkFromSmallProducers(userAnswers, NormalMode)
     case HowManyBroughtIntoUkFromSmallProducersPage => _ => defaultCall
     case ClaimCreditsForExportsPage => userAnswers => navigationForClaimCreditsForExports(userAnswers, NormalMode)
@@ -98,6 +102,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case HowManyBroughtIntoUKPage => _ => defaultCall
     case ExemptionsForSmallProducersPage => _ => defaultCall
     case RemoveSmallProducerConfirmPage => _ => defaultCall
+    case RemoveWarehouseDetailsPage => userAnswers => defaultCall
     case CorrectionReasonPage => _ => defaultCall
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => defaultCall
@@ -106,11 +111,13 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case RepaymentMethodPage => userAnswers => defaultCall
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, NormalMode)
     case HowManyPackagedAsContractPackerPage => _ => defaultCall
+    case AddASmallProducerPage => userAnswers => defaultCall
     case SelectPage => userAnswers => defaultCall
     case _ => _ => defaultCall
   }
 
   override val checkRouteMap: Page => UserAnswers => Call = {
+    case RemovePackagingSiteConfirmPage => _ => defaultCall
     case BroughtIntoUkFromSmallProducersPage => userAnswers => navigationForBroughtIntoUkFromSmallProducers(userAnswers, CheckMode)
     case ClaimCreditsForExportsPage => userAnswers => navigationForClaimCreditsForExports(userAnswers, CheckMode)
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, CheckMode)

@@ -23,8 +23,20 @@ import pages.updateRegisteredDetails.UpdateContactDetailsPage
 
 trait PageGenerators {
 
+  implicit lazy val arbitraryCorrectReturnRemovePackagingSiteConfirmPage: Arbitrary[correctReturn.RemovePackagingSiteConfirmPage.type] =
+    Arbitrary(correctReturn.RemovePackagingSiteConfirmPage)
+
+  implicit lazy val arbitraryCorrectReturnSecondaryWarehouseDetailsPage: Arbitrary[correctReturn.SecondaryWarehouseDetailsPage.type] =
+    Arbitrary(correctReturn.SecondaryWarehouseDetailsPage)
+
+  implicit lazy val arbitraryCorrectReturnRemoveWarehouseConfirmPage: Arbitrary[correctReturn.RemoveWarehouseDetailsPage.type] =
+    Arbitrary(correctReturn.RemoveWarehouseDetailsPage)
+
   implicit lazy val arbitraryCorrectReturnSmallProducerDetailsPage: Arbitrary[correctReturn.SmallProducerDetailsPage.type] =
     Arbitrary(correctReturn.SmallProducerDetailsPage)
+
+  implicit lazy val arbitraryCorrectReturnPackagingSiteDetailsPage: Arbitrary[correctReturn.PackagingSiteDetailsPage.type] =
+    Arbitrary(correctReturn.PackagingSiteDetailsPage)
 
   implicit lazy val arbitraryCorrectReturnBroughtIntoUkFromSmallProducersPage: Arbitrary[correctReturn.BroughtIntoUkFromSmallProducersPage.type] =
     Arbitrary(correctReturn.BroughtIntoUkFromSmallProducersPage)
@@ -52,6 +64,9 @@ trait PageGenerators {
 
   implicit lazy val arbitraryCorrectReturnSelectPage: Arbitrary[correctReturn.SelectPage.type] =
     Arbitrary(correctReturn.SelectPage)
+
+  implicit lazy val arbitraryCorrectReturnAddASmallProducerPage: Arbitrary[correctReturn.AddASmallProducerPage.type] =
+    Arbitrary(correctReturn.AddASmallProducerPage)
 
   implicit lazy val arbitraryCorrectReturnRepaymentMethodPage: Arbitrary[correctReturn.RepaymentMethodPage.type] =
     Arbitrary(correctReturn.RepaymentMethodPage)

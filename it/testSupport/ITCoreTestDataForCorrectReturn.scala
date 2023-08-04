@@ -1,16 +1,52 @@
 package testSupport
 
-import models.{SelectChange, UserAnswers}
+import models.backend.Site
+import models.{SelectChange, UserAnswers, Warehouse}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import pages.correctReturn._
 import play.api.libs.json.Json
 
 trait ITCoreTestDataForCorrectReturn extends ITSharedCoreTestData  {
+
+  def userAnswersForCorrectReturnRemovePackagingSiteConfirmPage(index: String): Map[String, UserAnswers] = {
+    val yesSelected = emptyUserAnswersForCorrectReturn
+      .copy(packagingSiteList = Map(index -> Site(ukAddress, None, None, None)))
+      .set(RemovePackagingSiteConfirmPage, true).success.value
+
+    val noSelected = emptyUserAnswersForCorrectReturn
+      .copy(packagingSiteList = Map(index -> Site(ukAddress, None, None, None)))
+      .set(RemovePackagingSiteConfirmPage, false).success.value
+    Map("yes" -> yesSelected, "no" -> noSelected)
+  }
+
+  val userAnswersForCorrectReturnSecondaryWarehouseDetailsPage: Map[String, UserAnswers] = {
+    val yesSelected = emptyUserAnswersForCorrectReturn.set(SecondaryWarehouseDetailsPage, true).success.value
+    val noSelected = emptyUserAnswersForCorrectReturn.set(SecondaryWarehouseDetailsPage, false).success.value
+    Map("yes" -> yesSelected, "no" -> noSelected)
+    }
+
+  def userAnswersForCorrectReturnRemoveWarehouseDetailsPage(index: String): Map[String, UserAnswers] = {
+    val yesSelected = emptyUserAnswersForCorrectReturn
+      .copy(warehouseList = Map(index -> Warehouse(None, ukAddress)))
+      .set(RemoveWarehouseDetailsPage, true).success.value
+
+    val noSelected = emptyUserAnswersForCorrectReturn
+      .copy(warehouseList = Map(index -> Warehouse(None, ukAddress)))
+      .set(RemoveWarehouseDetailsPage, false).success.value
+    Map("yes" -> yesSelected, "no" -> noSelected)
+  }
+
   val userAnswersForCorrectReturnSmallProducerDetailsPage: Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForCorrectReturn.set(SmallProducerDetailsPage, true).success.value
     val noSelected = emptyUserAnswersForCorrectReturn.set(SmallProducerDetailsPage, false).success.value
     Map("yes" -> yesSelected, "no" -> noSelected)
   }
+
+  val userAnswersForCorrectReturnPackagingSiteDetailsPage: Map[String, UserAnswers] = {
+    val yesSelected = emptyUserAnswersForCorrectReturn.set(PackagingSiteDetailsPage, true).success.value
+    val noSelected = emptyUserAnswersForCorrectReturn.set(PackagingSiteDetailsPage, false).success.value
+    Map("yes" -> yesSelected, "no" -> noSelected)
+    }
 
   val userAnswersForCorrectReturnRemoveSmallProducerConfirmPage: Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForCorrectReturn.set(RemoveSmallProducerConfirmPage, true).success.value
@@ -58,6 +94,8 @@ trait ITCoreTestDataForCorrectReturn extends ITSharedCoreTestData  {
 
   def sdilNumber: String
 
-  def emptyUserAnswersForCorrectReturn = UserAnswers(sdilNumber, SelectChange.CorrectReturn, Json.obj(), contactAddress = ukAddress)
+  def emptyUserAnswersForCorrectReturn = UserAnswers(sdilNumber, SelectChange.CorrectReturn, Json.obj(),
+    packagingSiteList = packagingSitesFromSubscription,
+    contactAddress = ukAddress)
 
 }

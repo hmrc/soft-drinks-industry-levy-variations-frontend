@@ -17,13 +17,14 @@
 package base
 
 import cats.data.EitherT
+import cats.implicits._
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.routes
 import errors.VariationsErrors
 import helpers.LoggerHelper
-import models.backend.{Site, UkAddress}
 import models._
+import models.backend.{Site, UkAddress}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -39,7 +40,6 @@ import play.api.test.Helpers._
 import play.api.{Application, Play}
 import queries.Settable
 import service.VariationResult
-import cats.implicits._
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
@@ -47,6 +47,17 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
 object SpecBase {
+  lazy val contactAddress = UkAddress(List("19 Rhes Priordy", "East London"), "E73 2RP")
+
+  val sdilNumber: String = "XKSDIL000000022"
+
+  val twoWarehouses: Map[String,Warehouse] = Map(
+    "1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
+    "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"))
+  )
+
+  val userAnswerTwoWarehouses : UserAnswers = UserAnswers(sdilNumber,SelectChange.CorrectReturn, contactAddress = contactAddress, data = Json.obj(), warehouseList = twoWarehouses)
+
   val aSubscription = RetrievedSubscription(
     utr = "0000000022",
     sdilRef = "XKSDIL000000022",

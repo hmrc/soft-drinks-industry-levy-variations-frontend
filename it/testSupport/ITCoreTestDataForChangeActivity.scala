@@ -67,6 +67,8 @@ trait ITCoreTestDataForChangeActivity extends ITSharedCoreTestData {
     Map("yes" -> yesSelected, "no" -> noSelected)
     }
   def sdilNumber: String
-  def emptyUserAnswersForChangeActivity = UserAnswers(sdilNumber, SelectChange.ChangeActivity, Json.obj(), contactAddress = ukAddress)
+  def emptyUserAnswersForChangeActivity = UserAnswers(sdilNumber, SelectChange.ChangeActivity, Json.obj(),
+    packagingSiteList = packagingSitesFromSubscription,
+    contactAddress = ukAddress)
 
 }
