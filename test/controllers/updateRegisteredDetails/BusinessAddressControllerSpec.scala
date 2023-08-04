@@ -30,7 +30,7 @@ class BusinessAddressControllerSpec extends SpecBase {
 
   lazy val businessAddressRoute = routes.BusinessAddressController.onPageLoad().url
   lazy val businessAddress: UkAddress = UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")
-  def onwardRoute: Call = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/soft-drinks-industry-levy-variations-frontend")
 
   "BusinessAddress Controller" - {
 
@@ -46,7 +46,7 @@ class BusinessAddressControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[BusinessAddressView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(List(businessAddress))(request, messages(application)).toString
+        contentAsString(result) mustEqual view(List(contactAddress))(request, messages(application)).toString
       }
     }
 
