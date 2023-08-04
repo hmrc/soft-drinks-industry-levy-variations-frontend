@@ -35,6 +35,7 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(correctReturn.RemoveWarehouseDetailsPage.type, JsValue)] ::
     arbitrary[(correctReturn.SmallProducerDetailsPage.type, JsValue)] ::
     arbitrary[(correctReturn.PackagingSiteDetailsPage.type, JsValue)] ::
+    arbitrary[(correctReturn.PackAtBusinessAddressPage.type, JsValue)] ::
     arbitrary[(correctReturn.RemoveSmallProducerConfirmPage.type, JsValue)] ::
     arbitrary[(correctReturn.BroughtIntoUkFromSmallProducersPage.type, JsValue)] ::
     arbitrary[(correctReturn.ClaimCreditsForExportsPage.type, JsValue)] ::

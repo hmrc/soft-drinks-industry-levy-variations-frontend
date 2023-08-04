@@ -88,7 +88,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   }
 
   override val normalRoutes: Page => UserAnswers => Call = {
-
+    case PackAtBusinessAddressPage => _ => defaultCall
     case RemovePackagingSiteConfirmPage => _ => defaultCall
     case SecondaryWarehouseDetailsPage => _ => defaultCall
     case SmallProducerDetailsPage => _ => defaultCall
