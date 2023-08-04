@@ -36,7 +36,7 @@ class SuggestDeregistrationControllerISpec extends ControllerITTestHelper {
   }
 
   s"POST " + normalRoutePath - {
-    "should redirect to the File returns controller when the user has un-filed returns" in {
+    "should redirect to Cancel Registration - Reason Controller" in {
         given
           .commonPrecondition
 
@@ -48,7 +48,7 @@ class SuggestDeregistrationControllerISpec extends ControllerITTestHelper {
           )
           whenReady(result) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad().url)
+            res.header(HeaderNames.LOCATION) mustBe Some(controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode).url)
           }
         }
       }
