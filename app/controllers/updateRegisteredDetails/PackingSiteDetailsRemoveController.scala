@@ -17,7 +17,7 @@
 package controllers.updateRegisteredDetails
 
 import controllers.actions._
-import controllers.{ControllerHelper, routes}
+import controllers.ControllerHelper
 import forms.updateRegisteredDetails.PackingSiteDetailsRemoveFormProvider
 import handlers.ErrorHandler
 import models.SelectChange.UpdateRegisteredDetails
@@ -58,7 +58,7 @@ class PackingSiteDetailsRemoveController @Inject()(
           Ok(view(form, mode, formattedAddress, index))
         case _ => genericLogger.logger.warn(s"Packing Site index $index doesn't exist ${request.userAnswers.id} packing site list length:" +
           s"${request.userAnswers.packagingSiteList.size}")
-          Redirect(routes.IndexController.onPageLoad)
+          Redirect(routes.PackagingSiteDetailsController.onPageLoad(mode))
       }
   }
 
@@ -69,7 +69,7 @@ class PackingSiteDetailsRemoveController @Inject()(
         case None =>
           genericLogger.logger.warn(s"Packing Site index $index doesn't exist ${request.userAnswers.id} packing site list length:" +
             s"${request.userAnswers.packagingSiteList.size}")
-          Future.successful(Redirect(routes.IndexController.onPageLoad))
+          Future.successful(Redirect(routes.PackagingSiteDetailsController.onPageLoad(mode)))
         case Some(site) =>
           val formattedAddress: Html = AddressFormattingHelper.addressFormatting(site.address, site.tradingName)
           form.bindFromRequest().fold(
