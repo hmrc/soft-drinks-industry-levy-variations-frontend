@@ -30,4 +30,4 @@ POST       /change-packaging-site-details/remove/:index                  control
 
 GET        /contact-details                       controllers.updateRegisteredDetails.ContactDetailsController.onPageLoad()
 
-GET        /business-address                       controllers.updateRegisteredDetails.BusinessAddressController.onPageLoad()
+GET        /business-address                       controllers.updateRegisteredDetails.BusinessAddressController.onPageLoad(mode: Mode = NormalMode)

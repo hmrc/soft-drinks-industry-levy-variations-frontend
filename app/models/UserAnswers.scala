@@ -34,7 +34,6 @@ case class UserAnswers(
                         smallProducerList: List[SmallProducer] = List.empty,
                         packagingSiteList: Map[String, Site] = Map.empty,
                         warehouseList: Map[String, Warehouse] = Map.empty,
-                        businessAddress: UkAddress,
                         contactAddress: UkAddress,
                         submitted:Boolean = false,
                         lastUpdated: Instant = Instant.now
@@ -115,7 +114,6 @@ object UserAnswers {
           (__ \ "smallProducerList").read[EncryptedValue] and
           (__ \ "packagingSiteList").read[Map[String, EncryptedValue]] and
           (__ \ "warehouseList").read[Map[String, EncryptedValue]] and
-          (__ \ "businessAddress").read[EncryptedValue] and
           (__ \ "contactAddress").read[EncryptedValue] and
           (__ \ "submitted").read[Boolean] and
           (__ \ "lastUpdated").read[Instant]
@@ -125,7 +123,7 @@ object UserAnswers {
     def writes(implicit encryption: Encryption): OWrites[UserAnswers] = new OWrites[UserAnswers] {
       override def writes(userAnswers: UserAnswers): JsObject = {
         val encryptedValue: (String, SelectChange, EncryptedValue, EncryptedValue, Map[String, EncryptedValue],
-          Map[String, EncryptedValue], EncryptedValue, EncryptedValue, Boolean, Instant) = {
+          Map[String, EncryptedValue], EncryptedValue, Boolean, Instant) = {
           ModelEncryption.encryptUserAnswers(userAnswers)
         }
         Json.obj(
@@ -136,9 +134,8 @@ object UserAnswers {
           "packagingSiteList" -> encryptedValue._5,
           "warehouseList" -> encryptedValue._6,
           "contactAddress" -> encryptedValue._7,
-          "businessAddress" -> encryptedValue._8,
-          "submitted" -> encryptedValue._9,
-          "lastUpdated" -> encryptedValue._10
+          "submitted" -> encryptedValue._8,
+          "lastUpdated" -> encryptedValue._9
         )
       }
     }

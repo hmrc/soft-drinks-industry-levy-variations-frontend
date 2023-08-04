@@ -17,8 +17,9 @@
 package views.summary.updateRegisteredDetails
 
 import controllers.updateRegisteredDetails.routes
+import models.backend.UkAddress
 import models.{CheckMode, NormalMode, UserAnswers, Warehouse}
-import pages.updateRegisteredDetails.{BusinessAddressPage, WarehouseDetailsPage}
+import pages.updateRegisteredDetails.BusinessAddressPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -29,34 +30,32 @@ import viewmodels.implicits._
 
 object BusinessAddressSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(BusinessAddressPage).map {
-      answer =>
+//  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+//    answers.get(BusinessAddressPage).map {
+//      answer =>
+//
+//        SummaryListRowViewModel(
+//          key     = "updateRegisteredDetails.warehouseDetails.checkYourAnswersLabel",
+//          value   = ValueViewModel(""),
+//          actions = Seq(
+//            ActionItemViewModel("site.change", routes.BusinessAddressController.onPageLoad(CheckMode).url)
+//              .withVisuallyHiddenText(messages("updateRegisteredDetails.warehouseDetails.change.hidden"))
+//          )
+//        )
+//  }
 
-        SummaryListRowViewModel(
-          key     = "updateRegisteredDetails.warehouseDetails.checkYourAnswersLabel",
-          value   = ValueViewModel(""),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.BusinessAddressController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("updateRegisteredDetails.warehouseDetails.change.hidden"))
-          )
-        )
-    }
 
-  def row2(warehouseList: Map[String, Warehouse])(implicit messages: Messages): List[SummaryListRow] = {
-    warehouseList.map {
-          warehouse =>
-            SummaryListRow(
-              key     = Key(
-                content = HtmlContent(AddressFormattingHelper.addressFormatting(warehouse._2.address, warehouse._2.tradingName)),
-                classes = "govuk-!-font-weight-regular govuk-!-width-full"
-              ),
-              actions = Some(Actions("",Seq(
-                ActionItemViewModel("site.remove", routes.WarehouseDetailsController.onPageLoad(NormalMode).url)
-                  .withVisuallyHiddenText(messages("updateRegisteredDetails.warehouseDetails.remove.hidden"))
-              )))
-            )
-          }.toList
-    }
+  def row(businessAddress: UkAddress)(implicit messages: Messages): SummaryListRow = {
+    SummaryListRow(
+      key     = Key(
+        content = HtmlContent(AddressFormattingHelper.addressFormatting(businessAddress, None)),
+        classes = "govuk-!-font-weight-regular govuk-!-width-full"
+      ),
+      actions = Some(Actions("",Seq(
+        ActionItemViewModel("site.change", controllers.routes.IndexController.onPageLoad.url)
+          .withVisuallyHiddenText(messages("updateRegisteredDetails.warehouseDetails.remove.hidden"))
+      )))
+    )
+  }
 
 }

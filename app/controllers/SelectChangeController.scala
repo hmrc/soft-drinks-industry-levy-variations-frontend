@@ -62,12 +62,12 @@ class SelectChangeController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => selectChangeOrchestrator.hasReturnsToCorrect(request.subscription).value
-          .map{
+          .map {
             case Right(hasVariableReturns) => BadRequest(view(formWithErrors, hasVariableReturns))
             case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
           },
         value => {
-          selectChangeOrchestrator.createUserAnswersAndSaveToDatabase(value, request.subscription).value.map{
+          selectChangeOrchestrator.createUserAnswersAndSaveToDatabase(value, request.subscription).value.map {
             case Right(_) => Redirect(getRedirectUrl(value))
             case Left(ReturnsStillPending) => Redirect(cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad())
             case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
@@ -84,5 +84,4 @@ class SelectChangeController @Inject()(
       case _ => routes.IndexController.onPageLoad
     }
   }
-
 }
