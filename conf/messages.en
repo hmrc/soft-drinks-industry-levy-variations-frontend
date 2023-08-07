@@ -129,7 +129,7 @@ updateRegisteredDetails.updateContactDetails.phoneNumber.change.hidden = your co
 updateRegisteredDetails.updateContactDetails.email.change.hidden = your contact person’s email address
 
 updateRegisteredDetails.businessAddress.title = Your business address for the Soft Drinks Industry Levy
-updateRegisteredDetails.businessAddress.change.hidden = business address {0}
+updateRegisteredDetails.businessAddress.change.hidden = business address
 
 cancelRegistration.reason.title = Why do you need to cancel your registration?
 cancelRegistration.reason.checkYourAnswersLabel = Reason for cancelling
