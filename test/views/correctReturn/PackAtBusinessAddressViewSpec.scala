@@ -40,7 +40,7 @@ class PackAtBusinessAddressViewSpec extends ViewSpecHelper {
   val address: Html = AddressFormattingHelper.addressFormatting(businessAddress, Option(businessName))
 
   object Selectors {
-    val HEADING_OUTSIDE_OF_FIELDSET = "govuk-heading-m"
+    val HEADING_OUTSIDE_OF_FIELDSET = "govuk-heading-l"
     val heading = "govuk-fieldset__heading"
     val legend = "govuk-fieldset__legend  govuk-fieldset__legend--m"
     val radios = "govuk-radios__item"
@@ -57,7 +57,7 @@ class PackAtBusinessAddressViewSpec extends ViewSpecHelper {
     val html = view(form, NormalMode, address)(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
-      document.title() must include(Messages("correctReturn.packAtBusinessAddress" + ".title"))
+      document.title() must include(Messages("correctReturn.packAtBusinessAddress.title"))
     }
 
     "should include the expected heading" in {
