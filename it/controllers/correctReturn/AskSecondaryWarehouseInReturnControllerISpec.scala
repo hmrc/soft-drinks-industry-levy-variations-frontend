@@ -272,13 +272,13 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("correctReturn.askSecondaryWarehouseInReturn" + ".title"))
+            page.title must include("Error: " + Messages("correctReturn.askSecondaryWarehouseInReturn.title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("correctReturn.askSecondaryWarehouseInReturn" + ".error.required")
+            errorSummary.text() mustBe Messages("correctReturn.askSecondaryWarehouseInReturn.error.required")
           }
         }
       }
