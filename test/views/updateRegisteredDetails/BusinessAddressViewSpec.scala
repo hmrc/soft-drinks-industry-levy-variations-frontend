@@ -24,7 +24,7 @@ import views.html.updateRegisteredDetails.BusinessAddressView
 
 class BusinessAddressViewSpec extends ViewSpecHelper {
 
-  val view = application.injector.instanceOf[BusinessAddressView]
+  val view: BusinessAddressView = application.injector.instanceOf[BusinessAddressView]
   implicit val request: Request[_] = FakeRequest()
   lazy val businessAddress: UkAddress = UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")
 
@@ -56,7 +56,7 @@ class BusinessAddressViewSpec extends ViewSpecHelper {
       val summaryListKey = document1.getElementsByClass("govuk-summary-list__key")
 
       summaryListKey.size mustBe 1
-      listItems.get(0).text() mustBe "Change business address 33 Rhes Priordy"
+      listItems.get(0).text() mustBe "Change business address"
     }
 
     testBackLink(document)
