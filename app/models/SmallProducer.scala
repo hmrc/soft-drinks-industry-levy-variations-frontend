@@ -21,10 +21,12 @@ import play.api.libs.json.{Json, Reads, Writes}
 case class SmallProducer(alias: String, sdilRef: String, litreage: (Long, Long)) {
 
   def getNameAndRef: String =
-    if (alias.nonEmpty)
+    if (alias.nonEmpty) {
       alias ++ "</br>" ++ sdilRef
-    else
+    }
+    else {
       sdilRef
+    }
 
 }
 

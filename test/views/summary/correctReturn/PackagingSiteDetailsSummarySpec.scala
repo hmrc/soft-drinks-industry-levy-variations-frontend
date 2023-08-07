@@ -17,9 +17,7 @@
 package views.summary.correctReturn
 
 import base.SpecBase
-import models.SmallProducer
 import models.backend.{Site, UkAddress}
-import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 
 import java.time.LocalDate
 
@@ -47,7 +45,6 @@ class PackagingSiteDetailsSummarySpec extends SpecBase {
     }
 
     "should return a summary list row with the correct information and action links" in {
-      val userAnswersWithProductionSites = emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packagingSites2)
 
       val packagingSiteDetailsSummaryRow = PackagingSiteDetailsSummary.row2(packagingSites2)
       val rowActionListItems = packagingSiteDetailsSummaryRow.head.actions.toList.head.items

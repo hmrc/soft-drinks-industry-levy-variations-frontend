@@ -35,7 +35,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
+        setAnswers(emptyUserAnswersForUpdateRegisteredDetails.copy(data = Json.obj()))
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, baseUrl + normalRoutePath)
@@ -91,7 +91,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
+        setAnswers(emptyUserAnswersForUpdateRegisteredDetails.copy(data = Json.obj()))
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, baseUrl + checkRoutePath)

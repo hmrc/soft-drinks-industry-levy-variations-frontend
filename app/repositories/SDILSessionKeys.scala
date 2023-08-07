@@ -19,5 +19,7 @@ package repositories
 object SDILSessionKeys {
 
   val SUBSCRIPTION = "SUBSCRIPTION"
+  val VARIABLE_RETURNS = "VARIABLE_RETURNS"
+  val RETURNS_PENDING = "RETURNS_PENDING"
 
 }

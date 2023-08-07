@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package models.backend
+package forms.correctReturn
 
-import play.api.libs.json.{Format, Json}
+import forms.mappings.Mappings
+import play.api.data.Form
 
-case class Contact(name: Option[String], positionInCompany: Option[String], phoneNumber: String, email: String)
+import javax.inject.Inject
 
-object Contact {
-  implicit val format: Format[Contact] = Json.format[Contact]
+class PackAtBusinessAddressFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Boolean] =
+    Form(
+      "value" -> boolean("correctReturn.packAtBusinessAddress.error.required")
+    )
 }

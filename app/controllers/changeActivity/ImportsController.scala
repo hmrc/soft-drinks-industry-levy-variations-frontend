@@ -76,7 +76,7 @@ class ImportsController @Inject()(
           if(value || ifStillLiableForLevy(userAnswers)) {
             updateDatabaseAndRedirect(updatedAnswers, ImportsPage, mode)
           } else {
-            handleUserWhoIsNoLongerLiableForLevy(updatedAnswers, request.subscription.utr)
+            handleUserWhoIsNoLongerLiableForLevy(updatedAnswers, request.subscription.utr, request.subscription.sdilRef)
           }
         }
       )
@@ -88,15 +88,16 @@ class ImportsController @Inject()(
     !hasAmountProducedNone || isContractPacker
   }
 
-  def handleUserWhoIsNoLongerLiableForLevy(updatedAnswers: Try[UserAnswers], utr: String)
+  def handleUserWhoIsNoLongerLiableForLevy(updatedAnswers: Try[UserAnswers], utr: String, sdilRef: String)
                                           (implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[AnyContent]) = {
     updateDatabaseWithoutRedirect(updatedAnswers, ImportsPage).flatMap {
       case true =>
-        connector.returns_pending(utr).map {
-          case Some(returns) if returns.nonEmpty =>
+        connector.returnsPending(utr, sdilRef).value.map {
+          case Right(returns) if returns.nonEmpty =>
             Redirect(controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad())
-          case _ =>
+          case Right(_) =>
             Redirect(routes.SuggestDeregistrationController.onPageLoad())
+          case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
         }
       case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
     }

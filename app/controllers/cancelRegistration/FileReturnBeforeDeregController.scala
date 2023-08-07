@@ -19,7 +19,8 @@ package controllers.cancelRegistration
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.ControllerActions
 import controllers.routes
-import models.{NormalMode, SelectChange}
+import handlers.ErrorHandler
+import models.SelectChange
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -34,19 +35,16 @@ class FileReturnBeforeDeregController @Inject()(
                                                  controllerActions: ControllerActions,
                                                  connector: SoftDrinksIndustryLevyConnector,
                                                  val controllerComponents: MessagesControllerComponents,
-                                                 view: FileReturnBeforeDeregView
+                                                 view: FileReturnBeforeDeregView,
+                                                 errorHandler: ErrorHandler
                                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration).async {
     implicit request =>
-    connector.returns_pending(request.subscription.utr).map {
-
-      case Some(returns) if returns.nonEmpty =>
-        Ok(view(FileReturnBeforeDeregSummary.displayMessage(returns)))
-      case Some(_) =>
-        Redirect(controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode))
-      case _ =>
-        Redirect(routes.JourneyRecoveryController.onPageLoad())
+    connector.returnsPending(request.subscription.utr, request.subscription.sdilRef).value.map {
+      case Right(returns) if returns.nonEmpty => Ok(view(FileReturnBeforeDeregSummary.displayMessage(returns)))
+      case Right(_) => Redirect(routes.SelectChangeController.onPageLoad)
+      case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
     }
   }
 }

@@ -3,10 +3,10 @@ package controllers.changeActivity
 import controllers.LitresISpecHelper
 import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced
-import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
+import models.{LitresInBands, NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.changeActivity.{AmountProducedPage, ContractPackingPage, HowManyContractPackingPage, HowManyImportsPage, HowManyOperatePackagingSiteOwnBrandsPage, ImportsPage, OperatePackagingSiteOwnBrandsPage, ThirdPartyPackagersPage}
+import pages.changeActivity._
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.Json
@@ -79,6 +79,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
                   .commonPrecondition
 
                 val userAnswers = emptyUserAnswersForChangeActivity
+                  .copy(packagingSiteList = Map.empty)
                   .set(AmountProducedPage, AmountProduced.Large).success.value
                   .set(OperatePackagingSiteOwnBrandsPage, true).success.value
                   .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100)).success.value
@@ -107,6 +108,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
                   .commonPrecondition
 
                 val userAnswers = emptyUserAnswersForChangeActivity
+                  .copy(packagingSiteList = Map.empty)
                   .set(AmountProducedPage, AmountProduced.Large).success.value
                   .set(OperatePackagingSiteOwnBrandsPage, false).success.value
                   .set(ContractPackingPage, true).success.value
@@ -135,6 +137,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
                   .commonPrecondition
 
                 val userAnswers = emptyUserAnswersForChangeActivity
+                  .copy(packagingSiteList = Map.empty)
                   .set(AmountProducedPage, AmountProduced.Large).success.value
                   .set(OperatePackagingSiteOwnBrandsPage, true).success.value
                   .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100)).success.value
@@ -164,6 +167,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
                   .commonPrecondition
 
                 val userAnswers = emptyUserAnswersForChangeActivity
+                  .copy(packagingSiteList = Map.empty)
                   .set(AmountProducedPage, AmountProduced.None).success.value
                   .set(ContractPackingPage, true).success.value
                   .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value

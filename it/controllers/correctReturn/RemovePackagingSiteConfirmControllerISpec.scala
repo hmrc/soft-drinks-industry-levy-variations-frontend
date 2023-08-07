@@ -3,7 +3,6 @@ package controllers.correctReturn
 import controllers.ControllerITTestHelper
 import models.SelectChange.CorrectReturn
 import models.backend.Site
-import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.correctReturn.RemovePackagingSiteConfirmPage
@@ -59,7 +58,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
               radioInputs.get(0).hasAttr("checked") mustBe false
               radioInputs.get(1).attr("value") mustBe "false"
               radioInputs.get(1).hasAttr("checked") mustBe false
-              page.getElementById("value-hint").text() mustBe "foo, bar wizz"
+              page.getElementById("value-hint").text() mustBe s"${ukAddress.lines.mkString(", ")} ${ukAddress.postCode}"
             }
           }
         }
@@ -199,7 +198,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
               .select("a")
               .attr("href") mustBe "#value"
             errorSummary.text() mustBe Messages("correctReturn.removePackagingSiteConfirm" + ".error.required")
-            page.getElementById("value-hint").text() mustBe "foo, bar wizz"
+            page.getElementById("value-hint").text() mustBe s"${ukAddress.lines.mkString(", ")} ${ukAddress.postCode}"
             getAnswers(emptyUserAnswersForCorrectReturn.id).get.packagingSiteList.size mustBe 1
           }
         }
@@ -289,7 +288,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
               .select("a")
               .attr("href") mustBe "#value"
             errorSummary.text() mustBe Messages("correctReturn.removePackagingSiteConfirm" + ".error.required")
-            page.getElementById("value-hint").text() mustBe "foo, bar wizz"
+            page.getElementById("value-hint").text() mustBe s"${ukAddress.lines.mkString(", ")} ${ukAddress.postCode}"
           }
         }
       }

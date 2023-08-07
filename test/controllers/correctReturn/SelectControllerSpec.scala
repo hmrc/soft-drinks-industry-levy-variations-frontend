@@ -64,8 +64,8 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
           Future.successful(Some(aSubscription))
         }
 
-        when(mockSdilConnector.returns_variable(any())(any())).thenReturn {
-          Future.successful(Some(returnPeriodList))
+        when(mockSdilConnector.returnsVariable(any(), any())(any())).thenReturn {
+          createSuccessVariationResult(returnPeriodList)
         }
 
         val result = route(application, request).value
@@ -91,8 +91,8 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
           Future.successful(Some(aSubscription))
         }
 
-        when(mockSdilConnector.returns_variable(any())(any())).thenReturn {
-          Future.successful(None)
+        when(mockSdilConnector.returnsVariable(any(), any())(any())).thenReturn {
+          createSuccessVariationResult(List.empty)
         }
 
         val request = FakeRequest(GET, selectRoute)
@@ -120,8 +120,8 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
           Future.successful(Some(aSubscription))
         }
 
-        when(mockSdilConnector.returns_variable(any())(any())).thenReturn {
-          Future.successful(Some(returnPeriodList))
+        when(mockSdilConnector.returnsVariable(any(), any())(any())).thenReturn {
+          createSuccessVariationResult(returnPeriodList)
         }
 
         val view = application.injector.instanceOf[SelectView]
@@ -139,8 +139,8 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
 
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
-      when(mockSdilConnector.returns_variable(any())(any())).thenReturn {
-        Future.successful(Some(returnPeriodList))
+      when(mockSdilConnector.returnsVariable(any(), any())(any())).thenReturn {
+        createSuccessVariationResult(returnPeriodList)
       }
 
 
@@ -176,8 +176,8 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
           Future.successful(Some(aSubscription))
         }
 
-        when(mockSdilConnector.returns_variable(any())(any())).thenReturn {
-          Future.successful(None)
+        when(mockSdilConnector.returnsVariable(any(), any())(any())).thenReturn {
+          createSuccessVariationResult(List.empty)
         }
 
         val result = route(application, request).value
@@ -200,8 +200,8 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
           Future.successful(Some(aSubscription))
         }
 
-        when(mockSdilConnector.returns_variable(any())(any())).thenReturn {
-          Future.successful(Some(returnPeriodList))
+        when(mockSdilConnector.returnsVariable(any(), any())(any())).thenReturn {
+          createSuccessVariationResult(returnPeriodList)
         }
 
         val boundForm = form.bind(Map("value" -> "invalid value"))

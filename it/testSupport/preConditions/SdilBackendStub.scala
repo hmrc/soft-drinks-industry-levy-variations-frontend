@@ -42,7 +42,7 @@ case class SdilBackendStub()
         UkAddress(List("105B Godfrey Marchant Grove", "Guildford"), "GU14 8NL"),
         Some("96"),
         Some("Star Products Ltd"),
-        Some(LocalDate.of(2017, 2, 11)))
+        None)
     ),
     warehouseSites = List(),
     contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
@@ -79,16 +79,7 @@ case class SdilBackendStub()
       get(
         urlPathMatching(s"/returns/$utr/pending"))
         .willReturn(
-          notFound()))
-    builder
-  }
-
-  def retrieveSubscription(identifier: String, refNum: String) = {
-    stubFor(
-      get(
-        urlPathMatching(s"/subscription/$identifier/$refNum"))
-        .willReturn(
-          ok(Json.toJson(aSubscription).toString())))
+          ok(Json.arr().toString())))
     builder
   }
 
@@ -98,6 +89,33 @@ case class SdilBackendStub()
         urlPathMatching(s"/returns/$utr/variable"))
         .willReturn(
           ok(Json.toJson(returnPeriodList).toString())))
+    builder
+  }
+
+  def no_returns_variable(utr: String) = {
+    stubFor(
+      get(
+        urlPathMatching(s"/returns/$utr/variable"))
+        .willReturn(
+          ok(Json.arr().toString())))
+    builder
+  }
+
+  def returns_variable_error(utr: String) = {
+    stubFor(
+      get(
+        urlPathMatching(s"/returns/$utr/variable"))
+        .willReturn(
+          serverError()))
+    builder
+  }
+
+  def retrieveSubscription(identifier: String, refNum: String) = {
+    stubFor(
+      get(
+        urlPathMatching(s"/subscription/$identifier/$refNum"))
+        .willReturn(
+          ok(Json.toJson(aSubscription).toString())))
     builder
   }
 

@@ -79,7 +79,7 @@ signedOut.guidance = We did not save your answers.
 unauthorised.title = You can’t access this service with this account
 unauthorised.heading = You can’t access this service with this account
 
-selectChange.title = What do you need to do
+selectChange.title = What do you need to do?
 selectChange.heading = What do you need to do?
 selectChange.hint = Changes can take up to 15 working days to process.
 selectChange.updateRegisteredDetails = Update contact, packaging site or warehouse details
@@ -268,6 +268,14 @@ updateRegisteredDetails.packingSiteDetailsRemove.title = Are you sure you want t
 updateRegisteredDetails.packingSiteDetailsRemove.heading = Are you sure you want to remove this warehouse?
 updateRegisteredDetails.packingSiteDetailsRemove.checkYourAnswersLabel = Are you sure you want to remove this warehouse?
 updateRegisteredDetails.packingSiteDetailsRemove.error.required = Select yes if you want to remove this packaging site
+
+correctReturn.packAtBusinessAddress.title = Is this address a UK packaging site you operate to produce liable drinks?
+correctReturn.packAtBusinessAddress.heading = Is this address a UK packaging site you operate to produce liable drinks?
+correctReturn.packAtBusinessAddress.checkYourAnswersLabel = Is this address a UK packaging site you operate to produce liable drinks?
+correctReturn.packAtBusinessAddress.error.required = Select yes if your registered business address is a UK packaging site that you operate to produce liable drinks
+correctReturn.packAtBusinessAddress.change.hidden = change pack at business address
+correctReturn.packAtBusinessAddress.detailsLink = Why we need these details
+correctReturn.packAtBusinessAddress.detailsContent = Because you changed your business activity, we need to know the addresses of any UK packaging sites you operate.
 
 changeActivity.packAtBusinessAddress.title = Is this address a UK packaging site you operate to produce liable drinks?
 changeActivity.packAtBusinessAddress.heading = Is this address a UK packaging site you operate to produce liable drinks?
@@ -508,3 +516,11 @@ correctReturn.packagingSiteDetails.checkYourAnswersLabel = UK packaging sites
 correctReturn.packagingSiteDetails.error.required = Select yes if you want to add another UK packaging site
 correctReturn.packagingSiteDetails.change.hidden = your UK packaging site details
 correctReturn.packagingSiteDetails.remove.hidden = {0} site address {1}
+
+updateRegisteredDetails.contactDetails.title = Change person''s details
+updateRegisteredDetails.contactDetails.heading = Change person''s details
+updateRegisteredDetails.contactDetails.legend = This is the person we will contact about the Soft Drinks Industry Levy, if we need to.
+updateRegisteredDetails.contactDetails.name.change.hidden = contact person''s full name
+updateRegisteredDetails.contactDetails.position.change.hidden = contact person''s job title
+updateRegisteredDetails.contactDetails.phoneNumber.change.hidden = contact person''s telephone number
+updateRegisteredDetails.contactDetails.email.change.hidden = contact person''s email address

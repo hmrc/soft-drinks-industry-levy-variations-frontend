@@ -17,14 +17,13 @@
 package controllers.correctReturn
 
 import base.SpecBase
+import models.SelectChange.CorrectReturn
+import models.{SelectChange, UserAnswers}
+import play.api.libs.json.Json
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.correctReturn.ReturnChangeRegistrationView
-import models.SelectChange.CorrectReturn
-import models.{SelectChange, UserAnswers}
-import org.scalatestplus.mockito.MockitoSugar
-import play.api.libs.json.Json
-import play.api.mvc.Call
 class ReturnChangeRegistrationControllerSpec extends SpecBase {
 
   def onwardRoute: Call = Call("GET", "/foo")

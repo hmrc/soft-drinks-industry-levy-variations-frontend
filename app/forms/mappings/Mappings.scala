@@ -18,7 +18,6 @@ package forms.mappings
 
 import models.{Enumerable, ReturnPeriod}
 import play.api.data.Forms.of
-import play.api.data.format.Formatter
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.data.{FieldMapping, Mapping}
 

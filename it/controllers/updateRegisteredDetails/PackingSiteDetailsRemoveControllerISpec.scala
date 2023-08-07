@@ -1,6 +1,7 @@
 package controllers.updateRegisteredDetails
 
 import controllers.ControllerITTestHelper
+import models.{CheckMode, NormalMode}
 import models.SelectChange.UpdateRegisteredDetails
 import models.backend.Site
 import org.jsoup.Jsoup
@@ -14,7 +15,7 @@ import play.api.test.WsTestClient
 class PackingSiteDetailsRemoveControllerISpec extends ControllerITTestHelper {
 
   def normalRoutePath(index: String) = s"/packaging-site-details/remove/$index"
-  def checkRoutePath(index: String) = s"/change-/packaging-site-details/remove/$index"
+  def checkRoutePath(index: String) = s"/change-packaging-site-details/remove/$index"
   val indexOfPackingSiteToBeRemoved: String = "siteUNO"
 
 
@@ -31,7 +32,7 @@ class PackingSiteDetailsRemoveControllerISpec extends ControllerITTestHelper {
 
           whenReady(result) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+            res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
           }
         }
       }
@@ -58,7 +59,7 @@ class PackingSiteDetailsRemoveControllerISpec extends ControllerITTestHelper {
               radioInputs.get(0).hasAttr("checked") mustBe false
               radioInputs.get(1).attr("value") mustBe "false"
               radioInputs.get(1).hasAttr("checked") mustBe false
-              page.getElementById("packingSiteToRemove").text() mustBe "foo, bar wizz"
+              page.getElementById("packingSiteToRemove").text() mustBe s"${ukAddress.lines.mkString(", ")} ${ukAddress.postCode}"
             }
           }
         }
@@ -82,7 +83,7 @@ class PackingSiteDetailsRemoveControllerISpec extends ControllerITTestHelper {
 
           whenReady(result) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+            res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
           }
         }
       }
@@ -138,7 +139,7 @@ class PackingSiteDetailsRemoveControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
               }
             }
           }
@@ -157,7 +158,7 @@ class PackingSiteDetailsRemoveControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
                 val userAnswersAfterTest = getAnswers(userAnswers.id)
                 val dataStoredForPage = userAnswersAfterTest.fold[Option[Boolean]](None)(_.get(PackingSiteDetailsRemovePage))
                 if(yesSelected) {
@@ -198,7 +199,7 @@ class PackingSiteDetailsRemoveControllerISpec extends ControllerITTestHelper {
               .select("a")
               .attr("href") mustBe "#value"
             errorSummary.text() mustBe Messages("updateRegisteredDetails.packingSiteDetailsRemove" + ".error.required")
-            page.getElementById("packingSiteToRemove").text() mustBe "foo, bar wizz"
+            page.getElementById("packingSiteToRemove").text() mustBe s"${ukAddress.lines.mkString(", ")} ${ukAddress.postCode}"
             getAnswers(emptyUserAnswersForUpdateRegisteredDetails.id).get.packagingSiteList.size mustBe 1
           }
         }
@@ -227,7 +228,7 @@ class PackingSiteDetailsRemoveControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
               }
             }
           }
@@ -246,7 +247,7 @@ class PackingSiteDetailsRemoveControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.UpdateRegisteredDetailsCYAController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
                 val userAnswersAfterTest = getAnswers(userAnswers.id)
                 val dataStoredForPage = userAnswersAfterTest.fold[Option[Boolean]](None)(_.get(PackingSiteDetailsRemovePage))
                 dataStoredForPage.nonEmpty mustBe true
@@ -288,7 +289,7 @@ class PackingSiteDetailsRemoveControllerISpec extends ControllerITTestHelper {
               .select("a")
               .attr("href") mustBe "#value"
             errorSummary.text() mustBe Messages("updateRegisteredDetails.packingSiteDetailsRemove" + ".error.required")
-            page.getElementById("packingSiteToRemove").text() mustBe "foo, bar wizz"
+            page.getElementById("packingSiteToRemove").text() mustBe s"${ukAddress.lines.mkString(", ")} ${ukAddress.postCode}"
           }
         }
       }

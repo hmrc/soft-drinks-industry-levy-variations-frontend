@@ -33,7 +33,7 @@ import utilities.GenericLogger
 import views.html.correctReturn.SelectView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class SelectController @Inject()(
                                   override val messagesApi: MessagesApi,
@@ -66,11 +66,12 @@ class SelectController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      connector.returns_variable(request.subscription.utr).flatMap {
-        case Some(returns) if returns.nonEmpty =>
-          Future.successful(Ok(view(preparedForm, mode, seperateReturnYears(returns: List[ReturnPeriod]))))
-        case _ =>
-          Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+      connector.returnsVariable(request.subscription.utr, request.subscription.sdilRef).value.map {
+        case Right(returns) if returns.nonEmpty =>
+          Ok(view(preparedForm, mode, seperateReturnYears(returns: List[ReturnPeriod])))
+        case Right(_) =>
+          Redirect(controllers.routes.IndexController.onPageLoad)
+        case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
       }
   }
 
@@ -79,13 +80,12 @@ class SelectController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors =>
 
-     connector.returns_variable(request.subscription.utr).flatMap{
-       case Some(returns) if returns.nonEmpty =>
-         Future.successful(BadRequest(view(formWithErrors, mode, seperateReturnYears(returns): List[List[ReturnPeriod]])))
-       case Some(returns) if returns.isEmpty =>
-         Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
-       case _ =>
-         Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+     connector.returnsVariable(request.subscription.utr, request.subscription.sdilRef).value.map{
+       case Right(returns) if returns.nonEmpty =>
+         BadRequest(view(formWithErrors, mode, seperateReturnYears(returns): List[List[ReturnPeriod]]))
+       case Right(_) =>
+         Redirect(controllers.routes.IndexController.onPageLoad)
+       case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
      },
         value => {
           val updatedAnswers = request.userAnswers.set(SelectPage, value)

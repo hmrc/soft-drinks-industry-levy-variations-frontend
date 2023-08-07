@@ -21,7 +21,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
+        setAnswers(emptyUserAnswersForUpdateRegisteredDetails.copy(data = Json.obj()))
 
         WsTestClient.withClient { client =>
           val result = createClientRequestGet(client, baseUrl + route)
