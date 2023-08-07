@@ -83,7 +83,7 @@ selectChange.title = What do you need to do?
 selectChange.heading = What do you need to do?
 selectChange.hint = Changes can take up to 15 working days to process.
 selectChange.updateRegisteredDetails = Update contact, packaging site or warehouse details
-selectChange.changeActivity = Change business activity
+selectChange.changeActivity = Report a change in the amount of liable drinks produced
 selectChange.cancelRegistration = Cancel Soft Drinks Industry Levy registration
 selectChange.correctReturn = Correct an error in previous return
 selectChange.checkYourAnswersLabel = What do you need to do
@@ -127,6 +127,9 @@ updateRegisteredDetails.updateContactDetails.fullName.change.hidden = your conta
 updateRegisteredDetails.updateContactDetails.position.change.hidden = your contact person’s job title
 updateRegisteredDetails.updateContactDetails.phoneNumber.change.hidden = your contact person’s telephone
 updateRegisteredDetails.updateContactDetails.email.change.hidden = your contact person’s email address
+
+updateRegisteredDetails.businessAddress.title = Your business address for the Soft Drinks Industry Levy
+updateRegisteredDetails.businessAddress.change.hidden = business address
 
 cancelRegistration.reason.title = Why do you need to cancel your registration?
 cancelRegistration.reason.checkYourAnswersLabel = Reason for cancelling
