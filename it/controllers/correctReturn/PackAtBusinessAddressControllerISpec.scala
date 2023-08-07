@@ -152,7 +152,8 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
                 val dataStoredForPage = updatedAnswers.fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe yesSelected
-                updatedAnswers.map(data => data.packagingSiteList) mustBe Some(if (yesSelected) packAtBusinessAddressSite else Map())
+                updatedAnswers.map(data => data.packagingSiteList) mustBe
+                  Some(if (yesSelected) packagingSitesFromSubscription ++ packAtBusinessAddressSite else packagingSitesFromSubscription)
               }
             }
           }
@@ -163,7 +164,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
                 .commonPrecondition
 
               val userAnswersWithPreviousSelection = if (previousKey == "yes") {
-                userAnswers.copy(packagingSiteList = packAtBusinessAddressSite)
+                userAnswers.copy(packagingSiteList = packagingSitesFromSubscription ++ packAtBusinessAddressSite)
               } else {
                 userAnswers
               }
@@ -181,7 +182,8 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
                   val dataStoredForPage = updatedAnswers.fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe yesSelected
-                  updatedAnswers.map(data => data.packagingSiteList) mustBe Some(if (yesSelected) packAtBusinessAddressSite else Map())
+                  updatedAnswers.map(data => data.packagingSiteList) mustBe
+                    Some(if (yesSelected) packagingSitesFromSubscription ++ packAtBusinessAddressSite else packagingSitesFromSubscription)
                 }
               }
             }
@@ -242,7 +244,8 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
                 val dataStoredForPage = updatedAnswers.fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe yesSelected
-                updatedAnswers.map(data => data.packagingSiteList) mustBe Some(if (yesSelected) packAtBusinessAddressSite else Map())
+                updatedAnswers.map(data => data.packagingSiteList) mustBe
+                  Some(if (yesSelected) packagingSitesFromSubscription ++ packAtBusinessAddressSite else packagingSitesFromSubscription)
               }
             }
           }
@@ -253,7 +256,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
                 .commonPrecondition
 
               val userAnswersWithPreviousSelection = if (previousKey == "yes") {
-                userAnswers.copy(packagingSiteList = packAtBusinessAddressSite)
+                userAnswers.copy(packagingSiteList = packagingSitesFromSubscription ++ packAtBusinessAddressSite)
               } else {
                 userAnswers
               }
@@ -271,7 +274,8 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
                   val dataStoredForPage = updatedAnswers.fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe yesSelected
-                  updatedAnswers.map(data => data.packagingSiteList) mustBe Some(if (yesSelected) packAtBusinessAddressSite else Map())
+                  updatedAnswers.map(data => data.packagingSiteList) mustBe
+                    Some(if (yesSelected) packagingSitesFromSubscription ++ packAtBusinessAddressSite else packagingSitesFromSubscription)
                 }
               }
             }
