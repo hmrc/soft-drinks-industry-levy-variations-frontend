@@ -16,16 +16,16 @@
 
 package forms.correctReturn
 
-import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
-import models.correctReturn.ExemptionsForSmallProducers
+
+import javax.inject.Inject
 
 class ExemptionsForSmallProducersFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[ExemptionsForSmallProducers] =
+  def apply(): Form[Boolean] =
     Form(
-      "value" -> enumerable[ExemptionsForSmallProducers]("correctReturn.exemptionsForSmallProducers.error.required")
+      "value" -> boolean("correctReturn.exemptionsForSmallProducers.error.required")
     )
+
 }

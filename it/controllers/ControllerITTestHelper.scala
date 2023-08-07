@@ -77,7 +77,7 @@ trait ControllerITTestHelper extends Specifications with TestConfiguration with 
       }
     }
     "the user is authenticated but has no sdil subscription" - {
-      "redirect to unauthorised controller" in {
+      "redirect to sdil home" in {
         given.authorisedButNoSdilSubscriptionPrecondition
 
         WsTestClient.withClient { client =>
@@ -88,7 +88,7 @@ trait ControllerITTestHelper extends Specifications with TestConfiguration with 
 
           whenReady(result1) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION).get must include("/unauthorised")
+            res.header(HeaderNames.LOCATION).get must include("/soft-drinks-industry-levy-account-frontend/home")
           }
         }
       }

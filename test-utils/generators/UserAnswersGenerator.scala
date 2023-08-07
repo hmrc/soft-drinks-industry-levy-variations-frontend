@@ -42,7 +42,6 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(correctReturn.ExemptionsForSmallProducersPage.type, JsValue)] ::
     arbitrary[(correctReturn.CorrectionReasonPage.type, JsValue)] ::
     arbitrary[(correctReturn.PackagedAsContractPackerPage.type, JsValue)] ::
-    arbitrary[(correctReturn.SelectPage.type, JsValue)] ::
     arbitrary[(correctReturn.AddASmallProducerPage.type, JsValue)] ::
     arbitrary[(correctReturn.RepaymentMethodPage.type, JsValue)] ::
     arbitrary[(changeActivity.ThirdPartyPackagersPage.type, JsValue)] ::

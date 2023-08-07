@@ -21,7 +21,7 @@ import javax.inject.Inject
 import forms.mappings.Mappings
 import play.api.data.Form
 import play.api.data.Forms._
-import models.updateRegisteredDetails.UpdateContactDetails
+import models.updateRegisteredDetails.ContactDetails
 
 class UpdateContactDetailsFormProvider @Inject() extends Mappings {
 
@@ -31,7 +31,7 @@ class UpdateContactDetailsFormProvider @Inject() extends Mappings {
   private val position = """^[a-zA-Z &\.\`\'\-\^]+$"""
   private val phoneNumberRegex = """^[A-Z0-9 )/(\\#+*\-]+$"""
 
-  def apply(): Form[UpdateContactDetails] = Form(
+  def apply(): Form[ContactDetails] = Form(
     mapping(
       "fullName" -> text("updateRegisteredDetails.updateContactDetails.error.fullName.required")
         .verifying(maxLength(40, "updateRegisteredDetails.updateContactDetails.error.fullName.length"))
@@ -45,6 +45,6 @@ class UpdateContactDetailsFormProvider @Inject() extends Mappings {
       "email" -> text("updateRegisteredDetails.updateContactDetails.error.email.required")
         .verifying(maxLength(132, "updateRegisteredDetails.updateContactDetails.error.email.length"))
         .verifying(regexp(emailRegex, "updateRegisteredDetails.updateContactDetails.error.email.invalid"))
-    )(UpdateContactDetails.apply)(UpdateContactDetails.unapply)
+    )(ContactDetails.apply)(ContactDetails.unapply)
   )
 }

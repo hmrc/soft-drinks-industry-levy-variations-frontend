@@ -112,7 +112,6 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, NormalMode)
     case HowManyPackagedAsContractPackerPage => _ => defaultCall
     case AddASmallProducerPage => userAnswers => defaultCall
-    case SelectPage => userAnswers => defaultCall
     case _ => _ => defaultCall
   }
 

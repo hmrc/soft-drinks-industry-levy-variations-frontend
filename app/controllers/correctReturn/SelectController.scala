@@ -16,24 +16,27 @@
 
 package controllers.correctReturn
 
-import cats.implicits.catsSyntaxPartialOrder
-import connectors.SoftDrinksIndustryLevyConnector
+import cats.data.EitherT
 import controllers.ControllerHelper
 import controllers.actions._
+import errors.{NoVariableReturns, SelectReturnFormError}
 import forms.correctReturn.SelectFormProvider
 import handlers.ErrorHandler
 import models.SelectChange.CorrectReturn
-import models.{Mode, ReturnPeriod}
+import models.requests.DataRequest
+import models.{NormalMode, ReturnPeriod}
 import navigation._
-import pages.correctReturn.SelectPage
+import orchestrators.CorrectReturnOrchestrator
+import play.api.data.{Form, FormError}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import service.VariationResult
 import services.SessionService
 import utilities.GenericLogger
 import views.html.correctReturn.SelectView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class SelectController @Inject()(
                                   override val messagesApi: MessagesApi,
@@ -41,56 +44,68 @@ class SelectController @Inject()(
                                   val navigator: NavigatorForCorrectReturn,
                                   controllerActions: ControllerActions,
                                   formProvider: SelectFormProvider,
-                                  connector: SoftDrinksIndustryLevyConnector,
+                                  correctReturnOrchestrator: CorrectReturnOrchestrator,
                                   val controllerComponents: MessagesControllerComponents,
                                   view: SelectView,
                                   val genericLogger: GenericLogger,
                                   val errorHandler: ErrorHandler
                                      )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
+  val form: Form[String] = formProvider()
 
-  def seperateReturnYears(returns:List[ReturnPeriod]): List[List[ReturnPeriod]] ={
-    returns.map(aReturn => aReturn.year match {
-      case year => returns.filter(_.year == year)
-    }).distinct
-      .sortWith(_.map(returnPeriod => returnPeriod.year) > _.map(returnPeriod => returnPeriod.year))
-      .map(returnPeriod => returnPeriod.sortWith(_.quarter > _.quarter).reverse)
-  }
-
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
+  def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
     implicit request =>
-
-      val preparedForm = request.userAnswers.get(SelectPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-
-      connector.returnsVariable(request.subscription.utr, request.subscription.sdilRef).value.map {
-        case Right(returns) if returns.nonEmpty =>
-          Ok(view(preparedForm, mode, seperateReturnYears(returns: List[ReturnPeriod])))
-        case Right(_) =>
-          Redirect(controllers.routes.IndexController.onPageLoad)
+      correctReturnOrchestrator.getReturnPeriods(request.subscription).value.map {
+        case Right(returnPeriods) =>
+          val returnPeriodsForYears = correctReturnOrchestrator.separateReturnPeriodsByYear(returnPeriods)
+          val preparedForm = request.userAnswers.correctReturnPeriod.fold(form)(value => form.fill(value.radioValue))
+          Ok(view(preparedForm, returnPeriodsForYears))
+        case Left(NoVariableReturns) => Redirect(controllers.routes.SelectChangeController.onPageLoad)
         case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
       }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
+  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
     implicit request =>
-      form.bindFromRequest().fold(
-        formWithErrors =>
+      val subscription = request.subscription
+      val userAnswers = request.userAnswers
 
-     connector.returnsVariable(request.subscription.utr, request.subscription.sdilRef).value.map{
-       case Right(returns) if returns.nonEmpty =>
-         BadRequest(view(formWithErrors, mode, seperateReturnYears(returns): List[List[ReturnPeriod]]))
-       case Right(_) =>
-         Redirect(controllers.routes.IndexController.onPageLoad)
-       case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
-     },
-        value => {
-          val updatedAnswers = request.userAnswers.set(SelectPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, SelectPage, mode)
-        }
-      )
+      val res = for {
+        returnPeriods <- correctReturnOrchestrator.getReturnPeriods(request.subscription)
+        selectedReturnPeriod <- getReturnPeriodFromForm(returnPeriods)
+        _ <- correctReturnOrchestrator.setupUserAnswersForCorrectReturn(subscription, userAnswers, selectedReturnPeriod)
+      } yield returnPeriods
+
+      res.value.map{
+        case Right(_) if subscription.activity.smallProducer =>
+          Redirect(routes.PackagedAsContractPackerController.onPageLoad(NormalMode))
+        case Right(_) =>
+          Redirect(routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode))
+        case Left(NoVariableReturns) =>
+          Redirect(controllers.routes.SelectChangeController.onPageLoad)
+        case Left(SelectReturnFormError(formWithError, returnPeriods)) =>
+          val returnPeriodsForYears = correctReturnOrchestrator.separateReturnPeriodsByYear(returnPeriods)
+          BadRequest(view(formWithError, returnPeriodsForYears))
+        case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
+      }
+  }
+
+  private def getReturnPeriodFromForm(returnPeriods: List[ReturnPeriod])
+                                    (implicit request: DataRequest[AnyContent]): VariationResult[ReturnPeriod] = EitherT {
+    form.bindFromRequest().fold(formWithErrors =>
+      Future.successful(Left(SelectReturnFormError(formWithErrors, returnPeriods))),
+      returnPeriodValue => getReturnPeriodFromRadioValues(returnPeriodValue, returnPeriods) match {
+        case Some(returnPeriod) => Future.successful(Right(returnPeriod))
+        case None =>
+          val formWithErrors = form.withError(FormError("value", "correctReturn.select.error.required"))
+          Future.successful(Left(SelectReturnFormError(formWithErrors, returnPeriods)))
+      }
+    )
+  }
+
+  private def getReturnPeriodFromRadioValues(radioValue: String, returnPeriods: List[ReturnPeriod]): Option[ReturnPeriod] = {
+    returnPeriods.collectFirst {
+      case returnPeriod if returnPeriod.radioValue == radioValue => returnPeriod
+    }
   }
 }

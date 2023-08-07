@@ -16,6 +16,9 @@
 
 package errors
 
+import models.ReturnPeriod
+import play.api.data.Form
+
 sealed trait VariationsErrors
 
 object SessionDatabaseInsertError extends VariationsErrors
@@ -29,5 +32,11 @@ object ReturnsStillPending extends VariationsErrors
 object FailedToAddDataToUserAnswers extends VariationsErrors
 
 object UnexpectedResponseFromSDIL extends VariationsErrors
+
+object NoSdilReturnForPeriod extends VariationsErrors
+
+object NoVariableReturns extends VariationsErrors
+
+case class SelectReturnFormError(formWithError: Form[String], returnPeriods: List[ReturnPeriod]) extends VariationsErrors
 
 

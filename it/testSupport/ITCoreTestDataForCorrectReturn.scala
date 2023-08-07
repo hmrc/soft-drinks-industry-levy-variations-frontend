@@ -67,6 +67,13 @@ trait ITCoreTestDataForCorrectReturn extends ITSharedCoreTestData  {
     Map("yes" -> yesSelected, "no" -> noSelected)
     }
 
+  val userAnswersForExceptionsForSmallProducersPage: Map[String, UserAnswers] = {
+    val yesSelected = emptyUserAnswersForCorrectReturn.set(ExemptionsForSmallProducersPage, true).success.value
+    val noSelected = emptyUserAnswersForCorrectReturn.set(ExemptionsForSmallProducersPage, false).success.value
+
+    Map("yes" -> yesSelected, "no" -> noSelected)
+  }
+
   val userAnswersForCorrectReturnBroughtIntoUKPage: Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForCorrectReturn.set(BroughtIntoUKPage, true).success.value
     val noSelected = emptyUserAnswersForCorrectReturn.set(BroughtIntoUKPage, false).success.value

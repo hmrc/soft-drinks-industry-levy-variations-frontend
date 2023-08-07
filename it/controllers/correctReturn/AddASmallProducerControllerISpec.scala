@@ -5,7 +5,6 @@ import models.SelectChange.CorrectReturn
 import models.{ReturnPeriod, SmallProducer}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.correctReturn.{SelectPage}
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
@@ -27,7 +26,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
   private val returnPeriod: ReturnPeriod = ReturnPeriod(2018, 1)
 
   private def userAnswersWithReturnPeriodSet = emptyUserAnswersForCorrectReturn
-    .set(SelectPage, returnPeriod).success.value
+    .copy(correctReturnPeriod = Some(returnPeriod))
 
   private def userAnswersWithSmallProducersSet = emptyUserAnswersForCorrectReturn
     .copy(smallProducerList = List(SmallProducer(aliasSuperCola, sdilRefSuperCola, (100, 200))))
@@ -36,7 +35,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
     "the return period has not been selected" - {
       "redirect to Index controller" in {
         setAnswers(emptyUserAnswersForCorrectReturn)
-        given.commonPreconditionChangeSubscription(aSubscription)
+        given.commonPreconditionChangeSubscription(diffSubscription)
 
         WsTestClient.withClient { client =>
           val result1 = client.url(url)
@@ -57,7 +56,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
     "Ask user to input a registered small producer's details" in {
       val userAnswers = userAnswersWithReturnPeriodSet
       setAnswers(userAnswers)
-      given.commonPreconditionChangeSubscription(aSubscription)
+      given.commonPreconditionChangeSubscription(diffSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(correctReturnBaseUrl + normalRoutePath)
@@ -80,7 +79,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
     "Ask user to input a registered small producer's details" in {
       val userAnswers = userAnswersWithReturnPeriodSet
       setAnswers(userAnswers)
-      given.commonPreconditionChangeSubscription(aSubscription)
+      given.commonPreconditionChangeSubscription(diffSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(correctReturnBaseUrl + checkRoutePath)
@@ -102,7 +101,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
   "POST " + normalRoutePath - {
     "Post the new form data and return form with error if SDIL reference number already exists as a small producer" in {
       given
-        .commonPreconditionChangeSubscription(aSubscription)
+        .commonPreconditionChangeSubscription(diffSubscription)
 
       val userAnswers = userAnswersWithSmallProducersSet
       setAnswers(userAnswers)
@@ -134,7 +133,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
     "Redirect to index controller if return period has not been set" in {
       given
-        .commonPreconditionChangeSubscription(aSubscription)
+        .commonPreconditionChangeSubscription(diffSubscription)
 
       val userAnswers = emptyUserAnswersForCorrectReturn
       setAnswers(userAnswers)
@@ -160,7 +159,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
     "Post the new form data and return form with error if SDIL reference number is not a valid small producer" in {
       given
-        .commonPreconditionChangeSubscription(aSubscription)
+        .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = false)
 
       val userAnswers = userAnswersWithReturnPeriodSet
@@ -197,7 +196,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         sdilRef = sdilRefSuperCola, litreage = (litres, litres))))
 
       given
-        .commonPreconditionChangeSubscription(aSubscription)
+        .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = true)
 
       val userAnswers = userAnswersWithReturnPeriodSet
@@ -228,7 +227,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
   "POST " + checkRoutePath - {
     "Post the new form data and return form with error if SDIL reference number already exists as a small producer" in {
       given
-        .commonPreconditionChangeSubscription(aSubscription)
+        .commonPreconditionChangeSubscription(diffSubscription)
 
       val userAnswers = userAnswersWithSmallProducersSet
       setAnswers(userAnswers)
@@ -260,7 +259,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
     "Redirect to index controller if return period has not been set" in {
       given
-        .commonPreconditionChangeSubscription(aSubscription)
+        .commonPreconditionChangeSubscription(diffSubscription)
 
       val userAnswers = emptyUserAnswersForCorrectReturn
       setAnswers(userAnswers)
@@ -286,7 +285,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
     "Post the new form data and return form with error if SDIL reference number is not a valid small producer" in {
       given
-        .commonPreconditionChangeSubscription(aSubscription)
+        .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = false)
 
       val userAnswers = userAnswersWithReturnPeriodSet
@@ -323,7 +322,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         sdilRef = sdilRefSuperCola, litreage = (litres, litres))))
 
       given
-        .commonPreconditionChangeSubscription(aSubscription)
+        .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = true)
 
       val userAnswers = userAnswersWithReturnPeriodSet

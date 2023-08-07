@@ -26,7 +26,7 @@ import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.correctReturn.{AddASmallProducerPage, SelectPage}
+import pages.correctReturn.AddASmallProducerPage
 import play.api.data.FormError
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -50,7 +50,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
     "must return OK and the correct view for a GET" in {
 
-      val userAnswers = emptyUserAnswersForCorrectReturn.set(SelectPage, returnPeriod.head).success.value
+      val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod.head))
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -73,8 +73,6 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[AddASmallProducerView]
-
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
       }
@@ -84,7 +82,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
       val smallProducer: AddASmallProducer = AddASmallProducer(Some("PRODUCER"), sdilNumber, 10, 20)
       val userAnswers = emptyUserAnswersForCorrectReturn
-        .set(SelectPage, returnPeriod.head).success.value
+        .copy(correctReturnPeriod = Some(returnPeriod.head))
         .set(AddASmallProducerPage, smallProducer).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -110,7 +108,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.set(SelectPage, returnPeriod.head).success.value))
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod.head))))
       .overrides(
         bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
         bind[SessionService].toInstance(mockSessionService),
@@ -218,9 +216,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(false))
       val smallProducerList: List[SmallProducer] = List(SmallProducer("MY SMALL PRODUCER", "XCSDIL000456789", (1L, 2L)))
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducerList)
-        .set(SelectPage, returnPeriod.head).success.value)
-      ).overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducerList, correctReturnPeriod = Some(returnPeriod.head))
+      )).overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
 
       running(application) {
         val request = FakeRequest(POST, addASmallProducerRoute)

@@ -5,7 +5,6 @@ import models.ReturnPeriod
 import models.SelectChange.CorrectReturn
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.correctReturn.SelectPage
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.Json
@@ -115,7 +114,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          val userAnswers = emptyUserAnswersForCorrectReturn.set(SelectPage, radio).success.value
+          val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(radio))
 
 
           setAnswers(userAnswers)
@@ -173,7 +172,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
-                val dataStoredForPage = getAnswers(sdilNumber).fold[Option[ReturnPeriod]](None)(_.get(SelectPage))
+                val dataStoredForPage = getAnswers(sdilNumber).fold[Option[ReturnPeriod]](None)(_.correctReturnPeriod)
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
               }
@@ -184,7 +183,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            val userAnswers = emptyUserAnswersForCorrectReturn.set(SelectPage, radio).success.value
+            val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(radio))
 
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
@@ -195,7 +194,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[ReturnPeriod]](None)(_.get(SelectPage))
+                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[ReturnPeriod]](None)(_.correctReturnPeriod)
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
               }
@@ -252,7 +251,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
-                val dataStoredForPage = getAnswers(sdilNumber).fold[Option[ReturnPeriod]](None)(_.get(SelectPage))
+                val dataStoredForPage = getAnswers(sdilNumber).fold[Option[ReturnPeriod]](None)(_.correctReturnPeriod)
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
               }
@@ -263,7 +262,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            val userAnswers = emptyUserAnswersForCorrectReturn.set(SelectPage, radio).success.value
+            val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(radio))
 
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
@@ -274,7 +273,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[ReturnPeriod]](None)(_.get(SelectPage))
+                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[ReturnPeriod]](None)(_.correctReturnPeriod)
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
               }

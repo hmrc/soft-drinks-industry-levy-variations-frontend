@@ -43,7 +43,7 @@ class FileReturnBeforeDeregController @Inject()(
 
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration).async {
     implicit request =>
-    connector.returnsPending(request.subscription.utr, request.subscription.sdilRef).value.map {
+    connector.returnsPending(request.subscription.utr).value.map {
       case Right(returns) if returns.nonEmpty => Ok(view(FileReturnBeforeDeregSummary.displayMessage(returns)))
       case Right(_) => Redirect(routes.SelectChangeController.onPageLoad)
       case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)

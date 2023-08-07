@@ -22,7 +22,7 @@ import com.google.inject.{Inject, Singleton}
 import connectors.SoftDrinksIndustryLevyConnector
 import errors.{ReturnsStillPending, VariationsErrors}
 import models.backend.Site
-import models.updateRegisteredDetails.UpdateContactDetails
+import models.updateRegisteredDetails.ContactDetails
 import models.{RetrievedSubscription, SelectChange, UserAnswers, Warehouse}
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import service.VariationResult
@@ -38,7 +38,7 @@ class SelectChangeOrchestrator @Inject()(sessionService: SessionService,
 
   def hasReturnsToCorrect(subscription: RetrievedSubscription)
                          (implicit hc: HeaderCarrier, ex: ExecutionContext): VariationResult[Boolean] = {
-    softDrinksIndustryLevyConnector.returnsVariable(subscription.utr, subscription.sdilRef).map(_.nonEmpty)
+    softDrinksIndustryLevyConnector.returnsVariable(subscription.utr).map(_.nonEmpty)
   }
 
   def createUserAnswersAndSaveToDatabase(value: SelectChange, subscription: RetrievedSubscription)
@@ -55,7 +55,7 @@ class SelectChangeOrchestrator @Inject()(sessionService: SessionService,
                                              (implicit ec: ExecutionContext,
                                               hc: HeaderCarrier): VariationResult[Unit] = EitherT{
     if(value == SelectChange.CancelRegistration) {
-      softDrinksIndustryLevyConnector.returnsPending(subscription.utr, subscription.sdilRef).value.map{
+      softDrinksIndustryLevyConnector.returnsPending(subscription.utr).value.map{
         case Right(pendingReturns) if pendingReturns.isEmpty => Right((): Unit)
         case Right(_) => Left(ReturnsStillPending)
         case Left(err) => Left(err)
@@ -84,7 +84,7 @@ class SelectChangeOrchestrator @Inject()(sessionService: SessionService,
   }
 
   private def setupUserAnswersForUpdateRegisteredDetails(subscription: RetrievedSubscription): Future[UserAnswers] = {
-    val contactDetails = UpdateContactDetails.fromContact(subscription.contact)
+    val contactDetails = ContactDetails.fromContact(subscription.contact)
     Future.fromTry(UserAnswers(id = subscription.sdilRef,
       journeyType = SelectChange.UpdateRegisteredDetails,
       contactAddress = subscription.address,

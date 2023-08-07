@@ -14,25 +14,12 @@
  * limitations under the License.
  */
 
-package forms.correctReturn
+package models
 
-import base.SpecBase
-import forms.behaviours.OptionFieldBehaviours
-import play.api.data.FormError
+import play.api.libs.json.{Format, Json}
 
-class SelectFormProviderSpec extends OptionFieldBehaviours with SpecBase {
+case class OptPreviousSubmittedReturn(optReturn: Option[SdilReturn])
 
-  val form = new SelectFormProvider()()
-
-  ".value" - {
-
-    val fieldName = "value"
-    val requiredKey = "correctReturn.select.error.required"
-
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
-  }
+object OptPreviousSubmittedReturn {
+  implicit val format: Format[OptPreviousSubmittedReturn] = Json.format[OptPreviousSubmittedReturn]
 }

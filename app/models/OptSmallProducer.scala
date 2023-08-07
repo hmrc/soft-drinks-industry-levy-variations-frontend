@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-package pages.correctReturn
+package models
 
+import play.api.libs.json.{Format, Json}
 
-import models.ReturnPeriod
-import pages.behaviours.PageBehaviours
+case class OptSmallProducer(optSmallProducer: Option[Boolean])
 
-class SelectSpec extends PageBehaviours {
-
-  "SelectPage" - {
-
-    beRetrievable[ReturnPeriod](SelectPage)
-
-    beSettable[ReturnPeriod](SelectPage)
-
-    beRemovable[ReturnPeriod](SelectPage)
-  }
+object OptSmallProducer {
+  implicit val format: Format[OptSmallProducer] = Json.format[OptSmallProducer]
 }

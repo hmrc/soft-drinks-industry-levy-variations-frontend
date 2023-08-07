@@ -19,10 +19,11 @@ package connectors
 import cats.data.EitherT
 import config.FrontendAppConfig
 import errors.UnexpectedResponseFromSDIL
-import models.{FinancialLineItem, RetrievedSubscription, ReturnPeriod, SdilReturn}
+import models.{FinancialLineItem, OptPreviousSubmittedReturn, OptRetrievedSubscription, OptSmallProducer, RetrievedSubscription, ReturnPeriod, SdilReturn}
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import service.VariationResult
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import utilities.GenericLogger
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -30,22 +31,30 @@ import scala.concurrent.{ExecutionContext, Future}
 class SoftDrinksIndustryLevyConnector @Inject()(
                                                  val http: HttpClient,
                                                  frontendAppConfig: FrontendAppConfig,
-                                                 sdilSessionCache: SDILSessionCache
+                                                 sdilSessionCache: SDILSessionCache,
+                                                 genericLogger: GenericLogger
                                                )(implicit ec: ExecutionContext) {
 
   lazy val sdilUrl: String = frontendAppConfig.sdilBaseUrl
 
   private def getSubscriptionUrl(sdilNumber: String,identifierType: String): String = s"$sdilUrl/subscription/$identifierType/$sdilNumber"
 
-  def retrieveSubscription(sdilNumber: String, identifierType: String)(implicit hc: HeaderCarrier): Future[Option[RetrievedSubscription]] = {
-    sdilSessionCache.fetchEntry[RetrievedSubscription](sdilNumber, SDILSessionKeys.SUBSCRIPTION).flatMap{
-      case Some(subscription) => Future.successful(Some(subscription))
+  def retrieveSubscription(identifierValue: String, identifierType: String)
+                          (implicit hc: HeaderCarrier): VariationResult[Option[RetrievedSubscription]] = EitherT {
+    sdilSessionCache.fetchEntry[OptRetrievedSubscription](identifierValue, SDILSessionKeys.SUBSCRIPTION).flatMap {
+      case Some(optSubscription) => Future.successful(Right(optSubscription.optRetrievedSubscription))
       case None =>
-        http.GET[Option[RetrievedSubscription]](getSubscriptionUrl(sdilNumber: String, identifierType)).flatMap {
-          case Some(a) =>
-            sdilSessionCache.save(a.sdilRef, SDILSessionKeys.SUBSCRIPTION, a)
-              .map{_ => Some(a)}
-          case _ => Future.successful(None)
+        http.GET[Option[RetrievedSubscription]](getSubscriptionUrl(identifierValue: String, identifierType)).flatMap {
+          optRetrievedSubscription =>
+            sdilSessionCache.save(identifierValue, SDILSessionKeys.SUBSCRIPTION, OptRetrievedSubscription(optRetrievedSubscription))
+              .map { _ =>
+                Right(optRetrievedSubscription)
+              }
+
+        }.recover {
+          case _ =>
+            genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][retrieveSubscription] - unexpected response for $identifierValue")
+            Left(UnexpectedResponseFromSDIL)
         }
     }
   }
@@ -53,36 +62,79 @@ class SoftDrinksIndustryLevyConnector @Inject()(
   private def smallProducerUrl(sdilRef:String, period:ReturnPeriod):String = s"$sdilUrl/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"
 
   def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod)(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
-    http.GET[Option[Boolean]](smallProducerUrl(sdilRef,period)).map {
-      case Some(a) => Some(a)
-      case _ => None
+    sdilSessionCache.fetchEntry[OptSmallProducer](sdilRef, SDILSessionKeys.smallProducerForPeriod(period)).flatMap {
+      case Some(optSP) => Future.successful(optSP.optSmallProducer)
+      case None =>
+        http.GET[Option[Boolean]](smallProducerUrl(sdilRef, period)).flatMap {
+          optSP =>
+            sdilSessionCache.save(sdilRef, SDILSessionKeys.smallProducerForPeriod(period), OptSmallProducer(optSP))
+              .map { _ => optSP }
+        }
     }
-
-  def oldestPendingReturnPeriod(utr: String)(implicit hc: HeaderCarrier): Future[Option[ReturnPeriod]] = {
-    val returnPeriods = http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending")
-    returnPeriods.map(_.sortBy(_.year).sortBy(_.quarter).headOption)
-  }
-
   def balance(
                sdilRef: String,
                withAssessment: Boolean
-             )(implicit hc: HeaderCarrier): Future[BigDecimal] =
-    http.GET[BigDecimal](s"$sdilUrl/balance/$sdilRef/$withAssessment")
+             )(implicit hc: HeaderCarrier): VariationResult[BigDecimal] = EitherT {
+    sdilSessionCache.fetchEntry[BigDecimal](sdilRef, SDILSessionKeys.balance(withAssessment)).flatMap {
+      case Some(b) => Future.successful(Right(b))
+      case None =>
+        http.GET[BigDecimal](s"$sdilUrl/balance/$sdilRef/$withAssessment")
+          .flatMap { b =>
+            sdilSessionCache.save[BigDecimal](sdilRef, SDILSessionKeys.balance(withAssessment), b)
+              .map(_ => Right(b))
+
+          }.recover {
+          case _ => genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][balance] - unexpected response for $sdilRef")
+            Left(UnexpectedResponseFromSDIL)
+        }
+    }
+  }
 
   def balanceHistory(
                       sdilRef: String,
                       withAssessment: Boolean
-                    )(implicit hc: HeaderCarrier): Future[List[FinancialLineItem]] = {
-    import FinancialLineItem.formatter
-    http.GET[List[FinancialLineItem]](s"$sdilUrl/balance/$sdilRef/history/all/$withAssessment")
+                    )(implicit hc: HeaderCarrier): VariationResult[List[FinancialLineItem]] = EitherT {
+    sdilSessionCache.fetchEntry[List[FinancialLineItem]](sdilRef, SDILSessionKeys.balanceHistory(withAssessment)).flatMap {
+      case Some(b) => Future.successful(Right(b))
+      case None =>
+        http.GET[List[FinancialLineItem]](s"$sdilUrl/balance/$sdilRef/history/all/$withAssessment")
+          .flatMap { bh =>
+            sdilSessionCache.save[List[FinancialLineItem]](sdilRef, SDILSessionKeys.balanceHistory(withAssessment), bh)
+              .map(_ => Right(bh))
+
+          }.recover {
+          case _ => genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][balanceHistory] - unexpected response for $sdilRef")
+            Left(UnexpectedResponseFromSDIL)
+        }
+    }
   }
 
-  def returnsVariable(utr: String, sdilRef: String)(implicit hc: HeaderCarrier): VariationResult[List[ReturnPeriod]] = EitherT {
-    sdilSessionCache.fetchEntry[List[ReturnPeriod]](sdilRef, SDILSessionKeys.VARIABLE_RETURNS).flatMap {
+  def getReturn(
+                   utr: String,
+                   period: ReturnPeriod
+                 )(implicit hc: HeaderCarrier): VariationResult[Option[SdilReturn]] = EitherT {
+    sdilSessionCache.fetchEntry[OptPreviousSubmittedReturn](utr, SDILSessionKeys.previousSubmittedReturn(utr, period)).flatMap {
+      case Some(optPreviousReturn) => Future.successful(Right(optPreviousReturn.optReturn))
+      case None =>
+        val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
+        http.GET[Option[SdilReturn]](uri)
+          .flatMap { optReturn =>
+            sdilSessionCache.save[OptPreviousSubmittedReturn](utr,
+              SDILSessionKeys.previousSubmittedReturn(utr, period), OptPreviousSubmittedReturn(optReturn))
+              .map(_ => Right(optReturn))
+          }.recover {
+          case _ => genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][returns_get] - unexpected response for $utr")
+            Left(UnexpectedResponseFromSDIL)
+        }
+    }
+  }
+
+  def returnsVariable(utr: String)(implicit hc: HeaderCarrier): VariationResult[List[ReturnPeriod]] = EitherT {
+    sdilSessionCache.fetchEntry[List[ReturnPeriod]](utr, SDILSessionKeys.VARIABLE_RETURNS).flatMap {
       case Some(variableReturns) => Future.successful(Right(variableReturns))
       case None =>
         http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/variable").flatMap { variableReturns =>
-            sdilSessionCache.save(sdilRef, SDILSessionKeys.VARIABLE_RETURNS, variableReturns)
+            sdilSessionCache.save(utr, SDILSessionKeys.VARIABLE_RETURNS, variableReturns)
               .map { _ => Right(variableReturns)
             }
         }.recover {
@@ -91,12 +143,12 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     }
   }
 
-  def returnsPending(utr: String, sdilRef: String)(implicit hc: HeaderCarrier): VariationResult[List[ReturnPeriod]] = EitherT {
-    sdilSessionCache.fetchEntry[List[ReturnPeriod]](sdilRef, SDILSessionKeys.RETURNS_PENDING).flatMap {
+  def returnsPending(utr: String)(implicit hc: HeaderCarrier): VariationResult[List[ReturnPeriod]] = EitherT {
+    sdilSessionCache.fetchEntry[List[ReturnPeriod]](utr, SDILSessionKeys.RETURNS_PENDING).flatMap {
       case Some(variableReturns) => Future.successful(Right(variableReturns))
       case None =>
         http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending").flatMap { variableReturns =>
-          sdilSessionCache.save(sdilRef, SDILSessionKeys.RETURNS_PENDING, variableReturns)
+          sdilSessionCache.save(utr, SDILSessionKeys.RETURNS_PENDING, variableReturns)
             .map { _ => Right(variableReturns)
             }
         }.recover {
@@ -105,7 +157,7 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     }
   }
 
-  def returns_update(utr: String, period: ReturnPeriod, sdilReturn: SdilReturn)(implicit hc: HeaderCarrier): Future[Option[Int]] = {
+  def updateReturn(utr: String, period: ReturnPeriod, sdilReturn: SdilReturn)(implicit hc: HeaderCarrier): Future[Option[Int]] = {
     val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
     http.POST[SdilReturn, HttpResponse](uri, sdilReturn) map {
       response => Some(response.status)

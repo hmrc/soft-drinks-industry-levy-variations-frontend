@@ -19,15 +19,10 @@ package generators
 import models._
 import models.changeActivity.AmountProduced
 import models.correctReturn.{AddASmallProducer, RepaymentMethod}
-import models.updateRegisteredDetails.UpdateContactDetails
+import models.updateRegisteredDetails.ContactDetails
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalacheck.Arbitrary._
 trait ModelGenerators {
-
-  implicit lazy val arbitraryCorrectReturnExemptionsForSmallProducers: Arbitrary[correctReturn.ExemptionsForSmallProducers] =
-    Arbitrary {
-      Gen.oneOf(correctReturn.ExemptionsForSmallProducers.values)
-    }
 
   implicit lazy val arbitraryCorrectReturnSelect: Arbitrary[ReturnPeriod] = {
 
@@ -59,14 +54,14 @@ trait ModelGenerators {
       } yield AddASmallProducer(producerName, referenceNumber, lowBand, highBand)
     }
 
-  implicit lazy val arbitraryUpdateRegisteredDetailsUpdateContactDetails: Arbitrary[UpdateContactDetails] =
+  implicit lazy val arbitraryUpdateRegisteredDetailsUpdateContactDetails: Arbitrary[ContactDetails] =
     Arbitrary {
       for {
         name <- arbitrary[String]
         job <- arbitrary[String]
         phoneNumber <- arbitrary[String]
         email <- arbitrary[String]
-      } yield UpdateContactDetails(name, job, phoneNumber, email)
+      } yield ContactDetails(name, job, phoneNumber, email)
     }
 
   implicit lazy val arbitrarySelectChange: Arbitrary[SelectChange] =

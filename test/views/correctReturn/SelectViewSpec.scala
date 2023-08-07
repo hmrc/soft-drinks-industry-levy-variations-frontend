@@ -30,13 +30,14 @@ class SelectViewSpec extends ViewSpecHelper {
   val view = application.injector.instanceOf[SelectView]
   val formProvider = new SelectFormProvider
   val form = formProvider.apply()
-  val returnsList: List[List[ReturnPeriod]] = List(returnPeriodList)
+  val returnsList: Map[Int, List[ReturnPeriod]] = Map(2020 -> returnPeriodsFor2020, 2022 -> returnPeriodsFor2022)
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-fieldset__heading"
     val legend = "govuk-fieldset__legend  govuk-fieldset__legend--m"
     val radios = "govuk-radios"
+    val radioDivider = "govuk-radios__divider"
     val radiosInput = "govuk-radios__input"
     val radiosItems = "govuk-radios__item"
     val radiosLables = "govuk-label govuk-radios__label"
@@ -47,135 +48,85 @@ class SelectViewSpec extends ViewSpecHelper {
     val form = "form"
   }
 
+
   "View" - {
-    val html = view(form, NormalMode, returns = returnsList)(request, messages(application))
+    val html = view(form, returnsList)(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
       document.title() must include(Messages("correctReturn.select" + ".title"))
     }
 
-    "should include a legend with the expected heading (the oldest year within the returns)" in {
+    "should include a legend with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual returnPeriodList.last.year.toString
+      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("correctReturn.select.heading")
     }
 
-    "when the form is not preoccupied and has no errors" - {
+    "should include radios" - {
+      val radios = document.getElementsByClass(Selectors.radios)
+      val dividers = document.getElementsByClass(Selectors.radioDivider)
+      val radioItems = radios.first().getElementsByClass(Selectors.radiosItems)
+      val totalNumberOfReturnPeriods = returnsList.foldLeft(List.empty[ReturnPeriod]) { (a, b) => a ++ b._2 }.size
+      "that has a size of 1" in {
+        radios.size() mustBe 1
+      }
 
-      "should include the expected radio buttons" - {
-        val radiobuttons = document.getElementsByClass(Selectors.radiosItems)
+      s"that has ${returnsList.size} dividers " - {
+        dividers.size() mustBe returnsList.size
+      }
 
-        "should have same amount of items as returns" in {
-          radiobuttons.size() mustBe returnPeriodList.size
-        }
-        returnPeriodList.zipWithIndex.foreach { case (radio, index) =>
-          s"that has the " + radio.toString + " to select and is unchecked" in {
-            if(index == 0) {
-              val radio1 = radiobuttons
-                .get(index)
-              radio1
-                .getElementsByClass(Selectors.radiosLables)
-                .text() mustBe Messages("January to March 2020")
-              val input = radio1
-                .getElementsByClass(Selectors.radiosInput)
-              input.attr("value") mustBe Json.toJson(ReturnPeriod(2020,0)).toString
-              input.hasAttr("checked") mustBe false
-            }
-            if(index == 1) {
-              val radio1 = radiobuttons
-                .get(index)
-              radio1
-                .getElementsByClass(Selectors.radiosLables)
-                .text() mustBe Messages("April to June 2020")
-              val input = radio1
-                .getElementsByClass(Selectors.radiosInput)
-              input.attr("value") mustBe Json.toJson(ReturnPeriod(2020,1)).toString
-              input.hasAttr("checked") mustBe false
-            }
-            if(index == 2) {
-              val radio1 = radiobuttons
-                .get(index)
-              radio1
-                .getElementsByClass(Selectors.radiosLables)
-                .text() mustBe Messages("July to September 2020")
+      s"that has $totalNumberOfReturnPeriods radio items" in {
+        radioItems.size() mustBe totalNumberOfReturnPeriods
+      }
 
-              val input = radio1
-                .getElementsByClass(Selectors.radiosInput)
-              input.attr("value") mustBe Json.toJson(ReturnPeriod(2020,2)).toString
-              input.hasAttr("checked") mustBe false
-            }
-            if(index == 3) {
-              val radio1 = radiobuttons
-                .get(index)
-              radio1
-                .getElementsByClass(Selectors.radiosLables)
-                .text() mustBe Messages("October to December 2020")
-              val input = radio1
-                .getElementsByClass(Selectors.radiosInput)
-              input.attr("value") mustBe Json.toJson(ReturnPeriod(2020,3)).toString
-              input.hasAttr("checked") mustBe false
-            }
-          }
+      returnsList.keys.zipWithIndex.foreach { case (year, index) =>
+        s"that includes a divider for year $year" in {
+          dividers.get(index).text() mustBe year.toString
         }
       }
-    }
 
-    returnPeriodList.foreach { radio =>
-      val html1 = view(form.fill(radio), NormalMode, returns = returnsList)(request, messages(application))
-      val document1 = doc(html1)
+      returnPeriodList.zipWithIndex.foreach { case (returnPeriod, periodIndex) =>
+        val year = returnPeriod.year
+        val quarter = returnPeriod.quarter
+        "when the form is empty and there are no errors" - {
+          s"with the expected radio item for year $year and quarter $quarter that is unchecked" in {
+            val expectedText = returnPeriod.quarter match {
+              case 0 => s"January to March $year"
+              case 1 => s"April to June $year"
+              case 2 => s"July to September $year"
+              case _ => s"October to December $year"
+            }
+            val radioItem = radioItems.get(periodIndex)
+            radioItem.className() mustBe Selectors.radiosItems
+            val radioInput = radioItem.getElementsByClass(Selectors.radiosInput)
+            val radioLabel = radioItem.getElementsByClass(Selectors.radiosLables)
+            radioLabel.text() mustBe expectedText
+            radioInput.attr("value") mustBe returnPeriod.radioValue
+            radioInput.hasAttr("checked") mustBe false
+          }
+        }
 
-      s"when the form is preoccupied with " + radio.toString + "selected and has no errors" - {
-        "should have radiobuttons" - {
-          val radiobuttons = document1.getElementsByClass(Selectors.radiosItems)
-          returnPeriodList.zipWithIndex.foreach { case (radio1, index) =>
-            if (radio1.toString == radio.toString) {
-              s"that has the option to select" + radio1.toString + " and is checked" in {
-                if(index == 1){
-                  val radiobuttons1 = radiobuttons
-                    .get(index)
-                  radiobuttons1
-                    .getElementsByClass(Selectors.radiosLables)
-                    .text() mustBe Messages("April to June 2020")
-                  val input = radiobuttons1
-                    .getElementsByClass(Selectors.radiosInput)
-                  input.attr("value") mustBe Json.toJson(ReturnPeriod(2020,1)).toString
-                  input.hasAttr("checked") mustBe true
-                }
-                if(index == 2){
-                  val radiobuttons1 = radiobuttons
-                    .get(index)
-                  radiobuttons1
-                    .getElementsByClass(Selectors.radiosLables)
-                    .text() mustBe Messages("July to September 2020")
-                  val input = radiobuttons1
-                    .getElementsByClass(Selectors.radiosInput)
-                  input.attr("value") mustBe Json.toJson(ReturnPeriod(2020,2)).toString
-                  input.hasAttr("checked") mustBe true
-                }
+
+        returnPeriodList.foreach { selectedReturnPeriod =>
+          s"when the form is prepopulated with " + selectedReturnPeriod.radioValue + "selected and has no errors" - {
+            val htmlPop = view(form.fill(selectedReturnPeriod.radioValue), returnsList)(request, messages(application))
+            val documentPop = doc(htmlPop)
+            val radioItems = documentPop.getElementsByClass(Selectors.radiosItems)
+
+            s"with the expected radio item for year $year and quarter $quarter that is checked equal ${selectedReturnPeriod == returnPeriod}" in {
+              val expectedText = returnPeriod.quarter match {
+                case 0 => s"January to March $year"
+                case 1 => s"April to June $year"
+                case 2 => s"July to September $year"
+                case _ => s"October to December $year"
               }
-            } else {
-              s"that has the option to select " + radio1.toString + " and is unchecked" in {
-                val radiobuttons1 = radiobuttons
-                  .get(index)
-                if(index == 0) {
-                  radiobuttons1
-                    .getElementsByClass(Selectors.radiosLables)
-                    .text() mustBe Messages("January to March 2020")
-                  val input = radiobuttons1
-                    .getElementsByClass(Selectors.radiosInput)
-                  input.attr("value") mustBe Json.toJson(ReturnPeriod(2020,0)).toString
-                  input.hasAttr("checked") mustBe false
-                }
-                if(index == 1) {
-                  radiobuttons1
-                    .getElementsByClass(Selectors.radiosLables)
-                    .text() mustBe Messages("April to June 2020")
-                  val input = radiobuttons1
-                    .getElementsByClass(Selectors.radiosInput)
-                  input.attr("value") mustBe Json.toJson(ReturnPeriod(2020,1)).toString
-                  input.hasAttr("checked") mustBe false
-                }
-              }
+              val radioItem = radioItems.get(periodIndex)
+              radioItem.className() mustBe Selectors.radiosItems
+              val radioInput = radioItem.getElementsByClass(Selectors.radiosInput)
+              val radioLabel = radioItem.getElementsByClass(Selectors.radiosLables)
+              radioLabel.text() mustBe expectedText
+              radioInput.attr("value") mustBe returnPeriod.radioValue
+              radioInput.hasAttr("checked") mustBe selectedReturnPeriod == returnPeriod
             }
           }
         }
@@ -186,26 +137,13 @@ class SelectViewSpec extends ViewSpecHelper {
       document.getElementsByClass(Selectors.button).text() mustBe Messages("site.continue")
     }
 
-    "contains a form with the correct action" - {
-      "when in CheckMode" in {
-        val htmlAllSelected = view(form.fill(returnPeriodList.head), CheckMode, returns = returnsList)(request, messages(application))
-        val documentAllSelected = doc(htmlAllSelected)
-
-        documentAllSelected.select(Selectors.form)
-          .attr("action") mustEqual routes.SelectController.onSubmit(CheckMode).url
-      }
-
-      "when in NormalMode" in {
-        val htmlAllSelected = view(form.fill(returnPeriodList.head), NormalMode, returns = returnsList)(request, messages(application))
-        val documentAllSelected = doc(htmlAllSelected)
-
-        documentAllSelected.select(Selectors.form)
-          .attr("action") mustEqual routes.SelectController.onSubmit(NormalMode).url
-      }
+    "contains a form with the correct action" in {
+      document.select(Selectors.form)
+        .attr("action") mustEqual routes.SelectController.onSubmit.url
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode, returns = returnsList)(request, messages(application))
+      val htmlWithErrors = view(form.bind(Map("value" -> "")), returnsList)(request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
@@ -219,7 +157,7 @@ class SelectViewSpec extends ViewSpecHelper {
           .first()
         errorSummary
           .select("a")
-          .attr("href") mustBe "#value_0"
+          .attr("href") mustBe "#value_0_0"
         errorSummary.text() mustBe Messages("correctReturn.select.error.required")
       }
     }

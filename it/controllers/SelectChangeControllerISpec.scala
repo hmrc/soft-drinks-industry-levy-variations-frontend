@@ -112,7 +112,7 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
 
             whenReady(result1) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(correctReturn.routes.SelectController.onPageLoad(NormalMode).url)
+              res.header(HeaderNames.LOCATION) mustBe Some(correctReturn.routes.SelectController.onPageLoad.url)
               val expectedUserAnswers = emptyUserAnswersForCorrectReturn
               val generatedUserAnswers = getAnswers(sdilNumber)
               generatedUserAnswers mustBe defined

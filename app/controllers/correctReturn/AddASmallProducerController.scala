@@ -21,11 +21,11 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.correctReturn.AddASmallProducerFormProvider
 import handlers.ErrorHandler
-import models.{Mode, SmallProducer, UserAnswers}
 import models.SelectChange.CorrectReturn
 import models.correctReturn.AddASmallProducer
+import models.{Mode, SmallProducer, UserAnswers}
 import navigation._
-import pages.correctReturn.{AddASmallProducerPage, SelectPage}
+import pages.correctReturn.AddASmallProducerPage
 import play.api.data.{Form, FormError}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -53,7 +53,7 @@ class AddASmallProducerController @Inject()(
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
     implicit request =>
 
-      request.userAnswers.get(SelectPage) match {
+      request.userAnswers.correctReturnPeriod match {
         case Some(_) =>
           val form: Form[AddASmallProducer] = formProvider(request.userAnswers)
           val preparedForm = request.userAnswers.get(AddASmallProducerPage) match {
@@ -85,7 +85,7 @@ class AddASmallProducerController @Inject()(
                 BadRequest(view(preparedForm.withError(FormError("referenceNumber", "correctReturn.addASmallProducer.error.referenceNumber.exists")), mode))
               )
             case _ =>
-              request.userAnswers.get(SelectPage) match {
+              request.userAnswers.correctReturnPeriod match {
                 case Some(returnPeriod) =>
                   sdilConnector.checkSmallProducerStatus(value.referenceNumber, returnPeriod).flatMap {
                     case Some(false) =>

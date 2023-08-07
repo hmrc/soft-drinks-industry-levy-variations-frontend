@@ -17,15 +17,14 @@
 package forms.correctReturn
 
 import forms.mappings.Mappings
-import models.ReturnPeriod
 import play.api.data.Form
 
 import javax.inject.Inject
 
 class SelectFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[ReturnPeriod] =
+  def apply(): Form[String] =
     Form(
-      "value" -> returnPeriod("correctReturn.select.error.required")
+      "value" -> text("correctReturn.select.error.required")
     )
 }

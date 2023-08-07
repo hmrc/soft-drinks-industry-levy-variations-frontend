@@ -17,11 +17,12 @@
 package controllers.correctReturn
 
 import base.SpecBase
+import errors.SessionDatabaseInsertError
 import forms.correctReturn.ExemptionsForSmallProducersFormProvider
 import models.NormalMode
-import models.correctReturn.ExemptionsForSmallProducers
 import models.SelectChange.CorrectReturn
 import navigation._
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -31,11 +32,10 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
-import views.html.correctReturn.ExemptionsForSmallProducersView
-import errors.SessionDatabaseInsertError
-import org.jsoup.Jsoup
-import scala.concurrent.Future
 import utilities.GenericLogger
+import views.html.correctReturn.ExemptionsForSmallProducersView
+
+import scala.concurrent.Future
 class ExemptionsForSmallProducersControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
@@ -69,7 +69,7 @@ class ExemptionsForSmallProducersControllerSpec extends SpecBase with MockitoSug
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = emptyUserAnswersForCorrectReturn
-      .set(ExemptionsForSmallProducersPage, ExemptionsForSmallProducers.values.head).success.value
+      .set(ExemptionsForSmallProducersPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -82,7 +82,7 @@ class ExemptionsForSmallProducersControllerSpec extends SpecBase with MockitoSug
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(ExemptionsForSmallProducers.values.head), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -107,7 +107,7 @@ class ExemptionsForSmallProducersControllerSpec extends SpecBase with MockitoSug
         val request =
           FakeRequest(POST, exemptionsForSmallProducersRoute
         )
-        .withFormUrlEncodedBody(("value", ExemptionsForSmallProducers.values.head.toString))
+        .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 
@@ -149,7 +149,7 @@ class ExemptionsForSmallProducersControllerSpec extends SpecBase with MockitoSug
         val request =
           FakeRequest(POST, exemptionsForSmallProducersRoute
         )
-        .withFormUrlEncodedBody(("value", ExemptionsForSmallProducers.values.head.toString))
+        .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
@@ -176,7 +176,7 @@ class ExemptionsForSmallProducersControllerSpec extends SpecBase with MockitoSug
           running(application) {
             val request = FakeRequest(POST, exemptionsForSmallProducersRoute
             )
-            .withFormUrlEncodedBody(("value", ExemptionsForSmallProducers.values.head.toString))
+            .withFormUrlEncodedBody(("value", "true"))
 
             await(route(application, request).value)
             events.collectFirst {

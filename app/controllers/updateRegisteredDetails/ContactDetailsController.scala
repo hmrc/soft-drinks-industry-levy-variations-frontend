@@ -20,7 +20,7 @@ import controllers.ControllerHelper
 import controllers.actions._
 import handlers.ErrorHandler
 import models.SelectChange.UpdateRegisteredDetails
-import models.updateRegisteredDetails.UpdateContactDetails
+import models.updateRegisteredDetails.ContactDetails
 import navigation.NavigatorForUpdateRegisteredDetails
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.i18n.MessagesApi
@@ -52,7 +52,7 @@ class ContactDetailsController @Inject()(
         case _ =>
           val subscriptionContact = request.subscription.contact
           val updateContactDetails =
-            UpdateContactDetails(
+            ContactDetails(
               subscriptionContact.name.getOrElse(""),
               subscriptionContact.positionInCompany.getOrElse(""),
               subscriptionContact.phoneNumber,

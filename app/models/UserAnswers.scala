@@ -17,6 +17,7 @@
 package models
 
 import models.backend.{Site, UkAddress}
+import models.correctReturn.CorrectReturnUserAnswersData
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json._
 import queries.{Gettable, Settable}
@@ -35,12 +36,18 @@ case class UserAnswers(
                         packagingSiteList: Map[String, Site] = Map.empty,
                         warehouseList: Map[String, Warehouse] = Map.empty,
                         contactAddress: UkAddress,
+                        correctReturnPeriod: Option[ReturnPeriod] = None,
                         submitted:Boolean = false,
                         lastUpdated: Instant = Instant.now
                             ) {
 
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
     Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)
+
+  def getCorrectReturnData(implicit rds: Reads[CorrectReturnUserAnswersData]): Option[CorrectReturnUserAnswersData] = {
+    val jsPath = JsPath \ "correctReturn"
+    Reads.optionNoError(Reads.at(jsPath)).reads(data).getOrElse(None)
+  }
 
   def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = {
 
@@ -55,6 +62,25 @@ case class UserAnswers(
       d =>
         val updatedAnswers = copy(data = d)
         page.cleanup(Some(value), updatedAnswers)
+    }
+  }
+
+  def setCorrectReturnData(correctReturnUserAnswersData: CorrectReturnUserAnswersData)
+                          (implicit writes: Writes[CorrectReturnUserAnswersData]): Try[UserAnswers] = {
+
+    val jsPath = JsPath \ "correctReturn"
+
+    val updatedData = data.setObject(jsPath, Json.toJson(correctReturnUserAnswersData)) match {
+      case JsSuccess(jsValue, _) =>
+        Success(jsValue)
+      case JsError(errors) =>
+        Failure(JsResultException(errors))
+    }
+
+    updatedData.flatMap {
+      d =>
+        val updatedAnswers = copy(data = d)
+        Success(updatedAnswers)
     }
   }
 
@@ -115,6 +141,7 @@ object UserAnswers {
           (__ \ "packagingSiteList").read[Map[String, EncryptedValue]] and
           (__ \ "warehouseList").read[Map[String, EncryptedValue]] and
           (__ \ "contactAddress").read[EncryptedValue] and
+          (__ \ "correctReturnPeriod").readNullable[ReturnPeriod] and
           (__ \ "submitted").read[Boolean] and
           (__ \ "lastUpdated").read[Instant]
         )(ModelEncryption.decryptUserAnswers _)
@@ -123,7 +150,7 @@ object UserAnswers {
     def writes(implicit encryption: Encryption): OWrites[UserAnswers] = new OWrites[UserAnswers] {
       override def writes(userAnswers: UserAnswers): JsObject = {
         val encryptedValue: (String, SelectChange, EncryptedValue, EncryptedValue, Map[String, EncryptedValue],
-          Map[String, EncryptedValue], EncryptedValue, Boolean, Instant) = {
+          Map[String, EncryptedValue], EncryptedValue, Option[ReturnPeriod], Boolean, Instant) = {
           ModelEncryption.encryptUserAnswers(userAnswers)
         }
         Json.obj(
@@ -134,8 +161,9 @@ object UserAnswers {
           "packagingSiteList" -> encryptedValue._5,
           "warehouseList" -> encryptedValue._6,
           "contactAddress" -> encryptedValue._7,
-          "submitted" -> encryptedValue._8,
-          "lastUpdated" -> encryptedValue._9
+          "correctReturnPeriod" -> encryptedValue._8,
+          "submitted" -> encryptedValue._9,
+          "lastUpdated" -> encryptedValue._10
         )
       }
     }

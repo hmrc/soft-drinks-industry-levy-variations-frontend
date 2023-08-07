@@ -16,10 +16,10 @@
 
 package generators
 
+import models.SelectChange
 import models.changeActivity.AmountProduced
 import models.correctReturn.{AddASmallProducer, RepaymentMethod}
-import models.updateRegisteredDetails.UpdateContactDetails
-import models.{ReturnPeriod, SelectChange}
+import models.updateRegisteredDetails.ContactDetails
 import org.scalacheck.Arbitrary
 import org.scalacheck.Arbitrary.arbitrary
 import pages.SelectChangePage
@@ -107,7 +107,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[pages.correctReturn.ExemptionsForSmallProducersPage.type]
-        value <- arbitrary[models.correctReturn.ExemptionsForSmallProducers].map(Json.toJson(_))
+        value <- arbitrary[Boolean].map(Json.toJson(_))
       } yield (page, value)
     }
 
@@ -124,14 +124,6 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
       for {
         page  <- arbitrary[pages.correctReturn.PackagedAsContractPackerPage.type]
         value <- arbitrary[Boolean].map(Json.toJson(_))
-      } yield (page, value)
-    }
-
-  implicit lazy val arbitraryCorrectReturnSelectUserAnswersEntry: Arbitrary[(pages.correctReturn.SelectPage.type, JsValue)] =
-    Arbitrary {
-      for {
-        page  <- arbitrary[pages.correctReturn.SelectPage.type]
-        value <- arbitrary[ReturnPeriod].map(Json.toJson(_))
       } yield (page, value)
     }
 
@@ -291,7 +283,7 @@ trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
     Arbitrary {
       for {
         page  <- arbitrary[UpdateContactDetailsPage.type]
-        value <- arbitrary[UpdateContactDetails].map(Json.toJson(_))
+        value <- arbitrary[ContactDetails].map(Json.toJson(_))
       } yield (page, value)
     }
 

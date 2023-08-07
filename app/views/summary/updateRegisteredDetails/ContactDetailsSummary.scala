@@ -17,9 +17,8 @@
 package views.summary.updateRegisteredDetails
 
 import controllers.updateRegisteredDetails.routes
-import models.updateRegisteredDetails.UpdateContactDetails
-import models.{CheckMode, Contact, NormalMode, UserAnswers}
-import pages.updateRegisteredDetails.UpdateContactDetailsPage
+import models.NormalMode
+import models.updateRegisteredDetails.ContactDetails
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
@@ -28,7 +27,7 @@ import viewmodels.implicits._
 
 object ContactDetailsSummary {
 
-  def rows(contact: UpdateContactDetails)(implicit messages: Messages): SummaryList = {
+  def rows(contact: ContactDetails)(implicit messages: Messages): SummaryList = {
     SummaryList(rows = Seq(
       createSummaryListItem("fullName", contact.fullName, messages("updateRegisteredDetails.contactDetails.name.change.hidden")),
       createSummaryListItem("position", contact.position, messages("updateRegisteredDetails.contactDetails.position.change.hidden")),

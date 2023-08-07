@@ -16,11 +16,11 @@
 
 package pages.updateRegisteredDetails
 
-import models.updateRegisteredDetails.UpdateContactDetails
+import models.updateRegisteredDetails.ContactDetails
 import play.api.libs.json.JsPath
 import pages.QuestionPage
 
-case object UpdateContactDetailsPage extends QuestionPage[UpdateContactDetails] {
+case object UpdateContactDetailsPage extends QuestionPage[ContactDetails] {
 
   override def path: JsPath = JsPath \ journeyType \ toString
 
