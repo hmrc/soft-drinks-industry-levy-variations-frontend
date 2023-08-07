@@ -57,16 +57,12 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(warehouseList = twoWarehouses))).build()
 
       running(application) {
 
-        val WarhouseMap: Map[String,Warehouse] =
-          Map("1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
-            "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
-
         val warehouseSummaryList: List[SummaryListRow] =
-          SecondaryWarehouseDetailsSummary.row2(WarhouseMap)(messages(application))
+          SecondaryWarehouseDetailsSummary.row2(twoWarehouses)(messages(application))
 
         val summaryList: SummaryList = SummaryListViewModel(
           rows = warehouseSummaryList
@@ -91,12 +87,8 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
       running(application) {
 
-        val WarhouseMap: Map[String,Warehouse] =
-          Map("1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
-            "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
-
         val warehouseSummaryList: List[SummaryListRow] =
-          SecondaryWarehouseDetailsSummary.row2(WarhouseMap)(messages(application))
+          SecondaryWarehouseDetailsSummary.row2(twoWarehouses)(messages(application))
 
         val summaryList: SummaryList = SummaryListViewModel(
           rows = warehouseSummaryList
