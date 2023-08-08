@@ -41,27 +41,21 @@ import viewmodels.govuk.summarylist._
 import scala.collection.immutable.Map
 
 class SecondaryWarehouseDetailsController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       val sessionService: SessionService,
-                                       val navigator: NavigatorForCorrectReturn,
-                                       controllerActions: ControllerActions,
-                                       formProvider: SecondaryWarehouseDetailsFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: SecondaryWarehouseDetailsView,
-                                       val genericLogger: GenericLogger,
-                                       val errorHandler: ErrorHandler
-                                     )(implicit ec: ExecutionContext) extends ControllerHelper {
+                                                     override val messagesApi: MessagesApi,
+                                                     val sessionService: SessionService,
+                                                     val navigator: NavigatorForCorrectReturn,
+                                                     controllerActions: ControllerActions,
+                                                     formProvider: SecondaryWarehouseDetailsFormProvider,
+                                                     val controllerComponents: MessagesControllerComponents,
+                                                     view: SecondaryWarehouseDetailsView,
+                                                     val genericLogger: GenericLogger,
+                                                     val errorHandler: ErrorHandler
+                                                   )(implicit ec: ExecutionContext) extends ControllerHelper {
 
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
     implicit request =>
-
-      val twoWarehouses: Map[String,Warehouse] = Map(
-        "1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
-        "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"))
-      )
-
 
       val preparedForm = request.userAnswers.get(SecondaryWarehouseDetailsPage) match {
         case None => form
@@ -69,7 +63,7 @@ class SecondaryWarehouseDetailsController @Inject()(
       }
 
       val siteList: SummaryList = SummaryListViewModel(
-        rows = SecondaryWarehouseDetailsSummary.row2(twoWarehouses)
+        rows = SecondaryWarehouseDetailsSummary.row2(request.userAnswers.warehouseList)
       )
 
       Ok(view(preparedForm, mode, siteList))

@@ -17,6 +17,7 @@
 package controllers.changeActivity
 
 import base.SpecBase
+import base.SpecBase.twoWarehouses
 import errors.SessionDatabaseInsertError
 import forms.changeActivity.SecondaryWarehouseDetailsFormProvider
 import models.SelectChange.ChangeActivity
@@ -26,6 +27,7 @@ import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.mongodb.scala.bson.BsonDocument
 import org.scalatestplus.mockito.MockitoSugar
 import pages.changeActivity.SecondaryWarehouseDetailsPage
 import play.api.inject.bind
@@ -103,7 +105,10 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, summaryList)(request, messages(application)).toString
+        println(Console.YELLOW + contentAsString(result) + Console.WHITE)
+        println("===================")
+        println(Console.YELLOW + view(form.fill(true), NormalMode, summaryList)(request, messages(application)).toString + Console.WHITE)
+        contentAsString(result) mustEqual  view(form.fill(true), NormalMode, summaryList)(request, messages(application)).toString
       }
     }
 

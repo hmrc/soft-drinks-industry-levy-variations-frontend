@@ -17,91 +17,67 @@
 package controllers.correctReturn
 
 import base.SpecBase
-import base.SpecBase.{twoWarehouses, userAnswerTwoWarehouses}
-import forms.correctReturn.SecondaryWarehouseDetailsFormProvider
-import models.{NormalMode, Warehouse}
+import forms.correctReturn.AskSecondaryWarehouseInReturnFormProvider
+import models.NormalMode
 import models.SelectChange.CorrectReturn
 import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.correctReturn.SecondaryWarehouseDetailsPage
+import pages.correctReturn.AskSecondaryWarehouseInReturnPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
-import views.html.correctReturn.SecondaryWarehouseDetailsView
+import views.html.correctReturn.AskSecondaryWarehouseInReturnView
 import utilities.GenericLogger
 import errors.SessionDatabaseInsertError
-import models.backend.UkAddress
-
 import scala.concurrent.Future
 import org.jsoup.Jsoup
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
-import viewmodels.govuk.SummaryListFluency
-import viewmodels.summary.correctReturn.SecondaryWarehouseDetailsSummary
 
-import scala.collection.immutable.Map
-
-class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with SummaryListFluency {
+class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute = Call("GET", "/foo")
 
-  val formProvider = new SecondaryWarehouseDetailsFormProvider()
+  val formProvider = new AskSecondaryWarehouseInReturnFormProvider()
   val form = formProvider()
 
-  lazy val secondaryWarehouseDetailsRoute = routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url
+  lazy val askSecondaryWarehouseInReturnRoute = routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url
 
-  "SecondaryWarehouseDetails Controller" - {
+  "AskSecondaryWarehouseInReturn Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(warehouseList = twoWarehouses))).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
 
       running(application) {
-
-        val warehouseSummaryList: List[SummaryListRow] =
-          SecondaryWarehouseDetailsSummary.row2(twoWarehouses)(messages(application))
-
-        val summaryList: SummaryList = SummaryListViewModel(
-          rows = warehouseSummaryList
-        )
-
-        val request = FakeRequest(GET, secondaryWarehouseDetailsRoute)
+        val request = FakeRequest(GET, askSecondaryWarehouseInReturnRoute)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[SecondaryWarehouseDetailsView]
+        val view = application.injector.instanceOf[AskSecondaryWarehouseInReturnView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, summaryList)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswersForCorrectReturn.set(SecondaryWarehouseDetailsPage, true).success.value
+      val userAnswers = emptyUserAnswersForCorrectReturn.set(AskSecondaryWarehouseInReturnPage, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers.copy(warehouseList = twoWarehouses))).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
+        val request = FakeRequest(GET, askSecondaryWarehouseInReturnRoute)
 
-        val warehouseSummaryList: List[SummaryListRow] =
-          SecondaryWarehouseDetailsSummary.row2(twoWarehouses)(messages(application))
-
-        val summaryList: SummaryList = SummaryListViewModel(
-          rows = warehouseSummaryList
-        )
-
-        val request = FakeRequest(GET, secondaryWarehouseDetailsRoute)
-
-        val view = application.injector.instanceOf[SecondaryWarehouseDetailsView]
+        val view = application.injector.instanceOf[AskSecondaryWarehouseInReturnView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, summaryList)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -121,7 +97,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
       running(application) {
         val request =
-          FakeRequest(POST, secondaryWarehouseDetailsRoute)
+          FakeRequest(POST, askSecondaryWarehouseInReturnRoute)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
@@ -133,38 +109,26 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswerTwoWarehouses)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
 
       running(application) {
-
-        val WarhouseMap: Map[String,Warehouse] =
-          Map("1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
-            "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
-
-        val warehouseSummaryList: List[SummaryListRow] =
-          SecondaryWarehouseDetailsSummary.row2(WarhouseMap)(messages(application))
-
-        val summaryList: SummaryList = SummaryListViewModel(
-          rows = warehouseSummaryList
-        )
-
         val request =
-          FakeRequest(POST, secondaryWarehouseDetailsRoute)
+          FakeRequest(POST, askSecondaryWarehouseInReturnRoute)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[SecondaryWarehouseDetailsView]
+        val view = application.injector.instanceOf[AskSecondaryWarehouseInReturnView]
 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, summaryList)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
       }
     }
 
-    testInvalidJourneyType(CorrectReturn, secondaryWarehouseDetailsRoute)
-    testNoUserAnswersError(secondaryWarehouseDetailsRoute)
+    testInvalidJourneyType(CorrectReturn, askSecondaryWarehouseInReturnRoute)
+    testNoUserAnswersError(askSecondaryWarehouseInReturnRoute)
 
     "must fail if the setting of userAnswers fails" in {
 
@@ -172,7 +136,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
       running(application) {
         val request =
-          FakeRequest(POST, secondaryWarehouseDetailsRoute
+          FakeRequest(POST, askSecondaryWarehouseInReturnRoute
         )
         .withFormUrlEncodedBody(("value", "true"))
 
@@ -199,14 +163,14 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request =
-            FakeRequest(POST, secondaryWarehouseDetailsRoute)
+            FakeRequest(POST, askSecondaryWarehouseInReturnRoute)
           .withFormUrlEncodedBody(("value", "true"))
 
           await(route(application, request).value)
           events.collectFirst {
             case event =>
               event.getLevel.levelStr mustBe "ERROR"
-              event.getMessage mustEqual "Failed to set value in session repository while attempting set on secondaryWarehouseDetails"
+              event.getMessage mustEqual "Failed to set value in session repository while attempting set on askSecondaryWarehouseInReturn"
           }.getOrElse(fail("No logging captured"))
         }
       }

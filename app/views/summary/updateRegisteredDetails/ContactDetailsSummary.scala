@@ -17,9 +17,8 @@
 package views.summary.updateRegisteredDetails
 
 import controllers.updateRegisteredDetails.routes
+import models.NormalMode
 import models.updateRegisteredDetails.UpdateContactDetails
-import models.{CheckMode, Contact, NormalMode, UserAnswers}
-import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
