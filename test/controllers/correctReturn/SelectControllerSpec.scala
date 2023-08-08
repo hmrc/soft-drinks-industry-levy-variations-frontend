@@ -14,278 +14,329 @@
  * limitations under the License.
  */
 
-///*
-// * Copyright 2023 HM Revenue & Customs
-// *
-// * Licensed under the Apache License, Version 2.0 (the "License");
-// * you may not use this file except in compliance with the License.
-// * You may obtain a copy of the License at
-// *
-// *     http://www.apache.org/licenses/LICENSE-2.0
-// *
-// * Unless required by applicable law or agreed to in writing, software
-// * distributed under the License is distributed on an "AS IS" BASIS,
-// * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// * See the License for the specific language governing permissions and
-// * limitations under the License.
-// */
-//
-//package controllers.correctReturn
-//
-//import base.SpecBase
-//import connectors.SoftDrinksIndustryLevyConnector
-//import errors.SessionDatabaseInsertError
-//import forms.correctReturn.SelectFormProvider
-//import models.NormalMode
-//import models.SelectChange.CorrectReturn
-//import navigation._
-//import org.jsoup.Jsoup
-//import org.mockito.ArgumentMatchers.{any, anyString}
-//import org.mockito.Mockito.when
-//import org.scalatestplus.mockito.MockitoSugar
-//import pages.correctReturn.SelectPage
-//import play.api.inject.bind
-//import play.api.libs.json.Json
-//import play.api.mvc.Call
-//import play.api.test.FakeRequest
-//import play.api.test.Helpers._
-//import services.SessionService
-//import utilities.GenericLogger
-//import views.html.correctReturn.SelectView
-//
-//import scala.concurrent.Future
-//class SelectControllerSpec extends SpecBase with MockitoSugar {
-//
-//  def onwardRoute = Call("GET", "/foo")
-//
-//  lazy val selectRoute: String = routes.SelectController.onPageLoad(NormalMode).url
-//
-//  val formProvider = new SelectFormProvider()
-//  val form = formProvider()
-//  val returnsList = List(returnPeriodList)
-//  val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
-//  val controller = application.injector.instanceOf[SelectController]
-//
-//  "Select Controller" - {
-//
-//    "must return OK and the correct view for a GET" in {
-//
-//      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).overrides(
-//        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
-//      ).build()
-//
-//      running(application) {
-//        val request = FakeRequest(GET, selectRoute)
-//        when(mockSdilConnector.retrieveSubscription(any, anyString())(any())).thenReturn {
-//          Future.successful(Some(aSubscription))
-//        }
-//
-//        when(mockSdilConnector.returnsVariable(any(), any())(any())).thenReturn {
-//          createSuccessVariationResult(returnPeriodList)
-//        }
-//
-//        val result = route(application, request).value
-//
-//        val view = application.injector.instanceOf[SelectView]
-//
-//
-//        status(result) mustEqual OK
-//        contentAsString(result) mustEqual view(form, NormalMode, controller.seperateReturnYears(returnPeriodList))(request, messages(application)).toString
-//      }
-//    }
-//
-//    "must redirect When returns is empty for GET" in {
-//
-//
-//      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).overrides(
-//        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
-//      ).build()
-//
-//      running(application) {
-//
-//        when(mockSdilConnector.retrieveSubscription(any, anyString())(any())).thenReturn {
-//          Future.successful(Some(aSubscription))
-//        }
-//
-//        when(mockSdilConnector.returnsVariable(any(), any())(any())).thenReturn {
-//          createSuccessVariationResult(List.empty)
-//        }
-//
-//        val request = FakeRequest(GET, selectRoute)
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual SEE_OTHER
-//
-//      }
-//    }
-//
-//    "must populate the view correctly on a GET when the question has previously been answered" in {
-//
-//      val userAnswers = emptyUserAnswersForCorrectReturn
-//      .set(SelectPage, returnPeriodList.head).success.value
-//
-//      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-//        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
-//      ).build()
-//
-//      running(application) {
-//        val request = FakeRequest(GET, selectRoute)
-//
-//        when(mockSdilConnector.retrieveSubscription(any, anyString())(any())).thenReturn {
-//          Future.successful(Some(aSubscription))
-//        }
-//
-//        when(mockSdilConnector.returnsVariable(any(), any())(any())).thenReturn {
-//          createSuccessVariationResult(returnPeriodList)
-//        }
-//
-//        val view = application.injector.instanceOf[SelectView]
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual OK
-//        contentAsString(result) mustEqual view(form.fill(returnPeriodList.head), NormalMode, controller.seperateReturnYears(returnPeriodList))(request, messages(application)).toString
-//      }
-//    }
-//
-//    "must redirect to the next page when valid data is submitted" in {
-//
-//      val mockSessionService = mock[SessionService]
-//
-//      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
-//
-//      when(mockSdilConnector.returnsVariable(any(), any())(any())).thenReturn {
-//        createSuccessVariationResult(returnPeriodList)
-//      }
-//
-//
-//      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).overrides(
-//        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector),
-//        bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn (onwardRoute)),
-//        bind[SessionService].toInstance(mockSessionService)
-//      ).build()
-//
-//      running(application) {
-//        val request =
-//          FakeRequest(POST, selectRoute
-//        )
-//        .withFormUrlEncodedBody(("value", Json.toJson(returnPeriodList.head).toString))
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual SEE_OTHER
-//        redirectLocation(result).value mustEqual onwardRoute.url
-//      }
-//    }
-//
-//    "must redirect to the index page when no returns are found when submitted" in {
-//
-//      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).overrides(
-//        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
-//      ).build()
-//
-//      running(application) {
-//        val request = FakeRequest(POST, selectRoute).withFormUrlEncodedBody(("value", "invalid value"))
-//
-//        when(mockSdilConnector.retrieveSubscription(any, anyString())(any())).thenReturn {
-//          Future.successful(Some(aSubscription))
-//        }
-//
-//        when(mockSdilConnector.returnsVariable(any(), any())(any())).thenReturn {
-//          createSuccessVariationResult(List.empty)
-//        }
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual SEE_OTHER
-//
-//      }
-//    }
-//
-//    "must return a Bad Request and errors when invalid data is submitted" in {
-//
-//      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).overrides(
-//        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
-//      ).build()
-//
-//      running(application) {
-//        val request = FakeRequest(POST, selectRoute).withFormUrlEncodedBody(("value", "invalid value"))
-//
-//        when(mockSdilConnector.retrieveSubscription(any, anyString())(any())).thenReturn {
-//          Future.successful(Some(aSubscription))
-//        }
-//
-//        when(mockSdilConnector.returnsVariable(any(), any())(any())).thenReturn {
-//          createSuccessVariationResult(returnPeriodList)
-//        }
-//
-//        val boundForm = form.bind(Map("value" -> "invalid value"))
-//
-//        val view = application.injector.instanceOf[SelectView]
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual BAD_REQUEST
-//        contentAsString(result) mustEqual view(boundForm, NormalMode, controller.seperateReturnYears(returnPeriodList))(request, messages(application)).toString
-//      }
-//    }
-//
-//
-//    testInvalidJourneyType(CorrectReturn, selectRoute)
-//    testNoUserAnswersError(selectRoute)
-//
-//    "must fail if the setting of userAnswers fails" in {
-//
-//      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CorrectReturn))) .overrides(
-//        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector),
-//        bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn (onwardRoute))
-//      )
-//        .build()
-//
-//      running(application) {
-//        val request =
-//          FakeRequest(POST, selectRoute
-//        )
-//        .withFormUrlEncodedBody(("value", Json.toJson(returnPeriodList.head).toString))
-//
-//        val result = route(application, request).value
-//
-//        status(result) mustEqual INTERNAL_SERVER_ERROR
-//        val page = Jsoup.parse(contentAsString(result))
-//        page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - Soft Drinks Industry Levy - GOV.UK"
-//      }
-//    }
-//    "should log an error message when internal server error is returned when user answers are not set in session repository" in {
-//      val mockSessionService = mock[SessionService]
-//
-//      when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
-//
-//      val application =
-//        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
-//          .overrides(
-//            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector),
-//            bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn (onwardRoute)),
-//            bind[SessionService].toInstance(mockSessionService)
-//          )
-//          .build()
-//
-//      running(application) {
-//        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
-//          running(application) {
-//            val request = FakeRequest(POST, selectRoute
-//            )
-//            .withFormUrlEncodedBody(("value", Json.toJson(returnPeriodList.head).toString))
-//
-//            await(route(application, request).value)
-//            events.collectFirst {
-//              case event =>
-//                event.getLevel.levelStr mustBe "ERROR"
-//                event.getMessage mustEqual "Failed to set value in session repository while attempting set on select"
-//            }.getOrElse(fail("No logging captured"))
-//          }
-//        }
-//      }
-//    }
-//  }
-//}
+package controllers.correctReturn
+
+import base.SpecBase
+import errors.{NoSdilReturnForPeriod, NoVariableReturns, UnexpectedResponseFromSDIL}
+import forms.correctReturn.SelectFormProvider
+import models.SelectChange.CorrectReturn
+import models.{NormalMode, ReturnPeriod}
+import orchestrators.CorrectReturnOrchestrator
+import org.jsoup.Jsoup
+import org.mockito.Mockito.when
+import org.scalatestplus.mockito.MockitoSugar
+import play.api.data.FormError
+import play.api.inject.bind
+import play.api.mvc.Call
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
+import views.html.correctReturn.SelectView
+class SelectControllerSpec extends SpecBase with MockitoSugar {
+
+  def onwardRoute = Call("GET", "/foo")
+
+  lazy val selectRoute: String = routes.SelectController.onPageLoad.url
+
+  val formProvider = new SelectFormProvider()
+  val form = formProvider()
+  val returnsList = List(returnPeriodList)
+  val mockOrchestrator: CorrectReturnOrchestrator = mock[CorrectReturnOrchestrator]
+  val controller = application.injector.instanceOf[SelectController]
+
+  "Select Controller" - {
+
+    "must return OK and the correct view for a GET" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, selectRoute)
+        when(mockOrchestrator.getReturnPeriods(aSubscription)(hc, ec)).thenReturn {
+          createSuccessVariationResult(returnPeriodList)
+        }
+        val separatedByYearAndSortedReturnPeriods = Map(2022 -> returnPeriodsFor2022, 2020 -> returnPeriodsFor2020)
+
+        when(mockOrchestrator.separateReturnPeriodsByYear(returnPeriodList)).thenReturn(separatedByYearAndSortedReturnPeriods)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[SelectView]
+
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form, separatedByYearAndSortedReturnPeriods)(request, messages(application)).toString
+      }
+    }
+
+    "must populate the view correctly on a GET when the question has previously been answered" in {
+
+      val userAnswers = emptyUserAnswersForCorrectReturn
+      .copy(correctReturnPeriod = Some(returnPeriodList.head))
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, selectRoute)
+        when(mockOrchestrator.getReturnPeriods(aSubscription)(hc, ec)).thenReturn {
+          createSuccessVariationResult(returnPeriodList)
+        }
+
+        val separatedByYearAndSortedReturnPeriods = Map(2022 -> returnPeriodsFor2022, 2020 -> returnPeriodsFor2020)
+
+        when(mockOrchestrator.separateReturnPeriodsByYear(returnPeriodList)).thenReturn(separatedByYearAndSortedReturnPeriods)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[SelectView]
+
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(form.fill(returnPeriodList.head.radioValue), separatedByYearAndSortedReturnPeriods)(request, messages(application)).toString
+      }
+    }
+
+
+    "must redirect to SelectChange page when returns is empty for GET" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+
+        when(mockOrchestrator.getReturnPeriods(aSubscription)(hc, ec)).thenReturn {
+          createFailureVariationResult(NoVariableReturns)
+        }
+
+        val request = FakeRequest(GET, selectRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.SelectChangeController.onPageLoad.url
+
+      }
+    }
+
+    "must render the error page when the backend call get variable returns fails for a GET" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        when(mockOrchestrator.getReturnPeriods(aSubscription)(hc, ec)).thenReturn {
+          createFailureVariationResult(UnexpectedResponseFromSDIL)
+        }
+
+        val request =
+          FakeRequest(GET, selectRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual INTERNAL_SERVER_ERROR
+        val page = Jsoup.parse(contentAsString(result))
+        page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - Soft Drinks Industry Levy - GOV.UK"
+      }
+    }
+
+    "on submit POST" - {
+      "when a valid return period selected and no errors occur" - {
+        "must redirect to own brands for a user who is not a small producer" in {
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).overrides(
+            bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+          ).build()
+
+          running(application) {
+            when(mockOrchestrator.getReturnPeriods(aSubscription)(hc, ec)).thenReturn {
+              createSuccessVariationResult(returnPeriodList)
+            }
+            when(mockOrchestrator.setupUserAnswersForCorrectReturn(aSubscription, emptyUserAnswersForCorrectReturn,
+              returnPeriodList.head)(hc, ec)
+            ).thenReturn {
+              createSuccessVariationResult((): Unit)
+            }
+
+            val request =
+              FakeRequest(POST, selectRoute
+              )
+                .withFormUrlEncodedBody(("value", returnPeriodList.head.radioValue))
+
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustEqual routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
+          }
+        }
+
+        "must redirect to copacker page for a user who is a small producer" in {
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn), Some(subscriptionSmallProducer)).overrides(
+            bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+          ).build()
+
+          running(application) {
+            when(mockOrchestrator.getReturnPeriods(aSubscription)(hc, ec)).thenReturn {
+              createSuccessVariationResult(returnPeriodList)
+            }
+            when(mockOrchestrator.setupUserAnswersForCorrectReturn(subscriptionSmallProducer, emptyUserAnswersForCorrectReturn,
+              returnPeriodList.head)(hc, ec)
+            ).thenReturn {
+              createSuccessVariationResult((): Unit)
+            }
+
+            val request =
+              FakeRequest(POST, selectRoute
+              )
+                .withFormUrlEncodedBody(("value", returnPeriodList.head.radioValue))
+
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustEqual routes.PackagedAsContractPackerController.onPageLoad(NormalMode).url
+          }
+        }
+      }
+    }
+
+    "must return a Bad Request and errors when no return period selected" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn), Some(subscriptionSmallProducer)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        when(mockOrchestrator.getReturnPeriods(aSubscription)(hc, ec)).thenReturn {
+          createSuccessVariationResult(returnPeriodList)
+        }
+
+        val separatedByYearAndSortedReturnPeriods = Map(2022 -> returnPeriodsFor2022, 2020 -> returnPeriodsFor2020)
+
+        when(mockOrchestrator.separateReturnPeriodsByYear(returnPeriodList)).thenReturn(separatedByYearAndSortedReturnPeriods)
+
+        val request =
+          FakeRequest(POST, selectRoute
+          )
+            .withFormUrlEncodedBody(("value", ""))
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[SelectView]
+        val formWithError = form.withError(FormError("value", "correctReturn.select.error.required"))
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(formWithError, separatedByYearAndSortedReturnPeriods)(request, messages(application)).toString
+      }
+    }
+
+    "must return a Bad Request and errors when return period selected is not in variableReturnList" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn), Some(subscriptionSmallProducer)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        when(mockOrchestrator.getReturnPeriods(aSubscription)(hc, ec)).thenReturn {
+          createSuccessVariationResult(returnPeriodList)
+        }
+
+        val separatedByYearAndSortedReturnPeriods = Map(2022 -> returnPeriodsFor2022, 2020 -> returnPeriodsFor2020)
+
+        when(mockOrchestrator.separateReturnPeriodsByYear(returnPeriodList)).thenReturn(separatedByYearAndSortedReturnPeriods)
+
+        val request =
+          FakeRequest(POST, selectRoute
+          )
+            .withFormUrlEncodedBody(("value", ReturnPeriod(2023, 0).radioValue))
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[SelectView]
+        val formWithError = form.withError(FormError("value", "correctReturn.select.error.required"))
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(formWithError, separatedByYearAndSortedReturnPeriods)(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to selectChange when there are no variable returns" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn), Some(subscriptionSmallProducer)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        when(mockOrchestrator.getReturnPeriods(aSubscription)(hc, ec)).thenReturn {
+          createFailureVariationResult(NoVariableReturns)
+        }
+
+        val request =
+          FakeRequest(POST, selectRoute
+          )
+            .withFormUrlEncodedBody(("value", returnPeriodList.head.radioValue))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.SelectChangeController.onPageLoad.url
+      }
+    }
+
+    "must render the error page" - {
+      "when the call to get return periods fails" in {
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).overrides(
+            bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+          ).build()
+
+          running(application) {
+            when(mockOrchestrator.getReturnPeriods(aSubscription)(hc, ec)).thenReturn {
+              createFailureVariationResult(UnexpectedResponseFromSDIL)
+            }
+
+            val request =
+              FakeRequest(POST, selectRoute
+              )
+                .withFormUrlEncodedBody(("value", returnPeriodList.head.radioValue))
+
+            val result = route(application, request).value
+
+            status(result) mustEqual INTERNAL_SERVER_ERROR
+            val page = Jsoup.parse(contentAsString(result))
+            page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - Soft Drinks Industry Levy - GOV.UK"
+          }
+        }
+
+      "when no sdilReturn was found for the selected variable return" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+        ).build()
+
+        running(application) {
+          when(mockOrchestrator.getReturnPeriods(aSubscription)(hc, ec)).thenReturn {
+            createSuccessVariationResult(returnPeriodList)
+          }
+          when(mockOrchestrator.setupUserAnswersForCorrectReturn(aSubscription, emptyUserAnswersForCorrectReturn,
+            returnPeriodList.head)(hc, ec)
+          ).thenReturn {
+            createFailureVariationResult(NoSdilReturnForPeriod)
+          }
+
+          val request =
+            FakeRequest(POST, selectRoute
+            )
+              .withFormUrlEncodedBody(("value", returnPeriodList.head.radioValue))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual INTERNAL_SERVER_ERROR
+          val page = Jsoup.parse(contentAsString(result))
+          page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - Soft Drinks Industry Levy - GOV.UK"
+        }
+      }
+    }
+
+    testInvalidJourneyType(CorrectReturn, selectRoute)
+    testNoUserAnswersError(selectRoute)
+  }
+}

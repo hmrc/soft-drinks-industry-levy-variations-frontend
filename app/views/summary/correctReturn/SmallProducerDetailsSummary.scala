@@ -22,7 +22,7 @@ import pages.QuestionPage
 import pages.correctReturn.SmallProducerDetailsPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
@@ -44,8 +44,8 @@ object SmallProducerDetailsSummary extends SummaryListRowLitresHelper {
     val rows = smallProducersList.map {
       smallProducer =>
         val value = ValueViewModel(
-          HtmlContent(
-            HtmlFormat.escape(smallProducer.alias)
+          Text(
+            smallProducer.alias
           )
         )
 

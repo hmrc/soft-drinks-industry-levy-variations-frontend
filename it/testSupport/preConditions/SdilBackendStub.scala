@@ -35,12 +35,12 @@ case class SdilBackendStub()
     builder
   }
 
-  def returns_variable(utr: String) = {
+  def returns_variable(utr: String, returnPeriods: List[ReturnPeriod] = returnPeriodList) = {
     stubFor(
       get(
         urlPathMatching(s"/returns/$utr/variable"))
         .willReturn(
-          ok(Json.toJson(returnPeriodList).toString())))
+          ok(Json.toJson(returnPeriods).toString())))
     builder
   }
 
@@ -62,12 +62,12 @@ case class SdilBackendStub()
     builder
   }
 
-  def retrieveSubscription(identifier: String, refNum: String) = {
+  def retrieveSubscription(identifier: String, refNum: String, subscription: RetrievedSubscription = aSubscription) = {
     stubFor(
       get(
         urlPathMatching(s"/subscription/$identifier/$refNum"))
         .willReturn(
-          ok(Json.toJson(aSubscription).toString())))
+          ok(Json.toJson(subscription).toString())))
     builder
   }
 
@@ -103,6 +103,22 @@ case class SdilBackendStub()
       get(
         urlPathMatching(s"/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"))
         .willReturn(ok(Json.toJson(smallProducerStatus).toString())))
+    builder
+  }
+
+  def checkSmallProducerStatusNone(sdilRef: String, period: ReturnPeriod): PreconditionBuilder = {
+    stubFor(
+      get(
+        urlPathMatching(s"/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"))
+        .willReturn(notFound()))
+    builder
+  }
+
+  def checkSmallProducerStatusError(sdilRef: String, period: ReturnPeriod): PreconditionBuilder = {
+    stubFor(
+      get(
+        urlPathMatching(s"/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"))
+        .willReturn(serverError()))
     builder
   }
 

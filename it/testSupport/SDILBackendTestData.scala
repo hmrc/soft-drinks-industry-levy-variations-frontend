@@ -47,10 +47,27 @@ object SDILBackendTestData {
     deregDate = None
   )
 
+  val subscriptionSmallProducer = RetrievedSubscription(
+    utr = "0000001611",
+    sdilRef = "XKSDIL000000022",
+    orgName = "Super Lemonade Plc",
+    address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
+    activity = RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = false),
+    liabilityDate = LocalDate.of(2018, 4, 19),
+    productionSites = List(),
+    warehouseSites = List(),
+    contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
+    deregDate = None
+  )
+
   val submittedDateTime = LocalDateTime.of(2023, 1, 1, 11, 0)
 
   val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0), submittedOn = Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
 
+  val literage = (200L, 100L)
+  val smallProducer1 = SmallProducer("test 1", "XKSDIL000000024", literage)
+  val smallProducer2 = SmallProducer("test 2", "XKSDIL000000025", literage)
+  val smallProducerList = List(smallProducer1, smallProducer2)
 
   def currentReturnPeriod = ReturnPeriod(LocalDate.now)
 

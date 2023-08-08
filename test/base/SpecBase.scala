@@ -289,6 +289,19 @@ trait SpecBase
     deregDate = None
   )
 
+  val subscriptionSmallProducer = RetrievedSubscription(
+    utr = "0000001611",
+    sdilRef = "XKSDIL000000022",
+    orgName = "Super Lemonade Plc",
+    address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
+    activity = RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = false),
+    liabilityDate = LocalDate.of(2018, 4, 19),
+    productionSites = List(),
+    warehouseSites = List(),
+    contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
+    deregDate = None
+  )
+
   val producerName = "Super Cola Plc"
   val sdilReference = "XCSDIL000000069"
   val producerNameParty = "Soft Juice"

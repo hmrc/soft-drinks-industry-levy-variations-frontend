@@ -105,7 +105,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
       val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(true))
+      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn createSuccessVariationResult(Some(true))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod.head))))
@@ -214,7 +214,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when data with small producer status false is submitted" in {
       val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn Future.successful(Some(false))
+      when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn createSuccessVariationResult(Some(false))
       val smallProducerList: List[SmallProducer] = List(SmallProducer("MY SMALL PRODUCER", "XCSDIL000456789", (1L, 2L)))
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducerList, correctReturnPeriod = Some(returnPeriod.head))
       )).overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()

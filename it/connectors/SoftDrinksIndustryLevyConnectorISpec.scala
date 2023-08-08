@@ -2,14 +2,14 @@ package connectors
 
 import cats.data.EitherT
 import errors.{UnexpectedResponseFromSDIL, VariationsErrors}
-import models.{FinancialLineItem, OptPreviousSubmittedReturn, OptRetrievedSubscription, ReturnPeriod}
+import models.{FinancialLineItem, OptPreviousSubmittedReturn, OptRetrievedSubscription, OptSmallProducer, ReturnPeriod}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import repositories.SDILSessionKeys
 import testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import uk.gov.hmrc.http.HeaderCarrier
 import testSupport.SDILBackendTestData._
 
-class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfiguration with ITCoreTestData{
+class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfiguration with ITCoreTestData {
 
   val sdilConnector = app.injector.instanceOf[SoftDrinksIndustryLevyConnector]
   implicit val hc = new HeaderCarrier()
@@ -441,6 +441,114 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
 
           whenReady(res.value) { result =>
             result mustBe Right(allFinicialItems)
+          }
+        }
+      }
+    }
+  }
+
+  "checkSmallProducerStatus" - {
+    "when the cache doesn't contain the result for the given utr and period" - {
+      "should call the backend" - {
+        "and return true" - {
+          "when the backend call returns true" in {
+            given
+              .sdilBackend
+              .checkSmallProducerStatus(aSubscription.sdilRef, returnPeriods.head, true)
+
+            val res = sdilConnector.checkSmallProducerStatus(aSubscription.sdilRef, returnPeriods.head)
+
+            whenReady(res.value) { result =>
+              result mustBe Right(Some(true))
+            }
+          }
+        }
+
+        "and return false" - {
+          "when the backend call returns false" in {
+            given
+              .sdilBackend
+              .checkSmallProducerStatus(aSubscription.sdilRef, returnPeriods.head, false)
+
+            val res = sdilConnector.checkSmallProducerStatus(aSubscription.sdilRef, returnPeriods.head)
+
+            whenReady(res.value) { result =>
+              result mustBe Right(Some(false))
+            }
+          }
+        }
+
+
+        "and return None" - {
+          "when the backend call returns 404" in {
+            given
+              .sdilBackend
+              .checkSmallProducerStatusNone(aSubscription.sdilRef, returnPeriods.head)
+
+            val res = sdilConnector.checkSmallProducerStatus(aSubscription.sdilRef, returnPeriods.head)
+
+            whenReady(res.value) { result =>
+              result mustBe Right(None)
+            }
+          }
+        }
+
+        "and return UnexpectedResponseFromSDIL error" - {
+          "when the backend call fails" in {
+            given
+              .sdilBackend
+              .checkSmallProducerStatusError(aSubscription.sdilRef, returnPeriods.head)
+
+            val res = sdilConnector.checkSmallProducerStatus(aSubscription.sdilRef, returnPeriods.head)
+
+            whenReady(res.value) { result =>
+              result mustBe Left(UnexpectedResponseFromSDIL)
+            }
+          }
+        }
+      }
+    }
+
+    "when the cache contains the result for the given utr and period" - {
+      "and return true" - {
+        "when the cache returns true" in {
+          val res = for {
+            _ <- EitherT.right[VariationsErrors](sdilSessionCache.save[OptSmallProducer](SDIL_REF,
+              SDILSessionKeys.smallProducerForPeriod(returnPeriods.head), OptSmallProducer(Some(true))))
+            result <- sdilConnector.checkSmallProducerStatus(aSubscription.sdilRef, returnPeriods.head)
+          } yield result
+
+          whenReady(res.value) { result =>
+            result mustBe Right(Some(true))
+          }
+        }
+      }
+
+      "and return false" - {
+        "when the cache returns false" in {
+          val res = for {
+            _ <- EitherT.right[VariationsErrors](sdilSessionCache.save[OptSmallProducer](SDIL_REF,
+              SDILSessionKeys.smallProducerForPeriod(returnPeriods.head), OptSmallProducer(Some(false))))
+            result <- sdilConnector.checkSmallProducerStatus(aSubscription.sdilRef, returnPeriods.head)
+          } yield result
+
+          whenReady(res.value) { result =>
+            result mustBe Right(Some(false))
+          }
+        }
+      }
+
+
+      "and return None" - {
+        "when the cache returns None" in {
+          val res = for {
+            _ <- EitherT.right[VariationsErrors](sdilSessionCache.save[OptSmallProducer](SDIL_REF,
+              SDILSessionKeys.smallProducerForPeriod(returnPeriods.head), OptSmallProducer(None)))
+            result <- sdilConnector.checkSmallProducerStatus(aSubscription.sdilRef, returnPeriods.head)
+          } yield result
+
+          whenReady(res.value) { result =>
+            result mustBe Right(None)
           }
         }
       }

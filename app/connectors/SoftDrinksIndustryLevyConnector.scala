@@ -61,16 +61,22 @@ class SoftDrinksIndustryLevyConnector @Inject()(
 
   private def smallProducerUrl(sdilRef:String, period:ReturnPeriod):String = s"$sdilUrl/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"
 
-  def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod)(implicit hc: HeaderCarrier): Future[Option[Boolean]] =
+  def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod)(implicit hc: HeaderCarrier): VariationResult[Option[Boolean]] = EitherT {
     sdilSessionCache.fetchEntry[OptSmallProducer](sdilRef, SDILSessionKeys.smallProducerForPeriod(period)).flatMap {
-      case Some(optSP) => Future.successful(optSP.optSmallProducer)
+      case Some(optSP) => Future.successful(Right(optSP.optSmallProducer))
       case None =>
         http.GET[Option[Boolean]](smallProducerUrl(sdilRef, period)).flatMap {
           optSP =>
             sdilSessionCache.save(sdilRef, SDILSessionKeys.smallProducerForPeriod(period), OptSmallProducer(optSP))
-              .map { _ => optSP }
+              .map { _ => Right(optSP)
+              }
+        }.recover {
+          case _ => genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][checkSmallProducerStatus] - unexpected response for $sdilRef")
+            Left(UnexpectedResponseFromSDIL)
         }
     }
+  }
+
   def balance(
                sdilRef: String,
                withAssessment: Boolean
@@ -157,11 +163,12 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     }
   }
 
-  def updateReturn(utr: String, period: ReturnPeriod, sdilReturn: SdilReturn)(implicit hc: HeaderCarrier): Future[Option[Int]] = {
-    val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
-    http.POST[SdilReturn, HttpResponse](uri, sdilReturn) map {
-      response => Some(response.status)
-    }
-  }
+  //Todo write properly when implementing the code to send updated return
+//  def updateReturn(utr: String, period: ReturnPeriod, sdilReturn: SdilReturn)(implicit hc: HeaderCarrier): Future[Option[Int]] = {
+//    val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
+//    http.POST[SdilReturn, HttpResponse](uri, sdilReturn) map {
+//      response => Some(response.status)
+//    }
+//  }
 
 }

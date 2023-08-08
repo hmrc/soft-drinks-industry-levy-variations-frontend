@@ -43,12 +43,12 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
 
   def setupUserAnswersForCorrectReturn(retrievedSubscription: RetrievedSubscription,
                                        userAnswers: UserAnswers,
-                                       returnPeriod: ReturnPeriod)
+                                       selectedReturnPeriod: ReturnPeriod)
                                       (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = {
 
     for {
-      sdilReturn <- getSdilReturn(retrievedSubscription, returnPeriod)
-      updatedUserAnswers <- generateUserAnswersWithSdilReturn(userAnswers, sdilReturn)
+      sdilReturn <- getSdilReturn(retrievedSubscription, selectedReturnPeriod)
+      updatedUserAnswers <- generateUserAnswersWithSdilReturn(userAnswers, sdilReturn, selectedReturnPeriod)
       _ <- EitherT(sessionService.set(updatedUserAnswers))
     } yield (): Unit
 
@@ -67,20 +67,20 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
   }
 
   private def getSdilReturn(retrievedSubscription: RetrievedSubscription,
-                            returnPeriod: ReturnPeriod)
+                            selectedReturnPeriod: ReturnPeriod)
                            (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[SdilReturn] = EitherT {
-    connector.getReturn(retrievedSubscription.utr, returnPeriod).value.map {
+    connector.getReturn(retrievedSubscription.utr, selectedReturnPeriod).value.map {
       case Right(Some(sdilReturn)) => Right(sdilReturn)
       case Right(_) => Left(NoSdilReturnForPeriod)
       case Left(error) => Left(error)
     }
   }
 
-  private def generateUserAnswersWithSdilReturn(userAnswers: UserAnswers, sdilReturn: SdilReturn)
+  private def generateUserAnswersWithSdilReturn(userAnswers: UserAnswers, sdilReturn: SdilReturn, selectedReturnPeriod: ReturnPeriod)
                                              (implicit ec: ExecutionContext): VariationResult[UserAnswers] = EitherT {
     val correctReturnUAData = CorrectReturnUserAnswersData.fromSdilReturn(sdilReturn)
     Future.fromTry(userAnswers
-      .copy(smallProducerList = sdilReturn.packSmall)
+      .copy(smallProducerList = sdilReturn.packSmall, correctReturnPeriod = Some(selectedReturnPeriod))
       .setCorrectReturnData(correctReturnUAData)
     )
       .map(Right(_))
