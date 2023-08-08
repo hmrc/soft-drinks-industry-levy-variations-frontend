@@ -54,6 +54,7 @@ case class SdilBackendStub()
     ReturnPeriod(2022, 0), ReturnPeriod(2022, 1), ReturnPeriod(2022, 2), ReturnPeriod(2022, 3))
 
   val returnPeriods: List[ReturnPeriod] = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
+  val emptyReturnPeriods: List[ReturnPeriod] = List()
 
   def returns_pending (utr: String) = {
     stubFor(
@@ -64,7 +65,16 @@ case class SdilBackendStub()
     builder
   }
 
-  def no_returns_pending (utr: String) = {
+  def returns_pending_empty(utr: String) = {
+    stubFor(
+      get(
+        urlPathMatching(s"/returns/$utr/pending"))
+        .willReturn(
+          ok(Json.toJson(emptyReturnPeriods).toString())))
+    builder
+  }
+
+  def returns_pending_not_found(utr: String) = {
     stubFor(
       get(
         urlPathMatching(s"/returns/$utr/pending"))

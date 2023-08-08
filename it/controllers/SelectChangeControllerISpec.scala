@@ -126,7 +126,7 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
         "when the user selects to cancel registration and has no returns pending" in {
           given
             .commonPrecondition
-            .sdilBackend.no_returns_pending("0000001611")
+            .sdilBackend.returns_pending_empty("0000001611")
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestPOST(client, baseUrl + route, Json.obj(("value", SelectChange.CancelRegistration.toString)))

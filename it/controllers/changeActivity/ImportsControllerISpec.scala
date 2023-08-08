@@ -398,7 +398,7 @@ class ImportsControllerISpec extends ControllerITTestHelper with LitresISpecHelp
 
         "and redirect to the to suggest de-registration page" - {
           "when not a contract packer, has activity type None and no returns pending" in {
-            given.noReturnPendingPreCondition
+            given.returnPendingNotFoundPreCondition
             setAnswers(emptyUserAnswersForChangeActivity
               .set(ContractPackingPage, false).success.value
               .set(AmountProducedPage, AmountProduced.None).success.value)
@@ -1054,7 +1054,7 @@ class ImportsControllerISpec extends ControllerITTestHelper with LitresISpecHelp
 
               "and redirect to the to suggest de-registration page" - {
                 "when not a contract packer, has activity type None and no returns pending" in {
-                  given.noReturnPendingPreCondition
+                  given.returnPendingNotFoundPreCondition
                   setAnswers(emptyUserAnswersForChangeActivity
                     .set(ContractPackingPage, false).success.value
                     .set(AmountProducedPage, AmountProduced.None).success.value)
