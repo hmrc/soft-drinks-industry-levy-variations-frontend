@@ -43,19 +43,8 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(variationsBaseUrl + request.uri).encodedUrl}"
 
   val basGatewayBaseUrl: String = servicesConfig.baseUrl("bas-gateway")
-  val sdilFrontendBaseUrl: String = servicesConfig.baseUrl("soft-drinks-industry-levy-frontend")
   val sdilBaseUrl: String = servicesConfig.baseUrl("soft-drinks-industry-levy")
-  val routeToAccountFrontend: Boolean = servicesConfig.getBoolean("routeToAccountFrontend")
-  val accountBaseUrl: String = servicesConfig.baseUrl("soft-drinks-industry-levy-account-frontend")
-  val softDrinksIndustryLevyFrontendLink :String  = s"${servicesConfig.baseUrl("soft-drinks-industry-levy-frontend")}/soft-drinks-industry-levy/register/start"
-
-  val sdilHomeUrl: String = {
-    if (routeToAccountFrontend) {
-      s"$accountBaseUrl/soft-drinks-industry-levy-account-frontend/home"
-    } else {
-      softDrinksIndustryLevyFrontendLink
-    }
-  }
+  val sdilHomeUrl: String = servicesConfig.getString("sdilHomeUrl")
 
   val loginUrl: String         = s"$basGatewayBaseUrl/bas-gateway/sign-in"
   val loginContinueUrl: String = sdilHomeUrl
