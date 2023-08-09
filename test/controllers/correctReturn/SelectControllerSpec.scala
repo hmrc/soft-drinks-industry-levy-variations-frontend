@@ -23,6 +23,7 @@ import models.SelectChange.CorrectReturn
 import models.{NormalMode, ReturnPeriod}
 import orchestrators.CorrectReturnOrchestrator
 import org.jsoup.Jsoup
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.FormError
@@ -53,7 +54,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request = FakeRequest(GET, selectRoute)
-        when(mockOrchestrator.getReturnPeriods(aSubscription)(hc, ec)).thenReturn {
+        when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
           createSuccessVariationResult(returnPeriodList)
         }
         val separatedByYearAndSortedReturnPeriods = Map(2022 -> returnPeriodsFor2022, 2020 -> returnPeriodsFor2020)
@@ -81,7 +82,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request = FakeRequest(GET, selectRoute)
-        when(mockOrchestrator.getReturnPeriods(aSubscription)(hc, ec)).thenReturn {
+        when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
           createSuccessVariationResult(returnPeriodList)
         }
 
@@ -108,7 +109,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
 
-        when(mockOrchestrator.getReturnPeriods(aSubscription)(hc, ec)).thenReturn {
+        when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
           createFailureVariationResult(NoVariableReturns)
         }
 
@@ -128,7 +129,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
       ).build()
 
       running(application) {
-        when(mockOrchestrator.getReturnPeriods(aSubscription)(hc, ec)).thenReturn {
+        when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
           createFailureVariationResult(UnexpectedResponseFromSDIL)
         }
 
@@ -151,11 +152,11 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
           ).build()
 
           running(application) {
-            when(mockOrchestrator.getReturnPeriods(aSubscription)(hc, ec)).thenReturn {
+            when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
               createSuccessVariationResult(returnPeriodList)
             }
-            when(mockOrchestrator.setupUserAnswersForCorrectReturn(aSubscription, emptyUserAnswersForCorrectReturn,
-              returnPeriodList.head)(hc, ec)
+            when(mockOrchestrator.setupUserAnswersForCorrectReturn(any(), any(),
+              any())(any(), any())
             ).thenReturn {
               createSuccessVariationResult((): Unit)
             }
@@ -178,11 +179,11 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
           ).build()
 
           running(application) {
-            when(mockOrchestrator.getReturnPeriods(aSubscription)(hc, ec)).thenReturn {
+            when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
               createSuccessVariationResult(returnPeriodList)
             }
-            when(mockOrchestrator.setupUserAnswersForCorrectReturn(subscriptionSmallProducer, emptyUserAnswersForCorrectReturn,
-              returnPeriodList.head)(hc, ec)
+            when(mockOrchestrator.setupUserAnswersForCorrectReturn(any(), any(),
+              any())(any(), any())
             ).thenReturn {
               createSuccessVariationResult((): Unit)
             }
@@ -208,7 +209,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
       ).build()
 
       running(application) {
-        when(mockOrchestrator.getReturnPeriods(aSubscription)(hc, ec)).thenReturn {
+        when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
           createSuccessVariationResult(returnPeriodList)
         }
 
@@ -238,7 +239,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
       ).build()
 
       running(application) {
-        when(mockOrchestrator.getReturnPeriods(aSubscription)(hc, ec)).thenReturn {
+        when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
           createSuccessVariationResult(returnPeriodList)
         }
 
@@ -267,7 +268,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
       ).build()
 
       running(application) {
-        when(mockOrchestrator.getReturnPeriods(aSubscription)(hc, ec)).thenReturn {
+        when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
           createFailureVariationResult(NoVariableReturns)
         }
 
@@ -290,7 +291,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
           ).build()
 
           running(application) {
-            when(mockOrchestrator.getReturnPeriods(aSubscription)(hc, ec)).thenReturn {
+            when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
               createFailureVariationResult(UnexpectedResponseFromSDIL)
             }
 
@@ -313,11 +314,11 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
         ).build()
 
         running(application) {
-          when(mockOrchestrator.getReturnPeriods(aSubscription)(hc, ec)).thenReturn {
+          when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
             createSuccessVariationResult(returnPeriodList)
           }
-          when(mockOrchestrator.setupUserAnswersForCorrectReturn(aSubscription, emptyUserAnswersForCorrectReturn,
-            returnPeriodList.head)(hc, ec)
+          when(mockOrchestrator.setupUserAnswersForCorrectReturn(any(), any(),
+            any())(any(), any())
           ).thenReturn {
             createFailureVariationResult(NoSdilReturnForPeriod)
           }

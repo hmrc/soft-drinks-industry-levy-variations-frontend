@@ -49,7 +49,7 @@ class PackagingSiteDetailsController @Inject()(
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(PackagingSiteDetailsPage) match {
@@ -62,7 +62,7 @@ class PackagingSiteDetailsController @Inject()(
       Ok(view(preparedForm, mode, packagingSites))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
 
       val packagingSites: Map[String, Site] = request.userAnswers.packagingSiteList

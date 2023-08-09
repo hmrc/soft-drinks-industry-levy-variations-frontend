@@ -39,8 +39,6 @@ class FileReturnBeforeDeregController @Inject()(
                                                  errorHandler: ErrorHandler
                                                )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-
-
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration).async {
     implicit request =>
     connector.returnsPending(request.subscription.utr).value.map {

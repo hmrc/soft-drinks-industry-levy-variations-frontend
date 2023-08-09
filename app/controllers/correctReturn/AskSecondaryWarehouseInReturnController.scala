@@ -19,38 +19,38 @@ package controllers.correctReturn
 import utilities.GenericLogger
 import controllers.ControllerHelper
 import controllers.actions._
-import forms.HowManyLitresFormProvider
+import forms.correctReturn.AskSecondaryWarehouseInReturnFormProvider
 import javax.inject.Inject
 import models.Mode
 import models.SelectChange.CorrectReturn
-import pages.correctReturn.HowManyBroughtIntoUKPage
+import pages.correctReturn.AskSecondaryWarehouseInReturnPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
-import views.html.correctReturn.HowManyBroughtIntoUKView
+import views.html.correctReturn.AskSecondaryWarehouseInReturnView
 import handlers.ErrorHandler
-import navigation._
 
 import scala.concurrent.{ExecutionContext, Future}
+import navigation._
 
-class HowManyBroughtIntoUKController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         val sessionService: SessionService,
-                                         val navigator: NavigatorForCorrectReturn,
-                                         controllerActions: ControllerActions,
-                                         formProvider: HowManyLitresFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: HowManyBroughtIntoUKView,
-                                         val genericLogger: GenericLogger,
-                                         val errorHandler: ErrorHandler
-                                 )(implicit ec: ExecutionContext) extends ControllerHelper {
+class AskSecondaryWarehouseInReturnController @Inject()(
+                                       override val messagesApi: MessagesApi,
+                                       val sessionService: SessionService,
+                                       val navigator: NavigatorForCorrectReturn,
+                                       controllerActions: ControllerActions,
+                                       formProvider: AskSecondaryWarehouseInReturnFormProvider,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       view: AskSecondaryWarehouseInReturnView,
+                                       val genericLogger: GenericLogger,
+                                       val errorHandler: ErrorHandler
+                                     )(implicit ec: ExecutionContext) extends ControllerHelper {
 
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
 
-      val preparedForm = request.userAnswers.get(HowManyBroughtIntoUKPage) match {
+      val preparedForm = request.userAnswers.get(AskSecondaryWarehouseInReturnPage) match {
         case None => form
         case Some(value) => form.fill(value)
       }
@@ -66,8 +66,8 @@ class HowManyBroughtIntoUKController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value => {
-          val updatedAnswers = request.userAnswers.set(HowManyBroughtIntoUKPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, HowManyBroughtIntoUKPage, mode)
+          val updatedAnswers = request.userAnswers.set(AskSecondaryWarehouseInReturnPage, value)
+          updateDatabaseAndRedirect(updatedAnswers, AskSecondaryWarehouseInReturnPage, mode)
         }
       )
   }

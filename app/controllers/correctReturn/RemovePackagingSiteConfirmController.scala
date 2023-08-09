@@ -50,7 +50,7 @@ class RemovePackagingSiteConfirmController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
+  def onPageLoad(mode: Mode, index: String): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
       request.userAnswers.packagingSiteList.get(index) match {
         case Some(site) =>
@@ -62,7 +62,7 @@ class RemovePackagingSiteConfirmController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode, index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
+  def onSubmit(mode: Mode, index: String): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
       val packagingSiteToRemove: Option[Site] = request.userAnswers.packagingSiteList.get(index)
       packagingSiteToRemove match {

@@ -91,6 +91,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
 
     case RemovePackagingSiteConfirmPage => _ => defaultCall
     case SecondaryWarehouseDetailsPage => _ => defaultCall
+    case AskSecondaryWarehouseInReturnPage => _ => defaultCall
     case SmallProducerDetailsPage => _ => defaultCall
     case PackagingSiteDetailsPage => _ => defaultCall
     case BroughtIntoUkFromSmallProducersPage => userAnswers => navigationForBroughtIntoUkFromSmallProducers(userAnswers, NormalMode)

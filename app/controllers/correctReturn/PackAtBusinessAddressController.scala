@@ -50,7 +50,7 @@ class PackAtBusinessAddressController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
       val formattedAddress = AddressFormattingHelper.addressFormatting(request.subscription.address, Option(request.subscription.orgName))
       val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
@@ -61,7 +61,7 @@ class PackAtBusinessAddressController @Inject()(
       Ok(view(preparedForm, mode, formattedAddress))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
       val businessName = request.subscription.orgName
       val businessAddress = request.subscription.address

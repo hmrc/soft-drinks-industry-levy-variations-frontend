@@ -75,6 +75,8 @@ object SDILBackendTestData {
     ReturnPeriod(2021, 0), ReturnPeriod(2021, 1), ReturnPeriod(2021, 2), ReturnPeriod(2021, 3),
     ReturnPeriod(2022, 0), ReturnPeriod(2022, 1), ReturnPeriod(2022, 2), ReturnPeriod(2022, 3))
 
+  val emptyReturnPeriods: List[ReturnPeriod] = List()
+
   val returnPeriods: List[ReturnPeriod] = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
   val finincialItemReturnCharge = ReturnCharge(currentReturnPeriod, BigDecimal(123.45))
   val finincialItemReturnChargeInterest = ReturnChargeInterest(localDate, BigDecimal(-12.45))

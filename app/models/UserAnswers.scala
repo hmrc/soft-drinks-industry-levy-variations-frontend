@@ -65,8 +65,10 @@ case class UserAnswers(
     }
   }
 
-  def setCorrectReturnData(correctReturnUserAnswersData: CorrectReturnUserAnswersData)
-                          (implicit writes: Writes[CorrectReturnUserAnswersData]): Try[UserAnswers] = {
+  def setForCorrectReturn(correctReturnUserAnswersData: CorrectReturnUserAnswersData,
+                          smallProducers: List[SmallProducer],
+                          returnPeriod: ReturnPeriod)
+                         (implicit writes: Writes[CorrectReturnUserAnswersData]): Try[UserAnswers] = {
 
     val jsPath = JsPath \ "correctReturn"
 
@@ -79,7 +81,9 @@ case class UserAnswers(
 
     updatedData.flatMap {
       d =>
-        val updatedAnswers = copy(data = d)
+        val updatedAnswers = copy(data = d,
+          smallProducerList = smallProducers,
+          correctReturnPeriod = Some(returnPeriod))
         Success(updatedAnswers)
     }
   }

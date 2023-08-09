@@ -42,7 +42,7 @@ import queries.Settable
 import service.VariationResult
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
 
@@ -116,7 +116,7 @@ trait SpecBase
   implicit lazy val messagesAPI = application.injector.instanceOf[MessagesApi]
   implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
   lazy val mcc = application.injector.instanceOf[MessagesControllerComponents]
-  implicit lazy val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+  implicit val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
   implicit lazy val hc: HeaderCarrier = HeaderCarrier()
   implicit lazy val ec: ExecutionContext = application.injector.instanceOf[ExecutionContext]
 
@@ -131,10 +131,10 @@ trait SpecBase
     super.afterEach()
   }
 
-  val returnPeriodsFor2020 = List(ReturnPeriod(2020, 0), ReturnPeriod(2020, 1), ReturnPeriod(2020, 2), ReturnPeriod(2020, 3))
-  val returnPeriodsFor2022 = List(ReturnPeriod(2022, 0), ReturnPeriod(2022, 1), ReturnPeriod(2022, 2), ReturnPeriod(2022, 3))
+  val returnPeriodsFor2020 = List(ReturnPeriod(2020, 3), ReturnPeriod(2020, 2), ReturnPeriod(2020, 1), ReturnPeriod(2020, 0))
+  val returnPeriodsFor2022 = List(ReturnPeriod(2022, 3), ReturnPeriod(2022, 2), ReturnPeriod(2022, 1), ReturnPeriod(2022, 0))
 
-   val returnPeriodList = returnPeriodsFor2020 ++ returnPeriodsFor2022
+   val returnPeriodList =  returnPeriodsFor2022 ++ returnPeriodsFor2020
 
   val JsonreturnPeriodList = List(Json.toJson(ReturnPeriod(2020, 0)), Json.toJson(ReturnPeriod(2020, 1)),
                                   Json.toJson(ReturnPeriod(2020, 2)), Json.toJson(ReturnPeriod(2020, 3)),
@@ -157,7 +157,7 @@ trait SpecBase
   val emptyUserAnswersForChangeActivity = UserAnswers(sdilNumber, SelectChange.ChangeActivity, contactAddress = contactAddress)
   val warehouseAddedToUserAnswersForChangeActivity: UserAnswers = UserAnswers(userAnswersId, SelectChange.ChangeActivity, warehouseList = Map("1" -> warehouse), contactAddress = contactAddress)
 
-  val emptyUserAnswersForCorrectReturn = UserAnswers(sdilNumber, SelectChange.CorrectReturn, contactAddress = contactAddress)
+  val emptyUserAnswersForCorrectReturn = UserAnswers(sdilNumber, SelectChange.CorrectReturn, contactAddress = contactAddress, correctReturnPeriod = returnPeriodsFor2022.headOption)
 
   val emptyUserAnswersForCancelRegistration = UserAnswers(sdilNumber, SelectChange.CancelRegistration, contactAddress = contactAddress)
 
@@ -315,8 +315,9 @@ trait SpecBase
   val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(-100))
   val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(-200))
   val financialItemList = List(financialItem1, financialItem2)
+  val submittedDateTime = LocalDateTime.of(2023, 1, 1, 11, 0)
 
-  def userDetailsWithSetMethodsReturningFailure(selectChange: SelectChange): UserAnswers = new UserAnswers("sdilId", selectChange, contactAddress = contactAddress) {
+  def userDetailsWithSetMethodsReturningFailure(selectChange: SelectChange): UserAnswers = new UserAnswers("sdilId", selectChange, contactAddress = contactAddress, correctReturnPeriod = if(selectChange == SelectChange.CorrectReturn) {returnPeriod.headOption} else {None}) {
     override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
     override def setAndRemoveLitresIfReq(page: Settable[Boolean], litresPage: Settable[LitresInBands], value: Boolean)(implicit writes: Writes[Boolean]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
   }

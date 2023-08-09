@@ -55,7 +55,7 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
   }
 
   def separateReturnPeriodsByYear(returnPeriods: List[ReturnPeriod]): Map[Int, List[ReturnPeriod]] = {
-    val orderReturnPeriods = returnPeriods.distinct.sortBy(_.start)
+    val orderReturnPeriods = returnPeriods.distinct.sortBy(_.start).reverse
 
     orderReturnPeriods.foldLeft(Map.empty[Int, List[ReturnPeriod]]) {
       (returnPeriodsForYears, returnPeriod) =>
@@ -80,10 +80,8 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
                                              (implicit ec: ExecutionContext): VariationResult[UserAnswers] = EitherT {
     val correctReturnUAData = CorrectReturnUserAnswersData.fromSdilReturn(sdilReturn)
     Future.fromTry(userAnswers
-      .copy(smallProducerList = sdilReturn.packSmall, correctReturnPeriod = Some(selectedReturnPeriod))
-      .setCorrectReturnData(correctReturnUAData)
-    )
-      .map(Right(_))
+      .setForCorrectReturn(correctReturnUAData, sdilReturn.packSmall, selectedReturnPeriod)
+    ).map(Right(_))
       .recover {
         case _ => Left(FailedToAddDataToUserAnswers)
       }

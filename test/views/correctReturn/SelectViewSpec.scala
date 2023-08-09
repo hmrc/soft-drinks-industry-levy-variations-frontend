@@ -18,19 +18,18 @@ package views.correctReturn
 
 import controllers.correctReturn.routes
 import forms.correctReturn.SelectFormProvider
-import models.{CheckMode, NormalMode, ReturnPeriod}
+import models.ReturnPeriod
 import play.api.i18n.Messages
-import play.api.libs.json.Json
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import views.html.correctReturn.SelectView
 import views.ViewSpecHelper
+import views.html.correctReturn.SelectView
 class SelectViewSpec extends ViewSpecHelper {
 
   val view = application.injector.instanceOf[SelectView]
   val formProvider = new SelectFormProvider
   val form = formProvider.apply()
-  val returnsList: Map[Int, List[ReturnPeriod]] = Map(2020 -> returnPeriodsFor2020, 2022 -> returnPeriodsFor2022)
+  val returnsList: Map[Int, List[ReturnPeriod]] = Map(2022 -> returnPeriodsFor2022, 2020 -> returnPeriodsFor2020)
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
