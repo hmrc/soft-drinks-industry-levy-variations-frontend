@@ -172,12 +172,4 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     }
   }
 
-  //Todo write properly when implementing the code to send updated return
-//  def updateReturn(utr: String, period: ReturnPeriod, sdilReturn: SdilReturn)(implicit hc: HeaderCarrier): Future[Option[Int]] = {
-//    val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
-//    http.POST[SdilReturn, HttpResponse](uri, sdilReturn) map {
-//      response => Some(response.status)
-//    }
-//  }
-
 }

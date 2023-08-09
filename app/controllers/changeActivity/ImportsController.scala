@@ -92,7 +92,7 @@ class ImportsController @Inject()(
                                           (implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[AnyContent]) = {
     updateDatabaseWithoutRedirect(updatedAnswers, ImportsPage).flatMap {
       case true =>
-        connector.getPendingReturnsFromCache(utr).value.map {
+        connector.returnsPending(utr).value.map {
           case Right(returns) if returns.nonEmpty =>
             Redirect(controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad())
           case Right(_) =>
