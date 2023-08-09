@@ -57,6 +57,7 @@ object SpecBase {
   )
 
   val userAnswerTwoWarehouses : UserAnswers = UserAnswers(sdilNumber,SelectChange.CorrectReturn, contactAddress = contactAddress, data = Json.obj(), warehouseList = twoWarehouses)
+  val userAnswerTwoWarehousesUpdateRegisteredDetails : UserAnswers = UserAnswers(sdilNumber,SelectChange.UpdateRegisteredDetails, contactAddress = contactAddress, data = Json.obj(), warehouseList = twoWarehouses)
 
   val aSubscription = RetrievedSubscription(
     utr = "0000000022",
