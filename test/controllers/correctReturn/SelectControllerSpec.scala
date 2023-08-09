@@ -48,7 +48,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).overrides(
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None))).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -74,7 +74,6 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = emptyUserAnswersForCorrectReturn
-      .copy(correctReturnPeriod = Some(returnPeriodList.head))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
@@ -96,7 +95,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
 
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(returnPeriodList.head.radioValue), separatedByYearAndSortedReturnPeriods)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(returnPeriodsFor2022.head.radioValue), separatedByYearAndSortedReturnPeriods)(request, messages(application)).toString
       }
     }
 

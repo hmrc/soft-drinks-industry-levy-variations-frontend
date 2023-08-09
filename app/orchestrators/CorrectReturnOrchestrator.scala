@@ -34,7 +34,7 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
 
   def getReturnPeriods(retrievedSubscription: RetrievedSubscription)
                               (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[List[ReturnPeriod]] = EitherT {
-    connector.returnsVariable(retrievedSubscription.utr).value.map{
+    connector.getVariableReturnsFromCache(retrievedSubscription.utr).value.map{
       case Right(returnPeriods) if returnPeriods.nonEmpty => Right(returnPeriods)
       case Right(_) => Left(NoVariableReturns)
       case Left(error) => Left(error)

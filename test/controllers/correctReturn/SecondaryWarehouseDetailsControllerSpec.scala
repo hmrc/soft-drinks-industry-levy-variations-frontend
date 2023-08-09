@@ -17,7 +17,6 @@
 package controllers.correctReturn
 
 import base.SpecBase
-import base.SpecBase.{twoWarehouses, userAnswerTwoWarehouses}
 import forms.correctReturn.SecondaryWarehouseDetailsFormProvider
 import models.{NormalMode, Warehouse}
 import models.SelectChange.CorrectReturn

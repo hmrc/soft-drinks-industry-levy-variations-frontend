@@ -64,7 +64,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
     "must return OK and the correct view for a GET" in {
 
-      val userAnswers: UserAnswers = UserAnswers(sdilNumber,  SelectChange.CorrectReturn, data = userAnswersData, smallProducerList = smallProducerList, contactAddress = contactAddress)
+      val userAnswers: UserAnswers = userAnswersForCorrectReturn(false)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -85,7 +85,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers: UserAnswers = UserAnswers(sdilNumber,  SelectChange.CorrectReturn, data = userAnswersData, smallProducerList = smallProducerList, contactAddress = contactAddress)
+      val userAnswers: UserAnswers = userAnswersForCorrectReturn(false)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers.set(RemoveSmallProducerConfirmPage, true).success.value)).build()
 
@@ -103,7 +103,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val userAnswers: UserAnswers = UserAnswers(sdilNumber,  SelectChange.CorrectReturn, data = userAnswersData, smallProducerList = smallProducerList, contactAddress = contactAddress)
+      val userAnswers: UserAnswers = userAnswersForCorrectReturn(false)
 
       val mockSessionService = mock[SessionService]
 
@@ -131,7 +131,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val userAnswers: UserAnswers = UserAnswers(sdilNumber,  SelectChange.CorrectReturn, data = userAnswersData, smallProducerList = smallProducerList, contactAddress = contactAddress)
+      val userAnswers: UserAnswers = userAnswersForCorrectReturn(false)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -160,7 +160,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
       when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducerList)))
+        applicationBuilder(userAnswers = Some(userAnswersForCorrectReturn(false)))
           .overrides(
             bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn (onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)

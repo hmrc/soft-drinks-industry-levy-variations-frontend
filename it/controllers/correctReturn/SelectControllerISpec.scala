@@ -18,8 +18,8 @@ import java.time.ZoneOffset
 class SelectControllerISpec extends ControllerITTestHelper {
 
   val routePath = "/select"
-  val returnPeriodYears: List[Int] = returnPeriodList.map(_.year).distinct.sorted
-  val sortedReturnPeriods = returnPeriodList.distinct.sortBy(_.start)
+  val returnPeriodYears: List[Int] = returnPeriodList.map(_.year).distinct.sorted.reverse
+  val sortedReturnPeriods = returnPeriodList.distinct.sortBy(_.start).reverse
 
   def expectedText(returnPeriod: ReturnPeriod) = returnPeriod.quarter match {
     case 0 => s"January to March $year"
@@ -48,6 +48,8 @@ class SelectControllerISpec extends ControllerITTestHelper {
     expectedCorrectReturnDataForPopulatedReturn
   }
 
+  val userAnswersNoReturnPeriod = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None)
+
 
 
   "GET " + routePath - {
@@ -58,7 +60,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
             .commonPrecondition
             .sdilBackend.returns_variable(UTR)
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
+          setAnswers(userAnswersNoReturnPeriod)
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, correctReturnBaseUrl + routePath)
@@ -89,7 +91,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
             .commonPrecondition
             .sdilBackend.returns_variable(UTR, returnsPeriodWithRepeats)
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
+          setAnswers(userAnswersNoReturnPeriod)
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, correctReturnBaseUrl + routePath)
@@ -122,7 +124,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
               .commonPrecondition
               .sdilBackend.returns_variable(UTR)
 
-            val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(selectedReturnPeriod))
+            val userAnswers = userAnswersNoReturnPeriod.copy(correctReturnPeriod = Some(selectedReturnPeriod))
 
             setAnswers(userAnswers)
 
@@ -158,7 +160,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
           .commonPrecondition
           .sdilBackend.no_returns_variable(UTR)
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setAnswers(userAnswersNoReturnPeriod)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + routePath)
@@ -177,7 +179,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
           .commonPrecondition
           .sdilBackend.returns_variable_error(UTR)
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setAnswers(userAnswersNoReturnPeriod)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + routePath)
@@ -208,7 +210,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
                   .sdilBackend.returns_variable(UTR)
                   .sdilBackend.retrieveReturn(UTR, returnPeriod, Some(sdilReturn))
 
-                setAnswers(emptyUserAnswersForCorrectReturn)
+                setAnswers(userAnswersNoReturnPeriod)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
                     client, correctReturnBaseUrl + routePath, Json.obj("value" -> returnPeriod.radioValue)
@@ -236,7 +238,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
                   .sdilBackend.returns_variable(UTR)
                   .sdilBackend.retrieveReturn(UTR, returnPeriod, Some(sdilReturn))
 
-                val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod))
+                val userAnswers = userAnswersNoReturnPeriod.copy(correctReturnPeriod = Some(returnPeriod))
 
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
@@ -268,7 +270,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
                   .sdilBackend.returns_variable(UTR)
                   .sdilBackend.retrieveReturn(UTR, returnPeriod, Some(sdilReturn))
 
-                setAnswers(emptyUserAnswersForCorrectReturn)
+                setAnswers(userAnswersNoReturnPeriod)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
                     client, correctReturnBaseUrl + routePath, Json.obj("value" -> returnPeriod.radioValue)
@@ -296,7 +298,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
                   .sdilBackend.returns_variable(UTR)
                   .sdilBackend.retrieveReturn(UTR, returnPeriod, Some(sdilReturn))
 
-                val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod))
+                val userAnswers = userAnswersNoReturnPeriod.copy(correctReturnPeriod = Some(returnPeriod))
 
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
@@ -331,7 +333,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
           .commonPrecondition
           .sdilBackend.returns_variable(UTR)
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setAnswers(userAnswersNoReturnPeriod)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, correctReturnBaseUrl + routePath, Json.obj("value" -> "")
@@ -358,7 +360,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
           .commonPrecondition
           .sdilBackend.returns_variable(UTR)
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setAnswers(userAnswersNoReturnPeriod)
         WsTestClient.withClient { client =>
           val diffReturnPeriod = ReturnPeriod(2018, 1)
           val result = createClientRequestPOST(
@@ -386,7 +388,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
           .commonPrecondition
           .sdilBackend.no_returns_variable(UTR)
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setAnswers(userAnswersNoReturnPeriod)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestPOST(
@@ -408,7 +410,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
           .sdilBackend.returns_variable(UTR)
           .sdilBackend.retrieveReturn(UTR, returnPeriodList.head, None)
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setAnswers(userAnswersNoReturnPeriod)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestPOST(
@@ -429,7 +431,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
           .sdilBackend.returns_variable(UTR)
           .sdilBackend.retrieveReturnError(UTR, returnPeriodList.head)
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setAnswers(userAnswersNoReturnPeriod)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestPOST(
@@ -449,7 +451,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
           .commonPrecondition
           .sdilBackend.returns_variable_error(UTR)
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setAnswers(userAnswersNoReturnPeriod)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestPOST(

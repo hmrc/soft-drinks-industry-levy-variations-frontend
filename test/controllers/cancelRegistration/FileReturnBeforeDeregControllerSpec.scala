@@ -42,7 +42,7 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
         inject.bind[SoftDrinksIndustryLevyConnector].toInstance(mockConnector)
       ).build()
 
-      when(mockConnector.returnsPending(any())(any())).thenReturn(createSuccessVariationResult(returnPeriods))
+      when(mockConnector.getPendingReturnsFromCache(any())(any())).thenReturn(createSuccessVariationResult(returnPeriods))
 
       running(application) {
         val request = FakeRequest(GET, fileReturnBeforDeregRoute)
@@ -62,7 +62,7 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
         inject.bind[SoftDrinksIndustryLevyConnector].toInstance(mockConnector)
       ).build()
 
-      when(mockConnector.returnsPending(any())(any())).thenReturn(createSuccessVariationResult(returnPeriod))
+      when(mockConnector.getPendingReturnsFromCache(any())(any())).thenReturn(createSuccessVariationResult(returnPeriod))
 
       running(application) {
         val request = FakeRequest(GET, fileReturnBeforDeregRoute)
@@ -82,7 +82,7 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
         inject.bind[SoftDrinksIndustryLevyConnector].toInstance(mockConnector)
       ).build()
 
-      when(mockConnector.returnsPending(any())(any())).thenReturn(createSuccessVariationResult(List.empty))
+      when(mockConnector.getPendingReturnsFromCache(any())(any())).thenReturn(createSuccessVariationResult(List.empty))
 
       running(application) {
         val request = FakeRequest(GET, fileReturnBeforDeregRoute)

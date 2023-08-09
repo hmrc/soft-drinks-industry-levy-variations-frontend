@@ -1,7 +1,7 @@
 package testSupport
 
 import models.backend.Site
-import models.{SelectChange, UserAnswers, Warehouse}
+import models.{ReturnPeriod, SelectChange, UserAnswers, Warehouse}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import pages.correctReturn._
 import play.api.libs.json.Json
@@ -115,6 +115,8 @@ trait ITCoreTestDataForCorrectReturn extends ITSharedCoreTestData  {
 
   def emptyUserAnswersForCorrectReturn = UserAnswers(sdilNumber, SelectChange.CorrectReturn, Json.obj(),
     packagingSiteList = packagingSitesFromSubscription,
-    contactAddress = ukAddress)
+    contactAddress = ukAddress,
+    correctReturnPeriod = Some(ReturnPeriod(2023, 0))
+  )
 
 }

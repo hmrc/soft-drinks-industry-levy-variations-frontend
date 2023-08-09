@@ -50,7 +50,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
     "must return OK and the correct view for a GET" in {
 
-      val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod.head))
+      val userAnswers = emptyUserAnswersForCorrectReturn
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -65,8 +65,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to Index controller when return period has not been selected" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
+    "must redirect to Select controller when return period has not been selected" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None))).build()
 
       running(application) {
         val request = FakeRequest(GET, addASmallProducerRoute)
@@ -74,15 +74,14 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
+        redirectLocation(result).value mustEqual routes.SelectController.onPageLoad.url
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val smallProducer: AddASmallProducer = AddASmallProducer(Some("PRODUCER"), sdilNumber, 10, 20)
-      val userAnswers = emptyUserAnswersForCorrectReturn
-        .copy(correctReturnPeriod = Some(returnPeriod.head))
+      val userAnswers = userAnswersForCorrectReturn(false)
         .set(AddASmallProducerPage, smallProducer).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -108,7 +107,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn createSuccessVariationResult(Some(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod.head))))
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
       .overrides(
         bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
         bind[SessionService].toInstance(mockSessionService),
@@ -182,14 +181,14 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to the Index controller when valid data without a return period is submitted" in {
+    "must redirect to the select controller when valid data without a return period is submitted" in {
 
       val mockSessionService = mock[SessionService]
 
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None)))
           .overrides(
             bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
@@ -208,7 +207,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
+        redirectLocation(result).value mustEqual routes.SelectController.onPageLoad.url
       }
     }
 
@@ -216,7 +215,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn createSuccessVariationResult(Some(false))
       val smallProducerList: List[SmallProducer] = List(SmallProducer("MY SMALL PRODUCER", "XCSDIL000456789", (1L, 2L)))
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducerList, correctReturnPeriod = Some(returnPeriod.head))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducerList)
       )).overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
 
       running(application) {

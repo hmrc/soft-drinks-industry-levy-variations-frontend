@@ -24,7 +24,6 @@ import controllers.routes
 import errors.VariationsErrors
 import helpers.LoggerHelper
 import models._
-import models.backend.{Site, UkAddress}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -33,7 +32,7 @@ import play.api.http.Status.SEE_OTHER
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.Writes
 import play.api.mvc.{Call, MessagesControllerComponents}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -42,63 +41,8 @@ import queries.Settable
 import service.VariationResult
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.{LocalDate, LocalDateTime}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Try}
-
-object SpecBase {
-  lazy val contactAddress = UkAddress(List("19 Rhes Priordy", "East London"), "E73 2RP")
-
-  val sdilNumber: String = "XKSDIL000000022"
-
-  val twoWarehouses: Map[String,Warehouse] = Map(
-    "1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
-    "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"))
-  )
-
-  val userAnswerTwoWarehouses : UserAnswers = UserAnswers(sdilNumber,SelectChange.CorrectReturn, contactAddress = contactAddress, data = Json.obj(), warehouseList = twoWarehouses)
-
-  val aSubscription = RetrievedSubscription(
-    utr = "0000000022",
-    sdilRef = "XKSDIL000000022",
-    orgName = "Super Lemonade Plc",
-    address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
-    activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = false),
-    liabilityDate = LocalDate.of(2018, 4, 19),
-    productionSites = List(
-      Site(
-        UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-        Some("88"),
-        Some("Wild Lemonade Group"),
-        Some(LocalDate.of(2018, 2, 26))),
-      Site(
-        UkAddress(List("117 Jerusalem Court", "St Albans"), "AL10 3UJ"),
-        Some("87"),
-        Some("Highly Addictive Drinks Plc"),
-        Some(LocalDate.of(2019, 8, 19))),
-      Site(
-        UkAddress(List("87B North Liddle Street", "Guildford"), "GU34 7CM"),
-        Some("94"),
-        Some("Monster Bottle Ltd"),
-        Some(LocalDate.of(2017, 9, 23))),
-      Site(
-        UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"),
-        Some("27"),
-        Some("Super Lemonade Group"),
-        Some(LocalDate.of(2017, 4, 23))),
-      Site(
-        UkAddress(List("105B Godfrey Marchant Grove", "Guildford"), "GU14 8NL"),
-        Some("96"),
-        Some("Star Products Ltd"),
-        Some(LocalDate.of(2017, 2, 11)))
-    ),
-    warehouseSites = List(),
-    contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
-    deregDate = None
-  )
-
-}
-
 trait SpecBase
   extends AnyFreeSpec
     with Matchers
@@ -107,10 +51,8 @@ trait SpecBase
     with ScalaFutures
     with IntegrationPatience
     with BeforeAndAfterEach
-    with LoggerHelper {
-
-  val userAnswersId: String = "id"
-  val sdilNumber: String = "XKSDIL000000022"
+    with LoggerHelper
+    with TestData {
 
   lazy val application = applicationBuilder(userAnswers = None).build()
   implicit lazy val messagesAPI = application.injector.instanceOf[MessagesApi]
@@ -130,38 +72,6 @@ trait SpecBase
     Play.stop(application)
     super.afterEach()
   }
-
-  val returnPeriodsFor2020 = List(ReturnPeriod(2020, 3), ReturnPeriod(2020, 2), ReturnPeriod(2020, 1), ReturnPeriod(2020, 0))
-  val returnPeriodsFor2022 = List(ReturnPeriod(2022, 3), ReturnPeriod(2022, 2), ReturnPeriod(2022, 1), ReturnPeriod(2022, 0))
-
-   val returnPeriodList =  returnPeriodsFor2022 ++ returnPeriodsFor2020
-
-  val JsonreturnPeriodList = List(Json.toJson(ReturnPeriod(2020, 0)), Json.toJson(ReturnPeriod(2020, 1)),
-                                  Json.toJson(ReturnPeriod(2020, 2)), Json.toJson(ReturnPeriod(2020, 3)),
-                                  Json.toJson(ReturnPeriod(2022, 0)), Json.toJson(ReturnPeriod(2022, 1)),
-                                  Json.toJson(ReturnPeriod(2022, 2)), Json.toJson(ReturnPeriod(2022, 3)))
-
-  lazy val warehouse = Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy"),"WR53 7CX"))
-  lazy val packingSite = Site(
-      UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-      Some("88"),
-      Some("Wild Lemonade Group"),
-      Some(LocalDate.of(2018, 2, 26)))
-
-  lazy val packingSiteMap = Map("000001" -> packingSite)
-
-  lazy val contactAddress = UkAddress(List("19 Rhes Priordy", "East London"), "E73 2RP")
-
-  val emptyUserAnswersForUpdateRegisteredDetails: UserAnswers = UserAnswers(userAnswersId, SelectChange.UpdateRegisteredDetails, contactAddress = contactAddress)
-  val warehouseAddedToUserAnswersForUpdateRegisteredDetails: UserAnswers = UserAnswers(userAnswersId, SelectChange.UpdateRegisteredDetails, warehouseList = Map("1" -> warehouse), contactAddress = contactAddress)
-  val emptyUserAnswersForChangeActivity = UserAnswers(sdilNumber, SelectChange.ChangeActivity, contactAddress = contactAddress)
-  val warehouseAddedToUserAnswersForChangeActivity: UserAnswers = UserAnswers(userAnswersId, SelectChange.ChangeActivity, warehouseList = Map("1" -> warehouse), contactAddress = contactAddress)
-
-  val emptyUserAnswersForCorrectReturn = UserAnswers(sdilNumber, SelectChange.CorrectReturn, contactAddress = contactAddress, correctReturnPeriod = returnPeriodsFor2022.headOption)
-
-  val emptyUserAnswersForCancelRegistration = UserAnswers(sdilNumber, SelectChange.CancelRegistration, contactAddress = contactAddress)
-
-  def emptyUserAnswersForSelectChange(selectChange: SelectChange) = UserAnswers(sdilNumber, selectChange, contactAddress = contactAddress)
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())
 
   protected def applicationBuilder(
@@ -250,72 +160,6 @@ trait SpecBase
     }
   }
 
-  val aSubscription = RetrievedSubscription(
-    utr = "0000000022",
-    sdilRef = "XKSDIL000000022",
-    orgName = "Super Lemonade Plc",
-    address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
-    activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = false),
-    liabilityDate = LocalDate.of(2018, 4, 19),
-    productionSites = List(
-      Site(
-        UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-        Some("88"),
-        Some("Wild Lemonade Group"),
-        Some(LocalDate.of(2018, 2, 26))),
-      Site(
-        UkAddress(List("117 Jerusalem Court", "St Albans"), "AL10 3UJ"),
-        Some("87"),
-        Some("Highly Addictive Drinks Plc"),
-        Some(LocalDate.of(2019, 8, 19))),
-      Site(
-        UkAddress(List("87B North Liddle Street", "Guildford"), "GU34 7CM"),
-        Some("94"),
-        Some("Monster Bottle Ltd"),
-        Some(LocalDate.of(2017, 9, 23))),
-      Site(
-        UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"),
-        Some("27"),
-        Some("Super Lemonade Group"),
-        Some(LocalDate.of(2017, 4, 23))),
-      Site(
-        UkAddress(List("105B Godfrey Marchant Grove", "Guildford"), "GU14 8NL"),
-        Some("96"),
-        Some("Star Products Ltd"),
-        Some(LocalDate.of(2017, 2, 11)))
-    ),
-    warehouseSites = List(),
-    contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
-    deregDate = None
-  )
-
-  val subscriptionSmallProducer = RetrievedSubscription(
-    utr = "0000001611",
-    sdilRef = "XKSDIL000000022",
-    orgName = "Super Lemonade Plc",
-    address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
-    activity = RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = false),
-    liabilityDate = LocalDate.of(2018, 4, 19),
-    productionSites = List(),
-    warehouseSites = List(),
-    contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
-    deregDate = None
-  )
-
-  val producerName = "Super Cola Plc"
-  val sdilReference = "XCSDIL000000069"
-  val producerNameParty = "Soft Juice"
-  val sdilReferenceParty = "XMSDIL000000113"
-  val bandMax: Long = 100000000000000L
-  val litres: Long = bandMax - 1
-  val smallProducerList: List[SmallProducer] = List(SmallProducer(producerNameParty, sdilReferenceParty, (litres, litres)))
-
-  val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
-  val returnPeriod = List(ReturnPeriod(2018, 1))
-  val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(-100))
-  val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(-200))
-  val financialItemList = List(financialItem1, financialItem2)
-  val submittedDateTime = LocalDateTime.of(2023, 1, 1, 11, 0)
 
   def userDetailsWithSetMethodsReturningFailure(selectChange: SelectChange): UserAnswers = new UserAnswers("sdilId", selectChange, contactAddress = contactAddress, correctReturnPeriod = if(selectChange == SelectChange.CorrectReturn) {returnPeriod.headOption} else {None}) {
     override def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))

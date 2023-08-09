@@ -63,7 +63,8 @@ class SoftDrinksIndustryLevyConnector @Inject()(
 
   def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod)(implicit hc: HeaderCarrier): VariationResult[Option[Boolean]] = EitherT {
     sdilSessionCache.fetchEntry[OptSmallProducer](sdilRef, SDILSessionKeys.smallProducerForPeriod(period)).flatMap {
-      case Some(optSP) => Future.successful(Right(optSP.optSmallProducer))
+      case Some(optSP) =>
+        Future.successful(Right(optSP.optSmallProducer))
       case None =>
         http.GET[Option[Boolean]](smallProducerUrl(sdilRef, period)).flatMap {
           optSP =>
@@ -135,31 +136,39 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     }
   }
 
-  def returnsVariable(utr: String)(implicit hc: HeaderCarrier): VariationResult[List[ReturnPeriod]] = EitherT {
+  def getVariableReturnsFromCache(utr: String)(implicit hc: HeaderCarrier): VariationResult[List[ReturnPeriod]] = EitherT {
     sdilSessionCache.fetchEntry[List[ReturnPeriod]](utr, SDILSessionKeys.VARIABLE_RETURNS).flatMap {
       case Some(variableReturns) => Future.successful(Right(variableReturns))
       case None =>
-        http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/variable").flatMap { variableReturns =>
-            sdilSessionCache.save(utr, SDILSessionKeys.VARIABLE_RETURNS, variableReturns)
-              .map { _ => Right(variableReturns)
-            }
-        }.recover {
-          case _ => Left(UnexpectedResponseFromSDIL)
+        returnsVariable(utr).value
+    }
+  }
+
+  def returnsVariable(utr: String)(implicit hc: HeaderCarrier): VariationResult[List[ReturnPeriod]] = EitherT {
+    http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/variable").flatMap { variableReturns =>
+        sdilSessionCache.save(utr, SDILSessionKeys.VARIABLE_RETURNS, variableReturns)
+          .map { _ => Right(variableReturns)
         }
+    }.recover {
+      case _ => Left(UnexpectedResponseFromSDIL)
+    }
+  }
+
+  def getPendingReturnsFromCache(utr: String)(implicit hc: HeaderCarrier): VariationResult[List[ReturnPeriod]] = EitherT {
+    sdilSessionCache.fetchEntry[List[ReturnPeriod]](utr, SDILSessionKeys.RETURNS_PENDING).flatMap {
+      case Some(pendingReturns) => Future.successful(Right(pendingReturns))
+      case None =>
+        returnsPending(utr).value
     }
   }
 
   def returnsPending(utr: String)(implicit hc: HeaderCarrier): VariationResult[List[ReturnPeriod]] = EitherT {
-    sdilSessionCache.fetchEntry[List[ReturnPeriod]](utr, SDILSessionKeys.RETURNS_PENDING).flatMap {
-      case Some(variableReturns) => Future.successful(Right(variableReturns))
-      case None =>
-        http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending").flatMap { variableReturns =>
-          sdilSessionCache.save(utr, SDILSessionKeys.RETURNS_PENDING, variableReturns)
-            .map { _ => Right(variableReturns)
-            }
-        }.recover {
-          case _ => Left(UnexpectedResponseFromSDIL)
+    http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending").flatMap { variableReturns =>
+      sdilSessionCache.save(utr, SDILSessionKeys.RETURNS_PENDING, variableReturns)
+        .map { _ => Right(variableReturns)
         }
+    }.recover {
+      case _ => Left(UnexpectedResponseFromSDIL)
     }
   }
 

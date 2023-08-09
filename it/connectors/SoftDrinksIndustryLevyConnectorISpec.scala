@@ -140,7 +140,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
     }
   }
 
-  "returns_pending" - {
+  "getPendingReturnsFromCache" - {
     "when the no pending returns in the cache" - {
       "should call the backend" - {
         "and return None when no pending returns" in {
@@ -148,7 +148,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
             .sdilBackend
             .no_returns_pending(UTR)
 
-          val res = sdilConnector.returnsPending(UTR)
+          val res = sdilConnector.getPendingReturnsFromCache(UTR)
 
           whenReady(res.value) { result =>
             result mustBe Right(List.empty)
@@ -159,7 +159,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
             .sdilBackend
             .returns_pending(UTR)
 
-          val res = sdilConnector.returnsPending(UTR)
+          val res = sdilConnector.getPendingReturnsFromCache(UTR)
 
           whenReady(res.value) { result =>
             result mustBe Right(returnPeriods)
@@ -171,7 +171,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
             .sdilBackend
             .returns_pending_error(UTR)
 
-          val res = sdilConnector.returnsPending(UTR)
+          val res = sdilConnector.getPendingReturnsFromCache(UTR)
 
           whenReady(res.value) { result =>
             result mustBe Left(UnexpectedResponseFromSDIL)
@@ -185,7 +185,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
         "and return None when no pending returns" in {
           val res = for {
             _ <- EitherT.right[VariationsErrors](sdilSessionCache.save(UTR, SDILSessionKeys.RETURNS_PENDING, List.empty[ReturnPeriod]))
-            result <- sdilConnector.returnsPending(UTR)
+            result <- sdilConnector.getPendingReturnsFromCache(UTR)
           } yield result
 
           whenReady(res.value) { result =>
@@ -195,7 +195,73 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
         "and return the list of pending return when exist" in {
           val res = for {
             _ <- EitherT.right[VariationsErrors](sdilSessionCache.save(UTR, SDILSessionKeys.RETURNS_PENDING, returnPeriods))
-            result <- sdilConnector.returnsPending(UTR)
+            result <- sdilConnector.getPendingReturnsFromCache(UTR)
+          } yield result
+
+          whenReady(res.value) { result =>
+            result mustBe Right(returnPeriods)
+          }
+        }
+      }
+    }
+  }
+
+  "getVariableReturnsFromCache" - {
+    "when the no variable returns in the cache" - {
+      "should call the backend" - {
+        "and return None when no pending returns" in {
+          given
+            .sdilBackend
+            .no_returns_variable(UTR)
+
+          val res = sdilConnector.getVariableReturnsFromCache(UTR)
+
+          whenReady(res.value) { result =>
+            result mustBe Right(List.empty)
+          }
+        }
+        "and return the list of variable return when exist" in {
+          given
+            .sdilBackend
+            .returns_variable(UTR)
+
+          val res = sdilConnector.getVariableReturnsFromCache(UTR)
+
+          whenReady(res.value) { result =>
+            result mustBe Right(returnPeriodList)
+          }
+        }
+
+        "and return UnexpectedResponseFromSDIL when the backend returns an unexpectedResponse code" in {
+          given
+            .sdilBackend
+            .returns_variable_error(UTR)
+
+          val res = sdilConnector.getVariableReturnsFromCache(UTR)
+
+          whenReady(res.value) { result =>
+            result mustBe Left(UnexpectedResponseFromSDIL)
+          }
+        }
+      }
+    }
+
+    "when a variable returns record is in the cache" - {
+      "should read the value from the cache" - {
+        "and return None when no pending returns" in {
+          val res = for {
+            _ <- EitherT.right[VariationsErrors](sdilSessionCache.save(UTR, SDILSessionKeys.VARIABLE_RETURNS, List.empty[ReturnPeriod]))
+            result <- sdilConnector.getVariableReturnsFromCache(UTR)
+          } yield result
+
+          whenReady(res.value) { result =>
+            result mustBe Right(List.empty)
+          }
+        }
+        "and return the list of pending return when exist" in {
+          val res = for {
+            _ <- EitherT.right[VariationsErrors](sdilSessionCache.save(UTR, SDILSessionKeys.VARIABLE_RETURNS, returnPeriods))
+            result <- sdilConnector.getVariableReturnsFromCache(UTR)
           } yield result
 
           whenReady(res.value) { result =>

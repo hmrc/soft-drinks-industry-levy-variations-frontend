@@ -18,9 +18,9 @@ package orchestrators
 
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
-import errors.{FailedToAddDataToUserAnswers, NoSdilReturnForPeriod, NoVariableReturns, SessionDatabaseInsertError, UnexpectedResponseFromSDIL}
+import errors._
 import models.correctReturn.CorrectReturnUserAnswersData
-import models.{LitresInBands, ReturnPeriod, SdilReturn, SelectChange, SmallProducer, UserAnswers}
+import models.{ReturnPeriod, SdilReturn, SelectChange, SmallProducer, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -28,7 +28,6 @@ import play.api.libs.json.{JsString, Json, Writes}
 import services.SessionService
 
 import java.time.ZoneOffset
-import scala.collection.immutable.List
 import scala.concurrent.Future
 import scala.util.{Failure, Try}
 
@@ -41,17 +40,6 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
   val populatedReturn = SdilReturn((100, 200), (200, 100),
     smallProducerList, (300, 400), (400, 300), (50, 60), (60, 50),
     submittedOn = Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
-
-  val expectedCorrectReturnDataForNilReturn = CorrectReturnUserAnswersData(false, None, false, None, false, false, None, false, None, false, None, false, None)
-  val expectedCorrectReturnDataForPopulatedReturn = CorrectReturnUserAnswersData(
-    true, Some(LitresInBands(100, 200)),
-    true, Some(LitresInBands(200, 100)),
-    true,
-    true, Some(LitresInBands(300, 400)),
-    true, Some(LitresInBands(400, 300)),
-    true, Some(LitresInBands(50, 60)),
-    true, Some(LitresInBands(60, 50))
-  )
 
   val sdilReturnsExamples = Map("a nilReturn" -> emptyReturn, "not a nilReturn" -> populatedReturn)
 
@@ -66,7 +54,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
   "getReturnPeriods" - {
     "when the call returns variable returnPeriods" - {
       "should return the variable returns" in {
-        when(mockSdilConnector.returnsVariable(aSubscription.utr)(hc)).thenReturn(createSuccessVariationResult(returnPeriodList))
+        when(mockSdilConnector.getVariableReturnsFromCache(aSubscription.utr)(hc)).thenReturn(createSuccessVariationResult(returnPeriodList))
 
         val res = orchestrator.getReturnPeriods(aSubscription)(hc, ec)
 
@@ -78,7 +66,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
 
     "when the call returns no variable returnPeriods" - {
       "should return a NoVariableReturns errors" in {
-        when(mockSdilConnector.returnsVariable(aSubscription.utr)(hc)).thenReturn(createSuccessVariationResult(List()))
+        when(mockSdilConnector.getVariableReturnsFromCache(aSubscription.utr)(hc)).thenReturn(createSuccessVariationResult(List()))
 
         val res = orchestrator.getReturnPeriods(aSubscription)(hc, ec)
 
@@ -90,7 +78,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
 
     "when the call fails for variable returnPeriods" - {
       "should return a UnexpectedResponseFromSDIL errors" in {
-        when(mockSdilConnector.returnsVariable(aSubscription.utr)(hc)).thenReturn(createFailureVariationResult(UnexpectedResponseFromSDIL))
+        when(mockSdilConnector.getVariableReturnsFromCache(aSubscription.utr)(hc)).thenReturn(createFailureVariationResult(UnexpectedResponseFromSDIL))
 
         val res = orchestrator.getReturnPeriods(aSubscription)(hc, ec)
 

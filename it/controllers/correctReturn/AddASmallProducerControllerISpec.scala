@@ -24,17 +24,13 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
   private val validAddASmallProducer = Json.obj("producerName" -> aliasSuperCola, "referenceNumber" -> sdilRefSuperCola, "lowBand" -> litres.toString, "highBand" -> litres.toString)
 
   private val returnPeriod: ReturnPeriod = ReturnPeriod(2018, 1)
-
-  private def userAnswersWithReturnPeriodSet = emptyUserAnswersForCorrectReturn
-    .copy(correctReturnPeriod = Some(returnPeriod))
-
   private def userAnswersWithSmallProducersSet = emptyUserAnswersForCorrectReturn
     .copy(smallProducerList = List(SmallProducer(aliasSuperCola, sdilRefSuperCola, (100, 200))))
 
   def testReturnPeriodNotSetForCorrectReturn(url: String): Unit = {
     "the return period has not been selected" - {
-      "redirect to Index controller" in {
-        setAnswers(emptyUserAnswersForCorrectReturn)
+      "redirect to Select controller" in {
+        setAnswers(emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None))
         given.commonPreconditionChangeSubscription(diffSubscription)
 
         WsTestClient.withClient { client =>
@@ -45,7 +41,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
           whenReady(result1) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION).get mustBe controllers.routes.IndexController.onPageLoad.url
+            res.header(HeaderNames.LOCATION).get mustBe routes.SelectController.onPageLoad.url
           }
         }
       }
@@ -54,7 +50,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
   "GET " + normalRoutePath - {
     "Ask user to input a registered small producer's details" in {
-      val userAnswers = userAnswersWithReturnPeriodSet
+      val userAnswers = emptyUserAnswersForCorrectReturn
       setAnswers(userAnswers)
       given.commonPreconditionChangeSubscription(diffSubscription)
 
@@ -77,7 +73,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
   }
   "GET " + checkRoutePath - {
     "Ask user to input a registered small producer's details" in {
-      val userAnswers = userAnswersWithReturnPeriodSet
+      val userAnswers = emptyUserAnswersForCorrectReturn
       setAnswers(userAnswers)
       given.commonPreconditionChangeSubscription(diffSubscription)
 
@@ -131,11 +127,11 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
     }
 
-    "Redirect to index controller if return period has not been set" in {
+    "Redirect to Select controller if return period has not been set" in {
       given
         .commonPreconditionChangeSubscription(diffSubscription)
 
-      val userAnswers = emptyUserAnswersForCorrectReturn
+      val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None)
       setAnswers(userAnswers)
 
       WsTestClient.withClient { client =>
@@ -149,7 +145,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
         whenReady(result) { res =>
           res.status mustBe 303
-          res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+          res.header(HeaderNames.LOCATION) mustBe Some(routes.SelectController.onPageLoad.url)
           getAnswers(sdilNumber).map(userAnswers => userAnswers.smallProducerList) mustBe Some(List())
         }
 
@@ -162,7 +158,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = false)
 
-      val userAnswers = userAnswersWithReturnPeriodSet
+      val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod))
       setAnswers(userAnswers)
 
       WsTestClient.withClient { client =>
@@ -199,7 +195,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = true)
 
-      val userAnswers = userAnswersWithReturnPeriodSet
+      val userAnswers = emptyUserAnswersForCorrectReturn
       setAnswers(userAnswers)
 
       WsTestClient.withClient { client =>
@@ -257,11 +253,11 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
     }
 
-    "Redirect to index controller if return period has not been set" in {
+    "Redirect to select controller if return period has not been set" in {
       given
         .commonPreconditionChangeSubscription(diffSubscription)
 
-      val userAnswers = emptyUserAnswersForCorrectReturn
+      val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None)
       setAnswers(userAnswers)
 
       WsTestClient.withClient { client =>
@@ -275,7 +271,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
         whenReady(result) { res =>
           res.status mustBe 303
-          res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+          res.header(HeaderNames.LOCATION) mustBe Some(routes.SelectController.onPageLoad.url)
           getAnswers(sdilNumber).map(userAnswers => userAnswers.smallProducerList) mustBe Some(List())
         }
 
@@ -288,7 +284,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = false)
 
-      val userAnswers = userAnswersWithReturnPeriodSet
+      val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod))
       setAnswers(userAnswers)
 
       WsTestClient.withClient { client =>
@@ -325,7 +321,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = true)
 
-      val userAnswers = userAnswersWithReturnPeriodSet
+      val userAnswers = emptyUserAnswersForCorrectReturn
       setAnswers(userAnswers)
 
       WsTestClient.withClient { client =>
