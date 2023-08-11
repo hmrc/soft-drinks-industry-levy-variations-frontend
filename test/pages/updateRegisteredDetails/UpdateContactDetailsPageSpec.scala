@@ -16,17 +16,17 @@
 
 package pages.updateRegisteredDetails
 
-import models.updateRegisteredDetails.UpdateContactDetails
+import models.updateRegisteredDetails.ContactDetails
 import pages.behaviours.PageBehaviours
 
 class UpdateContactDetailsPageSpec extends PageBehaviours {
 
   "UpdateContactDetailsPage" - {
 
-    beRetrievable[UpdateContactDetails](UpdateContactDetailsPage)
+    beRetrievable[ContactDetails](UpdateContactDetailsPage)
 
-    beSettable[UpdateContactDetails](UpdateContactDetailsPage)
+    beSettable[ContactDetails](UpdateContactDetailsPage)
 
-    beRemovable[UpdateContactDetails](UpdateContactDetailsPage)
+    beRemovable[ContactDetails](UpdateContactDetailsPage)
   }
 }

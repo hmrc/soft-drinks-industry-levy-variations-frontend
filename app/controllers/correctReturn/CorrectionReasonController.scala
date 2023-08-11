@@ -49,7 +49,7 @@ class CorrectionReasonController @Inject()(
 
   val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(CorrectionReasonPage) match {
@@ -60,7 +60,7 @@ class CorrectionReasonController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
 
       form.bindFromRequest().fold(

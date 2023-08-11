@@ -20,13 +20,13 @@ trait PreconditionHelpers {
       .sdilBackend.retrieveSubscription("utr","0000001611")
       .sdilBackend.retrieveSubscription("sdil","XKSDIL000000022")
       .sdilBackend.returns_variable("0000001611")
-      .sdilBackend.returns_pending_empty("0000001611")
+      .sdilBackend.no_returns_pending("0000001611")
   }
 
   def commonPreconditionChangeSubscription(retrievedSubscription: RetrievedSubscription): PreconditionBuilder = {
     builder
       .user.isAuthorisedAndEnrolled
-      .sdilBackend.retrieveSubscriptionToModify("utr", "0000001611", retrievedSubscription)
+      .sdilBackend.retrieveSubscription("utr", "0000001611", retrievedSubscription)
       .sdilBackend.returns_pending("0000001611")
   }
 
@@ -36,7 +36,7 @@ trait PreconditionHelpers {
       .sdilBackend.retrieveSubscription("utr", "0000001611")
       .sdilBackend.retrieveSubscription("sdil", "XKSDIL000000022")
       .sdilBackend.returns_variable("0000001611")
-      .sdilBackend.returns_pending_not_found("0000001611")
+      .sdilBackend.no_returns_pending("0000001611")
   }
 
   def unauthorisedPrecondition = {
@@ -59,6 +59,12 @@ trait PreconditionHelpers {
     builder
       .user.isAuthorisedAndEnrolled
       .sdilBackend.checkSmallProducerStatus(sdilRef, period, smallProducerStatus)
+  }
+
+  def smallProducerStatusError(sdilRef: String, period: ReturnPeriod): PreconditionBuilder = {
+    builder
+      .user.isAuthorisedAndEnrolled
+      .sdilBackend.checkSmallProducerStatusError(sdilRef, period)
   }
 
 }

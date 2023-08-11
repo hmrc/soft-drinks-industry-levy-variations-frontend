@@ -63,7 +63,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request = FakeRequest(GET, packAtBusinessAddressRoute)
         when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
-          Future.successful(Some(aSubscription))
+          createSuccessVariationResult(Some(aSubscription))
         }
         val result = route(application, request).value
 
@@ -84,7 +84,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request = FakeRequest(GET, packAtBusinessAddressRoute)
         when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
-          Future.successful(Some(aSubscription))
+          createSuccessVariationResult(Some(aSubscription))
         }
         val view = application.injector.instanceOf[PackAtBusinessAddressView]
 

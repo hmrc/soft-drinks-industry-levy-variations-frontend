@@ -22,7 +22,6 @@ import forms.correctReturn.AddASmallProducerFormProvider
 import models.correctReturn.AddASmallProducer
 import models.{CheckMode, LitresInBands, NormalMode}
 import org.jsoup.nodes.Document
-import pages.correctReturn.SelectPage
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
@@ -46,7 +45,7 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
   val addASmallProducer: AddASmallProducer = AddASmallProducer(Option("PRODUCER"), sdilProducerReference, lowBandValue, highBandValue)
 
   val formProvider = new AddASmallProducerFormProvider()
-  val userAnswers = emptyUserAnswersForCorrectReturn.set(SelectPage, returnPeriod.head).success.value
+  val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod.head))
   val form: Form[AddASmallProducer] = formProvider.apply(userAnswers)
   val formWithHighAndLowBands: Form[AddASmallProducer] = form.fill(addASmallProducer)
   val formWithLowBandOnly: Form[AddASmallProducer] = form.fill(addASmallProducer.copy(highBand = 0))

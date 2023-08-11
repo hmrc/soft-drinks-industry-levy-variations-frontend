@@ -47,7 +47,7 @@ class RemoveSmallProducerConfirmController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode, sdil: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
+  def onPageLoad(mode: Mode, sdil: String): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(RemoveSmallProducerConfirmPage) match {
@@ -66,7 +66,7 @@ class RemoveSmallProducerConfirmController @Inject()(
      }
   }
 
-  def onSubmit(mode: Mode, sdil: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
+  def onSubmit(mode: Mode, sdil: String): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
       val smallProducerName = request.userAnswers.smallProducerList.filter(x => x.sdilRef == sdil).map(producer => producer.alias).head
       form.bindFromRequest().fold(

@@ -1,7 +1,7 @@
 package testSupport
 
 import models.backend.Site
-import models.{SelectChange, UserAnswers, Warehouse}
+import models.{ReturnPeriod, SelectChange, UserAnswers, Warehouse}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import pages.correctReturn._
 import play.api.libs.json.Json
@@ -79,6 +79,13 @@ trait ITCoreTestDataForCorrectReturn extends ITSharedCoreTestData  {
     Map("yes" -> yesSelected, "no" -> noSelected)
     }
 
+  val userAnswersForExceptionsForSmallProducersPage: Map[String, UserAnswers] = {
+    val yesSelected = emptyUserAnswersForCorrectReturn.set(ExemptionsForSmallProducersPage, true).success.value
+    val noSelected = emptyUserAnswersForCorrectReturn.set(ExemptionsForSmallProducersPage, false).success.value
+
+    Map("yes" -> yesSelected, "no" -> noSelected)
+  }
+
   val userAnswersForCorrectReturnBroughtIntoUKPage: Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForCorrectReturn.set(BroughtIntoUKPage, true).success.value
     val noSelected = emptyUserAnswersForCorrectReturn.set(BroughtIntoUKPage, false).success.value
@@ -108,6 +115,8 @@ trait ITCoreTestDataForCorrectReturn extends ITSharedCoreTestData  {
 
   def emptyUserAnswersForCorrectReturn = UserAnswers(sdilNumber, SelectChange.CorrectReturn, Json.obj(),
     packagingSiteList = packagingSitesFromSubscription,
-    contactAddress = ukAddress)
+    contactAddress = ukAddress,
+    correctReturnPeriod = Some(ReturnPeriod(2023, 0))
+  )
 
 }

@@ -68,9 +68,6 @@ trait PageGenerators {
   implicit lazy val arbitraryThirdPartyPackagersPage: Arbitrary[changeActivity.ThirdPartyPackagersPage.type] =
     Arbitrary(changeActivity.ThirdPartyPackagersPage)
 
-  implicit lazy val arbitraryCorrectReturnSelectPage: Arbitrary[correctReturn.SelectPage.type] =
-    Arbitrary(correctReturn.SelectPage)
-
   implicit lazy val arbitraryCorrectReturnAddASmallProducerPage: Arbitrary[correctReturn.AddASmallProducerPage.type] =
     Arbitrary(correctReturn.AddASmallProducerPage)
 

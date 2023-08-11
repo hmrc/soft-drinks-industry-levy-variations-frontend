@@ -14,19 +14,12 @@
  * limitations under the License.
  */
 
-package pages.correctReturn
+package models
 
-import models.correctReturn.ExemptionsForSmallProducers
-import pages.behaviours.PageBehaviours
+import play.api.libs.json.{Format, Json}
 
-class ExemptionsForSmallProducersSpec extends PageBehaviours {
+case class OptPreviousSubmittedReturn(optReturn: Option[SdilReturn])
 
-  "ExemptionsForSmallProducersPage" - {
-
-    beRetrievable[ExemptionsForSmallProducers](ExemptionsForSmallProducersPage)
-
-    beSettable[ExemptionsForSmallProducers](ExemptionsForSmallProducersPage)
-
-    beRemovable[ExemptionsForSmallProducers](ExemptionsForSmallProducersPage)
-  }
+object OptPreviousSubmittedReturn {
+  implicit val format: Format[OptPreviousSubmittedReturn] = Json.format[OptPreviousSubmittedReturn]
 }

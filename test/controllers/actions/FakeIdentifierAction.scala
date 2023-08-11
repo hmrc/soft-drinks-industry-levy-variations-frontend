@@ -16,7 +16,7 @@
 
 package controllers.actions
 
-import base.SpecBase.aSubscription
+import base.TestData
 import models.requests.IdentifierRequest
 import models.{RetrievedSubscription, ReturnPeriod}
 import play.api.mvc._
@@ -25,7 +25,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class FakeIdentifierAction @Inject()(subscription: Option[RetrievedSubscription],
-                                     bodyParsers: BodyParser[AnyContent])  extends IdentifierAction  {
+                                     bodyParsers: BodyParser[AnyContent])  extends IdentifierAction with TestData {
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] =
     block(IdentifierRequest(request, "id", subscription.getOrElse(aSubscription), Some(ReturnPeriod(2023,1))))

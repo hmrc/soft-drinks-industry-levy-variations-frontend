@@ -49,7 +49,7 @@ class SmallProducerDetailsController @Inject()(
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
       val smallProducerList:List[SmallProducer] = request.userAnswers.smallProducerList
       val preparedForm = request.userAnswers.get(SmallProducerDetailsPage) match {
@@ -60,7 +60,7 @@ class SmallProducerDetailsController @Inject()(
       Ok(view(preparedForm, mode, smallProducerList))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
       val smallProducerList:List[SmallProducer] = request.userAnswers.smallProducerList
       form.bindFromRequest().fold(

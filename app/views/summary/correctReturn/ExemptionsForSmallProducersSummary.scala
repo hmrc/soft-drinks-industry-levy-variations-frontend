@@ -17,34 +17,20 @@
 package viewmodels.summary.correctReturn
 
 import controllers.correctReturn.routes
-import models.{CheckMode, UserAnswers}
-import pages.correctReturn.ExemptionsForSmallProducersPage
-import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import models.{CheckMode, LitresInBands}
+import pages.QuestionPage
+import pages.correctReturn.{BroughtIntoUKPage, HowManyBroughtIntoUKPage}
+import views.summary.correctReturn.HowManyBroughtIntoUKSummary
+import views.summary.{ReturnDetailsSummaryListWithLitres, SummaryListRowLitresHelper}
 
-object ExemptionsForSmallProducersSummary  {
+object ExemptionsForSmallProducersSummary extends ReturnDetailsSummaryListWithLitres {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(ExemptionsForSmallProducersPage).map {
-      answer =>
+  override val page: QuestionPage[Boolean] = BroughtIntoUKPage
+  override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyBroughtIntoUKPage)
+  override val summaryLitres: SummaryListRowLitresHelper = HowManyBroughtIntoUKSummary
+  override val key: String = "exemptionsForSmallProducers"
+  override val action: String = routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
+  override val actionId: String = "change-exemptionsForSmallProducers"
+  override val hiddenText: String = "exemptionsForSmallProducers"
 
-        val value = ValueViewModel(
-          HtmlContent(
-            HtmlFormat.escape(messages(s"correctReturn.exemptionsForSmallProducers.$answer"))
-          )
-        )
-
-        SummaryListRowViewModel(
-          key     = "correctReturn.exemptionsForSmallProducers.checkYourAnswersLabel",
-          value   = value,
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("correctReturn.exemptionsForSmallProducers.change.hidden"))
-          )
-        )
-    }
 }

@@ -37,6 +37,7 @@ class ModelEncryptionSpec extends SpecBase {
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")),Some("foo"), Some("foo"),Some(LocalDate.now()))),
         Map("foo" -> Warehouse(Some("foo"),UkAddress(List("foo"),"foo", Some("foo")))),
         UkAddress(List("123 Main Street", "Anytown"), "AB12 C34", alfId = Some("123456")),
+        None,
         false,
         Instant.ofEpochSecond(1))
 
@@ -50,8 +51,8 @@ class ModelEncryptionSpec extends SpecBase {
       Json.parse(encryption.crypto.decrypt(result._6.head._2, userAnswers.id)).as[Warehouse] mustBe userAnswers.warehouseList.head._2
       result._6.head._1 mustBe userAnswers.warehouseList.head._1
       Json.parse(encryption.crypto.decrypt(result._7, userAnswers.id)).as[UkAddress] mustBe userAnswers.contactAddress
-      result._8 mustBe userAnswers.submitted
-      result._9 mustBe userAnswers.lastUpdated
+      result._9 mustBe userAnswers.submitted
+      result._10 mustBe userAnswers.lastUpdated
     }
   }
   "decryptUserAnswers" - {
@@ -62,7 +63,7 @@ class ModelEncryptionSpec extends SpecBase {
         List(SmallProducer("foo", "bar", (1,1))),
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")),Some("foo"), Some("foo"),Some(LocalDate.now()))),
         Map("foo" -> Warehouse(Some("foo"),UkAddress(List("foo"),"foo", Some("foo")))),
-        UkAddress(List("123 Main Street", "Anytown"), "AB12 C34", alfId = Some("123456")),
+        UkAddress(List("123 Main Street", "Anytown"), "AB12 C34", alfId = Some("123456")), Some(ReturnPeriod(2023, 1)),
         false,
         Instant.ofEpochSecond(1))
 
@@ -73,7 +74,7 @@ class ModelEncryptionSpec extends SpecBase {
         encryption.crypto.encrypt(Json.toJson(userAnswers.smallProducerList).toString(), userAnswers.id),
         userAnswers.packagingSiteList.map(site => site._1 -> encryption.crypto.encrypt(Json.toJson(site._2).toString(), userAnswers.id)),
         userAnswers.warehouseList.map(warehouse => warehouse._1 -> encryption.crypto.encrypt(Json.toJson(warehouse._2).toString(), userAnswers.id)),
-        encryption.crypto.encrypt(Json.toJson(userAnswers.contactAddress).toString(), userAnswers.id),
+        encryption.crypto.encrypt(Json.toJson(userAnswers.contactAddress).toString(), userAnswers.id), userAnswers.correctReturnPeriod,
         userAnswers.submitted, userAnswers.lastUpdated
       )
       result mustBe userAnswers

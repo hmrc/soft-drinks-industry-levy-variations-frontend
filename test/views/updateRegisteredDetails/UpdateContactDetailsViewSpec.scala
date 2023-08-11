@@ -18,7 +18,7 @@ package views.updateRegisteredDetails
 
 import controllers.updateRegisteredDetails.routes
 import forms.updateRegisteredDetails.UpdateContactDetailsFormProvider
-import models.updateRegisteredDetails.UpdateContactDetails
+import models.updateRegisteredDetails.ContactDetails
 import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import play.api.i18n.Messages
@@ -46,9 +46,9 @@ class UpdateContactDetailsViewSpec extends ViewSpecHelper {
     val form = "form"
   }
 
-  val Updatecontactdetails: UpdateContactDetails = UpdateContactDetails("Full Name", "job position", "012345678901", "email@test.com")
-  val UpdatecontactdetailsJsObject: collection.Map[String, JsValue] = Json.toJson(Updatecontactdetails).as[JsObject].value
-  val UpdatecontactdetailsMap: Map[String, String] = Map("fullName" -> "Full Name",
+  val contactdetails: ContactDetails = ContactDetails("Full Name", "job position", "012345678901", "email@test.com")
+  val contactdetailsJsObject: collection.Map[String, JsValue] = Json.toJson(contactdetails).as[JsObject].value
+  val contactdetailsMap: Map[String, String] = Map("fullName" -> "Full Name",
     "position" -> "job position",
   "phoneNumber" -> "012345678901",
   "email" -> "email@test.com")
@@ -70,11 +70,11 @@ class UpdateContactDetailsViewSpec extends ViewSpecHelper {
       document.getElementsByClass(Selectors.heading).text() mustEqual Messages("updateRegisteredDetails.updateContactDetails" + ".heading")
     }
 
-    "should contain" + UpdatecontactdetailsMap.size + " questions" in {
-      questionItems.size() mustBe UpdatecontactdetailsMap.size
+    "should contain" + contactdetailsMap.size + " questions" in {
+      questionItems.size() mustBe contactdetailsMap.size
     }
 
-    UpdatecontactdetailsMap.zipWithIndex.foreach { case ((fieldName, fieldValue), index) =>
+    contactdetailsMap.zipWithIndex.foreach { case ((fieldName, fieldValue), index) =>
 
       "when the form is not prepopulated and has no errors" - {
         "should include the expected question fields" - {
@@ -96,7 +96,7 @@ class UpdateContactDetailsViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
       "when in CheckMode" in {
-        val htmlAllSelected = view(form.fill(Updatecontactdetails), CheckMode)(request, messages(application))
+        val htmlAllSelected = view(form.fill(contactdetails), CheckMode)(request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
         documentAllSelected.select(Selectors.form)
@@ -104,7 +104,7 @@ class UpdateContactDetailsViewSpec extends ViewSpecHelper {
       }
 
       "when in NormalMode" in {
-        val htmlAllSelected = view(form.fill(Updatecontactdetails), NormalMode)(request, messages(application))
+        val htmlAllSelected = view(form.fill(contactdetails), NormalMode)(request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
         documentAllSelected.select(Selectors.form)
@@ -113,12 +113,12 @@ class UpdateContactDetailsViewSpec extends ViewSpecHelper {
     }
 
 
-    UpdatecontactdetailsMap.foreach { case (fieldName, fieldValue) =>
-      val fieldWithError: Map[String, String] = UpdatecontactdetailsMap.map{
+    contactdetailsMap.foreach { case (fieldName, fieldValue) =>
+      val fieldWithError: Map[String, String] = contactdetailsMap.map{
         case(k,v) => if(k == fieldName) {(k -> "")} else {(k -> v)}
       }
 
-      val fieldWithFormatError: Map[String, String] = UpdatecontactdetailsMap.map {
+      val fieldWithFormatError: Map[String, String] = contactdetailsMap.map {
         case (k, v) => if (k == fieldName) {
           (k -> "****%%%%%**(())(")
         } else {

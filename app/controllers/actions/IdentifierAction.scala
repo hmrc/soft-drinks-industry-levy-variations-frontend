@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.routes
+import handlers.ErrorHandler
 import models.requests.IdentifierRequest
 import play.api.mvc.Results._
 import play.api.mvc._
@@ -37,7 +38,8 @@ class AuthenticatedIdentifierAction @Inject()(
                                                override val authConnector: AuthConnector,
                                                config: FrontendAppConfig,
                                                val parser: BodyParsers.Default,
-                                               sdilConnector: SoftDrinksIndustryLevyConnector)
+                                               sdilConnector: SoftDrinksIndustryLevyConnector,
+                                               errorHandler: ErrorHandler)
                                              (implicit val executionContext: ExecutionContext) extends IdentifierAction with AuthorisedFunctions with ActionHelpers {
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
@@ -51,24 +53,27 @@ class AuthenticatedIdentifierAction @Inject()(
         case (None, None) =>
           Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
         case (Some(sdil), _) =>
-          sdilConnector.retrieveSubscription(sdil.value, "sdil").flatMap {
-            case Some(sub) => block(IdentifierRequest(request, EnrolmentIdentifier("sdil", sub.sdilRef).value, sub))
-            case None =>
-              //ToDo redirect to current sdilFrontend
-              Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
-          }
-        case (None, Some(utr)) => sdilConnector.retrieveSubscription(utr, "utr").flatMap {
-          case Some(sub) => block(IdentifierRequest(request, EnrolmentIdentifier("sdil", sub.sdilRef).value, sub))
-          case None =>
-            //ToDo redirect to current sdilFrontend
-            Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
-        }
+          getSubscriptionAndGenerateIdentifierRequest(sdil.value, "sdil", request, block)
+        case (None, Some(utr)) => getSubscriptionAndGenerateIdentifierRequest(utr, "utr", request, block)
       }
     } recover {
       case _: NoActiveSession =>
         Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
       case _: AuthorisationException =>
         Redirect(routes.UnauthorisedController.onPageLoad)
+    }
+  }
+
+  private def getSubscriptionAndGenerateIdentifierRequest[A](identifierValue: String,
+                                                             identifierType: String,
+                                                             request: Request[A],
+                                                             block: IdentifierRequest[A] => Future[Result])
+                                                            (implicit hc: HeaderCarrier): Future[Result] = {
+    sdilConnector.retrieveSubscription(identifierValue, identifierType).value.flatMap {
+      case Right(Some(sub)) => block(IdentifierRequest(request, EnrolmentIdentifier("sdil", sub.sdilRef).value, sub))
+      case Right(None) =>
+        Future.successful(Redirect(config.sdilHomeUrl))
+      case Left(_) => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate(request)))
     }
   }
 }

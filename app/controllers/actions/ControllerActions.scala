@@ -19,7 +19,7 @@ package controllers.actions
 import com.google.inject.Inject
 import controllers.routes
 import models.SelectChange
-import models.requests.{DataRequest, OptionalDataRequest}
+import models.requests.{CorrectReturnDataRequest, DataRequest, OptionalDataRequest, RequiredDataRequest}
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionBuilder, ActionRefiner, AnyContent, Result}
 
@@ -36,14 +36,38 @@ class ControllerActions @Inject()(identify: IdentifierAction,
     identify andThen getData andThen journeyDataRequiredAction(journeyType)
   }
 
+  def withCorrectReturnJourneyData[A]: ActionBuilder[CorrectReturnDataRequest, AnyContent] = {
+    identify andThen getData andThen correctReturnDataRequiredAction
+  }
+
+  private def correctReturnDataRequiredAction: ActionRefiner[OptionalDataRequest, CorrectReturnDataRequest] =
+    new ActionRefiner[OptionalDataRequest, CorrectReturnDataRequest] {
+      override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, CorrectReturnDataRequest[A]]] = {
+
+
+        request.userAnswers match {
+          case Some(userAnswers) if userAnswers.journeyType == SelectChange.CorrectReturn =>
+            (userAnswers.correctReturnPeriod) match {
+              case Some(returnPeriod) => Future.successful(
+                Right(CorrectReturnDataRequest(request.request, request.sdilEnrolment,
+                request.subscription, userAnswers, returnPeriod)))
+              case None => Future.successful(Left(Redirect(controllers.correctReturn.routes.SelectController.onPageLoad)))
+            }
+          case _ => Future.successful(Left(Redirect(routes.SelectChangeController.onPageLoad)))
+        }
+      }
+
+      override protected def executionContext: ExecutionContext = ec
+    }
+
   private def journeyDataRequiredAction(journeyType: SelectChange): ActionRefiner[OptionalDataRequest, DataRequest] =
     new ActionRefiner[OptionalDataRequest, DataRequest] {
       override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
         request.userAnswers match {
           case Some(data) if data.journeyType == journeyType =>
-            Future.successful(Right(DataRequest(request.request, request.sdilEnrolment, request.subscription, data)))
+            Future.successful(Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, data)))
           case Some(data) if journeyType == SelectChange.CancelRegistration && data.journeyType == SelectChange.ChangeActivity =>
-            Future.successful(Right(DataRequest(request.request, request.sdilEnrolment, request.subscription, data)))
+            Future.successful(Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, data)))
           case _ => Future.successful(Left(Redirect(routes.SelectChangeController.onPageLoad)))
         }
       }
@@ -56,7 +80,7 @@ class ControllerActions @Inject()(identify: IdentifierAction,
       override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
         request.userAnswers match {
           case Some(data) =>
-            Future.successful(Right(DataRequest(request.request, request.sdilEnrolment, request.subscription, data)))
+            Future.successful(Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, data)))
           case _ => Future.successful(Left(Redirect(routes.SelectChangeController.onPageLoad)))
         }
       }

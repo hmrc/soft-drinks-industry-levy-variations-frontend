@@ -14,22 +14,12 @@
  * limitations under the License.
  */
 
-package models.updateRegisteredDetails
+package models
 
-import models.Contact
-import play.api.libs.json._
+import play.api.libs.json.{Format, Json}
 
-case class UpdateContactDetails (fullName: String, position: String, phoneNumber: String, email: String)
+case class OptSmallProducer(optSmallProducer: Option[Boolean])
 
-object UpdateContactDetails {
-  implicit val format = Json.format[UpdateContactDetails]
-
-  def fromContact(contact: Contact): UpdateContactDetails = {
-    UpdateContactDetails(
-      fullName = contact.name.getOrElse(""),
-      position = contact.positionInCompany.getOrElse(""),
-      phoneNumber = contact.phoneNumber,
-      email = contact.email
-    )
-  }
+object OptSmallProducer {
+  implicit val format: Format[OptSmallProducer] = Json.format[OptSmallProducer]
 }

@@ -43,11 +43,11 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(variationsBaseUrl + request.uri).encodedUrl}"
 
   val basGatewayBaseUrl: String = servicesConfig.baseUrl("bas-gateway")
-  val sdilFrontendBaseUrl: String = servicesConfig.baseUrl("soft-drinks-industry-levy-frontend")
   val sdilBaseUrl: String = servicesConfig.baseUrl("soft-drinks-industry-levy")
+  val sdilHomeUrl: String = servicesConfig.getString("sdilHomeUrl")
 
   val loginUrl: String         = s"$basGatewayBaseUrl/bas-gateway/sign-in"
-  val loginContinueUrl: String = s"$sdilFrontendBaseUrl/soft-drinks-industry-levy"
+  val loginContinueUrl: String = sdilHomeUrl
   val signOutUrl: String       = s"$basGatewayBaseUrl/bas-gateway/sign-out-without-state"
 
   private val exitSurveyBaseUrl: String = servicesConfig.baseUrl("feedback-frontend")
@@ -57,6 +57,7 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
   val countdown: Int = servicesConfig.getInt("timeout-dialog.countdown")
 
   val cacheTtl: Int = servicesConfig.getInt("mongodb.timeToLiveInSeconds")
+
 
   val lowerBandCostPerLitre: BigDecimal = BigDecimal(servicesConfig.getString("lowerBandCostPerLitre"))
   val higherBandCostPerLitre: BigDecimal = BigDecimal(servicesConfig.getString("higherBandCostPerLitre"))

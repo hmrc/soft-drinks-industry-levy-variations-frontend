@@ -33,7 +33,7 @@ class CorrectReturnCYAController @Inject()(
                                             view: CorrectReturnCYAView
                                           ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
+  def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
 
       val list: Seq[(String, SummaryList)] = Seq.empty

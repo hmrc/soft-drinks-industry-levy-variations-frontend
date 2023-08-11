@@ -30,7 +30,7 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase {
 
   lazy val returnChangeRegistrationRoute = routes.ReturnChangeRegistrationController.onPageLoad().url
 
-  lazy val submittedAnswers = UserAnswers(sdilNumber, SelectChange.CorrectReturn, data = Json.obj(), contactAddress = contactAddress)
+  lazy val submittedAnswers = emptyUserAnswersForCorrectReturn.copy(submitted = true)
 
   "ReturnChangeRegistration Controller" - {
 

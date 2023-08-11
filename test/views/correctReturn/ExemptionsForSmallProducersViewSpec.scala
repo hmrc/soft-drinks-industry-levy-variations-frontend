@@ -18,7 +18,6 @@ package views.correctReturn
 
 import controllers.correctReturn.routes
 import forms.correctReturn.ExemptionsForSmallProducersFormProvider
-import models.correctReturn.ExemptionsForSmallProducers
 import models.{CheckMode, NormalMode}
 import play.api.i18n.Messages
 import play.api.mvc.Request
@@ -35,10 +34,9 @@ class ExemptionsForSmallProducersViewSpec extends ViewSpecHelper {
   object Selectors {
     val heading = "govuk-fieldset__heading"
     val legend = "govuk-fieldset__legend  govuk-fieldset__legend--m"
-    val radios = "govuk-radios"
-    val radiosInput = "govuk-radios__input"
-    val radiosItems = "govuk-radios__item"
-    val radiosLables = "govuk-label govuk-radios__label"
+    val radios = "govuk-radios__item"
+    val radioInput = "govuk-radios__input"
+    val radioLables = "govuk-label govuk-radios__label"
     val body = "govuk-body"
     val errorSummaryTitle = "govuk-error-summary__title"
     val errorSummaryList = "govuk-list govuk-error-summary__list"
@@ -67,62 +65,104 @@ class ExemptionsForSmallProducersViewSpec extends ViewSpecHelper {
 
     "when the form is not preoccupied and has no errors" - {
 
-      "should include the expected radio buttons" - {
-        val radiobuttons = document.getElementsByClass(Selectors.radiosItems)
-
-        "that has 2 items" in {
-          radiobuttons.size() mustBe ExemptionsForSmallProducers.values.size
+      "should have radio buttons" - {
+        val radioButtons = document.getElementsByClass(Selectors.radios)
+        "that has the option to select Yes and is unchecked" in {
+          val radioButton1 = radioButtons
+            .get(0)
+          radioButton1
+            .getElementsByClass(Selectors.radioLables)
+            .text() mustBe "Yes"
+          radioButton1
+            .getElementsByClass(Selectors.radioInput)
+            .attr("value") mustBe "true"
+          radioButton1
+            .getElementsByClass(Selectors.radioInput)
+            .hasAttr("checked") mustBe false
         }
-        ExemptionsForSmallProducers.values.zipWithIndex.foreach { case (radio, index) =>
-          s"that has the " + radio.toString + " to select and is unchecked" in {
-            val radio1 = radiobuttons
-              .get(index)
-            radio1
-              .getElementsByClass(Selectors.radiosLables)
-              .text() mustBe Messages("correctReturn.exemptionsForSmallProducers." + radio.toString)
-            val input = radio1
-              .getElementsByClass(Selectors.radiosInput)
-            input.attr("value") mustBe radio.toString
-            input.hasAttr("checked") mustBe false
-          }
+
+        "that has the option to select No and is unchecked" in {
+          val radioButton1 = radioButtons
+            .get(1)
+          radioButton1
+            .getElementsByClass(Selectors.radioLables)
+            .text() mustBe "No"
+          radioButton1
+            .getElementsByClass(Selectors.radioInput)
+            .attr("value") mustBe "false"
+          radioButton1
+            .getElementsByClass(Selectors.radioInput)
+            .hasAttr("checked") mustBe false
         }
       }
     }
 
-    ExemptionsForSmallProducers.values.foreach { radio =>
-      val html1 = view(form.fill(radio), NormalMode)(request, messages(application))
+    "when the form is preoccupied with yes and has no errors" - {
+      val html1 = view(form.fill(true), NormalMode)(request, messages(application))
       val document1 = doc(html1)
+      "should have radio buttons" - {
+        val radioButtons = document1.getElementsByClass(Selectors.radios)
+        "that has the option to select Yes and is checked" in {
+          val radioButton1 = radioButtons
+            .get(0)
+          radioButton1
+            .getElementsByClass(Selectors.radioLables)
+            .text() mustBe "Yes"
+          radioButton1
+            .getElementsByClass(Selectors.radioInput)
+            .attr("value") mustBe "true"
+          radioButton1
+            .getElementsByClass(Selectors.radioInput)
+            .hasAttr("checked") mustBe true
+        }
 
-      s"when the form is preoccupied with " + radio.toString + "selected and has no errors" - {
-        "should have radiobuttons" - {
-          val radiobuttons = document1.getElementsByClass(Selectors.radiosItems)
-          ExemptionsForSmallProducers.values.zipWithIndex.foreach { case (radio1, index) =>
-            if (radio1.toString == radio.toString) {
-              s"that has the option to select" + radio1.toString + " and is checked" in {
-                val radiobuttons1 = radiobuttons
-                  .get(index)
-                radiobuttons1
-                  .getElementsByClass(Selectors.radiosLables)
-                  .text() mustBe Messages("correctReturn.exemptionsForSmallProducers." + radio1.toString)
-                val input = radiobuttons1
-                  .getElementsByClass(Selectors.radiosInput)
-                input.attr("value") mustBe radio1.toString
-                input.hasAttr("checked") mustBe true
-              }
-            } else {
-              s"that has the option to select " + radio1.toString + " and is unchecked" in {
-                val radiobuttons1 = radiobuttons
-                  .get(index)
-                radiobuttons1
-                  .getElementsByClass(Selectors.radiosLables)
-                  .text() mustBe Messages("correctReturn.exemptionsForSmallProducers." + radio1.toString)
-                val input = radiobuttons1
-                  .getElementsByClass(Selectors.radiosInput)
-                input.attr("value") mustBe radio1.toString
-                input.hasAttr("checked") mustBe false
-              }
-            }
-          }
+        "that has the option to select No and is unchecked" in {
+          val radioButton1 = radioButtons
+            .get(1)
+          radioButton1
+            .getElementsByClass(Selectors.radioLables)
+            .text() mustBe "No"
+          radioButton1
+            .getElementsByClass(Selectors.radioInput)
+            .attr("value") mustBe "false"
+          radioButton1
+            .getElementsByClass(Selectors.radioInput)
+            .hasAttr("checked") mustBe false
+        }
+      }
+    }
+
+    "when the form is preoccupied with no and has no errors" - {
+      val html1 = view(form.fill(false), NormalMode)(request, messages(application))
+      val document1 = doc(html1)
+      "should have radio buttons" - {
+        val radioButtons = document1.getElementsByClass(Selectors.radios)
+        "that has the option to select Yes and is unchecked" in {
+          val radioButton1 = radioButtons
+            .get(0)
+          radioButton1
+            .getElementsByClass(Selectors.radioLables)
+            .text() mustBe "Yes"
+          radioButton1
+            .getElementsByClass(Selectors.radioInput)
+            .attr("value") mustBe "true"
+          radioButton1
+            .getElementsByClass(Selectors.radioInput)
+            .hasAttr("checked") mustBe false
+        }
+
+        "that has the option to select No and is checked" in {
+          val radioButton1 = radioButtons
+            .get(1)
+          radioButton1
+            .getElementsByClass(Selectors.radioLables)
+            .text() mustBe "No"
+          radioButton1
+            .getElementsByClass(Selectors.radioInput)
+            .attr("value") mustBe "false"
+          radioButton1
+            .getElementsByClass(Selectors.radioInput)
+            .hasAttr("checked") mustBe true
         }
       }
     }
@@ -132,20 +172,38 @@ class ExemptionsForSmallProducersViewSpec extends ViewSpecHelper {
     }
 
     "contains a form with the correct action" - {
-      "when in CheckMode" in {
-        val htmlAllSelected = view(form.fill(ExemptionsForSmallProducers.values.head), CheckMode)(request, messages(application))
-        val documentAllSelected = doc(htmlAllSelected)
+      "when in CheckMode" - {
+        val htmlYesSelected = view(form.fill(true), CheckMode)(request, messages(application))
+        val documentYesSelected = doc(htmlYesSelected)
 
-        documentAllSelected.select(Selectors.form)
-          .attr("action") mustEqual routes.ExemptionsForSmallProducersController.onSubmit(CheckMode).url
+        val htmlNoSelected = view(form.fill(false), CheckMode)(request, messages(application))
+        val documentNoSelected = doc(htmlNoSelected)
+        "and yes is selected" in {
+          documentYesSelected.select(Selectors.form)
+            .attr("action") mustEqual routes.ExemptionsForSmallProducersController.onSubmit(CheckMode).url
+        }
+
+        "and no is selected" in {
+          documentNoSelected.select(Selectors.form)
+            .attr("action") mustEqual routes.ExemptionsForSmallProducersController.onSubmit(CheckMode).url
+        }
       }
 
-      "when in NormalMode" in {
-        val htmlAllSelected = view(form.fill(ExemptionsForSmallProducers.values.head), NormalMode)(request, messages(application))
-        val documentAllSelected = doc(htmlAllSelected)
+      "when in NormalMode" - {
+        val htmlYesSelected = view(form.fill(true), NormalMode)(request, messages(application))
+        val documentYesSelected = doc(htmlYesSelected)
 
-        documentAllSelected.select(Selectors.form)
-          .attr("action") mustEqual routes.ExemptionsForSmallProducersController.onSubmit(NormalMode).url
+        val htmlNoSelected = view(form.fill(false), NormalMode)(request, messages(application))
+        val documentNoSelected = doc(htmlNoSelected)
+        "and yes is selected" in {
+          documentYesSelected.select(Selectors.form)
+            .attr("action") mustEqual routes.ExemptionsForSmallProducersController.onSubmit(NormalMode).url
+        }
+
+        "and no is selected" in {
+          documentNoSelected.select(Selectors.form)
+            .attr("action") mustEqual routes.ExemptionsForSmallProducersController.onSubmit(NormalMode).url
+        }
       }
     }
 
@@ -154,8 +212,7 @@ class ExemptionsForSmallProducersViewSpec extends ViewSpecHelper {
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
-        val titleMessage = Messages("correctReturn.exemptionsForSmallProducers.title")
-        documentWithErrors.title must include("Error: " + titleMessage)
+        documentWithErrors.title must include("Error: Do you need to claim an exemption for any of the liable drinks you have packaged for registered small producers? - Soft Drinks Industry Levy - GOV.UK")
       }
 
       "contains a message that links to field with error" in {
@@ -164,8 +221,8 @@ class ExemptionsForSmallProducersViewSpec extends ViewSpecHelper {
           .first()
         errorSummary
           .select("a")
-          .attr("href") mustBe "#value_0"
-        errorSummary.text() mustBe Messages("correctReturn.exemptionsForSmallProducers.error.required")
+          .attr("href") mustBe "#value"
+        errorSummary.text() mustBe "Select yes if you need to claim an exemption for any of the liable drinks you have packaged for registered small producers"
       }
     }
 

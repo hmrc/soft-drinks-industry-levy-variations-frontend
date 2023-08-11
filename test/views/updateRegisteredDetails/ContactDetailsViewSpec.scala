@@ -16,12 +16,11 @@
 
 package views.updateRegisteredDetails
 
-import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import views.html.updateRegisteredDetails.ContactDetailsView
 import views.ViewSpecHelper
+import views.html.updateRegisteredDetails.ContactDetailsView
 
 class ContactDetailsViewSpec extends ViewSpecHelper {
 

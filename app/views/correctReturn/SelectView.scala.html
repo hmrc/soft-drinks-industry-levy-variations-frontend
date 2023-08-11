@@ -16,6 +16,7 @@
 
 @import models.correctReturn._
 @import controllers.correctReturn.routes
+@import views.helpers._
 
 @this(
     layout: templates.Layout,
@@ -26,31 +27,23 @@
     govukDetails: GovukDetails
 )
 
-@(form: Form[_], mode: Mode, returns: List[List[ReturnPeriod]])(implicit request: Request[_], messages: Messages)
+@(form: Form[String], returnPeriodsForYears: Map[Int, List[ReturnPeriod]])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("correctReturn.select.title"))) {
 
-    @formHelper(action = routes.SelectController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+    @formHelper(action = routes.SelectController.onSubmit, Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0_0")))
         }
 
-        <h1 class="govuk-heading-m">
-            @messages("correctReturn.select.heading")
-        </h1>
+        @govukRadios(
+            RadiosViewModel(
+                field = form("value"),
+                legend = LegendViewModel(Text(messages("correctReturn.select.heading"))).asPageHeading(),
+                items = ReturnPeriodsRadios.getRadioItems(returnPeriodsForYears)
+            ))
 
-
-<div @if(form.errors.nonEmpty) { class="govuk-form-group--error"}>
- @for((r, index) <- returns.zipWithIndex ) {
-   @govukRadios(
-     RadiosViewModel(
-      field  = form("value"),
-      legend = LegendViewModel(r.last.start.getYear.toString).asPageHeading(),
-      items  = SelectReturn.options(r),
-      noErrorRequired = index > 0))
-}
-</div>
 
         @govukDetails(
             Details(

@@ -79,7 +79,7 @@ class SelectChangeController @Inject()(
   private def getRedirectUrl(value: SelectChange): Call = {
     value match {
       case SelectChange.ChangeActivity => changeActivity.routes.AmountProducedController.onPageLoad(NormalMode)
-      case SelectChange.CorrectReturn => correctReturn.routes.SelectController.onPageLoad(NormalMode)
+      case SelectChange.CorrectReturn => correctReturn.routes.SelectController.onPageLoad
       case SelectChange.CancelRegistration => cancelRegistration.routes.ReasonController.onPageLoad(NormalMode)
       case _ => routes.IndexController.onPageLoad
     }

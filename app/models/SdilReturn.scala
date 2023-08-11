@@ -16,12 +16,11 @@
 
 package models
 
-import cats.implicits.{catsSyntaxSemigroup, toFoldableOps}
-
-import java.time.{Instant, LocalDate}
 import cats.implicits._
-import play.api.libs.json.Json
+import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
+import play.api.libs.json.{Format, JsPath, Json, OFormat}
 
+import java.time.Instant
 import scala.collection.immutable.ListMap
 
 case class SdilReturn(
@@ -74,28 +73,16 @@ case class SdilReturn(
 }
 
 object SdilReturn {
+  implicit val longTupleFormatter: Format[(Long, Long)] = (
+    (JsPath \ "lower").format[Long] and
+      (JsPath \ "higher").format[Long]
+    )((a: Long, b: Long) => (a, b), unlift({ x: (Long, Long) =>
+    Tuple2.unapply(x)
+  }))
+
+  implicit val smallProducerJson: OFormat[SmallProducer] = Json.format[SmallProducer]
+
   implicit val format = Json.format[SdilReturn]
-}
-
-case class ReturnPeriod(year: Int, quarter: Int) {
-  require(quarter <= 3 && quarter >= 0)
-  require(year >= 2018)
-  def start: LocalDate = LocalDate.of(year, quarter * 3 + 1, if (count == 0) 5 else 1)
-  def end: LocalDate = next.start.minusDays(1)
-  def deadline: LocalDate = end.plusDays(30)
-  def next: ReturnPeriod = ReturnPeriod(count + 1)
-  def previous: ReturnPeriod = ReturnPeriod(count - 1)
-  def count: Int = year * 4 + quarter - 2018 * 4 - 1
-}
-
-object ReturnPeriod {
-  def apply(o: Int): ReturnPeriod = {
-    val i = o + 1
-    ReturnPeriod(2018 + i / 4, i % 4)
-  }
-  def apply(date: LocalDate): ReturnPeriod = ReturnPeriod(date.getYear, quarter(date))
-  def quarter(date: LocalDate): Int = { date.getMonthValue - 1 } / 3
-  implicit val format = Json.format[ReturnPeriod]
 }
 
 object ReturnLiterageList {

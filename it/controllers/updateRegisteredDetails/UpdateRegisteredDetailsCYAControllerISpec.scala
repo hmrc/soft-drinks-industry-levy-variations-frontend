@@ -39,7 +39,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
       "should render the page with the contact details as a summary" in {
         given
           .commonPrecondition
-        setAnswers(emptyUserAnswersForUpdateRegisteredDetails.set(UpdateContactDetailsPage, updateContactDetails).success.value)
+        setAnswers(emptyUserAnswersForUpdateRegisteredDetails.set(UpdateContactDetailsPage, contactDetails).success.value)
 
         WsTestClient.withClient { client =>
           val result = createClientRequestGet(client, baseUrl + route)
@@ -51,19 +51,19 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
             page.title must include("Check your answers before sending your update")
             page.getElementsByTag("h2").first().text() mustBe "Soft Drinks Industry Levy contact"
             val elems = page.getElementsByClass("govuk-summary-list").first().getElementsByClass("govuk-summary-list__row")
-            elems.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe updateContactDetails.fullName
+            elems.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe contactDetails.fullName
             elems.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change Contact Details"
             elems.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "Contact Details"
             elems.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.UpdateContactDetailsController.onPageLoad(CheckMode).url
-            elems.get(1).getElementsByClass("govuk-summary-list__value").first().text() mustBe updateContactDetails.position
+            elems.get(1).getElementsByClass("govuk-summary-list__value").first().text() mustBe contactDetails.position
             elems.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change Contact Details"
             elems.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.UpdateContactDetailsController.onPageLoad(CheckMode).url
             elems.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "Contact Details"
-            elems.get(2).getElementsByClass("govuk-summary-list__value").first().text() mustBe updateContactDetails.phoneNumber
+            elems.get(2).getElementsByClass("govuk-summary-list__value").first().text() mustBe contactDetails.phoneNumber
             elems.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change Contact Details"
             elems.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.UpdateContactDetailsController.onPageLoad(CheckMode).url
             elems.get(2).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "Contact Details"
-            elems.get(3).getElementsByClass("govuk-summary-list__value").first().text() mustBe updateContactDetails.email
+            elems.get(3).getElementsByClass("govuk-summary-list__value").first().text() mustBe contactDetails.email
             elems.get(3).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change Contact Details"
             elems.get(3).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.UpdateContactDetailsController.onPageLoad(CheckMode).url
             elems.get(3).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "Contact Details"

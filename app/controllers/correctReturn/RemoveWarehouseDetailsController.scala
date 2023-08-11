@@ -49,7 +49,7 @@ class RemoveWarehouseDetailsController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode, index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
+  def onPageLoad(mode: Mode, index: String): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
       request.userAnswers.warehouseList.get(index) match {
         case Some(warehouse) =>
@@ -61,7 +61,7 @@ class RemoveWarehouseDetailsController @Inject()(
       }
   }
 
-  def onSubmit(mode: Mode, index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
+  def onSubmit(mode: Mode, index: String): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
       val warehouseToRemove: Option[Warehouse] = request.userAnswers.warehouseList.get(index)
       warehouseToRemove match {

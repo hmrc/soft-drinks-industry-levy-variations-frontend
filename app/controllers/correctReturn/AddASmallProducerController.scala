@@ -21,11 +21,11 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.correctReturn.AddASmallProducerFormProvider
 import handlers.ErrorHandler
-import models.{Mode, SmallProducer, UserAnswers}
 import models.SelectChange.CorrectReturn
 import models.correctReturn.AddASmallProducer
+import models.{Mode, SmallProducer, UserAnswers}
 import navigation._
-import pages.correctReturn.{AddASmallProducerPage, SelectPage}
+import pages.correctReturn.AddASmallProducerPage
 import play.api.data.{Form, FormError}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -48,27 +48,20 @@ class AddASmallProducerController @Inject()(
                                              view: AddASmallProducerView,
                                              val genericLogger: GenericLogger,
                                              val errorHandler: ErrorHandler
-                                     )(implicit ec: ExecutionContext) extends ControllerHelper {
+                                           )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
-
-      request.userAnswers.get(SelectPage) match {
-        case Some(_) =>
-          val form: Form[AddASmallProducer] = formProvider(request.userAnswers)
-          val preparedForm = request.userAnswers.get(AddASmallProducerPage) match {
-            case None => form
-            case Some(value) => form.fill(value)
-          }
-
-          Ok(view(preparedForm, mode))
-        case _ =>
-          genericLogger.logger.warn(s"Return period has not been set for correct return journey for ${request.userAnswers.id}")
-          Redirect(controllers.routes.IndexController.onPageLoad.url)
+      val form: Form[AddASmallProducer] = formProvider(request.userAnswers)
+      val preparedForm = request.userAnswers.get(AddASmallProducerPage) match {
+        case None => form
+        case Some(value) => form.fill(value)
       }
+
+      Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
 
       val form: Form[AddASmallProducer] = formProvider(request.userAnswers)
@@ -85,22 +78,17 @@ class AddASmallProducerController @Inject()(
                 BadRequest(view(preparedForm.withError(FormError("referenceNumber", "correctReturn.addASmallProducer.error.referenceNumber.exists")), mode))
               )
             case _ =>
-              request.userAnswers.get(SelectPage) match {
-                case Some(returnPeriod) =>
-                  sdilConnector.checkSmallProducerStatus(value.referenceNumber, returnPeriod).flatMap {
-                    case Some(false) =>
-                      Future.successful(
-                        BadRequest(view(preparedForm.withError(FormError("referenceNumber", "correctReturn.addASmallProducer.error.referenceNumber.notASmallProducer")), mode))
-                      )
-                    case _ =>
-                      val userAnswersSetPage: Try[UserAnswers] = request.userAnswers.set(AddASmallProducerPage, value)
-                      val updatedAnswers: Try[UserAnswers] = userAnswersSetPage
-                        .map(userAnswers => userAnswers.copy(smallProducerList = AddASmallProducer.toSmallProducer(value) :: userAnswers.smallProducerList))
-                      updateDatabaseAndRedirect(updatedAnswers, AddASmallProducerPage, mode)
-                  }
-                case _ =>
-                  genericLogger.logger.warn(s"Return period has not been set for correct return journey for ${request.userAnswers.id}")
-                  Future.successful(Redirect(controllers.routes.IndexController.onPageLoad.url))
+              sdilConnector.checkSmallProducerStatus(value.referenceNumber, request.returnPeriod).value.flatMap {
+                case Right(Some(false)) =>
+                  Future.successful(
+                    BadRequest(view(preparedForm.withError(FormError("referenceNumber", "correctReturn.addASmallProducer.error.referenceNumber.notASmallProducer")), mode))
+                  )
+                case Right(_) =>
+                  val userAnswersSetPage: Try[UserAnswers] = request.userAnswers.set(AddASmallProducerPage, value)
+                  val updatedAnswers: Try[UserAnswers] = userAnswersSetPage
+                    .map(userAnswers => userAnswers.copy(smallProducerList = AddASmallProducer.toSmallProducer(value) :: userAnswers.smallProducerList))
+                  updateDatabaseAndRedirect(updatedAnswers, AddASmallProducerPage, mode)
+                case Left(_) => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
               }
           }
         }

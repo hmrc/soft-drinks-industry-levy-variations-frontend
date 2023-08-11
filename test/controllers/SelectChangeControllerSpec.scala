@@ -128,7 +128,7 @@ class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
           status(result) mustEqual SEE_OTHER
           val expectedNextPage = selectChangeValue match {
             case SelectChange.ChangeActivity => changeActivity.routes.AmountProducedController.onPageLoad(NormalMode)
-            case SelectChange.CorrectReturn => correctReturn.routes.SelectController.onPageLoad(NormalMode)
+            case SelectChange.CorrectReturn => correctReturn.routes.SelectController.onPageLoad
             case SelectChange.CancelRegistration => cancelRegistration.routes.ReasonController.onPageLoad(NormalMode)
             case _ => routes.IndexController.onPageLoad
           }

@@ -18,7 +18,7 @@ package views.updateRegisteredDetails.summary
 
 import base.SpecBase
 import controllers.updateRegisteredDetails.routes
-import models.updateRegisteredDetails.UpdateContactDetails
+import models.updateRegisteredDetails.ContactDetails
 import models.{CheckMode, SelectChange, UserAnswers}
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
@@ -35,7 +35,7 @@ class UpdateContactDetailsSummarySpec extends SpecBase {
     }
 
     s"should return correct rows when $UpdateContactDetailsPage is present" in {
-      val contactDetails = UpdateContactDetails("foo","bar", "wizz", "bang")
+      val contactDetails = ContactDetails("foo","bar", "wizz", "bang")
       val res = UpdateContactDetailsSummary.rows(
         UserAnswers("", SelectChange.UpdateRegisteredDetails, contactAddress = contactAddress).set(UpdateContactDetailsPage, contactDetails).success.value).get
       res._1 mustBe "Soft Drinks Industry Levy contact"
