@@ -317,6 +317,15 @@ addressLookupFrontend.contactDetails.editPageLabels.line3Label = Address line 3 
 addressLookupFrontend.contactDetails.editPageLabels.townLabel = Address line 4 (optional)
 addressLookupFrontend.contactDetails.editPageLabels.postcodeLabel = Postcode
 
+addressLookupFrontend.updateRegisteredBusinessAddress.lookupPageLabels.title = Find UK contact address
+addressLookupFrontend.updateRegisteredBusinessAddress.lookupPageLabels.postcodeLabel = Postcode
+addressLookupFrontend.updateRegisteredBusinessAddress.editPageLabels.title = Update your registered business address for the Soft Drinks Industry Levy
+addressLookupFrontend.updateRegisteredBusinessAddress.editPageLabels.line1Label = Address line 1
+addressLookupFrontend.updateRegisteredBusinessAddress.editPageLabels.line2Label = Address line 2
+addressLookupFrontend.updateRegisteredBusinessAddress.editPageLabels.line3Label = Address line 3 (optional)
+addressLookupFrontend.updateRegisteredBusinessAddress.editPageLabels.townLabel = Address line 4 (optional)
+addressLookupFrontend.updateRegisteredBusinessAddress.editPageLabels.postcodeLabel = Postcode
+
 changeActivity.thirdPartyPackagers.title = Do you use any third parties in the UK to package liable drinks on your behalf?
 changeActivity.thirdPartyPackagers.heading = Do you use any third parties in the UK to package liable drinks on your behalf?
 changeActivity.thirdPartyPackagers.checkYourAnswersLabel = Use third party packagers?

@@ -20,11 +20,17 @@ import base.SpecBase
 import models.SelectChange.UpdateRegisteredDetails
 import models.backend.UkAddress
 import navigation._
+import org.mockito.ArgumentMatchers
+import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.mock
 import play.api.inject
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.{AddressLookupService, ContactDetails}
 import views.html.updateRegisteredDetails.BusinessAddressView
+
+import scala.concurrent.Future
 
 class BusinessAddressControllerSpec extends SpecBase {
 
@@ -33,6 +39,49 @@ class BusinessAddressControllerSpec extends SpecBase {
   def onwardRoute: Call = Call("GET", "/soft-drinks-industry-levy-variations-frontend")
 
   "BusinessAddress Controller" - {
+
+    "must redirect to ALF" in {
+      val mockAddressLookupService: AddressLookupService = mock[AddressLookupService]
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
+          .overrides(inject.bind[AddressLookupService].toInstance(mockAddressLookupService))
+          .build()
+
+      when(mockAddressLookupService
+        .initJourneyAndReturnOnRampUrl(ArgumentMatchers.eq(ContactDetails), ArgumentMatchers.any())(
+          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+      ).thenReturn(Future.successful("woohooherewegoo!"))
+
+      running(application) {
+        val request =
+          FakeRequest(GET, controllers.updateRegisteredDetails.routes.BusinessAddressController.changeAddress().url)
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual "woohooherewegoo!"
+      }
+    }
+
+    "must return error when attempting to navigate to ALF but ALF returns error" in {
+      val mockAddressLookupService: AddressLookupService = mock[AddressLookupService]
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
+          .overrides(inject.bind[AddressLookupService].toInstance(mockAddressLookupService))
+          .build()
+
+      when(mockAddressLookupService
+        .initJourneyAndReturnOnRampUrl(ArgumentMatchers.eq(ContactDetails), ArgumentMatchers.any())(
+          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+      ).thenReturn(Future.failed(new Exception("uh oh spagetio")))
+
+      running(application) {
+        val request =
+          FakeRequest(GET, controllers.updateRegisteredDetails.routes.BusinessAddressController.changeAddress().url)
+        val result = route(application, request).value
+
+        intercept[Exception](await(result))
+      }
+    }
 
     "must return OK and the correct view for a GET" in {
 
@@ -50,7 +99,7 @@ class BusinessAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the index page when the Save and continue button is clicked" in {
+    "must redirect to the CYA page when the Save and continue button is clicked" in {
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
@@ -65,11 +114,13 @@ class BusinessAddressControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual controllers.updateRegisteredDetails.routes.UpdateRegisteredDetailsCYAController.onPageLoad.url
       }
     }
 
-    testInvalidJourneyType(UpdateRegisteredDetails, businessAddressRoute)
-    testNoUserAnswersError(businessAddressRoute)
+    "test invalid scenarios for main business address route" - {
+      testInvalidJourneyType(UpdateRegisteredDetails, businessAddressRoute)
+      testNoUserAnswersError(businessAddressRoute)
+    }
   }
 }
