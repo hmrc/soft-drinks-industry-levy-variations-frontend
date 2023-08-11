@@ -24,11 +24,6 @@ import org.scalacheck.{Arbitrary, Gen}
 import org.scalacheck.Arbitrary._
 trait ModelGenerators {
 
-  implicit lazy val arbitraryUpdateRegisteredDetailsChangeRegisteredDetails: Arbitrary[updateRegisteredDetails.ChangeRegisteredDetails] =
-    Arbitrary {
-      Gen.oneOf(updateRegisteredDetails.ChangeRegisteredDetails.values)
-    }
-
   implicit lazy val arbitraryCorrectReturnExemptionsForSmallProducers: Arbitrary[correctReturn.ExemptionsForSmallProducers] =
     Arbitrary {
       Gen.oneOf(correctReturn.ExemptionsForSmallProducers.values)

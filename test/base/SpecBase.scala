@@ -23,7 +23,7 @@ import controllers.actions._
 import controllers.routes
 import errors.VariationsErrors
 import helpers.LoggerHelper
-import models.{RetrievedActivity, _}
+import models._
 import models.backend.{Site, UkAddress}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
@@ -96,9 +96,6 @@ object SpecBase {
     contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
     deregDate = None
   )
-
-  val voluntarySubscription: RetrievedSubscription = aSubscription.copy(activity = RetrievedActivity(
-    smallProducer = false, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = true))
 
 }
 

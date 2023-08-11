@@ -536,12 +536,3 @@ correctReturn.askSecondaryWarehouseInReturn.change.hidden = AskSecondaryWarehous
 correctReturn.askSecondaryWarehouseInReturn.detailsLink = Why should I register a warehouse?
 correctReturn.askSecondaryWarehouseInReturn.detailsContent1 = You can delay when you have to report liable drinks in your quarterly return and pay the levy on them if you register the warehouses you use to store them.
 correctReturn.askSecondaryWarehouseInReturn.detailsContent2 = Because you changed your business activity, you can choose to register any of the UK warehouses you use to store liable drinks.
-
-updateRegisteredDetails.changeRegisteredDetails.title = What do you need to update?
-updateRegisteredDetails.changeRegisteredDetails.hint = Changes can take up to 15 working days to process. Select all that apply. 
-updateRegisteredDetails.changeRegisteredDetails.sites = Add or remove packaging sites or warehouse addresses
-updateRegisteredDetails.changeRegisteredDetails.contactDetails = Update your contact person for the Soft Drinks Industry Levy
-updateRegisteredDetails.changeRegisteredDetails.businessAddress = Update your registered business address for the Soft Drinks Industry Levy
-updateRegisteredDetails.changeRegisteredDetails.checkYourAnswersLabel = Registered details updated
-updateRegisteredDetails.changeRegisteredDetails.error.required = Select at least one option to continue
-updateRegisteredDetails.changeRegisteredDetails.change.hidden = what registered details you need to update

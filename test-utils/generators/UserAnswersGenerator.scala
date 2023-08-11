@@ -29,7 +29,7 @@ import play.api.libs.json.{JsValue, Json}
 trait UserAnswersGenerator extends TryValues {
   self: Generators =>
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
-    arbitrary[(updateRegisteredDetails.ChangeRegisteredDetailsPage.type, JsValue)] ::
+
     arbitrary[(correctReturn.RemovePackagingSiteConfirmPage.type, JsValue)] ::
     arbitrary[(correctReturn.SecondaryWarehouseDetailsPage.type, JsValue)] ::
     arbitrary[(correctReturn.RemoveWarehouseDetailsPage.type, JsValue)] ::

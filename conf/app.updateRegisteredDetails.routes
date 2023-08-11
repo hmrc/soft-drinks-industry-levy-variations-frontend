@@ -1,37 +1,34 @@
 # update registered account details specific routes
 
-GET         /check-your-answers                             controllers.updateRegisteredDetails.UpdateRegisteredDetailsCYAController.onPageLoad
-POST        /check-your-answers                             controllers.updateRegisteredDetails.UpdateRegisteredDetailsCYAController.onSubmit
+GET         /check-your-answers                          controllers.updateRegisteredDetails.UpdateRegisteredDetailsCYAController.onPageLoad
+POST        /check-your-answers                          controllers.updateRegisteredDetails.UpdateRegisteredDetailsCYAController.onSubmit
 
-GET        /contact-details-add                             controllers.updateRegisteredDetails.UpdateContactDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST       /contact-details-add                             controllers.updateRegisteredDetails.UpdateContactDetailsController.onSubmit(mode: Mode = NormalMode)
-GET        /change-contact-details-add                      controllers.updateRegisteredDetails.UpdateContactDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-contact-details-add                      controllers.updateRegisteredDetails.UpdateContactDetailsController.onSubmit(mode: Mode = CheckMode)
+GET        /contact-details-add                        controllers.updateRegisteredDetails.UpdateContactDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /contact-details-add                        controllers.updateRegisteredDetails.UpdateContactDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-contact-details-add                  controllers.updateRegisteredDetails.UpdateContactDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-contact-details-add                  controllers.updateRegisteredDetails.UpdateContactDetailsController.onSubmit(mode: Mode = CheckMode)
 
-GET        /warehouse-details                               controllers.updateRegisteredDetails.WarehouseDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST       /warehouse-details                               controllers.updateRegisteredDetails.WarehouseDetailsController.onSubmit(mode: Mode = NormalMode)
-GET        /change-warehouse-details                        controllers.updateRegisteredDetails.WarehouseDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-warehouse-details                        controllers.updateRegisteredDetails.WarehouseDetailsController.onSubmit(mode: Mode = CheckMode)
+GET        /warehouse-details                        controllers.updateRegisteredDetails.WarehouseDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /warehouse-details                        controllers.updateRegisteredDetails.WarehouseDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-warehouse-details                  controllers.updateRegisteredDetails.WarehouseDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-warehouse-details                  controllers.updateRegisteredDetails.WarehouseDetailsController.onSubmit(mode: Mode = CheckMode)
 
-GET        /warehouse-details/remove/:index                 controllers.updateRegisteredDetails.RemoveWarehouseDetailsController.onPageLoad(mode: Mode = NormalMode, index: String)
-POST       /warehouse-details/remove/:index                 controllers.updateRegisteredDetails.RemoveWarehouseDetailsController.onSubmit(mode: Mode = NormalMode, index: String)
-GET        /change-warehouse-details/remove/:index          controllers.updateRegisteredDetails.RemoveWarehouseDetailsController.onPageLoad(mode: Mode = CheckMode, index: String)
-POST       /change-warehouse-details/remove/:index          controllers.updateRegisteredDetails.RemoveWarehouseDetailsController.onSubmit(mode: Mode = CheckMode, index: String)
+GET        /warehouse-details/remove/:index                        controllers.updateRegisteredDetails.RemoveWarehouseDetailsController.onPageLoad(mode: Mode = NormalMode, index: String)
+POST       /warehouse-details/remove/:index                        controllers.updateRegisteredDetails.RemoveWarehouseDetailsController.onSubmit(mode: Mode = NormalMode, index: String)
+GET        /change-warehouse-details/remove/:index                 controllers.updateRegisteredDetails.RemoveWarehouseDetailsController.onPageLoad(mode: Mode = CheckMode, index: String)
+POST       /change-warehouse-details/remove/:index                  controllers.updateRegisteredDetails.RemoveWarehouseDetailsController.onSubmit(mode: Mode = CheckMode, index: String)
 
-GET        /packaging-site-details                          controllers.updateRegisteredDetails.PackagingSiteDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST       /packaging-site-details                          controllers.updateRegisteredDetails.PackagingSiteDetailsController.onSubmit(mode: Mode = NormalMode)
-GET        /change-packaging-site-details                   controllers.updateRegisteredDetails.PackagingSiteDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-packaging-site-details                   controllers.updateRegisteredDetails.PackagingSiteDetailsController.onSubmit(mode: Mode = CheckMode)
+GET        /packaging-site-details                        controllers.updateRegisteredDetails.PackagingSiteDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /packaging-site-details                        controllers.updateRegisteredDetails.PackagingSiteDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /change-packaging-site-details                  controllers.updateRegisteredDetails.PackagingSiteDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-packaging-site-details                  controllers.updateRegisteredDetails.PackagingSiteDetailsController.onSubmit(mode: Mode = CheckMode)
 
-GET        /packaging-site-details/remove/:index            controllers.updateRegisteredDetails.PackingSiteDetailsRemoveController.onPageLoad(mode: Mode = NormalMode, index: String)
-POST       /packaging-site-details/remove/:index            controllers.updateRegisteredDetails.PackingSiteDetailsRemoveController.onSubmit(mode: Mode = NormalMode, index: String)
-GET        /change-packaging-site-details/remove/:index     controllers.updateRegisteredDetails.PackingSiteDetailsRemoveController.onPageLoad(mode: Mode = CheckMode, index: String)
-POST       /change-packaging-site-details/remove/:index     controllers.updateRegisteredDetails.PackingSiteDetailsRemoveController.onSubmit(mode: Mode = CheckMode, index: String)
+GET        /packaging-site-details/remove/:index                        controllers.updateRegisteredDetails.PackingSiteDetailsRemoveController.onPageLoad(mode: Mode = NormalMode, index: String)
+POST       /packaging-site-details/remove/:index                      controllers.updateRegisteredDetails.PackingSiteDetailsRemoveController.onSubmit(mode: Mode = NormalMode, index: String)
+GET        /change-packaging-site-details/remove/:index                  controllers.updateRegisteredDetails.PackingSiteDetailsRemoveController.onPageLoad(mode: Mode = CheckMode, index: String)
+POST       /change-packaging-site-details/remove/:index                  controllers.updateRegisteredDetails.PackingSiteDetailsRemoveController.onSubmit(mode: Mode = CheckMode, index: String)
 
-GET        /contact-details                                 controllers.updateRegisteredDetails.ContactDetailsController.onPageLoad()
+GET        /contact-details                       controllers.updateRegisteredDetails.ContactDetailsController.onPageLoad()
 
 GET        /business-address                                controllers.updateRegisteredDetails.BusinessAddressController.onPageLoad()
 POST       /business-address                                controllers.updateRegisteredDetails.BusinessAddressController.onSubmit()
-
-GET        /                                                controllers.updateRegisteredDetails.ChangeRegisteredDetailsController.onPageLoad()
-POST       /                                                controllers.updateRegisteredDetails.ChangeRegisteredDetailsController.onSubmit()
