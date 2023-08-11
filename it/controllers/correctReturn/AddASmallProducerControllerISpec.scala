@@ -338,9 +338,36 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
           res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
           getAnswers(sdilNumber).map(userAnswers => userAnswers.smallProducerList) mustBe expectedResult
         }
-
       }
+    }
 
+    "render the error page when the call to get small producer status fails" in {
+
+      val expectedResult: Some[List[SmallProducer]] = Some(List(SmallProducer(alias = aliasSuperCola,
+        sdilRef = sdilRefSuperCola, litreage = (litres, litres))))
+
+      given
+        .commonPreconditionChangeSubscription(diffSubscription)
+        .smallProducerStatusError(sdilRefSuperCola, returnPeriod)
+
+      val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod))
+      setAnswers(userAnswers)
+
+      WsTestClient.withClient { client =>
+        val result =
+          client.url(correctReturnBaseUrl + checkRoutePath)
+            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
+              "Csrf-Token" -> "nocheck")
+            .withFollowRedirects(false)
+            .post(validAddASmallProducer)
+
+        whenReady(result) { res =>
+          res.status mustBe 500
+          val page = Jsoup.parse(res.body)
+          page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - Soft Drinks Industry Levy - GOV.UK"
+        }
+      }
     }
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath, Some(validAddASmallProducer))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath, Some(validAddASmallProducer))

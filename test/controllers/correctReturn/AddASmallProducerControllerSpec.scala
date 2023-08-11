@@ -18,11 +18,13 @@ package controllers.correctReturn
 
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
+import errors.{SessionDatabaseInsertError, UnexpectedResponseFromSDIL}
 import forms.correctReturn.AddASmallProducerFormProvider
 import models.SelectChange.CorrectReturn
 import models.correctReturn.AddASmallProducer
 import models.{NormalMode, SmallProducer}
 import navigation._
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -33,6 +35,7 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
+import utilities.GenericLogger
 import views.html.correctReturn.AddASmallProducerView
 
 import scala.concurrent.Future
@@ -240,6 +243,78 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+      }
+    }
+
+
+    "must render the error page when call to get small producer status fails" in {
+
+      val mockSessionService = mock[SessionService]
+
+      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+          .overrides(
+            bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
+            bind[SessionService].toInstance(mockSessionService),
+            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+          )
+          .build()
+
+      running(application) {
+        when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn createFailureVariationResult(UnexpectedResponseFromSDIL)
+
+        val request = FakeRequest(POST, addASmallProducerRoute)
+          .withFormUrlEncodedBody(
+            ("producerName", "PRODUCER"),
+            ("referenceNumber", "XKSDIL000000023"),
+            ("lowBand", "10"),
+            ("highBand", "20")
+          )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual INTERNAL_SERVER_ERROR
+        val page = Jsoup.parse(contentAsString(result))
+        page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - Soft Drinks Industry Levy - GOV.UK"
+      }
+    }
+
+    "should log an error message when internal server error is returned when user answers are not set in session repository" in {
+      val mockSessionService = mock[SessionService]
+
+      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+          .overrides(
+            bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
+            bind[SessionService].toInstance(mockSessionService),
+            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+          )
+          .build()
+
+      running(application) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn createSuccessVariationResult(Some(true))
+          when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+          val request =
+            FakeRequest(POST, addASmallProducerRoute)
+              .withFormUrlEncodedBody(
+                ("producerName", "PRODUCER"),
+                ("referenceNumber", "XKSDIL000000023"),
+                ("lowBand", "10"),
+                ("highBand", "20")
+              )
+
+          await(route(application, request).value)
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustBe "ERROR"
+              event.getMessage mustEqual "Failed to set value in session repository while attempting set on addASmallProducer"
+          }.getOrElse(fail("No logging captured"))
+        }
       }
     }
 

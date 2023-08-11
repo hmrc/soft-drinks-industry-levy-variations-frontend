@@ -61,4 +61,10 @@ trait PreconditionHelpers {
       .sdilBackend.checkSmallProducerStatus(sdilRef, period, smallProducerStatus)
   }
 
+  def smallProducerStatusError(sdilRef: String, period: ReturnPeriod): PreconditionBuilder = {
+    builder
+      .user.isAuthorisedAndEnrolled
+      .sdilBackend.checkSmallProducerStatusError(sdilRef, period)
+  }
+
 }
