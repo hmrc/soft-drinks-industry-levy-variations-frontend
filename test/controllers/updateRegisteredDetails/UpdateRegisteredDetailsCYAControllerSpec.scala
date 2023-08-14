@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.routes._
 import controllers.updateRegisteredDetails.routes._
 import models.SelectChange.UpdateRegisteredDetails
-import models.updateRegisteredDetails.UpdateContactDetails
+import models.updateRegisteredDetails.ContactDetails
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -34,7 +34,7 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
   "Check Your Answers Controller" - {
 
     "must return OK and the correct view for a GET" in {
-      val contactDetails = UpdateContactDetails("foo", "bar", "wizz", "bang")
+      val contactDetails = ContactDetails("foo", "bar", "wizz", "bang")
       val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(UpdateContactDetailsPage,contactDetails).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 

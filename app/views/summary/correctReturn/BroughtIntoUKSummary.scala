@@ -18,15 +18,15 @@ package views.summary.correctReturn
 
 import controllers.correctReturn.routes
 import models.{CheckMode, LitresInBands}
-import pages.correctReturn.{HowManyBroughtIntoUKPage, BroughtIntoUKPage}
 import pages.QuestionPage
+import pages.correctReturn.BroughtIntoUKPage
 import views.summary.{ReturnDetailsSummaryListWithLitres, SummaryListRowLitresHelper}
 
 object BroughtIntoUKSummary extends ReturnDetailsSummaryListWithLitres  {
 
   override val page: QuestionPage[Boolean] = BroughtIntoUKPage
-  override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyBroughtIntoUKPage)
-  override val summaryLitres: SummaryListRowLitresHelper = HowManyBroughtIntoUKSummary
+  override val optLitresPage: Option[QuestionPage[LitresInBands]] = None
+  override val summaryLitres: SummaryListRowLitresHelper = SmallProducerDetailsSummary
   override val key: String = "reportingbroughtIntoUK"
   override val action: String = routes.BroughtIntoUKController.onPageLoad(CheckMode).url
   override val actionId: String = "change-broughtIntoUK"

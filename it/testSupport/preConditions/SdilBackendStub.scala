@@ -1,61 +1,13 @@
 package testSupport.preConditions
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.backend.{Site, UkAddress}
-import models.{Contact, RetrievedActivity, RetrievedSubscription, ReturnPeriod}
+import models.{FinancialLineItem, RetrievedSubscription, ReturnPeriod, SdilReturn}
 import play.api.libs.json.Json
-
-import java.time.LocalDate
+import testSupport.SDILBackendTestData._
 
 case class SdilBackendStub()
                           (implicit builder: PreconditionBuilder)
 {
-  val aSubscription = RetrievedSubscription(
-    utr = "0000001611",
-    sdilRef = "XKSDIL000000022",
-    orgName = "Super Lemonade Plc",
-    address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"),
-    activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = false),
-    liabilityDate = LocalDate.of(2018, 4, 19),
-    productionSites = List(
-      Site(
-        UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-        Some("88"),
-        Some("Wild Lemonade Group"),
-        Some(LocalDate.of(2018, 2, 26))),
-      Site(
-        UkAddress(List("117 Jerusalem Court", "St Albans"), "AL10 3UJ"),
-        Some("87"),
-        Some("Highly Addictive Drinks Plc"),
-        Some(LocalDate.of(2019, 8, 19))),
-      Site(
-        UkAddress(List("87B North Liddle Street", "Guildford"), "GU34 7CM"),
-        Some("94"),
-        Some("Monster Bottle Ltd"),
-        Some(LocalDate.of(2017, 9, 23))),
-      Site(
-        UkAddress(List("122 Dinsdale Crescent", "Romford"), "RM95 8FQ"),
-        Some("27"),
-        Some("Super Lemonade Group"),
-        Some(LocalDate.of(2017, 4, 23))),
-      Site(
-        UkAddress(List("105B Godfrey Marchant Grove", "Guildford"), "GU14 8NL"),
-        Some("96"),
-        Some("Star Products Ltd"),
-        None)
-    ),
-    warehouseSites = List(),
-    contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
-    deregDate = None
-  )
-
-  val returnPeriodList: List[ReturnPeriod] = List(ReturnPeriod(2020, 0), ReturnPeriod(2020, 1), ReturnPeriod(2020, 2), ReturnPeriod(2020, 3),
-    ReturnPeriod(2021, 0), ReturnPeriod(2021, 1), ReturnPeriod(2021, 2), ReturnPeriod(2021, 3),
-    ReturnPeriod(2022, 0), ReturnPeriod(2022, 1), ReturnPeriod(2022, 2), ReturnPeriod(2022, 3))
-
-  val returnPeriods: List[ReturnPeriod] = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
-  val emptyReturnPeriods: List[ReturnPeriod] = List()
-
   def returns_pending (utr: String) = {
     stubFor(
       get(
@@ -65,16 +17,7 @@ case class SdilBackendStub()
     builder
   }
 
-  def returns_pending_empty(utr: String) = {
-    stubFor(
-      get(
-        urlPathMatching(s"/returns/$utr/pending"))
-        .willReturn(
-          ok(Json.toJson(emptyReturnPeriods).toString())))
-    builder
-  }
-
-  def returns_pending_not_found(utr: String) = {
+  def no_returns_pending (utr: String) = {
     stubFor(
       get(
         urlPathMatching(s"/returns/$utr/pending"))
@@ -83,12 +26,21 @@ case class SdilBackendStub()
     builder
   }
 
-  def returns_variable(utr: String) = {
+  def returns_pending_error(utr: String) = {
+    stubFor(
+      get(
+        urlPathMatching(s"/returns/$utr/pending"))
+        .willReturn(
+          serverError()))
+    builder
+  }
+
+  def returns_variable(utr: String, returnPeriods: List[ReturnPeriod] = returnPeriodList) = {
     stubFor(
       get(
         urlPathMatching(s"/returns/$utr/variable"))
         .willReturn(
-          ok(Json.toJson(returnPeriodList).toString())))
+          ok(Json.toJson(returnPeriods).toString())))
     builder
   }
 
@@ -110,12 +62,12 @@ case class SdilBackendStub()
     builder
   }
 
-  def retrieveSubscription(identifier: String, refNum: String) = {
+  def retrieveSubscription(identifier: String, refNum: String, subscription: RetrievedSubscription = aSubscription) = {
     stubFor(
       get(
         urlPathMatching(s"/subscription/$identifier/$refNum"))
         .willReturn(
-          ok(Json.toJson(aSubscription).toString())))
+          ok(Json.toJson(subscription).toString())))
     builder
   }
 
@@ -125,6 +77,15 @@ case class SdilBackendStub()
         urlPathMatching(s"/subscription/$identifier/$refNum"))
         .willReturn(
           notFound()))
+    builder
+  }
+
+  def retrieveSubscriptionError(identifier: String, refNum: String) = {
+    stubFor(
+      get(
+        urlPathEqualTo(s"/subscription/$identifier/$refNum"))
+        .willReturn(
+          serverError()))
     builder
   }
 
@@ -142,6 +103,82 @@ case class SdilBackendStub()
       get(
         urlPathMatching(s"/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"))
         .willReturn(ok(Json.toJson(smallProducerStatus).toString())))
+    builder
+  }
+
+  def checkSmallProducerStatusNone(sdilRef: String, period: ReturnPeriod): PreconditionBuilder = {
+    stubFor(
+      get(
+        urlPathMatching(s"/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"))
+        .willReturn(notFound()))
+    builder
+  }
+
+  def checkSmallProducerStatusError(sdilRef: String, period: ReturnPeriod): PreconditionBuilder = {
+    stubFor(
+      get(
+        urlPathMatching(s"/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"))
+        .willReturn(serverError()))
+    builder
+  }
+
+  def retrieveReturn(utr: String, period: ReturnPeriod, resp: Option[SdilReturn]) = {
+    val uri = s"/returns/$utr/year/${period.year}/quarter/${period.quarter}"
+    val response = resp match {
+      case Some(sdilReturn) => ok(Json.toJson(sdilReturn).toString())
+      case None => notFound()
+    }
+    stubFor(
+      get(
+        urlPathEqualTo(uri))
+        .willReturn(
+          response))
+    builder
+  }
+
+  def retrieveReturnError(utr: String, period: ReturnPeriod) = {
+    val uri = s"/returns/$utr/year/${period.year}/quarter/${period.quarter}"
+    stubFor(
+      get(
+        urlPathEqualTo(uri))
+        .willReturn(
+          serverError()))
+    builder
+  }
+
+  def balance(sdilRef: String, withAssessment: Boolean, balance: BigDecimal = BigDecimal(1000)) = {
+    stubFor(
+      get(
+        urlPathMatching(s"/balance/$sdilRef/$withAssessment"))
+        .willReturn(
+          ok(Json.toJson(balance).toString())))
+    builder
+  }
+
+  def balancefailure(sdilRef: String, withAssessment: Boolean) = {
+    stubFor(
+      get(
+        urlPathMatching(s"/balance/$sdilRef/$withAssessment"))
+        .willReturn(
+          serverError()))
+    builder
+  }
+
+  def balanceHistory(sdilRef: String, withAssessment: Boolean, finincialItems: List[FinancialLineItem]) = {
+    stubFor(
+      get(
+        urlPathMatching(s"/balance/$sdilRef/history/all/$withAssessment"))
+        .willReturn(
+          ok(Json.toJson(finincialItems).toString())))
+    builder
+  }
+
+  def balanceHistoryfailure(sdilRef: String, withAssessment: Boolean) = {
+    stubFor(
+      get(
+        urlPathMatching(s"/balance/$sdilRef/history/all/$withAssessment"))
+        .willReturn(
+          serverError()))
     builder
   }
 }

@@ -1,11 +1,8 @@
 # correct an error in a return specific routes
 GET         /check-your-answers                                 controllers.correctReturn.CorrectReturnCYAController.onPageLoad
 
-GET        /select                                              controllers.correctReturn.SelectController.onPageLoad(mode: Mode = NormalMode)
-POST       /select                                              controllers.correctReturn.SelectController.onSubmit(mode: Mode = NormalMode)
-GET        /change-select                                       controllers.correctReturn.SelectController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-select                                       controllers.correctReturn.SelectController.onSubmit(mode: Mode = CheckMode)
-
+GET        /select                                              controllers.correctReturn.SelectController.onPageLoad
+POST       /select                                              controllers.correctReturn.SelectController.onSubmit
 
 GET        /correction-reason                                   controllers.correctReturn.CorrectionReasonController.onPageLoad(mode: Mode = NormalMode)
 POST       /correction-reason                                   controllers.correctReturn.CorrectionReasonController.onSubmit(mode: Mode = NormalMode)

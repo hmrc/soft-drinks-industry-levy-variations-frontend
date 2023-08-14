@@ -19,7 +19,7 @@ package models.UpdateRegisteredDetails
 import base.SpecBase
 import models.backend.UkAddress
 import models.updateRegisteredDetails.Submission.VariationsContact
-import models.updateRegisteredDetails.UpdateContactDetails
+import models.updateRegisteredDetails.ContactDetails
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -91,7 +91,7 @@ class VariationsContactSpec extends AnyFreeSpec with Matchers with ScalaCheckPro
       }
 
       "when i have submitted no changes to an address but have made changes to email address and phone number" in {
-        val contactDetails = UpdateContactDetails("foo", "bar", "123456789", "email@test.com")
+        val contactDetails = ContactDetails("foo", "bar", "123456789", "email@test.com")
 
         VariationsContact.generateBusinessContact(
           emptyUserAnswersForUpdateRegisteredDetails.set(UpdateContactDetailsPage, contactDetails).success.value,
@@ -100,7 +100,7 @@ class VariationsContactSpec extends AnyFreeSpec with Matchers with ScalaCheckPro
       }
 
       "when i have submitted changes to the address line 1,  email address and phone number" in {
-        lazy val contactDetails = UpdateContactDetails("foo", "bar", "123456789", "email@test.com")
+        lazy val contactDetails = ContactDetails("foo", "bar", "123456789", "email@test.com")
         lazy val subscriptionAddress = UkAddress(List("19 Rhes Priordy", "East London"), "F23 9RJ")
 
         VariationsContact.generateBusinessContact(

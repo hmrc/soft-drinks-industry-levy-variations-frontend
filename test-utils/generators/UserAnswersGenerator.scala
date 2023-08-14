@@ -29,7 +29,7 @@ import play.api.libs.json.{JsValue, Json}
 trait UserAnswersGenerator extends TryValues {
   self: Generators =>
   val generators: Seq[Gen[(QuestionPage[_], JsValue)]] =
-
+    arbitrary[(updateRegisteredDetails.ChangeRegisteredDetailsPage.type, JsValue)] ::
     arbitrary[(correctReturn.RemovePackagingSiteConfirmPage.type, JsValue)] ::
     arbitrary[(correctReturn.SecondaryWarehouseDetailsPage.type, JsValue)] ::
     arbitrary[(correctReturn.RemoveWarehouseDetailsPage.type, JsValue)] ::
@@ -44,7 +44,6 @@ trait UserAnswersGenerator extends TryValues {
     arbitrary[(correctReturn.ExemptionsForSmallProducersPage.type, JsValue)] ::
     arbitrary[(correctReturn.CorrectionReasonPage.type, JsValue)] ::
     arbitrary[(correctReturn.PackagedAsContractPackerPage.type, JsValue)] ::
-    arbitrary[(correctReturn.SelectPage.type, JsValue)] ::
     arbitrary[(correctReturn.AddASmallProducerPage.type, JsValue)] ::
     arbitrary[(correctReturn.RepaymentMethodPage.type, JsValue)] ::
     arbitrary[(changeActivity.ThirdPartyPackagersPage.type, JsValue)] ::

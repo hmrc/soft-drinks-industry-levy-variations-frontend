@@ -54,7 +54,7 @@ class SecondaryWarehouseDetailsController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(SecondaryWarehouseDetailsPage) match {
@@ -69,7 +69,7 @@ class SecondaryWarehouseDetailsController @Inject()(
       Ok(view(preparedForm, mode, siteList))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
 
       val siteList: SummaryList = SummaryListViewModel(

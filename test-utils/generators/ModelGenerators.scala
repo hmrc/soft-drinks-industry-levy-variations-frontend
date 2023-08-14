@@ -16,69 +16,70 @@
 
 package generators
 
-import models._
-import models.changeActivity.AmountProduced
-import models.correctReturn.{AddASmallProducer, RepaymentMethod}
-import models.updateRegisteredDetails.UpdateContactDetails
-import org.scalacheck.{Arbitrary, Gen}
-import org.scalacheck.Arbitrary._
-trait ModelGenerators {
+  import models._
+  import models.changeActivity.AmountProduced
+  import models.correctReturn.{AddASmallProducer, RepaymentMethod}
+  import models.updateRegisteredDetails.ContactDetails
+  import org.scalacheck.{Arbitrary, Gen}
+  import org.scalacheck.Arbitrary._
 
-  implicit lazy val arbitraryCorrectReturnExemptionsForSmallProducers: Arbitrary[correctReturn.ExemptionsForSmallProducers] =
-    Arbitrary {
-      Gen.oneOf(correctReturn.ExemptionsForSmallProducers.values)
+  trait ModelGenerators {
+
+    implicit lazy val arbitraryUpdateRegisteredDetailsChangeRegisteredDetails: Arbitrary[updateRegisteredDetails.ChangeRegisteredDetails] =
+      Arbitrary {
+        Gen.oneOf(updateRegisteredDetails.ChangeRegisteredDetails.values)
+      }
+
+    implicit lazy val arbitraryCorrectReturnSelect: Arbitrary[ReturnPeriod] = {
+
+      val returnPeriodList = List(ReturnPeriod(2020, 0), ReturnPeriod(2020, 1), ReturnPeriod(2020, 2), ReturnPeriod(2020, 3),
+        ReturnPeriod(2022, 0), ReturnPeriod(2022, 1), ReturnPeriod(2022, 2), ReturnPeriod(2022, 3))
+
+      Arbitrary {
+        Gen.oneOf(returnPeriodList)
+      }
     }
 
-  implicit lazy val arbitraryCorrectReturnSelect: Arbitrary[ReturnPeriod] = {
+    implicit lazy val arbitraryChangeActivityAmountProduced: Arbitrary[AmountProduced] =
+      Arbitrary {
+        Gen.oneOf(AmountProduced.values)
+      }
 
-    val returnPeriodList = List(ReturnPeriod(2020, 0), ReturnPeriod(2020, 1), ReturnPeriod(2020, 2), ReturnPeriod(2020, 3),
-      ReturnPeriod(2022, 0), ReturnPeriod(2022, 1), ReturnPeriod(2022, 2), ReturnPeriod(2022, 3))
+    implicit lazy val arbitraryCorrectReturnRepaymentMethod: Arbitrary[RepaymentMethod] =
+      Arbitrary {
+        Gen.oneOf(RepaymentMethod.values)
+      }
 
-    Arbitrary {
-      Gen.oneOf(returnPeriodList)
-    }
+    implicit lazy val arbitraryCorrectReturnAddASmallProducer: Arbitrary[AddASmallProducer] =
+      Arbitrary {
+        for {
+          producerName <- arbitrary[Option[String]]
+          referenceNumber <- arbitrary[String]
+          lowBand <- arbitrary[Long]
+          highBand <- arbitrary[Long]
+        } yield AddASmallProducer(producerName, referenceNumber, lowBand, highBand)
+      }
+
+    implicit lazy val arbitraryUpdateRegisteredDetailsUpdateContactDetails: Arbitrary[ContactDetails] =
+      Arbitrary {
+        for {
+          name <- arbitrary[String]
+          job <- arbitrary[String]
+          phoneNumber <- arbitrary[String]
+          email <- arbitrary[String]
+        } yield ContactDetails(name, job, phoneNumber, email)
+      }
+
+    implicit lazy val arbitrarySelectChange: Arbitrary[SelectChange] =
+      Arbitrary {
+        Gen.oneOf(SelectChange.values.toSeq)
+      }
+
+    implicit lazy val arbitraryLitresInBands: Arbitrary[LitresInBands] =
+      Arbitrary {
+        for {
+          lowBand <- arbitrary[Long]
+          highBand <- arbitrary[Long]
+        } yield LitresInBands(lowBand, highBand)
+      }
   }
-
-  implicit lazy val arbitraryChangeActivityAmountProduced: Arbitrary[AmountProduced] =
-    Arbitrary {
-      Gen.oneOf(AmountProduced.values)
-    }
-
-  implicit lazy val arbitraryCorrectReturnRepaymentMethod: Arbitrary[RepaymentMethod] =
-    Arbitrary {
-      Gen.oneOf(RepaymentMethod.values)
-    }
-
-  implicit lazy val arbitraryCorrectReturnAddASmallProducer: Arbitrary[AddASmallProducer] =
-    Arbitrary {
-      for {
-        producerName <- arbitrary[Option[String]]
-        referenceNumber <- arbitrary[String]
-        lowBand <- arbitrary[Long]
-        highBand <- arbitrary[Long]
-      } yield AddASmallProducer(producerName, referenceNumber, lowBand, highBand)
-    }
-
-  implicit lazy val arbitraryUpdateRegisteredDetailsUpdateContactDetails: Arbitrary[UpdateContactDetails] =
-    Arbitrary {
-      for {
-        name <- arbitrary[String]
-        job <- arbitrary[String]
-        phoneNumber <- arbitrary[String]
-        email <- arbitrary[String]
-      } yield UpdateContactDetails(name, job, phoneNumber, email)
-    }
-
-  implicit lazy val arbitrarySelectChange: Arbitrary[SelectChange] =
-    Arbitrary {
-      Gen.oneOf(SelectChange.values.toSeq)
-    }
-
-  implicit lazy val arbitraryLitresInBands: Arbitrary[LitresInBands] =
-    Arbitrary {
-      for {
-        lowBand <- arbitrary[Long]
-        highBand <- arbitrary[Long]
-      } yield LitresInBands(lowBand, highBand)
-    }
-}

@@ -14,17 +14,22 @@
  * limitations under the License.
  */
 
-package pages.correctReturn
+package models.updateRegisteredDetails
 
-import models.ReturnPeriod
+import models.Contact
+import play.api.libs.json._
 
-import play.api.libs.json.JsPath
-import pages.QuestionPage
+case class ContactDetails(fullName: String, position: String, phoneNumber: String, email: String)
 
-case object SelectPage extends QuestionPage[ReturnPeriod] {
+object ContactDetails {
+  implicit val format = Json.format[ContactDetails]
 
-  override def path: JsPath = JsPath \ journeyType \ toString
-
-  def journeyType: String = "correctReturn"
-  override def toString: String = "select"
+  def fromContact(contact: Contact): ContactDetails = {
+    ContactDetails(
+      fullName = contact.name.getOrElse(""),
+      position = contact.positionInCompany.getOrElse(""),
+      phoneNumber = contact.phoneNumber,
+      email = contact.email
+    )
+  }
 }

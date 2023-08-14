@@ -32,7 +32,7 @@ class FileReturnBeforeDeregControllerISpec extends ControllerITTestHelper {
     "should redirect when no returns pending are found" in {
       given
         .commonPrecondition
-        .sdilBackend.returns_pending_not_found("0000001611")
+        .sdilBackend.no_returns_pending("0000001611")
 
       setAnswers(emptyUserAnswersForCancelRegistration)
 

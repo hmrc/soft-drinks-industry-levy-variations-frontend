@@ -14,50 +14,50 @@
  * limitations under the License.
  */
 
-package models.correctReturn
+package models.updateRegisteredDetails
 
+import generators.ModelGenerators
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen
-import org.scalatest.OptionValues
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import org.scalatest.OptionValues
 import play.api.libs.json.{JsError, JsString, Json}
 
-class ExemptionsForSmallProducersSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues {
+class ChangeRegisteredDetailsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with ModelGenerators {
 
-  "ExemptionsForSmallProducers" - {
+  "ChangeRegisteredDetails" - {
 
     "must deserialise valid values" in {
 
-      val gen = Gen.oneOf(ExemptionsForSmallProducers.values)
+      val gen = arbitrary[ChangeRegisteredDetails]
 
       forAll(gen) {
-        exemptionsForSmallProducers =>
+        changeRegisteredDetails =>
 
-          JsString(exemptionsForSmallProducers.toString).validate[ExemptionsForSmallProducers].asOpt.value mustEqual exemptionsForSmallProducers
+          JsString(changeRegisteredDetails.toString).validate[ChangeRegisteredDetails].asOpt.value mustEqual changeRegisteredDetails
       }
     }
 
     "must fail to deserialise invalid values" in {
 
-      val gen = arbitrary[String] suchThat (!ExemptionsForSmallProducers.values.map(_.toString).contains(_))
+      val gen = arbitrary[String] suchThat (!ChangeRegisteredDetails.values.map(_.toString).contains(_))
 
       forAll(gen) {
         invalidValue =>
 
-          JsString(invalidValue).validate[ExemptionsForSmallProducers] mustEqual JsError("error.invalid")
+          JsString(invalidValue).validate[ChangeRegisteredDetails] mustEqual JsError("error.invalid")
       }
     }
 
     "must serialise" in {
 
-      val gen = Gen.oneOf(ExemptionsForSmallProducers.values)
+      val gen = arbitrary[ChangeRegisteredDetails]
 
       forAll(gen) {
-        exemptionsForSmallProducers =>
+        changeRegisteredDetails =>
 
-          Json.toJson(exemptionsForSmallProducers) mustEqual JsString(exemptionsForSmallProducers.toString)
+          Json.toJson(changeRegisteredDetails) mustEqual JsString(changeRegisteredDetails.toString)
       }
     }
   }

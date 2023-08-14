@@ -2,6 +2,7 @@ package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.ChangeActivity
+import models.backend.{Site, UkAddress}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.changeActivity.PackAtBusinessAddressPage

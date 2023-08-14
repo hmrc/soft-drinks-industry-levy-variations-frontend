@@ -1,14 +1,12 @@
 package controllers.updateRegisteredDetails
 
 import controllers.ControllerITTestHelper
-import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{contain, convertToAnyMustWrapper, include}
-import play.api.i18n.Messages
-import play.api.test.WsTestClient
 import models.SelectChange.UpdateRegisteredDetails
-import org.jsoup.nodes.Element
+import org.jsoup.Jsoup
+import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.libs.json.Json
+import play.api.test.WsTestClient
 
 class ContactDetailsControllerISpec extends ControllerITTestHelper {
 

@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package pages.correctReturn
+package pages.updateRegisteredDetails
+
+import models.updateRegisteredDetails.ChangeRegisteredDetails
+import play.api.libs.json.JsPath
+import pages.QuestionPage
 
 
-import models.ReturnPeriod
-import pages.behaviours.PageBehaviours
+case object ChangeRegisteredDetailsPage extends QuestionPage[Set[ChangeRegisteredDetails]] {
 
-class SelectSpec extends PageBehaviours {
+  override def path: JsPath = JsPath \ journeyType \ toString
 
-  "SelectPage" - {
+  def journeyType: String = "updateRegisteredDetails"
 
-    beRetrievable[ReturnPeriod](SelectPage)
-
-    beSettable[ReturnPeriod](SelectPage)
-
-    beRemovable[ReturnPeriod](SelectPage)
-  }
+  override def toString: String = "changeRegisteredDetails"
 }

@@ -47,7 +47,7 @@ class HowManyOperatePackagingSiteOwnBrandsController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(HowManyOperatePackagingSiteOwnBrandsPage) match {
@@ -58,7 +58,7 @@ class HowManyOperatePackagingSiteOwnBrandsController @Inject()(
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
 
       form.bindFromRequest().fold(

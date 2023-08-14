@@ -112,8 +112,8 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
 
             whenReady(result1) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(correctReturn.routes.SelectController.onPageLoad(NormalMode).url)
-              val expectedUserAnswers = emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packagingSitesFromSubscription)
+              res.header(HeaderNames.LOCATION) mustBe Some(correctReturn.routes.SelectController.onPageLoad.url)
+              val expectedUserAnswers = emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packagingSitesFromSubscription, correctReturnPeriod = None)
               val generatedUserAnswers = getAnswers(sdilNumber)
               generatedUserAnswers mustBe defined
               generatedUserAnswers.get.copy(lastUpdated = expectedUserAnswers.lastUpdated) mustEqual expectedUserAnswers
@@ -126,7 +126,7 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
         "when the user selects to cancel registration and has no returns pending" in {
           given
             .commonPrecondition
-            .sdilBackend.returns_pending_empty("0000001611")
+            .sdilBackend.no_returns_pending("0000001611")
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestPOST(client, baseUrl + route, Json.obj(("value", SelectChange.CancelRegistration.toString)))

@@ -14,22 +14,19 @@
  * limitations under the License.
  */
 
-package models.updateRegisteredDetails
+package pages.updateRegisteredDetails
 
-import models.Contact
-import play.api.libs.json._
+import models.updateRegisteredDetails.ChangeRegisteredDetails
+import pages.behaviours.PageBehaviours
 
-case class UpdateContactDetails (fullName: String, position: String, phoneNumber: String, email: String)
+class ChangeRegisteredDetailsPageSpec extends PageBehaviours {
 
-object UpdateContactDetails {
-  implicit val format = Json.format[UpdateContactDetails]
+  "ChangeRegisteredDetailsPage" - {
 
-  def fromContact(contact: Contact): UpdateContactDetails = {
-    UpdateContactDetails(
-      fullName = contact.name.getOrElse(""),
-      position = contact.positionInCompany.getOrElse(""),
-      phoneNumber = contact.phoneNumber,
-      email = contact.email
-    )
+    beRetrievable[Set[ChangeRegisteredDetails]](ChangeRegisteredDetailsPage)
+
+    beSettable[Set[ChangeRegisteredDetails]](ChangeRegisteredDetailsPage)
+
+    beRemovable[Set[ChangeRegisteredDetails]](ChangeRegisteredDetailsPage)
   }
 }

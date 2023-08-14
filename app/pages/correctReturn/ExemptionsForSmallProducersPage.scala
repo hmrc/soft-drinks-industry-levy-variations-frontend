@@ -16,11 +16,10 @@
 
 package pages.correctReturn
 
-import models.correctReturn.ExemptionsForSmallProducers
-import play.api.libs.json.JsPath
 import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-case object ExemptionsForSmallProducersPage extends QuestionPage[ExemptionsForSmallProducers] {
+case object ExemptionsForSmallProducersPage extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ journeyType \ toString
 

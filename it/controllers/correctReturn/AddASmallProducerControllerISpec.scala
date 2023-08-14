@@ -5,7 +5,6 @@ import models.SelectChange.CorrectReturn
 import models.{ReturnPeriod, SmallProducer}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.correctReturn.{SelectPage}
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
@@ -25,18 +24,14 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
   private val validAddASmallProducer = Json.obj("producerName" -> aliasSuperCola, "referenceNumber" -> sdilRefSuperCola, "lowBand" -> litres.toString, "highBand" -> litres.toString)
 
   private val returnPeriod: ReturnPeriod = ReturnPeriod(2018, 1)
-
-  private def userAnswersWithReturnPeriodSet = emptyUserAnswersForCorrectReturn
-    .set(SelectPage, returnPeriod).success.value
-
   private def userAnswersWithSmallProducersSet = emptyUserAnswersForCorrectReturn
     .copy(smallProducerList = List(SmallProducer(aliasSuperCola, sdilRefSuperCola, (100, 200))))
 
   def testReturnPeriodNotSetForCorrectReturn(url: String): Unit = {
     "the return period has not been selected" - {
-      "redirect to Index controller" in {
-        setAnswers(emptyUserAnswersForCorrectReturn)
-        given.commonPreconditionChangeSubscription(aSubscription)
+      "redirect to Select controller" in {
+        setAnswers(emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None))
+        given.commonPreconditionChangeSubscription(diffSubscription)
 
         WsTestClient.withClient { client =>
           val result1 = client.url(url)
@@ -46,7 +41,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
           whenReady(result1) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION).get mustBe controllers.routes.IndexController.onPageLoad.url
+            res.header(HeaderNames.LOCATION).get mustBe routes.SelectController.onPageLoad.url
           }
         }
       }
@@ -55,9 +50,9 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
   "GET " + normalRoutePath - {
     "Ask user to input a registered small producer's details" in {
-      val userAnswers = userAnswersWithReturnPeriodSet
+      val userAnswers = emptyUserAnswersForCorrectReturn
       setAnswers(userAnswers)
-      given.commonPreconditionChangeSubscription(aSubscription)
+      given.commonPreconditionChangeSubscription(diffSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(correctReturnBaseUrl + normalRoutePath)
@@ -78,9 +73,9 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
   }
   "GET " + checkRoutePath - {
     "Ask user to input a registered small producer's details" in {
-      val userAnswers = userAnswersWithReturnPeriodSet
+      val userAnswers = emptyUserAnswersForCorrectReturn
       setAnswers(userAnswers)
-      given.commonPreconditionChangeSubscription(aSubscription)
+      given.commonPreconditionChangeSubscription(diffSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(correctReturnBaseUrl + checkRoutePath)
@@ -102,7 +97,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
   "POST " + normalRoutePath - {
     "Post the new form data and return form with error if SDIL reference number already exists as a small producer" in {
       given
-        .commonPreconditionChangeSubscription(aSubscription)
+        .commonPreconditionChangeSubscription(diffSubscription)
 
       val userAnswers = userAnswersWithSmallProducersSet
       setAnswers(userAnswers)
@@ -132,11 +127,11 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
     }
 
-    "Redirect to index controller if return period has not been set" in {
+    "Redirect to Select controller if return period has not been set" in {
       given
-        .commonPreconditionChangeSubscription(aSubscription)
+        .commonPreconditionChangeSubscription(diffSubscription)
 
-      val userAnswers = emptyUserAnswersForCorrectReturn
+      val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None)
       setAnswers(userAnswers)
 
       WsTestClient.withClient { client =>
@@ -150,7 +145,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
         whenReady(result) { res =>
           res.status mustBe 303
-          res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+          res.header(HeaderNames.LOCATION) mustBe Some(routes.SelectController.onPageLoad.url)
           getAnswers(sdilNumber).map(userAnswers => userAnswers.smallProducerList) mustBe Some(List())
         }
 
@@ -160,10 +155,10 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
     "Post the new form data and return form with error if SDIL reference number is not a valid small producer" in {
       given
-        .commonPreconditionChangeSubscription(aSubscription)
+        .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = false)
 
-      val userAnswers = userAnswersWithReturnPeriodSet
+      val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod))
       setAnswers(userAnswers)
 
       WsTestClient.withClient { client =>
@@ -197,10 +192,10 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         sdilRef = sdilRefSuperCola, litreage = (litres, litres))))
 
       given
-        .commonPreconditionChangeSubscription(aSubscription)
+        .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = true)
 
-      val userAnswers = userAnswersWithReturnPeriodSet
+      val userAnswers = emptyUserAnswersForCorrectReturn
       setAnswers(userAnswers)
 
       WsTestClient.withClient { client =>
@@ -228,7 +223,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
   "POST " + checkRoutePath - {
     "Post the new form data and return form with error if SDIL reference number already exists as a small producer" in {
       given
-        .commonPreconditionChangeSubscription(aSubscription)
+        .commonPreconditionChangeSubscription(diffSubscription)
 
       val userAnswers = userAnswersWithSmallProducersSet
       setAnswers(userAnswers)
@@ -258,11 +253,11 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
     }
 
-    "Redirect to index controller if return period has not been set" in {
+    "Redirect to select controller if return period has not been set" in {
       given
-        .commonPreconditionChangeSubscription(aSubscription)
+        .commonPreconditionChangeSubscription(diffSubscription)
 
-      val userAnswers = emptyUserAnswersForCorrectReturn
+      val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None)
       setAnswers(userAnswers)
 
       WsTestClient.withClient { client =>
@@ -276,7 +271,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
         whenReady(result) { res =>
           res.status mustBe 303
-          res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+          res.header(HeaderNames.LOCATION) mustBe Some(routes.SelectController.onPageLoad.url)
           getAnswers(sdilNumber).map(userAnswers => userAnswers.smallProducerList) mustBe Some(List())
         }
 
@@ -286,10 +281,10 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
     "Post the new form data and return form with error if SDIL reference number is not a valid small producer" in {
       given
-        .commonPreconditionChangeSubscription(aSubscription)
+        .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = false)
 
-      val userAnswers = userAnswersWithReturnPeriodSet
+      val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod))
       setAnswers(userAnswers)
 
       WsTestClient.withClient { client =>
@@ -323,10 +318,10 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         sdilRef = sdilRefSuperCola, litreage = (litres, litres))))
 
       given
-        .commonPreconditionChangeSubscription(aSubscription)
+        .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = true)
 
-      val userAnswers = userAnswersWithReturnPeriodSet
+      val userAnswers = emptyUserAnswersForCorrectReturn
       setAnswers(userAnswers)
 
       WsTestClient.withClient { client =>
@@ -343,9 +338,36 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
           res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
           getAnswers(sdilNumber).map(userAnswers => userAnswers.smallProducerList) mustBe expectedResult
         }
-
       }
+    }
 
+    "render the error page when the call to get small producer status fails" in {
+
+      val expectedResult: Some[List[SmallProducer]] = Some(List(SmallProducer(alias = aliasSuperCola,
+        sdilRef = sdilRefSuperCola, litreage = (litres, litres))))
+
+      given
+        .commonPreconditionChangeSubscription(diffSubscription)
+        .smallProducerStatusError(sdilRefSuperCola, returnPeriod)
+
+      val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod))
+      setAnswers(userAnswers)
+
+      WsTestClient.withClient { client =>
+        val result =
+          client.url(correctReturnBaseUrl + checkRoutePath)
+            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
+            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
+              "Csrf-Token" -> "nocheck")
+            .withFollowRedirects(false)
+            .post(validAddASmallProducer)
+
+        whenReady(result) { res =>
+          res.status mustBe 500
+          val page = Jsoup.parse(res.body)
+          page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - Soft Drinks Industry Levy - GOV.UK"
+        }
+      }
     }
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath, Some(validAddASmallProducer))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath, Some(validAddASmallProducer))

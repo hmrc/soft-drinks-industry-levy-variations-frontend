@@ -18,7 +18,7 @@ package models.UpdateRegisteredDetails.Submission
 
 import base.SpecBase
 import models.updateRegisteredDetails.Submission.VariationsPersonalDetails
-import models.updateRegisteredDetails.UpdateContactDetails
+import models.updateRegisteredDetails.ContactDetails
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -35,7 +35,7 @@ class VariationsPersonalDetailsSpec extends AnyFreeSpec with Matchers with Scala
         }
 
       "when i have changed the name" in {
-        val contactDetails = UpdateContactDetails("Tom Jeffery", "Chief Infrastructure Agent", "04495 206189", "Adeline.Greene@gmail.com")
+        val contactDetails = ContactDetails("Tom Jeffery", "Chief Infrastructure Agent", "04495 206189", "Adeline.Greene@gmail.com")
 
         VariationsPersonalDetails.apply(
           emptyUserAnswersForUpdateRegisteredDetails.copy(
@@ -45,7 +45,7 @@ class VariationsPersonalDetailsSpec extends AnyFreeSpec with Matchers with Scala
       }
 
       "when i have changed the position" in {
-        val contactDetails = UpdateContactDetails("Ava Adams", "Chief Data Analyst", "04495 206189", "Adeline.Greene@gmail.com")
+        val contactDetails = ContactDetails("Ava Adams", "Chief Data Analyst", "04495 206189", "Adeline.Greene@gmail.com")
 
         VariationsPersonalDetails.apply(
           emptyUserAnswersForUpdateRegisteredDetails.copy(
@@ -55,7 +55,7 @@ class VariationsPersonalDetailsSpec extends AnyFreeSpec with Matchers with Scala
       }
 
       "when i have changed the telephone number" in {
-        val contactDetails = UpdateContactDetails("Ava Adams", "Chief Infrastructure Agent", "02246 259761", "Adeline.Greene@gmail.com")
+        val contactDetails = ContactDetails("Ava Adams", "Chief Infrastructure Agent", "02246 259761", "Adeline.Greene@gmail.com")
 
         VariationsPersonalDetails.apply(
           emptyUserAnswersForUpdateRegisteredDetails.copy(
@@ -65,7 +65,7 @@ class VariationsPersonalDetailsSpec extends AnyFreeSpec with Matchers with Scala
       }
 
       "when i have changed the email" in {
-        val contactDetails = UpdateContactDetails("Ava Adams", "Chief Infrastructure Agent", "04495 206189", "new.email@gmail.com")
+        val contactDetails = ContactDetails("Ava Adams", "Chief Infrastructure Agent", "04495 206189", "new.email@gmail.com")
 
         VariationsPersonalDetails.apply(
           emptyUserAnswersForUpdateRegisteredDetails.copy(

@@ -16,24 +16,24 @@
 
 package forms.correctReturn
 
-import forms.behaviours.OptionFieldBehaviours
-import models.correctReturn.ExemptionsForSmallProducers
+import forms.behaviours.BooleanFieldBehaviours
 import play.api.data.FormError
 
-class ExemptionsForSmallProducersFormProviderSpec extends OptionFieldBehaviours {
+class ExemptionsForSmallProducersFormProviderSpec extends BooleanFieldBehaviours {
+
+  val requiredKey = "correctReturn.exemptionsForSmallProducers.error.required"
+  val invalidKey = "error.boolean"
 
   val form = new ExemptionsForSmallProducersFormProvider()()
 
   ".value" - {
 
     val fieldName = "value"
-    val requiredKey = "correctReturn.exemptionsForSmallProducers.error.required"
 
-    behave like optionsField[ExemptionsForSmallProducers](
+    behave like booleanField(
       form,
       fieldName,
-      validValues  = ExemptionsForSmallProducers.values,
-      invalidError = FormError(fieldName, "error.invalid")
+      invalidError = FormError(fieldName, invalidKey)
     )
 
     behave like mandatoryField(

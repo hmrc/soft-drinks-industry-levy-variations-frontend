@@ -76,6 +76,7 @@ class SessionRepositoryISpec
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")),Some("foo"), Some("foo"),Some(LocalDate.now()))),
         Map("foo" -> Warehouse(Some("foo"),UkAddress(List("foo"),"foo", Some("foo")))),
         UkAddress(List("123 Main Street", "Anytown"), "AB12 C34", alfId = Some("123456")),
+        None,
         false,
         Instant.ofEpochSecond(1))
       val setResult = await(repository.set(userAnswersBefore))

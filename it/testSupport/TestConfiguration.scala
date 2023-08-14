@@ -14,7 +14,7 @@ import play.api.inject._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{CookieHeaderEncoding, MessagesControllerComponents, Session, SessionCookieBaker}
 import play.api.{Application, Environment, Mode}
-import repositories.{SDILSessionCacheRepository, SessionRepository}
+import repositories.{SDILSessionCache, SDILSessionCacheRepository, SessionRepository}
 import testSupport.databases.SessionDatabaseOperations
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
@@ -68,6 +68,8 @@ trait TestConfiguration
 
   lazy val sessionRespository: SessionRepository = app.injector.instanceOf[SessionRepository]
   lazy val sdilSessionCacheRepo: SDILSessionCacheRepository = app.injector.instanceOf[SDILSessionCacheRepository]
+  lazy val sdilSessionCache: SDILSessionCache = app.injector.instanceOf[SDILSessionCache]
+
 
   val authCookie: String = createSessionCookieAsString(authData).substring(5)
   val authAndSessionCookie: String = createSessionCookieAsString(sessionAndAuth).substring(5)

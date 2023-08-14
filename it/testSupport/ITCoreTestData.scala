@@ -21,6 +21,9 @@ trait ITCoreTestData
   val day = 10
   val date = LocalDate.of(year, month, day)
 
+  val UTR = "0000001611"
+  val SDIL_REF = "XKSDIL000000022"
+
   val validDateJson = Json.obj(
     "value.day" -> day.toString,
     "value.month" -> month.toString,
@@ -38,7 +41,7 @@ trait ITCoreTestData
 
   val defaultCall = routes.IndexController.onPageLoad
 
-  val aSubscription = RetrievedSubscription(
+  val diffSubscription = RetrievedSubscription(
     utr = "0000001611",
     sdilRef = "XKSDIL000000022",
     orgName = "Super Lemonade Plc",

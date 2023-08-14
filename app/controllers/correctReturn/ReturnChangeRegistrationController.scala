@@ -37,12 +37,12 @@ class ReturnChangeRegistrationController @Inject()(
                                                     view: ReturnChangeRegistrationView
                                                   ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
+  def onPageLoad: Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
         Ok(view(routes.IndexController.onPageLoad.url))
   }
 
-  def onSubmit(): Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
+  def onSubmit(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
       Redirect(navigator.nextPage(ReturnChangeRegistrationPage, NormalMode, request.userAnswers))
   }

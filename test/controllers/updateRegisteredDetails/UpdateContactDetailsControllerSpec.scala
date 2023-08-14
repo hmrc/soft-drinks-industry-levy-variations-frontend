@@ -21,7 +21,7 @@ import errors.SessionDatabaseInsertError
 import forms.updateRegisteredDetails.UpdateContactDetailsFormProvider
 import models.NormalMode
 import models.SelectChange.UpdateRegisteredDetails
-import models.updateRegisteredDetails.UpdateContactDetails
+import models.updateRegisteredDetails.ContactDetails
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -91,7 +91,7 @@ class UpdateContactDetailsControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(UpdateContactDetails("Testing Example", "Job Position", "080073282942", "email@test.com")), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(ContactDetails("Testing Example", "Job Position", "080073282942", "email@test.com")), NormalMode)(request, messages(application)).toString
       }
     }
 

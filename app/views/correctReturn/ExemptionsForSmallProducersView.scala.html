@@ -35,14 +35,14 @@
     @formHelper(action = routes.ExemptionsForSmallProducersController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
         @govukRadios(
-            RadiosViewModel(
+            RadiosViewModel.yesNo(
                 field  = form("value"),
                 legend = LegendViewModel(messages("correctReturn.exemptionsForSmallProducers.heading")).asPageHeading(),
-                items  = ExemptionsForSmallProducers.options
+                hint = None
              )
             )
 
