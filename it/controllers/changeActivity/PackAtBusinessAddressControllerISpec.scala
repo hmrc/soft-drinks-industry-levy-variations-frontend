@@ -2,7 +2,7 @@ package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.ChangeActivity
-gimport org.jsoup.Jsoup
+import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.changeActivity.PackAtBusinessAddressPage
 import play.api.http.HeaderNames
