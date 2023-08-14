@@ -43,13 +43,11 @@ case class ReturnPeriod(year: Int, quarter: Int) {
     ReturnPeriod(nextReturnYear, nextReturnQuarter)
   }
   def previous: ReturnPeriod = {
-    val previousReturnQuarter = (quarter - 1) % 4
-    val previousReturnYear = if (previousReturnQuarter > quarter) {
-      year + 1
+    if(quarter == 0) {
+      ReturnPeriod((year - 1), 3)
     } else {
-      year
+      ReturnPeriod(year, (quarter - 1))
     }
-    ReturnPeriod(previousReturnYear, previousReturnQuarter)
   }
   def radioValue: String = s"YEAR-$year-QUARTER-$quarter"
 }
