@@ -1,11 +1,10 @@
 package controllers.updateRegisteredDetails
 
 import controllers.ControllerITTestHelper
-import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import play.api.i18n.Messages
-import play.api.test.WsTestClient
 import models.SelectChange.UpdateRegisteredDetails
+import org.jsoup.Jsoup
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import play.api.test.WsTestClient
 
 class BusinessAddressControllerISpec extends ControllerITTestHelper {
 
