@@ -1,16 +1,16 @@
 package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
-import models.{LitresInBands, NormalMode, ReturnPeriod, SdilReturn}
 import models.SelectChange.CorrectReturn
 import models.correctReturn.CorrectReturnUserAnswersData
+import models.{LitresInBands, NormalMode, ReturnPeriod, SdilReturn, SelectChange}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, defined, include}
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
-import testSupport.SDILBackendTestData.{aSubscription, emptyReturn, returnPeriodList, returnPeriods, smallProducerList, submittedDateTime, subscriptionSmallProducer}
+import testSupport.SDILBackendTestData._
 
 import java.time.ZoneOffset
 
@@ -112,6 +112,42 @@ class SelectControllerISpec extends ControllerITTestHelper {
                 radioItem.attr("value") mustBe returnPeriod.radioValue
                 radioItem.hasAttr("checked") mustBe false
               }
+            }
+          }
+        }
+      }
+
+      "should generate the userAnswers and render the select page" - {
+        "when the user is deregistered and has no useranswers" in {
+          given
+            .commonPreconditionDereg
+            .sdilBackend.returns_variable(UTR)
+
+          remove(sdilNumber)
+
+          WsTestClient.withClient { client =>
+            val result1 = createClientRequestGet(client, correctReturnBaseUrl + routePath)
+
+            whenReady(result1) { res =>
+              res.status mustBe 200
+              val page = Jsoup.parse(res.body)
+              page.title() mustBe "Which return do you need to correct? - Soft Drinks Industry Levy - GOV.UK"
+              val radioDivider = page.getElementsByClass("govuk-radios__divider")
+              radioDivider.size() mustBe returnPeriodYears.size
+              returnPeriodYears.zipWithIndex.foreach { case (year, index) =>
+                radioDivider.get(index).text() mustBe year.toString
+              }
+              val radioInputs = page.getElementsByClass("govuk-radios__input")
+              radioInputs.size() mustBe returnPeriodList.size
+              sortedReturnPeriods.zipWithIndex.foreach { case (returnPeriod, index) =>
+                val radioItem = radioInputs.get(index)
+                radioItem.attr("value") mustBe returnPeriod.radioValue
+                radioItem.hasAttr("checked") mustBe false
+              }
+
+              val generatedUA = getAnswers(sdilNumber)
+              generatedUA mustBe defined
+              generatedUA.get.journeyType mustBe SelectChange.CorrectReturn
             }
           }
         }

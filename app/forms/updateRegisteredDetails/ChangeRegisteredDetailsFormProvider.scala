@@ -16,13 +16,14 @@
 
 package forms.updateRegisteredDetails
 
-import javax.inject.{Inject, Singleton}
 import forms.mappings.Mappings
 import models.Enumerable
-import play.api.data.Form
-import play.api.data.Forms.set
 import models.updateRegisteredDetails.ChangeRegisteredDetails
 import models.updateRegisteredDetails.ChangeRegisteredDetails.{enumerableNonVoluntary, enumerableVoluntary}
+import play.api.data.Form
+import play.api.data.Forms.set
+
+import javax.inject.Inject
 
 
 class ChangeRegisteredDetailsFormProvider @Inject() extends Mappings {

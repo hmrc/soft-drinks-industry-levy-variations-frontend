@@ -20,7 +20,6 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.correctReturn.RemovePackagingSiteConfirmFormProvider
 import handlers.ErrorHandler
-import models.SelectChange.CorrectReturn
 import models.backend.Site
 import models.{Mode, UserAnswers}
 import navigation._

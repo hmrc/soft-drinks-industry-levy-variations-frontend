@@ -48,7 +48,7 @@ trait SummaryListRowLitresHelper {
     ).flatten
   }
 
-  private def bandRow(litres: Long, band: String, isCheckAnswers: Boolean, noBorder: Boolean = true)(implicit messages: Messages): SummaryListRow = {
+  private def bandRow(litres: Long, band: String, isCheckAnswers: Boolean, noBorder: Boolean)(implicit messages: Messages): SummaryListRow = {
     val key = if (band == lowBand) {
       "litres.lowBand"
     } else {

@@ -16,24 +16,22 @@
 
 package controllers.correctReturn
 
-import utilities.GenericLogger
 import controllers.ControllerHelper
 import controllers.actions._
 import forms.correctReturn.SmallProducerDetailsFormProvider
-
-import javax.inject.Inject
+import handlers.ErrorHandler
 import models.{Mode, SmallProducer}
-import models.SelectChange.CorrectReturn
+import navigation._
 import pages.correctReturn.SmallProducerDetailsPage
+import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
+import utilities.GenericLogger
 import views.html.correctReturn.SmallProducerDetailsView
-import handlers.ErrorHandler
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import navigation._
-import play.api.data.Form
 
 class SmallProducerDetailsController @Inject()(
                                        override val messagesApi: MessagesApi,

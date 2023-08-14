@@ -21,7 +21,6 @@ import controllers.actions._
 import forms.correctReturn.ClaimCreditsForLostDamagedFormProvider
 import handlers.ErrorHandler
 import models.Mode
-import models.SelectChange.CorrectReturn
 import navigation._
 import pages.correctReturn.{ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage}
 import play.api.i18n.MessagesApi

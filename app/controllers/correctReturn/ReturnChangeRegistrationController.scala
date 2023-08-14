@@ -19,7 +19,6 @@ package controllers.correctReturn
 import controllers.actions._
 import controllers.routes
 import models.NormalMode
-import models.SelectChange.CorrectReturn
 import navigation.NavigatorForCorrectReturn
 import pages.correctReturn.ReturnChangeRegistrationPage
 import play.api.i18n.{I18nSupport, MessagesApi}

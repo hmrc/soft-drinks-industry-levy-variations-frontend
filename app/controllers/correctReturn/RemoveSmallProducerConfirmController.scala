@@ -21,7 +21,6 @@ import controllers.{ControllerHelper, routes}
 import forms.correctReturn.RemoveSmallProducerConfirmFormProvider
 import handlers.ErrorHandler
 import models.Mode
-import models.SelectChange.CorrectReturn
 import navigation._
 import pages.correctReturn.RemoveSmallProducerConfirmPage
 import play.api.i18n.MessagesApi

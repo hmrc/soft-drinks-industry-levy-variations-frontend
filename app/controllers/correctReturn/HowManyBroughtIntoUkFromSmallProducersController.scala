@@ -16,21 +16,20 @@
 
 package controllers.correctReturn
 
-import utilities.GenericLogger
 import controllers.ControllerHelper
 import controllers.actions._
 import forms.HowManyLitresFormProvider
-import javax.inject.Inject
+import handlers.ErrorHandler
 import models.Mode
-import models.SelectChange.CorrectReturn
+import navigation._
 import pages.correctReturn.HowManyBroughtIntoUkFromSmallProducersPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
+import utilities.GenericLogger
 import views.html.correctReturn.HowManyBroughtIntoUkFromSmallProducersView
-import handlers.ErrorHandler
-import navigation._
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class HowManyBroughtIntoUkFromSmallProducersController @Inject()(
