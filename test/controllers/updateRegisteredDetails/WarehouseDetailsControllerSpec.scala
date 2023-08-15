@@ -17,12 +17,15 @@
 package controllers.updateRegisteredDetails
 
 import base.SpecBase
+import base.SpecBase.{twoWarehouses, userAnswerTwoWarehousesUpdateRegisteredDetails}
 import errors.SessionDatabaseInsertError
 import forms.updateRegisteredDetails.WarehouseDetailsFormProvider
-import models.NormalMode
+import models.{NormalMode, Warehouse}
 import models.SelectChange.UpdateRegisteredDetails
+import models.backend.UkAddress
 import navigation._
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -32,16 +35,19 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import views.html.updateRegisteredDetails.WarehouseDetailsView
 import views.summary.updateRegisteredDetails.WarehouseDetailsSummary
 
+import scala.collection.immutable.Map
 import scala.concurrent.Future
 
 class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with SummaryListFluency {
 
   def onwardRoute = Call("GET", "/foo")
+  def doc(result: String): Document = Jsoup.parse(result)
 
   val formProvider = new WarehouseDetailsFormProvider()
   val form = formProvider()
@@ -52,7 +58,7 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswerTwoWarehousesUpdateRegisteredDetails)).build()
 
       running(application) {
         val request = FakeRequest(GET, warehouseDetailsRoute)
@@ -61,8 +67,24 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
 
         val view = application.injector.instanceOf[WarehouseDetailsView]
 
+        val warehouseSummaryList: List[SummaryListRow] =
+          WarehouseDetailsSummary.row2(twoWarehouses)(messages(application))
+
+        val summaryList: SummaryList = SummaryListViewModel(
+          rows = warehouseSummaryList
+        )
+
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, None)(request, messages(application)).toString
+        val summaryActions = doc(contentAsString(result)).getElementsByClass("govuk-summary-list__actions")
+        summaryActions.size() mustEqual 2
+        summaryActions.first.text() must include("Remove")
+        summaryActions.last.text() must include("Remove")
+
+        val removeLink = doc(contentAsString(result)).getElementsByClass("govuk-summary-list__actions")
+          .tagName("ul").tagName("li").last().getElementsByClass("govuk-link").last()
+        removeLink.attr("href") mustEqual "/soft-drinks-industry-levy-variations-frontend/change-registered-details/warehouse-details/remove/2"
+
+        contentAsString(result) mustEqual view(form, NormalMode, Some(summaryList))(request, messages(application)).toString
       }
     }
 
