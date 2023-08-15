@@ -68,6 +68,8 @@ trait TestData {
     deregDate = None
   )
 
+  val deregSubscription = aSubscription.copy(deregDate = Some(LocalDate.now.minusMonths(1)))
+
   val subscriptionSmallProducer = RetrievedSubscription(
     utr = "0000001611",
     sdilRef = "XKSDIL000000022",

@@ -190,6 +190,25 @@ class SelectControllerISpec extends ControllerITTestHelper {
       }
     }
 
+    "should redirect to sdilHome" - {
+      "when the are no variable returns for a deregistered user" in {
+        given
+          .commonPreconditionDereg
+          .sdilBackend.no_returns_variable(UTR)
+
+        remove(sdilNumber)
+
+        WsTestClient.withClient { client =>
+          val result1 = createClientRequestGet(client, correctReturnBaseUrl + routePath)
+
+          whenReady(result1) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION) mustBe Some("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home")
+          }
+        }
+      }
+    }
+
     "should redirect to the select change page" - {
       "when the are no variable returns" in {
         given
@@ -434,6 +453,27 @@ class SelectControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.SelectChangeController.onPageLoad.url)
+          }
+        }
+      }
+    }
+
+    "should redirect to the sdil home" - {
+      "when the are no variable returns for a deregistered user" in {
+        given
+          .commonPreconditionDereg
+          .sdilBackend.no_returns_variable(UTR)
+
+        remove(sdilNumber)
+
+        WsTestClient.withClient { client =>
+          val result1 = createClientRequestPOST(
+            client, correctReturnBaseUrl + routePath, Json.obj("value" -> returnPeriodList.head.radioValue)
+          )
+
+          whenReady(result1) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION) mustBe Some("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home")
           }
         }
       }
