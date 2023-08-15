@@ -19,8 +19,6 @@ package models
 import base.SpecBase
 import org.scalatestplus.mockito.MockitoSugar
 
-import java.time.LocalDate
-
 class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper {
 
   "SdilReturn" - {

@@ -20,7 +20,6 @@ import controllers.actions._
 import controllers.{ControllerHelper, routes}
 import forms.correctReturn.RemoveWarehouseDetailsFormProvider
 import handlers.ErrorHandler
-import models.SelectChange.CorrectReturn
 import models.{Mode, UserAnswers, Warehouse}
 import navigation._
 import pages.correctReturn.RemoveWarehouseDetailsPage

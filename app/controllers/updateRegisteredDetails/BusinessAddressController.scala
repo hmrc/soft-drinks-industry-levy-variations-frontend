@@ -43,7 +43,7 @@ class BusinessAddressController @Inject()(
   }
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
-    implicit request =>
+    _ =>
       Redirect(controllers.updateRegisteredDetails.routes.UpdateRegisteredDetailsCYAController.onPageLoad)
   }
 

@@ -20,7 +20,7 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.correctReturn.RemoveSmallProducerConfirmFormProvider
 import models.SelectChange.CorrectReturn
-import models.{NormalMode, SelectChange, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any

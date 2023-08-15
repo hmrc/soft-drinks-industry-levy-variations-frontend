@@ -17,6 +17,7 @@
 package controllers.correctReturn
 
 import cats.data.EitherT
+import config.FrontendAppConfig
 import controllers.ControllerHelper
 import controllers.actions._
 import errors.{NoVariableReturns, SelectReturnFormError}
@@ -48,7 +49,8 @@ class SelectController @Inject()(
                                   val controllerComponents: MessagesControllerComponents,
                                   view: SelectView,
                                   val genericLogger: GenericLogger,
-                                  val errorHandler: ErrorHandler
+                                  val errorHandler: ErrorHandler,
+                                  config: FrontendAppConfig
                                      )(implicit ec: ExecutionContext) extends ControllerHelper {
 
   val form: Form[String] = formProvider()
@@ -60,7 +62,8 @@ class SelectController @Inject()(
           val returnPeriodsForYears = correctReturnOrchestrator.separateReturnPeriodsByYear(returnPeriods)
           val preparedForm = request.userAnswers.correctReturnPeriod.fold(form)(value => form.fill(value.radioValue))
           Ok(view(preparedForm, returnPeriodsForYears))
-        case Left(NoVariableReturns) => Redirect(controllers.routes.SelectChangeController.onPageLoad)
+        case Left(NoVariableReturns) if request.subscription.deregDate.isEmpty => Redirect(controllers.routes.SelectChangeController.onPageLoad)
+        case Left(NoVariableReturns) => Redirect(config.sdilHomeUrl)
         case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
       }
   }
@@ -81,6 +84,7 @@ class SelectController @Inject()(
           Redirect(routes.PackagedAsContractPackerController.onPageLoad(NormalMode))
         case Right(_) =>
           Redirect(routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode))
+        case Left(NoVariableReturns) if request.subscription.deregDate.nonEmpty => Redirect(config.sdilHomeUrl)
         case Left(NoVariableReturns) =>
           Redirect(controllers.routes.SelectChangeController.onPageLoad)
         case Left(SelectReturnFormError(formWithError, returnPeriods)) =>

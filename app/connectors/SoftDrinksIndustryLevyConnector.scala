@@ -22,7 +22,7 @@ import errors.UnexpectedResponseFromSDIL
 import models.{FinancialLineItem, OptPreviousSubmittedReturn, OptRetrievedSubscription, OptSmallProducer, RetrievedSubscription, ReturnPeriod, SdilReturn}
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import service.VariationResult
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 import utilities.GenericLogger
 
 import javax.inject.Inject

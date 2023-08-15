@@ -16,29 +16,24 @@
 
 package controllers.correctReturn
 
-import utilities.GenericLogger
 import controllers.ControllerHelper
 import controllers.actions._
 import forms.correctReturn.SecondaryWarehouseDetailsFormProvider
-
-import javax.inject.Inject
-import models.{Mode, Warehouse}
-import models.SelectChange.CorrectReturn
+import handlers.ErrorHandler
+import models.Mode
+import navigation._
 import pages.correctReturn.SecondaryWarehouseDetailsPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
-import views.html.correctReturn.SecondaryWarehouseDetailsView
-import handlers.ErrorHandler
-import models.backend.UkAddress
-
-import scala.concurrent.{ExecutionContext, Future}
-import navigation._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewmodels.summary.correctReturn.SecondaryWarehouseDetailsSummary
+import utilities.GenericLogger
 import viewmodels.govuk.summarylist._
+import viewmodels.summary.correctReturn.SecondaryWarehouseDetailsSummary
+import views.html.correctReturn.SecondaryWarehouseDetailsView
 
-import scala.collection.immutable.Map
+import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class SecondaryWarehouseDetailsController @Inject()(
                                                      override val messagesApi: MessagesApi,

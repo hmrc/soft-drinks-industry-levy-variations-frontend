@@ -18,8 +18,6 @@ package controllers.correctReturn
 
 import base.SpecBase
 import models.SelectChange.CorrectReturn
-import models.{SelectChange, UserAnswers}
-import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

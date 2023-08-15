@@ -17,8 +17,7 @@
 package controllers.correctReturn
 
 import com.google.inject.Inject
-import controllers.actions.{ControllerActions, IdentifierAction}
-import models.SelectChange.CorrectReturn
+import controllers.actions.ControllerActions
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -27,7 +26,6 @@ import views.html.correctReturn.CorrectReturnCYAView
 
 class CorrectReturnCYAController @Inject()(
                                             override val messagesApi: MessagesApi,
-                                            identify: IdentifierAction,
                                             controllerActions: ControllerActions,
                                             val controllerComponents: MessagesControllerComponents,
                                             view: CorrectReturnCYAView

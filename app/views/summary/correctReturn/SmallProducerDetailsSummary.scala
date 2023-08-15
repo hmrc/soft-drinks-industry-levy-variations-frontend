@@ -21,7 +21,6 @@ import models.{CheckMode, SmallProducer}
 import pages.QuestionPage
 import pages.correctReturn.SmallProducerDetailsPage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.summarylist._

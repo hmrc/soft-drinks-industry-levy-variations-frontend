@@ -16,22 +16,21 @@
 
 package controllers.correctReturn
 
-import utilities.GenericLogger
 import controllers.ControllerHelper
 import controllers.actions._
 import forms.correctReturn.AskSecondaryWarehouseInReturnFormProvider
-import javax.inject.Inject
+import handlers.ErrorHandler
 import models.Mode
-import models.SelectChange.CorrectReturn
+import navigation._
 import pages.correctReturn.AskSecondaryWarehouseInReturnPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
+import utilities.GenericLogger
 import views.html.correctReturn.AskSecondaryWarehouseInReturnView
-import handlers.ErrorHandler
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import navigation._
 
 class AskSecondaryWarehouseInReturnController @Inject()(
                                        override val messagesApi: MessagesApi,

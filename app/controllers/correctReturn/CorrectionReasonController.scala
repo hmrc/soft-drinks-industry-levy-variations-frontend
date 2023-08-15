@@ -16,24 +16,22 @@
 
 package controllers.correctReturn
 
-import utilities.GenericLogger
+import controllers.ControllerHelper
 import controllers.actions._
 import forms.correctReturn.CorrectionReasonFormProvider
-
-import javax.inject.Inject
+import handlers.ErrorHandler
 import models.Mode
+import navigation._
 import pages.correctReturn.CorrectionReasonPage
+import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
+import utilities.GenericLogger
 import views.html.correctReturn.CorrectionReasonView
-import handlers.ErrorHandler
-import controllers.ControllerHelper
-import models.SelectChange.CorrectReturn
 
+import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import navigation._
-import play.api.data.Form
 
 class CorrectionReasonController @Inject()(
                                        override val messagesApi: MessagesApi,

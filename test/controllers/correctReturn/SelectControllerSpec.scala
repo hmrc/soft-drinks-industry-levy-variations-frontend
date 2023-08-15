@@ -17,11 +17,11 @@
 package controllers.correctReturn
 
 import base.SpecBase
-import errors.{NoSdilReturnForPeriod, NoVariableReturns, UnexpectedResponseFromSDIL}
+import errors.{NoSdilReturnForPeriod, NoVariableReturns, SessionDatabaseInsertError, UnexpectedResponseFromSDIL}
 import forms.correctReturn.SelectFormProvider
 import models.SelectChange.CorrectReturn
 import models.{NormalMode, ReturnPeriod}
-import orchestrators.CorrectReturnOrchestrator
+import orchestrators.{CorrectReturnOrchestrator, SelectChangeOrchestrator}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -122,24 +122,84 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must render the error page when the backend call get variable returns fails for a GET" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+
+    "must redirect to sdilHome when returns is empty for GET nd user is deregistered" in {
+
+      val mockSelectChangeOrchestrator = mock[SelectChangeOrchestrator]
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn),
+        subscription = Some(deregSubscription)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator),
+        bind[SelectChangeOrchestrator].toInstance(mockSelectChangeOrchestrator)
       ).build()
 
       running(application) {
+
+        when(mockSelectChangeOrchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(deregSubscription)(ec))
+          .thenReturn(createSuccessVariationResult(emptyUserAnswersForCorrectReturn))
+
         when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
-          createFailureVariationResult(UnexpectedResponseFromSDIL)
+          createFailureVariationResult(NoVariableReturns)
         }
 
-        val request =
-          FakeRequest(GET, selectRoute)
+        val request = FakeRequest(GET, selectRoute)
 
         val result = route(application, request).value
 
-        status(result) mustEqual INTERNAL_SERVER_ERROR
-        val page = Jsoup.parse(contentAsString(result))
-        page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - Soft Drinks Industry Levy - GOV.UK"
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual "http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"
+
+      }
+    }
+
+    "must render the error page" - {
+      "when the backend call get variable returns fails for a GET" in {
+        val mockSelectChangeOrchestrator = mock[SelectChangeOrchestrator]
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn),
+          subscription = Some(deregSubscription)).overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator),
+          bind[SelectChangeOrchestrator].toInstance(mockSelectChangeOrchestrator)
+        ).build()
+
+        running(application) {
+
+          when(mockSelectChangeOrchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(deregSubscription)(ec))
+            .thenReturn(createFailureVariationResult(SessionDatabaseInsertError))
+          when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
+            createFailureVariationResult(UnexpectedResponseFromSDIL)
+          }
+
+          val request =
+            FakeRequest(GET, selectRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual INTERNAL_SERVER_ERROR
+          val page = Jsoup.parse(contentAsString(result))
+          page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - Soft Drinks Industry Levy - GOV.UK"
+        }
+      }
+
+      "when the session fails to save the user answers for deregistered user" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+        ).build()
+
+        running(application) {
+          when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
+            createFailureVariationResult(UnexpectedResponseFromSDIL)
+          }
+
+          val request =
+            FakeRequest(GET, selectRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual INTERNAL_SERVER_ERROR
+          val page = Jsoup.parse(contentAsString(result))
+          page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - Soft Drinks Industry Levy - GOV.UK"
+        }
       }
     }
 
@@ -280,6 +340,28 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.SelectChangeController.onPageLoad.url
+      }
+    }
+
+    "must redirect to sdil home when there are no variable returns for a deregistered user" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn), Some(deregSubscription)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
+          createFailureVariationResult(NoVariableReturns)
+        }
+
+        val request =
+          FakeRequest(POST, selectRoute
+          )
+            .withFormUrlEncodedBody(("value", returnPeriodList.head.radioValue))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual "http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"
       }
     }
 

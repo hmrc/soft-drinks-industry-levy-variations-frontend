@@ -343,9 +343,6 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
     "render the error page when the call to get small producer status fails" in {
 
-      val expectedResult: Some[List[SmallProducer]] = Some(List(SmallProducer(alias = aliasSuperCola,
-        sdilRef = sdilRefSuperCola, litreage = (litres, litres))))
-
       given
         .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatusError(sdilRefSuperCola, returnPeriod)

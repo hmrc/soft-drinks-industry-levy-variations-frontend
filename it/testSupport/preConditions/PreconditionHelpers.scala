@@ -1,6 +1,7 @@
 package testSupport.preConditions
 
 import models.{RetrievedSubscription, ReturnPeriod}
+import testSupport.SDILBackendTestData.subscriptionDeregistered
 
 trait PreconditionHelpers {
   implicit val builder: PreconditionBuilder
@@ -10,6 +11,15 @@ trait PreconditionHelpers {
       .user.isAuthorisedAndEnrolled
       .sdilBackend.retrieveSubscription("utr","0000001611")
       .sdilBackend.retrieveSubscription("sdil","XKSDIL000000022")
+      .sdilBackend.returns_variable("0000001611")
+      .sdilBackend.returns_pending("0000001611")
+  }
+
+  def commonPreconditionDereg = {
+    builder
+      .user.isAuthorisedAndEnrolled
+      .sdilBackend.retrieveSubscription("utr", "0000001611", subscriptionDeregistered)
+      .sdilBackend.retrieveSubscription("sdil", "XKSDIL000000022", subscriptionDeregistered)
       .sdilBackend.returns_variable("0000001611")
       .sdilBackend.returns_pending("0000001611")
   }
