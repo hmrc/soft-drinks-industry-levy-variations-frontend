@@ -56,7 +56,7 @@ class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
           defaultCall
       }
     }else if(changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.ContactDetails)){
-      routes.UpdateContactDetailsController.onPageLoad(NormalMode)
+      routes.ContactDetailsController.onPageLoad()
     }else {
       routes.BusinessAddressController.onPageLoad()
     }

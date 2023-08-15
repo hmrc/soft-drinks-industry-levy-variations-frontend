@@ -92,7 +92,7 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
 
             whenReady(result1) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+              res.header(HeaderNames.LOCATION) mustBe Some("/soft-drinks-industry-levy-variations-frontend/change-registered-details")
               val expectedUserAnswers = emptyUserAnswersForUpdateRegisteredDetails
               val generatedUserAnswers = getAnswers(sdilNumber)
               generatedUserAnswers mustBe defined
