@@ -251,7 +251,6 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
         val alfOnRampURL: String = "http://onramp.com"
 
-
         given
           .commonPrecondition
           .alf.getSuccessResponseFromALFInit(alfOnRampURL)

@@ -188,7 +188,6 @@ class AddressLookupService @Inject()(
            countryPickerLabels = None
          ))
        ))
-
      case ContactDetails => Some(
        JourneyLabels(
          en = Some(LanguageLabels(

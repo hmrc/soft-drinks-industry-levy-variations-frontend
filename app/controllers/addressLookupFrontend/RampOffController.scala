@@ -65,7 +65,7 @@ class RampOffController @Inject()(controllerActions: ControllerActions,
         updatedUserAnswers = addressLookupService.addAddressUserAnswers(ContactDetails, alfResponse.address, request.userAnswers, sdilId, alfId)
         _ <- sessionRepository.set(updatedUserAnswers)
       } yield {
-        Redirect(controllers.routes.IndexController.onPageLoad)
+        Redirect(controllers.updateRegisteredDetails.routes.BusinessAddressController.onPageLoad())
       }
   }
 }

@@ -42,7 +42,7 @@ object BusinessAddressSummary  {
             classes = "govuk-!-font-weight-regular govuk-!-width-full"
           ),
           actions = Some(Actions("", Seq(
-            ActionItemViewModel("site.change", controllers.routes.IndexController.onPageLoad.url)
+            ActionItemViewModel("site.change", controllers.updateRegisteredDetails.routes.BusinessAddressController.changeAddress().url)
               .withVisuallyHiddenText(messages("updateRegisteredDetails.businessAddress.change.hidden"))
           )))
         )
