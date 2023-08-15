@@ -20,14 +20,16 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.updateRegisteredDetails.WarehouseDetailsFormProvider
 import handlers.ErrorHandler
-import models.Mode
 import models.SelectChange.UpdateRegisteredDetails
+import models.{CheckMode, Mode}
 import navigation._
-import pages.updateRegisteredDetails.WarehouseDetailsPage
-import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{AddressLookupService, SessionService}
+import pages.updateRegisteredDetails.{ChangeRegisteredDetailsPage, WarehouseDetailsPage}
+import play.api.data.Form
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
+import services.{AddressLookupService, SessionService, WarehouseDetails}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import uk.gov.hmrc.http.HeaderCarrier
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import views.html.updateRegisteredDetails.WarehouseDetailsView
@@ -37,19 +39,19 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class WarehouseDetailsController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       val sessionService: SessionService,
-                                       val navigator: NavigatorForUpdateRegisteredDetails,
-                                       controllerActions: ControllerActions,
-                                       formProvider: WarehouseDetailsFormProvider,
-                                       addressLookupService: AddressLookupService,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: WarehouseDetailsView,
-                                       val genericLogger: GenericLogger,
-                                       val errorHandler: ErrorHandler
-                                     )(implicit ec: ExecutionContext) extends ControllerHelper with SummaryListFluency {
+                                            override val messagesApi: MessagesApi,
+                                            val sessionService: SessionService,
+                                            val navigator: NavigatorForUpdateRegisteredDetails,
+                                            controllerActions: ControllerActions,
+                                            formProvider: WarehouseDetailsFormProvider,
+                                            addressLookupService: AddressLookupService,
+                                            val controllerComponents: MessagesControllerComponents,
+                                            view: WarehouseDetailsView,
+                                            val genericLogger: GenericLogger,
+                                            val errorHandler: ErrorHandler
+                                          )(implicit ec: ExecutionContext) extends ControllerHelper with SummaryListFluency {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
     implicit request =>
@@ -78,14 +80,46 @@ class WarehouseDetailsController @Inject()(
         )
         case _ => None
       }
+      val desiredRegisteredDetailsToChangeList = request.userAnswers.get(ChangeRegisteredDetailsPage) match {
+        case None => genericLogger.logger.error(
+          s"Failed to obtain which registered details to change from user answers while on ${WarehouseDetailsPage.toString}")
+          Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+        case Some(values) => values.toList
+      }
+
+      val addContactDetails: Boolean = desiredRegisteredDetailsToChangeList.toString.contains("contactDetails")
+      val addBusinessAddress: Boolean = desiredRegisteredDetailsToChangeList.toString.contains("businessAddress")
 
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, summaryList))),
-            value => {
-          val updatedAnswers = request.userAnswers.set(WarehouseDetailsPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, WarehouseDetailsPage, mode)
-        }
+
+        value =>
+          updateDatabaseWithoutRedirect(request.userAnswers.set(WarehouseDetailsPage, value), WarehouseDetailsPage).flatMap {
+            case true => getOnwardUrl(value, addContactDetails, addBusinessAddress, mode).map(Redirect(_))
+            case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+          }
+
       )
   }
+
+  private def getOnwardUrl(value: Boolean, addContactDetails: Boolean, addBusinessAddress: Boolean, mode: Mode)
+                          (implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages, requestHeader: RequestHeader): Future[String] = {
+    if (value) {
+      addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails)(hc, ec, messages, requestHeader)
+    } else if (mode == CheckMode) {
+      Future.successful(controllers.updateRegisteredDetails.routes.UpdateRegisteredDetailsCYAController.onPageLoad.url)
+    } else {
+      if (addContactDetails) {
+        Future.successful(controllers.updateRegisteredDetails.routes.UpdateContactDetailsController.onPageLoad(mode).url)
+      } else {
+        if (addBusinessAddress) {
+          Future.successful(controllers.updateRegisteredDetails.routes.BusinessAddressController.onPageLoad().url)
+        } else {
+          Future.successful(controllers.updateRegisteredDetails.routes.UpdateRegisteredDetailsCYAController.onPageLoad.url)
+        }
+      }
+    }
+  }
+
 }

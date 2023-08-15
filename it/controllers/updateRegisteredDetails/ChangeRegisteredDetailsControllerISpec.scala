@@ -13,7 +13,6 @@ import play.api.libs.json.Json
 import play.api.test.WsTestClient
 import testSupport.SDILBackendTestData.aSubscription
 
-
 class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
 
   val normalRoutePath = "/"
@@ -51,7 +50,8 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(ChangeRegisteredDetailsPage, Set(checkboxItem)).success.value
+          val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(ChangeRegisteredDetailsPage, Seq(checkboxItem)).success.value
+
 
           setAnswers(userAnswers)
 
@@ -80,7 +80,8 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(ChangeRegisteredDetailsPage, ChangeRegisteredDetails.values.toSet).success.value
+        val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(ChangeRegisteredDetailsPage, ChangeRegisteredDetails.values).success.value
+
 
         setAnswers(userAnswers)
 
@@ -150,7 +151,8 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
-                val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Set[ChangeRegisteredDetails]]](None)(_.get(ChangeRegisteredDetailsPage))
+
+                val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Seq[ChangeRegisteredDetails]]](None)(_.get(ChangeRegisteredDetailsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get.head mustBe checkboxItem
               }
@@ -161,7 +163,7 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(ChangeRegisteredDetailsPage, Set(checkboxItem)).success.value
+            val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(ChangeRegisteredDetailsPage, Seq(checkboxItem)).success.value
 
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
@@ -172,7 +174,7 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
-                val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Set[ChangeRegisteredDetails]]](None)(_.get(ChangeRegisteredDetailsPage))
+                val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Seq[ChangeRegisteredDetails]]](None)(_.get(ChangeRegisteredDetailsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get.head mustBe checkboxItem
               }
@@ -197,9 +199,10 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result) { res =>
               res.status mustBe 303
               res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
-              val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Set[ChangeRegisteredDetails]]](None)(_.get(ChangeRegisteredDetailsPage))
+
+              val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Seq[ChangeRegisteredDetails]]](None)(_.get(ChangeRegisteredDetailsPage))
               dataStoredForPage.nonEmpty mustBe true
-              dataStoredForPage.get mustBe ChangeRegisteredDetails.values.toSet
+              dataStoredForPage.get mustBe ChangeRegisteredDetails.values
             }
           }
         }
@@ -208,7 +211,7 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(ChangeRegisteredDetailsPage, ChangeRegisteredDetails.values.toSet).success.value
+          val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(ChangeRegisteredDetailsPage, ChangeRegisteredDetails.values).success.value
 
           setAnswers(userAnswers)
           WsTestClient.withClient { client =>
@@ -219,9 +222,10 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result) { res =>
               res.status mustBe 303
               res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
-              val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Set[ChangeRegisteredDetails]]](None)(_.get(ChangeRegisteredDetailsPage))
+
+              val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Seq[ChangeRegisteredDetails]]](None)(_.get(ChangeRegisteredDetailsPage))
               dataStoredForPage.nonEmpty mustBe true
-              dataStoredForPage.get mustBe ChangeRegisteredDetails.values.toSet
+              dataStoredForPage.get mustBe ChangeRegisteredDetails.values
             }
           }
         }
@@ -260,7 +264,7 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
           .commonPrecondition
 
         val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(ChangeRegisteredDetailsPage,
-          ChangeRegisteredDetails.voluntaryValues.toSet).success.value
+          ChangeRegisteredDetails.voluntaryValues).success.value
 
         setAnswers(userAnswers)
         WsTestClient.withClient { client =>
@@ -279,9 +283,9 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
               .attr("href") mustBe "#value_0"
             errorSummary.text() mustBe "Select at least one option to continue"
 
-            val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Set[ChangeRegisteredDetails]]](None)(_.get(ChangeRegisteredDetailsPage))
+            val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Seq[ChangeRegisteredDetails]]](None)(_.get(ChangeRegisteredDetailsPage))
             dataStoredForPage.nonEmpty mustBe true
-            dataStoredForPage.get mustBe ChangeRegisteredDetails.voluntaryValues.toSet
+            dataStoredForPage.get mustBe ChangeRegisteredDetails.voluntaryValues
           }
         }
       }

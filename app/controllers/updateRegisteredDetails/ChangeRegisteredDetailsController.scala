@@ -47,7 +47,7 @@ class ChangeRegisteredDetailsController @Inject()(
                                         val errorHandler: ErrorHandler
                                       )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  def form(isVoluntary: Boolean): Form[Set[ChangeRegisteredDetails]] = formProvider.apply(isVoluntary)
+  def form(isVoluntary: Boolean): Form[Seq[ChangeRegisteredDetails]] = formProvider.apply(isVoluntary)
 
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
     implicit request =>

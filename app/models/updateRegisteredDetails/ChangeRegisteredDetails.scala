@@ -21,6 +21,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import viewmodels.govuk.checkbox._
 import models.{Enumerable, WithName}
+
 sealed trait ChangeRegisteredDetails
 
 object ChangeRegisteredDetails extends Enumerable.Implicits {
@@ -67,4 +68,5 @@ object ChangeRegisteredDetails extends Enumerable.Implicits {
 
   val enumerableVoluntary: Enumerable[ChangeRegisteredDetails] =
     Enumerable(voluntaryValues.map(v => v.toString -> v): _*)
+
 }

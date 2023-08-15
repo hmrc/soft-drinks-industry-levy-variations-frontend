@@ -110,6 +110,14 @@ trait Constraints {
         Invalid(errorKey)
     }
 
+  protected def nonEmptySeq(errorKey: String): Constraint[Seq[_]] =
+    Constraint {
+      case set if set.nonEmpty =>
+        Valid
+      case _ =>
+        Invalid(errorKey)
+    }
+
   protected def maximumValueNotEqual[A](maximum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
     Constraint {
       input =>

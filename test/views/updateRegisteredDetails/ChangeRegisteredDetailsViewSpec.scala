@@ -31,7 +31,8 @@ class ChangeRegisteredDetailsViewSpec extends ViewSpecHelper {
   val view: ChangeRegisteredDetailsView = application.injector.instanceOf[ChangeRegisteredDetailsView]
   val formProvider = new ChangeRegisteredDetailsFormProvider
   val isVoluntary: Boolean = false
-  val form: Form[Set[ChangeRegisteredDetails]] = formProvider.apply(isVoluntary)
+  val form: Form[Seq[ChangeRegisteredDetails]] = formProvider.apply(isVoluntary)
+
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
@@ -86,7 +87,7 @@ class ChangeRegisteredDetailsViewSpec extends ViewSpecHelper {
     }
 
     ChangeRegisteredDetails.values.foreach { checkbox =>
-      val html1 = view(form.fill(Set(checkbox)), isVoluntary)(request, messages(application))
+      val html1 = view(form.fill(Seq(checkbox)), isVoluntary)(request, messages(application))
       val document1 = doc(html1)
 
       s"when the form is preoccupied with " + checkbox.toString + "selected and has no errors" - {
@@ -124,7 +125,7 @@ class ChangeRegisteredDetailsViewSpec extends ViewSpecHelper {
     }
 
     s"when the form is preoccupied with all checkboxes selected and has no errors" - {
-      val htmlAllSelected = view(form.fill(ChangeRegisteredDetails.values.toSet), isVoluntary)(request, messages(application))
+      val htmlAllSelected = view(form.fill(ChangeRegisteredDetails.values), isVoluntary)(request, messages(application))
       val documentAllSelected = doc(htmlAllSelected)
       "should have checkboxes" - {
         val checkboxes = documentAllSelected.getElementsByClass(Selectors.checkboxesItems)
@@ -148,7 +149,7 @@ class ChangeRegisteredDetailsViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
       "when in NormalMode" in {
-        val htmlAllSelected = view(form.fill(ChangeRegisteredDetails.values.toSet), isVoluntary)(request, messages(application))
+        val htmlAllSelected = view(form.fill(ChangeRegisteredDetails.values), isVoluntary)(request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
         documentAllSelected.select(Selectors.form)
