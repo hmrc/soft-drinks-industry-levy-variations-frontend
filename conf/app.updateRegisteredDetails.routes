@@ -30,8 +30,11 @@ POST       /change-packaging-site-details/remove/:index     controllers.updateRe
 
 GET        /contact-details                                 controllers.updateRegisteredDetails.ContactDetailsController.onPageLoad()
 
-GET        /business-address                                controllers.updateRegisteredDetails.BusinessAddressController.onPageLoad()
-POST       /business-address                                controllers.updateRegisteredDetails.BusinessAddressController.onSubmit()
 
 GET        /                                                controllers.updateRegisteredDetails.ChangeRegisteredDetailsController.onPageLoad()
 POST       /                                                controllers.updateRegisteredDetails.ChangeRegisteredDetailsController.onSubmit()
+
+GET        /business-address                                        controllers.updateRegisteredDetails.BusinessAddressController.onPageLoad()
+GET        /change-business-address                                 controllers.updateRegisteredDetails.BusinessAddressController.changeAddress()
+POST       /business-address                                        controllers.updateRegisteredDetails.BusinessAddressController.onSubmit()
+
