@@ -157,7 +157,7 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
                   case ChangeRegisteredDetails.BusinessAddress => res.header(HeaderNames.LOCATION) mustBe Some(routes.BusinessAddressController.onPageLoad().url)
                 }
 
-                val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Set[ChangeRegisteredDetails]]](None)(_.get(ChangeRegisteredDetailsPage))
+                val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Seq[ChangeRegisteredDetails]]](None)(_.get(ChangeRegisteredDetailsPage))
 
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get.head mustBe checkboxItem
@@ -185,7 +185,7 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
                   case ChangeRegisteredDetails.ContactDetails => res.header(HeaderNames.LOCATION) mustBe Some(routes.ContactDetailsController.onPageLoad().url)
                   case ChangeRegisteredDetails.BusinessAddress => res.header(HeaderNames.LOCATION) mustBe Some(routes.BusinessAddressController.onPageLoad().url)
                 }
-                val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Set[ChangeRegisteredDetails]]](None)(_.get(ChangeRegisteredDetailsPage))
+                val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Seq[ChangeRegisteredDetails]]](None)(_.get(ChangeRegisteredDetailsPage))
 
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get.head mustBe checkboxItem
@@ -212,7 +212,7 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
               res.status mustBe 303
 
               res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
-              val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Set[ChangeRegisteredDetails]]](None)(_.get(ChangeRegisteredDetailsPage))
+              val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Seq[ChangeRegisteredDetails]]](None)(_.get(ChangeRegisteredDetailsPage))
 
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe ChangeRegisteredDetails.values
@@ -236,7 +236,7 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
               res.status mustBe 303
 
               res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
-              val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Set[ChangeRegisteredDetails]]](None)(_.get(ChangeRegisteredDetailsPage))
+              val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Seq[ChangeRegisteredDetails]]](None)(_.get(ChangeRegisteredDetailsPage))
 
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe ChangeRegisteredDetails.values
