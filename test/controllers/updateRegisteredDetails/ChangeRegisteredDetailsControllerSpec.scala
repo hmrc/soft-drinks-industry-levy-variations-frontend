@@ -47,8 +47,7 @@ class ChangeRegisteredDetailsControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new ChangeRegisteredDetailsFormProvider()
   val isVoluntary: Boolean = false
-  val form: Form[Set[ChangeRegisteredDetails]] = formProvider(isVoluntary)
-
+  val form: Form[Seq[ChangeRegisteredDetails]] = formProvider(isVoluntary)
 
   "ChangeRegisteredDetails Controller" - {
 
@@ -58,74 +57,56 @@ class ChangeRegisteredDetailsControllerSpec extends SpecBase with MockitoSugar {
       ) ).build()
 
       running(application) {
-        val request = FakeRequest(GET, changeRegisteredDetailsRoute
-        )
-
+        val request = FakeRequest(GET, changeRegisteredDetailsRoute)
         val result = route(application, request).value
-
         val view = application.injector.instanceOf[ChangeRegisteredDetailsView]
 
         status(result) mustEqual OK
-
         contentAsString(result) mustEqual view(form, isVoluntary)(request, messages(application)).toString
       }
     }
 
     "must return OK and the correct view for a GET when the user is voluntarily registered" in {
-
-      val applicationVoluntarySetup = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails
-      ), subscription = Some(voluntarySubscription)).build()
+      val applicationVoluntarySetup = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails),
+        subscription = Some(voluntarySubscription)).build()
 
       running(applicationVoluntarySetup) {
-        val request = FakeRequest(GET, changeRegisteredDetailsRoute
-        )
-
+        val request = FakeRequest(GET, changeRegisteredDetailsRoute)
         val result = route(applicationVoluntarySetup, request).value
-
         val view = applicationVoluntarySetup.injector.instanceOf[ChangeRegisteredDetailsView]
 
         status(result) mustEqual OK
-
         contentAsString(result) mustEqual view(form, isVoluntary = true)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-
       val userAnswers = emptyUserAnswersForUpdateRegisteredDetails
-      .set(ChangeRegisteredDetailsPage, ChangeRegisteredDetails.values.toSet).success.value
-
+      .set(ChangeRegisteredDetailsPage, ChangeRegisteredDetails.values).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, changeRegisteredDetailsRoute
-        )
-
+        val request = FakeRequest(GET, changeRegisteredDetailsRoute)
         val view = application.injector.instanceOf[ChangeRegisteredDetailsView]
-
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(ChangeRegisteredDetails.values.toSet), isVoluntary)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(ChangeRegisteredDetails.values), isVoluntary)(request, messages(application)).toString
       }
     }
 
     "must redirect to the next page when valid data is submitted" in {
-
       val mockSessionService = mock[SessionService]
 
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails
-      ) )
-      .overrides(
-        bind[NavigatorForUpdateRegisteredDetails
-      ].toInstance(new FakeNavigatorForUpdateRegisteredDetails (onwardRoute)
-      ),
-      bind[SessionService].toInstance(mockSessionService)
-      )
-      .build()
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
+          .overrides(
+            bind[NavigatorForUpdateRegisteredDetails].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
+            bind[SessionService].toInstance(mockSessionService)
+          )
+          .build()
 
       running(application) {
         val request =
@@ -142,19 +123,15 @@ class ChangeRegisteredDetailsControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails
-      ) ).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)).build()
 
       running(application) {
         val request =
-          FakeRequest(POST, changeRegisteredDetailsRoute
-        )
+          FakeRequest(POST, changeRegisteredDetailsRoute)
         .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
-
         val view = application.injector.instanceOf[ChangeRegisteredDetailsView]
-
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST

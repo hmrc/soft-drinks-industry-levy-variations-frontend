@@ -17,42 +17,45 @@
 package controllers.updateRegisteredDetails
 
 import base.SpecBase
-import base.SpecBase.{twoWarehouses, userAnswerTwoWarehousesUpdateRegisteredDetails}
+import base.SpecBase.userAnswerTwoWarehousesUpdateRegisteredDetails
 import errors.SessionDatabaseInsertError
 import forms.updateRegisteredDetails.WarehouseDetailsFormProvider
-import models.{NormalMode, Warehouse}
+import models.NormalMode
 import models.SelectChange.UpdateRegisteredDetails
-import models.backend.UkAddress
+import models.updateRegisteredDetails.ChangeRegisteredDetails
 import navigation._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.updateRegisteredDetails.WarehouseDetailsPage
+import pages.updateRegisteredDetails.{ChangeRegisteredDetailsPage, WarehouseDetailsPage}
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.SessionService
+import repositories.SessionRepository
+import services.{AddressLookupService, SessionService, WarehouseDetails}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import views.html.updateRegisteredDetails.WarehouseDetailsView
 import views.summary.updateRegisteredDetails.WarehouseDetailsSummary
 
-import scala.collection.immutable.Map
 import scala.concurrent.Future
 
 class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with SummaryListFluency {
 
-  def onwardRoute = Call("GET", "/foo")
   def doc(result: String): Document = Jsoup.parse(result)
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new WarehouseDetailsFormProvider()
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  lazy val warehouseDetailsRoute = routes.WarehouseDetailsController.onPageLoad(NormalMode).url
+  lazy val warehouseDetailsRoute: String = routes.WarehouseDetailsController.onPageLoad(NormalMode).url
 
   "WarehouseDetails Controller" - {
 
@@ -102,7 +105,7 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode,  None)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, None)(request, messages(application)).toString
       }
     }
 
@@ -128,17 +131,26 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to the next page when valid data is submitted (true)" in {
+      val mockSessionRepository = mock[SessionRepository]
+      val mockAddressLookupService = mock[AddressLookupService]
+      val onwardUrlForALF = "foobarwizz"
 
-      val mockSessionService = mock[SessionService]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+      when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
+        ArgumentMatchers.eq(WarehouseDetails), ArgumentMatchers.any())(
+        ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
+        .thenReturn(Future.successful(onwardUrlForALF))
+
+      val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(ChangeRegisteredDetailsPage, ChangeRegisteredDetails.values).success.value
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
+        applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
-            bind[NavigatorForUpdateRegisteredDetails].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
-            bind[SessionService].toInstance(mockSessionService)
+            bind[Navigator].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
           )
           .build()
 
@@ -150,33 +162,43 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual onwardUrlForALF
+
+        verify(mockAddressLookupService, times(1)).initJourneyAndReturnOnRampUrl(
+          ArgumentMatchers.eq(WarehouseDetails), ArgumentMatchers.any())(
+          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       }
     }
 
-    "must redirect to the next page when valid data (warehouses in the list) is submitted" in {
+    "must redirect to the next page when valid data is submitted (false)" in {
+      val mockSessionRepository = mock[SessionRepository]
+      val mockAddressLookupService = mock[AddressLookupService]
 
-      val mockSessionService = mock[SessionService]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
-
+      val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(ChangeRegisteredDetailsPage, ChangeRegisteredDetails.values).success.value
       val application =
-        applicationBuilder(userAnswers = Some(warehouseAddedToUserAnswersForUpdateRegisteredDetails))
+        applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
-            bind[NavigatorForUpdateRegisteredDetails].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
-            bind[SessionService].toInstance(mockSessionService)
+            bind[Navigator].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
           )
           .build()
 
       running(application) {
         val request =
           FakeRequest(POST, warehouseDetailsRoute)
-            .withFormUrlEncodedBody(("value", "true"))
+            .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual controllers.updateRegisteredDetails.routes.UpdateContactDetailsController.onPageLoad(NormalMode).url
+
+        verify(mockAddressLookupService, times(0)).initJourneyAndReturnOnRampUrl(
+          ArgumentMatchers.any(), ArgumentMatchers.any())(
+          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       }
     }
 
@@ -210,8 +232,8 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
       running(application) {
         val request =
           FakeRequest(POST, warehouseDetailsRoute
-        )
-        .withFormUrlEncodedBody(("value", "true"))
+          )
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
@@ -229,7 +251,7 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
           .overrides(
-            bind[NavigatorForUpdateRegisteredDetails].toInstance(new FakeNavigatorForUpdateRegisteredDetails (onwardRoute)),
+            bind[NavigatorForUpdateRegisteredDetails].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           ).build()
 
@@ -237,16 +259,39 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request =
             FakeRequest(POST, warehouseDetailsRoute)
-          .withFormUrlEncodedBody(("value", "true"))
+              .withFormUrlEncodedBody(("value", "true"))
 
           await(route(application, request).value)
-          events.collectFirst {
-            case event =>
-              event.getLevel.levelStr mustBe "ERROR"
-              event.getMessage mustEqual "Failed to set value in session repository while attempting set on warehouseDetails"
-          }.getOrElse(fail("No logging captured"))
+          events.toString() must include("Failed to set value in session repository while attempting set on warehouseDetails")
         }
       }
     }
+
+    "should log an error when no answers are returned from the ChangeRegisteredDetailsPage" in {
+      val mockSessionRepository = mock[SessionRepository]
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+          )
+          .build()
+
+      running(application) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          val request =
+            FakeRequest(POST, warehouseDetailsRoute)
+              .withFormUrlEncodedBody(("value", "false"))
+
+          await(route(application, request).value)
+
+          events.toString() must include("Failed to obtain which registered details to change from user answers while on warehouseDetails")
+        }
+      }
+    }
+
   }
 }

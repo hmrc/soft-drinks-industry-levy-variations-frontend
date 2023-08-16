@@ -103,9 +103,6 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        println(Console.YELLOW + contentAsString(result) + Console.WHITE)
-        println("===================")
-        println(Console.YELLOW + view(form.fill(true), NormalMode, summaryList)(request, messages(application)).toString + Console.WHITE)
         contentAsString(result) mustEqual  view(form.fill(true), NormalMode, summaryList)(request, messages(application)).toString
       }
     }
