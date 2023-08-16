@@ -107,18 +107,13 @@ class WarehouseDetailsController @Inject()(
                           (implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages, requestHeader: RequestHeader): Future[String] = {
     if (value) {
       addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails)(hc, ec, messages, requestHeader)
-    } else if (mode == CheckMode) {
-      Future.successful(controllers.updateRegisteredDetails.routes.UpdateRegisteredDetailsCYAController.onPageLoad.url)
     } else {
-      if (addContactDetails) {
-        Future.successful(controllers.updateRegisteredDetails.routes.UpdateContactDetailsController.onPageLoad(mode).url)
-      } else {
-        if (addBusinessAddress) {
-          Future.successful(controllers.updateRegisteredDetails.routes.BusinessAddressController.onPageLoad().url)
-        } else {
-          Future.successful(controllers.updateRegisteredDetails.routes.UpdateRegisteredDetailsCYAController.onPageLoad.url)
-        }
-      }
+      Future.successful((mode, addContactDetails, addBusinessAddress) match {
+        case (CheckMode, _, _) => controllers.updateRegisteredDetails.routes.UpdateRegisteredDetailsCYAController.onPageLoad.url
+        case (_, true, _) => controllers.updateRegisteredDetails.routes.UpdateContactDetailsController.onPageLoad(mode).url
+        case (_, false, true) => controllers.updateRegisteredDetails.routes.BusinessAddressController.onPageLoad().url
+        case (_, false, false) => controllers.updateRegisteredDetails.routes.UpdateRegisteredDetailsCYAController.onPageLoad.url
+      })
     }
   }
 
