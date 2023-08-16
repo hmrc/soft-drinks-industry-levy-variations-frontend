@@ -17,6 +17,8 @@
 package navigation
 
 import controllers.updateRegisteredDetails.routes
+import models.updateRegisteredDetails.ChangeRegisteredDetails
+import models.updateRegisteredDetails.ChangeRegisteredDetails.Sites
 import models.{CheckMode, NormalMode, UserAnswers}
 import pages.Page
 import pages.updateRegisteredDetails._
@@ -28,7 +30,7 @@ import javax.inject.{Inject, Singleton}
 class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
 
   override val normalRoutes: Page => UserAnswers => Call = {
-    case ChangeRegisteredDetailsPage => _ => defaultCall
+    case ChangeRegisteredDetailsPage => userAnswers => changeRegisteredDetailNavigation(userAnswers)
     case WarehouseDetailsPage => userAnswers => defaultCall
     case RemoveWarehouseDetailsPage => userAnswers => routes.WarehouseDetailsController.onPageLoad(NormalMode)
     case PackagingSiteDetailsPage => userAnswers => defaultCall
@@ -40,5 +42,23 @@ class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
   override val checkRouteMap: Page => UserAnswers => Call = {
     case PackingSiteDetailsRemovePage => _ => routes.PackagingSiteDetailsController.onPageLoad(CheckMode)
     case _ => _ => routes.UpdateRegisteredDetailsCYAController.onPageLoad
+  }
+
+  def changeRegisteredDetailNavigation(userAnswers: UserAnswers) = {
+    val changeRegisteredDetailsPageAnswers =  userAnswers.get(ChangeRegisteredDetailsPage).head
+    if (changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.Sites)){
+      userAnswers match {
+        case userAnswers if userAnswers.packagingSiteList.nonEmpty =>
+          routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
+        case userAnswers if userAnswers.warehouseList.nonEmpty =>
+          routes.WarehouseDetailsController.onPageLoad(NormalMode)
+        case _ =>
+          defaultCall
+      }
+    }else if(changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.ContactDetails)){
+      routes.ContactDetailsController.onPageLoad()
+    }else {
+      routes.BusinessAddressController.onPageLoad()
+    }
   }
 }

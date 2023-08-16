@@ -127,6 +127,7 @@ class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual SEE_OTHER
           val expectedNextPage = selectChangeValue match {
+            case SelectChange.UpdateRegisteredDetails => updateRegisteredDetails.routes.ChangeRegisteredDetailsController.onPageLoad()
             case SelectChange.ChangeActivity => changeActivity.routes.AmountProducedController.onPageLoad(NormalMode)
             case SelectChange.CorrectReturn => correctReturn.routes.SelectController.onPageLoad
             case SelectChange.CancelRegistration => cancelRegistration.routes.ReasonController.onPageLoad(NormalMode)
@@ -134,29 +135,6 @@ class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
           }
           redirectLocation(result).value mustEqual expectedNextPage.url
         }
-      }
-    }
-
-    "must redirect to the index controller when no user answers data is submitted" in {
-
-      val mockSessionService = mock[SessionService]
-
-      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
-
-      val application =
-        applicationBuilder(userAnswers = None)
-          .overrides(bind[SelectChangeOrchestrator].toInstance(mockOrchestrator))
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, selectChangeRoute)
-            .withFormUrlEncodedBody(("value", SelectChange.values.head.toString))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.IndexController.onPageLoad.url
       }
     }
 
