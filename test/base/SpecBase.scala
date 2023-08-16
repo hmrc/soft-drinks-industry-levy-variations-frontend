@@ -57,8 +57,10 @@ object SpecBase {
     "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"))
   )
 
-  val userAnswerTwoWarehouses : UserAnswers = UserAnswers(sdilNumber,SelectChange.CorrectReturn, contactAddress = contactAddress,
-    data = Json.obj(), warehouseList = twoWarehouses)
+
+  val userAnswerTwoWarehouses : UserAnswers = UserAnswers(sdilNumber,SelectChange.CorrectReturn, contactAddress = contactAddress, data = Json.obj(), warehouseList = twoWarehouses)
+  val userAnswerTwoWarehousesUpdateRegisteredDetails : UserAnswers = UserAnswers(sdilNumber,SelectChange.UpdateRegisteredDetails, contactAddress = contactAddress, data = Json.obj(), warehouseList = twoWarehouses)
+
 
   val aSubscription: RetrievedSubscription = RetrievedSubscription(
     utr = "0000000022",

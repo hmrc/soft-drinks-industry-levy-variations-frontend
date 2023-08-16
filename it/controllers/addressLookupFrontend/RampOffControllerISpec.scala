@@ -36,7 +36,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
               UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId))))
 
             res.status mustBe SEE_OTHER
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+            res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.WarehouseDetailsController.onPageLoad(NormalMode).url)
           }
 
         }
@@ -65,7 +65,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
               UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId))))
 
             res.status mustBe SEE_OTHER
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+            res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.WarehouseDetailsController.onPageLoad(NormalMode).url)
           }
         }
       }
@@ -237,7 +237,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
             updatedUserAnswersNoContactDetails.warehouseList mustBe emptyUserAnswersForUpdateRegisteredDetails.warehouseList
 
             res.status mustBe SEE_OTHER
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+            res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.BusinessAddressController.onPageLoad().url)
           }
 
         }
@@ -266,7 +266,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
             updatedUserAnswers.warehouseList mustBe emptyUserAnswersForUpdateRegisteredDetails.warehouseList
 
             res.status mustBe SEE_OTHER
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+            res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.BusinessAddressController.onPageLoad().url)
           }
         }
       }

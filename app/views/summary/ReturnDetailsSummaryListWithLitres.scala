@@ -47,7 +47,7 @@ trait ReturnDetailsSummaryListWithLitres extends ReturnDetailsSummaryRowHelper {
     )
   }
 
-  private def getLitresDetails(userAnswers: UserAnswers, isCheckAnswers: Boolean, litresPage: QuestionPage[LitresInBands], includeLevyRows: Boolean = true)
+  private def getLitresDetails(userAnswers: UserAnswers, isCheckAnswers: Boolean, litresPage: QuestionPage[LitresInBands], includeLevyRows: Boolean)
                               (implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
     (userAnswers.get(page), userAnswers.get(litresPage)) match {
       case (Some(true), Some(litresInBands)) => summaryLitres.rows(litresInBands, isCheckAnswers, includeLevyRows)

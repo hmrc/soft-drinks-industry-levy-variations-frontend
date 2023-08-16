@@ -16,18 +16,19 @@
 
 package forms.updateRegisteredDetails
 
-import javax.inject.{Inject, Singleton}
 import forms.mappings.Mappings
 import models.Enumerable
-import play.api.data.Form
-import play.api.data.Forms.set
 import models.updateRegisteredDetails.ChangeRegisteredDetails
 import models.updateRegisteredDetails.ChangeRegisteredDetails.{enumerableNonVoluntary, enumerableVoluntary}
+import play.api.data.Form
+import play.api.data.Forms.seq
+
+import javax.inject.Inject
 
 
 class ChangeRegisteredDetailsFormProvider @Inject() extends Mappings {
 
-  def apply(isVoluntary: Boolean): Form[Set[ChangeRegisteredDetails]] = {
+  def apply(isVoluntary: Boolean): Form[Seq[ChangeRegisteredDetails]] = {
     val enumerableValues: Enumerable[ChangeRegisteredDetails] = {
       if(isVoluntary) {
         enumerableVoluntary
@@ -37,8 +38,8 @@ class ChangeRegisteredDetailsFormProvider @Inject() extends Mappings {
     }
     Form(
       "value" ->
-        set(enumerable[ChangeRegisteredDetails]("updateRegisteredDetails.changeRegisteredDetails.error.required")(enumerableValues))
-        .verifying(nonEmptySet("updateRegisteredDetails.changeRegisteredDetails.error.required"))
+        seq(enumerable[ChangeRegisteredDetails]("updateRegisteredDetails.changeRegisteredDetails.error.required")(enumerableValues))
+          .verifying(nonEmptySeq("updateRegisteredDetails.changeRegisteredDetails.error.required"))
     )
   }
 }

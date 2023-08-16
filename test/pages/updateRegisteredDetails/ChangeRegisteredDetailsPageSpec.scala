@@ -22,11 +22,8 @@ import pages.behaviours.PageBehaviours
 class ChangeRegisteredDetailsPageSpec extends PageBehaviours {
 
   "ChangeRegisteredDetailsPage" - {
-
-    beRetrievable[Set[ChangeRegisteredDetails]](ChangeRegisteredDetailsPage)
-
-    beSettable[Set[ChangeRegisteredDetails]](ChangeRegisteredDetailsPage)
-
-    beRemovable[Set[ChangeRegisteredDetails]](ChangeRegisteredDetailsPage)
+    beRetrievable[Seq[ChangeRegisteredDetails]](ChangeRegisteredDetailsPage)
+    beSettable[Seq[ChangeRegisteredDetails]](ChangeRegisteredDetailsPage)
+    beRemovable[Seq[ChangeRegisteredDetails]](ChangeRegisteredDetailsPage)
   }
 }

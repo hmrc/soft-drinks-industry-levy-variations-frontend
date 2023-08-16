@@ -18,7 +18,7 @@ trait ITCoreTestDataForUpdateRegisteredDetails extends ITSharedCoreTestData {
       .copy(warehouseList = Map(index -> Warehouse(None, ukAddress)))
       .set(RemoveWarehouseDetailsPage, false).success.value
     Map("yes" -> yesSelected, "no" -> noSelected)
-    }
+  }
 
   def userAnswersForUpdateRegisteredDetailsPackingSiteDetailsRemovePage(index: String): Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForUpdateRegisteredDetails
@@ -29,13 +29,13 @@ trait ITCoreTestDataForUpdateRegisteredDetails extends ITSharedCoreTestData {
       .copy(packagingSiteList = Map(index -> Site(ukAddress, None, None, None)))
       .set(PackingSiteDetailsRemovePage, false).success.value
     Map("yes" -> yesSelected, "no" -> noSelected)
-    }
+  }
 
   val userAnswersForUpdateRegisteredDetailsWarehouseDetailsPage: Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForUpdateRegisteredDetails.set(WarehouseDetailsPage, true).success.value
     val noSelected = emptyUserAnswersForUpdateRegisteredDetails.set(WarehouseDetailsPage, false).success.value
     Map("yes" -> yesSelected, "no" -> noSelected)
-    }
+  }
 
   val userAnswersForUpdateRegisteredDetailsPackagingSiteDetailsPage: Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForUpdateRegisteredDetails.set(PackagingSiteDetailsPage, true).success.value

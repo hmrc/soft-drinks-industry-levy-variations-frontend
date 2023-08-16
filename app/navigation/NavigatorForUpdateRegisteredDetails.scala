@@ -32,7 +32,7 @@ class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
   override val normalRoutes: Page => UserAnswers => Call = {
     case ChangeRegisteredDetailsPage => userAnswers => changeRegisteredDetailNavigation(userAnswers)
     case WarehouseDetailsPage => userAnswers => defaultCall
-    case RemoveWarehouseDetailsPage => userAnswers => defaultCall
+    case RemoveWarehouseDetailsPage => userAnswers => routes.WarehouseDetailsController.onPageLoad(NormalMode)
     case PackagingSiteDetailsPage => userAnswers => defaultCall
     case PackingSiteDetailsRemovePage => _ => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
     case UpdateContactDetailsPage => userAnswers => defaultCall

@@ -55,7 +55,9 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
   val address3 = UkAddress(List("3 Test drive", "Example"), "EX3 3AB")
   val address4 = UkAddress(List("4 Test drive", "Example"), "EX4 4AB")
 
-  def retrievedSubscription(productionSites: List[Site] = List.empty, warehouses: List[Site] = List.empty) = RetrievedSubscription(
+  def retrievedSubscription(productionSites: List[Site] = List.empty,
+                            warehouses: List[Site] = List.empty,
+                            deregDate: Option[LocalDate] = None) = RetrievedSubscription(
     utr = "0000000022",
     sdilRef = "XKSDIL000000022",
     orgName = "Super Lemonade Plc",
@@ -71,7 +73,7 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
     productionSites = productionSites,
     warehouseSites = warehouses,
     contact = contact,
-    deregDate = None
+    deregDate = deregDate
   )
 
   def expectedUserAnswers(value: SelectChange,
@@ -233,6 +235,75 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
               result mustBe Left(SessionDatabaseInsertError)
             }
           }
+        }
+      }
+    }
+  }
+
+  "createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase" - {
+    "should generate and save the expected user answers and return the generated user answers" - {
+      "when the subscription contains no packaging sites or warehouses" in {
+        val expectedGeneratedUA = expectedUserAnswers(SelectChange.CorrectReturn)
+        when(mockSessionService.set(expectedGeneratedUA)).thenReturn(Future.successful(Right(true)))
+
+        val res = orchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(retrievedSubscription(deregDate = Some(LocalDate.now())))
+
+        whenReady(res.value) { result =>
+          result mustBe Right(expectedGeneratedUA)
+        }
+      }
+
+      "when the subscription contains packaging sites and warehouses that have no or closure dates in the future" in {
+        val packagingSite1 = Site(address1, None, Some(tradingName1), None)
+        val packagingSite2 = Site(address2, None, Some(tradingName2), Some(LocalDate.now().plusYears(2L)))
+        val packagingSites = List(packagingSite1, packagingSite2)
+        val warehouseSite1 = Site(address3, None, Some(tradingName3), None)
+        val warehouseSite2 = Site(address4, None, Some(tradingName4), Some(LocalDate.now().plusYears(2L)))
+        val warehouseSites = List(warehouseSite1, warehouseSite2)
+        val warehouse1 = Warehouse(Some(tradingName3), address3)
+        val warehouse2 = Warehouse(Some(tradingName4), address4)
+        val expectedGeneratedUA = expectedUserAnswers(SelectChange.CorrectReturn,
+          Map("0" -> packagingSite1, "1" -> packagingSite2),
+          Map("0" -> warehouse1, "1" -> warehouse2))
+        when(mockSessionService.set(expectedGeneratedUA)).thenReturn(Future.successful(Right(true)))
+
+        val res = orchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(retrievedSubscription(packagingSites, warehouseSites, deregDate = Some(LocalDate.now)))
+
+        whenReady(res.value) { result =>
+          result mustBe Right(expectedGeneratedUA)
+        }
+      }
+
+      "when the subscription contains packaging sites and warehouses that have one closure date in the past" in {
+        val packagingSite1 = Site(address1, None, Some(tradingName1), None)
+        val packagingSite2 = Site(address2, None, Some(tradingName2), Some(LocalDate.now().minusYears(2L)))
+        val packagingSites = List(packagingSite1, packagingSite2)
+        val warehouseSite1 = Site(address3, None, Some(tradingName3), None)
+        val warehouseSite2 = Site(address4, None, Some(tradingName4), Some(LocalDate.now().minusYears(2L)))
+        val warehouseSites = List(warehouseSite1, warehouseSite2)
+        val warehouse1 = Warehouse(Some(tradingName3), address3)
+        val expectedGeneratedUA = expectedUserAnswers(SelectChange.CorrectReturn,
+          Map("0" -> packagingSite1),
+          Map("0" -> warehouse1))
+        when(mockSessionService.set(expectedGeneratedUA)).thenReturn(Future.successful(Right(true)))
+
+        val res = orchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(retrievedSubscription(packagingSites, warehouseSites, deregDate = Some(LocalDate.now)))
+
+        whenReady(res.value) { result =>
+          result mustBe Right(expectedGeneratedUA)
+        }
+      }
+    }
+
+    "should return a SessionDatabaseInsertError" - {
+      "when the insert to database fails" in {
+        val expectedGeneratedUA = expectedUserAnswers(SelectChange.CorrectReturn)
+        when(mockSessionService.set(expectedGeneratedUA)).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
+
+        val res = orchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(retrievedSubscription())
+
+        whenReady(res.value) { result =>
+          result mustBe Left(SessionDatabaseInsertError)
         }
       }
     }

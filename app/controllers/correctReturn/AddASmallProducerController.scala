@@ -21,7 +21,6 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.correctReturn.AddASmallProducerFormProvider
 import handlers.ErrorHandler
-import models.SelectChange.CorrectReturn
 import models.correctReturn.AddASmallProducer
 import models.{Mode, SmallProducer, UserAnswers}
 import navigation._

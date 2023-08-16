@@ -51,6 +51,14 @@ class SelectChangeOrchestrator @Inject()(sessionService: SessionService,
     } yield (): Unit
   }
 
+  def createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(subscription: RetrievedSubscription)
+                                                                        (implicit ec: ExecutionContext): VariationResult[UserAnswers] = {
+    for {
+      userAnswers <- EitherT.right[VariationsErrors](generateDefaultUserAnswers(SelectChange.CorrectReturn, subscription))
+      _ <- EitherT(sessionService.set(userAnswers))
+    } yield userAnswers
+  }
+
   private def hasNoReturnsPendingIfRequired(value: SelectChange, subscription: RetrievedSubscription)
                                              (implicit ec: ExecutionContext,
                                               hc: HeaderCarrier): VariationResult[Unit] = EitherT{

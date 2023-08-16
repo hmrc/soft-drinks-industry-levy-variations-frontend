@@ -54,7 +54,7 @@ object WarehouseDetailsSummary  {
                 classes = "govuk-!-font-weight-regular govuk-!-width-full"
               ),
               actions = Some(Actions("",Seq(
-                ActionItemViewModel("site.remove", routes.WarehouseDetailsController.onPageLoad(NormalMode).url)
+                ActionItemViewModel("site.remove", controllers.updateRegisteredDetails.routes.RemoveWarehouseDetailsController.onPageLoad(NormalMode, warehouse._1).url )
                   .withVisuallyHiddenText(messages("updateRegisteredDetails.warehouseDetails.remove.hidden"))
               )))
             )

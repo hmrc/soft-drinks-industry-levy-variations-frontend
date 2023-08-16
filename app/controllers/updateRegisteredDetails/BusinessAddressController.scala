@@ -21,28 +21,37 @@ import models.SelectChange.UpdateRegisteredDetails
 import navigation.NavigatorForUpdateRegisteredDetails
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.{AddressLookupService, ContactDetails}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.updateRegisteredDetails.BusinessAddressView
 
 import javax.inject.Inject
+import scala.concurrent.ExecutionContext
 
 class BusinessAddressController @Inject()(
                                            override val messagesApi: MessagesApi,
                                            controllerActions: ControllerActions,
                                            val navigator: NavigatorForUpdateRegisteredDetails,
                                            val controllerComponents: MessagesControllerComponents,
-                                           view: BusinessAddressView
-                                         ) extends FrontendBaseController with I18nSupport {
+                                           view: BusinessAddressView,
+                                           addressLookupService: AddressLookupService
+                                         )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
     implicit request =>
-
       Ok(view(List(request.userAnswers.contactAddress)))
   }
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
+    _ =>
+      Redirect(controllers.updateRegisteredDetails.routes.UpdateRegisteredDetailsCYAController.onPageLoad)
+  }
+
+  def changeAddress: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails).async {
     implicit request =>
-      Redirect(controllers.routes.IndexController.onPageLoad)
+        addressLookupService.initJourneyAndReturnOnRampUrl(ContactDetails).map(
+          initUrl => Redirect(initUrl)
+        )
   }
 
 }

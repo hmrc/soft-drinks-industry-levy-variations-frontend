@@ -49,13 +49,13 @@ class WarehouseDetailsViewSpec extends ViewSpecHelper {
     val html = view(form, NormalMode, Some(SummaryList()))(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
-      document.title() must include(Messages("updateRegisteredDetails.warehouseDetails" + ".title"))
+      document.title() mustBe "Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
     }
 
     "should include a legend with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("updateRegisteredDetails.warehouseDetails.subHeading")
+      legend.get(0).getElementsByClass(Selectors.heading).text() mustBe "Do you want to add another warehouse?"
     }
 
     "when the form is not preoccupied and has no errors" - {
@@ -163,7 +163,7 @@ class WarehouseDetailsViewSpec extends ViewSpecHelper {
     }
 
     "contain the correct button" - {
-      document.getElementsByClass(Selectors.button).text() mustBe Messages("site.continue")
+      document.getElementsByClass(Selectors.button).text() mustBe "Save and continue"
     }
 
     "contains a form with the correct action" - {
@@ -207,8 +207,7 @@ class WarehouseDetailsViewSpec extends ViewSpecHelper {
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
-        val titleMessage = Messages("updateRegisteredDetails.warehouseDetails.title")
-        documentWithErrors.title must include("Error: " + titleMessage)
+        documentWithErrors.title mustBe "Error: Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
       }
 
       "contains a message that links to field with error" in {
@@ -218,7 +217,7 @@ class WarehouseDetailsViewSpec extends ViewSpecHelper {
         errorSummary
           .select("a")
           .attr("href") mustBe "#value"
-        errorSummary.text() mustBe Messages("updateRegisteredDetails.warehouseDetails.error.required")
+        errorSummary.text() mustBe "Select yes if you want to register another UK warehouse"
       }
     }
 

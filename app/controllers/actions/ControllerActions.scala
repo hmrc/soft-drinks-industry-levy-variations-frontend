@@ -18,15 +18,19 @@ package controllers.actions
 
 import com.google.inject.Inject
 import controllers.routes
+import handlers.ErrorHandler
 import models.SelectChange
 import models.requests.{CorrectReturnDataRequest, DataRequest, OptionalDataRequest, RequiredDataRequest}
-import play.api.mvc.Results.Redirect
+import orchestrators.SelectChangeOrchestrator
+import play.api.mvc.Results.{InternalServerError, Redirect}
 import play.api.mvc.{ActionBuilder, ActionRefiner, AnyContent, Result}
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class ControllerActions @Inject()(identify: IdentifierAction,
-                                  getData: DataRetrievalAction)(implicit ec: ExecutionContext) {
+                                  getData: DataRetrievalAction,
+                                  selectChangeOrchestrator: SelectChangeOrchestrator,
+                                  errorHandler: ErrorHandler)(implicit ec: ExecutionContext) {
 
   def withRequiredData[A]: ActionBuilder[DataRequest, AnyContent] = {
     identify andThen getData andThen dataRequiredAction
@@ -64,10 +68,15 @@ class ControllerActions @Inject()(identify: IdentifierAction,
     new ActionRefiner[OptionalDataRequest, DataRequest] {
       override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
         request.userAnswers match {
-          case Some(data) if data.journeyType == journeyType =>
-            Future.successful(Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, data)))
-          case Some(data) if journeyType == SelectChange.CancelRegistration && data.journeyType == SelectChange.ChangeActivity =>
-            Future.successful(Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, data)))
+          case Some(userAnswers) if userAnswers.journeyType == journeyType =>
+            Future.successful(Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers)))
+          case Some(userAnswers) if journeyType == SelectChange.CancelRegistration && userAnswers.journeyType == SelectChange.ChangeActivity =>
+            Future.successful(Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers)))
+          case None if request.subscription.deregDate.nonEmpty =>
+            selectChangeOrchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(request.subscription).value.map{
+              case Right(userAnswers) => Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers))
+              case Left(_) => Left(InternalServerError(errorHandler.internalServerErrorTemplate(request)))
+            }
           case _ => Future.successful(Left(Redirect(routes.SelectChangeController.onPageLoad)))
         }
       }

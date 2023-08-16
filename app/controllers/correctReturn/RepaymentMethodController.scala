@@ -21,7 +21,6 @@ import controllers.actions._
 import forms.correctReturn.RepaymentMethodFormProvider
 import handlers.ErrorHandler
 import models.Mode
-import models.SelectChange.CorrectReturn
 import models.correctReturn.RepaymentMethod
 import navigation._
 import pages.correctReturn.RepaymentMethodPage

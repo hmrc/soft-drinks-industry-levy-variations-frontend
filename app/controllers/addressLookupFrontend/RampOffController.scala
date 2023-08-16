@@ -39,7 +39,11 @@ class RampOffController @Inject()(controllerActions: ControllerActions,
         updatedUserAnswers = addressLookupService.addAddressUserAnswers(WarehouseDetails, alfResponse.address, request.userAnswers, sdilId, alfId)
         _ <- sessionRepository.set(updatedUserAnswers)
       } yield {
-        Redirect(controllers.routes.IndexController.onPageLoad)
+        val redirectUrl = updatedUserAnswers.journeyType match {
+          case SelectChange.UpdateRegisteredDetails => controllers.updateRegisteredDetails.routes.WarehouseDetailsController.onPageLoad(NormalMode)
+          case _ => controllers.routes.IndexController.onPageLoad
+        }
+        Redirect(redirectUrl)
       }
   }
 
@@ -65,7 +69,7 @@ class RampOffController @Inject()(controllerActions: ControllerActions,
         updatedUserAnswers = addressLookupService.addAddressUserAnswers(ContactDetails, alfResponse.address, request.userAnswers, sdilId, alfId)
         _ <- sessionRepository.set(updatedUserAnswers)
       } yield {
-        Redirect(controllers.routes.IndexController.onPageLoad)
+        Redirect(controllers.updateRegisteredDetails.routes.BusinessAddressController.onPageLoad())
       }
   }
 }
