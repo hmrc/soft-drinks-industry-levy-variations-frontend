@@ -206,6 +206,24 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
             }
           }
         }
+
+        "when the user answers with 0" in {
+          given
+            .commonPrecondition
+
+          setAnswers(emptyUserAnswersForCorrectReturn)
+          WsTestClient.withClient { client =>
+            val result = createClientRequestPOST(
+              client, correctReturnBaseUrl + path, jsonWith0
+            )
+
+            whenReady(result) { res =>
+              res.status mustBe 400
+              val page = Jsoup.parse(res.body)
+              testNegativeFormErrors(page, errorTitle)
+            }
+          }
+        }
       }
 
       testUnauthorisedUser(correctReturnBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))

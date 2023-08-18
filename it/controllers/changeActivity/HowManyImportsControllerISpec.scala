@@ -579,6 +579,24 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
           }
         }
       }
+
+      "when the user answers with 0" in {
+        given
+          .commonPrecondition
+
+        setAnswers(emptyUserAnswersForChangeActivity)
+        WsTestClient.withClient { client =>
+          val result = createClientRequestPOST(
+            client, changeActivityBaseUrl + normalRoutePath, jsonWith0
+          )
+
+          whenReady(result) { res =>
+            res.status mustBe 400
+            val page = Jsoup.parse(res.body)
+            testNegativeFormErrors(page, errorTitle)
+          }
+        }
+      }
     }
 
     testUnauthorisedUser(changeActivityBaseUrl + normalRoutePath, Some(Json.toJson(litresInBandsDiff)))
@@ -1074,6 +1092,24 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
             testOutOfMaxValFormErrors(page, errorTitle)
+          }
+        }
+      }
+
+      "when the user answers with 0" in {
+        given
+          .commonPrecondition
+
+        setAnswers(emptyUserAnswersForChangeActivity)
+        WsTestClient.withClient { client =>
+          val result = createClientRequestPOST(
+            client, changeActivityBaseUrl + checkRoutePath, jsonWith0
+          )
+
+          whenReady(result) { res =>
+            res.status mustBe 400
+            val page = Jsoup.parse(res.body)
+            testNegativeFormErrors(page, errorTitle)
           }
         }
       }

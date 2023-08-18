@@ -38,6 +38,7 @@ trait LitresISpecHelper extends ControllerITTestHelper {
   val jsonWithNegativeNumber: JsObject = Json.obj("lowBand" -> "-1", "highBand" -> "-2")
   val jsonWithDecimalNumber: JsObject = Json.obj("lowBand" -> "1.8", "highBand" -> "2.3")
   val jsonWithOutOfRangeNumber: JsObject = Json.obj("lowBand" -> "110000000000000", "highBand" -> "120000000000000")
+  val jsonWith0: JsObject = Json.obj("lowBand" -> "0", "highBand" -> "0")
 
   object Selectors {
     val heading = "govuk-heading-m"
