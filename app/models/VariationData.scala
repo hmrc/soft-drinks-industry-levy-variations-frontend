@@ -35,7 +35,6 @@ case class ReturnVariationData(
                                 repaymentMethod: Option[String] = None
                               ) extends VariationData {
 
-  def changedLitreages: Map[String, ((Long, Long), (Long, Long))] = original.compare(revised)
   def removedSmallProducers: List[SmallProducer] = original.packSmall.filterNot(revised.packSmall.toSet)
   def addedSmallProducers: List[SmallProducer] = revised.packSmall.filterNot(original.packSmall.toSet)
 
@@ -109,7 +108,7 @@ object RegistrationVariationData {
       } yield Call(method, url)
   }
 
-//  implicit val returnTupleFormat: Format[(SdilReturn, SdilReturn)] = Json.format[(SdilReturn, SdilReturn)]
+
   implicit val format: Format[RegistrationVariationData] = Json.format[RegistrationVariationData]
 
   def apply(original: RetrievedSubscription): RegistrationVariationData = RegistrationVariationData(

@@ -17,7 +17,7 @@
 package models
 
 import play.api.libs.json.{Json, Reads, Writes}
-
+import cats.implicits._
 case class SmallProducer(alias: String, sdilRef: String, litreage: (Long, Long)) {
 
   def getNameAndRef: String =
@@ -31,6 +31,7 @@ case class SmallProducer(alias: String, sdilRef: String, litreage: (Long, Long))
 }
 
 object SmallProducer {
+  def totalOfAllSmallProducers(smallProducers: List[SmallProducer]): (Long, Long) = smallProducers.map(x => x.litreage).combineAll
   implicit val writes: Writes[SmallProducer] = Json.writes
   implicit val reads: Reads[SmallProducer] = Json.reads
 

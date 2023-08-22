@@ -19,7 +19,6 @@ package views.updateRegisteredDetails
 import controllers.updateRegisteredDetails.routes
 import forms.updateRegisteredDetails.WarehouseDetailsFormProvider
 import models.{CheckMode, NormalMode}
-import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList

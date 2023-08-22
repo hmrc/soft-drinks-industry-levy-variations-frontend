@@ -50,8 +50,6 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
   val userAnswersNoReturnPeriod = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None)
 
-
-
   "GET " + routePath - {
     "should render the select page with radio items for each unique return period" - {
       "that has no return periods checked" - {

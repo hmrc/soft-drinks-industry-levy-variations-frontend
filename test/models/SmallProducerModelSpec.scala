@@ -31,6 +31,17 @@ class SmallProducerModelSpec extends SpecBase with MockitoSugar with DataHelper 
       val data = testSmallProducer(alias = "", sdilRef = "testRef", litreage = (15, 15))
       data.getNameAndRef mustBe "testRef"
     }
+    "totalOfAllSmallProducers returns the total of one smallProducers literages" in {
+      val data = List(testSmallProducer("test", "test", (15,14)))
+      SmallProducer.totalOfAllSmallProducers(data) mustBe (15, 14)
+    }
+
+    "totalOfAllSmallProducers returns the total of all smallProducers literages" in {
+      val data = List(testSmallProducer("test", "test", (15, 14)),
+          testSmallProducer("test", "test", (15, 14))
+      )
+      SmallProducer.totalOfAllSmallProducers(data) mustBe (30, 28)
+    }
   }
 
 }
