@@ -18,7 +18,6 @@ package navigation
 
 import controllers.updateRegisteredDetails.routes
 import models.updateRegisteredDetails.ChangeRegisteredDetails
-import models.updateRegisteredDetails.ChangeRegisteredDetails.Sites
 import models.{CheckMode, NormalMode, UserAnswers}
 import pages.Page
 import pages.updateRegisteredDetails._

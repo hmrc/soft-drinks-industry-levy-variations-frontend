@@ -18,24 +18,11 @@ package models
 
 import base.SpecBase
 import org.scalatestplus.mockito.MockitoSugar
+import pages.correctReturn.{HowManyBroughtIntoUKPage, HowManyBroughtIntoUkFromSmallProducersPage, HowManyClaimCreditsForExportsPage, HowManyCreditsForLostDamagedPage, HowManyOperatePackagingSiteOwnBrandsPage, HowManyPackagedAsContractPackerPage}
 
 class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper {
 
   "SdilReturn" - {
-    "smallPackTotal returns the total of one smallProducers literages" in {
-      val data = testSdilReturn(
-        packSmall = List(testSmallProducer("test", "test", (15,14)))
-      )
-      data.smallPackTotal mustBe (15, 14)
-    }
-
-    "smallPackTotal returns the total of all smallProducers literages" in {
-      val data = testSdilReturn(
-        packSmall = List(testSmallProducer("test", "test", (15, 14)),
-          testSmallProducer("test", "test", (15, 14)))
-      )
-      data.smallPackTotal mustBe(30, 28)
-    }
 
     "totalPacked returns the total of packLarge amounrt and smallPacktotal with one smallProducers literages" in {
       val data = testSdilReturn(
@@ -117,6 +104,22 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper {
       )
 
       data.total mustBe expectedValue
+    }
+    "apply with userAnswers should default if all answers empty" in {
+      SdilReturn.apply(emptyUserAnswersForCorrectReturn) mustBe SdilReturn((0, 0), (0, 0), List(), (0, 0), (0, 0), (0, 0), (0, 0), None)
+    }
+    "apply with full user answers should populate correctly" in {
+      val userAnswers = {
+        emptyUserAnswersForCorrectReturn
+          .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1,1)).success.value
+          .set(HowManyPackagedAsContractPackerPage, LitresInBands(3,4)).success.value
+          .set(HowManyBroughtIntoUKPage, LitresInBands(5,6)).success.value
+          .set(HowManyBroughtIntoUkFromSmallProducersPage, LitresInBands(33,22)).success.value
+          .set(HowManyClaimCreditsForExportsPage, LitresInBands(32, 22)).success.value
+          .set(HowManyCreditsForLostDamagedPage, LitresInBands(22, 22)).success.value
+          .copy(smallProducerList = List(SmallProducer("","", (1,1))))
+      }
+      SdilReturn.apply(userAnswers) mustBe SdilReturn((1, 1), (3, 4), List(SmallProducer("", "", (1, 1))), (5, 6), (33, 22), (32, 22), (22, 22), None)
     }
   }
 }

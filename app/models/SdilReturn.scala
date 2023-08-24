@@ -17,11 +17,11 @@
 package models
 
 import cats.implicits._
+import pages.correctReturn._
 import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
 import play.api.libs.json.{Format, JsPath, Json, OFormat}
 
 import java.time.Instant
-import scala.collection.immutable.ListMap
 
 case class SdilReturn(
                        ownBrand: (Long, Long),
@@ -34,31 +34,10 @@ case class SdilReturn(
                        submittedOn: Option[Instant] = None
                      ) {
 
-  def smallPackTotal: (Long, Long) = packSmall.map(x => x.litreage).combineAll
-  def totalPacked: (Long, Long) = packLarge |+| smallPackTotal
+  def totalPacked: (Long, Long) = packLarge |+| SmallProducer.totalOfAllSmallProducers(packSmall)
   def totalImported: (Long, Long) = importLarge |+| importSmall
 
-  private def toLongs: List[(Long, Long)] =
-    List(ownBrand, packLarge, smallPackTotal, importLarge, importSmall, export, wastage)
-  private val keys = ReturnLiterageList.returnLiterageList
   def sumLitres(l: List[(Long, Long)]): BigDecimal = l.map(x => LitreOps(x).dueLevy).sum
-
-  /*
-   Produces a map of differing litreage fields containing the revised and original litreages as a tuple
-   and keyed by the field name
-   */
-  def compare(other: SdilReturn): ListMap[String, ((Long, Long), (Long, Long))] = {
-    val y = this.toLongs
-
-    ListMap(
-      other.toLongs.zipWithIndex
-        .filter { x =>
-          x._1 != y(x._2)
-        }
-        .map { x =>
-          keys(x._2) -> ((x._1, y(x._2)))
-        }: _*)
-  }
 
   def total: BigDecimal = sumLitres(List(ownBrand, packLarge, importLarge)) - sumLitres(List(export, wastage))
 
@@ -73,6 +52,32 @@ case class SdilReturn(
 }
 
 object SdilReturn {
+
+  def apply(userAnswers: UserAnswers): SdilReturn = {
+    val lowOwnBrand = userAnswers.get(HowManyOperatePackagingSiteOwnBrandsPage).map(_.lowBand).getOrElse(0L)
+    val highOwnBrand = userAnswers.get(HowManyOperatePackagingSiteOwnBrandsPage).map(_.highBand).getOrElse(0L)
+    val lowPackLarge = userAnswers.get(HowManyPackagedAsContractPackerPage).map(_.lowBand).getOrElse(0L)
+    val highPackLarge = userAnswers.get(HowManyPackagedAsContractPackerPage).map(_.highBand).getOrElse(0L)
+    val packSmall = userAnswers.smallProducerList
+    val lowImportLarge = userAnswers.get(HowManyBroughtIntoUKPage).map(_.lowBand).getOrElse(0L)
+    val highImportLarge = userAnswers.get(HowManyBroughtIntoUKPage).map(_.highBand).getOrElse(0L)
+    val lowImportSmall = userAnswers.get(HowManyBroughtIntoUkFromSmallProducersPage).map(_.lowBand).getOrElse(0L)
+    val highImportSmall = userAnswers.get(HowManyBroughtIntoUkFromSmallProducersPage).map(_.highBand).getOrElse(0L)
+    val lowExports = userAnswers.get(HowManyClaimCreditsForExportsPage).map(_.lowBand).getOrElse(0L)
+    val highExports = userAnswers.get(HowManyClaimCreditsForExportsPage).map(_.highBand).getOrElse(0L)
+    val lowWastage = userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L)
+    val highWastage = userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L)
+    SdilReturn(
+      ownBrand = (lowOwnBrand, highOwnBrand),
+      packLarge = (lowPackLarge, highPackLarge),
+      packSmall = packSmall,
+      importLarge = (lowImportLarge, highImportLarge),
+      importSmall = (lowImportSmall, highImportSmall),
+      export = (lowExports, highExports),
+      wastage = (lowWastage, highWastage)
+    )
+  }
+
   implicit val longTupleFormatter: Format[(Long, Long)] = (
     (JsPath \ "lower").format[Long] and
       (JsPath \ "higher").format[Long]
@@ -83,16 +88,4 @@ object SdilReturn {
   implicit val smallProducerJson: OFormat[SmallProducer] = Json.format[SmallProducer]
 
   implicit val format = Json.format[SdilReturn]
-}
-
-object ReturnLiterageList {
-  val returnLiterageList = List(
-    "own-brands-packaged-at-own-sites",
-    "packaged-as-a-contract-packer",
-    "exemptions-for-small-producers",
-    "brought-into-uk",
-    "brought-into-uk-from-small-producers",
-    "claim-credits-for-exports",
-    "claim-credits-for-lost-damaged"
-  )
 }
