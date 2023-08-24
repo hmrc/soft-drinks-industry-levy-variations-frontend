@@ -22,7 +22,7 @@ import errors.{SessionDatabaseInsertError, UnexpectedResponseFromSDIL}
 import forms.correctReturn.AddASmallProducerFormProvider
 import models.SelectChange.CorrectReturn
 import models.correctReturn.AddASmallProducer
-import models.{NormalMode, SmallProducer}
+import models.{LitresInBands, NormalMode, SmallProducer}
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -83,7 +83,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val smallProducer: AddASmallProducer = AddASmallProducer(Some("PRODUCER"), sdilNumber, 10, 20)
+      val smallProducer: AddASmallProducer = AddASmallProducer(Some("PRODUCER"), sdilNumber, LitresInBands(10, 20))
       val userAnswers = userAnswersForCorrectReturn(false)
         .set(AddASmallProducerPage, smallProducer).success.value
 
@@ -123,8 +123,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
           .withFormUrlEncodedBody(
             ("producerName", "PRODUCER"),
             ("referenceNumber", "XKSDIL000000023"),
-            ("lowBand", "10"),
-            ("highBand", "20")
+            ("litres.lowBand", "10"),
+            ("litres.highBand", "20")
           )
 
         val result = route(application, request).value
@@ -164,15 +164,15 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
           .withFormUrlEncodedBody(
             ("producerName", "PRODUCER"),
             ("referenceNumber", smallProducerSDILRef),
-            ("lowBand", "10"),
-            ("highBand", "20")
+            ("litres.lowBand", "10"),
+            ("litres.highBand", "20")
           )
 
         val boundForm = form.bind(Map(
           "producerName" -> "PRODUCER",
           "referenceNumber" -> smallProducerSDILRef,
-          "lowBand" -> "10",
-          "highBand" -> "20"
+          "litres.lowBand" -> "10",
+          "litres.highBand" -> "20"
         )).withError(FormError("referenceNumber", "correctReturn.addASmallProducer.error.referenceNumber.exists"))
 
         val view = application.injector.instanceOf[AddASmallProducerView]
@@ -203,8 +203,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
           .withFormUrlEncodedBody(
             ("producerName", "PRODUCER"),
             ("referenceNumber", "XKSDIL000000023"),
-            ("lowBand", "10"),
-            ("highBand", "20")
+            ("litres.lowBand", "10"),
+            ("litres.highBand", "20")
           )
 
         val result = route(application, request).value
@@ -226,15 +226,15 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
           .withFormUrlEncodedBody(
             ("producerName", "PRODUCER"),
             ("referenceNumber", "XKSDIL000000023"),
-            ("lowBand", "10"),
-            ("highBand", "20")
+            ("litres.lowBand", "10"),
+            ("litres.highBand", "20")
           )
 
         val boundForm = form.bind(Map(
           "producerName" -> "PRODUCER",
           "referenceNumber" -> "XKSDIL000000023",
-          "lowBand" -> "10",
-          "highBand" -> "20"
+          "litres.lowBand" -> "10",
+          "litres.highBand" -> "20"
         )).withError(FormError("referenceNumber", "correctReturn.addASmallProducer.error.referenceNumber.notASmallProducer"))
 
         val view = application.injector.instanceOf[AddASmallProducerView]
@@ -269,8 +269,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
           .withFormUrlEncodedBody(
             ("producerName", "PRODUCER"),
             ("referenceNumber", "XKSDIL000000023"),
-            ("lowBand", "10"),
-            ("highBand", "20")
+            ("litres.lowBand", "10"),
+            ("litres.highBand", "20")
           )
 
         val result = route(application, request).value
@@ -304,8 +304,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
               .withFormUrlEncodedBody(
                 ("producerName", "PRODUCER"),
                 ("referenceNumber", "XKSDIL000000023"),
-                ("lowBand", "10"),
-                ("highBand", "20")
+                ("litres.lowBand", "10"),
+                ("litres.highBand", "20")
               )
 
           await(route(application, request).value)

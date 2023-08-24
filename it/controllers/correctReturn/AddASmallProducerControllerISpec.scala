@@ -21,7 +21,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
   
   private val litres = 1000L
 
-  private val validAddASmallProducer = Json.obj("producerName" -> aliasSuperCola, "referenceNumber" -> sdilRefSuperCola, "lowBand" -> litres.toString, "highBand" -> litres.toString)
+  private val validAddASmallProducer = Json.obj("producerName" -> aliasSuperCola, "referenceNumber" -> sdilRefSuperCola, "litres.lowBand" -> litres.toString, "litres.highBand" -> litres.toString)
 
   private val returnPeriod: ReturnPeriod = ReturnPeriod(2018, 1)
   private def userAnswersWithSmallProducersSet = emptyUserAnswersForCorrectReturn

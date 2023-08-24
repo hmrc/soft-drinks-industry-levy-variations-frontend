@@ -56,7 +56,7 @@ package generators
           referenceNumber <- arbitrary[String]
           lowBand <- arbitrary[Long]
           highBand <- arbitrary[Long]
-        } yield AddASmallProducer(producerName, referenceNumber, lowBand, highBand)
+        } yield AddASmallProducer(producerName, referenceNumber, LitresInBands(lowBand, highBand))
       }
 
     implicit lazy val arbitraryUpdateRegisteredDetailsUpdateContactDetails: Arbitrary[ContactDetails] =

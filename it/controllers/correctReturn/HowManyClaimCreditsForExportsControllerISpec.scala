@@ -80,7 +80,7 @@ class HowManyClaimCreditsForExportsControllerISpec extends LitresISpecHelper {
             setAnswers(emptyUserAnswersForCorrectReturn)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + path, Json.toJson(litresInBands)
+                client, correctReturnBaseUrl + path, Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
@@ -100,7 +100,7 @@ class HowManyClaimCreditsForExportsControllerISpec extends LitresISpecHelper {
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + path, Json.toJson(litresInBandsDiff)
+                client, correctReturnBaseUrl + path, Json.toJson(litresInBandsDiffObj)
               )
 
               whenReady(result) { res =>
@@ -221,7 +221,7 @@ class HowManyClaimCreditsForExportsControllerISpec extends LitresISpecHelper {
             whenReady(result) { res =>
               res.status mustBe 400
               val page = Jsoup.parse(res.body)
-              testNegativeFormErrors(page, errorTitle)
+              testZeroFormErrors(page, errorTitle)
             }
           }
         }

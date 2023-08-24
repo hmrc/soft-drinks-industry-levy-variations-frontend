@@ -80,7 +80,7 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
             setAnswers(emptyUserAnswersForCorrectReturn)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + path, Json.toJson(litresInBands)
+                client, correctReturnBaseUrl + path, Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
@@ -100,7 +100,7 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + path, Json.toJson(litresInBandsDiff)
+                client, correctReturnBaseUrl + path, Json.toJson(litresInBandsDiffObj)
               )
 
               whenReady(result) { res =>
@@ -221,15 +221,15 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
             whenReady(result) { res =>
               res.status mustBe 400
               val page = Jsoup.parse(res.body)
-              testNegativeFormErrors(page, errorTitle)
+              testZeroFormErrors(page, errorTitle)
             }
           }
         }
       }
 
-      testUnauthorisedUser(correctReturnBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
-      testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
-      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
+      testUnauthorisedUser(correctReturnBaseUrl + path, Some(Json.toJson(litresInBandsDiffObj)))
+      testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + path, Some(Json.toJson(litresInBandsDiffObj)))
+      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + path, Some(Json.toJson(litresInBandsDiffObj)))
     }
   }
 }

@@ -22,45 +22,45 @@
 
 @govukInput(
     Input(
-        id = "lowBand",
-        name = "lowBand",
+        id = form.error("litres").fold("litres.lowBand")(_ => "litres"),
+        name = "litres.lowBand",
         label = LabelViewModel(messages("litres.lowBand")),
         classes = "govuk-input--width-10",
         suffix = Some(PrefixOrSuffix(
         content = Text(messages("litres.text"))
-        )),
-        errorMessage =
-        form.error("lowBand").map{ e =>
-            ErrorMessage(
-                content = Text(messages(s"${e.messages.headOption.get}")),
-                visuallyHiddenText = Some(messages("site.error"))
-            )
-        },
-        value = form("lowBand").value
+    )),
+    errorMessage =
+    form.error("litres").fold(form.error("litres.lowBand"))(Some(_)).map { e =>
+        ErrorMessage(
+        content = Text(messages(s"${e.messages.headOption.get}")),
+        visuallyHiddenText = Some(messages("site.error"))
+        )
+    },
+    value = form("litres.lowBand").value
     )
-        .withHint(Hint(content = Text(messages("litres.lowBandHint"))))
-        .withAttribute("inputmode" -> "numeric")
+    .withHint(Hint(content = Text(messages("litres.lowBandHint"))))
+    .withAttribute("inputmode" -> "numeric")
 
 )
 @govukInput(
     Input(
-        id = "highBand",
-        name = "highBand",
+        id = "litres.highBand",
+        name = "litres.highBand",
         label = LabelViewModel(messages("litres.highBand")),
         classes = "govuk-input--width-10",
         suffix = Some(PrefixOrSuffix(
-            content = Text(messages("litres.text"))
-        )),
-        errorMessage =
-        form.error("highBand").map{ e =>
-          ErrorMessage(
-              content = Text(messages(s"${e.messages.headOption.get}")),
-              visuallyHiddenText = Some(messages("site.error"))
-          )
-        },
-        value = form("highBand").value
+        content = Text(messages("litres.text"))
+)),
+    errorMessage =
+    form.error("litres").fold(form.error("litres.highBand"))(Some(_)).map { e =>
+    ErrorMessage(
+    content = Text(messages(s"${e.messages.headOption.get}")),
+    visuallyHiddenText = Some(messages("site.error"))
+)
+},
+value = form("litres.highBand").value
 
-    )
-        .withHint(Hint(content = Text(messages("litres.highBandHint"))))
-        .withAttribute("inputmode" -> "numeric")
+)
+.withHint(Hint(content = Text(messages("litres.highBandHint"))))
+.withAttribute("inputmode" -> "numeric")
 )

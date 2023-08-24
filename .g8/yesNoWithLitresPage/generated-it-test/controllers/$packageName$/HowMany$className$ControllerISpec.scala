@@ -81,7 +81,7 @@ class HowMany$className$ControllerISpec extends LitresISpecHelper {
             setAnswers(emptyUserAnswersFor$packageName;format="cap"$)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, $packageName$BaseUrl + path, Json.toJson(litresInBands)
+                client, $packageName$BaseUrl + path, Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
@@ -101,7 +101,7 @@ class HowMany$className$ControllerISpec extends LitresISpecHelper {
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, $packageName$BaseUrl + path, Json.toJson(litresInBandsDiff)
+                client, $packageName$BaseUrl + path, Json.toJson(litresInBandsDiffObj)
               )
 
               whenReady(result) { res =>
@@ -222,7 +222,7 @@ class HowMany$className$ControllerISpec extends LitresISpecHelper {
             whenReady(result) { res =>
               res.status mustBe 400
               val page = Jsoup.parse(res.body)
-              testNegativeFormErrors(page, errorTitle)
+              testZeroFormErrors(page, errorTitle)
             }
           }
         }

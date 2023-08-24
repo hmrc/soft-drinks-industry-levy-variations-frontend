@@ -80,7 +80,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
             setAnswers(emptyUserAnswersForChangeActivity)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + path, Json.toJson(litresInBands)
+                client, changeActivityBaseUrl + path, Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
@@ -100,7 +100,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + path, Json.toJson(litresInBandsDiff)
+                client, changeActivityBaseUrl + path, Json.toJson(litresInBandsDiffObj)
               )
 
               whenReady(result) { res =>
@@ -221,7 +221,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
             whenReady(result) { res =>
               res.status mustBe 400
               val page = Jsoup.parse(res.body)
-              testNegativeFormErrors(page, errorTitle)
+              testZeroFormErrors(page, errorTitle)
             }
           }
         }

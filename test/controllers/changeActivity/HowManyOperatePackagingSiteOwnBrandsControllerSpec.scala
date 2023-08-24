@@ -99,7 +99,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
       running(application) {
         val request =
           FakeRequest(POST, howManyOperatePackagingSiteOwnBrandsRoute)
-            .withFormUrlEncodedBody(("lowBand", "1000"), ("highBand", "2000"))
+            .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
 
         val result = route(application, request).value
 
@@ -115,9 +115,9 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
       running(application) {
         val request =
           FakeRequest(POST, howManyOperatePackagingSiteOwnBrandsRoute)
-            .withFormUrlEncodedBody(("lowBand", ""), ("highBand", ""))
+            .withFormUrlEncodedBody(("litres.lowBand", ""), ("litres.highBand", ""))
 
-        val boundForm = form.bind(Map("lowBand" -> "", "highBand" -> ""))
+        val boundForm = form.bind(Map("litres.lowBand" -> "", "litres.highBand" -> ""))
 
         val view = application.injector.instanceOf[HowManyOperatePackagingSiteOwnBrandsView]
 
@@ -138,7 +138,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
       running(application) {
         val request =
           FakeRequest(POST, howManyOperatePackagingSiteOwnBrandsRoute)
-        .withFormUrlEncodedBody(("lowBand", "1000"), ("highBand", "2000"))
+        .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
 
         val result = route(application, request).value
 
@@ -164,7 +164,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request =
             FakeRequest(POST, howManyOperatePackagingSiteOwnBrandsRoute)
-          .withFormUrlEncodedBody(("lowBand", "1000"), ("highBand", "2000"))
+          .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
 
           await(route(application, request).value)
           events.collectFirst {

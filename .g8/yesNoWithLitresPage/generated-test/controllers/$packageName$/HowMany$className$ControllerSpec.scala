@@ -82,7 +82,7 @@ class HowMany$className$ControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, howMany$className$Route)
-            .withFormUrlEncodedBody(("lowBand", "1000"), ("highBand", "2000"))
+            .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
 
         val result = route(application, request).value
 
@@ -98,9 +98,9 @@ class HowMany$className$ControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, howMany$className$Route)
-            .withFormUrlEncodedBody(("lowBand", ""), ("highBand", ""))
+            .withFormUrlEncodedBody(("litres.lowBand", ""), ("litres.highBand", ""))
 
-        val boundForm = form.bind(Map("lowBand" -> "", "highBand" -> ""))
+        val boundForm = form.bind(Map("litres.lowBand" -> "", "litres.highBand" -> ""))
 
         val view = application.injector.instanceOf[HowMany$className$View]
 
@@ -121,7 +121,7 @@ class HowMany$className$ControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, howMany$className$Route)
-        .withFormUrlEncodedBody(("lowBand", "1000"), ("highBand", "2000"))
+        .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
 
         val result = route(application, request).value
 
@@ -147,7 +147,7 @@ class HowMany$className$ControllerSpec extends SpecBase with MockitoSugar {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request =
             FakeRequest(POST, howMany$className$Route)
-          .withFormUrlEncodedBody(("lowBand", "1000"), ("highBand", "2000"))
+          .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
 
           await(route(application, request).value)
           events.collectFirst {

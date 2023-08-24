@@ -25,12 +25,12 @@ import javax.inject.Inject
 
 class HowManyLitresFormProvider @Inject() extends Mappings {
 
-   def apply(): Form[LitresInBands] = Form(
-     mapping(
-       "lowBand" -> litres(
-         "lowBand"),
-       "highBand" -> litres(
-         "highBand")
-    )(LitresInBands.apply)(LitresInBands.unapply)
-   )
- }
+  def apply(): Form[LitresInBands] = Form(
+    mapping(
+      "litres" -> tuple[Long, Long]("lowBand" -> litres(
+        "lowBand"),
+        "highBand" -> litres(
+          "highBand")).verifying("litres.error.negative", litres => litres._1 + litres._2 != 0)
+    )(litres => LitresInBands(litres._1, litres._2))(litres => Some((litres.lowBand, litres.highBand)))
+  )
+}
