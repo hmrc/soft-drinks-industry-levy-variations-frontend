@@ -98,7 +98,7 @@ class HowManyBroughtIntoUkFromSmallProducersControllerSpec extends SpecBase with
       running(application) {
         val request =
           FakeRequest(POST, howManyBroughtIntoUkFromSmallProducersRoute)
-            .withFormUrlEncodedBody(("lowBand", "1000"), ("highBand", "2000"))
+            .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
 
         val result = route(application, request).value
 
@@ -137,7 +137,7 @@ class HowManyBroughtIntoUkFromSmallProducersControllerSpec extends SpecBase with
       running(application) {
         val request =
           FakeRequest(POST, howManyBroughtIntoUkFromSmallProducersRoute)
-        .withFormUrlEncodedBody(("lowBand", "1000"), ("highBand", "2000"))
+        .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
 
         val result = route(application, request).value
 
@@ -163,7 +163,7 @@ class HowManyBroughtIntoUkFromSmallProducersControllerSpec extends SpecBase with
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request =
             FakeRequest(POST, howManyBroughtIntoUkFromSmallProducersRoute)
-          .withFormUrlEncodedBody(("lowBand", "1000"), ("highBand", "2000"))
+          .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
 
           await(route(application, request).value)
           events.collectFirst {

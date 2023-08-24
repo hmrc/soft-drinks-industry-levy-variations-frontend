@@ -38,6 +38,7 @@ litres.error.lowBand.nonNumeric = Number of litres in the low band must be numer
 litres.error.highBand.nonNumeric = Number of litres in the high band must be numeric
 litres.error.lowBand.negative = Number of litres in the low band must be a positive number
 litres.error.highBand.negative = Number of litres in the high band must be a positive number
+litres.error.negative = Number of litres must be a positive number
 litres.error.lowBand.wholeNumber = Number of litres in the low band must be a whole number
 litres.error.highBand.wholeNumber = Number of litres in the high band must be a whole number
 litres.error.lowBand.outOfMaxVal = Number of litres in the low band must be less than 100,000,000,000,000

@@ -39,9 +39,11 @@ trait Mappings extends Formatters with Constraints {
     of(intFormatter(requiredKey, wholeNumberKey, nonNumericKey, invalidLength,args))
 
   protected def litres(band: String,
-                       args: Seq[String] = Seq.empty): Mapping[Long] =
-    of(litresFormatter(band, args))
+                       args: Seq[String] = Seq.empty): Mapping[Long] = {
+     of(litresFormatter(band, args))
       .verifying(maximumValueNotEqual(100000000000000L, s"litres.error.$band.outOfMaxVal"))
+  }
+
 
   protected def sdilReference(requiredKey: String = "error.required",
                               userAnswersId: String,

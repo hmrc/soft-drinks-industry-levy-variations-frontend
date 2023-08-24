@@ -68,9 +68,9 @@ class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFi
 
   }
 
-  ".lowBand" - {
+  "litres.lowBand" - {
 
-    val fieldName = "lowBand"
+    val fieldName = "litres.lowBand"
     val requiredKey = "litres.error.lowBand.required"
     val numberKey = "litres.error.lowBand.nonNumeric"
     val negativeNumberKey = "litres.error.lowBand.negative"
@@ -107,9 +107,9 @@ class AddASmallProducerFormProviderSpec extends LongFieldBehaviour with StringFi
     )
   }
 
-  ".highBand" - {
+  "litres.highBand" - {
 
-    val fieldName = "highBand"
+    val fieldName = "litres.highBand"
     val requiredKey = "litres.error.highBand.required"
     val numberKey = "litres.error.highBand.nonNumeric"
     val negativeNumberKey = "litres.error.highBand.negative"

@@ -42,19 +42,19 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
   val litresInBands: LitresInBands = LitresInBands(lowBandValue, highBandValue)
 
   val sdilProducerReference: String = "XKSDIL000000023"
-  val addASmallProducer: AddASmallProducer = AddASmallProducer(Option("PRODUCER"), sdilProducerReference, lowBandValue, highBandValue)
+  val addASmallProducer: AddASmallProducer = AddASmallProducer(Option("PRODUCER"), sdilProducerReference,litres = LitresInBands(lowBandValue, highBandValue))
 
   val formProvider = new AddASmallProducerFormProvider()
   val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod.head))
   val form: Form[AddASmallProducer] = formProvider.apply(userAnswers)
-  val formWithHighAndLowBands: Form[AddASmallProducer] = form.fill(addASmallProducer)
-  val formWithLowBandOnly: Form[AddASmallProducer] = form.fill(addASmallProducer.copy(highBand = 0))
-  val formWithHighBandOnly: Form[AddASmallProducer] = form.fill(addASmallProducer.copy(lowBand = 0))
-  val emptyForm: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "lowBand" -> "", "highBand" -> ""))
-  val formWithNoNumeric: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "lowBand" -> "x", "highBand" -> "y"))
-  val formWithNegativeNumber: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "lowBand" -> "-1", "highBand" -> "-2"))
-  val formWithDecimalNumber: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "lowBand" -> "1.8", "highBand" -> "2.3"))
-  val formWithOutOfRangeNumber: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "lowBand" -> "110000000000000", "highBand" -> "120000000000000"))
+  val formWithHighAndLowBands: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "litres.lowBand" -> s"$lowBandValue", "litres.highBand" -> s"$highBandValue"))
+  val formWithLowBandOnly: Form[AddASmallProducer] = form.fill(addASmallProducer.copy(litres = LitresInBands(1, 0)))
+  val formWithHighBandOnly: Form[AddASmallProducer] = form.fill(addASmallProducer.copy(litres = LitresInBands(0, 1)))
+  val emptyForm: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "litres.lowBand" -> "", "litres.highBand" -> ""))
+  val formWithNoNumeric: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "litres.lowBand" -> "x", "litres.highBand" -> "y"))
+  val formWithNegativeNumber: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "litres.lowBand" -> "-1", "litres.highBand" -> "-2"))
+  val formWithDecimalNumber: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "litres.lowBand" -> "1.8", "litres.highBand" -> "2.3"))
+  val formWithOutOfRangeNumber: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "litres.lowBand" -> "110000000000000", "litres.highBand" -> "120000000000000"))
 
   object Selectors {
     val heading = "govuk-heading-m"
@@ -75,18 +75,18 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
           formGroups.size() mustEqual numberOfPrecedingInputs + 2
         }
         "that includes a field for low band that is populated" in {
-          val lowBandGroup = formGroups.get(numberOfPrecedingInputs)
+          val lowBandGroup = formGroups.get(2)
           lowBandGroup.getElementsByClass(Selectors.label).text() mustBe Messages("litres.lowBand")
-          lowBandGroup.getElementById("lowBand-hint").text() mustBe Messages("litres.lowBandHint")
-          lowBandGroup.getElementById("lowBand").hasAttr("value") mustBe true
-          lowBandGroup.getElementById("lowBand").attr("value") mustBe lowBandValue.toString
+          lowBandGroup.getElementById("litres.lowBand-hint").text() mustBe Messages("litres.lowBandHint")
+          lowBandGroup.getElementById("litres.lowBand").hasAttr("value") mustBe true
+          lowBandGroup.getElementById("litres.lowBand").attr("value") mustBe lowBandValue.toString
         }
         "that includes a field for high band that is populated" in {
-          val highBandGroup = formGroups.get(numberOfPrecedingInputs + 1)
+          val highBandGroup = formGroups.get(3)
           highBandGroup.getElementsByClass(Selectors.label).text() mustBe Messages("litres.highBand")
-          highBandGroup.getElementById("highBand-hint").text() mustBe Messages("litres.highBandHint")
-          highBandGroup.getElementById("highBand").hasAttr("value") mustBe true
-          highBandGroup.getElementById("highBand").attr("value") mustBe highBandValue.toString
+          highBandGroup.getElementById("litres.highBand-hint").text() mustBe Messages("litres.highBandHint")
+          highBandGroup.getElementById("litres.highBand").hasAttr("value") mustBe true
+          highBandGroup.getElementById("litres.highBand").attr("value") mustBe highBandValue.toString
         }
       }
     }
@@ -99,17 +99,17 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
         s"that includes ${numberOfPrecedingInputs + 2} input fields" in {
           formGroups.size() mustEqual numberOfPrecedingInputs + 2
         }
-        "that includes a field for low band that is not populated" in {
-          val lowBandGroup = formGroups.get(numberOfPrecedingInputs)
+        "that includes a field for low band that is populated" in {
+          val lowBandGroup = formGroups.get(2)
           lowBandGroup.getElementsByClass(Selectors.label).text() mustBe Messages("litres.lowBand")
-          lowBandGroup.getElementById("lowBand-hint").text() mustBe Messages("litres.lowBandHint")
-          lowBandGroup.getElementById("lowBand").hasAttr("value") mustBe false
+          lowBandGroup.getElementById("litres.lowBand-hint").text() mustBe Messages("litres.lowBandHint")
+          lowBandGroup.getElementById("litres.lowBand").hasAttr("value") mustBe false
         }
-        "that includes a field for high band that is not populated" in {
-          val highBandGroup = formGroups.get(numberOfPrecedingInputs + 1)
+        "that includes a field for high band that is populated" in {
+          val highBandGroup = formGroups.get(3)
           highBandGroup.getElementsByClass(Selectors.label).text() mustBe Messages("litres.highBand")
-          highBandGroup.getElementById("highBand-hint").text() mustBe Messages("litres.highBandHint")
-          highBandGroup.getElementById("highBand").hasAttr("value") mustBe false
+          highBandGroup.getElementById("litres.highBand-hint").text() mustBe Messages("litres.highBandHint")
+          highBandGroup.getElementById("litres.highBand").hasAttr("value") mustBe false
         }
       }
     }
@@ -145,9 +145,9 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
           val error2 = errors.get(1)
 
           error1.text() mustBe Messages("litres.error.lowBand.required")
-          error1.select("a").attr("href") mustBe "#lowBand"
+          error1.select("a").attr("href") mustBe "#litres.lowBand"
           error2.text() mustBe Messages("litres.error.highBand.required")
-          error2.select("a").attr("href") mustBe "#highBand"
+          error2.select("a").attr("href") mustBe "#litres.highBand"
         }
       }
     }
@@ -170,9 +170,9 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
           val error2 = errors.get(1)
 
           error1.text() mustBe Messages("litres.error.lowBand.nonNumeric")
-          error1.select("a").attr("href") mustBe "#lowBand"
+          error1.select("a").attr("href") mustBe "#litres.lowBand"
           error2.text() mustBe Messages("litres.error.highBand.nonNumeric")
-          error2.select("a").attr("href") mustBe "#highBand"
+          error2.select("a").attr("href") mustBe "#litres.highBand"
         }
       }
     }
@@ -193,9 +193,9 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
           val error1 = errors.get(0)
           val error2 = errors.get(1)
           error1.text() mustBe Messages("litres.error.lowBand.negative")
-          error1.select("a").attr("href") mustBe "#lowBand"
+          error1.select("a").attr("href") mustBe "#litres.lowBand"
           error2.text() mustBe Messages("litres.error.highBand.negative")
-          error2.select("a").attr("href") mustBe "#highBand"
+          error2.select("a").attr("href") mustBe "#litres.highBand"
         }
       }
     }
@@ -218,9 +218,9 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
           val error2 = errors.get(1)
 
           error1.text() mustBe Messages("litres.error.lowBand.wholeNumber")
-          error1.select("a").attr("href") mustBe "#lowBand"
+          error1.select("a").attr("href") mustBe "#litres.lowBand"
           error2.text() mustBe Messages("litres.error.highBand.wholeNumber")
-          error2.select("a").attr("href") mustBe "#highBand"
+          error2.select("a").attr("href") mustBe "#litres.highBand"
         }
       }
     }
@@ -243,9 +243,9 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
           val error2 = errors.get(1)
 
           error1.text() mustBe Messages("litres.error.lowBand.outOfMaxVal")
-          error1.select("a").attr("href") mustBe "#lowBand"
+          error1.select("a").attr("href") mustBe "#litres.lowBand"
           error2.text() mustBe Messages("litres.error.highBand.outOfMaxVal")
-          error2.select("a").attr("href") mustBe "#highBand"
+          error2.select("a").attr("href") mustBe "#litres.highBand"
         }
       }
     }

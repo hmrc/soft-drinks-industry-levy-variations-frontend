@@ -34,11 +34,11 @@ trait LitresSpecHelper extends ViewSpecHelper {
   val formWithHighAndLowBands: Form[LitresInBands] = form.fill(litresInBands)
   val formWithLowBandOnly: Form[LitresInBands] = form.fill(litresInBands.copy(highBand = 0))
   val formWithHighBandOnly: Form[LitresInBands] = form.fill(litresInBands.copy(lowBand = 0))
-  val emptyForm: Form[LitresInBands] = form.bind(Map("lowBand" -> "", "highBand" -> ""))
-  val formWithNoNumeric: Form[LitresInBands] = form.bind(Map("lowBand" -> "x", "highBand" -> "y"))
-  val formWithNegativeNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "-1", "highBand" -> "-2"))
-  val formWithDecimalNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "1.8", "highBand" -> "2.3"))
-  val formWithOutOfRangeNumber: Form[LitresInBands] = form.bind(Map("lowBand" -> "110000000000000", "highBand" -> "120000000000000"))
+  val emptyForm: Form[LitresInBands] = form.bind(Map("litres.lowBand" -> "", "litres.highBand" -> ""))
+  val formWithNoNumeric: Form[LitresInBands] = form.bind(Map("litres.lowBand" -> "x", "litres.highBand" -> "y"))
+  val formWithNegativeNumber: Form[LitresInBands] = form.bind(Map("litres.lowBand" -> "-1", "litres.highBand" -> "-2"))
+  val formWithDecimalNumber: Form[LitresInBands] = form.bind(Map("litres.lowBand" -> "1.8", "litres.highBand" -> "2.3"))
+  val formWithOutOfRangeNumber: Form[LitresInBands] = form.bind(Map("litres.lowBand" -> "110000000000000", "litres.highBand" -> "120000000000000"))
 
   object Selectors {
     val heading = "govuk-heading-m"
@@ -62,16 +62,16 @@ trait LitresSpecHelper extends ViewSpecHelper {
         "that includes a field for low band that is populated" in {
           val lowBandGroup = formGroups.get(0)
           lowBandGroup.getElementsByClass(Selectors.label).text() mustBe Messages("litres.lowBand")
-          lowBandGroup.getElementById("lowBand-hint").text() mustBe Messages("litres.lowBandHint")
-          lowBandGroup.getElementById("lowBand").hasAttr("value") mustBe true
-          lowBandGroup.getElementById("lowBand").attr("value") mustBe lowBandValue.toString
+          lowBandGroup.getElementById("litres.lowBand-hint").text() mustBe Messages("litres.lowBandHint")
+          lowBandGroup.getElementById("litres.lowBand").hasAttr("value") mustBe true
+          lowBandGroup.getElementById("litres.lowBand").attr("value") mustBe lowBandValue.toString
         }
         "that includes a field for high band that is populated" in {
           val highBandGroup = formGroups.get(1)
           highBandGroup.getElementsByClass(Selectors.label).text() mustBe Messages("litres.highBand")
-          highBandGroup.getElementById("highBand-hint").text() mustBe Messages("litres.highBandHint")
-          highBandGroup.getElementById("highBand").hasAttr("value") mustBe true
-          highBandGroup.getElementById("highBand").attr("value") mustBe highBandValue.toString
+          highBandGroup.getElementById("litres.highBand-hint").text() mustBe Messages("litres.highBandHint")
+          highBandGroup.getElementById("litres.highBand").hasAttr("value") mustBe true
+          highBandGroup.getElementById("litres.highBand").attr("value") mustBe highBandValue.toString
         }
       }
     }
@@ -87,14 +87,14 @@ trait LitresSpecHelper extends ViewSpecHelper {
         "that includes a field for low band that is not populated" in {
           val lowBandGroup = formGroups.get(0)
           lowBandGroup.getElementsByClass(Selectors.label).text() mustBe Messages("litres.lowBand")
-          lowBandGroup.getElementById("lowBand-hint").text() mustBe Messages("litres.lowBandHint")
-          lowBandGroup.getElementById("lowBand").hasAttr("value") mustBe false
+          lowBandGroup.getElementById("litres.lowBand-hint").text() mustBe Messages("litres.lowBandHint")
+          lowBandGroup.getElementById("litres.lowBand").hasAttr("value") mustBe false
         }
         "that includes a field for high band that is not populated" in {
           val highBandGroup = formGroups.get(1)
           highBandGroup.getElementsByClass(Selectors.label).text() mustBe Messages("litres.highBand")
-          highBandGroup.getElementById("highBand-hint").text() mustBe Messages("litres.highBandHint")
-          highBandGroup.getElementById("highBand").hasAttr("value") mustBe false
+          highBandGroup.getElementById("litres.highBand-hint").text() mustBe Messages("litres.highBandHint")
+          highBandGroup.getElementById("litres.highBand").hasAttr("value") mustBe false
         }
       }
     }
@@ -130,9 +130,9 @@ trait LitresSpecHelper extends ViewSpecHelper {
           val error2 = errors.get(1)
 
           error1.text() mustBe Messages("litres.error.lowBand.required")
-          error1.select("a").attr("href") mustBe "#lowBand"
+          error1.select("a").attr("href") mustBe "#litres.lowBand"
           error2.text() mustBe Messages("litres.error.highBand.required")
-          error2.select("a").attr("href") mustBe "#highBand"
+          error2.select("a").attr("href") mustBe "#litres.highBand"
         }
       }
     }
@@ -155,9 +155,9 @@ trait LitresSpecHelper extends ViewSpecHelper {
           val error2 = errors.get(1)
 
           error1.text() mustBe Messages("litres.error.lowBand.nonNumeric")
-          error1.select("a").attr("href") mustBe "#lowBand"
+          error1.select("a").attr("href") mustBe "#litres.lowBand"
           error2.text() mustBe Messages("litres.error.highBand.nonNumeric")
-          error2.select("a").attr("href") mustBe "#highBand"
+          error2.select("a").attr("href") mustBe "#litres.highBand"
         }
       }
     }
@@ -178,9 +178,9 @@ trait LitresSpecHelper extends ViewSpecHelper {
           val error1 = errors.get(0)
           val error2 = errors.get(1)
           error1.text() mustBe Messages("litres.error.lowBand.negative")
-          error1.select("a").attr("href") mustBe "#lowBand"
+          error1.select("a").attr("href") mustBe "#litres.lowBand"
           error2.text() mustBe Messages("litres.error.highBand.negative")
-          error2.select("a").attr("href") mustBe "#highBand"
+          error2.select("a").attr("href") mustBe "#litres.highBand"
         }
       }
     }
@@ -203,9 +203,9 @@ trait LitresSpecHelper extends ViewSpecHelper {
           val error2 = errors.get(1)
 
           error1.text() mustBe Messages("litres.error.lowBand.wholeNumber")
-          error1.select("a").attr("href") mustBe "#lowBand"
+          error1.select("a").attr("href") mustBe "#litres.lowBand"
           error2.text() mustBe Messages("litres.error.highBand.wholeNumber")
-          error2.select("a").attr("href") mustBe "#highBand"
+          error2.select("a").attr("href") mustBe "#litres.highBand"
         }
       }
     }
@@ -228,9 +228,9 @@ trait LitresSpecHelper extends ViewSpecHelper {
           val error2 = errors.get(1)
 
           error1.text() mustBe Messages("litres.error.lowBand.outOfMaxVal")
-          error1.select("a").attr("href") mustBe "#lowBand"
+          error1.select("a").attr("href") mustBe "#litres.lowBand"
           error2.text() mustBe Messages("litres.error.highBand.outOfMaxVal")
-          error2.select("a").attr("href") mustBe "#highBand"
+          error2.select("a").attr("href") mustBe "#litres.highBand"
         }
       }
     }

@@ -80,7 +80,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
             setAnswers(emptyUserAnswersForChangeActivity)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + path, Json.toJson(litresInBands)
+                client, changeActivityBaseUrl + path, Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
@@ -100,7 +100,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + path, Json.toJson(litresInBandsDiff)
+                client, changeActivityBaseUrl + path, Json.toJson(litresInBandsDiffObj)
               )
 
               whenReady(result) { res =>
@@ -204,6 +204,24 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
               res.status mustBe 400
               val page = Jsoup.parse(res.body)
               testOutOfMaxValFormErrors(page, errorTitle)
+            }
+          }
+        }
+
+        "when the user answers with 0" in {
+          given
+            .commonPrecondition
+
+          setAnswers(emptyUserAnswersForChangeActivity)
+          WsTestClient.withClient { client =>
+            val result = createClientRequestPOST(
+              client, changeActivityBaseUrl + path, jsonWith0
+            )
+
+            whenReady(result) { res =>
+              res.status mustBe 400
+              val page = Jsoup.parse(res.body)
+              testZeroFormErrors(page, errorTitle)
             }
           }
         }

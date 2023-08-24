@@ -99,7 +99,7 @@ class HowManyCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSu
       running(application) {
         val request =
           FakeRequest(POST, howManyCreditsForLostDamagedRoute)
-            .withFormUrlEncodedBody(("lowBand", "1000"), ("highBand", "2000"))
+            .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
 
         val result = route(application, request).value
 
@@ -138,7 +138,7 @@ class HowManyCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSu
       running(application) {
         val request =
           FakeRequest(POST, howManyCreditsForLostDamagedRoute)
-        .withFormUrlEncodedBody(("lowBand", "1000"), ("highBand", "2000"))
+        .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
 
         val result = route(application, request).value
 
@@ -164,7 +164,7 @@ class HowManyCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSu
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request =
             FakeRequest(POST, howManyCreditsForLostDamagedRoute)
-          .withFormUrlEncodedBody(("lowBand", "1000"), ("highBand", "2000"))
+          .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
 
           await(route(application, request).value)
           events.collectFirst {

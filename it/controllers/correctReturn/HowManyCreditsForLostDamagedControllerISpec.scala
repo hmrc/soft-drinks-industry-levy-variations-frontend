@@ -79,7 +79,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
             setAnswers(emptyUserAnswersForCorrectReturn)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + path, Json.toJson(litresInBands)
+                client, correctReturnBaseUrl + path, Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
@@ -99,7 +99,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + path, Json.toJson(litresInBandsDiff)
+                client, correctReturnBaseUrl + path, Json.toJson(litresInBandsDiffObj)
               )
 
               whenReady(result) { res =>
@@ -203,6 +203,24 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
               res.status mustBe 400
               val page = Jsoup.parse(res.body)
               testOutOfMaxValFormErrors(page, errorTitle)
+            }
+          }
+        }
+
+        "when the user answers with 0" in {
+          given
+            .commonPrecondition
+
+          setAnswers(emptyUserAnswersForCorrectReturn)
+          WsTestClient.withClient { client =>
+            val result = createClientRequestPOST(
+              client, correctReturnBaseUrl + path, jsonWith0
+            )
+
+            whenReady(result) { res =>
+              res.status mustBe 400
+              val page = Jsoup.parse(res.body)
+              testZeroFormErrors(page, errorTitle)
             }
           }
         }

@@ -90,7 +90,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBands)
+                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
                   )
 
                   whenReady(result) { res =>
@@ -119,7 +119,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBands)
+                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
                   )
 
                   whenReady(result) { res =>
@@ -149,7 +149,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBands)
+                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
                   )
 
                   whenReady(result) { res =>
@@ -175,7 +175,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBands)
+                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
                   )
 
                   whenReady(result) { res =>
@@ -210,7 +210,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBands)
+                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
                   )
 
                   whenReady(result) { res =>
@@ -238,7 +238,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBands)
+                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
                   )
 
                   whenReady(result) { res =>
@@ -267,7 +267,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBands)
+                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
                   )
 
                   whenReady(result) { res =>
@@ -292,7 +292,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBands)
+                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
                   )
 
                   whenReady(result) { res =>
@@ -324,7 +324,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBands)
+                  client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
@@ -348,7 +348,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBands)
+                  client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
@@ -371,7 +371,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             setAnswers(emptyUserAnswersForChangeActivity)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBands)
+                client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
@@ -396,7 +396,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBands)
+                client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
@@ -420,7 +420,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBands)
+                client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
@@ -446,7 +446,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBands)
+                client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
@@ -471,7 +471,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBands)
+                client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
@@ -579,11 +579,29 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
           }
         }
       }
+
+      "when the user answers with 0" in {
+        given
+          .commonPrecondition
+
+        setAnswers(emptyUserAnswersForChangeActivity)
+        WsTestClient.withClient { client =>
+          val result = createClientRequestPOST(
+            client, changeActivityBaseUrl + normalRoutePath, jsonWith0
+          )
+
+          whenReady(result) { res =>
+            res.status mustBe 400
+            val page = Jsoup.parse(res.body)
+            testZeroFormErrors(page, errorTitle)
+          }
+        }
+      }
     }
 
-    testUnauthorisedUser(changeActivityBaseUrl + normalRoutePath, Some(Json.toJson(litresInBandsDiff)))
-    testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + normalRoutePath, Some(Json.toJson(litresInBandsDiff)))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + normalRoutePath, Some(Json.toJson(litresInBandsDiff)))
+    testUnauthorisedUser(changeActivityBaseUrl + normalRoutePath, Some(Json.toJson(litresInBandsDiffObj)))
+    testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + normalRoutePath, Some(Json.toJson(litresInBandsDiffObj)))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + normalRoutePath, Some(Json.toJson(litresInBandsDiffObj)))
   }
 
   s"POST " + checkRoutePath - {
@@ -606,7 +624,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBands)
+                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
@@ -634,7 +652,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBands)
+                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
@@ -663,7 +681,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBands)
+                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
@@ -687,7 +705,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBands)
+                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
@@ -720,7 +738,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBands)
+                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
@@ -748,7 +766,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBands)
+                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
@@ -777,7 +795,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBands)
+                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
@@ -802,7 +820,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBands)
+                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
@@ -826,7 +844,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBands)
+                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
@@ -856,7 +874,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBands)
+                client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
@@ -876,7 +894,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             setAnswers(emptyUserAnswersForChangeActivity)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBands)
+                client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
@@ -899,7 +917,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBands)
+                client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
@@ -923,7 +941,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBands)
+                client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
@@ -946,7 +964,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBands)
+                client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
@@ -969,7 +987,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBands)
+                client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
@@ -1077,10 +1095,28 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
           }
         }
       }
+
+      "when the user answers with 0" in {
+        given
+          .commonPrecondition
+
+        setAnswers(emptyUserAnswersForChangeActivity)
+        WsTestClient.withClient { client =>
+          val result = createClientRequestPOST(
+            client, changeActivityBaseUrl + checkRoutePath, jsonWith0
+          )
+
+          whenReady(result) { res =>
+            res.status mustBe 400
+            val page = Jsoup.parse(res.body)
+            testZeroFormErrors(page, errorTitle)
+          }
+        }
+      }
     }
 
-    testUnauthorisedUser(changeActivityBaseUrl + checkRoutePath, Some(Json.toJson(litresInBandsDiff)))
-    testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + checkRoutePath, Some(Json.toJson(litresInBandsDiff)))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + checkRoutePath, Some(Json.toJson(litresInBandsDiff)))
+    testUnauthorisedUser(changeActivityBaseUrl + checkRoutePath, Some(Json.toJson(litresInBandsDiffObj)))
+    testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + checkRoutePath, Some(Json.toJson(litresInBandsDiffObj)))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + checkRoutePath, Some(Json.toJson(litresInBandsDiffObj)))
   }
 }

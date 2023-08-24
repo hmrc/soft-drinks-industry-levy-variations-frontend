@@ -99,7 +99,7 @@ class HowManyContractPackingControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, howManyContractPackingRoute)
-            .withFormUrlEncodedBody(("lowBand", "1000"), ("highBand", "2000"))
+            .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
 
         val result = route(application, request).value
 
@@ -138,7 +138,7 @@ class HowManyContractPackingControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, howManyContractPackingRoute)
-        .withFormUrlEncodedBody(("lowBand", "1000"), ("highBand", "2000"))
+        .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
 
         val result = route(application, request).value
 
@@ -164,7 +164,7 @@ class HowManyContractPackingControllerSpec extends SpecBase with MockitoSugar {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request =
             FakeRequest(POST, howManyContractPackingRoute)
-          .withFormUrlEncodedBody(("lowBand", "1000"), ("highBand", "2000"))
+          .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
 
           await(route(application, request).value)
           events.collectFirst {
