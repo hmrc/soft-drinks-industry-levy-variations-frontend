@@ -2,10 +2,10 @@ package controllers.cancelRegistration
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.CancelRegistration
-import models.UserAnswers
+import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.cancelRegistration.ReasonPage
+import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.Json
@@ -124,7 +124,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
 
   s"POST " + normalRoutePath - {
     "when the user answers the question" - {
-      "should update the session with the new values and redirect to the index controller" - {
+      "should update the session with the new values and redirect to the cancellation date controller " - {
         "when the session contains no data for page" in {
           given
             .commonPrecondition
@@ -137,7 +137,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.CancelRegistrationDateController.onPageLoad(NormalMode).url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[String]](None)(_.get(ReasonPage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe reasonDiff
@@ -157,7 +157,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.CancelRegistrationDateController.onPageLoad(NormalMode).url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[String]](None)(_.get(ReasonPage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe reasonDiff
@@ -196,12 +196,13 @@ class ReasonControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(cancelRegistrationBaseUrl + normalRoutePath, Some(Json.obj("value" -> reasonDiff)))
     testAuthenticatedUserButNoUserAnswers(cancelRegistrationBaseUrl + normalRoutePath, Some(Json.obj("value" -> reasonDiff)))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CancelRegistration, cancelRegistrationBaseUrl + normalRoutePath, Some(Json.obj("value" -> reasonDiff)))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CancelRegistration, cancelRegistrationBaseUrl + normalRoutePath,
+      Some(Json.obj("value" -> reasonDiff)))
   }
 
   s"POST " + checkRoutePath - {
     "when the user answers the question" - {
-      "should update the session with the new values and redirect to the index controller" - {
+      "should update the session with the new values and redirect to the CYA controller" - {
         "when the session contains no data for page" in {
           given
             .commonPrecondition
@@ -273,6 +274,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(cancelRegistrationBaseUrl + checkRoutePath, Some(Json.obj("value" -> reasonDiff)))
     testAuthenticatedUserButNoUserAnswers(cancelRegistrationBaseUrl + checkRoutePath, Some(Json.obj("value" -> reasonDiff)))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CancelRegistration, cancelRegistrationBaseUrl + checkRoutePath, Some(Json.obj("value" -> reasonDiff)))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CancelRegistration, cancelRegistrationBaseUrl + checkRoutePath,
+      Some(Json.obj("value" -> reasonDiff)))
   }
 }

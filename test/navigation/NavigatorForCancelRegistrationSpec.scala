@@ -19,7 +19,10 @@ package navigation
 import base.SpecBase
 import controllers.cancelRegistration.routes
 import models._
+import models.enums.VariationJourneyTypes.cancelRegistration
 import pages._
+import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
+import play.api.libs.json.Json
 
 class NavigatorForCancelRegistrationSpec extends SpecBase {
 
@@ -34,6 +37,12 @@ class NavigatorForCancelRegistrationSpec extends SpecBase {
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id", SelectChange.CancelRegistration, contactAddress = contactAddress)) mustBe defaultCall
       }
+
+      s"must go from $ReasonPage to $CancelRegistrationDatePage" in {
+        val result = navigator.nextPage(ReasonPage, NormalMode,
+          UserAnswers("id", SelectChange.CancelRegistration, Json.obj(ReasonPage.toString -> "I don't want to anymore"), contactAddress = contactAddress))
+        result mustBe routes.CancelRegistrationDateController.onPageLoad(NormalMode)
+      }
     }
 
     "in Check mode" - {
@@ -41,7 +50,14 @@ class NavigatorForCancelRegistrationSpec extends SpecBase {
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress = contactAddress)) mustBe routes.CancelRegistrationCYAController.onPageLoad
+        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", SelectChange.CancelRegistration,
+          contactAddress = contactAddress)) mustBe routes.CancelRegistrationCYAController.onPageLoad
+      }
+
+      s"must go from $ReasonPage to CYA page" in {
+        val result = navigator.nextPage(ReasonPage, CheckMode,
+          UserAnswers("id", SelectChange.CancelRegistration, Json.obj(ReasonPage.toString -> "I don't want to anymore"), contactAddress = contactAddress))
+        result mustBe routes.CancelRegistrationCYAController.onPageLoad
       }
     }
   }
