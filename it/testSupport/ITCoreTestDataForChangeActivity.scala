@@ -1,7 +1,7 @@
 package testSupport
 
 import models.backend.Site
-import models.{SelectChange, UserAnswers}
+import models.{SelectChange, UserAnswers, Warehouse}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import pages.changeActivity._
 import play.api.libs.json.Json
@@ -30,6 +30,7 @@ trait ITCoreTestDataForChangeActivity extends ITSharedCoreTestData {
     emptyUserAnswersForChangeActivity
       .set(PackagingSiteDetailsPage, true).success.value
       .copy(packagingSiteList = Map("1" -> Site(ukAddress, None, None, None), "123456" -> Site(ukAddress, None, Some("Site two trading name"), None)))
+      .set(SecondaryWarehouseDetailsPage, false).success.value
   }
 
   def userAnswersForChangeActivityRemovePackagingSiteDetailsPage(index: String): Map[String, UserAnswers] = {
@@ -46,6 +47,17 @@ trait ITCoreTestDataForChangeActivity extends ITSharedCoreTestData {
   val userAnswersForChangeActivitySecondaryWarehouseDetailsPage: Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForChangeActivity.set(SecondaryWarehouseDetailsPage, true).success.value
     val noSelected = emptyUserAnswersForChangeActivity.set(SecondaryWarehouseDetailsPage, false).success.value
+    Map("yes" -> yesSelected, "no" -> noSelected)
+  }
+
+  def userAnswersForChangeActivityRemoveWarehouseDetailsPage(index: String): Map[String, UserAnswers] = {
+    val yesSelected = emptyUserAnswersForChangeActivity
+      .copy(warehouseList = Map(index -> Warehouse(None, ukAddress)))
+      .set(RemoveWarehouseDetailsPage, true).success.value
+
+    val noSelected = emptyUserAnswersForChangeActivity
+      .copy(warehouseList = Map(index -> Warehouse(None, ukAddress)))
+      .set(RemoveWarehouseDetailsPage, false).success.value
     Map("yes" -> yesSelected, "no" -> noSelected)
   }
 

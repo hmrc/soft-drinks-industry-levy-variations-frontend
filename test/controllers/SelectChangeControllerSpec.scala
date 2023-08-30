@@ -27,10 +27,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.SessionService
 import views.html.SelectChangeView
-
-import scala.concurrent.Future
 
 class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
 

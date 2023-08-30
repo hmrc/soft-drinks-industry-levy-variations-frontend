@@ -21,13 +21,14 @@ import errors.SessionDatabaseInsertError
 import forms.changeActivity.SecondaryWarehouseDetailsFormProvider
 import models.SelectChange.ChangeActivity
 import models.backend.UkAddress
-import models.{NormalMode, UserAnswers, Warehouse}
+import models.{UserAnswers, Warehouse}
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.changeActivity.SecondaryWarehouseDetailsPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -42,12 +43,12 @@ import scala.concurrent.Future
 
 class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with SummaryListFluency {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new SecondaryWarehouseDetailsFormProvider()
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  lazy val warehouseDetailsRoute = routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url
+  lazy val warehouseDetailsRoute: String = routes.SecondaryWarehouseDetailsController.onPageLoad.url
 
   "SecondaryWarehouseDetails Controller" - {
 
@@ -63,7 +64,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
         val view = application.injector.instanceOf[SecondaryWarehouseDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, None)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, None)(request, messages(application)).toString
       }
     }
 
@@ -81,14 +82,14 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode,  None)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), None)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered with a single warehouse in the list" in {
 
       val summaryList = Some(SummaryListViewModel(
-        rows = SecondaryWarehouseDetailsSummary.summaryRows(Map("1" -> warehouse), noRemoveAction = true)
+        rows = SecondaryWarehouseDetailsSummary.summaryRows(Map("1" -> warehouse))
       ))
 
       val userAnswers = warehouseAddedToUserAnswersForChangeActivity.set(SecondaryWarehouseDetailsPage, true).success.value
@@ -103,7 +104,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual  view(form.fill(true), NormalMode, summaryList)(request, messages(application)).toString
+        contentAsString(result) mustEqual  view(form.fill(true), summaryList)(request, messages(application)).toString
       }
     }
 
@@ -124,7 +125,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, summaryList)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), summaryList)(request, messages(application)).toString
       }
     }
 
@@ -134,23 +135,22 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
-      val application =
+      val applicationSetup =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
           .overrides(
-            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           )
           .build()
 
-      running(application) {
+      running(applicationSetup) {
         val request =
           FakeRequest(POST, warehouseDetailsRoute)
-            .withFormUrlEncodedBody(("value", "true"))
+            .withFormUrlEncodedBody(("value", "false"))
 
-        val result = route(application, request).value
+        val result = route(applicationSetup, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual routes.ChangeActivityCYAController.onPageLoad.url
       }
     }
 
@@ -163,7 +163,6 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
       val application =
         applicationBuilder(userAnswers = Some(warehouseAddedToUserAnswersForChangeActivity))
           .overrides(
-            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           )
           .build()
@@ -171,12 +170,12 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
       running(application) {
         val request =
           FakeRequest(POST, warehouseDetailsRoute)
-            .withFormUrlEncodedBody(("value", "true"))
+            .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual routes.ChangeActivityCYAController.onPageLoad.url
       }
     }
 
@@ -196,7 +195,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, None)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, None)(request, messages(application)).toString
       }
     }
 

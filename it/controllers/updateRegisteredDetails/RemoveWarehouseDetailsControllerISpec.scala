@@ -204,7 +204,8 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(updateRegisteredDetailsBaseUrl + normalRoutePath(indexOfWarehouseToBeRemoved), Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + normalRoutePath(indexOfWarehouseToBeRemoved), Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl + normalRoutePath(indexOfWarehouseToBeRemoved), Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl +
+      normalRoutePath(indexOfWarehouseToBeRemoved), Some(Json.obj("value" -> "true")))
   }
 
   s"POST " + checkRoutePath(indexOfWarehouseToBeRemoved) - {
@@ -293,6 +294,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(updateRegisteredDetailsBaseUrl + checkRoutePath(indexOfWarehouseToBeRemoved), Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + checkRoutePath(indexOfWarehouseToBeRemoved), Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl + checkRoutePath(indexOfWarehouseToBeRemoved), Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl +
+      checkRoutePath(indexOfWarehouseToBeRemoved), Some(Json.obj("value" -> "true")))
   }
 }

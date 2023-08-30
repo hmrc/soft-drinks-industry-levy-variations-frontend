@@ -17,7 +17,7 @@
 package views.summary.changeActivity
 
 import controllers.changeActivity.routes
-import models.{CheckMode, NormalMode, UserAnswers, Warehouse}
+import models.{NormalMode, UserAnswers, Warehouse}
 import pages.changeActivity.SecondaryWarehouseDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
@@ -39,31 +39,25 @@ object SecondaryWarehouseDetailsSummary  {
           key     = "changeActivity.secondaryWarehouseDetails.checkYourAnswersLabel",
           value   = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad.url)
               .withVisuallyHiddenText(messages("changeActivity.secondaryWarehouseDetails.change.hidden"))
           )
         )
     }
 
-  def summaryRows(warehouseList: Map[String, Warehouse], noRemoveAction: Boolean = false)(implicit messages: Messages): List[SummaryListRow] = {
-    val actions: Option[Actions] = if (noRemoveAction) {
-      None
-    } else {
-      Some(Actions("", Seq(
-        ActionItemViewModel("site.remove", routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
-          .withVisuallyHiddenText(messages("changeActivity.secondaryWarehouseDetails.remove.hidden"))
-      )))
-    }
+  def summaryRows(warehouseList: Map[String, Warehouse])(implicit messages: Messages): List[SummaryListRow] = {
     warehouseList.map {
-          warehouse =>
-            SummaryListRow(
-              key     = Key(
-                content = HtmlContent(AddressFormattingHelper.addressFormatting(warehouse._2.address, warehouse._2.tradingName)),
-                classes = "govuk-!-font-weight-regular govuk-!-width-full"
-              ),
-              actions = actions
-            )
-          }.toList
+      warehouse =>
+        SummaryListRow(
+          key = Key(HtmlContent(AddressFormattingHelper.addressFormatting(warehouse._2.address, warehouse._2.tradingName))),
+          classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds",
+          actions = Some(Actions("", Seq(
+            ActionItemViewModel("site.remove", routes.RemoveWarehouseDetailsController.onPageLoad(warehouse._1).url)
+              .withVisuallyHiddenText(messages("changeActivity.secondaryWarehouseDetails.remove.hidden",
+                warehouse._2.tradingName.getOrElse(""), warehouse._2.address.lines.head))
+          )))
+        )
     }
+  }.toList
 
 }

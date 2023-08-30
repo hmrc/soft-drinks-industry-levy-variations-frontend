@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package controllers.correctReturn
+package controllers.changeActivity
 
 import controllers.actions._
 import controllers.{ControllerHelper, routes}
-import forms.correctReturn.RemoveWarehouseDetailsFormProvider
+import forms.changeActivity.RemoveWarehouseDetailsFormProvider
 import handlers.ErrorHandler
-import models.{Mode, UserAnswers, Warehouse}
+import models.SelectChange.ChangeActivity
+import models.requests.DataRequest
+import models.{NormalMode, UserAnswers, Warehouse}
 import navigation._
-import pages.correctReturn.RemoveWarehouseDetailsPage
+import pages.changeActivity.RemoveWarehouseDetailsPage
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,7 +32,7 @@ import play.twirl.api.Html
 import services.SessionService
 import utilities.GenericLogger
 import viewmodels.AddressFormattingHelper
-import views.html.correctReturn.RemoveWarehouseDetailsView
+import views.html.changeActivity.RemoveWarehouseDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,7 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class RemoveWarehouseDetailsController @Inject()(
                                        override val messagesApi: MessagesApi,
                                        val sessionService: SessionService,
-                                       val navigator: NavigatorForCorrectReturn,
+                                       val navigator: NavigatorForChangeActivity,
                                        controllerActions: ControllerActions,
                                        formProvider: RemoveWarehouseDetailsFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
@@ -49,34 +51,34 @@ class RemoveWarehouseDetailsController @Inject()(
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode, index: String): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
+  def onPageLoad(index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
       request.userAnswers.warehouseList.get(index) match {
         case Some(warehouse) =>
           val formattedAddress = AddressFormattingHelper.addressFormatting(warehouse.address, warehouse.tradingName)
-          Ok(view(form, mode, formattedAddress, index))
-        case _ => indexNotFoundRedirect(index, request, routes.IndexController.onPageLoad)
+          Ok(view(form, formattedAddress, index))
+        case _ => indexNotFoundRedirect(index, request, controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad)
       }
   }
 
-  def onSubmit(mode: Mode, index: String): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
+  def onSubmit(index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
       val warehouseToRemove: Option[Warehouse] = request.userAnswers.warehouseList.get(index)
       warehouseToRemove match {
         case None =>
-          Future.successful(indexNotFoundRedirect(index, request, routes.IndexController.onPageLoad))
+          Future.successful(indexNotFoundRedirect(index, request, controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad))
         case Some(warehouse) =>
           val formattedAddress: Html = AddressFormattingHelper.addressFormatting(warehouse.address, warehouse.tradingName)
           form.bindFromRequest().fold(
             formWithErrors =>
-              Future.successful(BadRequest(view(formWithErrors, mode, formattedAddress, index))),
+              Future.successful(BadRequest(view(formWithErrors, formattedAddress, index))),
             value => {
               val updatedAnswersFinal: UserAnswers = if (value) {
                 request.userAnswers.copy(warehouseList = request.userAnswers.warehouseList.removed(index))
               } else {
                 request.userAnswers
               }
-              updateDatabaseAndRedirect(updatedAnswersFinal, RemoveWarehouseDetailsPage, mode)
+              updateDatabaseAndRedirect(updatedAnswersFinal, RemoveWarehouseDetailsPage, mode = NormalMode)
             }
           )
       }

@@ -17,11 +17,12 @@
 package controllers
 
 import handlers.ErrorHandler
+import models.requests.DataRequest
 import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.Page
 import play.api.i18n.I18nSupport
-import play.api.mvc.{AnyContent, Request, Result}
+import play.api.mvc.{AnyContent, Call, Request, Result}
 import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilities.GenericLogger
@@ -76,6 +77,12 @@ trait ControllerHelper extends FrontendBaseController with I18nSupport {
           false
       }
     }
+  }
+
+  def indexNotFoundRedirect(index: String, request: DataRequest[AnyContent], redirectTo: Call) = {
+    genericLogger.logger.warn(s"Warehouse index $index doesn't exist ${request.userAnswers.id} warehouse list length:" +
+      s"${request.userAnswers.warehouseList.size}")
+    Redirect(redirectTo)
   }
 
 }

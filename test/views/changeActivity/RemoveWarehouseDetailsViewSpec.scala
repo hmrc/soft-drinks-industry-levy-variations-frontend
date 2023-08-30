@@ -17,18 +17,18 @@
 package views.changeActivity
 
 import controllers.changeActivity.routes
-import forms.changeActivity.SecondaryWarehouseDetailsFormProvider
+import forms.changeActivity.RemoveWarehouseDetailsFormProvider
 import play.api.data.Form
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import play.twirl.api.Html
 import views.ViewSpecHelper
-import views.html.changeActivity.SecondaryWarehouseDetailsView
+import views.html.changeActivity.RemoveWarehouseDetailsView
 
-class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
+class RemoveWarehouseDetailsViewSpec extends ViewSpecHelper {
 
-  val view: SecondaryWarehouseDetailsView = application.injector.instanceOf[SecondaryWarehouseDetailsView]
-  val formProvider = new SecondaryWarehouseDetailsFormProvider
+  val view: RemoveWarehouseDetailsView = application.injector.instanceOf[RemoveWarehouseDetailsView]
+  val formProvider = new RemoveWarehouseDetailsFormProvider
   val form: Form[Boolean] = formProvider.apply()
   implicit val request: Request[_] = FakeRequest()
 
@@ -44,18 +44,13 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
     val button = "govuk-button"
     val form = "form"
   }
-
+  val html: Html = Html("foo")
+  val index: String = "bar"
   "View" - {
-    val html = view(form, Some(SummaryList()))(request, messages(application))
-    val document = doc(html)
-    "should contain the expected title" in {
-      document.title() mustBe "Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
-    }
 
-    "should include a legend with the expected heading" in {
-      val legend = document.getElementsByClass(Selectors.legend)
-      legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.heading).text() mustBe "Do you want to add a UK warehouse?"
+    val document = doc(view(form, html, index)(request, messages(application)))
+    "should contain the expected title" in {
+      document.title() mustBe "Are you sure you want to remove this warehouse? - Soft Drinks Industry Levy - GOV.UK"
     }
 
     "when the form is not preoccupied and has no errors" - {
@@ -93,7 +88,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with yes and has no errors" - {
-      val html1 = view(form.fill(true), Some(SummaryList()))(request, messages(application))
+      val html1 = view(form.fill(true), html, index)(request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -128,7 +123,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with no and has no errors" - {
-      val html1 = view(form.fill(false), Some(SummaryList()))(request, messages(application))
+      val html1 = view(form.fill(false), html, index)(request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -162,45 +157,36 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
       }
     }
 
-    val expectedDetails = "Why should I register a warehouse?"
-    val expectedDetailsInfo =
-      "You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register the warehouses you use to store them."
-
-    "contain the correct details" - {
-      document.getElementsByClass("govuk-details__summary-text").text() mustBe expectedDetails
-    }
-
-    "contain the correct details" - {
-      document.getElementsByClass("govuk-details__text").text() mustBe expectedDetailsInfo
-    }
     "contain the correct button" - {
       document.getElementsByClass(Selectors.button).text() mustBe "Save and continue"
     }
+    "have the expected address message" in {
+      document.getElementById("warehouseToRemove").text mustBe html.body
+    }
 
     "contains a form with the correct action" - {
-
-      val htmlYesSelected = view(form.fill(true), Some(SummaryList()))(request, messages(application))
+      val htmlYesSelected = view(form.fill(true), html, index)(request, messages(application))
       val documentYesSelected = doc(htmlYesSelected)
 
-      val htmlNoSelected = view(form.fill(false), Some(SummaryList()))(request, messages(application))
+      val htmlNoSelected = view(form.fill(false), html, index)(request, messages(application))
       val documentNoSelected = doc(htmlNoSelected)
       "and yes is selected" in {
         documentYesSelected.select(Selectors.form)
-          .attr("action") mustEqual routes.SecondaryWarehouseDetailsController.onSubmit.url
+          .attr("action") mustEqual routes.RemoveWarehouseDetailsController.onSubmit(index).url
       }
 
       "and no is selected" in {
         documentNoSelected.select(Selectors.form)
-          .attr("action") mustEqual routes.SecondaryWarehouseDetailsController.onSubmit.url
+          .attr("action") mustEqual routes.RemoveWarehouseDetailsController.onSubmit(index).url
       }
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), Some(SummaryList()))(request, messages(application))
+      val htmlWithErrors = view(form.bind(Map("value" -> "")), html, index)(request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
-        documentWithErrors.title mustBe "Error: Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
+        documentWithErrors.title mustBe "Error: Are you sure you want to remove this warehouse? - Soft Drinks Industry Levy - GOV.UK"
       }
 
       "contains a message that links to field with error" in {
@@ -210,7 +196,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
         errorSummary
           .select("a")
           .attr("href") mustBe "#value"
-        errorSummary.text() mustBe "Select yes if you want to add another UK warehouse"
+        errorSummary.text() mustBe "Select yes if you want to remove this warehouse"
       }
     }
 
