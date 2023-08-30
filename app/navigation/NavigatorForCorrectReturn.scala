@@ -27,7 +27,6 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class NavigatorForCorrectReturn @Inject()() extends Navigator {
 
-
   private def navigationForBroughtIntoUkFromSmallProducers(userAnswers: UserAnswers, mode: Mode): Call = {
     if (userAnswers.get(page = BroughtIntoUkFromSmallProducersPage).contains(true)) {
       routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(mode)
@@ -88,7 +87,6 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   }
 
   override val normalRoutes: Page => UserAnswers => Call = {
-
     case RemovePackagingSiteConfirmPage => _ => defaultCall
     case SecondaryWarehouseDetailsPage => _ => defaultCall
     case AskSecondaryWarehouseInReturnPage => _ => defaultCall
@@ -104,7 +102,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case ExemptionsForSmallProducersPage => _ => defaultCall
     case RemoveSmallProducerConfirmPage => _ => defaultCall
     case RemoveWarehouseDetailsPage => userAnswers => defaultCall
-    case CorrectionReasonPage => _ => defaultCall
+    case CorrectionReasonPage => _ => routes.RepaymentMethodController.onPageLoad(NormalMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => defaultCall
     case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamaged(userAnswers, NormalMode)
