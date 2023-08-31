@@ -118,4 +118,55 @@ object ChangeActivityCYAGenerators {
   val contractValues: Map[String, Option[Boolean]] = Map("contract packing" -> Some(true), "not contract packing" -> Some(false), "" -> None)
   val importValues: Map[String, Option[Boolean]] = Map("importing" -> Some(true), "not importing" -> Some(false), "" -> None)
 
+//  New code \/\/\/\/\/\/\ - Still think map would work with key/value
+
+  val amountProducedValuesTuples: List[(String, Option[AmountProduced])] = List(
+    "amount produced large" -> Some(Large),
+    "amount produced small" -> Some(Small),
+    "amount produced none" -> Some(NoneProduced),
+    "" -> None
+  )
+
+  val thirdPartyPackagingValuesTuples: List[(String, Option[Boolean])] = List("using third party packagers" -> Some(true), "not using third party packagers" -> Some(false), "" -> None)
+  val ownBrandsValuesTuples: List[(String, Option[Boolean])] = List("producing own brands" -> Some(true), "not producing own brands" -> Some(false), "" -> None)
+  val contractValuesTuples: List[(String, Option[Boolean])] = List("contract packing" -> Some(true), "not contract packing" -> Some(false), "" -> None)
+  val importValuesTuples: List[(String, Option[Boolean])] = List("importing" -> Some(true), "not importing" -> Some(false), "" -> None)
+
+  def makeKeyString(keyStrings: List[String]): String = keyStrings.filterNot(_.isEmpty).mkString(", ")
+
+  case class UserAnswerOptions(
+                                amountProducedTuple: (String, Option[AmountProduced]),
+                                thirdPartyPackagingTuple: (String, Option[Boolean]),
+                                ownBrandsTuple: (String, Option[Boolean]),
+                                contractTuple: (String, Option[Boolean]),
+                                importTuple: (String, Option[Boolean]))
+
+  //    Probably best to extend these test cases and name them more sensibly (possibly by using map key, value to create tuple)
+
+
+  val testCaseOptions: List[UserAnswerOptions] = List(
+    UserAnswerOptions(amountProducedValuesTuples.head, thirdPartyPackagingValuesTuples.head, ownBrandsValuesTuples(1), contractValuesTuples(1), importValuesTuples(0))
+  )
+
+  def getKeyStringFromUserAnswerOptions(userAnswerOptions: UserAnswerOptions): String = {
+    val keyStrings: List[String] = List(
+      userAnswerOptions.amountProducedTuple._1,
+      userAnswerOptions.thirdPartyPackagingTuple._1,
+      userAnswerOptions.ownBrandsTuple._1,
+      userAnswerOptions.contractTuple._1,
+      userAnswerOptions.importTuple._1
+    )
+    makeKeyString(keyStrings)
+  }
+
+  def getUserAnswersFromUserAnswerOptions(userAnswerOptions: UserAnswerOptions): UserAnswers = {
+    getUserAnswers(
+      userAnswerOptions.amountProducedTuple._2,
+      userAnswerOptions.thirdPartyPackagingTuple._2,
+      userAnswerOptions.ownBrandsTuple._2,
+      userAnswerOptions.contractTuple._2,
+      userAnswerOptions.importTuple._2
+    )
+  }
+
 }

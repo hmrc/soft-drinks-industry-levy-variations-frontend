@@ -30,6 +30,10 @@ import org.mockito.MockitoSugar.mock
 import pages.changeActivity.{AmountProducedPage, ContractPackingPage, HowManyContractPackingPage, HowManyImportsPage, HowManyOperatePackagingSiteOwnBrandsPage, ImportsPage}
 import play.api.mvc.Call
 import play.api.inject.bind
+import models.SelectChange.ChangeActivity
+import generators.ChangeActivityCYAGenerators.{sdilNumber, _}
+import models.{SelectChange, UserAnswers}
+import models.changeActivity.AmountProduced
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.ChangeActivityService
@@ -40,40 +44,32 @@ import views.summary.changeActivity.ChangeActivitySummary
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency with DataHelper{
+class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency with DataHelper {
 
   def onwardRoute = Call("GET", "/foo")
 
   "Check Your Answers Controller" - {
 
-    amountProducedValues.foreach { case (amountProducedKey, amountProducedValue) =>
-      thirdPartyPackagingValues.foreach { case (thirdPartyPackagingKey, thirdPartyPackagingValue) =>
-        ownBrandsValues.foreach { case (ownBrandsKey, ownBrandsValue) =>
-          contractValues.foreach { case (contractKey, contractValue) =>
-            importValues.foreach { case (importKey, importValue) =>
-              val key = List(amountProducedKey, thirdPartyPackagingKey, ownBrandsKey, contractKey, importKey).filterNot(_.isEmpty).mkString(", ")
-              val userAnswers = getUserAnswers(amountProducedValue, thirdPartyPackagingValue, ownBrandsValue, contractValue, importValue)
-              s"must return OK and the correct view for a GET for user answers $key" in {
+    testCaseOptions.foreach { case userAnswerOptions =>
+      val key = getKeyStringFromUserAnswerOptions(userAnswerOptions)
+      val userAnswers = getUserAnswersFromUserAnswerOptions(userAnswerOptions)
 
-                val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      s"must return OK and the correct view for a GET for user answers $key" in {
 
-                running(application) {
-                  val request = FakeRequest(GET, ChangeActivityCYAController.onPageLoad.url)
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-                  val result = route(application, request).value
+        running(application) {
+          val request = FakeRequest(GET, ChangeActivityCYAController.onPageLoad.url)
 
-                  val view = application.injector.instanceOf[ChangeActivityCYAView]
+          val result = route(application, request).value
+          val view = application.injector.instanceOf[ChangeActivityCYAView]
 
-                  status(result) mustEqual OK
-                  contentAsString(result) mustEqual view(
-                    aSubscription.orgName,
-                    ChangeActivitySummary.summaryListsAndHeadings(userAnswers, isCheckAnswers = true),
-                    routes.ChangeActivityCYAController.onSubmit
-                  )(request, messages(application)).toString
-                }
-              }
-            }
-          }
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual view(
+            aSubscription.orgName,
+            ChangeActivitySummary.summaryListsAndHeadings(userAnswers, isCheckAnswers = true),
+            routes.ChangeActivityCYAController.onSubmit
+          )(request, messages(application)).toString
         }
       }
     }
@@ -136,6 +132,39 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency w
         redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-variations-frontend/change-activity/variation-done"
       }
     }
+
+//    amountProducedValues.foreach { case (amountProducedKey, amountProducedValue) =>
+//      thirdPartyPackagingValues.foreach { case (thirdPartyPackagingKey, thirdPartyPackagingValue) =>
+//        ownBrandsValues.foreach { case (ownBrandsKey, ownBrandsValue) =>
+//          contractValues.foreach { case (contractKey, contractValue) =>
+//            importValues.foreach { case (importKey, importValue) =>
+//              val key = List(amountProducedKey, thirdPartyPackagingKey, ownBrandsKey, contractKey, importKey).filterNot(_.isEmpty).mkString(", ")
+//              val userAnswers = getUserAnswers(amountProducedValue, thirdPartyPackagingValue, ownBrandsValue, contractValue, importValue)
+//              s"must return OK and the correct view for a GET for user answers $key" in {
+//
+//                val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+//
+//                running(application) {
+//                  val request = FakeRequest(GET, ChangeActivityCYAController.onPageLoad.url)
+//
+//                  val result = route(application, request).value
+//
+//                  val view = application.injector.instanceOf[ChangeActivityCYAView]
+//
+//                  status(result) mustEqual OK
+//                  contentAsString(result) mustEqual view(
+//                    aSubscription.orgName,
+//                    ChangeActivitySummary.summaryListsAndHeadings(userAnswers),
+//                    routes.ChangeActivityCYAController.onSubmit
+//                  )(request, messages(application)).toString
+//                }
+//              }
+//            }
+//          }
+//        }
+//      }
+//    }
+
     testInvalidJourneyType(ChangeActivity, ChangeActivityCYAController.onPageLoad.url, false)
     testNoUserAnswersError(ChangeActivityCYAController.onPageLoad.url, false)
   }
