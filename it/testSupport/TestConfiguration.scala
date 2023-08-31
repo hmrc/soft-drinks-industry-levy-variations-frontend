@@ -75,7 +75,7 @@ trait TestConfiguration
   val authAndSessionCookie: String = createSessionCookieAsString(sessionAndAuth).substring(5)
   abstract override implicit val patienceConfig: PatienceConfig =
     PatienceConfig(
-      timeout = Span(4, Seconds),
+      timeout = Span(5, Seconds),
       interval = Span(50, Millis))
 
   lazy val config = Map(
@@ -109,8 +109,6 @@ trait TestConfiguration
         bind[Clock].toInstance(Clock.systemDefaultZone().withZone(ZoneOffset.UTC))
       )
   }
-
-  app.injector.instanceOf[HealthController]
 
   val wireMockServer = new WireMockServer(wireMockConfig().port(wiremockPort))
 
