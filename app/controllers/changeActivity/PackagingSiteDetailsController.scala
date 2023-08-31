@@ -94,7 +94,7 @@ class PackagingSiteDetailsController @Inject()(
     } else if(mode == CheckMode) {
       Future.successful(controllers.changeActivity.routes.ChangeActivityCYAController.onPageLoad.url)
     } else {
-      Future.successful(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(mode).url)
+      Future.successful(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad.url)
     }
   }
 }

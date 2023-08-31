@@ -253,10 +253,13 @@ changeActivity.secondaryWarehouseDetails.detailsLink = Why should I register a w
 changeActivity.secondaryWarehouseDetails.detailsContent = You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register the warehouses you use to store them.
 changeActivity.secondaryWarehouseDetails.checkYourAnswersLabel = Change your UK warehouse details
 changeActivity.secondaryWarehouseDetails.error.required = Select yes if you want to add another UK warehouse
-changeActivity.secondaryWarehouseDetails.remove.hidden = remove UK warehouse
+changeActivity.secondaryWarehouseDetails.remove.hidden = warehouse {0} at {1}
+
+changeActivity.removeWarehouseDetails.title = Are you sure you want to remove this warehouse?
+changeActivity.removeWarehouseDetails.error.required = Select yes if you want to remove this warehouse
 
 updateRegisteredDetails.removeWarehouseDetails.title = Are you sure you want to remove this warehouse?
-updateRegisteredDetails.removeWarehouseDetails.heading = Are yo sure you want to remove this warehouse?
+updateRegisteredDetails.removeWarehouseDetails.heading = Are you sure you want to remove this warehouse?
 updateRegisteredDetails.removeWarehouseDetails.checkYourAnswersLabel = Are you sure you want to remove this warehouse?
 updateRegisteredDetails.removeWarehouseDetails.error.required = Select yes if you want to remove this warehouse
 

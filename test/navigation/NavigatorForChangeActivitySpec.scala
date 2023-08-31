@@ -20,6 +20,8 @@ import base.SpecBase
 import controllers.changeActivity.routes
 import models._
 import pages._
+import pages.changeActivity.{RemoveWarehouseDetailsPage, SecondaryWarehouseDetailsPage}
+import play.api.libs.json.Json
 
 class NavigatorForChangeActivitySpec extends SpecBase {
 
@@ -33,6 +35,12 @@ class NavigatorForChangeActivitySpec extends SpecBase {
 
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id", SelectChange.ChangeActivity, contactAddress = contactAddress)) mustBe defaultCall
+      }
+
+      s"must navigate back to $SecondaryWarehouseDetailsPage when either choice is selected" in {
+        val result = navigator.nextPage(RemoveWarehouseDetailsPage, NormalMode,
+          UserAnswers("id", SelectChange.ChangeActivity, Json.obj(RemoveWarehouseDetailsPage.toString -> "true"), contactAddress = contactAddress))
+        result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad
       }
     }
 

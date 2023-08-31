@@ -20,14 +20,15 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.SecondaryWarehouseDetailsFormProvider
 import handlers.ErrorHandler
-import models.Mode
 import models.SelectChange.ChangeActivity
 import navigation._
 import pages.changeActivity.SecondaryWarehouseDetailsPage
-import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{AddressLookupService, SessionService}
+import play.api.data.Form
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
+import services.{AddressLookupService, SessionService, WarehouseDetails}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import uk.gov.hmrc.http.HeaderCarrier
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import views.html.changeActivity.SecondaryWarehouseDetailsView
@@ -49,9 +50,9 @@ class SecondaryWarehouseDetailsController @Inject()(
                                        val errorHandler: ErrorHandler
                                      )(implicit ec: ExecutionContext) extends ControllerHelper with SummaryListFluency {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
+  def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(SecondaryWarehouseDetailsPage) match {
@@ -61,30 +62,42 @@ class SecondaryWarehouseDetailsController @Inject()(
 
       val summaryList: Option[SummaryList] = request.userAnswers.warehouseList match {
         case warehouseList if warehouseList.nonEmpty => Some(SummaryListViewModel(
-          rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouseList, noRemoveAction = warehouseList.size == 1))
+          rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouseList))
         )
         case _ => None
       }
 
-      Ok(view(preparedForm, mode, summaryList))
+      Ok(view(preparedForm, summaryList))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
+  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
       val summaryList: Option[SummaryList] = request.userAnswers.warehouseList match {
         case warehouseList if warehouseList.nonEmpty => Some(SummaryListViewModel(
-          rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouseList, noRemoveAction = warehouseList.size == 1))
+          rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouseList))
         )
         case _ => None
       }
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, summaryList))),
+          Future.successful(BadRequest(view(formWithErrors, summaryList))),
             value => {
-          val updatedAnswers = request.userAnswers.set(SecondaryWarehouseDetailsPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, SecondaryWarehouseDetailsPage, mode)
+              updateDatabaseWithoutRedirect(request.userAnswers.set(SecondaryWarehouseDetailsPage, value), SecondaryWarehouseDetailsPage).flatMap {
+                case true => getOnwardUrl(value).map(Redirect(_))
+                case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+              }
         }
       )
   }
+
+  private def getOnwardUrl(value: Boolean)
+                          (implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages, requestHeader: RequestHeader): Future[String] = {
+    if (value) {
+      addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails)(hc, ec, messages, requestHeader)
+    } else {
+      Future.successful(routes.ChangeActivityCYAController.onPageLoad.url)
+    }
+  }
+
 }

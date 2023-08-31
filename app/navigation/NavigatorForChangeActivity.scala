@@ -92,7 +92,6 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     case PackAtBusinessAddressPage => _ => defaultCall
     case PackagingSiteDetailsPage => _ => defaultCall
     case RemovePackagingSiteDetailsPage => _ => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
-    case SecondaryWarehouseDetailsPage => _ => defaultCall
     case ContractPackingPage => userAnswers => navigationForContractPacking(userAnswers, NormalMode)
     case HowManyContractPackingPage => userAnswers => navigationForHowManyContractPacking(userAnswers, NormalMode)
     case ImportsPage => userAnswers => navigationForImports(userAnswers, NormalMode)
@@ -101,6 +100,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.ContractPackingController.onPageLoad(NormalMode)
     case AmountProducedPage => userAnswers => navigationForAmountProduced(userAnswers, NormalMode)
     case SuggestDeregistrationPage => _ => controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode)
+    case RemoveWarehouseDetailsPage => _ => routes.SecondaryWarehouseDetailsController.onPageLoad
     case _ => _ => defaultCall
   }
 
@@ -111,6 +111,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     case ImportsPage => userAnswers => navigationForImports(userAnswers, CheckMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.ChangeActivityCYAController.onPageLoad
+    case RemoveWarehouseDetailsPage => _ => routes.SecondaryWarehouseDetailsController.onPageLoad
     case _ => _ => routes.ChangeActivityCYAController.onPageLoad
   }
 
@@ -130,8 +131,8 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
         routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
       case Some(true) =>
         routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
-      case Some(false) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
-      case _ => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+      case Some(false) => routes.SecondaryWarehouseDetailsController.onPageLoad
+      case _ => routes.SecondaryWarehouseDetailsController.onPageLoad
     }
 
   private def navigateForLargeAmountProducedFollowingImports(userAnswers: UserAnswers): Call =
@@ -140,7 +141,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
         routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
       case (Some(opsob), Some(cp)) if opsob || cp =>
         routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
-      case (Some(_), Some(_)) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+      case (Some(_), Some(_)) => routes.SecondaryWarehouseDetailsController.onPageLoad
       case (Some(_), _) => routes.ContractPackingController.onPageLoad(NormalMode)
       case _ => routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode)
     }

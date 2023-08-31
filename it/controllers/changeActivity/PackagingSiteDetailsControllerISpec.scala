@@ -150,7 +150,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
+                res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad.url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe false
@@ -170,7 +170,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
+                res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad.url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe false

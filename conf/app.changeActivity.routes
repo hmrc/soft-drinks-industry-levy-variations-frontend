@@ -53,10 +53,11 @@ POST       /pack-at-business-address                            controllers.chan
 GET        /change-pack-at-business-address                     controllers.changeActivity.PackAtBusinessAddressController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-pack-at-business-address                     controllers.changeActivity.PackAtBusinessAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET        /secondary-warehouse-details                         controllers.changeActivity.SecondaryWarehouseDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST       /secondary-warehouse-details                         controllers.changeActivity.SecondaryWarehouseDetailsController.onSubmit(mode: Mode = NormalMode)
-GET        /change-secondary-warehouse-details                  controllers.changeActivity.SecondaryWarehouseDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-secondary-warehouse-details                  controllers.changeActivity.SecondaryWarehouseDetailsController.onSubmit(mode: Mode = CheckMode)
+GET        /secondary-warehouse-details                         controllers.changeActivity.SecondaryWarehouseDetailsController.onPageLoad
+POST       /secondary-warehouse-details                         controllers.changeActivity.SecondaryWarehouseDetailsController.onSubmit
+
+GET        /secondary-warehouse-details/remove/:index           controllers.changeActivity.RemoveWarehouseDetailsController.onPageLoad(index: String)
+POST       /secondary-warehouse-details/remove/:index           controllers.changeActivity.RemoveWarehouseDetailsController.onSubmit(index: String)
 
 GET        /third-party-packagers                               controllers.changeActivity.ThirdPartyPackagersController.onPageLoad(mode: Mode = NormalMode)
 POST       /third-party-packagers                               controllers.changeActivity.ThirdPartyPackagersController.onSubmit(mode: Mode = NormalMode)
