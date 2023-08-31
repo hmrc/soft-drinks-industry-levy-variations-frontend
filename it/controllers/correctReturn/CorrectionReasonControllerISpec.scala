@@ -2,7 +2,7 @@ package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.CorrectReturn
-import models.UserAnswers
+import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import pages.correctReturn.CorrectionReasonPage
@@ -123,7 +123,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
 
   s"POST " + normalRoutePath - {
     "when the user answers the question" - {
-      "should update the session with the new values and redirect to the index controller" - {
+      "should update the session with the new values and redirect to the repayment controller" - {
         "when the session contains no data for page" in {
           given
             .commonPrecondition
@@ -136,7 +136,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.correctReturn.routes.RepaymentMethodController.onPageLoad(NormalMode).url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[String]](None)(_.get(CorrectionReasonPage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe correctionReasonDiff
@@ -156,7 +156,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.correctReturn.routes.RepaymentMethodController.onPageLoad(NormalMode).url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[String]](None)(_.get(CorrectionReasonPage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe correctionReasonDiff
@@ -202,7 +202,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
 
   s"POST " + checkRoutePath - {
     "when the user answers the question" - {
-      "should update the session with the new values and redirect to the index controller" - {
+      "should update the session with the new values and redirect to the CYA controller" - {
         "when the session contains no data for page" in {
           given
             .commonPrecondition

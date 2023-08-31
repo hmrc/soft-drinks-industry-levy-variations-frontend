@@ -44,6 +44,7 @@
                 field = form("value"),
                 label = LabelViewModel(messages("correctReturn.correctionReason.title")).asPageHeading()
             ).withHint(HintViewModel(content = HtmlContent(detailsAndHint)))
+             .withId("correctionReason")
         )
 
         @govukButton(
