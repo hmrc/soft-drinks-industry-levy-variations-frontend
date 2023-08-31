@@ -17,6 +17,7 @@
 package repositories
 
 import play.api.libs.json.Format
+
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
