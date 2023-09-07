@@ -20,21 +20,21 @@ import controllers.correctReturn.routes
 import forms.correctReturn.SecondaryWarehouseDetailsFormProvider
 import models.backend.UkAddress
 import models.{CheckMode, NormalMode, Warehouse}
+import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import viewmodels.govuk.SummaryListFluency
 import viewmodels.summary.correctReturn.SecondaryWarehouseDetailsSummary
-import views.html.correctReturn.SecondaryWarehouseDetailsView
 import views.ViewSpecHelper
+import views.html.correctReturn.SecondaryWarehouseDetailsView
 
-import scala.collection.immutable.Map
 class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListFluency {
 
-  val view = application.injector.instanceOf[SecondaryWarehouseDetailsView]
+  val view: SecondaryWarehouseDetailsView = application.injector.instanceOf[SecondaryWarehouseDetailsView]
   val formProvider = new SecondaryWarehouseDetailsFormProvider
-  val form = formProvider.apply()
+  val form: Form[Boolean] = formProvider.apply()
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
@@ -42,7 +42,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
     val legend = "govuk-fieldset__legend  govuk-fieldset__legend--m"
     val radios = "govuk-radios__item"
     val radioInput = "govuk-radios__input"
-    val radioLables = "govuk-label govuk-radios__label"
+    val radioLabels = "govuk-label govuk-radios__label"
     val body = "govuk-body"
     val errorSummaryTitle = "govuk-error-summary__title"
     val errorSummaryList = "govuk-list govuk-error-summary__list"
@@ -51,12 +51,12 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
   }
 
   "View" - {
-    val WarhouseMap: Map[String,Warehouse] =
+    val WarehouseMap: Map[String,Warehouse] =
       Map("1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
         "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
 
     val warehouseSummaryList: List[SummaryListRow] =
-      SecondaryWarehouseDetailsSummary.row2(WarhouseMap)(messages(application))
+      SecondaryWarehouseDetailsSummary.row2(WarehouseMap)(messages(application))
 
     val summaryList: SummaryList = SummaryListViewModel(
       rows = warehouseSummaryList
@@ -64,8 +64,9 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
 
     val html = view(form, NormalMode, summaryList)(request, messages(application))
     val document = doc(html)
+
     "should contain the expected title" in {
-      document.title() must include(Messages("Do you want to add another UK warehouse?"))
+      document.title() mustBe s"You added {0} UK warehouse{1} - Soft Drinks Industry Levy - GOV.UK"
     }
 
     "should include a legend with the expected heading" in {
@@ -82,7 +83,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -96,7 +97,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -109,12 +110,12 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
     }
 
     "when the form is preoccupied with yes and has no errors" - {
-      val WarhouseMap: Map[String,Warehouse] =
+      val WarehouseMap: Map[String,Warehouse] =
         Map("1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
           "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
 
       val warehouseSummaryList: List[SummaryListRow] =
-        SecondaryWarehouseDetailsSummary.row2(WarhouseMap)(messages(application))
+        SecondaryWarehouseDetailsSummary.row2(WarehouseMap)(messages(application))
 
       val summaryList: SummaryList = SummaryListViewModel(
         rows = warehouseSummaryList
@@ -128,7 +129,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -142,7 +143,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -155,12 +156,12 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
     }
 
     "when the form is preoccupied with no and has no errors" - {
-      val WarhouseMap: Map[String,Warehouse] =
+      val WarehouseMap: Map[String,Warehouse] =
         Map("1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
           "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
 
       val warehouseSummaryList: List[SummaryListRow] =
-        SecondaryWarehouseDetailsSummary.row2(WarhouseMap)(messages(application))
+        SecondaryWarehouseDetailsSummary.row2(WarehouseMap)(messages(application))
 
       val summaryList: SummaryList = SummaryListViewModel(
         rows = warehouseSummaryList
@@ -174,7 +175,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -188,7 +189,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -200,8 +201,8 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
       }
     }
 
-    "contain the correct button" - {
-      document.getElementsByClass(Selectors.button).text() mustBe Messages("site.continue")
+    "contain the correct button" in {
+      document.getElementsByClass(Selectors.button).text() mustBe "Save and continue"
     }
 
     "contains a form with the correct action" - {
@@ -264,12 +265,12 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
     }
 
     "when there are form errors" - {
-      val WarhouseMap: Map[String,Warehouse] =
+      val WarehouseMap: Map[String,Warehouse] =
         Map("1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
           "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
 
       val warehouseSummaryList: List[SummaryListRow] =
-        SecondaryWarehouseDetailsSummary.row2(WarhouseMap)(messages(application))
+        SecondaryWarehouseDetailsSummary.row2(WarehouseMap)(messages(application))
 
       val summaryList: SummaryList = SummaryListViewModel(
         rows = warehouseSummaryList
@@ -279,8 +280,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
-        val titleMessage = Messages("Do you want to add another UK warehouse?")
-        documentWithErrors.title must include("Error: " + titleMessage)
+        documentWithErrors.title mustBe "Error: You added {0} UK warehouse{1} - Soft Drinks Industry Levy - GOV.UK"
       }
 
       "contains a message that links to field with error" in {

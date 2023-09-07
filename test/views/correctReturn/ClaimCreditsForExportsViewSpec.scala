@@ -19,15 +19,16 @@ package views.correctReturn
 import controllers.correctReturn.routes
 import forms.correctReturn.ClaimCreditsForExportsFormProvider
 import models.{CheckMode, NormalMode}
+import play.api.data.Form
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import views.ViewSpecHelper
 import views.html.correctReturn.ClaimCreditsForExportsView
 class ClaimCreditsForExportsViewSpec extends ViewSpecHelper {
 
-  val view = application.injector.instanceOf[ClaimCreditsForExportsView]
+  val view: ClaimCreditsForExportsView = application.injector.instanceOf[ClaimCreditsForExportsView]
   val formProvider = new ClaimCreditsForExportsFormProvider
-  val form = formProvider.apply()
+  val form: Form[Boolean] = formProvider.apply()
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
@@ -35,7 +36,7 @@ class ClaimCreditsForExportsViewSpec extends ViewSpecHelper {
     val legend = "govuk-fieldset__legend  govuk-fieldset__legend--m"
     val radios = "govuk-radios__item"
     val radioInput = "govuk-radios__input"
-    val radioLables = "govuk-label govuk-radios__label"
+    val radioLabels = "govuk-label govuk-radios__label"
     val body = "govuk-body"
     val errorSummaryTitle = "govuk-error-summary__title"
     val errorSummaryList = "govuk-list govuk-error-summary__list"
@@ -47,13 +48,14 @@ class ClaimCreditsForExportsViewSpec extends ViewSpecHelper {
     val html = view(form, NormalMode)(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
-      document.title() mustBe "Do you want to claim a credit for liable drinks that have been exported? - Soft Drinks Industry Levy - GOV.UK"
+      document.title() mustBe "Exported drinks - Soft Drinks Industry Levy - GOV.UK"
     }
 
     "should include the expected hint text" in {
       val hint = document.getElementById("value-hint")
       hint.className() mustBe "govuk-hint"
-      hint.text() mustBe "You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them."
+      hint.text() mustBe
+        "You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them."
     }
     "should include a legend with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
@@ -69,7 +71,7 @@ class ClaimCreditsForExportsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -83,7 +85,7 @@ class ClaimCreditsForExportsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -104,7 +106,7 @@ class ClaimCreditsForExportsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -118,7 +120,7 @@ class ClaimCreditsForExportsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -139,7 +141,7 @@ class ClaimCreditsForExportsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -153,7 +155,7 @@ class ClaimCreditsForExportsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -214,7 +216,7 @@ class ClaimCreditsForExportsViewSpec extends ViewSpecHelper {
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
-        documentWithErrors.title must include("Error: Do you want to claim a credit for liable drinks that have been exported? - Soft Drinks Industry Levy - GOV.UK")
+        documentWithErrors.title mustBe "Error: Exported drinks - Soft Drinks Industry Levy - GOV.UK"
       }
 
       "contains a message that links to field with error" in {

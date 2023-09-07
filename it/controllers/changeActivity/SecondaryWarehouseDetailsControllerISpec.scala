@@ -203,7 +203,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             timeoutKeepAliveUrl = Some(controllers.routes.KeepAliveController.keepAlive.url)
           )),
           serviceHref = Some(controllers.routes.IndexController.onPageLoad.url),
-          pageHeadingStyle = Some("govuk-heading-m")
+          pageHeadingStyle = Some("govuk-heading-l")
         ),
         labels = Some(
           JourneyLabels(

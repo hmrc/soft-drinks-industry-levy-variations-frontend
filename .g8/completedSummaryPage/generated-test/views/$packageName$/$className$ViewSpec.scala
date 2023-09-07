@@ -28,7 +28,7 @@ class $className$ViewSpec extends ViewSpecHelper {
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
-    val heading = "govuk-heading-m"
+    val heading = "govuk-heading-l"
     val panel = "govuk-panel govuk-panel--confirmation"
     val panel_title = "govuk-panel__title"
     val panel_body = "govuk-panel__body"

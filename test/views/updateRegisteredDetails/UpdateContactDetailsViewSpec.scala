@@ -38,7 +38,7 @@ class UpdateContactDetailsViewSpec extends ViewSpecHelper {
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
-    val heading = "govuk-heading-m"
+    val heading = "govuk-heading-l"
     val formGroup = "govuk-form-group"
     val label = "govuk-label"
     val errorSummaryList = "govuk-list govuk-error-summary__list"

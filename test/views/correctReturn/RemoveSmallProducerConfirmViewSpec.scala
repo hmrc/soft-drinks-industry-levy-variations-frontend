@@ -19,6 +19,7 @@ package views.correctReturn
 import controllers.correctReturn.routes
 import forms.correctReturn.RemoveSmallProducerConfirmFormProvider
 import models.NormalMode
+import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -26,18 +27,18 @@ import views.ViewSpecHelper
 import views.html.correctReturn.RemoveSmallProducerConfirmView
 class RemoveSmallProducerConfirmViewSpec extends ViewSpecHelper {
 
-  val view = application.injector.instanceOf[RemoveSmallProducerConfirmView]
+  val view: RemoveSmallProducerConfirmView = application.injector.instanceOf[RemoveSmallProducerConfirmView]
   val formProvider = new RemoveSmallProducerConfirmFormProvider
-  val form = formProvider.apply()
+  val form: Form[Boolean] = formProvider.apply()
   val smallProducerName = "Super Lemonade Plc"
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-fieldset__heading"
-    val legend = "govuk-fieldset__legend  govuk-fieldset__legend--m"
+    val legend = "govuk-fieldset__legend  govuk-fieldset__legend--l"
     val radios = "govuk-radios__item"
     val radioInput = "govuk-radios__input"
-    val radioLables = "govuk-label govuk-radios__label"
+    val radioLabels = "govuk-label govuk-radios__label"
     val body = "govuk-body"
     val errorSummaryTitle = "govuk-error-summary__title"
     val errorSummaryList = "govuk-list govuk-error-summary__list"
@@ -69,7 +70,7 @@ class RemoveSmallProducerConfirmViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -83,7 +84,7 @@ class RemoveSmallProducerConfirmViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -104,7 +105,7 @@ class RemoveSmallProducerConfirmViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -118,7 +119,7 @@ class RemoveSmallProducerConfirmViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -139,7 +140,7 @@ class RemoveSmallProducerConfirmViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -153,7 +154,7 @@ class RemoveSmallProducerConfirmViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)

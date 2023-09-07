@@ -61,7 +61,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
     }
 
     "should include the expected heading" in {
-      val heading = document.getElementsByClass("govuk-heading-m")
+      val heading = document.getElementsByClass("govuk-heading-l")
       heading.size() mustBe 1
       heading.text() mustBe "You added 0 UK packaging sites"
     }
@@ -251,13 +251,13 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
 
     val html1 = view(form.fill(true), NormalMode, packagingSites = Map.empty)(request, messages(application))
     val document1 = doc(html1)
-    val heading1 = document1.getElementsByClass("govuk-heading-m").get(0).text()
+    val heading1 = document1.getElementsByClass("govuk-heading-l").get(0).text()
     val html2 = view(form.fill(true), NormalMode, packagingSites)(request, messages(application))
     val document2 = doc(html2)
-    val heading2 = document2.getElementsByClass("govuk-heading-m").get(0).text()
+    val heading2 = document2.getElementsByClass("govuk-heading-l").get(0).text()
     val html3 = view(form.fill(true), NormalMode, packagingSites2)(request, messages(application))
     val document3 = doc(html3)
-    val heading3 = document3.getElementsByClass("govuk-heading-m").get(0).text()
+    val heading3 = document3.getElementsByClass("govuk-heading-l").get(0).text()
 
     "when the list is empty the heading should be pluralised" in {
       heading1 mustBe "You added 0 UK packaging sites"

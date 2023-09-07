@@ -28,7 +28,7 @@ class ReturnChangeRegistrationViewSpec extends ViewSpecHelper {
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
-    val heading = "govuk-heading-m"
+    val heading = "govuk-heading-l"
   }
 
   "View" - {

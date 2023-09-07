@@ -41,7 +41,7 @@ trait LitresSpecHelper extends ViewSpecHelper {
   val formWithOutOfRangeNumber: Form[LitresInBands] = form.bind(Map("litres.lowBand" -> "110000000000000", "litres.highBand" -> "120000000000000"))
 
   object Selectors {
-    val heading = "govuk-heading-m"
+    val heading = "govuk-heading-l"
     val body = "govuk-body"
     val errorSummaryTitle = "govuk-error-summary__title"
     val errorSummaryList = "govuk-list govuk-error-summary__list"

@@ -19,6 +19,7 @@ package views.correctReturn
 import controllers.correctReturn.routes
 import forms.correctReturn.ClaimCreditsForLostDamagedFormProvider
 import models.{CheckMode, NormalMode}
+import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -27,17 +28,17 @@ import views.html.correctReturn.ClaimCreditsForLostDamagedView
 
 class ClaimCreditsForLostDamagedViewSpec extends ViewSpecHelper {
 
-  val view = application.injector.instanceOf[ClaimCreditsForLostDamagedView]
+  val view: ClaimCreditsForLostDamagedView = application.injector.instanceOf[ClaimCreditsForLostDamagedView]
   val formProvider = new ClaimCreditsForLostDamagedFormProvider
-  val form = formProvider.apply()
+  val form: Form[Boolean] = formProvider.apply()
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
-    val HEADING = "govuk-heading-m"
+    val HEADING = "govuk-heading-l"
     val legend = "govuk-fieldset__legend  govuk-fieldset__legend--m"
     val radios = "govuk-radios__item"
     val radioInput = "govuk-radios__input"
-    val radioLables = "govuk-label govuk-radios__label"
+    val radioLabels = "govuk-label govuk-radios__label"
     val body = "govuk-body"
     val errorSummaryTitle = "govuk-error-summary__title"
     val errorSummaryList = "govuk-list govuk-error-summary__list"
@@ -49,19 +50,19 @@ class ClaimCreditsForLostDamagedViewSpec extends ViewSpecHelper {
     val html = view(form, NormalMode)(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
-      document.title() must include(Messages("correctReturn.claimCreditsForLostDamaged.title"))
+      document.title() mustBe "Lost or destroyed drinks - Soft Drinks Industry Levy - GOV.UK"
     }
 
     "should include the expected heading" in {
       val heading = document.getElementsByClass(Selectors.HEADING)
       heading.size() mustBe 1
-      heading.get(0).text() mustEqual Messages("correctReturn.claimCreditsForLostDamaged.warningHeading")
+      heading.get(0).text() mustBe "Lost or destroyed drinks"
     }
 
     "should include a expected legend" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).text() mustEqual Messages("correctReturn.claimCreditsForLostDamaged.legend")
+      legend.get(0).text() mustBe "Do you want to claim a credit for liable drinks which have been lost or destroyed?"
     }
 
     "when the form is not preoccupied and has no errors" - {
@@ -72,7 +73,7 @@ class ClaimCreditsForLostDamagedViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -86,7 +87,7 @@ class ClaimCreditsForLostDamagedViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -107,7 +108,7 @@ class ClaimCreditsForLostDamagedViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -121,7 +122,7 @@ class ClaimCreditsForLostDamagedViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -142,7 +143,7 @@ class ClaimCreditsForLostDamagedViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -156,7 +157,7 @@ class ClaimCreditsForLostDamagedViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)

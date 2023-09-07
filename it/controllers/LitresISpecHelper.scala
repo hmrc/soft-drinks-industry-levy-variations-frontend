@@ -43,7 +43,7 @@ trait LitresISpecHelper extends ControllerITTestHelper {
   val jsonWith0: JsObject = Json.obj("litres.lowBand" -> "0", "litres.highBand" -> "0")
 
   object Selectors {
-    val heading = "govuk-heading-m"
+    val heading = "govuk-heading-l"
     val body = "govuk-body"
     val errorSummaryTitle = "govuk-error-summary__title"
     val errorSummaryList = "govuk-list govuk-error-summary__list"

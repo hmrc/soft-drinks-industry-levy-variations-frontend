@@ -35,7 +35,7 @@ class AmountProducedViewSpec extends ViewSpecHelper {
 
   object Selectors {
     val heading = "govuk-fieldset__heading"
-    val legend = "govuk-fieldset__legend  govuk-fieldset__legend--m"
+    val legend = "govuk-fieldset__legend  govuk-fieldset__legend--l"
     val radios = "govuk-radios"
     val radiosInput = "govuk-radios__input"
     val radiosItems = "govuk-radios__item"

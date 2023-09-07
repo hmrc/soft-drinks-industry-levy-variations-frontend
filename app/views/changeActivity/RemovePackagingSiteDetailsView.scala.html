@@ -37,13 +37,13 @@
         @govukRadios(
         RadiosViewModel.yesNo(
         field = form("value"),
-        legend = LegendViewModel(messages("correctReturn.removePackagingSiteDetails.title")).asPageHeading(),
+        legend = LegendViewModel(messages("changeActivity.removePackagingSiteDetails.title")).asPageHeading(),
         hint = Some(Hint(content = HtmlContent(address)).withCssClass("govuk-body-m"))
         )
     )
 
         @govukButton(
-            ButtonViewModel(messages("site.continue"))
+            ButtonViewModel(messages("site.saveContinue"))
         )
     }
 }

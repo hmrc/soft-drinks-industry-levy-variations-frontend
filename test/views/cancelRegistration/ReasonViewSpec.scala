@@ -37,7 +37,7 @@ class ReasonViewSpec extends ViewSpecHelper {
 
   object Selectors {
     val formGroup = "govuk-form-group"
-    val labelAsHeading = "govuk-label  govuk-label--m"
+    val labelAsHeading = "govuk-label  govuk-label--l"
     val hint = "govuk-hint"
     val errorSummaryList = "govuk-list govuk-error-summary__list"
     val button = "govuk-button"
@@ -69,8 +69,8 @@ class ReasonViewSpec extends ViewSpecHelper {
       }
     }
 
-    "contain the correct button" - {
-      document.getElementsByClass(Selectors.button).text() mustBe Messages("site.saveContinue")
+    "contain the correct button" in {
+      document.getElementsByClass(Selectors.button).text() mustBe "Save and continue"
     }
 
     "contains a form with the correct action" - {

@@ -42,7 +42,7 @@ class PackAtBusinessAddressViewSpec extends ViewSpecHelper {
   object Selectors {
     val HEADING_OUTSIDE_OF_FIELDSET = "govuk-heading-l"
     val heading = "govuk-fieldset__heading"
-    val legend = "govuk-fieldset__legend  govuk-fieldset__legend--m"
+    val legend = "govuk-fieldset__legend  govuk-fieldset__legend--l"
     val radios = "govuk-radios__item"
     val radioInput = "govuk-radios__input"
     val radioLables = "govuk-label govuk-radios__label"

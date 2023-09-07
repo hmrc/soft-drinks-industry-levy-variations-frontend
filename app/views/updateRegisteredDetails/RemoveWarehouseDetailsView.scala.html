@@ -34,19 +34,17 @@
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-      <h1 class="govuk-heading-m">@messages("updateRegisteredDetails.removeWarehouseDetails.title")</h1>
-      <p id="warehouseToRemove" class="govuk-body-m">@address</p>
 
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(""),
-                hint = None
+                legend = LegendViewModel("updateRegisteredDetails.removeWarehouseDetails.title").asPageHeading(),
+                hint =Some(Hint(content = HtmlContent(address)).withCssClass("govuk-body-m"))
             )
         )
 
         @govukButton(
-            ButtonViewModel(messages("site.continue"))
+            ButtonViewModel(messages("site.saveContinue"))
         )
     }
 }

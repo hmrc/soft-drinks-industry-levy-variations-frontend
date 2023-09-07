@@ -37,7 +37,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">@messages("correctReturn.claimCreditsForExports.heading2")</h1>
+        <h1 class="govuk-heading-l">@messages("correctReturn.claimCreditsForExports.title")</h1>
 
         @govukWarningText(WarningText(
             iconFallbackText = Some(messages("correctReturn.claimCreditsForExports.warningFallBack")),
@@ -47,7 +47,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
             field = form("value"),
-            legend = LegendViewModel(messages("correctReturn.claimCreditsForExports.title")).withCssClass("govuk-fieldset__legend--m"),
+            legend = LegendViewModel(messages("correctReturn.claimCreditsForExports.heading2")).asPageSubHeading(),
             hint = Some(Hint(content = messages("correctReturn.claimCreditsForExports.subHeading")))
                 )
             )

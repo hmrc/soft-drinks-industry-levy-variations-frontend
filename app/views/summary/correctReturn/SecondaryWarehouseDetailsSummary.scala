@@ -53,7 +53,7 @@ object SecondaryWarehouseDetailsSummary  {
           classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds",
           actions = Some(Actions("",Seq(
             ActionItemViewModel("site.remove", controllers.routes.IndexController.onPageLoad.url)
-              .withVisuallyHiddenText(messages("secondaryWarehouseDetails.remove.hidden"))
+              .withVisuallyHiddenText(messages("correctReturn.secondaryWarehouseDetails.remove.hidden", warehouse._2.tradingName.getOrElse(""), warehouse._2.address.lines.head))
           )))
         )
     }

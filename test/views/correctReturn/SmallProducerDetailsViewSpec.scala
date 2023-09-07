@@ -32,7 +32,7 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
-    val heading = "govuk-heading-m"
+    val heading = "govuk-heading-l"
     val legend = "govuk-fieldset__legend  govuk-fieldset__legend--m"
     val radios = "govuk-radios__item"
     val radioInput = "govuk-radios__input"
@@ -245,13 +245,13 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
   "View should contain the correct heading and summary row details" - {
     val html1 = view(form.fill(true), NormalMode, smallProducerList = List.empty)(request, messages(application))
     val document1 = doc(html1)
-    val heading1 = document1.getElementsByClass("govuk-heading-m").get(0).text()
+    val heading1 = document1.getElementsByClass("govuk-heading-l").get(0).text()
     val html2 = view(form.fill(true), NormalMode, smallProducerList)(request, messages(application))
     val document2 = doc(html2)
-    val heading2 = document2.getElementsByClass("govuk-heading-m").get(0).text()
+    val heading2 = document2.getElementsByClass("govuk-heading-l").get(0).text()
     val html3 = view(form.fill(true), NormalMode, smallProducerListWithTwoProducers)(request, messages(application))
     val document3 = doc(html3)
-    val heading3 = document3.getElementsByClass("govuk-heading-m").get(0).text()
+    val heading3 = document3.getElementsByClass("govuk-heading-l").get(0).text()
 
     "when the list is empty the heading should be pluralised" in {
       heading1 mustBe "You added 0 small producers"

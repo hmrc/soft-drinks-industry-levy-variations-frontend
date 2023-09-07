@@ -19,6 +19,7 @@ package views.updateRegisteredDetails
 import controllers.updateRegisteredDetails.routes
 import forms.updateRegisteredDetails.RemoveWarehouseDetailsFormProvider
 import models.{CheckMode, NormalMode}
+import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -27,17 +28,17 @@ import views.ViewSpecHelper
 import views.html.updateRegisteredDetails.RemoveWarehouseDetailsView
 class RemoveWarehouseDetailsViewSpec extends ViewSpecHelper {
 
-  val view = application.injector.instanceOf[RemoveWarehouseDetailsView]
+  val view: RemoveWarehouseDetailsView = application.injector.instanceOf[RemoveWarehouseDetailsView]
   val formProvider = new RemoveWarehouseDetailsFormProvider
-  val form = formProvider.apply()
+  val form: Form[Boolean] = formProvider.apply()
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-fieldset__heading"
-    val legend = "govuk-fieldset__legend  govuk-fieldset__legend--m"
+    val legend = "govuk-fieldset__legend  govuk-fieldset__legend--l"
     val radios = "govuk-radios__item"
     val radioInput = "govuk-radios__input"
-    val radioLables = "govuk-label govuk-radios__label"
+    val radioLabels = "govuk-label govuk-radios__label"
     val body = "govuk-body"
     val errorSummaryTitle = "govuk-error-summary__title"
     val errorSummaryList = "govuk-list govuk-error-summary__list"
@@ -46,7 +47,8 @@ class RemoveWarehouseDetailsViewSpec extends ViewSpecHelper {
   }
   val html: Html = Html("foo")
   val index: String = "bar"
-  "View" - {
+
+  "View - updateRegisteredDetails - RemoveWarehouseDetails View spec" - {
 
     val document = doc(view(form, NormalMode, html, index)(request, messages(application)))
     "should contain the expected title" in {
@@ -61,7 +63,7 @@ class RemoveWarehouseDetailsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -75,7 +77,7 @@ class RemoveWarehouseDetailsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -96,7 +98,7 @@ class RemoveWarehouseDetailsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -110,7 +112,7 @@ class RemoveWarehouseDetailsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -131,7 +133,7 @@ class RemoveWarehouseDetailsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -145,7 +147,7 @@ class RemoveWarehouseDetailsViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -157,11 +159,11 @@ class RemoveWarehouseDetailsViewSpec extends ViewSpecHelper {
       }
     }
 
-    "contain the correct button" - {
-      document.getElementsByClass(Selectors.button).text() mustBe Messages("site.continue")
+    "contain the correct button" in {
+      document.getElementsByClass(Selectors.button).text() mustBe "Save and continue"
     }
     "have the expected address message" in {
-      document.getElementById("warehouseToRemove").text mustBe html.body
+      document.getElementsByClass("govuk-hint").text mustBe html.body
     }
 
     "contains a form with the correct action" - {

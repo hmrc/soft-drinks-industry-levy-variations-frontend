@@ -37,7 +37,7 @@ class $className$ViewSpec extends ViewSpecHelper {
 
   object Selectors {
     val heading = "govuk-fieldset__heading"
-    val legend = "govuk-fieldset__legend  govuk-fieldset__legend--m"
+    val legend = "govuk-fieldset__legend  govuk-fieldset__legend--l"
     val checkboxes = "govuk-checkboxes"
     val checkboxesInput = "govuk-checkboxes__input"
     val checkboxesItems = "govuk-checkboxes__item"
