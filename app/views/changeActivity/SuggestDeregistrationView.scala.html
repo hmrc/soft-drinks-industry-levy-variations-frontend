@@ -33,7 +33,7 @@
  @layout(pageTitle = titleNoForm(messages("changeActivity.suggestDeregistration.title"))) {
   @formHelper(action = routes.SuggestDeregistrationController.onSubmit(), Symbol("autoComplete") -> "off") {
 
-   <h1 class="govuk-heading-m">@messages("changeActivity.suggestDeregistration.title")</h1>
+   <h1 class="govuk-heading-l">@messages("changeActivity.suggestDeregistration.title")</h1>
    @deregInfo
 
    @govukButton(

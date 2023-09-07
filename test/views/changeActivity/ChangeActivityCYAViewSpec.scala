@@ -26,7 +26,7 @@ import views.html.changeActivity.ChangeActivityCYAView
 
 class ChangeActivityCYAViewSpec extends ViewSpecHelper {
 
-  val view = application.injector.instanceOf[ChangeActivityCYAView]
+  val view: ChangeActivityCYAView = application.injector.instanceOf[ChangeActivityCYAView]
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
@@ -53,27 +53,31 @@ class ChangeActivityCYAViewSpec extends ViewSpecHelper {
     "should have the expected pre header caption" in {
       document.getElementsByClass(Selectors.PRE_HEADER_CAPTION).text() mustEqual ALIAS
     }
+
     "should have the expected heading" in {
       document.getElementsByTag("h1").text() mustEqual "Check your answers before sending your update"
     }
-    "contain the correct button" - {
+
+    "contain the correct button" in {
       document.getElementsByClass(Selectors.button).text() mustBe "Confirm updates and send"
     }
-    "contain the correct summary lists" - {
-      document.getElementsByClass(Selectors.summaryListHeading).get(1).text() mustBe "foo"
+
+    "contain the correct summary lists" in {
+      document.getElementsByClass(Selectors.summaryListHeading).get(0).text() mustBe "foo"
       document.getElementsByClass(Selectors.summaryList)
         .first()
         .getElementsByClass(Selectors.summaryRow)
         .first()
         .getElementsByClass(Selectors.summaryValue).first().text() mustBe "bar"
-      document.getElementsByClass(Selectors.summaryListHeading).get(2).text() mustBe "wizz"
+      document.getElementsByClass(Selectors.summaryListHeading).get(1).text() mustBe "wizz"
       document.getElementsByClass(Selectors.summaryList)
         .last()
         .getElementsByClass(Selectors.summaryRow)
         .first()
         .getElementsByClass(Selectors.summaryValue).first().text() mustBe "bang"
     }
-    "contains a form with the correct action" - {
+
+    "contains a form with the correct action" in {
       document.select(Selectors.form).attr("action") mustEqual call.url
     }
 

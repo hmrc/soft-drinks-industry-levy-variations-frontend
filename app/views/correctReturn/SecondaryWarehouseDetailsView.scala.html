@@ -31,8 +31,8 @@
 
     @formHelper(action = routes.SecondaryWarehouseDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
-    <h1 class="govuk-heading-m">
-        @messages("correctReturn.secondaryWarehouseDetails.heading", warehouses.rows.size, if(warehouses.rows.size == 1) "" else "s")
+    <h1 class="govuk-heading-l">
+        @messages("correctReturn.secondaryWarehouseDetails.title", warehouses.rows.size, if(warehouses.rows.size == 1) "" else "s")
     </h1>
 
         @if(form.errors.nonEmpty) {
@@ -46,13 +46,13 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("correctReturn.secondaryWarehouseDetails.title")).withCssClass("govuk-fieldset__legend--m"),
+                legend = LegendViewModel(messages("correctReturn.secondaryWarehouseDetails.legendHeading")).withCssClass("govuk-fieldset__legend--m"),
                 hint = None
             )
         )
 
         @govukButton(
-            ButtonViewModel(messages("site.continue"))
+            ButtonViewModel(messages("site.saveContinue"))
         )
     }
 }

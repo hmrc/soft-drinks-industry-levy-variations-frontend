@@ -37,7 +37,7 @@ class $className$ViewSpec extends ViewSpecHelper {
 
   object Selectors {
     val heading = "govuk-fieldset__heading"
-    val legend = "govuk-fieldset__legend  govuk-fieldset__legend--m"
+    val legend = "govuk-fieldset__legend  govuk-fieldset__legend--l"
     val dateItems = "govuk-date-input__item"
     val dateLables = "govuk-label govuk-date-input__label"
     val errorSummaryList = "govuk-list govuk-error-summary__list"

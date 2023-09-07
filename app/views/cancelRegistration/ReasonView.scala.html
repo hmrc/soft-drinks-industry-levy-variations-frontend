@@ -15,7 +15,7 @@
  *@
 
 @import controllers.cancelRegistration.routes
-@import viewmodels.InputWidth._
+@import viewmodels.LabelSize.Large
 
 @this(
     layout: templates.Layout,
@@ -38,7 +38,7 @@
         @govukTextarea(
             TextAreaViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("cancelRegistration.reason.title")).asPageHeading()
+                label = LabelViewModel(messages("cancelRegistration.reason.title")).asPageHeading(Large)
             ).withHint(HintViewModel(messages("cancelRegistration.reason.hint")))
         )
 

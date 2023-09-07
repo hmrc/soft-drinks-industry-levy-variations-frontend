@@ -19,6 +19,7 @@ package views.updateRegisteredDetails
 import controllers.updateRegisteredDetails.routes
 import forms.updateRegisteredDetails.PackingSiteDetailsRemoveFormProvider
 import models.{CheckMode, NormalMode}
+import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -27,17 +28,17 @@ import views.html.updateRegisteredDetails.PackingSiteDetailsRemoveView
 import views.ViewSpecHelper
 class PackingSiteDetailsRemoveViewSpec extends ViewSpecHelper {
 
-  val view = application.injector.instanceOf[PackingSiteDetailsRemoveView]
+  val view: PackingSiteDetailsRemoveView = application.injector.instanceOf[PackingSiteDetailsRemoveView]
   val formProvider = new PackingSiteDetailsRemoveFormProvider
-  val form = formProvider.apply()
+  val form: Form[Boolean] = formProvider.apply()
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-fieldset__heading"
-    val legend = "govuk-fieldset__legend  govuk-fieldset__legend--m"
+    val legend = "govuk-fieldset__legend  govuk-fieldset__legend--l"
     val radios = "govuk-radios__item"
     val radioInput = "govuk-radios__input"
-    val radioLables = "govuk-label govuk-radios__label"
+    val radioLabels = "govuk-label govuk-radios__label"
     val body = "govuk-body"
     val errorSummaryTitle = "govuk-error-summary__title"
     val errorSummaryList = "govuk-list govuk-error-summary__list"
@@ -63,7 +64,7 @@ class PackingSiteDetailsRemoveViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -77,7 +78,7 @@ class PackingSiteDetailsRemoveViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -98,7 +99,7 @@ class PackingSiteDetailsRemoveViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -112,7 +113,7 @@ class PackingSiteDetailsRemoveViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -133,7 +134,7 @@ class PackingSiteDetailsRemoveViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -147,7 +148,7 @@ class PackingSiteDetailsRemoveViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -159,8 +160,8 @@ class PackingSiteDetailsRemoveViewSpec extends ViewSpecHelper {
       }
     }
 
-    "contain the correct button" - {
-      document.getElementsByClass(Selectors.button).text() mustBe Messages("site.continue")
+    "contain the correct button" in {
+      document.getElementsByClass(Selectors.button).text() mustBe "Save and continue"
     }
 
     "contains a form with the correct action" - {

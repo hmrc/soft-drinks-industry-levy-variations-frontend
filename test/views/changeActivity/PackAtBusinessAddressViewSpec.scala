@@ -20,6 +20,7 @@ import controllers.changeActivity.routes
 import forms.changeActivity.PackAtBusinessAddressFormProvider
 import models.backend.UkAddress
 import models.{CheckMode, NormalMode}
+import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -29,9 +30,9 @@ import views.html.changeActivity.PackAtBusinessAddressView
 import views.ViewSpecHelper
 class PackAtBusinessAddressViewSpec extends ViewSpecHelper {
 
-  val view = application.injector.instanceOf[PackAtBusinessAddressView]
+  val view: PackAtBusinessAddressView = application.injector.instanceOf[PackAtBusinessAddressView]
   val formProvider = new PackAtBusinessAddressFormProvider
-  val form = formProvider.apply()
+  val form: Form[Boolean] = formProvider.apply()
   implicit val request: Request[_] = FakeRequest()
 
   val businessName: String = "ACME Drinks Ltd."
@@ -39,12 +40,12 @@ class PackAtBusinessAddressViewSpec extends ViewSpecHelper {
   val address: Html = AddressFormattingHelper.addressFormatting(businessAddress, Option(businessName))
 
   object Selectors {
-    val HEADING_OUTSIDE_OF_FIELDSET = "govuk-heading-m"
+    val HEADING_OUTSIDE_OF_FIELDSET = "govuk-heading-l"
     val heading = "govuk-fieldset__heading"
     val legend = "govuk-fieldset__legend  govuk-fieldset__legend--m"
     val radios = "govuk-radios__item"
     val radioInput = "govuk-radios__input"
-    val radioLables = "govuk-label govuk-radios__label"
+    val radioLabels = "govuk-label govuk-radios__label"
     val body = "govuk-body"
     val errorSummaryTitle = "govuk-error-summary__title"
     val errorSummaryList = "govuk-list govuk-error-summary__list"
@@ -52,7 +53,7 @@ class PackAtBusinessAddressViewSpec extends ViewSpecHelper {
     val form = "form"
   }
 
-  "View" - {
+  "View - Change Activity - PackAtBusinessAddressViewSpec" - {
     val html = view(form, NormalMode, address)(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
@@ -84,7 +85,7 @@ class PackAtBusinessAddressViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -98,7 +99,7 @@ class PackAtBusinessAddressViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -119,7 +120,7 @@ class PackAtBusinessAddressViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -133,7 +134,7 @@ class PackAtBusinessAddressViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -154,7 +155,7 @@ class PackAtBusinessAddressViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(0)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "Yes"
           radioButton1
             .getElementsByClass(Selectors.radioInput)
@@ -168,7 +169,7 @@ class PackAtBusinessAddressViewSpec extends ViewSpecHelper {
           val radioButton1 = radioButtons
             .get(1)
           radioButton1
-            .getElementsByClass(Selectors.radioLables)
+            .getElementsByClass(Selectors.radioLabels)
             .text() mustBe "No"
           radioButton1
             .getElementsByClass(Selectors.radioInput)

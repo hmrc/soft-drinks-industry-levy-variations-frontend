@@ -36,7 +36,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        <h1 class="govuk-heading-m">
+        <h1 class="govuk-heading-l">
             @messages("changeActivity.secondaryWarehouseDetails.heading")
         </h1>
 
@@ -54,7 +54,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("changeActivity.secondaryWarehouseDetails.subHeading")).asPageHeading(),
+                legend = LegendViewModel(messages("changeActivity.secondaryWarehouseDetails.subHeading")).asPageSubHeading(),
                 hint = None
             )
         )

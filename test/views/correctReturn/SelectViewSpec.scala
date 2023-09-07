@@ -19,6 +19,7 @@ package views.correctReturn
 import controllers.correctReturn.routes
 import forms.correctReturn.SelectFormProvider
 import models.ReturnPeriod
+import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -26,20 +27,20 @@ import views.ViewSpecHelper
 import views.html.correctReturn.SelectView
 class SelectViewSpec extends ViewSpecHelper {
 
-  val view = application.injector.instanceOf[SelectView]
+  val view: SelectView = application.injector.instanceOf[SelectView]
   val formProvider = new SelectFormProvider
-  val form = formProvider.apply()
+  val form: Form[String] = formProvider.apply()
   val returnsList: Map[Int, List[ReturnPeriod]] = Map(2022 -> returnPeriodsFor2022, 2020 -> returnPeriodsFor2020)
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-fieldset__heading"
-    val legend = "govuk-fieldset__legend  govuk-fieldset__legend--m"
+    val legend = "govuk-fieldset__legend  govuk-fieldset__legend--l"
     val radios = "govuk-radios"
     val radioDivider = "govuk-radios__divider"
     val radiosInput = "govuk-radios__input"
     val radiosItems = "govuk-radios__item"
-    val radiosLables = "govuk-label govuk-radios__label"
+    val radiosLabels = "govuk-label govuk-radios__label"
     val body = "govuk-body"
     val errorSummaryTitle = "govuk-error-summary__title"
     val errorSummaryList = "govuk-list govuk-error-summary__list"
@@ -98,7 +99,7 @@ class SelectViewSpec extends ViewSpecHelper {
             val radioItem = radioItems.get(periodIndex)
             radioItem.className() mustBe Selectors.radiosItems
             val radioInput = radioItem.getElementsByClass(Selectors.radiosInput)
-            val radioLabel = radioItem.getElementsByClass(Selectors.radiosLables)
+            val radioLabel = radioItem.getElementsByClass(Selectors.radiosLabels)
             radioLabel.text() mustBe expectedText
             radioInput.attr("value") mustBe returnPeriod.radioValue
             radioInput.hasAttr("checked") mustBe false
@@ -122,7 +123,7 @@ class SelectViewSpec extends ViewSpecHelper {
               val radioItem = radioItems.get(periodIndex)
               radioItem.className() mustBe Selectors.radiosItems
               val radioInput = radioItem.getElementsByClass(Selectors.radiosInput)
-              val radioLabel = radioItem.getElementsByClass(Selectors.radiosLables)
+              val radioLabel = radioItem.getElementsByClass(Selectors.radiosLabels)
               radioLabel.text() mustBe expectedText
               radioInput.attr("value") mustBe returnPeriod.radioValue
               radioInput.hasAttr("checked") mustBe selectedReturnPeriod == returnPeriod
@@ -132,8 +133,8 @@ class SelectViewSpec extends ViewSpecHelper {
       }
     }
 
-    "contain the correct button" - {
-      document.getElementsByClass(Selectors.button).text() mustBe Messages("site.continue")
+    "contain the correct button" in {
+      document.getElementsByClass(Selectors.button).text() mustBe "Save and continue"
     }
 
     "contains a form with the correct action" in {

@@ -50,7 +50,7 @@ class BusinessAddressControllerISpec extends ControllerITTestHelper {
             timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
           )),
           serviceHref = Some(routes.IndexController.onPageLoad.url),
-          pageHeadingStyle = Some("govuk-heading-m")
+          pageHeadingStyle = Some("govuk-heading-l")
         ),
         labels = Some(
           JourneyLabels(
@@ -147,5 +147,6 @@ class BusinessAddressControllerISpec extends ControllerITTestHelper {
   }
   testUnauthorisedUser(updateRegisteredDetailsBaseUrl + normalRoutePath,  Some(Json.obj("value" -> "true")))
   testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + normalRoutePath,  Some(Json.obj("value" -> "true")))
-  testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+  testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails,
+    updateRegisteredDetailsBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
 }

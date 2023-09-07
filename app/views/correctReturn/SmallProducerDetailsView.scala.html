@@ -36,9 +36,9 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
         @if(smallProducerList.size == 1) {
-            <h1 class="govuk-heading-m">@messages("correctReturn.smallProducerDetails.headingSingle")</h1>
+            <h1 class="govuk-heading-l">@messages("correctReturn.smallProducerDetails.headingSingle")</h1>
         } else {
-            <h1 class="govuk-heading-m">@messages("correctReturn.smallProducerDetails.heading", smallProducerList.length)</h1>
+            <h1 class="govuk-heading-l">@messages("correctReturn.smallProducerDetails.heading", smallProducerList.length)</h1>
         }
         @govukSummaryList(SmallProducerDetailsSummary.producerList(smallProducerList))
 
