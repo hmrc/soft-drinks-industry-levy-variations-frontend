@@ -78,6 +78,7 @@ class SessionRepositoryISpec
         UkAddress(List("123 Main Street", "Anytown"), "AB12 C34", alfId = Some("123456")),
         None,
         false,
+        Option(Instant.ofEpochSecond(1)),
         Instant.ofEpochSecond(1))
       val setResult = await(repository.set(userAnswersBefore))
       setResult mustBe true

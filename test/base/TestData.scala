@@ -19,6 +19,7 @@ package base
 import models._
 import models.backend.{Site, UkAddress}
 import models.correctReturn.CorrectReturnUserAnswersData
+import org.bson.json.JsonObject
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import play.api.libs.json.Json
 
@@ -124,11 +125,21 @@ trait TestData {
   lazy val packingSiteMap = Map("000001" -> packingSite)
 
   lazy val contactAddress = UkAddress(List("19 Rhes Priordy", "East London"), "E73 2RP")
+  lazy val updatedContactAddress = UkAddress(List("123 Updated Street", "Updated City Name"), "E73 2RP")
 
-  val emptyUserAnswersForUpdateRegisteredDetails: UserAnswers = UserAnswers(userAnswersId, SelectChange.UpdateRegisteredDetails, contactAddress = contactAddress)
-  val warehouseAddedToUserAnswersForUpdateRegisteredDetails: UserAnswers = UserAnswers(userAnswersId, SelectChange.UpdateRegisteredDetails, warehouseList = Map("1" -> warehouse), contactAddress = contactAddress)
+  val emptyUserAnswersForUpdateRegisteredDetails: UserAnswers =
+    UserAnswers(userAnswersId, SelectChange.UpdateRegisteredDetails, contactAddress = contactAddress)
+  val userAnswersWithUpdatedContactForUpdateRegisteredDetails: UserAnswers = UserAnswers(sdilNumber,
+    SelectChange.UpdateRegisteredDetails,
+    Json.obj(("updateRegisteredDetails", Json.obj("updateContactDetails" -> Json.toJson(updatedContactAddress)))),
+    packagingSiteList = packingSiteMap,
+    contactAddress = contactAddress
+  )
+  val warehouseAddedToUserAnswersForUpdateRegisteredDetails: UserAnswers =
+    UserAnswers(userAnswersId, SelectChange.UpdateRegisteredDetails, warehouseList = Map("1" -> warehouse), contactAddress = contactAddress)
   val emptyUserAnswersForChangeActivity = UserAnswers(sdilNumber, SelectChange.ChangeActivity, contactAddress = contactAddress)
-  val warehouseAddedToUserAnswersForChangeActivity: UserAnswers = UserAnswers(userAnswersId, SelectChange.ChangeActivity, warehouseList = Map("1" -> warehouse), contactAddress = contactAddress)
+  val warehouseAddedToUserAnswersForChangeActivity: UserAnswers =
+    UserAnswers(userAnswersId, SelectChange.ChangeActivity, warehouseList = Map("1" -> warehouse), contactAddress = contactAddress)
 
   val expectedCorrectReturnDataForNilReturn = CorrectReturnUserAnswersData(false, None, false, None, false, false, None, false, None, false, None, false, None)
   val expectedCorrectReturnDataForPopulatedReturn = CorrectReturnUserAnswersData(
@@ -141,7 +152,8 @@ trait TestData {
     true, Some(LitresInBands(60, 50))
   )
 
-  val emptyUserAnswersForCorrectReturn = UserAnswers(sdilNumber, SelectChange.CorrectReturn, contactAddress = contactAddress, correctReturnPeriod = returnPeriodsFor2022.headOption)
+  val emptyUserAnswersForCorrectReturn = UserAnswers(sdilNumber, SelectChange.CorrectReturn, contactAddress = contactAddress,
+    correctReturnPeriod = returnPeriodsFor2022.headOption)
 
   def userAnswersForCorrectReturn(sdilReturnIsNil: Boolean) = {
     val (correctReturnData, smallProducers) = if (sdilReturnIsNil) {

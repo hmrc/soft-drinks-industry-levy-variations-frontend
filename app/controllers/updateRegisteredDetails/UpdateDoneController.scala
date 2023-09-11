@@ -16,32 +16,36 @@
 
 package controllers.updateRegisteredDetails
 
-import com.google.inject.Inject
-import controllers.actions.ControllerActions
-import models.SelectChange.UpdateRegisteredDetails
+import controllers.actions._
+
+import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.updateRegisteredDetails.UpdateRegisteredDetailsCYAView
+import views.html.updateRegisteredDetails.UpdateDoneView
+import models.SelectChange.UpdateRegisteredDetails
 import views.summary.updateRegisteredDetails.UpdateContactDetailsSummary
 
+import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, ZoneId}
 
-class UpdateRegisteredDetailsCYAController @Inject()(
-                                            override val messagesApi: MessagesApi,
-                                            controllerActions: ControllerActions,
-                                            val controllerComponents: MessagesControllerComponents,
-                                            view: UpdateRegisteredDetailsCYAView
-                                          ) extends FrontendBaseController with I18nSupport {
+class UpdateDoneController @Inject()(
+                                       override val messagesApi: MessagesApi,
+                                        controllerActions: ControllerActions,
+                                       val controllerComponents: MessagesControllerComponents,
+                                       view: UpdateDoneView
+                                     ) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
+
     implicit request =>
-
       val summaryList = Seq(UpdateContactDetailsSummary.rows(request.userAnswers)).flatten
+      val getSentDateTime = LocalDateTime.now(ZoneId.of("UTC")) //LocalDateTime.ofInstant(request.userAnswers.submittedOn.get, ZoneId.of("UTC"))
+      val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+      val timeFormatter = DateTimeFormatter.ofPattern("H:MMa")
+      val formattedDate = getSentDateTime.format(dateFormatter)
+      val formattedTime = getSentDateTime.format(timeFormatter)
 
-      Ok(view(summaryList, routes.UpdateRegisteredDetailsCYAController.onSubmit))
-  }
-  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
-      Redirect(controllers.routes.IndexController.onPageLoad.url)
+      Ok(view(summaryList, formattedDate, formattedTime, request.subscription.orgName))
   }
 }

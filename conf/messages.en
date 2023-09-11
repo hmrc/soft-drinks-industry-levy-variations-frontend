@@ -100,38 +100,6 @@ changeActivity.checkYourAnswers.operatePackingSiteOwnBrandsSection = Packaged in
 changeActivity.checkYourAnswers.contractPackingSection = Package for customers
 changeActivity.checkYourAnswers.importsSection = Brought into the UK
 
-updateRegisteredDetails.checkYourAnswers.title = Check your answers before sending your update
-updateRegisteredDetails.checkYourAnswers.heading = Check your answers before sending your update
-updateRegisteredDetails.checkYourAnswers.updateContactDetails.title = Soft Drinks Industry Levy contact
-updateRegisteredDetails.updateContactDetails.change.hidden = Contact Details
-updateRegisteredDetails.checkYourAnswers.submit = Confirm updates and send
-
-updateRegisteredDetails.updateContactDetails.title = Edit your contact person details
-updateRegisteredDetails.updateContactDetails.heading = Edit your contact person details
-updateRegisteredDetails.updateContactDetails.fullName = Full name
-updateRegisteredDetails.updateContactDetails.position = Job title
-updateRegisteredDetails.updateContactDetails.phoneNumber = Telephone number
-updateRegisteredDetails.updateContactDetails.email = Email address
-updateRegisteredDetails.updateContactDetails.error.fullName.required = Enter your contact person’s full name
-updateRegisteredDetails.updateContactDetails.error.position.required = Enter your contact person’s job title
-updateRegisteredDetails.updateContactDetails.error.email.required = Enter your contact person’s email address
-updateRegisteredDetails.updateContactDetails.error.phoneNumber.required = Enter your contact person’s telephone number
-updateRegisteredDetails.updateContactDetails.error.fullName.length = Full name must be 40 characters or less
-updateRegisteredDetails.updateContactDetails.error.position.length = Job title must be 155 characters or less
-updateRegisteredDetails.updateContactDetails.error.phoneNumber.length = Telephone number must be 24 characters or less
-updateRegisteredDetails.updateContactDetails.error.email.length = Email address must be 132 characters or less
-updateRegisteredDetails.updateContactDetails.error.fullName.invalid = Full name must only include letters a to z, apostrophes, hyphens and spaces
-updateRegisteredDetails.updateContactDetails.error.position.invalid = Job title must only include letters a to z, apostrophes, dashes, hyphens and spaces
-updateRegisteredDetails.updateContactDetails.error.phoneNumber.invalid = Enter a telephone number, like <span style="white-space: nowrap">01632 960999</span> or <span style="white-space: nowrap">07700 900999</span>
-updateRegisteredDetails.updateContactDetails.error.email.invalid = Enter a real email address, like name@example.com
-updateRegisteredDetails.updateContactDetails.fullName.change.hidden = your contact person’s full name
-updateRegisteredDetails.updateContactDetails.position.change.hidden = your contact person’s job title
-updateRegisteredDetails.updateContactDetails.phoneNumber.change.hidden = your contact person’s telephone
-updateRegisteredDetails.updateContactDetails.email.change.hidden = your contact person’s email address
-
-updateRegisteredDetails.businessAddress.title = Your business address for the Soft Drinks Industry Levy
-updateRegisteredDetails.businessAddress.change.hidden = business address
-
 cancelRegistration.reason.title = Why do you need to cancel your registration?
 cancelRegistration.reason.checkYourAnswersLabel = Reason for cancelling
 cancelRegistration.reason.hint = Enter a maximum of 255 characters
@@ -225,14 +193,6 @@ howManyContractPacking.title = How many litres will you package as a third party
 changeActivity.contractPacking.lowband.litres.hidden = number of litres in low band contract packed at your own site
 changeActivity.contractPacking.highband.litres.hidden = number of litres in high band contract packed at your own site
 
-updateRegisteredDetails.warehouseDetails.title = Change your UK warehouse details
-updateRegisteredDetails.warehouseDetails.heading = Change your UK warehouse details
-updateRegisteredDetails.warehouseDetails.subtext = You don''t have any registered warehouses.
-updateRegisteredDetails.warehouseDetails.subHeading = Do you want to add another warehouse?
-updateRegisteredDetails.warehouseDetails.checkYourAnswersLabel = Change your UK warehouse details
-updateRegisteredDetails.warehouseDetails.error.required = Select yes if you want to register another UK warehouse
-updateRegisteredDetails.warehouseDetails.remove.hidden = remove UK warehouse
-
 changeActivity.packagingSiteDetails.title = UK packaging site details
 changeActivity.packagingSiteDetails.heading = UK packaging site details
 changeActivity.packagingSiteDetails.subHeading = Do you want to add another UK packaging site?
@@ -257,24 +217,6 @@ changeActivity.secondaryWarehouseDetails.remove.hidden = warehouse {0} at {1}
 
 changeActivity.removeWarehouseDetails.title = Are you sure you want to remove this warehouse?
 changeActivity.removeWarehouseDetails.error.required = Select yes if you want to remove this warehouse
-
-updateRegisteredDetails.removeWarehouseDetails.title = Are you sure you want to remove this warehouse?
-updateRegisteredDetails.removeWarehouseDetails.heading = Are you sure you want to remove this warehouse?
-updateRegisteredDetails.removeWarehouseDetails.checkYourAnswersLabel = Are you sure you want to remove this warehouse?
-updateRegisteredDetails.removeWarehouseDetails.error.required = Select yes if you want to remove this warehouse
-
-updateRegisteredDetails.packagingSiteDetails.title = Change your UK packaging site details
-updateRegisteredDetails.packagingSiteDetails.heading = Change your UK packaging site details
-updateRegisteredDetails.packagingSiteDetails.subHeading = Do you want to add another packaging site?
-updateRegisteredDetails.packagingSiteDetails.info = You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register the warehouses you use to store them.
-updateRegisteredDetails.packagingSiteDetails.checkYourAnswersLabel = UK packaging site details
-updateRegisteredDetails.packagingSiteDetails.error.required = Select yes if you need to add another packaging site
-updateRegisteredDetails.packagingSiteDetails.change.hidden = change UK packaging site details
-
-updateRegisteredDetails.packingSiteDetailsRemove.title = Are you sure you want to remove this packaging site?
-updateRegisteredDetails.packingSiteDetailsRemove.heading = Are you sure you want to remove this packaging site?
-updateRegisteredDetails.packingSiteDetailsRemove.checkYourAnswersLabel = Are you sure you want to remove this packaging site?
-updateRegisteredDetails.packingSiteDetailsRemove.error.required = Select yes if you want to remove this packaging site
 
 correctReturn.packAtBusinessAddress.title = Is this address a UK packaging site you operate to produce liable drinks?
 correctReturn.packAtBusinessAddress.heading = Is this address a UK packaging site you operate to produce liable drinks?
@@ -558,3 +500,72 @@ updateRegisteredDetails.changeRegisteredDetails.businessAddress = Update your re
 updateRegisteredDetails.changeRegisteredDetails.checkYourAnswersLabel = Registered details updated
 updateRegisteredDetails.changeRegisteredDetails.error.required = Select at least one option to continue
 updateRegisteredDetails.changeRegisteredDetails.change.hidden = what registered details you need to update
+
+updateRegisteredDetails.removeWarehouseDetails.title = Are you sure you want to remove this warehouse?
+updateRegisteredDetails.removeWarehouseDetails.heading = Are you sure you want to remove this warehouse?
+updateRegisteredDetails.removeWarehouseDetails.checkYourAnswersLabel = Are you sure you want to remove this warehouse?
+updateRegisteredDetails.removeWarehouseDetails.error.required = Select yes if you want to remove this warehouse
+
+updateRegisteredDetails.packagingSiteDetails.title = Change your UK packaging site details
+updateRegisteredDetails.packagingSiteDetails.heading = Change your UK packaging site details
+updateRegisteredDetails.packagingSiteDetails.subHeading = Do you want to add another packaging site?
+updateRegisteredDetails.packagingSiteDetails.info = You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register the warehouses you use to store them.
+updateRegisteredDetails.packagingSiteDetails.checkYourAnswersLabel = UK packaging site details
+updateRegisteredDetails.packagingSiteDetails.error.required = Select yes if you need to add another packaging site
+updateRegisteredDetails.packagingSiteDetails.change.hidden = change UK packaging site details
+
+updateRegisteredDetails.packingSiteDetailsRemove.title = Are you sure you want to remove this packaging site?
+updateRegisteredDetails.packingSiteDetailsRemove.heading = Are you sure you want to remove this packaging site?
+updateRegisteredDetails.packingSiteDetailsRemove.checkYourAnswersLabel = Are you sure you want to remove this packaging site?
+updateRegisteredDetails.packingSiteDetailsRemove.error.required = Select yes if you want to remove this packaging site
+
+
+updateRegisteredDetails.checkYourAnswers.title = Check your answers before sending your update
+updateRegisteredDetails.checkYourAnswers.heading = Check your answers before sending your update
+updateRegisteredDetails.checkYourAnswers.updateContactDetails.title = Soft Drinks Industry Levy contact
+updateRegisteredDetails.updateContactDetails.change.hidden = Contact Details
+updateRegisteredDetails.checkYourAnswers.submit = Confirm updates and send
+
+updateRegisteredDetails.updateContactDetails.title = Edit your contact person details
+updateRegisteredDetails.updateContactDetails.heading = Edit your contact person details
+updateRegisteredDetails.updateContactDetails.fullName = Full name
+updateRegisteredDetails.updateContactDetails.position = Job title
+updateRegisteredDetails.updateContactDetails.phoneNumber = Telephone number
+updateRegisteredDetails.updateContactDetails.email = Email address
+updateRegisteredDetails.updateContactDetails.error.fullName.required = Enter your contact person’s full name
+updateRegisteredDetails.updateContactDetails.error.position.required = Enter your contact person’s job title
+updateRegisteredDetails.updateContactDetails.error.email.required = Enter your contact person’s email address
+updateRegisteredDetails.updateContactDetails.error.phoneNumber.required = Enter your contact person’s telephone number
+updateRegisteredDetails.updateContactDetails.error.fullName.length = Full name must be 40 characters or less
+updateRegisteredDetails.updateContactDetails.error.position.length = Job title must be 155 characters or less
+updateRegisteredDetails.updateContactDetails.error.phoneNumber.length = Telephone number must be 24 characters or less
+updateRegisteredDetails.updateContactDetails.error.email.length = Email address must be 132 characters or less
+updateRegisteredDetails.updateContactDetails.error.fullName.invalid = Full name must only include letters a to z, apostrophes, hyphens and spaces
+updateRegisteredDetails.updateContactDetails.error.position.invalid = Job title must only include letters a to z, apostrophes, dashes, hyphens and spaces
+updateRegisteredDetails.updateContactDetails.error.phoneNumber.invalid = Enter a telephone number, like <span style="white-space: nowrap">01632 960999</span> or <span style="white-space: nowrap">07700 900999</span>
+updateRegisteredDetails.updateContactDetails.error.email.invalid = Enter a real email address, like name@example.com
+updateRegisteredDetails.updateContactDetails.fullName.change.hidden = your contact person’s full name
+updateRegisteredDetails.updateContactDetails.position.change.hidden = your contact person’s job title
+updateRegisteredDetails.updateContactDetails.phoneNumber.change.hidden = your contact person’s telephone
+updateRegisteredDetails.updateContactDetails.email.change.hidden = your contact person’s email address
+
+updateRegisteredDetails.businessAddress.title = Your business address for the Soft Drinks Industry Levy
+updateRegisteredDetails.businessAddress.change.hidden = business address
+
+updateRegisteredDetails.warehouseDetails.title = Change your UK warehouse details
+updateRegisteredDetails.warehouseDetails.heading = Change your UK warehouse details
+updateRegisteredDetails.warehouseDetails.subtext = You don''t have any registered warehouses.
+updateRegisteredDetails.warehouseDetails.subHeading = Do you want to add another warehouse?
+updateRegisteredDetails.warehouseDetails.checkYourAnswersLabel = Change your UK warehouse details
+updateRegisteredDetails.warehouseDetails.error.required = Select yes if you want to register another UK warehouse
+updateRegisteredDetails.warehouseDetails.remove.hidden = remove UK warehouse
+
+updateRegisteredDetails.updateDone.title = Update sent
+updateRegisteredDetails.updateDone.panel.message = We have received the update to your Soft Drinks Industry Levy details
+updateRegisteredDetails.updateDone.updateInfo = Your update for {0} was sent on {1} at {2}. Changes can take up to 15 days to process.
+updateRegisteredDetails.updateDone.updateInfoTwoPart1 = Your update for {0}
+updateRegisteredDetails.updateDone.updateInfoTwoPart2 = was sent on {0} at {1}. Changes can take up to 15 days to process.
+updateRegisteredDetails.updateDone.whatNextText = You do not need to do anything else. We will update your details with the information you have provided.
+updateRegisteredDetails.updateDone.accountHomeLink = Go back to your Soft Drinks Industry Levy details
+updateRegisteredDetails.updateDone.detailsSummary = View the details of your update
+

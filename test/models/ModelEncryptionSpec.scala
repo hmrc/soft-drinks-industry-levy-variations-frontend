@@ -39,6 +39,7 @@ class ModelEncryptionSpec extends SpecBase {
         UkAddress(List("123 Main Street", "Anytown"), "AB12 C34", alfId = Some("123456")),
         None,
         false,
+        Option(Instant.ofEpochSecond(1)),
         Instant.ofEpochSecond(1))
 
       val result = ModelEncryption.encryptUserAnswers(userAnswers)
@@ -52,7 +53,8 @@ class ModelEncryptionSpec extends SpecBase {
       result._6.head._1 mustBe userAnswers.warehouseList.head._1
       Json.parse(encryption.crypto.decrypt(result._7, userAnswers.id)).as[UkAddress] mustBe userAnswers.contactAddress
       result._9 mustBe userAnswers.submitted
-      result._10 mustBe userAnswers.lastUpdated
+      result._10 mustBe userAnswers.submittedOn
+      result._11 mustBe userAnswers.lastUpdated
     }
   }
   "decryptUserAnswers" - {
@@ -65,6 +67,7 @@ class ModelEncryptionSpec extends SpecBase {
         Map("foo" -> Warehouse(Some("foo"),UkAddress(List("foo"),"foo", Some("foo")))),
         UkAddress(List("123 Main Street", "Anytown"), "AB12 C34", alfId = Some("123456")), Some(ReturnPeriod(2023, 1)),
         false,
+        Option(Instant.ofEpochSecond(1)),
         Instant.ofEpochSecond(1))
 
      val result = ModelEncryption.decryptUserAnswers(
@@ -75,7 +78,7 @@ class ModelEncryptionSpec extends SpecBase {
         userAnswers.packagingSiteList.map(site => site._1 -> encryption.crypto.encrypt(Json.toJson(site._2).toString(), userAnswers.id)),
         userAnswers.warehouseList.map(warehouse => warehouse._1 -> encryption.crypto.encrypt(Json.toJson(warehouse._2).toString(), userAnswers.id)),
         encryption.crypto.encrypt(Json.toJson(userAnswers.contactAddress).toString(), userAnswers.id), userAnswers.correctReturnPeriod,
-        userAnswers.submitted, userAnswers.lastUpdated
+        userAnswers.submitted, userAnswers.submittedOn, userAnswers.lastUpdated
       )
       result mustBe userAnswers
 
