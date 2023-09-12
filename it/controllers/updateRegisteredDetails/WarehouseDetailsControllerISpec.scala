@@ -77,7 +77,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
               val page = Jsoup.parse(res.body)
               page.title must include(Messages("updateRegisteredDetails.warehouseDetails" + ".title"))
               val summaryList = page.getElementsByClass("govuk-caption-m")
-              summaryList.text mustBe ("ABC Ltd 33 Rhes Priordy WR53 7CX Remove remove UK warehouse")
+              summaryList.text mustBe "ABC Ltd 33 Rhes Priordy WR53 7CX Remove warehouse ABC Ltd at 33 Rhes Priordy"
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"

@@ -19,36 +19,41 @@ package controllers.updateRegisteredDetails
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.updateRegisteredDetails.PackagingSiteDetailsFormProvider
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.updateRegisteredDetails.PackagingSiteDetailsPage
+import pages.updateRegisteredDetails.{ChangeRegisteredDetailsPage, PackagingSiteDetailsPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.SessionService
+import services.{AddressLookupService, PackingDetails, SessionService, WarehouseDetails}
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import views.html.updateRegisteredDetails.PackagingSiteDetailsView
 import views.summary.updateRegisteredDetails.PackagingSiteDetailsSummary
 import models.SelectChange.UpdateRegisteredDetails
+import models.updateRegisteredDetails.ChangeRegisteredDetails
+import org.mockito.ArgumentMatchers
+import org.mockito.MockitoSugar.{times, verify}
+import play.api.data.Form
+import repositories.SessionRepository
 
 import scala.concurrent.Future
 
 class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  with SummaryListFluency{
 
-  def onwardRoute = Call("GET", "/foo")
-
+  def onwardRoute: Call = Call("GET", "/foo")
   val formProvider = new PackagingSiteDetailsFormProvider()
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  lazy val packagingSiteDetailsRoute = routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
+  lazy val packagingSiteDetailsRoute: String = routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
+  lazy val packagingSiteDetailsCheckModeRoute: String = routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
 
-  "PackagingSiteDetails Controller" - {
+  "PackagingSiteDetails Controller within Update Registered Details" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -92,7 +97,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to the warehouse details page when valid false answer data is submitted in NormalMode" in {
 
       val mockSessionService = mock[SessionService]
 
@@ -101,7 +106,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
           .overrides(
-            bind[NavigatorForUpdateRegisteredDetails].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
+            bind[Navigator].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           )
           .build()
@@ -109,12 +114,38 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
       running(application) {
         val request =
           FakeRequest(POST, packagingSiteDetailsRoute)
-            .withFormUrlEncodedBody(("value", "true"))
+            .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual routes.WarehouseDetailsController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect to the Check your answers page when false answer data is submitted in Check answers" in {
+
+      val mockSessionService = mock[SessionService]
+
+      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
+            bind[SessionService].toInstance(mockSessionService)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, packagingSiteDetailsCheckModeRoute)
+            .withFormUrlEncodedBody(("value", "false"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.updateRegisteredDetails.routes.UpdateRegisteredDetailsCYAController.onPageLoad.url
       }
     }
 
@@ -171,7 +202,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
           .overrides(
-            bind[NavigatorForUpdateRegisteredDetails].toInstance(new FakeNavigatorForUpdateRegisteredDetails (onwardRoute)),
+            bind[Navigator].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           ).build()
 
@@ -190,5 +221,45 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
         }
       }
     }
+
+    "must redirect to the next page when valid data is submitted (true)" in {
+      val mockSessionRepository = mock[SessionRepository]
+      val mockAddressLookupService = mock[AddressLookupService]
+      val onwardUrlForALF = "foobarwizz"
+
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+      when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
+        ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any())(
+        ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
+        .thenReturn(Future.successful(onwardUrlForALF))
+
+      val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(ChangeRegisteredDetailsPage, ChangeRegisteredDetails.values).success.value
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[Navigator].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[AddressLookupService].toInstance(mockAddressLookupService)
+          )
+          .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, packagingSiteDetailsRoute)
+            .withFormUrlEncodedBody(("value", "true"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardUrlForALF
+
+        verify(mockAddressLookupService, times(1)).initJourneyAndReturnOnRampUrl(
+          ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any())(
+          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+      }
+    }
+
   }
 }

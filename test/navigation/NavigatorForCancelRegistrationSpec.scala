@@ -19,7 +19,6 @@ package navigation
 import base.SpecBase
 import controllers.cancelRegistration.routes
 import models._
-import models.enums.VariationJourneyTypes.cancelRegistration
 import pages._
 import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
 import play.api.libs.json.Json
