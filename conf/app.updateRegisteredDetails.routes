@@ -36,3 +36,5 @@ POST       /                                                controllers.updateRe
 GET        /business-address                                controllers.updateRegisteredDetails.BusinessAddressController.onPageLoad()
 GET        /change-business-address                         controllers.updateRegisteredDetails.BusinessAddressController.changeAddress()
 POST       /business-address                                controllers.updateRegisteredDetails.BusinessAddressController.onSubmit()
+
+GET        /update-done                                     controllers.updateRegisteredDetails.UpdateDoneController.onPageLoad()

@@ -38,6 +38,7 @@ case class UserAnswers(
                         contactAddress: UkAddress,
                         correctReturnPeriod: Option[ReturnPeriod] = None,
                         submitted:Boolean = false,
+                        submittedOn: Option[Instant] = None,
                         lastUpdated: Instant = Instant.now
                             ) {
 
@@ -147,6 +148,7 @@ object UserAnswers {
           (__ \ "contactAddress").read[EncryptedValue] and
           (__ \ "correctReturnPeriod").readNullable[ReturnPeriod] and
           (__ \ "submitted").read[Boolean] and
+          (__ \ "submittedOn").readNullable[Instant] and
           (__ \ "lastUpdated").read[Instant]
         )(ModelEncryption.decryptUserAnswers _)
     }
@@ -154,7 +156,7 @@ object UserAnswers {
     def writes(implicit encryption: Encryption): OWrites[UserAnswers] = new OWrites[UserAnswers] {
       override def writes(userAnswers: UserAnswers): JsObject = {
         val encryptedValue: (String, SelectChange, EncryptedValue, EncryptedValue, Map[String, EncryptedValue],
-          Map[String, EncryptedValue], EncryptedValue, Option[ReturnPeriod], Boolean, Instant) = {
+          Map[String, EncryptedValue], EncryptedValue, Option[ReturnPeriod], Boolean, Option[Instant], Instant) = {
           ModelEncryption.encryptUserAnswers(userAnswers)
         }
         Json.obj(
@@ -167,7 +169,8 @@ object UserAnswers {
           "contactAddress" -> encryptedValue._7,
           "correctReturnPeriod" -> encryptedValue._8,
           "submitted" -> encryptedValue._9,
-          "lastUpdated" -> encryptedValue._10
+          "submittedOn" -> encryptedValue._10,
+          "lastUpdated" -> encryptedValue._11
         )
       }
     }

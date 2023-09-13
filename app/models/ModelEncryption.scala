@@ -45,7 +45,8 @@ object ModelEncryption {
   }
 
   def encryptUserAnswers(userAnswers: UserAnswers)(implicit encryption: Encryption):
-  (String, SelectChange, EncryptedValue, EncryptedValue, Map[String, EncryptedValue], Map[String, EncryptedValue], EncryptedValue, Option[ReturnPeriod], Boolean, Instant) = {
+  (String, SelectChange, EncryptedValue, EncryptedValue, Map[String, EncryptedValue], Map[String, EncryptedValue],
+    EncryptedValue, Option[ReturnPeriod], Boolean, Option[Instant], Instant) = {
     ( userAnswers.id,
       userAnswers.journeyType,
       encryption.crypto.encrypt(userAnswers.data.toString(), userAnswers.id),
@@ -54,7 +55,7 @@ object ModelEncryption {
       userAnswers.warehouseList.map(warehouse => warehouse._1 -> encryption.crypto.encrypt(Json.toJson(warehouse._2).toString(), userAnswers.id)),
       encryption.crypto.encrypt(Json.toJson(userAnswers.contactAddress).toString(), userAnswers.id),
       userAnswers.correctReturnPeriod,
-      userAnswers.submitted, userAnswers.lastUpdated
+      userAnswers.submitted, userAnswers.submittedOn, userAnswers.lastUpdated
     )
   }
 
@@ -67,6 +68,7 @@ object ModelEncryption {
                          contactAddress: EncryptedValue,
                          correctReturnPeriod: Option[ReturnPeriod],
                          submitted: Boolean,
+                         submittedOn: Option[Instant],
                          lastUpdated: Instant)(implicit encryption: Encryption): UserAnswers = {
     UserAnswers(
       id = id,
@@ -78,6 +80,7 @@ object ModelEncryption {
       contactAddress = Json.parse(encryption.crypto.decrypt(contactAddress, id)).as[UkAddress],
       correctReturnPeriod = correctReturnPeriod,
       submitted = submitted,
+      submittedOn = submittedOn,
       lastUpdated = lastUpdated
     )
   }
