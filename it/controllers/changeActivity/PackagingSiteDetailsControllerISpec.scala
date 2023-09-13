@@ -2,8 +2,8 @@ package controllers.changeActivity
 
 import controllers.{ControllerITTestHelper, routes}
 import models.SelectChange.ChangeActivity
+import models.UserAnswers
 import models.alf.init._
-import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.changeActivity.PackagingSiteDetailsPage

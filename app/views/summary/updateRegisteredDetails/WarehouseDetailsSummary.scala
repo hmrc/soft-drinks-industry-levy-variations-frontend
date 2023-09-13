@@ -54,8 +54,10 @@ object WarehouseDetailsSummary  {
                 classes = "govuk-!-font-weight-regular govuk-!-width-full"
               ),
               actions = Some(Actions("",Seq(
-                ActionItemViewModel("site.remove", controllers.updateRegisteredDetails.routes.RemoveWarehouseDetailsController.onPageLoad(NormalMode, warehouse._1).url )
-                  .withVisuallyHiddenText(messages("updateRegisteredDetails.warehouseDetails.remove.hidden"))
+                ActionItemViewModel("site.remove",
+                  controllers.updateRegisteredDetails.routes.RemoveWarehouseDetailsController.onPageLoad(NormalMode, warehouse._1).url )
+                  .withVisuallyHiddenText(messages("updateRegisteredDetails.warehouseDetails.remove.hidden",
+                    warehouse._2.tradingName.getOrElse(""), warehouse._2.address.lines.head))
               )))
             )
           }.toList

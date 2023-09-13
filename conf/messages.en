@@ -519,7 +519,6 @@ updateRegisteredDetails.packingSiteDetailsRemove.heading = Are you sure you want
 updateRegisteredDetails.packingSiteDetailsRemove.checkYourAnswersLabel = Are you sure you want to remove this packaging site?
 updateRegisteredDetails.packingSiteDetailsRemove.error.required = Select yes if you want to remove this packaging site
 
-
 updateRegisteredDetails.checkYourAnswers.title = Check your answers before sending your update
 updateRegisteredDetails.checkYourAnswers.heading = Check your answers before sending your update
 updateRegisteredDetails.checkYourAnswers.updateContactDetails.title = Soft Drinks Industry Levy contact
@@ -558,7 +557,7 @@ updateRegisteredDetails.warehouseDetails.subtext = You don''t have any registere
 updateRegisteredDetails.warehouseDetails.subHeading = Do you want to add another warehouse?
 updateRegisteredDetails.warehouseDetails.checkYourAnswersLabel = Change your UK warehouse details
 updateRegisteredDetails.warehouseDetails.error.required = Select yes if you want to register another UK warehouse
-updateRegisteredDetails.warehouseDetails.remove.hidden = remove UK warehouse
+updateRegisteredDetails.warehouseDetails.remove.hidden = warehouse {0} at {1}
 
 updateRegisteredDetails.updateDone.title = Update sent
 updateRegisteredDetails.updateDone.panel.message = We have received the update to your Soft Drinks Industry Levy details
@@ -568,4 +567,3 @@ updateRegisteredDetails.updateDone.updateInfoTwoPart2 = was sent on {0} at {1}. 
 updateRegisteredDetails.updateDone.whatNextText = You do not need to do anything else. We will update your details with the information you have provided.
 updateRegisteredDetails.updateDone.accountHomeLink = Go back to your Soft Drinks Industry Levy details
 updateRegisteredDetails.updateDone.detailsSummary = View the details of your update
-

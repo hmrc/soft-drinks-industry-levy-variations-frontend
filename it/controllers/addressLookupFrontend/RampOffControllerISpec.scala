@@ -122,7 +122,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
             updatedUserAnswers.warehouseList mustBe emptyUserAnswersForUpdateRegisteredDetails.warehouseList
 
             res.status mustBe SEE_OTHER
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+            res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
           }
         }
       }
@@ -179,7 +179,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
               updatedUserAnswers.warehouseList mustBe emptyUserAnswersForUpdateRegisteredDetails.warehouseList
 
               res.status mustBe SEE_OTHER
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
             }
           }
         }
