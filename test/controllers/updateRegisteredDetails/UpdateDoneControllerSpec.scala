@@ -17,10 +17,11 @@
 package controllers.updateRegisteredDetails
 
 import base.SpecBase
+import config.FrontendAppConfig
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import views.html.updateRegisteredDetails.UpdateDoneView
-import models.SelectChange.UpdateRegisteredDetails
 import views.summary.updateRegisteredDetails.UpdateContactDetailsSummary
 
 import java.time.format.DateTimeFormatter
@@ -28,14 +29,15 @@ import java.time.{LocalDateTime, ZoneId}
 
 class UpdateDoneControllerSpec extends SpecBase {
 
-  lazy val updateDoneRoute = routes.UpdateDoneController.onPageLoad().url
-  val getSentDateTime = LocalDateTime.now(ZoneId.of("UTC"))
-  val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-  val timeFormatter = DateTimeFormatter.ofPattern("H:MMa")
-  val formattedDate = getSentDateTime.format(dateFormatter)
-  val formattedTime = getSentDateTime.format(timeFormatter)
-  val summaryList = Seq(UpdateContactDetailsSummary.rows(emptyUserAnswersForUpdateRegisteredDetails)).flatten
-  val orgName = aSubscription.orgName
+  lazy val updateDoneRoute: String = routes.UpdateDoneController.onPageLoad().url
+  val getSentDateTime: LocalDateTime = LocalDateTime.now(ZoneId.of("UTC"))
+  val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+  val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("H:MMa")
+  val formattedDate: String = getSentDateTime.format(dateFormatter)
+  val formattedTime: String = getSentDateTime.format(timeFormatter)
+  val summaryList: Seq[(String, SummaryList)] = Seq(UpdateContactDetailsSummary.rows(emptyUserAnswersForUpdateRegisteredDetails)).flatten
+  val orgName: String = aSubscription.orgName
+  val config: FrontendAppConfig = frontendAppConfig
 
   "UpdateDone Controller" - {
 
@@ -51,7 +53,7 @@ class UpdateDoneControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UpdateDoneView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(summaryList, formattedDate, formattedTime, orgName)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(summaryList, formattedDate, formattedTime, orgName)(request, messages(application), config).toString
       }
     }
   }

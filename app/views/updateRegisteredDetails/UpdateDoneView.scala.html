@@ -15,6 +15,7 @@
  *@
 
 @import views.html.helpers.printLinkWithJs
+@import config.FrontendAppConfig
 
 @this(
         layout: templates.Layout,
@@ -24,7 +25,8 @@
         printLinkWithJs: printLinkWithJs
 )
 
-@(seqSummaryList: Seq[(String, SummaryList)], formattedDate: String, formattedTime: String, companyName: String)(implicit request: Request[_], messages: Messages)
+@(seqSummaryList: Seq[(String, SummaryList)], formattedDate: String, formattedTime: String, companyName: String)(
+        implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
 @layout(pageTitle = titleNoForm(messages("updateRegisteredDetails.updateDone.title")), showBackLink = false) {
 
@@ -51,7 +53,7 @@
     <p class="govuk-body" id="whatNextText">@messages("updateRegisteredDetails.updateDone.whatNextText")</p>
 
      <p class="govuk-body-m">
-        <a class="govuk-link" href="">@messages("updateRegisteredDetails.updateDone.accountHomeLink")</a>
+        <a class="govuk-link" href="@config.sdilHomeUrl">@messages("updateRegisteredDetails.updateDone.accountHomeLink")</a>
      </p>
 
     @govukDetails(Details(

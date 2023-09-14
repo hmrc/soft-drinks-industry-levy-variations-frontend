@@ -20,7 +20,6 @@ import base.SpecBase
 import org.scalatestplus.mockito.MockitoSugar
 
 import java.time.LocalDate
-import scala.collection.immutable.ListMap
 
 class VariationDataModelSpec extends SpecBase with MockitoSugar with DataHelper {
 

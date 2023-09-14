@@ -19,7 +19,6 @@ package base
 import models._
 import models.backend.{Site, UkAddress}
 import models.correctReturn.CorrectReturnUserAnswersData
-import org.bson.json.JsonObject
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import play.api.libs.json.Json
 
@@ -30,7 +29,7 @@ trait TestData {
   val userAnswersId: String = "id"
   val sdilNumber: String = "XKSDIL000000022"
 
-  val aSubscription = RetrievedSubscription(
+  val aSubscription: RetrievedSubscription = RetrievedSubscription(
     utr = "0000000022",
     sdilRef = "XKSDIL000000022",
     orgName = "Super Lemonade Plc",
