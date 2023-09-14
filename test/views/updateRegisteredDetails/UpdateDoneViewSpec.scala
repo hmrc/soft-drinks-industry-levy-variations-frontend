@@ -16,6 +16,7 @@
 
 package views.updateRegisteredDetails
 
+import config.FrontendAppConfig
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -38,6 +39,7 @@ class UpdateDoneViewSpec extends ViewSpecHelper {
   val formattedTime: String = getSentDateTime.format(timeFormatter)
   val summaryList: Seq[(String, SummaryList)] = Seq(UpdateContactDetailsSummary.rows(emptyUserAnswersForUpdateRegisteredDetails)).flatten
   val orgName: String = aSubscription.orgName
+  val config: FrontendAppConfig = frontendAppConfig
 
   object Selectors {
     val heading = "govuk-heading-l"
@@ -52,7 +54,7 @@ class UpdateDoneViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view(summaryList, formattedDate, formattedTime, orgName)(request, messages(application))
+    val html = view(summaryList, formattedDate, formattedTime, orgName)(request, messages(application), config)
     val document = doc(html)
     "should contain the expected title" in {
       document.title() mustBe "Update sent - Soft Drinks Industry Levy - GOV.UK"
