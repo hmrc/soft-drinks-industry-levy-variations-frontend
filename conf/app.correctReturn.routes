@@ -1,6 +1,9 @@
 # correct an error in a return specific routes
 GET         /check-your-answers                                 controllers.correctReturn.CorrectReturnCYAController.onPageLoad
 
+GET         /check-changes                                      controllers.correctReturn.CorrectReturnCheckChangesCYAController.onPageLoad
+POST        /check-changes                                      controllers.correctReturn.CorrectReturnCheckChangesCYAController.onSubmit
+
 GET        /select                                              controllers.correctReturn.SelectController.onPageLoad
 POST       /select                                              controllers.correctReturn.SelectController.onSubmit
 
