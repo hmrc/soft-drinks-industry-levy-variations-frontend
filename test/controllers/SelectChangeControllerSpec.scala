@@ -19,7 +19,8 @@ package controllers
 import base.SpecBase
 import errors.UnexpectedResponseFromSDIL
 import forms.SelectChangeFormProvider
-import models.{NormalMode, SelectChange, UserAnswers}
+import models.backend.UkAddress
+import models.{Contact, NormalMode, RetrievedActivity, RetrievedSubscription, SelectChange, UserAnswers}
 import orchestrators.SelectChangeOrchestrator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -28,6 +29,8 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.SelectChangeView
+
+import java.time.LocalDate
 
 class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
 
@@ -63,6 +66,33 @@ class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
             status(result) mustEqual OK
             contentAsString(result) mustEqual view(form, hasVariableReturns)(request, messages(application)).toString
           }
+        }
+
+        "must return OK and display the view correctly when the user is deregistered and has submitted returns" in {
+          val userAnswers = UserAnswers(sdilNumber, SelectChange.values.head, contactAddress = contactAddress)
+          val retrievedSubscription = RetrievedSubscription(
+            "foo", "bar", "wizz", UkAddress(List.empty, ""),
+            RetrievedActivity(smallProducer = false, largeProducer = false, contractPacker = false, importer = false, voluntaryRegistration = false),
+            LocalDate.now(), productionSites = List.empty, warehouseSites = List.empty, contact = Contact(None,None,"",""), deregDate = Some(LocalDate.of(2023, 1, 1)))
+
+          val application = applicationBuilder(userAnswers = Some(userAnswers), subscription = Some(retrievedSubscription))
+            .overrides(bind[SelectChangeOrchestrator].toInstance(mockOrchestrator))
+            .build()
+
+          running(application) {
+            when(mockOrchestrator.hasReturnsToCorrect(any())(any(), any())) thenReturn createSuccessVariationResult(hasVariableReturns)
+            val request = FakeRequest(GET, selectChangeRoute)
+
+            val view = application.injector.instanceOf[SelectChangeView]
+
+            val result = route(application, request).value
+
+            status(result) mustEqual OK
+            println("THIS IS WHAT IT LOOKS LIKE:")
+            println(contentAsString(result))
+            contentAsString(result) mustEqual view(form.fill(SelectChange.values.head), hasVariableReturns, isDeregistered = true)(request, messages(application)).toString
+          }
+
         }
 
         "must populate the view correctly on a GET when the question has previously been answered" in {

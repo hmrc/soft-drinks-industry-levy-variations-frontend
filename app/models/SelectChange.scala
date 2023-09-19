@@ -35,9 +35,11 @@ object SelectChange extends Enumerable.Implicits {
 
   val valuesWithOutCorrectReturns: Seq[SelectChange] = values.filterNot(_ == CorrectReturn)
 
+  val valuesWithOnlyCorrectReturns: Seq[SelectChange] = values.filter(_ == CorrectReturn)
 
-  def options(hasCorrectableReturns: Boolean)(implicit messages: Messages): Seq[RadioItem] = {
-    val valuesList = if (hasCorrectableReturns) values else valuesWithOutCorrectReturns
+
+  def options(hasCorrectableReturns: Boolean, isDeregistered: Boolean)(implicit messages: Messages): Seq[RadioItem] = {
+    val valuesList = if (isDeregistered) valuesWithOnlyCorrectReturns else if (hasCorrectableReturns) values else valuesWithOutCorrectReturns
     valuesList.zipWithIndex.map {
       case (value, index) =>
         RadioItem(
