@@ -18,6 +18,7 @@ package controllers.correctReturn
 
 import com.google.inject.Inject
 import controllers.actions.ControllerActions
+import controllers.correctReturn.routes
 import models.SelectChange.CorrectReturn
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -38,7 +39,7 @@ class CorrectReturnCheckChangesCYAController @Inject()(
       val orgName: String = " " + request.subscription.orgName
       val list: Seq[(String, SummaryList)] = Seq.empty
 
-      Ok(view(orgName, list))
+      Ok(view(orgName, list, routes.CorrectReturnCheckChangesCYAController.onSubmit))
   }
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {

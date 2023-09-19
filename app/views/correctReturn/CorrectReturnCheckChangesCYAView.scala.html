@@ -16,10 +16,12 @@
 
 @this(
     layout: templates.Layout,
-    govukSummaryList: GovukSummaryList
+    govukSummaryList: GovukSummaryList,
+    formHelper: FormWithCSRF,
+    govukButton: GovukButton
 )
 
-@(orgName: String, seqSummaryList: Seq[(String, SummaryList)])(implicit request: Request[_], messages: Messages)
+@(orgName: String, seqSummaryList: Seq[(String, SummaryList)], submitCall: Call)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("correctReturn.checkChanges.title"))) {
 
@@ -28,7 +30,11 @@
     <span class="govuk-body">@messages("correctReturn.checkChanges.updateFor")@orgName</span>
 
     @for((heading, summaryList) <- seqSummaryList) {
-    <h2 class="govuk-heading-m">@heading</h2>
+    <h2 class="govuk-heading-m">@messages(heading)</h2>
     @govukSummaryList(summaryList)
+    }
+
+    @formHelper(action = submitCall, Symbol("autoComplete") -> "off") {
+        @govukButton(ButtonViewModel(messages("correctReturn.checkChanges.confirmAndSend")))
     }
 }

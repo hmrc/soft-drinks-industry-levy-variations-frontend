@@ -40,10 +40,11 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[CorrectReturnCheckChangesCYAView]
+        val orgName = " Super Lemonade Plc"
         val list: Seq[(String, SummaryList)] = Seq.empty
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(list)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(orgName, list, routes.CorrectReturnCheckChangesCYAController.onSubmit)(request, messages(application)).toString
       }
     }
 

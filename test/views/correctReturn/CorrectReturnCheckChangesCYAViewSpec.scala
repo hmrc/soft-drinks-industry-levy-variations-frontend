@@ -16,8 +16,10 @@
 
 package views.correctReturn
 
+import org.jsoup.nodes.Document
 import play.api.mvc.{Call, Request}
 import play.api.test.FakeRequest
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.Value
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
@@ -30,7 +32,7 @@ class CorrectReturnCheckChangesCYAViewSpec extends ViewSpecHelper {
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
-    val PRE_HEADER_CAPTION = "govuk-caption-l"
+    val body = "govuk-body"
     val heading = "govuk-heading-l"
     val summaryListHeading = "govuk-heading-m"
     val button = "govuk-button"
@@ -47,15 +49,16 @@ class CorrectReturnCheckChangesCYAViewSpec extends ViewSpecHelper {
       )
     }
     val call = Call("GET","/foo")
-    val correctionForNotice = "This update is for Vegan Cola"
-    val html = view(correctionForNotice, summaryList, call)(request, messages(application))
-    val document = doc(html)
-    "should have the expected pre header caption" in {
-      document.getElementsByClass(Selectors.PRE_HEADER_CAPTION).text() mustEqual correctionForNotice
-    }
+    val orgName: String = " " + aSubscription.orgName
+    val html: HtmlFormat.Appendable = view(orgName, summaryList, call)(request, messages(application))
+    val document: Document = doc(html)
 
     "should have the expected heading" in {
       document.getElementsByTag("h1").text() mustEqual "Check your answers before sending your correction"
+    }
+
+    "should have the expected post header caption" in {
+      document.getElementsByClass(Selectors.body).text() mustEqual "This update is for Super Lemonade Plc"
     }
 
     "contain the correct button" in {

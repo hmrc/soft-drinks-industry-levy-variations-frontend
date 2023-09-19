@@ -486,6 +486,7 @@ correctReturn.askSecondaryWarehouseInReturn.detailsContent2 = Because you change
 
 correctReturn.checkChanges.updateFor = This update is for
 correctReturn.checkChanges.title = Check your answers before sending your correction
+correctReturn.checkChanges.confirmAndSend = Confirm details and send correction
 
 updateRegisteredDetails.contactDetails.title = Change person''s details
 updateRegisteredDetails.contactDetails.heading = Change person''s details
