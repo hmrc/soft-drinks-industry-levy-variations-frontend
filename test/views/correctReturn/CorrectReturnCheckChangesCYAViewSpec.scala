@@ -14,24 +14,25 @@
  * limitations under the License.
  */
 
-package views.changeActivity
+package views.correctReturn
 
+import org.jsoup.nodes.Document
 import play.api.mvc.{Call, Request}
 import play.api.test.FakeRequest
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.Value
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import views.ViewSpecHelper
-import views.html.changeActivity.ChangeActivityCYAView
+import views.html.correctReturn.CorrectReturnCheckChangesCYAView
 
+class CorrectReturnCheckChangesCYAViewSpec extends ViewSpecHelper {
 
-class ChangeActivityCYAViewSpec extends ViewSpecHelper {
-
-  val view: ChangeActivityCYAView = application.injector.instanceOf[ChangeActivityCYAView]
+  val view: CorrectReturnCheckChangesCYAView = application.injector.instanceOf[CorrectReturnCheckChangesCYAView]
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
-    val PRE_HEADER_CAPTION = "govuk-caption-l"
+    val body = "govuk-body"
     val heading = "govuk-heading-l"
     val summaryListHeading = "govuk-heading-m"
     val button = "govuk-button"
@@ -48,19 +49,20 @@ class ChangeActivityCYAViewSpec extends ViewSpecHelper {
       )
     }
     val call = Call("GET","/foo")
-    val ALIAS = "ALIAS"
-    val html = view(ALIAS, summaryList, call)(request, messages(application))
-    val document = doc(html)
-    "should have the expected pre header caption" in {
-      document.getElementsByClass(Selectors.PRE_HEADER_CAPTION).text() mustEqual ALIAS
-    }
+    val orgName: String = " " + aSubscription.orgName
+    val html: HtmlFormat.Appendable = view(orgName, summaryList, call)(request, messages(application))
+    val document: Document = doc(html)
 
     "should have the expected heading" in {
-      document.getElementsByTag("h1").text() mustEqual "Check your answers before sending your update"
+      document.getElementsByTag("h1").text() mustEqual "Check your answers before sending your correction"
+    }
+
+    "should have the expected post header caption" in {
+      document.getElementsByClass(Selectors.body).text() mustEqual "This update is for Super Lemonade Plc"
     }
 
     "contain the correct button" in {
-      document.getElementsByClass(Selectors.button).text() mustBe "Confirm updates and send"
+      document.getElementsByClass(Selectors.button).text() mustBe "Confirm details and send correction"
     }
 
     "contain the correct summary lists" in {
