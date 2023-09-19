@@ -88,8 +88,6 @@ class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
             val result = route(application, request).value
 
             status(result) mustEqual OK
-            println("THIS IS WHAT IT LOOKS LIKE:")
-            println(contentAsString(result))
             contentAsString(result) mustEqual view(form.fill(SelectChange.values.head), hasVariableReturns, isDeregistered = true)(request, messages(application)).toString
           }
 
