@@ -28,7 +28,7 @@ object ExemptionsForSmallProducersSummary extends ReturnDetailsSummaryListWithLi
   override val page: QuestionPage[Boolean] = BroughtIntoUKPage
   override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyBroughtIntoUKPage)
   override val summaryLitres: SummaryListRowLitresHelper = HowManyBroughtIntoUKSummary
-  override val key: String = "exemptionsForSmallProducers"
+  override val key: String = "correctReturn.exemptionsForSmallProducers.checkYourAnswersLabel"
   override val action: String = routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
   override val actionId: String = "change-exemptionsForSmallProducers"
   override val hiddenText: String = "exemptionsForSmallProducers"

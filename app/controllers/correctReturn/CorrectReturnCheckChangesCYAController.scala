@@ -17,36 +17,29 @@
 package controllers.correctReturn
 
 import com.google.inject.Inject
+import config.FrontendAppConfig
 import controllers.actions.ControllerActions
-<<<<<<< HEAD
-import controllers.correctReturn.routes
-=======
->>>>>>> 49c8c91 (DLS-7741 add check changes page and tests)
 import models.SelectChange.CorrectReturn
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.correctReturn.CorrectReturnCheckChangesCYAView
+import views.summary.correctReturn.CorrectReturnBaseCYASummary
 
 class CorrectReturnCheckChangesCYAController @Inject()(
                                             override val messagesApi: MessagesApi,
                                             controllerActions: ControllerActions,
                                             val controllerComponents: MessagesControllerComponents,
                                             view: CorrectReturnCheckChangesCYAView
-                                          ) extends FrontendBaseController with I18nSupport {
+                                          )(implicit config: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
 
       val orgName: String = " " + request.subscription.orgName
-      val list: Seq[(String, SummaryList)] = Seq.empty
+      val sections = CorrectReturnBaseCYASummary.summaryListAndHeadings(request.userAnswers)
 
-<<<<<<< HEAD
-      Ok(view(orgName, list, routes.CorrectReturnCheckChangesCYAController.onSubmit))
-=======
-      Ok(view(orgName, list))
->>>>>>> 49c8c91 (DLS-7741 add check changes page and tests)
+      Ok(view(orgName, sections, routes.CorrectReturnCheckChangesCYAController.onSubmit))
   }
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {

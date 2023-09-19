@@ -16,10 +16,13 @@
 
 package views.summary.correctReturn
 
+import config.FrontendAppConfig
 import controllers.correctReturn.routes
-import models.{CheckMode, LitresInBands}
+import models.{CheckMode, LitresInBands, UserAnswers}
 import pages.QuestionPage
 import pages.correctReturn.BroughtIntoUKPage
+import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import views.summary.{ReturnDetailsSummaryListWithLitres, SummaryListRowLitresHelper}
 
 object BroughtIntoUKSummary extends ReturnDetailsSummaryListWithLitres  {
@@ -27,7 +30,7 @@ object BroughtIntoUKSummary extends ReturnDetailsSummaryListWithLitres  {
   override val page: QuestionPage[Boolean] = BroughtIntoUKPage
   override val optLitresPage: Option[QuestionPage[LitresInBands]] = None
   override val summaryLitres: SummaryListRowLitresHelper = SmallProducerDetailsSummary
-  override val key: String = "reportingbroughtIntoUK"
+  override val key: String = "correctReturn.broughtIntoUK.checkYourAnswersLabel"
   override val action: String = routes.BroughtIntoUKController.onPageLoad(CheckMode).url
   override val actionId: String = "change-broughtIntoUK"
   override val hiddenText: String = "broughtIntoUK"

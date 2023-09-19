@@ -28,7 +28,7 @@ object BroughtIntoUkFromSmallProducersSummary extends ReturnDetailsSummaryListWi
   override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyBroughtIntoUkFromSmallProducersPage)
   override val summaryLitres: SummaryListRowLitresHelper = HowManyBroughtIntoUkFromSmallProducersSummary
   //LDS ignore
-  override val key: String = "reportingbroughtIntoUkFromSmallProducers"
+  override val key: String = "correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersLabel"
   override val action: String = routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
   override val actionId: String = "change-broughtIntoUkFromSmallProducers"
   override val hiddenText: String = "broughtIntoUkFromSmallProducers"

@@ -36,8 +36,10 @@ object UKSitesSummary {
         actions = if (isCheckAnswers) {
           val onwardRoute = if (userAnswers.packagingSiteList.nonEmpty) {
             controllers.correctReturn.routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
-          } else
+          } else {
             controllers.correctReturn.routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url
+          }
+
           Seq(
             ActionItemViewModel("site.change", onwardRoute)
               .withAttribute(("id", "change-packaging-sites"))
@@ -60,13 +62,16 @@ object UKSitesSummary {
         actions = if (isCheckAnswers) {
           val onwardRoute = if (userAnswers.warehouseList.nonEmpty) {
             controllers.correctReturn.routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url
-          } else
-            controllers.correctReturn.routes.AskSecondaryWarehouseInReturnController.onPageLoad (CheckMode).url
+          } else {
+            controllers.correctReturn.routes.AskSecondaryWarehouseInReturnController.onPageLoad(CheckMode).url
+          }
+
           Seq(
             ActionItemViewModel("site.change", onwardRoute)
               .withAttribute(("id", "change-warehouse-sites"))
               .withVisuallyHiddenText(messages("checkYourAnswers.sites.warehouse.change.hidden"))
           )
+
         } else {
           Seq.empty
         }

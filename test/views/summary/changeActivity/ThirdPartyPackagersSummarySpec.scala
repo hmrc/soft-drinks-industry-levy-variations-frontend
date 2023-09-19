@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.changeActivity.summary
+package views.summary.changeActivity
 
 import base.SpecBase
 import models.{SelectChange, UserAnswers}

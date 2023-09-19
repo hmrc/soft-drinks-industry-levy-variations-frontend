@@ -27,7 +27,7 @@ object PackagedAsContractPackerSummary extends ReturnDetailsSummaryListWithLitre
   override val page: QuestionPage[Boolean] = PackagedAsContractPackerPage
   override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyPackagedAsContractPackerPage)
   override val summaryLitres: SummaryListRowLitresHelper = HowManyPackagedAsContractPackerSummary
-  override val key: String = "reportingpackagedAsContractPacker"
+  override val key: String = "correctReturn.packagedAsContractPacker.checkYourAnswersLabel"
   override val action: String = routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
   override val actionId: String = "change-packagedAsContractPacker"
   override val hiddenText: String = "packagedAsContractPacker"

@@ -33,7 +33,7 @@ trait ReturnDetailsSummaryListWithLitres extends ReturnDetailsSummaryRowHelper {
   val action: String
   val actionId: String
   val hiddenText: String
-  val isSmallProducerLitres: Boolean = false
+  private val isSmallProducerLitres: Boolean = false
 
   def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean, includeLevyRows: Boolean = true)
                  (implicit messages: Messages, config: FrontendAppConfig): SummaryList = {
@@ -54,7 +54,6 @@ trait ReturnDetailsSummaryListWithLitres extends ReturnDetailsSummaryRowHelper {
       case _ => Seq.empty
     }
   }
-
 
   private def getLitresForSmallProducer(userAnswers: UserAnswers, isCheckAnswers: Boolean, includeLevyRows: Boolean = true)
                                        (implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
