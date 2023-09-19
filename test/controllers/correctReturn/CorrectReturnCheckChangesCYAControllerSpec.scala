@@ -19,7 +19,6 @@ package controllers.correctReturn
 import base.SpecBase
 import controllers.correctReturn.routes._
 import models.SelectChange.CorrectReturn
-import models.correctReturn.ChangedPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -46,9 +45,9 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(orgName, list, routes.CorrectReturnCheckChangesCYAController.onSubmit)(request, messages(application)).toString
       }
-    }
 
-    testInvalidJourneyType(CorrectReturn, CorrectReturnCheckChangesCYAController.onPageLoad.url, false)
-    testNoUserAnswersError(CorrectReturnCheckChangesCYAController.onPageLoad.url, false)
+      testInvalidJourneyType(CorrectReturn, CorrectReturnCheckChangesCYAController.onPageLoad.url, false)
+      testNoUserAnswersError(CorrectReturnCheckChangesCYAController.onPageLoad.url, false)
+    }
   }
 }
