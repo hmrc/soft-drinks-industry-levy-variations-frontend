@@ -101,6 +101,7 @@ changeActivity.checkYourAnswers.contractPackingSection = Package for customers
 changeActivity.checkYourAnswers.importsSection = Brought into the UK
 
 cancelRegistration.reason.title = Why do you need to cancel your registration?
+cancelRegistration.reason.characterCount = You have {0} characters remaining
 cancelRegistration.reason.checkYourAnswersLabel = Reason for cancelling
 cancelRegistration.reason.hint = Enter a maximum of 255 characters
 cancelRegistration.reason.error.required = Enter why you need to cancel your registration

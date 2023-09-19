@@ -16,12 +16,13 @@
 
 @import controllers.cancelRegistration.routes
 @import viewmodels.LabelSize.Large
+@import views.html.templates.InputCharacterCount
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
-    govukTextarea : GovukTextarea,
+    characterCount : InputCharacterCount,
     govukButton: GovukButton
 )
 
@@ -35,11 +36,15 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @govukTextarea(
-            TextAreaViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("cancelRegistration.reason.title")).asPageHeading(Large)
-            ).withHint(HintViewModel(messages("cancelRegistration.reason.hint")))
+        @characterCount(
+            field = form("value"),
+            id = "value",
+            name = "value",
+            label = messages("cancelRegistration.reason.title"),
+            isPageHeading = true,
+            hint = Some(messages("cancelRegistration.reason.hint")),
+            threshold = Some(0),
+            maxLength = Some(255)
         )
 
         @govukButton(

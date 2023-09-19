@@ -37,7 +37,7 @@ class ReasonViewSpec extends ViewSpecHelper {
 
   object Selectors {
     val formGroup = "govuk-form-group"
-    val labelAsHeading = "govuk-label  govuk-label--l"
+    val labelAsHeading = "govuk-label govuk-label--l"
     val hint = "govuk-hint"
     val errorSummaryList = "govuk-list govuk-error-summary__list"
     val button = "govuk-button"
