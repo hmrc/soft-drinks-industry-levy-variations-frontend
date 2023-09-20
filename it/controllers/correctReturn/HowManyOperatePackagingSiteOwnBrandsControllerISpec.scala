@@ -19,7 +19,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
 
   List(NormalMode, CheckMode).foreach { mode =>
     val (path, redirectLocation) = if(mode == NormalMode) {
-      (normalRoutePath, controllers.routes.IndexController.onPageLoad.url)
+      (normalRoutePath, routes.PackagedAsContractPackerController.onPageLoad(NormalMode).url)
     } else {
       (checkRoutePath, routes.CorrectReturnCYAController.onPageLoad.url)
     }
