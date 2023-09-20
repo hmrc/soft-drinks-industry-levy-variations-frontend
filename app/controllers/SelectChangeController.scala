@@ -28,6 +28,7 @@ import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.SelectChangeView
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
@@ -52,10 +53,14 @@ class SelectChangeController @Inject()(
         case None => form
       }
       selectChangeOrchestrator.hasReturnsToCorrect(request.subscription).value.map {
-        case Right(hasVariableReturns) => Ok(view(preparedForm, hasVariableReturns))
+        case Right(hasVariableReturns) =>
+          request.subscription.deregDate match {
+            case None => Ok(view(preparedForm, hasVariableReturns))
+            case _ => Ok(view(preparedForm, hasVariableReturns,isDeregistered = true))
+          }
+
         case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
       }
-
   }
 
   def onSubmit: Action[AnyContent] = (identify andThen getData).async {

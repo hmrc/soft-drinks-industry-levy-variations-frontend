@@ -22,7 +22,7 @@
     govukButton: GovukButton
 )
 
-@(form: Form[_], hasCorrectableReturns: Boolean = false)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], hasCorrectableReturns: Boolean = false, isDeregistered: Boolean = false)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("selectChange.title"))) {
 
@@ -36,7 +36,7 @@
             RadiosViewModel(
                 field  = form("value"),
                 legend = LegendViewModel(messages("selectChange.heading")).asPageHeading(),
-                items  = SelectChange.options(hasCorrectableReturns)
+                items  = SelectChange.options(hasCorrectableReturns, isDeregistered)
             ).withHint(HintViewModel(messages("selectChange.hint"))))
 
         @govukButton(
