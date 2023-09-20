@@ -16,10 +16,11 @@
 
 package views.summary
 
-import models.{CheckMode, UserAnswers}
+import models.{CheckMode, RetrievedSubscription, SdilReturn, UserAnswers}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{SummaryList, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import utilities.UserTypeCheck
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -78,9 +79,20 @@ object UKSitesSummary {
       )
   }
 
-  def getHeadingAndSummary(userAnswers: UserAnswers, isCheckAnswers: Boolean)
+  def getHeadingAndSummary(userAnswers: UserAnswers, isCheckAnswers: Boolean, subscription: RetrievedSubscription)
                           (implicit messages: Messages): Option[(String, SummaryList)] = {
-    val optSummaryList = Option(
+    val optSummaryList = (
+      UserTypeCheck.isNewPacker(SdilReturn.apply(userAnswers), subscription),
+      UserTypeCheck.isNewImporter(SdilReturn.apply(userAnswers), subscription)
+    ) match {
+      case (true, false) => Option(
+        SummaryListViewModel(
+          Seq(
+            getPackAtBusinessAddressRow(userAnswers, isCheckAnswers),
+          )
+        )
+      )
+      case (true, true) => Option(
         SummaryListViewModel(
           Seq(
             getPackAtBusinessAddressRow(userAnswers, isCheckAnswers),
@@ -88,7 +100,15 @@ object UKSitesSummary {
           )
         )
       )
-
+      case (false, true) => Option(
+        SummaryListViewModel(
+          Seq(
+            getAskSecondaryWarehouseRow(userAnswers, isCheckAnswers)
+          )
+        )
+      )
+      case _ => None
+    }
       optSummaryList.map(list => "checkYourAnswers.sites" -> list)
     }
 

@@ -37,7 +37,7 @@ class CorrectReturnCheckChangesCYAController @Inject()(
     implicit request =>
 
       val orgName: String = " " + request.subscription.orgName
-      val sections = CorrectReturnBaseCYASummary.summaryListAndHeadings(request.userAnswers)
+      val sections = CorrectReturnBaseCYASummary.summaryListAndHeadings(request.userAnswers, request.subscription)
 
       Ok(view(orgName, sections, routes.CorrectReturnCheckChangesCYAController.onSubmit))
   }

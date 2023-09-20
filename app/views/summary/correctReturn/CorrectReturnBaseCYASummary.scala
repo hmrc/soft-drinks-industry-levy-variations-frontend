@@ -17,72 +17,111 @@
 package views.summary.correctReturn
 
 import config.FrontendAppConfig
-import models.UserAnswers
+import models.{RetrievedSubscription, UserAnswers}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 import viewmodels.summary.correctReturn.ExemptionsForSmallProducersSummary
 import views.summary.UKSitesSummary
 
 object CorrectReturnBaseCYASummary {
-  def summaryListAndHeadings(userAnswers: UserAnswers)
-                 (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
 
+  def summaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription)
+                            (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
+    (ownBrandsSummarySection(userAnswers) ++ contractPackerSummarySection(userAnswers) ++
+      contractPackedForRegisteredSmallProducersSection(userAnswers) ++ broughtIntoUKSection(userAnswers) ++
+      broughtIntoUkFromSmallProducersSection(userAnswers) ++ claimCreditsForExportsSection(userAnswers) ++
+      claimCreditsForLostDamagedSection(userAnswers) ++ siteDetailsSection(userAnswers, subscription)).toSeq
+  }
+
+  def ownBrandsSummarySection(userAnswers: UserAnswers)
+                             (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Option[(String, SummaryList)] = {
     val ownBrandsSummary: Option[SummaryList] =
       Some(OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers = true))
-    val ownBrandsSection: Option[(String, SummaryList)] = ownBrandsSummary.map(summary => {
+    val ownBrandsList: Option[(String, SummaryList)] = ownBrandsSummary.map(summary => {
       "correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader" -> summary
     })
+    ownBrandsList
+  }
+
+  def contractPackerSummarySection(userAnswers: UserAnswers)
+                                  (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Option[(String, SummaryList)] = {
     val contractPackedOwnSiteSummary: SummaryList = PackagedAsContractPackerSummary.summaryList(userAnswers, isCheckAnswers = true)
-    val contractPackedOwnSiteSection: Option[(String, SummaryList)] = if (contractPackedOwnSiteSummary.rows.isEmpty) None else {
+    val contractPackedOwnSiteList: Option[(String, SummaryList)] = if (contractPackedOwnSiteSummary.rows.isEmpty) None else {
       Option(
         "correctReturn.packagedAsContractPacker.checkYourAnswersSectionHeader" ->
           contractPackedOwnSiteSummary
       )
     }
+    contractPackedOwnSiteList
+  }
+
+  def contractPackedForRegisteredSmallProducersSection(userAnswers: UserAnswers)
+                                                      (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Option[(String, SummaryList)] = {
     val contractPackedForRegisteredSmallProducers: SummaryList =
       ExemptionsForSmallProducersSummary.summaryList(userAnswers, isCheckAnswers = true)
-    val contractPackedForRegisteredSmallProducersSection: Option[(String, SummaryList)] =
+    val contractPackedForRegisteredSmallProducersList: Option[(String, SummaryList)] = {
       if (contractPackedForRegisteredSmallProducers.rows.isEmpty) None else {
         Option(
           "correctReturn.exemptionsForSmallProducers.checkYourAnswersSectionHeader" ->
             contractPackedForRegisteredSmallProducers
         )
       }
+    }
+    contractPackedForRegisteredSmallProducersList
+  }
+
+  def broughtIntoUKSection(userAnswers: UserAnswers)
+                          (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Option[(String, SummaryList)] = {
     val broughtIntoUKSummary: SummaryList = BroughtIntoUKSummary.summaryList(userAnswers, isCheckAnswers = true)
-    val broughtIntoUKSection: Option[(String, SummaryList)] = if (broughtIntoUKSummary.rows.isEmpty) None else {
+    val broughtIntoUKList: Option[(String, SummaryList)] = if (broughtIntoUKSummary.rows.isEmpty) None else {
       Option(
         "correctReturn.broughtIntoUK.checkYourAnswersSectionHeader" ->
           broughtIntoUKSummary
       )
     }
-    val broughtIntoUkFromSmallProducersSummary: SummaryList =
-      BroughtIntoUkFromSmallProducersSummary.summaryList(userAnswers, isCheckAnswers = true)
-    val broughtIntoUkFromSmallProducersSection: Option[(String, SummaryList)] =
-      if (broughtIntoUkFromSmallProducersSummary.rows.isEmpty) None else {
-        Option(
-          "correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersSectionHeader" ->
-            broughtIntoUkFromSmallProducersSummary
-        )
-      }
+    broughtIntoUKList
+  }
+
+  def broughtIntoUkFromSmallProducersSection(userAnswers: UserAnswers)
+                                            (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Option[(String, SummaryList)] = {
+  val broughtIntoUkFromSmallProducersSummary: SummaryList =
+    BroughtIntoUkFromSmallProducersSummary.summaryList(userAnswers, isCheckAnswers = true)
+  val broughtIntoUkFromSmallProducersList: Option[(String, SummaryList)] = {
+    if (broughtIntoUkFromSmallProducersSummary.rows.isEmpty) None else {
+      Option(
+        "correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersSectionHeader" ->
+          broughtIntoUkFromSmallProducersSummary
+      )
+    }
+  }
+    broughtIntoUkFromSmallProducersList
+  }
+
+  def claimCreditsForExportsSection(userAnswers: UserAnswers)
+                                            (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Option[(String, SummaryList)] = {
     val claimCreditsForExportsSummary: SummaryList = ClaimCreditsForExportsSummary.summaryList(userAnswers, isCheckAnswers = true)
-    val claimCreditsForExportsSection: Option[(String, SummaryList)] = if (claimCreditsForExportsSummary.rows.isEmpty) None else {
+    val claimCreditsForExportsList: Option[(String, SummaryList)] = if (claimCreditsForExportsSummary.rows.isEmpty) None else {
       Option(
         "correctReturn.claimCreditsForExports.checkYourAnswersSectionHeader" ->
           claimCreditsForExportsSummary
       )
     }
-    val claimCreditsForLostDamagedSummaryPlaceholder: SummaryList = ClaimCreditsForExportsSummary.summaryList(userAnswers, isCheckAnswers = true)
-    val claimCreditsForLostDemagedSection: Option[(String, SummaryList)] = if (claimCreditsForLostDamagedSummaryPlaceholder.rows.isEmpty) None else {
+    claimCreditsForExportsList
+  }
+
+  def claimCreditsForLostDamagedSection(userAnswers: UserAnswers)
+                                   (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Option[(String, SummaryList)] = {
+    val claimCreditsForLostDamagedSummary: SummaryList = ClaimCreditsForLostDestroyedSummary.summaryList(userAnswers, isCheckAnswers = true)
+    val claimCreditsForLostDamagedList: Option[(String, SummaryList)] = if (claimCreditsForLostDamagedSummary.rows.isEmpty) None else {
       Option(
         "correctReturn.claimCreditsForLostDamaged.checkYourAnswersSectionHeader" ->
-          claimCreditsForLostDamagedSummaryPlaceholder
+          claimCreditsForLostDamagedSummary
       )
     }
-    val siteDetailsSection: Option[(String, SummaryList)] = UKSitesSummary.getHeadingAndSummary(userAnswers, isCheckAnswers = true)
-
-    (ownBrandsSection ++ contractPackedOwnSiteSection ++ contractPackedForRegisteredSmallProducersSection ++
-      broughtIntoUKSection ++ broughtIntoUkFromSmallProducersSection ++ claimCreditsForExportsSection ++
-      claimCreditsForLostDemagedSection ++ siteDetailsSection).toSeq
+    claimCreditsForLostDamagedList
   }
+
+  def siteDetailsSection(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit messages: Messages): Option[(String, SummaryList)] =
+    UKSitesSummary.getHeadingAndSummary(userAnswers, isCheckAnswers = true, subscription)
 
 }
