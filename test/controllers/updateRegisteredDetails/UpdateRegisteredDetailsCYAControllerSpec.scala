@@ -51,7 +51,7 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
       }
     }
 
-    "must Redirect to next page when data is correct for POST" in {
+    "must redirect to update done when data is correct for POST" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)).build()
 
       running(application) {
@@ -60,7 +60,7 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual IndexController.onPageLoad.url
+        redirectLocation(result).value mustEqual UpdateDoneController.onPageLoad.url
       }
     }
     testInvalidJourneyType(UpdateRegisteredDetails, UpdateRegisteredDetailsCYAController.onPageLoad.url)

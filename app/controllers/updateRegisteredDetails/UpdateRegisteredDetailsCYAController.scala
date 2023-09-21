@@ -42,6 +42,7 @@ class UpdateRegisteredDetailsCYAController @Inject()(
       Ok(view(summaryList, routes.UpdateRegisteredDetailsCYAController.onSubmit))
   }
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
-      Redirect(controllers.routes.IndexController.onPageLoad.url)
+//    TODO: Need to actually update to ETMP
+      Redirect(routes.UpdateDoneController.onPageLoad.url)
   }
 }
