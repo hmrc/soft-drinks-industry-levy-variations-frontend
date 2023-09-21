@@ -30,6 +30,6 @@ object ClaimCreditsForExportsSummary extends ReturnDetailsSummaryListWithLitres 
   override val key: String = "correctReturn.claimCreditsForExports.checkYourAnswersLabel"
   override val action: String = routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url
   override val actionId: String = "change-claimCreditsForExports"
-  override val hiddenText: String = "claimCreditsForExports"
+  override val hiddenText: String = "correctReturn.claimCreditsForExports"
 
 }

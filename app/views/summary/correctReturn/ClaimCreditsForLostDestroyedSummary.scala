@@ -30,6 +30,6 @@ object ClaimCreditsForLostDestroyedSummary extends ReturnDetailsSummaryListWithL
   override val key: String = "correctReturn.claimCreditsForLostDamaged.checkYourAnswersLabel"
   override val action: String = routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url
   override val actionId: String = "change-claimCreditsForLostDamaged"
-  override val hiddenText: String = "claimCreditsForLostDamaged"
+  override val hiddenText: String = "correctReturn.claimCreditsForLostDamaged"
 
 }

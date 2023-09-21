@@ -31,6 +31,6 @@ object BroughtIntoUkFromSmallProducersSummary extends ReturnDetailsSummaryListWi
   override val key: String = "correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersLabel"
   override val action: String = routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
   override val actionId: String = "change-broughtIntoUkFromSmallProducers"
-  override val hiddenText: String = "broughtIntoUkFromSmallProducers"
+  override val hiddenText: String = "correctReturn.broughtIntoUkFromSmallProducers"
 
 }

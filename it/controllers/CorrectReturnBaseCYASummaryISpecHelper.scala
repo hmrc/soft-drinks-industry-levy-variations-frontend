@@ -17,11 +17,11 @@ package controllers
  */
 
 import controllers.correctReturn.routes
+import models.correctReturn.AddASmallProducer
 import models.{CheckMode, LitresInBands, UserAnswers}
 import org.jsoup.nodes.Element
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import pages.correctReturn
 import pages.correctReturn._
 
 trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
@@ -39,14 +39,16 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
   val contractPackingLitres: LitresInBands = LitresInBands(3000, 4000)
   val importsLitres: LitresInBands = LitresInBands(5000, 6000)
   val importsSmallProducerLitres: LitresInBands = LitresInBands(5000, 6000)
+  val smallProducerLitres: LitresInBands = LitresInBands(3243, 3542)
 
   def userAnswerWithLitresForAllPages: UserAnswers = emptyUserAnswersForCorrectReturn
     .copy(packagingSiteList = Map.empty, warehouseList = Map.empty)
     .set(OperatePackagingSiteOwnBrandsPage, true).success.value
     .set(HowManyOperatePackagingSiteOwnBrandsPage, operatePackagingSiteLitres).success.value
     .set(PackagedAsContractPackerPage, true).success.value
-    .set(correctReturn.HowManyPackagedAsContractPackerPage, contractPackingLitres).success.value
+    .set(HowManyPackagedAsContractPackerPage, contractPackingLitres).success.value
     .set(ExemptionsForSmallProducersPage, true).success.value
+    .set(AddASmallProducerPage, AddASmallProducer(None, "", smallProducerLitres)).success.value
     .set(BroughtIntoUKPage, true).success.value
     .set(HowManyBroughtIntoUKPage, importsLitres).success.value
     .set(BroughtIntoUkFromSmallProducersPage, true).success.value
@@ -76,13 +78,13 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     val rows = operatePackagingSites.getElementsByClass("govuk-summary-list__row")
     val yesNoRow = rows.get(0)
     val lowBandRow = rows.get(1)
-    val highBandRow = rows.get(2)
+    val highBandRow = rows.get(3)
     yesNoRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe "Yes"
     if(isCheckAnswers) {
       yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
-        .first().text() mustBe "Change do you operate any packaging sites in the UK to package liable drinks for the brands you own?"
+        .first().text() mustBe "Change whether you package your own brands at your own site"
       yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
-        .first().text() mustBe "do you operate any packaging sites in the UK to package liable drinks for the brands you own?"
+        .first().text() mustBe "whether you package your own brands at your own site"
       yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
         .first().attr("href") mustBe routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
     } else {
@@ -92,9 +94,9 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     lowBandRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(litresInBands.lowBand)
     if (isCheckAnswers) {
       lowBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
-        .first().text() mustBe "Change amount of litres in low band for own brands packaged at your own site"
+        .first().text() mustBe "Change number of litres in low band packaged at your own site"
       lowBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
-        .first().text() mustBe "amount of litres in low band for own brands packaged at your own site"
+        .first().text() mustBe "number of litres in low band packaged at your own site"
       lowBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
         .first().attr("href") mustBe routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
     } else {
@@ -104,9 +106,9 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     highBandRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(litresInBands.highBand)
     if (isCheckAnswers) {
       highBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
-        .first().text() mustBe "Change amount of litres in high band for own brands packaged at your own site"
+        .first().text() mustBe "Change number of litres in high band packaged at your own site"
       highBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
-        .first().text() mustBe "amount of litres in high band for own brands packaged at your own site"
+        .first().text() mustBe "number of litres in high band packaged at your own site"
       highBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
         .first().attr("href") mustBe routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
     } else {
@@ -122,9 +124,9 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     yesNoRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe "No"
     if (isCheckAnswers) {
       yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
-        .first().text() mustBe "Change do you operate any packaging sites in the UK to package liable drinks for the brands you own?"
+        .first().text() mustBe "Change whether you package your own brands at your own site"
       yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
-        .first().text() mustBe "do you operate any packaging sites in the UK to package liable drinks for the brands you own?"
+        .first().text() mustBe "whether you package your own brands at your own site"
       yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
         .first().attr("href") mustBe routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
     } else {
@@ -138,14 +140,14 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     val rows = operatePackagingSites.getElementsByClass("govuk-summary-list__row")
     val yesNoRow = rows.get(0)
     val lowBandRow = rows.get(1)
-    val highBandRow = rows.get(2)
+    val highBandRow = rows.get(3)
     yesNoRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe "Yes"
     if (isCheckAnswers) {
       yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
         .first().text() mustBe
-        "Change do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?"
+        "Change whether you use contract packing at your own site"
       yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
-        .first().text() mustBe "do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?"
+        .first().text() mustBe "whether you use contract packing at your own site"
       yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
         .first().attr("href") mustBe routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
     } else {
@@ -155,9 +157,9 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     lowBandRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(litresInBands.lowBand)
     if (isCheckAnswers) {
       lowBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
-        .first().text() mustBe "Change amount of litres in low band for contract packed at your own site"
+        .first().text() mustBe "Change number of litres in low band contract packed at your own site"
       lowBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
-        .first().text() mustBe "amount of litres in low band for contract packed at your own site"
+        .first().text() mustBe "number of litres in low band contract packed at your own site"
       lowBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
         .first().attr("href") mustBe routes.HowManyPackagedAsContractPackerController.onPageLoad(CheckMode).url
     } else {
@@ -167,9 +169,9 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     highBandRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(litresInBands.highBand)
     if (isCheckAnswers) {
       highBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
-        .first().text() mustBe "Change amount of litres in high band for contract packed at your own site"
+        .first().text() mustBe "Change number of litres in high band contract packed at your own site"
       highBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
-        .first().text() mustBe "amount of litres in high band for contract packed at your own site"
+        .first().text() mustBe "number of litres in high band contract packed at your own site"
       highBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
         .first().attr("href") mustBe routes.HowManyPackagedAsContractPackerController.onPageLoad(CheckMode).url
     } else {
@@ -177,17 +179,17 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     }
   }
 
-  def validateContractPackingWithNoLitresSummaryList(operatePackagingSites: Element,
+  def validateContractPackingWithNoLitresSummaryList(exemptionsForSmallProducers: Element,
                                                    isCheckYourAnswers: Boolean) = {
-    val rows = operatePackagingSites.getElementsByClass("govuk-summary-list__row")
+    val rows = exemptionsForSmallProducers.getElementsByClass("govuk-summary-list__row")
     rows.size() mustBe 1
     val yesNoRow = rows.get(0)
     yesNoRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe "No"
     if (isCheckYourAnswers) {
       yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
-        .first().text() mustBe "Change do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?"
+        .first().text() mustBe "Change whether you use contract packing at your own site"
       yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
-        .first().text() mustBe "do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?"
+        .first().text() mustBe "whether you use contract packing at your own site"
       yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
         .first().attr("href") mustBe routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
     } else {
@@ -195,19 +197,84 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     }
   }
 
-  def validateImportsWithLitresSummaryList(imports: Element,
-                                                         litresInBands: LitresInBands,
-                                                         isCheckYourAnswers: Boolean) = {
-    val rows = imports.getElementsByClass("govuk-summary-list__row")
+  def validateContractPackedForSmallProducersWithLitresSummaryList(operatePackagingSites: Element,
+                                                   litresInBands: LitresInBands,
+                                                   isCheckAnswers: Boolean): Assertion = {
+    val rows = operatePackagingSites.getElementsByClass("govuk-summary-list__row")
     val yesNoRow = rows.get(0)
     val lowBandRow = rows.get(1)
-    val highBandRow = rows.get(2)
+    val highBandRow = rows.get(3)
     yesNoRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe "Yes"
+    if (isCheckAnswers) {
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().text() mustBe
+        "Change whether you contract pack for registered small producers"
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
+        .first().text() mustBe "whether you contract pack for registered small producers"
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().attr("href") mustBe routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
+    } else {
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").size() mustBe 0
+    }
+
+    lowBandRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(litresInBands.lowBand)
+    if (isCheckAnswers) {
+      lowBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().text() mustBe "Change number of litres in low band you are claiming exemption for"
+      lowBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
+        .first().text() mustBe "number of litres in low band you are claiming exemption for"
+      lowBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().attr("href") mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode).url
+    } else {
+      lowBandRow.getElementsByClass("govuk-summary-list__actions").size() mustBe 0
+    }
+
+    highBandRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(litresInBands.highBand)
+    if (isCheckAnswers) {
+      highBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().text() mustBe "Change number of litres in high band you are claiming exemption for"
+      highBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
+        .first().text() mustBe "number of litres in high band you are claiming exemption for"
+      highBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().attr("href") mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode).url
+    } else {
+      highBandRow.getElementsByClass("govuk-summary-list__actions").size() mustBe 0
+    }
+  }
+
+  def validateContractPackedForSmallProducersWithNoLitresSummaryList(operatePackagingSites: Element,
+                                                     isCheckYourAnswers: Boolean) = {
+    val rows = operatePackagingSites.getElementsByClass("govuk-summary-list__row")
+    rows.size() mustBe 1
+    val yesNoRow = rows.get(0)
+    yesNoRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe "No"
     if (isCheckYourAnswers) {
       yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
-        .first().text() mustBe "Change do you bring liable drinks into the UK from anywhere outside of the UK?"
+        .first().text() mustBe "Change whether you contract pack for registered small producers"
       yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
-        .first().text() mustBe "do you bring liable drinks into the UK from anywhere outside of the UK?"
+        .first().text() mustBe "whether you contract pack for registered small producers"
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().attr("href") mustBe routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
+    } else {
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").size() mustBe 0
+    }
+  }
+
+  def validateImportsWithLitresSummaryList(imports: Element,
+                                                         litresInBands: LitresInBands,
+                                                         isCheckYourAnswers: Boolean): Assertion = {
+    val rows = imports.getElementsByClass("govuk-summary-list__row")
+
+    val yesNoRow = rows.get(0)
+    val lowBandRow = rows.get(1)
+    val highBandRow = rows.get(3)
+    yesNoRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe "Yes"
+
+    if (isCheckYourAnswers) {
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().text() mustBe "Change whether you bring liable drinks into the UK"
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
+        .first().text() mustBe "whether you bring liable drinks into the UK"
       yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
         .first().attr("href") mustBe routes.BroughtIntoUKController.onPageLoad(CheckMode).url
     } else {
@@ -217,9 +284,9 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     lowBandRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(litresInBands.lowBand)
     if (isCheckYourAnswers) {
       lowBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
-        .first().text() mustBe "Change amount of litres in low band for brought into the UK"
+        .first().text() mustBe "Change number of litres in low band brought into the UK"
       lowBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
-        .first().text() mustBe "amount of litres in low band for brought into the UK"
+        .first().text() mustBe "number of litres in low band brought into the UK"
       lowBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
         .first().attr("href") mustBe routes.HowManyBroughtIntoUKController.onPageLoad(CheckMode).url
     } else {
@@ -229,9 +296,9 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     highBandRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(litresInBands.highBand)
     if (isCheckYourAnswers) {
       highBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
-        .first().text() mustBe "Change amount of litres in high band for brought into the UK"
+        .first().text() mustBe "Change number of litres in high band brought into the UK"
       highBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
-        .first().text() mustBe "amount of litres in high band for brought into the UK"
+        .first().text() mustBe "number of litres in high band brought into the UK"
       highBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
         .first().attr("href") mustBe routes.HowManyBroughtIntoUKController.onPageLoad(CheckMode).url
     } else {
@@ -240,18 +307,206 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
   }
 
   def validateImportsWithNoLitresSummaryList(imports: Element,
+                                           isCheckYourAnswers: Boolean): Assertion = {
+    val rows = imports.getElementsByClass("govuk-summary-list__row")
+    rows.size() mustBe 1
+    val yesNoRow = rows.get(0)
+    yesNoRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe "No"
+
+    if (isCheckYourAnswers) {
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().text() mustBe "Change whether you bring liable drinks into the UK"
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
+        .first().text() mustBe "whether you bring liable drinks into the UK"
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().attr("href") mustBe routes.BroughtIntoUKController.onPageLoad(CheckMode).url
+    } else {
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").size() mustBe 0
+    }
+  }
+
+  def validateImportsFromSmallProducersWithLitresSummaryList(imports: Element,
+                                           litresInBands: LitresInBands,
                                            isCheckYourAnswers: Boolean) = {
+    val rows = imports.getElementsByClass("govuk-summary-list__row")
+    val yesNoRow = rows.get(0)
+    val lowBandRow = rows.get(1)
+    val highBandRow = rows.get(3)
+    yesNoRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe "Yes"
+    if (isCheckYourAnswers) {
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().text() mustBe "Change whether you bring liable drinks into the UK from a small producer"
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
+        .first().text() mustBe "whether you bring liable drinks into the UK from a small producer"
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().attr("href") mustBe routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
+    } else {
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").size() mustBe 0
+    }
+
+    lowBandRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(litresInBands.lowBand)
+    if (isCheckYourAnswers) {
+      lowBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().text() mustBe "Change number of litres in low band brought into the UK from a small producer"
+      lowBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
+        .first().text() mustBe "number of litres in low band brought into the UK from a small producer"
+      lowBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().attr("href") mustBe routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
+    } else {
+      lowBandRow.getElementsByClass("govuk-summary-list__actions").size() mustBe 0
+    }
+
+    highBandRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(litresInBands.highBand)
+    if (isCheckYourAnswers) {
+      highBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().text() mustBe "Change number of litres in high band brought into the UK from a small producer"
+      highBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
+        .first().text() mustBe "number of litres in high band brought into the UK from a small producer"
+      highBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().attr("href") mustBe routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
+    } else {
+      highBandRow.getElementsByClass("govuk-summary-list__actions").size() mustBe 0
+    }
+  }
+
+  def validateImportsFromSmallProducersWithNoLitresSummaryList(imports: Element,
+                                             isCheckYourAnswers: Boolean) = {
     val rows = imports.getElementsByClass("govuk-summary-list__row")
     rows.size() mustBe 1
     val yesNoRow = rows.get(0)
     yesNoRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe "No"
     if (isCheckYourAnswers) {
       yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
-        .first().text() mustBe "Change do you bring liable drinks into the UK from anywhere outside of the UK?"
+        .first().text() mustBe "Change whether you bring liable drinks into the UK from a small producer"
       yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
-        .first().text() mustBe "do you bring liable drinks into the UK from anywhere outside of the UK?"
+        .first().text() mustBe "whether you bring liable drinks into the UK from a small producer"
       yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
-        .first().attr("href") mustBe routes.HowManyBroughtIntoUKController.onPageLoad(CheckMode).url
+        .first().attr("href") mustBe routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
+    } else {
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").size() mustBe 0
+    }
+  }
+
+  def validateExportsWithLitresSummaryList(imports: Element,
+                                           litresInBands: LitresInBands,
+                                           isCheckAnswers: Boolean): Assertion = {
+    val rows = imports.getElementsByClass("govuk-summary-list__row")
+    val yesNoRow = rows.get(0)
+    val lowBandRow = rows.get(1)
+    val highBandRow = rows.get(2)
+    yesNoRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe "Yes"
+    if (isCheckAnswers) {
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().text() mustBe
+        "Change whether you want to claim credits for exported liable drinks"
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
+        .first().text() mustBe "whether you want to claim credits for exported liable drinks"
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().attr("href") mustBe routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url
+    } else {
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").size() mustBe 0
+    }
+
+    lowBandRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(litresInBands.lowBand)
+    if (isCheckAnswers) {
+      lowBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().text() mustBe "Change number of litres in the low band for exported liable drinks"
+      lowBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
+        .first().text() mustBe "number of litres in the low band for exported liable drinks"
+      lowBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().attr("href") mustBe routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
+    } else {
+      lowBandRow.getElementsByClass("govuk-summary-list__actions").size() mustBe 0
+    }
+
+    highBandRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(litresInBands.highBand)
+    if (isCheckAnswers) {
+      highBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().text() mustBe "Change number of litres in the high band for exported liable drinks"
+      highBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
+        .first().text() mustBe "number of litres in the high band for exported liable drinks"
+      highBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().attr("href") mustBe routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
+    } else {
+      highBandRow.getElementsByClass("govuk-summary-list__actions").size() mustBe 0
+    }
+  }
+
+  def validateExportsWithNoLitresSummaryList(imports: Element, isCheckYourAnswers: Boolean) = {
+    val rows = imports.getElementsByClass("govuk-summary-list__row")
+    rows.size() mustBe 1
+    val yesNoRow = rows.get(0)
+    yesNoRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe "No"
+    if (isCheckYourAnswers) {
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().text() mustBe "Change whether you want to claim credits for exported liable drinks"
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
+        .first().text() mustBe "whether you want to claim credits for exported liable drinks"
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().attr("href") mustBe routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url
+    } else {
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").size() mustBe 0
+    }
+  }
+
+  def validateLostOrDamagedWithLitresSummaryList(imports: Element,
+                                                 litresInBands: LitresInBands,
+                                                 isCheckAnswers: Boolean): Assertion = {
+    val rows = imports.getElementsByClass("govuk-summary-list__row")
+    val yesNoRow = rows.get(0)
+    val lowBandRow = rows.get(1)
+    val highBandRow = rows.get(2)
+    yesNoRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe "Yes"
+    if (isCheckAnswers) {
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().text() mustBe
+        "Change whether you want to claim credits for lost or destroyed liable drinks"
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
+        .first().text() mustBe "whether you want to claim credits for lost or destroyed liable drinks"
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().attr("href") mustBe routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url
+    } else {
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").size() mustBe 0
+    }
+
+    lowBandRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(litresInBands.lowBand)
+    if (isCheckAnswers) {
+      lowBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().text() mustBe "Change number of litres in the low band for lost or destroyed liable drinks"
+      lowBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
+        .first().text() mustBe "number of litres in the low band for lost or destroyed liable drinks"
+      lowBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().attr("href") mustBe routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
+    } else {
+      lowBandRow.getElementsByClass("govuk-summary-list__actions").size() mustBe 0
+    }
+
+    highBandRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe java.text.NumberFormat.getInstance.format(litresInBands.highBand)
+    if (isCheckAnswers) {
+      highBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().text() mustBe "Change number of litres in the high band for lost or destroyed liable drinks"
+      highBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
+        .first().text() mustBe "number of litres in the high band for lost or destroyed liable drinks"
+      highBandRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().attr("href") mustBe routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
+    } else {
+      highBandRow.getElementsByClass("govuk-summary-list__actions").size() mustBe 0
+    }
+  }
+
+  def validateLostOrDamagedWithNoLitresSummaryList(imports: Element,
+                                                   isCheckYourAnswers: Boolean) = {
+    val rows = imports.getElementsByClass("govuk-summary-list__row")
+    rows.size() mustBe 1
+    val yesNoRow = rows.get(0)
+    yesNoRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe "No"
+    if (isCheckYourAnswers) {
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().text() mustBe "Change whether you want to claim credits for lost or destroyed liable drinks"
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
+        .first().text() mustBe "whether you want to claim credits for lost or destroyed liable drinks"
+      yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+        .first().attr("href") mustBe routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url
     } else {
       yesNoRow.getElementsByClass("govuk-summary-list__actions").size() mustBe 0
     }

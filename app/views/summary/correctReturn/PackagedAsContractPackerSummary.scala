@@ -30,6 +30,6 @@ object PackagedAsContractPackerSummary extends ReturnDetailsSummaryListWithLitre
   override val key: String = "correctReturn.packagedAsContractPacker.checkYourAnswersLabel"
   override val action: String = routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
   override val actionId: String = "change-packagedAsContractPacker"
-  override val hiddenText: String = "packagedAsContractPacker"
+  override val hiddenText: String = "correctReturn.packagedAsContractPacker"
 
 }

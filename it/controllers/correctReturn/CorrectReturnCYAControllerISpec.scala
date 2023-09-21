@@ -16,7 +16,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
 
   "GET " + routes.CorrectReturnCYAController.onPageLoad.url - {
     "when the userAnswers contains no data" - {
-      "should redirect to Select Change controller" in {
+      "should redirect to Select Return controller" in {
         given
           .commonPrecondition
 
@@ -27,7 +27,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
 
           whenReady(result) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.SelectChangeController.onPageLoad.url)
+            res.header(HeaderNames.LOCATION) mustBe Some(routes.SelectController.onPageLoad.url)
           }
         }
       }
@@ -48,22 +48,45 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
             res.status mustBe OK
             val page = Jsoup.parse(res.body)
             page.title mustBe "Check your answers before sending your update - Soft Drinks Industry Levy - GOV.UK"
-            page.getElementsByClass("govuk-summary-list").size() mustBe 7
+            page.getElementsByClass("govuk-summary-list").size() mustBe 8
 
-            val operatePackagingSites = page.getElementsByClass("govuk-summary-list").get(1)
-            page.getElementsByTag("h2").get(1).text() mustBe "Own brands packaged at your own site"
+            val operatePackagingSites = page.getElementsByClass("govuk-summary-list").get(0)
+
+            page.getElementsByTag("h2").get(0).text() mustBe "Own brands packaged at your own site"
             validateOperatePackagingSitesWithLitresSummaryList(operatePackagingSites, operatePackagingSiteLitres, true)
 
-            val contractPacking = page.getElementsByClass("govuk-summary-list").get(2)
+            val contractPacking = page.getElementsByClass("govuk-summary-list").get(1)
 
-            page.getElementsByTag("h2").get(2).text() mustBe "Contract packed at your own site"
+            page.getElementsByTag("h2").get(1).text() mustBe "Contract packed at your own site"
             validateContractPackingWithLitresSummaryList(contractPacking, contractPackingLitres, true)
 
+            val contractPackedForSmallProducers = page.getElementsByClass("govuk-summary-list").get(2)
+
+            page.getElementsByTag("h2").get(2).text() mustBe "Contract packed for registered small producers"
+            validateContractPackedForSmallProducersWithLitresSummaryList(contractPackedForSmallProducers, smallProducerLitres, true)
+
             val imports = page.getElementsByClass("govuk-summary-list").get(3)
+
             page.getElementsByTag("h2").get(3).text() mustBe "Brought into the UK"
             validateImportsWithLitresSummaryList(imports, importsLitres, true)
 
-            val siteDetailsSummaryListItem = page.getElementsByClass("govuk-summary-list").get(6)
+            val importsSmallProducers = page.getElementsByClass("govuk-summary-list").get(4)
+
+            page.getElementsByTag("h2").get(4).text() mustBe "Brought into the UK from small producers"
+            validateImportsFromSmallProducersWithLitresSummaryList(importsSmallProducers, importsLitres, true)
+
+            val exported = page.getElementsByClass("govuk-summary-list").get(5)
+
+            page.getElementsByTag("h2").get(5).text() mustBe "Exports"
+            validateExportsWithLitresSummaryList(exported, importsLitres, true)
+
+            val lostOrDamaged = page.getElementsByClass("govuk-summary-list").get(6)
+
+            page.getElementsByTag("h2").get(6).text() mustBe "Lost or damaged"
+            validateLostOrDamagedWithLitresSummaryList(lostOrDamaged, importsLitres, true)
+
+            val siteDetailsSummaryListItem = page.getElementsByClass("govuk-summary-list").get(8)
+
             page.getElementsByTag("h2").get(6).text() mustBe "UK site details"
             validateSiteDetailsSummary(siteDetailsSummaryListItem, 3, 1, true)
 
@@ -90,22 +113,39 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
               page.title mustBe "Check your answers before sending your update - Soft Drinks Industry Levy - GOV.UK"
               page.getElementsByClass("govuk-summary-list").size() mustBe 7
 
-              val operatePackagingSites = page.getElementsByClass("govuk-summary-list").get(1)
-              page.getElementsByTag("h2").get(1).text() mustBe "Own brands packaged at your own site"
+              val operatePackagingSites = page.getElementsByClass("govuk-summary-list").get(0)
+              page.getElementsByTag("h2").get(0).text() mustBe "Own brands packaged at your own site"
               validateOperatePackagingSitesWithNoLitresSummaryList(operatePackagingSites, true)
 
-              val contractPacking = page.getElementsByClass("govuk-summary-list").get(2)
+              val contractPacking = page.getElementsByClass("govuk-summary-list").get(1)
 
-              page.getElementsByTag("h2").get(2).text() mustBe "Contract packed at your own site"
+              page.getElementsByTag("h2").get(1).text() mustBe "Contract packed at your own site"
               validateContractPackingWithNoLitresSummaryList(contractPacking, true)
 
+              val contractPackedForSmallProducers = page.getElementsByClass("govuk-summary-list").get(2)
+
+              page.getElementsByTag("h2").get(2).text() mustBe "Contract packed for registered small producers"
+              validateContractPackedForSmallProducersWithNoLitresSummaryList(contractPackedForSmallProducers, true)
+
               val imports = page.getElementsByClass("govuk-summary-list").get(3)
+
               page.getElementsByTag("h2").get(3).text() mustBe "Brought into the UK"
               validateImportsWithNoLitresSummaryList(imports, true)
 
-              val siteDetailsSummaryListItem = page.getElementsByClass("govuk-summary-list").get(6)
-              page.getElementsByTag("h2").get(6).text() mustBe "UK site details"
-              validateSiteDetailsSummary(siteDetailsSummaryListItem, 0, 0, true)
+              val importsFromSmallProducers = page.getElementsByClass("govuk-summary-list").get(4)
+
+              page.getElementsByTag("h2").get(4).text() mustBe "Brought into the UK from small producers"
+              validateImportsFromSmallProducersWithNoLitresSummaryList(importsFromSmallProducers, true)
+
+              val exports = page.getElementsByClass("govuk-summary-list").get(5)
+
+              page.getElementsByTag("h2").get(5).text() mustBe "Exported"
+              validateExportsWithNoLitresSummaryList(exports, true)
+
+              val lostOrDamaged = page.getElementsByClass("govuk-summary-list").get(6)
+
+              page.getElementsByTag("h2").get(6).text() mustBe "Lost or destroyed"
+              validateLostOrDamagedWithNoLitresSummaryList(lostOrDamaged, true)
 
               page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCYAController.onSubmit.url
               page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Save and continue"
