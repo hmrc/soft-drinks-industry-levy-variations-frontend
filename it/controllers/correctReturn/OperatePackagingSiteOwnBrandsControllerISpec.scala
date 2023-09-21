@@ -150,7 +150,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
                 val expectedLocation = if (yesSelected) {
                   routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
                 } else {
-                  controllers.routes.IndexController.onPageLoad.url
+                  routes.PackagedAsContractPackerController.onPageLoad(NormalMode).url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(OperatePackagingSiteOwnBrandsPage))
@@ -176,7 +176,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
                 val expectedLocation = if (yesSelected) {
                   routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
                 } else {
-                  controllers.routes.IndexController.onPageLoad.url
+                  routes.PackagedAsContractPackerController.onPageLoad(NormalMode).url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(OperatePackagingSiteOwnBrandsPage))

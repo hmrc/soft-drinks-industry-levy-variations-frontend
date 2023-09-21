@@ -72,7 +72,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     } else if (mode == CheckMode) {
       routes.CorrectReturnCYAController.onPageLoad
     } else {
-      controllers.routes.IndexController.onPageLoad
+      routes.PackagedAsContractPackerController.onPageLoad(mode)
     }
   }
 
@@ -104,7 +104,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case RemoveWarehouseDetailsPage => userAnswers => defaultCall
     case CorrectionReasonPage => _ => routes.RepaymentMethodController.onPageLoad(NormalMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
-    case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => defaultCall
+    case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => routes.PackagedAsContractPackerController.onPageLoad(NormalMode)
     case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamaged(userAnswers, NormalMode)
     case HowManyCreditsForLostDamagedPage => userAnswers => defaultCall
     case RepaymentMethodPage => userAnswers => defaultCall
@@ -122,6 +122,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case ExemptionsForSmallProducersPage => _ =>  routes.CorrectReturnCYAController.onPageLoad
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, CheckMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
+    case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => routes.CorrectReturnCYAController.onPageLoad
     case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamaged(userAnswers, CheckMode)
     case _ => _ => routes.CorrectReturnCYAController.onPageLoad
   }
