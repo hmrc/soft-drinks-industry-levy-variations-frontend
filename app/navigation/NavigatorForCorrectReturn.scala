@@ -72,7 +72,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     } else if (mode == CheckMode) {
       routes.CorrectReturnCYAController.onPageLoad
     } else {
-      routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(mode)
+      routes.PackagedAsContractPackerController.onPageLoad(mode)
     }
   }
 

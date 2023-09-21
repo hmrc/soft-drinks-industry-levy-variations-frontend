@@ -147,7 +147,12 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url)
+                val expectedLocation = if (yesSelected) {
+                  routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
+                } else {
+                  routes.PackagedAsContractPackerController.onPageLoad(NormalMode).url
+                }
+                res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(OperatePackagingSiteOwnBrandsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe yesSelected
@@ -168,7 +173,12 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url)
+                val expectedLocation = if (yesSelected) {
+                  routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
+                } else {
+                  routes.PackagedAsContractPackerController.onPageLoad(NormalMode).url
+                }
+                res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(OperatePackagingSiteOwnBrandsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe yesSelected
