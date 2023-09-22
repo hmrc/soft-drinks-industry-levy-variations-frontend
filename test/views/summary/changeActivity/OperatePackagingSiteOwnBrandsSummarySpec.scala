@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.changeActivity.summary
+package views.summary.changeActivity
 
 import base.SpecBase
 import models.LitresInBands
@@ -64,12 +64,12 @@ class OperatePackagingSiteOwnBrandsSummarySpec extends SpecBase {
 
         if (includeLevyRows) {
 
-          res.rows(2).key.content.asHtml mustBe Html("litres.lowBandLevy")
+          res.rows(2).key.content.asHtml mustBe Html("Low band levy")
           res.rows(2).key.classes mustBe ""
           res.rows(2).value.content.asHtml mustBe Html("£180.00")
           res.rows(2).value.classes.trim mustBe "govuk-!-text-align-right"
 
-          res.rows(4).key.content.asHtml mustBe Html("litres.highBandLevy")
+          res.rows(4).key.content.asHtml mustBe Html("High band levy")
           res.rows(4).key.classes mustBe ""
           res.rows(4).value.content.asHtml mustBe Html("£480.00")
           res.rows(4).value.classes.trim mustBe "govuk-!-text-align-right"
@@ -105,12 +105,12 @@ class OperatePackagingSiteOwnBrandsSummarySpec extends SpecBase {
 
         if (includeLevyRows) {
 
-          res.rows(2).key.content.asHtml mustBe Html("litres.lowBandLevy")
+          res.rows(2).key.content.asHtml mustBe Html("Low band levy")
           res.rows(2).key.classes mustBe ""
           res.rows(2).value.content.asHtml mustBe Html("£180.00")
           res.rows(2).value.classes.trim mustBe "govuk-!-text-align-right"
 
-          res.rows(4).key.content.asHtml mustBe Html("litres.highBandLevy")
+          res.rows(4).key.content.asHtml mustBe Html("High band levy")
           res.rows(4).key.classes mustBe ""
           res.rows(4).value.content.asHtml mustBe Html("£480.00")
           res.rows(4).value.classes.trim mustBe "govuk-!-text-align-right"

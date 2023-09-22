@@ -55,7 +55,6 @@ trait ReturnDetailsSummaryListWithLitres extends ReturnDetailsSummaryRowHelper {
     }
   }
 
-
   private def getLitresForSmallProducer(userAnswers: UserAnswers, isCheckAnswers: Boolean, includeLevyRows: Boolean = true)
                                        (implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
     val smallProducerList = userAnswers.smallProducerList

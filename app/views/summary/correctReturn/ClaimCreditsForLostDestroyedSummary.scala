@@ -19,17 +19,17 @@ package views.summary.correctReturn
 import controllers.correctReturn.routes
 import models.{CheckMode, LitresInBands}
 import pages.QuestionPage
-import pages.correctReturn.{BroughtIntoUKPage, HowManyBroughtIntoUKPage}
+import pages.correctReturn.{ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage}
 import views.summary.{ReturnDetailsSummaryListWithLitres, SummaryListRowLitresHelper}
 
-object BroughtIntoUKSummary extends ReturnDetailsSummaryListWithLitres  {
+object ClaimCreditsForLostDestroyedSummary extends ReturnDetailsSummaryListWithLitres  {
 
-  override val page: QuestionPage[Boolean] = BroughtIntoUKPage
-  override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyBroughtIntoUKPage)
-  override val summaryLitres: SummaryListRowLitresHelper = HowManyBroughtIntoUKSummary
-  override val key: String = "correctReturn.broughtIntoUK.checkYourAnswersLabel"
-  override val action: String = routes.BroughtIntoUKController.onPageLoad(CheckMode).url
-  override val actionId: String = "change-broughtIntoUK"
-  override val hiddenText: String = "correctReturn.broughtIntoUK"
+  override val page: QuestionPage[Boolean] = ClaimCreditsForLostDamagedPage
+  override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyCreditsForLostDamagedPage)
+  override val summaryLitres: SummaryListRowLitresHelper = HowManyClaimCreditsForLostDestroyedSummary
+  override val key: String = "correctReturn.claimCreditsForLostDamaged.checkYourAnswersLabel"
+  override val action: String = routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url
+  override val actionId: String = "change-claimCreditsForLostDamaged"
+  override val hiddenText: String = "correctReturn.claimCreditsForLostDamaged"
 
 }

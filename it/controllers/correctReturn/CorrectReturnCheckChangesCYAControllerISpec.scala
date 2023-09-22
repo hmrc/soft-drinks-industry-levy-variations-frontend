@@ -13,6 +13,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends ControllerITTestHelper
   val route = "/correct-return/check-changes"
 
   "GET " + routes.CorrectReturnCheckChangesCYAController.onPageLoad.url - {
+
     "when the userAnswers contains no data" - {
       "should render the page" in {
         given
@@ -36,6 +37,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends ControllerITTestHelper
     testUnauthorisedUser(baseUrl + route)
     testAuthenticatedUserButNoUserAnswers(baseUrl + route)
   }
+
   "POST " + routes.CorrectReturnCheckChangesCYAController.onSubmit.url - {
     "when the userAnswers contains no data" - {
       "should redirect to next page" in {

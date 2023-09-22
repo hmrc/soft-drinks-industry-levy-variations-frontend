@@ -41,6 +41,7 @@ class CorrectReturnCheckChangesCYAViewSpec extends ViewSpecHelper {
     val summaryValue = "govuk-summary-list__value"
     val form = "form"
   }
+
   "View" - {
     val summaryList: Seq[(String, SummaryList)] = {
       Seq(
@@ -49,6 +50,7 @@ class CorrectReturnCheckChangesCYAViewSpec extends ViewSpecHelper {
       )
     }
     val call = Call("GET","/foo")
+
     val orgName: String = " " + aSubscription.orgName
     val html: HtmlFormat.Appendable = view(orgName, summaryList, call)(request, messages(application))
     val document: Document = doc(html)

@@ -24,6 +24,6 @@ object HowManyBroughtIntoUKSummary extends SummaryListRowLitresHelper {
 
   override val actionUrl: String = routes.HowManyBroughtIntoUKController.onPageLoad(CheckMode).url
   override val bandActionIdKey: String = "broughtIntoUK"
-  override val bandHiddenKey: String = "broughtIntoUK"
+  override val bandHiddenKey: String = "correctReturn.broughtIntoUK"
 
 }
