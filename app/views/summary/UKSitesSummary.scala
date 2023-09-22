@@ -100,7 +100,7 @@ object UKSitesSummary {
       case (true, false) => Option(
         SummaryListViewModel(
           Seq(
-            getPackAtBusinessAddressRow(userAnswers, isCheckAnswers),
+            getPackAtBusinessAddressRow(userAnswers, isCheckAnswers)
           )
         )
       )
