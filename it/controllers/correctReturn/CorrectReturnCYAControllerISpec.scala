@@ -77,18 +77,18 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
 
             val exported = page.getElementsByClass("govuk-summary-list").get(5)
 
-            page.getElementsByTag("h2").get(5).text() mustBe "Exports"
+            page.getElementsByTag("h2").get(5).text() mustBe "Exported"
             validateExportsWithLitresSummaryList(exported, importsLitres, true)
 
             val lostOrDamaged = page.getElementsByClass("govuk-summary-list").get(6)
 
-            page.getElementsByTag("h2").get(6).text() mustBe "Lost or damaged"
+            page.getElementsByTag("h2").get(6).text() mustBe "Lost or destroyed"
             validateLostOrDamagedWithLitresSummaryList(lostOrDamaged, importsLitres, true)
 
-            val siteDetailsSummaryListItem = page.getElementsByClass("govuk-summary-list").get(8)
+            val siteDetailsSummaryListItem = page.getElementsByClass("govuk-summary-list").get(7)
 
-            page.getElementsByTag("h2").get(6).text() mustBe "UK site details"
-            validateSiteDetailsSummary(siteDetailsSummaryListItem, 3, 1, true)
+            page.getElementsByTag("h2").get(7).text() mustBe "UK site details"
+            validateSiteDetailsSummary(siteDetailsSummaryListItem, 1, 2, true)
 
             page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCYAController.onSubmit.url
             page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Save and continue"

@@ -42,9 +42,15 @@ object UKSitesSummary {
           }
 
           Seq(
-            ActionItemViewModel("site.change", onwardRoute)
-              .withAttribute(("id", "change-packaging-sites"))
-              .withVisuallyHiddenText(messages("checkYourAnswers.sites.packing.change.hidden"))
+            if (userAnswers.packagingSiteList.size != 1) {
+              ActionItemViewModel("site.change", onwardRoute)
+                .withAttribute(("id", "change-packaging-sites"))
+                .withVisuallyHiddenText(messages("checkYourAnswers.sites.packing.change.hidden.multiple"))
+            } else {
+              ActionItemViewModel("site.change", onwardRoute)
+                .withAttribute(("id", "change-packaging-sites"))
+                .withVisuallyHiddenText(messages("checkYourAnswers.sites.packing.change.hidden.one"))
+            }
           )
         } else {
           Seq.empty
@@ -68,10 +74,16 @@ object UKSitesSummary {
           }
 
           Seq(
-            ActionItemViewModel("site.change", onwardRoute)
-              .withAttribute(("id", "change-warehouse-sites"))
-              .withVisuallyHiddenText(messages("checkYourAnswers.sites.warehouse.change.hidden"))
-          )
+            if (userAnswers.warehouseList.size != 1) {
+              ActionItemViewModel("site.change", onwardRoute)
+                .withAttribute(("id", "change-warehouse-sites"))
+                .withVisuallyHiddenText(messages("checkYourAnswers.sites.warehouse.change.hidden.multiple"))
+            } else {
+              ActionItemViewModel("site.change", onwardRoute)
+                .withAttribute(("id", "change-warehouse-sites"))
+                .withVisuallyHiddenText(messages("checkYourAnswers.sites.warehouse.change.hidden.one"))
+            }
+        )
 
         } else {
           Seq.empty

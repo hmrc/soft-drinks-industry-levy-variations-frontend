@@ -39,16 +39,16 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
   val contractPackingLitres: LitresInBands = LitresInBands(3000, 4000)
   val importsLitres: LitresInBands = LitresInBands(5000, 6000)
   val importsSmallProducerLitres: LitresInBands = LitresInBands(5000, 6000)
-  val smallProducerLitres: LitresInBands = LitresInBands(3243, 3542)
+  val smallProducerLitres: LitresInBands = LitresInBands(2000, 4000)
 
   def userAnswerWithLitresForAllPages: UserAnswers = emptyUserAnswersForCorrectReturn
-    .copy(packagingSiteList = Map.empty, warehouseList = Map.empty)
+    .copy(packagingSiteList = packagingSitesFromSubscription, warehouseList = warehousesFromSubscription, smallProducerList = smallProducersAddedList)
     .set(OperatePackagingSiteOwnBrandsPage, true).success.value
     .set(HowManyOperatePackagingSiteOwnBrandsPage, operatePackagingSiteLitres).success.value
     .set(PackagedAsContractPackerPage, true).success.value
     .set(HowManyPackagedAsContractPackerPage, contractPackingLitres).success.value
     .set(ExemptionsForSmallProducersPage, true).success.value
-    .set(AddASmallProducerPage, AddASmallProducer(None, "", smallProducerLitres)).success.value
+    .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", smallProducerLitres)).success.value
     .set(BroughtIntoUKPage, true).success.value
     .set(HowManyBroughtIntoUKPage, importsLitres).success.value
     .set(BroughtIntoUkFromSmallProducersPage, true).success.value
@@ -393,7 +393,7 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     val rows = imports.getElementsByClass("govuk-summary-list__row")
     val yesNoRow = rows.get(0)
     val lowBandRow = rows.get(1)
-    val highBandRow = rows.get(2)
+    val highBandRow = rows.get(3)
     yesNoRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe "Yes"
     if (isCheckAnswers) {
       yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
@@ -455,7 +455,7 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     val rows = imports.getElementsByClass("govuk-summary-list__row")
     val yesNoRow = rows.get(0)
     val lowBandRow = rows.get(1)
-    val highBandRow = rows.get(2)
+    val highBandRow = rows.get(3)
     yesNoRow.getElementsByClass("govuk-summary-list__value").first().text() mustBe "Yes"
     if (isCheckAnswers) {
       yesNoRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
@@ -515,26 +515,38 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
   def validateSiteDetailsSummary(summaryList: Element,
                                  numberOfPackagingSites: Int = 0,
                                  numberOfWarehouses: Int = 0,
-                                 isCheckAnswers: Boolean = true) = {
+                                 isCheckAnswers: Boolean = true): Unit = {
     val rows = summaryList.getElementsByClass("govuk-summary-list__row")
-    if (numberOfPackagingSites == 0) {
+    if (numberOfPackagingSites == 0  && numberOfWarehouses != 0) {
       rows.size() mustBe 1
       testWarehouseSitesRow(rows.get(0))
-    } else {
+    } else if (numberOfPackagingSites != 0 && numberOfWarehouses == 0) {
+      rows.size() mustBe 1
+      testPackingSitesRow(rows.get(0))
+    } else if (numberOfPackagingSites != 0 && numberOfWarehouses != 0) {
       rows.size() mustBe 2
       testPackingSitesRow(rows.get(0))
       testWarehouseSitesRow(rows.get(1))
+    } else {
+      rows.size() mustBe 0
     }
 
     def testPackingSitesRow(packingRow: Element) = {
       if (isCheckAnswers) {
         val packingLink = routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
         packingRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
-          .first().text() mustBe "Change the UK packaging site that you operate to produce liable drinks"
-        packingRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
-          .first().text() mustBe "the UK packaging site that you operate to produce liable drinks"
-        packingRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
           .first().attr("href") mustBe packingLink
+        if (numberOfPackagingSites == 1) {
+          packingRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+            .first().text() mustBe "Change the UK packaging site that you operate to produce liable drinks"
+          packingRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
+            .first().text() mustBe "the UK packaging site that you operate to produce liable drinks"
+        } else {
+          packingRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+            .first().text() mustBe "Change the UK packaging sites that you operate to produce liable drinks"
+          packingRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
+            .first().text() mustBe "the UK packaging sites that you operate to produce liable drinks"
+        }
       } else {
         packingRow.getElementsByClass("govuk-summary-list__actions").size() mustBe 0
       }
@@ -548,11 +560,17 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
           routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url
         }
         warehouseRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+          .first().attr("href") mustBe warehouseLink
+        if (numberOfWarehouses == 1) {
+          warehouseRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
+            .first().text() mustBe "Change the UK warehouse you use to store liable drinks"
+          warehouseRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
+            .first().text() mustBe "the UK warehouse you use to store liable drinks"
+        }
+        warehouseRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
           .first().text() mustBe "Change the UK warehouses you use to store liable drinks"
         warehouseRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden")
           .first().text() mustBe "the UK warehouses you use to store liable drinks"
-        warehouseRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
-          .first().attr("href") mustBe warehouseLink
       } else {
         warehouseRow.getElementsByClass("govuk-summary-list__actions").size() mustBe 0
       }

@@ -1,6 +1,6 @@
 package testSupport
 
-import models.Warehouse
+import models.{SmallProducer, Warehouse}
 import models.backend.{Site, UkAddress}
 
 trait ITSharedCoreTestData {
@@ -17,6 +17,11 @@ trait ITSharedCoreTestData {
   val warehousesFromSubscription: Map[String, Warehouse] = Map(
     "0" -> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy"),"WR53 7CX")),
     "123456" -> Warehouse(Some("XYZ Ltd"), UkAddress(List("30 Main Street"), "WR53 7CX"))
+  )
+
+  val smallProducersAddedList: List[SmallProducer] = List(
+    SmallProducer("Star Products Ltd", "96", (1000L, 2000L)),
+    SmallProducer("Super Star cola Ltd", "97", (1000L, 2000L))
   )
 
 }

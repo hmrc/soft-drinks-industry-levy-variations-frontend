@@ -599,10 +599,12 @@ updateRegisteredDetails.updateDone.detailsSummary = View the details of your upd
 checkYourAnswers.sites = UK site details
 checkYourAnswers.packing.checkYourAnswersLabel.multiple = You have {0} packaging sites
 checkYourAnswers.packing.checkYourAnswersLabel.one = You have 1 packaging site
-checkYourAnswers.sites.packing.change.hidden = packaging site details
+checkYourAnswers.sites.packing.change.hidden.one = the UK packaging site that you operate to produce liable drinks
+checkYourAnswers.sites.packing.change.hidden.multiple = the UK packaging sites that you operate to produce liable drinks
 checkYourAnswers.warehouse.checkYourAnswersLabel.multiple = You have {0} warehouses
 checkYourAnswers.warehouse.checkYourAnswersLabel.one = You have 1 warehouse
-checkYourAnswers.sites.warehouse.change.hidden = warehouse details
+checkYourAnswers.sites.warehouse.change.hidden.one = the UK warehouse you use to store liable drinks
+checkYourAnswers.sites.warehouse.change.hidden.multiple = the UK warehouses you use to store liable drinks
 
 litres.lowBandLevy = Low band levy
 litres.highBandLevy = High band levy

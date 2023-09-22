@@ -26,7 +26,7 @@ object ClaimCreditsForLostDestroyedSummary extends ReturnDetailsSummaryListWithL
 
   override val page: QuestionPage[Boolean] = ClaimCreditsForLostDamagedPage
   override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyCreditsForLostDamagedPage)
-  override val summaryLitres: SummaryListRowLitresHelper = HowManyClaimCreditsForExportsSummary
+  override val summaryLitres: SummaryListRowLitresHelper = HowManyClaimCreditsForLostDestroyedSummary
   override val key: String = "correctReturn.claimCreditsForLostDamaged.checkYourAnswersLabel"
   override val action: String = routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url
   override val actionId: String = "change-claimCreditsForLostDamaged"
