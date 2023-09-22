@@ -24,7 +24,6 @@ import models.{LitresInBands, SmallProducer}
 import pages.correctReturn._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.SummaryListFluency
 import views.html.correctReturn.CorrectReturnCYAView
 import views.summary.correctReturn.CorrectReturnBaseCYASummary

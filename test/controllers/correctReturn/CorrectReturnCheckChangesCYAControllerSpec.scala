@@ -19,12 +19,9 @@ package controllers.correctReturn
 import base.SpecBase
 import controllers.correctReturn.routes._
 import models.SelectChange.CorrectReturn
-<<<<<<< HEAD
-=======
 import models.correctReturn.AddASmallProducer
 import models.{LitresInBands, SmallProducer}
 import pages.correctReturn._
->>>>>>> 3c0b0b8 (DLS-7741 update failing spec tests)
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
@@ -35,11 +32,11 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
 
   "Check Your Answers Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET" - {
       val litres = LitresInBands(2000, 4000)
       val userAnswers = emptyUserAnswersForCorrectReturn
-      .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
-        smallProducerList = List(SmallProducer("", "XZSDIL000000234", (2000,4000))))
+        .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
+          smallProducerList = List(SmallProducer("", "XZSDIL000000234", (2000, 4000))))
         .set(OperatePackagingSiteOwnBrandsPage, true).success.value
         .set(HowManyOperatePackagingSiteOwnBrandsPage, litres).success.value
         .set(PackagedAsContractPackerPage, true).success.value
@@ -64,7 +61,6 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
 
         val view = application.injector.instanceOf[CorrectReturnCheckChangesCYAView]
         val orgName = " Super Lemonade Plc"
-
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(orgName, CorrectReturnBaseCYASummary.summaryListAndHeadings(userAnswers, aSubscription),
