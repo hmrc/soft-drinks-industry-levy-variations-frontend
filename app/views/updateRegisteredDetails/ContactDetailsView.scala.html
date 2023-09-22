@@ -18,24 +18,27 @@
 @import controllers.updateRegisteredDetails.routes
 
 @this(
-        layout: templates.Layout,
-        govukButton: GovukButton,
-        govukSummaryList: GovukSummaryList
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukButton: GovukButton,
+    govukSummaryList: GovukSummaryList
 )
 
 @(summaryList: SummaryList)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("updateRegisteredDetails.contactDetails.title"))) {
 
-    <h1 class="govuk-heading-l">@messages("updateRegisteredDetails.contactDetails.heading")</h1>
+    @formHelper(action = controllers.updateRegisteredDetails.routes.ContactDetailsController.onSubmit, Symbol("autoComplete") -> "off") {
 
-    <p class="govuk-body">@messages("updateRegisteredDetails.contactDetails.legend")</p>
+        <h1 class="govuk-heading-l">@messages("updateRegisteredDetails.contactDetails.heading")</h1>
 
-    @govukSummaryList(summaryList)
+        <p class="govuk-body">@messages("updateRegisteredDetails.contactDetails.legend")</p>
 
-    @govukButton(
-        ButtonViewModel(messages("site.saveContinue"))
-                .asLink(routes.UpdateRegisteredDetailsCYAController.onPageLoad.url).withAttribute("id","save-and-continue-button")
-    )
+        @govukSummaryList(summaryList)
+
+        @govukButton(
+            ButtonViewModel(messages("site.saveContinue"))
+        )
+    }
 
 }

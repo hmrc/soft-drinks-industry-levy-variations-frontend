@@ -66,4 +66,8 @@ class ContactDetailsController @Inject()(
       }
   }
 
+  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
+    Redirect(controllers.routes.IndexController.onPageLoad.url)
+  }
+
 }
