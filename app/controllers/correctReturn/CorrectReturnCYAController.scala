@@ -35,11 +35,10 @@ class CorrectReturnCYAController @Inject()(
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
-
+      val orgName: String = " " + request.subscription.orgName
       val sections = CorrectReturnBaseCYASummary.summaryListAndHeadings(request.userAnswers, request.subscription)
 
-
-      Ok(view(sections, routes.CorrectReturnCYAController.onSubmit))
+      Ok(view(orgName, sections, routes.CorrectReturnCYAController.onSubmit))
   }
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {

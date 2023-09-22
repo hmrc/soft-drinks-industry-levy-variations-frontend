@@ -27,10 +27,16 @@ object CorrectReturnBaseCYASummary {
 
   def summaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription)
                             (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
-    (ownBrandsSummarySection(userAnswers) ++ contractPackerSummarySection(userAnswers) ++
+    val allSummarySectionsExceptOwnBrands = (contractPackerSummarySection(userAnswers) ++
       contractPackedForRegisteredSmallProducersSection(userAnswers) ++ broughtIntoUKSection(userAnswers) ++
       broughtIntoUkFromSmallProducersSection(userAnswers) ++ claimCreditsForExportsSection(userAnswers) ++
-      claimCreditsForLostDamagedSection(userAnswers) ++ siteDetailsSection(userAnswers, subscription)).toSeq
+      claimCreditsForLostDamagedSection(userAnswers) ++ siteDetailsSection(userAnswers, subscription)
+      )
+    if (subscription.activity.smallProducer) {
+      allSummarySectionsExceptOwnBrands.toSeq
+    } else {
+      (allSummarySectionsExceptOwnBrands ++ ownBrandsSummarySection(userAnswers)).toSeq
+    }
   }
 
   def ownBrandsSummarySection(userAnswers: UserAnswers)
