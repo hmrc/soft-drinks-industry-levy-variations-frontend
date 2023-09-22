@@ -27,28 +27,23 @@ object CorrectReturnBaseCYASummary {
 
   def summaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription)
                             (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
-    val allSummarySectionsExceptOwnBrands = (contractPackerSummarySection(userAnswers) ++
+    (ownBrandsSummarySection(userAnswers) ++ contractPackerSummarySection(userAnswers) ++
       contractPackedForRegisteredSmallProducersSection(userAnswers) ++ broughtIntoUKSection(userAnswers) ++
       broughtIntoUkFromSmallProducersSection(userAnswers) ++ claimCreditsForExportsSection(userAnswers) ++
-      claimCreditsForLostDamagedSection(userAnswers) ++ siteDetailsSection(userAnswers, subscription)
-      )
-    if (subscription.activity.smallProducer) {
-      allSummarySectionsExceptOwnBrands.toSeq
-    } else {
-      (allSummarySectionsExceptOwnBrands ++ ownBrandsSummarySection(userAnswers)).toSeq
-    }
+      claimCreditsForLostDamagedSection(userAnswers) ++ siteDetailsSection(userAnswers, subscription)).toSeq
   }
 
   def ownBrandsSummarySection(userAnswers: UserAnswers)
-                             (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Option[(String, SummaryList)] = {
-    val ownBrandsSummary: Option[SummaryList] =
-      Some(OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers = true))
-    val ownBrandsList: Option[(String, SummaryList)] = ownBrandsSummary.map(summary => {
-      "correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader" -> summary
-    })
-    ownBrandsList
+                                  (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Option[(String, SummaryList)] = {
+    val ownBrandsSummary: SummaryList = OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers = true)
+    val ownBrandsSummaryList: Option[(String, SummaryList)] = if (ownBrandsSummary.rows.isEmpty) None else {
+      Option(
+        "correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader" ->
+          ownBrandsSummary
+      )
+    }
+    ownBrandsSummaryList
   }
-
   def contractPackerSummarySection(userAnswers: UserAnswers)
                                   (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Option[(String, SummaryList)] = {
     val contractPackedOwnSiteSummary: SummaryList = PackagedAsContractPackerSummary.summaryList(userAnswers, isCheckAnswers = true)
