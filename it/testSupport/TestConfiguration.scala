@@ -13,17 +13,16 @@ import play.api.i18n.{Lang, MessagesApi, MessagesImpl}
 import play.api.inject._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{CookieHeaderEncoding, MessagesControllerComponents, Session, SessionCookieBaker}
-import play.api.{Application, Environment, Mode}
+import play.api.{Application, Environment, Mode, Play}
 import repositories.{SDILSessionCache, SDILSessionCacheRepository, SessionRepository}
 import testSupport.databases.SessionDatabaseOperations
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
-import uk.gov.hmrc.play.health.HealthController
 
 import java.time.{Clock, ZoneOffset}
 import java.util.concurrent.TimeUnit
-import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext}
 import scala.jdk.CollectionConverters._
 
 trait TestConfiguration
@@ -70,15 +69,15 @@ trait TestConfiguration
   lazy val sdilSessionCacheRepo: SDILSessionCacheRepository = app.injector.instanceOf[SDILSessionCacheRepository]
   lazy val sdilSessionCache: SDILSessionCache = app.injector.instanceOf[SDILSessionCache]
 
-
   val authCookie: String = createSessionCookieAsString(authData).substring(5)
   val authAndSessionCookie: String = createSessionCookieAsString(sessionAndAuth).substring(5)
+
   abstract override implicit val patienceConfig: PatienceConfig =
     PatienceConfig(
-      timeout = Span(4, Seconds),
+      timeout = Span(5, Seconds),
       interval = Span(50, Millis))
 
-  lazy val config = Map(
+   lazy val config = Map(
     s"microservice.services.address-lookup-frontend.host" -> s"$wiremockHost",
     s"microservice.services.address-lookup-frontend.port" -> s"$wiremockPort",
     s"microservice.services.auth.host" -> s"$wiremockHost",
@@ -110,33 +109,32 @@ trait TestConfiguration
       )
   }
 
-  app.injector.instanceOf[HealthController]
-
   val wireMockServer = new WireMockServer(wireMockConfig().port(wiremockPort))
 
-  override def beforeAll() = {
-    wireMockServer.stop()
+  override def beforeAll(): Unit = {
     wireMockServer.start()
-    Await.result(sessionRespository.collection.deleteMany(BsonDocument()).toFuture(), Duration(5, TimeUnit.SECONDS))
-    Await.result(sdilSessionCacheRepo.collection.deleteMany(BsonDocument()).toFuture(), Duration(5, TimeUnit.SECONDS))
     configureFor(wiremockHost, wiremockPort)
   }
 
-  override def beforeEach() = {
-    Await.result(sessionRespository.collection.deleteMany(BsonDocument()).toFuture(),Duration(5,TimeUnit.SECONDS))
-    Await.result(sdilSessionCacheRepo.collection.deleteMany(BsonDocument()).toFuture(),Duration(5,TimeUnit.SECONDS))
+  override def beforeEach(): Unit = {
+    Await.result(sessionRespository.collection.deleteMany(BsonDocument()).toFuture(),Duration(3,TimeUnit.SECONDS))
+    Await.result(sdilSessionCacheRepo.collection.deleteMany(BsonDocument()).toFuture(),Duration(3,TimeUnit.SECONDS))
     resetAllScenarios()
     reset()
+
   }
 
   override protected def afterAll(): Unit = {
-    wireMockServer.stop()
+    wireMockServer.shutdown()
+    Play.stop(app)
   }
 
   override def afterEach(): Unit = {
-    wireMockServer.getAllServeEvents.asScala.toList
-      .sortBy(_.getRequest.getLoggedDate)
-      .map(_.getRequest).foreach(r => s"${r.getLoggedDate.toInstant.toEpochMilli}\t${r.getMethod}\t${r.getUrl}")
+    if(false) {
+      wireMockServer.getAllServeEvents.asScala.toList
+        .sortBy(_.getRequest.getLoggedDate)
+        .map(_.getRequest).foreach(r => s"${r.getLoggedDate.toInstant.toEpochMilli}\t${r.getMethod}\t${r.getUrl}")
+    }
   }
 
   implicit lazy val messagesAPI = app.injector.instanceOf[MessagesApi]

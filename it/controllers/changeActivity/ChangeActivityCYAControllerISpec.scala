@@ -14,7 +14,7 @@ import play.api.libs.json.Json
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 
-class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
+class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTestClient {
 
   val route = "/change-activity/check-your-answers"
 
@@ -26,7 +26,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
 
         setAnswers(emptyUserAnswersForChangeActivity)
 
-        WsTestClient.withClient { client =>
+        withClient { client =>
           val result = createClientRequestGet(client, baseUrl + route)
 
           whenReady(result) { res =>
@@ -173,7 +173,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
                   val userAnswers = getUserAnswers(amountProducedValue, thirdPartyPackagingValue, ownBrandsValue, contractValue, importValue)
                   setAnswers(userAnswers)
 
-                  WsTestClient.withClient { client =>
+                  withClient { client =>
                     val result = createClientRequestGet(client, baseUrl + route)
 
                     whenReady(result) { res =>
@@ -218,7 +218,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper {
 
         setAnswers(emptyUserAnswersForChangeActivity)
 
-        WsTestClient.withClient { client =>
+        withClient { client =>
           val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
           whenReady(result) { res =>
