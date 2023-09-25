@@ -57,7 +57,7 @@ object PackagingSiteDetailsSummary  {
             actions = if(packingSiteList.size > 1){ Some(Actions("",Seq(
               ActionItemViewModel("site.remove", routes.PackingSiteDetailsRemoveController.onPageLoad(NormalMode, packingSite._1).url)
                 .withVisuallyHiddenText(messages("updateRegisteredDetails.packagingSiteDetails.remove.hidden",
-                  packingSite._2.tradingName.getOrElse(""), packingSite._2.address))
+                  packingSite._2.tradingName.getOrElse(""), packingSite._2.address.lines.head))
             )))} else {
               None
             }
