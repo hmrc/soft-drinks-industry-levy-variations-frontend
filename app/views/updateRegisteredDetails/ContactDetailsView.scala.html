@@ -15,6 +15,7 @@
  *@
 
 @import views.html.helpers._
+@import controllers.updateRegisteredDetails.routes
 
 @this(
         layout: templates.Layout,
@@ -34,7 +35,7 @@
 
     @govukButton(
         ButtonViewModel(messages("site.saveContinue"))
-                .asLink(routes.IndexController.onPageLoad.url).withAttribute("id","save-and-continue-button")
+                .asLink(routes.UpdateRegisteredDetailsCYAController.onPageLoad.url).withAttribute("id","save-and-continue-button")
     )
 
 }
