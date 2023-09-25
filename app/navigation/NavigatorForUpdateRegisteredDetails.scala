@@ -40,7 +40,6 @@ class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
 
   override val checkRouteMap: Page => UserAnswers => Call = {
     case PackingSiteDetailsRemovePage => _ => routes.PackagingSiteDetailsController.onPageLoad(CheckMode)
-    case UpdateContactDetailsPage => _ => routes.UpdateRegisteredDetailsCYAController.onPageLoad
     case _ => _ => routes.UpdateRegisteredDetailsCYAController.onPageLoad
   }
 
