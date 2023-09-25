@@ -17,17 +17,17 @@
 package controllers.updateRegisteredDetails
 
 import base.SpecBase
-import controllers.routes._
 import controllers.updateRegisteredDetails.routes._
 import models.SelectChange.UpdateRegisteredDetails
+import models.backend.UkAddress
 import models.updateRegisteredDetails.ContactDetails
-import pages.updateRegisteredDetails.UpdateContactDetailsPage
+import pages.updateRegisteredDetails.{UpdateContactDetailsPage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.SummaryListFluency
 import views.html.updateRegisteredDetails.UpdateRegisteredDetailsCYAView
-import views.summary.updateRegisteredDetails.UpdateContactDetailsSummary
+import views.summary.updateRegisteredDetails.{BusinessAddressSummary, UpdateContactDetailsSummary}
 
 class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryListFluency {
 
@@ -35,7 +35,10 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
 
     "must return OK and the correct view for a GET" in {
       val contactDetails = ContactDetails("foo", "bar", "wizz", "bang")
-      val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(UpdateContactDetailsPage,contactDetails).success.value
+      val businessAddress: UkAddress = UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")
+      val userAnswers = emptyUserAnswersForUpdateRegisteredDetails
+        .copy(contactAddress = businessAddress)
+        .set(UpdateContactDetailsPage,contactDetails).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -44,7 +47,10 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[UpdateRegisteredDetailsCYAView]
-        val list: Seq[(String, SummaryList)] = Seq(UpdateContactDetailsSummary.rows(userAnswers).get)
+        val list: Seq[(String, SummaryList)] = Seq(
+          UpdateContactDetailsSummary.rows(userAnswers),
+          BusinessAddressSummary.rows(userAnswers)
+        ).flatten
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(list, routes.UpdateRegisteredDetailsCYAController.onSubmit)(request, messages(application)).toString
