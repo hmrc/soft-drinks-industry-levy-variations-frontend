@@ -34,6 +34,8 @@
     @govukSummaryList(summaryList)
     }
 
+    <p class="govuk-body">@messages("correctReturn.checkChanges.confirmationStatement")</p>
+
     @formHelper(action = submitCall, Symbol("autoComplete") -> "off") {
         @govukButton(ButtonViewModel(messages("correctReturn.checkChanges.confirmAndSend")))
     }
