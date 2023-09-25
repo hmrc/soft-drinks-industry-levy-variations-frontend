@@ -201,6 +201,7 @@ changeActivity.packagingSiteDetails.info = You must tell us about all of the UK 
 changeActivity.packagingSiteDetails.checkYourAnswersLabel = UK packaging site details
 changeActivity.packagingSiteDetails.error.required = Select yes if you need to add another packaging site
 changeActivity.packagingSiteDetails.change.hidden = {0} site address {1}
+changeActivity.packagingSiteDetails.remove.hidden = {0} site address {1}
 
 changeActivity.removePackagingSiteDetails.title = Are you sure you want to remove this packaging site?
 changeActivity.removePackagingSiteDetails.heading = Are you sure you want to remove this packaging site?
@@ -491,7 +492,7 @@ correctReturn.packagingSiteDetails.heading = You added {0} UK packaging sites
 correctReturn.packagingSiteDetails.heading1 = You added 1 UK packaging site
 correctReturn.packagingSiteDetails.checkYourAnswersLabel = UK packaging sites
 correctReturn.packagingSiteDetails.error.required = Select yes if you want to add another UK packaging site
-correctReturn.packagingSiteDetails.change.hidden = your UK packaging site details
+correctReturn.packagingSiteDetails.change.hidden = {0} site address {1}
 correctReturn.packagingSiteDetails.remove.hidden = {0} site address {1}
 
 correctReturn.askSecondaryWarehouseInReturn.title = Do you want to register any UK warehouses you use to store liable drinks?
@@ -540,7 +541,8 @@ updateRegisteredDetails.packagingSiteDetails.subHeading = Do you want to add ano
 updateRegisteredDetails.packagingSiteDetails.info = You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register the warehouses you use to store them.
 updateRegisteredDetails.packagingSiteDetails.checkYourAnswersLabel = UK packaging site details
 updateRegisteredDetails.packagingSiteDetails.error.required = Select yes if you need to add another packaging site
-updateRegisteredDetails.packagingSiteDetails.change.hidden = change UK packaging site details
+updateRegisteredDetails.packagingSiteDetails.change.hidden = {0} site address {1}
+updateRegisteredDetails.packagingSiteDetails.remove.hidden = {0} site address {1}
 
 updateRegisteredDetails.packingSiteDetailsRemove.title = Are you sure you want to remove this packaging site?
 updateRegisteredDetails.packingSiteDetailsRemove.heading = Are you sure you want to remove this packaging site?
