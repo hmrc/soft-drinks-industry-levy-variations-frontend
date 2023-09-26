@@ -22,6 +22,4 @@ import pages.Page
 case object ChangeActivityCYAPage extends Page {
 
   override def toString: String = "checkYourAnswers"
-
-  override val url: Mode => String = _ => controllers.changeActivity.routes.ChangeActivityCYAController.onPageLoad.url
 }
