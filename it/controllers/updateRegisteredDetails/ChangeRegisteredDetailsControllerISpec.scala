@@ -153,7 +153,7 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
 
                 checkboxItem match {
                   case ChangeRegisteredDetails.Sites => res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
-                  case ChangeRegisteredDetails.ContactDetails => res.header(HeaderNames.LOCATION) mustBe Some(routes.ContactDetailsController.onPageLoad().url)
+                  case ChangeRegisteredDetails.ContactDetails => res.header(HeaderNames.LOCATION) mustBe Some(routes.UpdateContactDetailsController.onPageLoad(NormalMode).url)
                   case ChangeRegisteredDetails.BusinessAddress => res.header(HeaderNames.LOCATION) mustBe Some(routes.BusinessAddressController.onPageLoad().url)
                 }
 
@@ -182,7 +182,7 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
 
                 checkboxItem match {
                   case ChangeRegisteredDetails.Sites => res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
-                  case ChangeRegisteredDetails.ContactDetails => res.header(HeaderNames.LOCATION) mustBe Some(routes.ContactDetailsController.onPageLoad().url)
+                  case ChangeRegisteredDetails.ContactDetails => res.header(HeaderNames.LOCATION) mustBe Some(routes.UpdateContactDetailsController.onPageLoad(NormalMode).url)
                   case ChangeRegisteredDetails.BusinessAddress => res.header(HeaderNames.LOCATION) mustBe Some(routes.BusinessAddressController.onPageLoad().url)
                 }
                 val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Seq[ChangeRegisteredDetails]]](None)(_.get(ChangeRegisteredDetailsPage))

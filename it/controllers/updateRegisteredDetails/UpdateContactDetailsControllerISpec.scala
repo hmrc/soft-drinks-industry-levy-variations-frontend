@@ -2,10 +2,10 @@ package controllers.updateRegisteredDetails
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.UpdateRegisteredDetails
-import models.updateRegisteredDetails.ContactDetails
+import models.updateRegisteredDetails.{ChangeRegisteredDetails, ContactDetails}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.updateRegisteredDetails.UpdateContactDetailsPage
+import pages.updateRegisteredDetails.{ChangeRegisteredDetailsPage, UpdateContactDetailsPage}
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json}
@@ -13,7 +13,7 @@ import play.api.test.WsTestClient
 
 class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
 
-  val normalRoutePath = "/change-registered-details/contact-details-add"
+  val normalRoutePath = "/change-registered-details/contact-details-add/"
   val checkRoutePath = "/change-registered-details/change-contact-details-add"
 
   val updateContactDetailsJsObject = Json.toJson(contactDetails).as[JsObject].value
@@ -148,7 +148,9 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
+          val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(ChangeRegisteredDetailsPage, Seq(ChangeRegisteredDetails.ContactDetails)).success.value
+          setAnswers(userAnswers)
+
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, baseUrl + normalRoutePath, Json.toJson(contactDetailsDiff)
@@ -156,7 +158,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.UpdateRegisteredDetailsCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[ContactDetails]](None)(_.get(UpdateContactDetailsPage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe contactDetailsDiff
@@ -168,6 +170,9 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
+          val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(ChangeRegisteredDetailsPage, Seq(ChangeRegisteredDetails.ContactDetails)).success.value
+          setAnswers(userAnswers)
+
           setAnswers(userAnswers)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
@@ -176,7 +181,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.UpdateRegisteredDetailsCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[ContactDetails]](None)(_.get(UpdateContactDetailsPage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe contactDetailsDiff

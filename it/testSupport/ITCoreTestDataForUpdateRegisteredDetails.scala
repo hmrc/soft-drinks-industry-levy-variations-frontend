@@ -4,7 +4,7 @@ import models.backend.Site
 import models.updateRegisteredDetails.ContactDetails
 import models.{SelectChange, UserAnswers, Warehouse}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
-import pages.updateRegisteredDetails.{PackagingSiteDetailsPage, PackingSiteDetailsRemovePage, RemoveWarehouseDetailsPage, WarehouseDetailsPage}
+import pages.updateRegisteredDetails.{ChangeRegisteredDetailsPage, PackagingSiteDetailsPage, PackingSiteDetailsRemovePage, RemoveWarehouseDetailsPage, WarehouseDetailsPage}
 import play.api.libs.json.Json
 
 trait ITCoreTestDataForUpdateRegisteredDetails extends ITSharedCoreTestData {

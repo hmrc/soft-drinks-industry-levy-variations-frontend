@@ -18,7 +18,7 @@ package navigation
 
 import controllers.updateRegisteredDetails.routes
 import models.updateRegisteredDetails.ChangeRegisteredDetails
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages.Page
 import pages.updateRegisteredDetails._
 import play.api.mvc.Call
@@ -32,15 +32,33 @@ class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
     case ChangeRegisteredDetailsPage => userAnswers => changeRegisteredDetailNavigation(userAnswers)
     case WarehouseDetailsPage => userAnswers => defaultCall
     case RemoveWarehouseDetailsPage => userAnswers => routes.WarehouseDetailsController.onPageLoad(NormalMode)
-    case PackagingSiteDetailsPage => userAnswers => defaultCall
+    case PackagingSiteDetailsPage => userAnswers => PackagingSiteDetailsNavigation(userAnswers)
     case PackingSiteDetailsRemovePage => _ => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
-    case UpdateContactDetailsPage => userAnswers => defaultCall
+    case UpdateContactDetailsPage => userAnswers => UpdateContactDetailsNavigation(userAnswers)
     case _ => _ => defaultCall
   }
 
   override val checkRouteMap: Page => UserAnswers => Call = {
     case PackingSiteDetailsRemovePage => _ => routes.PackagingSiteDetailsController.onPageLoad(CheckMode)
     case _ => _ => routes.UpdateRegisteredDetailsCYAController.onPageLoad
+  }
+
+  def PackagingSiteDetailsNavigation(userAnswers: UserAnswers): Call = {
+    val changeRegisteredDetailsPageAnswers =  userAnswers.get(ChangeRegisteredDetailsPage).head
+    if(changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.ContactDetails)){
+      routes.UpdateContactDetailsController.onPageLoad(NormalMode)
+    }else{
+      routes.UpdateRegisteredDetailsCYAController.onPageLoad
+    }
+  }
+
+  def UpdateContactDetailsNavigation(userAnswers: UserAnswers): Call = {
+    val changeRegisteredDetailsPageAnswers =  userAnswers.get(ChangeRegisteredDetailsPage).head
+    if(changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.BusinessAddress)){
+      routes.BusinessAddressController.onPageLoad()
+    }else{
+      routes.UpdateRegisteredDetailsCYAController.onPageLoad
+    }
   }
 
   def changeRegisteredDetailNavigation(userAnswers: UserAnswers) = {
@@ -55,7 +73,7 @@ class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
           defaultCall
       }
     }else if(changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.ContactDetails)){
-      routes.ContactDetailsController.onPageLoad()
+      routes.UpdateContactDetailsController.onPageLoad(NormalMode)
     }else {
       routes.BusinessAddressController.onPageLoad()
     }
