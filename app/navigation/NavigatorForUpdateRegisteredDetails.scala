@@ -43,18 +43,22 @@ class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
     case _ => _ => routes.UpdateRegisteredDetailsCYAController.onPageLoad
   }
 
-  def PackagingSiteDetailsNavigation(userAnswers: UserAnswers):Call = {
+  def PackagingSiteDetailsNavigation(userAnswers: UserAnswers): Call = {
     val changeRegisteredDetailsPageAnswers =  userAnswers.get(ChangeRegisteredDetailsPage).head
     if(changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.ContactDetails)){
       routes.UpdateContactDetailsController.onPageLoad(NormalMode)
-    }else{routes.UpdateRegisteredDetailsCYAController.onPageLoad}
+    }else{
+      routes.UpdateRegisteredDetailsCYAController.onPageLoad
+    }
   }
 
-  def UpdateContactDetailsNavigation(userAnswers: UserAnswers):Call = {
+  def UpdateContactDetailsNavigation(userAnswers: UserAnswers): Call = {
     val changeRegisteredDetailsPageAnswers =  userAnswers.get(ChangeRegisteredDetailsPage).head
     if(changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.BusinessAddress)){
       routes.BusinessAddressController.onPageLoad()
-    }else{routes.UpdateRegisteredDetailsCYAController.onPageLoad}
+    }else{
+      routes.UpdateRegisteredDetailsCYAController.onPageLoad
+    }
   }
 
   def changeRegisteredDetailNavigation(userAnswers: UserAnswers) = {
