@@ -29,6 +29,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends ControllerITTestHelper
             val page = Jsoup.parse(res.body)
             page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
             page.getElementsByClass("govuk-summary-list").size() mustBe 0
+            page.getElementsByClass("govuk-body").size() mustBe 2
           }
         }
       }
