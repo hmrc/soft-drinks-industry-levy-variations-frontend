@@ -51,7 +51,7 @@ case class UserAnswers(
   }
 
   def getCorrectReturnOriginalSDILReturnData(implicit rds: Reads[SdilReturn]): Option[SdilReturn] = {
-    val jsPath = JsPath \ "OriginalSDILReturn"
+    val jsPath = JsPath \ "originalSDILReturn"
     Reads.optionNoError(Reads.at(jsPath)).reads(data).getOrElse(None)
   }
 
@@ -97,7 +97,7 @@ case class UserAnswers(
   def setOriginalSDILReturn(originalSDILReturn: SdilReturn)
                                  (implicit writes: Writes[CorrectReturnUserAnswersData]): Try[UserAnswers] = {
 
-    val jsPath = JsPath \ "OriginalSDILReturn"
+    val jsPath = JsPath \ "originalSDILReturn"
 
     val updatedData = data.setObject(jsPath, Json.toJson(originalSDILReturn)) match {
       case JsSuccess(jsValue, _) =>

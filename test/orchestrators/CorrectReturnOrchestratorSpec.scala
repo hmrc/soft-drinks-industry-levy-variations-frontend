@@ -33,15 +33,16 @@ import scala.util.{Failure, Try}
 
 class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
 
-  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+  val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
   val mockSessionService: SessionService = mock[SessionService]
 
-  val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0), submittedOn = Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
-  val populatedReturn = SdilReturn((100, 200), (200, 100),
+  val emptyReturn: SdilReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0), submittedOn =
+    Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
+  val populatedReturn: SdilReturn = SdilReturn((100, 200), (200, 100),
     smallProducerList, (300, 400), (400, 300), (50, 60), (60, 50),
     submittedOn = Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
 
-  val sdilReturnsExamples = Map("a nilReturn" -> emptyReturn, "not a nilReturn" -> populatedReturn)
+  val sdilReturnsExamples: Map[String, SdilReturn] = Map("a nilReturn" -> emptyReturn, "not a nilReturn" -> populatedReturn)
 
   def getExpectedUserAnswersCorrectReturnData(key: String): CorrectReturnUserAnswersData = if (key == "a nilReturn") {
     expectedCorrectReturnDataForNilReturn
@@ -93,11 +94,13 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
     "when a sdil return exists" - {
       "should populate the user answers with the data, save to the database and return unit" - {
         sdilReturnsExamples.foreach { case (key, sdilReturn) =>
-          s"when the sdilReturn is $key and the useranswers data is empty" in {
+          s"when the sdilReturn is $key and the user answers data is empty" in {
             val returnPeriod = returnPeriodList.head
+            val uAsSDILReturn = if(key == "a nilReturn") {emptyReturn} else populatedReturn
             val expectedGeneratedUA = emptyUserAnswersForCorrectReturn.copy(
               smallProducerList = if(key == "a nilReturn") {List()} else {smallProducerList},
-              data = Json.obj(("correctReturn", Json.toJson(getExpectedUserAnswersCorrectReturnData(key)))),
+              data = Json.obj("originalSDILReturn" -> Json.toJson(uAsSDILReturn),
+                ("correctReturn", Json.toJson(getExpectedUserAnswersCorrectReturnData(key)))),
               correctReturnPeriod = Some(returnPeriod)
             )
             when(mockSdilConnector.getReturn(aSubscription.utr, returnPeriod)(hc)).thenReturn(createSuccessVariationResult(Some(sdilReturn)))
@@ -110,10 +113,11 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
             }
           }
 
-          s"when the sdilReturn is $key and the useranswers data contains some data" in {
+          s"when the sdilReturn is $key and the user answers data contains some data" in {
             val returnPeriod = returnPeriodList.head
             val uaInitialData = Json.obj(("testing", JsString("I am still here")))
             val initialUserAnswers = emptyUserAnswersForCorrectReturn.copy(data = uaInitialData)
+            val uAsSDILReturn = if (key == "a nilReturn") {emptyReturn} else populatedReturn
             val expectedGeneratedUA = emptyUserAnswersForCorrectReturn.copy(
               smallProducerList = if (key == "a nilReturn") {
                 List()
@@ -121,7 +125,8 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
                 smallProducerList
               },
               data = uaInitialData ++
-                Json.obj(("correctReturn", Json.toJson(getExpectedUserAnswersCorrectReturnData(key)))),
+                Json.obj("originalSDILReturn" -> Json.toJson(uAsSDILReturn),
+                  ("correctReturn", Json.toJson(getExpectedUserAnswersCorrectReturnData(key)))),
               correctReturnPeriod = Some(returnPeriod)
             )
             when(mockSdilConnector.getReturn(aSubscription.utr, returnPeriod)(hc)).thenReturn(createSuccessVariationResult(Some(sdilReturn)))
@@ -147,6 +152,9 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
                                              smallProducers: List[SmallProducer],
                                              returnPeriod: ReturnPeriod)
                                             (implicit writes: Writes[CorrectReturnUserAnswersData]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
+            override def setOriginalSDILReturn(originalSDILReturn: SdilReturn)
+                                              (implicit writes: Writes[CorrectReturnUserAnswersData]):
+              Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
           }
           when(mockSdilConnector.getReturn(aSubscription.utr, returnPeriods.head)(hc)).thenReturn(createSuccessVariationResult(Some(emptyReturn)))
           val res = orchestrator.setupUserAnswersForCorrectReturn(aSubscription, failingUserAnswers, returnPeriods.head)(hc, ec)

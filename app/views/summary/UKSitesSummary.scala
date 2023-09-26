@@ -91,20 +91,26 @@ object UKSitesSummary {
       )
   }
 
-  def getHeadingAndSummary(userAnswers: UserAnswers, isCheckAnswers: Boolean, subscription: RetrievedSubscription)
-                          (implicit messages: Messages): Option[(String, SummaryList)] = {
+  def getHeadingAndSummaryForCorrectReturn(userAnswers: UserAnswers, isCheckAnswers: Boolean, subscription: RetrievedSubscription)
+                                          (implicit messages: Messages): Option[(String, SummaryList)] = {
     val optSummaryList = (
       UserTypeCheck.isNewPacker(SdilReturn.apply(userAnswers), subscription),
-      UserTypeCheck.isNewImporter(SdilReturn.apply(userAnswers), subscription)
+      UserTypeCheck.isNewImporter(SdilReturn.apply(userAnswers), subscription),
+      subscription.productionSites.isEmpty,
+      subscription.warehouseSites.isEmpty
     ) match {
-      case (true, false) => Option(
+      case (true, false, true, _) =>
+        println(Console.YELLOW + "New packer, subscription list empty" + Console.WHITE)
+        Option(
         SummaryListViewModel(
           Seq(
             getPackAtBusinessAddressRow(userAnswers, isCheckAnswers)
           )
         )
       )
-      case (true, true) => Option(
+      case (true, true, true, true) =>
+        println(Console.YELLOW + "New packer & importer, subscription lists empty" + Console.WHITE)
+        Option(
         SummaryListViewModel(
           Seq(
             getPackAtBusinessAddressRow(userAnswers, isCheckAnswers),
@@ -112,7 +118,10 @@ object UKSitesSummary {
           )
         )
       )
-      case (false, true) => Option(
+      case (false, true, _, true) =>
+        println(Console.YELLOW + "New importer, subscription list empty" + Console.WHITE)
+        println(Console.YELLOW + "subscription is " + subscription + Console.WHITE)
+        Option(
         SummaryListViewModel(
           Seq(
             getAskSecondaryWarehouseRow(userAnswers, isCheckAnswers)

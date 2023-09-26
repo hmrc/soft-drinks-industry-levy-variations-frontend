@@ -48,7 +48,8 @@ class CorrectReturnBaseCYASummarySpec extends SpecBase {
         res.rows(1).key.classes mustBe ""
         res.rows(1).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(lowLitres))
         res.rows(1).value.classes.trim mustBe "govuk-!-text-align-right"
-        res.rows(1).actions.head.items.head.href mustBe "/soft-drinks-industry-levy-variations-frontend/change-activity/change-how-many-contract-packing-next-12-months"
+        res.rows(1).actions.head.items.head.href mustBe
+          "/soft-drinks-industry-levy-variations-frontend/change-activity/change-how-many-contract-packing-next-12-months"
         res.rows(1).actions.head.items.head.attributes mustBe Map("id" -> "change-lowband-litreage-contractPacking")
         res.rows(1).actions.head.items.head.content.asHtml mustBe Html("Change")
 
@@ -58,7 +59,8 @@ class CorrectReturnBaseCYASummarySpec extends SpecBase {
         res.rows(highLitresRowIndex).key.classes mustBe ""
         res.rows(highLitresRowIndex).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(highLitres))
         res.rows(highLitresRowIndex).value.classes.trim mustBe "govuk-!-text-align-right"
-        res.rows(highLitresRowIndex).actions.head.items.head.href mustBe "/soft-drinks-industry-levy-variations-frontend/change-activity/change-how-many-contract-packing-next-12-months"
+        res.rows(highLitresRowIndex).actions.head.items.head.href mustBe
+          "/soft-drinks-industry-levy-variations-frontend/change-activity/change-how-many-contract-packing-next-12-months"
         res.rows(highLitresRowIndex).actions.head.items.head.attributes mustBe Map("id" -> "change-highband-litreage-contractPacking")
         res.rows(highLitresRowIndex).actions.head.items.head.content.asHtml mustBe Html("Change")
 

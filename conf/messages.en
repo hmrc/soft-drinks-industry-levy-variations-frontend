@@ -508,11 +508,12 @@ correctReturn.checkChanges.title = Check your answers before sending your correc
 correctReturn.checkChanges.confirmationStatement = By sending this correction you are confirming that, to the best of your knowledge, the details you are providing are correct.
 correctReturn.checkChanges.balanceHeader = Balance
 correctReturn.checkChanges.sendReturnHeader = Send your return
-
-correctReturn.checkChanges.updateFor = This update is for
-correctReturn.checkChanges.title = Check your answers before sending your correction
-
 correctReturn.checkChanges.confirmAndSend = Confirm details and send correction
+
+correctReturn.checkYourAnswers.updateFor = This update is for
+correctReturn.checkYourAnswers.title = Check your answers before sending your update
+
+
 
 
 updateRegisteredDetails.contactDetails.title = Change person''s details

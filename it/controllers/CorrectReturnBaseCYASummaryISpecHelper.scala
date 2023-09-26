@@ -18,11 +18,17 @@ package controllers
 
 import controllers.correctReturn.routes
 import models.correctReturn.AddASmallProducer
-import models.{CheckMode, LitresInBands, UserAnswers}
+import models.{CheckMode, LitresInBands, SdilReturn, UserAnswers}
+import org.bson.json.JsonObject
 import org.jsoup.nodes.Element
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import pages.{Page, QuestionPage}
 import pages.correctReturn._
+import play.api.libs.json.Json
+import testSupport.SDILBackendTestData.{smallProducerList, submittedDateTime}
+
+import java.time.ZoneOffset
 
 trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
 
@@ -40,9 +46,15 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
   val importsLitres: LitresInBands = LitresInBands(5000, 6000)
   val importsSmallProducerLitres: LitresInBands = LitresInBands(5000, 6000)
   val smallProducerLitres: LitresInBands = LitresInBands(2000, 4000)
+  val emptyReturn: SdilReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0), submittedOn =
+    Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
+  val populatedReturn: SdilReturn = SdilReturn((100, 200), (200, 100),
+    smallProducerList, (300, 400), (400, 300), (50, 60), (60, 50),
+    submittedOn = Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
 
-  def userAnswerWithLitresForAllPages: UserAnswers = emptyUserAnswersForCorrectReturn
-    .copy(packagingSiteList = packagingSitesFromSubscription, warehouseList = warehousesFromSubscription, smallProducerList = smallProducersAddedList)
+  def userAnswerWithLitresForAllPagesNilSdilReturn: UserAnswers = emptyUserAnswersForCorrectReturnWithWarehouses
+    .copy(data = Json.obj("originalSDILReturn" -> Json.toJson(emptyReturn)))
+    .copy(smallProducerList = smallProducersAddedList)
     .set(OperatePackagingSiteOwnBrandsPage, true).success.value
     .set(HowManyOperatePackagingSiteOwnBrandsPage, operatePackagingSiteLitres).success.value
     .set(PackagedAsContractPackerPage, true).success.value
@@ -62,8 +74,18 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     .set(AskSecondaryWarehouseInReturnPage, true).success.value
     .set(SecondaryWarehouseDetailsPage, false).success.value
 
-  def userAnswerWithAllNos: UserAnswers = emptyUserAnswersForCorrectReturn
-      .copy(packagingSiteList = Map.empty, warehouseList = Map.empty)
+  def userAnswerWithOnePageChangedAndNilSdilReturn(page: QuestionPage[Boolean], howManyPage: QuestionPage[LitresInBands]): UserAnswers = emptyUserAnswersForCorrectReturnWithWarehouses
+    .copy(data = Json.obj("originalSDILReturn" -> Json.toJson(emptyReturn)))
+    .set(page, true).success.value
+    .set(howManyPage, operatePackagingSiteLitres).success.value
+
+  def userAnswerWithExemptionSmallProducerPageUpdatedAndNilSdilReturn: UserAnswers = emptyUserAnswersForCorrectReturnWithWarehouses
+    .copy(data = Json.obj("originalSDILReturn" -> Json.toJson(emptyReturn)))
+    .copy(smallProducerList = smallProducersAddedList)
+    .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", smallProducerLitres)).success.value
+
+  def userAnswerWithAllNosWithOriginalSdilReturn: UserAnswers = emptyUserAnswersForCorrectReturnWithWarehouses
+      .copy(data = Json.obj("originalSDILReturn" -> Json.toJson(populatedReturn)))
       .set(OperatePackagingSiteOwnBrandsPage, false).success.value
       .set(PackagedAsContractPackerPage, false).success.value
       .set(ExemptionsForSmallProducersPage, false).success.value

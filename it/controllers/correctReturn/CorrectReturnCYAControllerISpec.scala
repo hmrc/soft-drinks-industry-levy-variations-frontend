@@ -35,7 +35,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
 
     "when the user has populated all pages including litres" - {
       "should render the check your answers page with only the required details" in {
-        val userAnswers = userAnswerWithLitresForAllPages
+        val userAnswers = userAnswerWithLitresForAllPagesNilSdilReturn
         given
           .commonPrecondition
 
@@ -98,7 +98,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
 
       "and they have only populated the required pages and have no litres" - {
         "should render the check your answers page with expected summary items" in {
-          val userAnswers = userAnswerWithAllNos
+          val userAnswers = userAnswerWithAllNosWithOriginalSdilReturn
           given
             .commonPrecondition
 
@@ -153,30 +153,6 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
           }
         }
       }
-
-//      "and the user answers are no to own brands and yes to co-pack and import " +
-//        "then sites should be displayed" in {
-//        val userAnswers = userAnswerWithLitresForAllPages(Large)
-//          .set(OperatePackagingSitesPage, false).success.value
-//          .remove(HowManyOperatePackagingSitesPage).success.value
-//
-//        given
-//          .commonPrecondition
-//
-//        setAnswers(userAnswers)
-//
-//        WsTestClient.withClient { client =>
-//          val result = createClientRequestGet(client, baseUrl + route)
-//
-//          whenReady(result) { res =>
-//            res.status mustBe OK
-//            val page = Jsoup.parse(res.body)
-//            page.getElementsByTag("dt").text() must include("You have 3 packaging sites")
-//
-//          }
-//        }
-//      }
-
     }
 
     testUnauthorisedUser(baseUrl + route)

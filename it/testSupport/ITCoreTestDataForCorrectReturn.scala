@@ -119,5 +119,12 @@ trait ITCoreTestDataForCorrectReturn extends ITSharedCoreTestData  {
     correctReturnPeriod = Some(ReturnPeriod(2023, 0))
   )
 
+  def emptyUserAnswersForCorrectReturnWithWarehouses: UserAnswers = UserAnswers(sdilNumber, SelectChange.CorrectReturn, Json.obj(),
+    packagingSiteList = packagingSitesFromSubscription,
+    warehouseList = warehousesFromSubscription,
+    contactAddress = ukAddress,
+    correctReturnPeriod = Some(ReturnPeriod(2023, 0))
+  )
+
 
 }
