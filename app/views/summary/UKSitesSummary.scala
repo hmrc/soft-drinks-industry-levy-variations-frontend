@@ -99,18 +99,14 @@ object UKSitesSummary {
       subscription.productionSites.isEmpty,
       subscription.warehouseSites.isEmpty
     ) match {
-      case (true, false, true, _) =>
-        println(Console.YELLOW + "New packer, subscription list empty" + Console.WHITE)
-        Option(
+      case (true, false, true, _) => Option(
         SummaryListViewModel(
           Seq(
             getPackAtBusinessAddressRow(userAnswers, isCheckAnswers)
           )
         )
       )
-      case (true, true, true, true) =>
-        println(Console.YELLOW + "New packer & importer, subscription lists empty" + Console.WHITE)
-        Option(
+      case (true, true, true, true) => Option(
         SummaryListViewModel(
           Seq(
             getPackAtBusinessAddressRow(userAnswers, isCheckAnswers),
@@ -118,10 +114,7 @@ object UKSitesSummary {
           )
         )
       )
-      case (false, true, _, true) =>
-        println(Console.YELLOW + "New importer, subscription list empty" + Console.WHITE)
-        println(Console.YELLOW + "subscription is " + subscription + Console.WHITE)
-        Option(
+      case (false, true, _, true) => Option(
         SummaryListViewModel(
           Seq(
             getAskSecondaryWarehouseRow(userAnswers, isCheckAnswers)

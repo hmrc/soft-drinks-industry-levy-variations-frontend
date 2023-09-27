@@ -4,7 +4,7 @@ import controllers.CorrectReturnBaseCYASummaryISpecHelper
 import models.LitresInBands
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import pages.correctReturn.{BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, ExemptionsForSmallProducersPage, HowManyBroughtIntoUKPage, HowManyBroughtIntoUkFromSmallProducersPage, HowManyClaimCreditsForExportsPage, HowManyCreditsForLostDamagedPage, HowManyOperatePackagingSiteOwnBrandsPage, HowManyPackagedAsContractPackerPage, OperatePackagingSiteOwnBrandsPage, PackagedAsContractPackerPage}
+import pages.correctReturn._
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
@@ -213,7 +213,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
         "should render the check changes page with only the Brought into the UK section" in {
           val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(BroughtIntoUKPage, HowManyBroughtIntoUKPage)
           given
-            .commonPrecondition
+            .commonPreconditionChangeSubscription(diffSubscriptionWithWarehouses)
 
           setAnswers(userAnswers)
 
@@ -243,7 +243,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
         "should render the check changes page with only the Brought into the UK from small producers section" in {
           val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(BroughtIntoUkFromSmallProducersPage, HowManyBroughtIntoUkFromSmallProducersPage)
           given
-            .commonPrecondition
+            .commonPreconditionChangeSubscription(diffSubscriptionWithWarehouses)
 
           setAnswers(userAnswers)
 
@@ -347,6 +347,42 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
               page.getElementsByTag("h2").get(0).text() mustBe "Contract packed for registered small producers"
               validateContractPackedForSmallProducersWithLitresSummaryList(contractPackedForSmallProducers, smallProducerLitres, true)
+
+              page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
+              page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm details and send correction"
+            }
+          }
+        }
+      }
+
+      s"when the user has changed answers on $BroughtIntoUKPage, activity of Importer is false, and they have no warehouses " - {
+        "should render the check changes page with the Brought into the UK and UK site sections" in {
+          val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(BroughtIntoUKPage, HowManyBroughtIntoUKPage)
+            .copy(warehouseList = warehousesFromSubscription)
+          given
+            .commonPrecondition
+
+          setAnswers(userAnswers)
+
+          WsTestClient.withClient { client =>
+            val result = createClientRequestGet(client, baseUrl + route)
+
+            whenReady(result) { res =>
+              res.status mustBe OK
+
+              val page = Jsoup.parse(res.body)
+              page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
+              page.getElementsByClass("govuk-summary-list").size() mustBe 2
+
+              val contractPacking = page.getElementsByClass("govuk-summary-list").get(0)
+
+              page.getElementsByTag("h2").get(0).text() mustBe "Brought into the UK"
+              validateImportsWithLitresSummaryList(contractPacking, LitresInBands(1000, 2000), true)
+
+              val siteDetailsSummaryListItem = page.getElementsByClass("govuk-summary-list").get(1)
+
+              page.getElementsByTag("h2").get(1).text() mustBe "UK site details"
+              validateSiteDetailsSummary(siteDetailsSummaryListItem, 0, numberOfWarehouses = 2, isCheckAnswers = true)
 
               page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
               page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm details and send correction"

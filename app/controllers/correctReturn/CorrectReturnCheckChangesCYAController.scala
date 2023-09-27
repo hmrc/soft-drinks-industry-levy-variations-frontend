@@ -41,15 +41,12 @@ class CorrectReturnCheckChangesCYAController @Inject()(
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
-      println(Console.YELLOW + "User answers are " + request.userAnswers + Console.WHITE)
       val orgName: String = " " + request.subscription.orgName
       val originalSDILReturn = request.userAnswers.getCorrectReturnOriginalSDILReturnData.get
       val currentSDILReturn = SdilReturn.apply(request.userAnswers)
-      println(Console.BLUE + "Orig SDIL return is  " + originalSDILReturn + Console.WHITE)
-      println(Console.BLUE + "Current SDIL return is  " + currentSDILReturn + Console.WHITE)
       val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSDILReturn, currentSDILReturn)
       val sections = CorrectReturnBaseCYASummary.changedSummaryListAndHeadings(request.userAnswers, request.subscription, changedPages)
-       println(Console.MAGENTA + "changed pages  " + changedPages + Console.WHITE)
+
       Ok(view(orgName, sections, routes.CorrectReturnCheckChangesCYAController.onSubmit))
   }
 

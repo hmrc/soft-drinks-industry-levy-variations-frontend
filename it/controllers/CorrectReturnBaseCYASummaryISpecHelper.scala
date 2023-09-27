@@ -19,11 +19,10 @@ package controllers
 import controllers.correctReturn.routes
 import models.correctReturn.AddASmallProducer
 import models.{CheckMode, LitresInBands, SdilReturn, UserAnswers}
-import org.bson.json.JsonObject
 import org.jsoup.nodes.Element
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import pages.{Page, QuestionPage}
+import pages.QuestionPage
 import pages.correctReturn._
 import play.api.libs.json.Json
 import testSupport.SDILBackendTestData.{smallProducerList, submittedDateTime}
@@ -82,6 +81,7 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
   def userAnswerWithExemptionSmallProducerPageUpdatedAndNilSdilReturn: UserAnswers = emptyUserAnswersForCorrectReturnWithWarehouses
     .copy(data = Json.obj("originalSDILReturn" -> Json.toJson(emptyReturn)))
     .copy(smallProducerList = smallProducersAddedList)
+    .set(ExemptionsForSmallProducersPage, true).success.value
     .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", smallProducerLitres)).success.value
 
   def userAnswerWithAllNosWithOriginalSdilReturn: UserAnswers = emptyUserAnswersForCorrectReturnWithWarehouses
