@@ -29,7 +29,7 @@ import javax.inject.{Inject, Singleton}
 class NavigatorForCancelRegistration @Inject()() extends Navigator {
 
   override val normalRoutes: Page => UserAnswers => Call = {
-    case CancelRegistrationDatePage => userAnswers => defaultCall
+    case CancelRegistrationDatePage => userAnswers => routes.CancelRegistrationCYAController.onPageLoad
     case ReasonPage => userAnswers => routes.CancelRegistrationDateController.onPageLoad(mode = NormalMode)
     case _ => _ => defaultCall
   }

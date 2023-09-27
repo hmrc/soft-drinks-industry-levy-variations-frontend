@@ -19,22 +19,36 @@ package controllers.cancelRegistration
 import com.google.inject.Inject
 import controllers.actions.ControllerActions
 import models.SelectChange
+import pages.cancelRegistration.ReasonPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.govuk.SummaryListFluency
+import viewmodels.summary.cancelRegistration.{CancelRegistrationDateSummary, ReasonSummary}
 import views.html.cancelRegistration.CancelRegistrationCYAView
+import views.summary.changeActivity.OperatePackagingSiteOwnBrandsSummary
 
 class CancelRegistrationCYAController @Inject()(
                                             override val messagesApi: MessagesApi,
                                             controllerActions: ControllerActions,
                                             val controllerComponents: MessagesControllerComponents,
                                             view: CancelRegistrationCYAView
-                                          ) extends FrontendBaseController with I18nSupport {
+                                          ) extends FrontendBaseController with I18nSupport with SummaryListFluency {
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration) {
     implicit request =>
-      val list: Seq[(String, SummaryList)] = Seq.empty
+
+        val cancelRegistrationDateSummary : (String, SummaryList) = ("",SummaryListViewModel(
+         rows = Seq(CancelRegistrationDateSummary.row(request.userAnswers)))
+        )
+
+      val reasonRegistrationDateSummary : (String, SummaryList) = ("",SummaryListViewModel(
+        rows = Seq(ReasonSummary.row(request.userAnswers)))
+      )
+
+      val list = Seq(cancelRegistrationDateSummary, reasonRegistrationDateSummary)
+
       Ok(view(list))
   }
 }

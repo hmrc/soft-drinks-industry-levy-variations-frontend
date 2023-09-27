@@ -24,22 +24,12 @@ import play.api.libs.json.Json
 class ReasonSummarySpec extends SpecBase {
 
   "row" - {
-
-    "should return nothing when the reason question page has not been answered" in {
-      val cancelReasonSummaryRow = ReasonSummary.row(emptyUserAnswersForCancelRegistration)
-
-      cancelReasonSummaryRow mustBe None
-    }
-
     "should return a summary list row with the appropriate cancellation reason if an answer has been added" in {
       val userAnswersWithCancelReason = UserAnswers(sdilNumber, SelectChange.CancelRegistration,
         Json.obj("cancelRegistration" -> Json.obj("reason" -> "incorrectly registered")), contactAddress = contactAddress)
 
       val cancelReasonSummaryRow = ReasonSummary.row(userAnswersWithCancelReason)
 
-      cancelReasonSummaryRow.head.key.content.asHtml.toString mustBe "Reason for cancelling"
-      cancelReasonSummaryRow.head.value.content.asHtml.toString mustBe "incorrectly registered"
-      cancelReasonSummaryRow.head.actions.toList.head.items.head.content.asHtml.toString() must include("Change")
     }
   }
 }

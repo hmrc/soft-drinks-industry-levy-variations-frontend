@@ -28,7 +28,7 @@ import viewmodels.implicits._
 
 object CancelRegistrationDateSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
     answers.get(CancelRegistrationDatePage).map {
       answer =>
 
@@ -42,5 +42,5 @@ object CancelRegistrationDateSummary  {
               .withVisuallyHiddenText(messages("cancelRegistration.cancelRegistrationDate.change.hidden"))
           )
         )
-    }
+    }.getOrElse(throw new IllegalArgumentException(s"No end date inputted"))
 }
