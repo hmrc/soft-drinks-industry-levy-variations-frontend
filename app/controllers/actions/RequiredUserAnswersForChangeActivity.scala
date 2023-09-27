@@ -55,7 +55,8 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
 //    RemoveWarehouseDetailsPage -> (_ => routes.RemoveWarehouseDetailsController.onPageLoad(CheckMode).url),
 //    TODO: Need to add check mode to below in theory - can be a later ticket
     SecondaryWarehouseDetailsPage -> (_ => routes.SecondaryWarehouseDetailsController.onPageLoad.url),
-    SuggestDeregistrationPage -> (_ => routes.SuggestDeregistrationController.onPageLoad.url),
+//    NOTE: Do not think below is needed
+//    SuggestDeregistrationPage -> (_ => routes.SuggestDeregistrationController.onPageLoad.url),
     ThirdPartyPackagersPage -> (_ => routes.ThirdPartyPackagersController.onPageLoad(CheckMode).url)
   )
 
@@ -97,72 +98,56 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
     }
   }
 
-  private val previousPageSmallOrNonProducer = PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get,
-    AmountProduced.enumerable.withName("xnot").get))(implicitly[Reads[AmountProduced]])
+  private val implicitAmountProduced = implicitly[Reads[AmountProduced]]
+  private val implicitBands = implicitly[Reads[LitresInBands]]
+  private val implicitBoolean = implicitly[Reads[Boolean]]
+  private val implicitString = implicitly[Reads[String]]
+
   private val largeProducer = AmountProduced.enumerable.withName("large").get
-  private val smallproducer = AmountProduced.enumerable.withName("small").get
+  private val smallProducer = AmountProduced.enumerable.withName("small").get
+  private val noneProducer = AmountProduced.enumerable.withName("none").get
+  private val previousPageSmallOrNonProducer = PreviousPage(AmountProducedPage, List(smallProducer, noneProducer))(implicitly[Reads[AmountProduced]])
   //      TODO: RequiredPage for each page in pageRouteMap. Implicitly reads, use List.empty initially
   //      TODO: Then build up list of previous pages
-  private val pagesRequiredForAmountProducedPage: List[List[PreviousPage[_, _]]] = List()
-  private val pagesRequiredForContractPackingPage: List[List[PreviousPage[_, _]]] = List()
-  private val pagesRequiredForHowManyContractPackingPage: List[List[PreviousPage[_, _]]] = List()
-  private val pagesRequiredForHowManyImportsPage: List[List[PreviousPage[_, _]]] = List()
-  private val pagesRequiredForHowManyOperatePackagingSiteOwnBrandsPage: List[List[PreviousPage[_, _]]] = List()
-  private val pagesRequiredForImportsPage: List[List[PreviousPage[_, _]]] = List()
-  private val pagesRequiredForOperatePackagingSiteOwnBrandsPage: List[List[PreviousPage[_, _]]] = List()
-  private val pagesRequiredForPackagingSiteDetailsPage: List[List[PreviousPage[_, _]]] = List()
-  private val pagesRequiredForPackAtBusinessAddressPage: List[List[PreviousPage[_, _]]] = List()
-  private val pagesRequiredForSecondaryWarehouseDetailsPage: List[List[PreviousPage[_, _]]] = List()
-  private val pagesRequiredForSuggestDeregistrationPage: List[List[PreviousPage[_, _]]] = List()
-  private val pagesRequiredForThirdPartyPackagersPage: List[List[PreviousPage[_, _]]] = List()
-
-  //    List(
-  //      RequiredPage(VerifyPage, List.empty)(implicitly[Reads[Verify]]),
-  //      RequiredPage(OrganisationTypePage, List.empty)(implicitly[Reads[OrganisationType]]),
-  //      RequiredPage(HowManyLitresGloballyPage, List.empty)(implicitGlobally),
-  //      RequiredPage(ThirdPartyPackagersPage, List(PreviousPage(HowManyLitresGloballyPage, List(smallproducer))(implicitGlobally)))(implicitBoolean),
-  //      RequiredPage(OperatePackagingSitesPage, List(PreviousPage(HowManyLitresGloballyPage, List(smallproducer, largeProducer))(implicitGlobally)))(implicitBoolean),
-  //      RequiredPage(HowManyOperatePackagingSitesPage, List(PreviousPage(OperatePackagingSitesPage, List(true))(implicitBoolean)))(implicitBands),
-  //      RequiredPage(ContractPackingPage, List.empty)(implicitBoolean),
-  //      RequiredPage(HowManyContractPackingPage, List(PreviousPage(ContractPackingPage, List(true))(implicitBoolean)))(implicitBands),
-  //      RequiredPage(ImportsPage, List.empty)(implicitBoolean),
-  //      RequiredPage(HowManyImportsPage, List(PreviousPage(ImportsPage, List(true))(implicitBoolean)))(implicitBands),
-  //      RequiredPage(StartDatePage, List(PreviousPage(HowManyLitresGloballyPage, List(largeProducer))(implicitGlobally)))(implicitDate),
-  //      RequiredPage(StartDatePage, List(previousPageSmallOrNonProducer, PreviousPage(ContractPackingPage, List(true))(implicitBoolean)))(implicitDate),
-  //      RequiredPage(StartDatePage, List(previousPageSmallOrNonProducer, PreviousPage(ImportsPage, List(true))(implicitBoolean)))(implicitDate),
-  //      RequiredPage(PackAtBusinessAddressPage, List(previousPageSmallOrNonProducer, PreviousPage(ContractPackingPage, List(true))
-  //      (implicitBoolean)))(implicitBoolean),
-  //      RequiredPage(PackAtBusinessAddressPage, List(PreviousPage(HowManyLitresGloballyPage, List(largeProducer))(implicitGlobally),
-  //        PreviousPage(OperatePackagingSitesPage, List(false))(implicitBoolean), PreviousPage(ContractPackingPage, List(true))
-  //        (implicitBoolean)))(implicitBoolean),
-  //      RequiredPage(PackAtBusinessAddressPage, List(PreviousPage(HowManyLitresGloballyPage, List(largeProducer))(implicitGlobally),
-  //        PreviousPage(OperatePackagingSitesPage, List(true))(implicitBoolean), PreviousPage(ContractPackingPage, List(true, false))
-  //        (implicitBoolean)))(implicitBoolean),
-  //      RequiredPage(PackagingSiteDetailsPage, List(PreviousPage(PackAtBusinessAddressPage, List(true, false))(implicitBoolean)))(implicitBoolean),
-  //      RequiredPage(AskSecondaryWarehousesPage, List(PreviousPage(StartDatePage, List.empty)(implicitDate)))(implicitBoolean),
-  //      RequiredPage(WarehouseDetailsPage, List(PreviousPage(AskSecondaryWarehousesPage, List(true))(implicitBoolean)))(implicitBoolean),
-  //      RequiredPage(ContactDetailsPage, List(PreviousPage(HowManyLitresGloballyPage, List(smallproducer))(implicitGlobally),
-  //        PreviousPage(ThirdPartyPackagersPage, List(true))(implicitBoolean), PreviousPage(OperatePackagingSitesPage, List(true, false))(implicitBoolean),
-  //        PreviousPage(ContractPackingPage, List(false))(implicitBoolean), PreviousPage(ImportsPage, List(false))(implicitBoolean)))
-  //      (implicitly[Reads[ContactDetails]]),
-  //      RequiredPage(ContactDetailsPage, List(PreviousPage(AskSecondaryWarehousesPage, List(true, false))(implicitBoolean)))(implicitly[Reads[ContactDetails]])
-  //    )
+  private val pagesRequiredForAmountProducedPage: List[List[PreviousPage[_, _]]] = List.empty
+  private val pagesRequiredForContractPackingPage: List[List[PreviousPage[_, _]]] = List.empty
+  private val pagesRequiredForHowManyContractPackingPage: List[List[PreviousPage[_, _]]] = List(
+    List(PreviousPage(ContractPackingPage, List(true))(implicitBoolean))
+  )
+  private val pagesRequiredForHowManyImportsPage: List[List[PreviousPage[_, _]]] = List(
+    List(PreviousPage(ImportsPage, List(true))(implicitBoolean))
+  )
+  private val pagesRequiredForHowManyOperatePackagingSiteOwnBrandsPage: List[List[PreviousPage[_, _]]] = List(
+    List(PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitBoolean))
+  )
+  private val pagesRequiredForImportsPage: List[List[PreviousPage[_, _]]] = List.empty
+  private val pagesRequiredForOperatePackagingSiteOwnBrandsPage: List[List[PreviousPage[_, _]]] = List(
+    List(PreviousPage(AmountProducedPage, List(smallProducer, largeProducer))(implicitAmountProduced))
+  )
+  private val pagesRequiredForPackagingSiteDetailsPage: List[List[PreviousPage[_, _]]] = List(
+    List(PreviousPage(PackAtBusinessAddressPage, List(true, false))(implicitBoolean))
+  )
+  private val pagesRequiredForPackAtBusinessAddressPage: List[List[PreviousPage[_, _]]] = List(
+    List(previousPageSmallOrNonProducer, PreviousPage(ContractPackingPage, List(true))(implicitBoolean)),
+    List(PreviousPage(AmountProducedPage, List(largeProducer))(implicitAmountProduced), PreviousPage(OperatePackagingSiteOwnBrandsPage, List(false))(implicitBoolean), PreviousPage(ContractPackingPage, List(true))(implicitBoolean)),
+    List(PreviousPage(AmountProducedPage, List(largeProducer))(implicitAmountProduced), PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitBoolean), PreviousPage(ContractPackingPage, List(true, false))(implicitBoolean))
+  )
+//  TODO: Is below correct?
+  private val pagesRequiredForSecondaryWarehouseDetailsPage: List[List[PreviousPage[_, _]]] = List.empty
+  private val pagesRequiredForThirdPartyPackagersPage: List[List[PreviousPage[_, _]]] = List(
+    List(PreviousPage(AmountProducedPage, List(smallProducer))(implicitAmountProduced))
+  )
 
   private[controllers] def journey: List[RequiredPage[_,_,_]] = {
-    val implicitAmountProduced = implicitly[Reads[AmountProduced]]
-    val implicitBands = implicitly[Reads[LitresInBands]]
-    val implicitBoolean = implicitly[Reads[Boolean]]
-    val implicitString = implicitly[Reads[String]]
-
     List(
       pagesRequiredForAmountProducedPage.map(RequiredPage(AmountProducedPage, _)(implicitAmountProduced)),
       ////      NOTE: Do not think below are needed
       ////      RequiredPage(ChangeActivityCYAPage, List.empty)(implicitBoolean),
       pagesRequiredForContractPackingPage.map(RequiredPage(ContractPackingPage, _)(implicitBoolean)),
-      pagesRequiredForHowManyContractPackingPage.map(RequiredPage(HowManyContractPackingPage, _)(implicitBoolean)),
+      pagesRequiredForHowManyContractPackingPage.map(RequiredPage(HowManyContractPackingPage, _)(implicitBands)),
       pagesRequiredForHowManyImportsPage.map(RequiredPage(HowManyImportsPage, _)(implicitBands)),
       pagesRequiredForHowManyOperatePackagingSiteOwnBrandsPage.map(RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, _)(implicitBands)),
-      pagesRequiredForImportsPage.map(RequiredPage(ImportsPage, _)(implicitBands)),
+      pagesRequiredForImportsPage.map(RequiredPage(ImportsPage, _)(implicitBoolean)),
       pagesRequiredForOperatePackagingSiteOwnBrandsPage.map(RequiredPage(OperatePackagingSiteOwnBrandsPage, _)(implicitBoolean)),
       pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean)),
       pagesRequiredForPackAtBusinessAddressPage.map(RequiredPage(PackAtBusinessAddressPage, _)(implicitBoolean)),
@@ -170,7 +155,7 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
       ////      RequiredPage(RemovePackagingSiteDetailsPage, List.empty)(implicitBoolean),
       ////      RequiredPage(RemoveWarehouseDetailsPage, List.empty)(implicitBoolean),
       pagesRequiredForSecondaryWarehouseDetailsPage.map(RequiredPage(SecondaryWarehouseDetailsPage, _)(implicitBoolean)),
-      pagesRequiredForSuggestDeregistrationPage.map(RequiredPage(SuggestDeregistrationPage, _)(implicitString)),
+      ////      RequiredPage(SuggestDeregistrationPage, List.empty)(implicitBoolean),
       pagesRequiredForThirdPartyPackagersPage.map(RequiredPage(ThirdPartyPackagersPage, _)(implicitBoolean))
     ).flatten
   }
