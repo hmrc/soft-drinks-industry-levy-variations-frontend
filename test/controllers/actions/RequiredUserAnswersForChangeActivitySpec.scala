@@ -18,10 +18,9 @@ package controllers.actions
 
 import base.SpecBase
 import models.changeActivity.AmountProduced.{Large, None, Small}
-import models.backend.UkAddress
 import models.changeActivity.AmountProduced
-import models.requests.DataRequest
-import models.{CheckMode, LitresInBands, RosmRegistration, RosmWithUtr, UserAnswers}
+import models.requests.{DataRequest, RequiredDataRequest}
+import models.{CheckMode, LitresInBands, UserAnswers}
 import pages.{Page, QuestionPage}
 import pages.changeActivity._
 import play.api.libs.json.Reads
@@ -39,9 +38,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
   val exampleSuccessActionResult: String = "woohoo"
   val exampleSuccessAction: Future[Result] = Future.successful(Ok(exampleSuccessActionResult))
 
-  def dataRequest(userAnswers: UserAnswers): DataRequest[AnyContentAsEmpty.type] = DataRequest(
-    FakeRequest(), "", hasCTEnrolment = false, None, userAnswers, RosmWithUtr("", RosmRegistration("", None, None, UkAddress(List.empty, "", None)))
-  )
+  def dataRequest(userAnswers: UserAnswers): DataRequest[AnyContentAsEmpty.type] = RequiredDataRequest(FakeRequest(), "", aSubscription, userAnswers)) )
   "requireData" - {
     "should return result passed in when not a page matched in function" in {
       contentAsString(requiredUserAnswers.requireData(AmountProducedPage)(exampleSuccessAction)(dataRequest(emptyUserAnswersForChangeActivity))) mustBe exampleSuccessActionResult
