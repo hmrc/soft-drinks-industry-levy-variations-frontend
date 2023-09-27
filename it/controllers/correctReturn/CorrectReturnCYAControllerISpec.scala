@@ -35,9 +35,9 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
 
     "when the user has populated all pages including litres" - {
       "should render the check your answers page with only the required details" in {
-        val userAnswers = userAnswerWithLitresForAllPagesNilSdilReturn
+        val userAnswers = userAnswerWithLitresForAllPagesNilSdilReturn.copy(warehouseList = warehousesFromSubscription)
         given
-          .commonPrecondition
+          .commonPreconditionChangeSubscription(diffSubscription)
 
         setAnswers(userAnswers)
 

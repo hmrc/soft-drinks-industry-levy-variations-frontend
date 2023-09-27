@@ -51,7 +51,7 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     smallProducerList, (300, 400), (400, 300), (50, 60), (60, 50),
     submittedOn = Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
 
-  def userAnswerWithLitresForAllPagesNilSdilReturn: UserAnswers = emptyUserAnswersForCorrectReturnWithWarehouses
+  def userAnswerWithLitresForAllPagesNilSdilReturn: UserAnswers = emptyUserAnswersForCorrectReturn
     .copy(data = Json.obj("originalSDILReturn" -> Json.toJson(emptyReturn)))
     .copy(smallProducerList = smallProducersAddedList)
     .set(OperatePackagingSiteOwnBrandsPage, true).success.value
@@ -73,18 +73,18 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     .set(AskSecondaryWarehouseInReturnPage, true).success.value
     .set(SecondaryWarehouseDetailsPage, false).success.value
 
-  def userAnswerWithOnePageChangedAndNilSdilReturn(page: QuestionPage[Boolean], howManyPage: QuestionPage[LitresInBands]): UserAnswers = emptyUserAnswersForCorrectReturnWithWarehouses
+  def userAnswerWithOnePageChangedAndNilSdilReturn(page: QuestionPage[Boolean], howManyPage: QuestionPage[LitresInBands]): UserAnswers = emptyUserAnswersForCorrectReturn
     .copy(data = Json.obj("originalSDILReturn" -> Json.toJson(emptyReturn)))
     .set(page, true).success.value
     .set(howManyPage, operatePackagingSiteLitres).success.value
 
-  def userAnswerWithExemptionSmallProducerPageUpdatedAndNilSdilReturn: UserAnswers = emptyUserAnswersForCorrectReturnWithWarehouses
+  def userAnswerWithExemptionSmallProducerPageUpdatedAndNilSdilReturn: UserAnswers = emptyUserAnswersForCorrectReturn
     .copy(data = Json.obj("originalSDILReturn" -> Json.toJson(emptyReturn)))
     .copy(smallProducerList = smallProducersAddedList)
     .set(ExemptionsForSmallProducersPage, true).success.value
     .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", smallProducerLitres)).success.value
 
-  def userAnswerWithAllNosWithOriginalSdilReturn: UserAnswers = emptyUserAnswersForCorrectReturnWithWarehouses
+  def userAnswerWithAllNosWithOriginalSdilReturn: UserAnswers = emptyUserAnswersForCorrectReturn
       .copy(data = Json.obj("originalSDILReturn" -> Json.toJson(populatedReturn)))
       .set(OperatePackagingSiteOwnBrandsPage, false).success.value
       .set(PackagedAsContractPackerPage, false).success.value
