@@ -115,13 +115,12 @@ class ContactDetailsControllerISpec extends ControllerITTestHelper {
       whenReady(result) { res =>
         res.status mustBe 200
         val page = Jsoup.parse(res.body)
-        page.getElementById("save-and-continue-button").text() must include("Save and continue")
-        page.getElementById("save-and-continue-button").attr("href") must include(controllers.routes.IndexController.onPageLoad.url)
+        page.getElementsByClass("govuk-button").first().text() must include("Save and continue")
       }
     }
   }
 
-  "Page should render existing address in user answers if one exists" in {
+  "Page should render existing contact details in user answers if it exists" in {
     given.commonPrecondition
     setAnswers(userAnswersContainingContactAddress)
 

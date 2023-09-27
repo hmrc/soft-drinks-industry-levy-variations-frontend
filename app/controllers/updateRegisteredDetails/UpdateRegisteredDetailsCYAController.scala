@@ -21,9 +21,10 @@ import controllers.actions.ControllerActions
 import models.SelectChange.UpdateRegisteredDetails
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.updateRegisteredDetails.UpdateRegisteredDetailsCYAView
-import views.summary.updateRegisteredDetails.UpdateContactDetailsSummary
+import views.summary.updateRegisteredDetails.{BusinessAddressSummary, UpdateContactDetailsSummary}
 
 import java.time.{LocalDateTime, ZoneId}
 
@@ -36,12 +37,13 @@ class UpdateRegisteredDetailsCYAController @Inject()(
 
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
     implicit request =>
-
-      val summaryList = Seq(UpdateContactDetailsSummary.rows(request.userAnswers)).flatten
+      val updateContactDetailsSummary: Option[(String, SummaryList)] = UpdateContactDetailsSummary.rows(request.userAnswers)
+      val businessAddressSummary: Option[(String, SummaryList)] = BusinessAddressSummary.rows(request.userAnswers)
+      val summaryList = Seq(updateContactDetailsSummary, businessAddressSummary).flatten
 
       Ok(view(summaryList, routes.UpdateRegisteredDetailsCYAController.onSubmit))
   }
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
-      Redirect(controllers.routes.IndexController.onPageLoad.url)
+      Redirect(routes.UpdateDoneController.onPageLoad.url)
   }
 }

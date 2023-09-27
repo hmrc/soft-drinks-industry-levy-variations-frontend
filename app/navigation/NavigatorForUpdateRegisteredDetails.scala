@@ -44,26 +44,26 @@ class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
   }
 
   def PackagingSiteDetailsNavigation(userAnswers: UserAnswers): Call = {
-    val changeRegisteredDetailsPageAnswers =  userAnswers.get(ChangeRegisteredDetailsPage).head
-    if(changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.ContactDetails)){
+    val changeRegisteredDetailsPageAnswers = userAnswers.get(ChangeRegisteredDetailsPage).head
+    if (changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.ContactDetails)) {
       routes.UpdateContactDetailsController.onPageLoad(NormalMode)
-    }else{
+    } else {
       routes.UpdateRegisteredDetailsCYAController.onPageLoad
     }
   }
 
   def UpdateContactDetailsNavigation(userAnswers: UserAnswers): Call = {
-    val changeRegisteredDetailsPageAnswers =  userAnswers.get(ChangeRegisteredDetailsPage).head
-    if(changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.BusinessAddress)){
+    val changeRegisteredDetailsPageAnswers = userAnswers.get(ChangeRegisteredDetailsPage).head
+    if (changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.BusinessAddress)) {
       routes.BusinessAddressController.onPageLoad()
-    }else{
+    } else {
       routes.UpdateRegisteredDetailsCYAController.onPageLoad
     }
   }
 
   def changeRegisteredDetailNavigation(userAnswers: UserAnswers) = {
-    val changeRegisteredDetailsPageAnswers =  userAnswers.get(ChangeRegisteredDetailsPage).head
-    if (changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.Sites)){
+    val changeRegisteredDetailsPageAnswers = userAnswers.get(ChangeRegisteredDetailsPage).head
+    if (changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.Sites)) {
       userAnswers match {
         case userAnswers if userAnswers.packagingSiteList.nonEmpty =>
           routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
@@ -72,9 +72,9 @@ class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
         case _ =>
           defaultCall
       }
-    }else if(changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.ContactDetails)){
+    } else if (changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.ContactDetails)) {
       routes.UpdateContactDetailsController.onPageLoad(NormalMode)
-    }else {
+    } else {
       routes.BusinessAddressController.onPageLoad()
     }
   }

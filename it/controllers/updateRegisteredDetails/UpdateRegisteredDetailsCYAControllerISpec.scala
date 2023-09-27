@@ -11,12 +11,13 @@ import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import viewmodels.AddressFormattingHelper
 
 class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
 
   val route = "/change-registered-details/check-your-answers"
   "GET " + routes.UpdateRegisteredDetailsCYAController.onPageLoad.url - {
-    "when the userAnswers contains no data" - {
+    "when the userAnswers contains business address only" - {
       "should render the page" in {
         given
           .commonPrecondition
@@ -30,11 +31,18 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
             res.status mustBe OK
             val page = Jsoup.parse(res.body)
             page.title must include(Messages("updateRegisteredDetails.checkYourAnswers.title"))
-            page.getElementsByClass("govuk-summary-list").size() mustBe 0
+            val elems = page.getElementsByClass("govuk-summary-list").first().getElementsByClass("govuk-summary-list__row")
+            elems.get(0).getElementsByClass("govuk-summary-list__key").first().text() mustBe
+              AddressFormattingHelper.addressFormatting(emptyUserAnswersForUpdateRegisteredDetails.contactAddress, None).toString().replace("<br>", " ")
+            elems.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change business address"
+            elems.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "business address"
+            page.getElementsByClass("govuk-summary-list").size() mustBe 1
+            page.getElementsByClass("govuk-summary-list__row").size() mustBe 1
           }
         }
       }
     }
+
     s"when the userAnswers contains the $UpdateContactDetailsPage" - {
       "should render the page with the contact details as a summary" in {
         given
@@ -67,13 +75,15 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
             elems.get(3).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change Contact Details"
             elems.get(3).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.UpdateContactDetailsController.onPageLoad(CheckMode).url
             elems.get(3).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "Contact Details"
-            page.getElementsByClass("govuk-summary-list__row").size() mustBe 4
+            page.getElementsByClass("govuk-summary-list").size() mustBe 2
+            page.getElementsByClass("govuk-summary-list__row").size() mustBe 5
             page.getElementsByTag("form").first().attr("action") mustBe routes.UpdateRegisteredDetailsCYAController.onSubmit.url
             page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm updates and send"
           }
         }
       }
     }
+
     testUnauthorisedUser(baseUrl + route)
     testAuthenticatedUserButNoUserAnswers(baseUrl + route)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, baseUrl + route)
@@ -90,7 +100,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
           val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
           whenReady(result) { res =>
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+            res.header(HeaderNames.LOCATION) mustBe Some(routes.UpdateDoneController.onPageLoad.url)
           }
         }
       }

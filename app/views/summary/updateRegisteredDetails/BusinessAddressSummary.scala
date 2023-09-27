@@ -16,7 +16,9 @@
 
 package views.summary.updateRegisteredDetails
 
+import models.UserAnswers
 import models.backend.UkAddress
+import pages.updateRegisteredDetails.BusinessAddressPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -47,6 +49,15 @@ object BusinessAddressSummary  {
           )))
         )
     }
+  }
+
+  def rows(answers: UserAnswers)(implicit messages: Messages): Option[(String, SummaryList)] = {
+    Some(
+      messages("updateRegisteredDetails.checkYourAnswers.businessAddress.title") ->
+        SummaryList(
+          rows = row(List(answers.contactAddress))
+        )
+    )
   }
 
 }
