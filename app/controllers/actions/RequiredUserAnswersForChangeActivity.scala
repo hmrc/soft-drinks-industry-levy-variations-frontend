@@ -50,13 +50,8 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
     OperatePackagingSiteOwnBrandsPage -> (_ => routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url),
     PackagingSiteDetailsPage -> (_ => routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url),
     PackAtBusinessAddressPage -> (_ => routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url),
-//    NOTE: Do not think below two are needed
-//    RemovePackagingSiteDetailsPage -> (_ => routes.RemovePackagingSiteDetailsController.onPageLoad(CheckMode).url),
-//    RemoveWarehouseDetailsPage -> (_ => routes.RemoveWarehouseDetailsController.onPageLoad(CheckMode).url),
 //    TODO: Need to add check mode to below in theory - can be a later ticket
     SecondaryWarehouseDetailsPage -> (_ => routes.SecondaryWarehouseDetailsController.onPageLoad.url),
-//    NOTE: Do not think below is needed
-//    SuggestDeregistrationPage -> (_ => routes.SuggestDeregistrationController.onPageLoad.url),
     ThirdPartyPackagersPage -> (_ => routes.ThirdPartyPackagersController.onPageLoad(CheckMode).url)
   )
 
@@ -66,8 +61,6 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
       genericLogger.logger.warn(s"${request.userAnswers.id} has hit CYA and is missing $userAnswersMissing, user will be redirected to ${userAnswersMissing.head.pageRequired}")
       val missingPage: Page = userAnswersMissing.head.pageRequired.asInstanceOf[Page]
       Future.successful(Redirect(pageRouteMap(missingPage)(CheckMode)))
-//      NOTE: pageRouteMap removes need to put url on Page trait
-//      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(CheckMode)))
     } else {
       action
     }
@@ -98,65 +91,49 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
     }
   }
 
-  private val implicitAmountProduced = implicitly[Reads[AmountProduced]]
-  private val implicitBands = implicitly[Reads[LitresInBands]]
-  private val implicitBoolean = implicitly[Reads[Boolean]]
-  private val implicitString = implicitly[Reads[String]]
-
-  private val largeProducer = AmountProduced.enumerable.withName("large").get
-  private val smallProducer = AmountProduced.enumerable.withName("small").get
-  private val noneProducer = AmountProduced.enumerable.withName("none").get
-  private val previousPageSmallOrNonProducer = PreviousPage(AmountProducedPage, List(smallProducer, noneProducer))(implicitly[Reads[AmountProduced]])
-  //      TODO: RequiredPage for each page in pageRouteMap. Implicitly reads, use List.empty initially
-  //      TODO: Then build up list of previous pages
-  private val pagesRequiredForAmountProducedPage: List[List[PreviousPage[_, _]]] = List.empty
-  private val pagesRequiredForContractPackingPage: List[List[PreviousPage[_, _]]] = List.empty
-  private val pagesRequiredForHowManyContractPackingPage: List[List[PreviousPage[_, _]]] = List(
-    List(PreviousPage(ContractPackingPage, List(true))(implicitBoolean))
-  )
-  private val pagesRequiredForHowManyImportsPage: List[List[PreviousPage[_, _]]] = List(
-    List(PreviousPage(ImportsPage, List(true))(implicitBoolean))
-  )
-  private val pagesRequiredForHowManyOperatePackagingSiteOwnBrandsPage: List[List[PreviousPage[_, _]]] = List(
-    List(PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitBoolean))
-  )
-  private val pagesRequiredForImportsPage: List[List[PreviousPage[_, _]]] = List.empty
-  private val pagesRequiredForOperatePackagingSiteOwnBrandsPage: List[List[PreviousPage[_, _]]] = List(
-    List(PreviousPage(AmountProducedPage, List(smallProducer, largeProducer))(implicitAmountProduced))
-  )
-  private val pagesRequiredForPackagingSiteDetailsPage: List[List[PreviousPage[_, _]]] = List(
-    List(PreviousPage(PackAtBusinessAddressPage, List(true, false))(implicitBoolean))
-  )
-  private val pagesRequiredForPackAtBusinessAddressPage: List[List[PreviousPage[_, _]]] = List(
-    List(previousPageSmallOrNonProducer, PreviousPage(ContractPackingPage, List(true))(implicitBoolean)),
-    List(PreviousPage(AmountProducedPage, List(largeProducer))(implicitAmountProduced), PreviousPage(OperatePackagingSiteOwnBrandsPage, List(false))(implicitBoolean), PreviousPage(ContractPackingPage, List(true))(implicitBoolean)),
-    List(PreviousPage(AmountProducedPage, List(largeProducer))(implicitAmountProduced), PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitBoolean), PreviousPage(ContractPackingPage, List(true, false))(implicitBoolean))
-  )
-//  TODO: Is below correct?
-  private val pagesRequiredForSecondaryWarehouseDetailsPage: List[List[PreviousPage[_, _]]] = List.empty
-  private val pagesRequiredForThirdPartyPackagersPage: List[List[PreviousPage[_, _]]] = List(
-    List(PreviousPage(AmountProducedPage, List(smallProducer))(implicitAmountProduced))
-  )
-
   private[controllers] def journey: List[RequiredPage[_,_,_]] = {
+    val implicitAmountProduced = implicitly[Reads[AmountProduced]]
+    val implicitBands = implicitly[Reads[LitresInBands]]
+    val implicitBoolean = implicitly[Reads[Boolean]]
+
+    val largeProducer = AmountProduced.enumerable.withName("large").get
+    val smallProducer = AmountProduced.enumerable.withName("small").get
+    val noneProducer = AmountProduced.enumerable.withName("none").get
+    val previousPageSmallOrNonProducer = PreviousPage(AmountProducedPage, List(smallProducer, noneProducer))(implicitly[Reads[AmountProduced]])
+    val pagesRequiredForAmountProducedPage: List[List[PreviousPage[_, _]]] = List.empty
+    val pagesRequiredForContractPackingPage: List[List[PreviousPage[_, _]]] = List.empty
+    val pagesRequiredForHowManyContractPackingPage: List[List[PreviousPage[_, _]]] =
+      List(List(PreviousPage(ContractPackingPage, List(true))(implicitBoolean)))
+    val pagesRequiredForHowManyImportsPage: List[List[PreviousPage[_, _]]] =
+      List(List(PreviousPage(ImportsPage, List(true))(implicitBoolean)))
+    val pagesRequiredForHowManyOperatePackagingSiteOwnBrandsPage: List[List[PreviousPage[_, _]]] =
+      List(List(PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitBoolean)))
+    val pagesRequiredForImportsPage: List[List[PreviousPage[_, _]]] = List.empty
+    val pagesRequiredForOperatePackagingSiteOwnBrandsPage: List[List[PreviousPage[_, _]]] =
+      List(List(PreviousPage(AmountProducedPage, List(smallProducer, largeProducer))(implicitAmountProduced)))
+    val pagesRequiredForPackagingSiteDetailsPage: List[List[PreviousPage[_, _]]] =
+      List(List(PreviousPage(PackAtBusinessAddressPage, List(true, false))(implicitBoolean)))
+    val pagesRequiredForPackAtBusinessAddressPage: List[List[PreviousPage[_, _]]] = List(
+      List(previousPageSmallOrNonProducer, PreviousPage(ContractPackingPage, List(true))(implicitBoolean)),
+      List(PreviousPage(AmountProducedPage, List(largeProducer))(implicitAmountProduced), PreviousPage(OperatePackagingSiteOwnBrandsPage, List(false))(implicitBoolean), PreviousPage(ContractPackingPage, List(true))(implicitBoolean)),
+      List(PreviousPage(AmountProducedPage, List(largeProducer))(implicitAmountProduced), PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitBoolean), PreviousPage(ContractPackingPage, List(true, false))(implicitBoolean))
+    )
+    //  TODO: Is below correct?
+    val pagesRequiredForSecondaryWarehouseDetailsPage: List[List[PreviousPage[_, _]]] = List.empty
+    val pagesRequiredForThirdPartyPackagersPage: List[List[PreviousPage[_, _]]] =
+      List(List(PreviousPage(AmountProducedPage, List(smallProducer))(implicitAmountProduced)))
     List(
       pagesRequiredForAmountProducedPage.map(RequiredPage(AmountProducedPage, _)(implicitAmountProduced)),
-      ////      NOTE: Do not think below are needed
-      ////      RequiredPage(ChangeActivityCYAPage, List.empty)(implicitBoolean),
+      pagesRequiredForThirdPartyPackagersPage.map(RequiredPage(ThirdPartyPackagersPage, _)(implicitBoolean)),
+      pagesRequiredForOperatePackagingSiteOwnBrandsPage.map(RequiredPage(OperatePackagingSiteOwnBrandsPage, _)(implicitBoolean)),
+      pagesRequiredForHowManyOperatePackagingSiteOwnBrandsPage.map(RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, _)(implicitBands)),
       pagesRequiredForContractPackingPage.map(RequiredPage(ContractPackingPage, _)(implicitBoolean)),
       pagesRequiredForHowManyContractPackingPage.map(RequiredPage(HowManyContractPackingPage, _)(implicitBands)),
-      pagesRequiredForHowManyImportsPage.map(RequiredPage(HowManyImportsPage, _)(implicitBands)),
-      pagesRequiredForHowManyOperatePackagingSiteOwnBrandsPage.map(RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, _)(implicitBands)),
       pagesRequiredForImportsPage.map(RequiredPage(ImportsPage, _)(implicitBoolean)),
-      pagesRequiredForOperatePackagingSiteOwnBrandsPage.map(RequiredPage(OperatePackagingSiteOwnBrandsPage, _)(implicitBoolean)),
-      pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean)),
+      pagesRequiredForHowManyImportsPage.map(RequiredPage(HowManyImportsPage, _)(implicitBands)),
       pagesRequiredForPackAtBusinessAddressPage.map(RequiredPage(PackAtBusinessAddressPage, _)(implicitBoolean)),
-      ////      NOTE: Do not think below two are needed
-      ////      RequiredPage(RemovePackagingSiteDetailsPage, List.empty)(implicitBoolean),
-      ////      RequiredPage(RemoveWarehouseDetailsPage, List.empty)(implicitBoolean),
-      pagesRequiredForSecondaryWarehouseDetailsPage.map(RequiredPage(SecondaryWarehouseDetailsPage, _)(implicitBoolean)),
-      ////      RequiredPage(SuggestDeregistrationPage, List.empty)(implicitBoolean),
-      pagesRequiredForThirdPartyPackagersPage.map(RequiredPage(ThirdPartyPackagersPage, _)(implicitBoolean))
+      pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean)),
+      pagesRequiredForSecondaryWarehouseDetailsPage.map(RequiredPage(SecondaryWarehouseDetailsPage, _)(implicitBoolean))
     ).flatten
   }
 }
