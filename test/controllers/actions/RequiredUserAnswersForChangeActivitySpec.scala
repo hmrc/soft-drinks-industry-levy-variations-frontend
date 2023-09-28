@@ -408,7 +408,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
       }
     }
   }
-  // TODO: URL STUFF ABOVE
+
 //  "returnMissingAnswers" - {
 //    "should return all missing answers when user answers is empty" in {
 //      implicit val dataRequest: DataRequest[AnyContentAsEmpty.type] = DataRequest(
@@ -637,29 +637,23 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
 //      res mustBe List.empty
 //    }
 //  }
-//  "checkYourAnswersRequiredData" - {
-//    "should redirect to verify controller when missing answers" in {
-//      implicit val dataRequest: DataRequest[AnyContentAsEmpty.type] = DataRequest(
-//        FakeRequest(),"", hasCTEnrolment = false, None, emptyUserAnswersForChangeActivity, RosmWithUtr("", RosmRegistration("", None, None, UkAddress(List.empty,"", None)))
-//      )
-//      redirectLocation(requiredUserAnswers.checkYourAnswersRequiredData(exampleSuccessAction)).get mustBe controllers.changeActivity.routes.VerifyController.onPageLoad(CheckMode).url
-//    }
-//    "should redirect to action when all answers answered" in {
-//      val userAnswers = {
-//        emptyUserAnswersForChangeActivity
-//          .set(AmountProducedPage, Small).success.value
-//          .set(ThirdPartyPackagersPage, true).success.value
-//          .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-//          .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1,1)).success.value
-//          .set(ContractPackingPage, true).success.value
-//          .set(HowManyContractPackingPage, LitresInBands(1,1)).success.value
-//          .set(ImportsPage, true).success.value
-//          .set(HowManyImportsPage, LitresInBands(1,1)).success.value
-//          .set(PackAtBusinessAddressPage, true).success.value
-//          .set(PackagingSiteDetailsPage, true).success.value
-//      }
-//      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-//      contentAsString(requiredUserAnswers.checkYourAnswersRequiredData(exampleSuccessAction)) mustBe exampleSuccessActionResult
-//    }
-//  }
+  "checkYourAnswersRequiredData" - {
+    "should redirect to action when all answers answered" in {
+      val userAnswers = {
+        emptyUserAnswersForChangeActivity
+          .set(AmountProducedPage, Small).success.value
+          .set(ThirdPartyPackagersPage, true).success.value
+          .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+          .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1,1)).success.value
+          .set(ContractPackingPage, true).success.value
+          .set(HowManyContractPackingPage, LitresInBands(1,1)).success.value
+          .set(ImportsPage, true).success.value
+          .set(HowManyImportsPage, LitresInBands(1,1)).success.value
+          .set(PackAtBusinessAddressPage, true).success.value
+          .set(PackagingSiteDetailsPage, true).success.value
+      }
+      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+      contentAsString(requiredUserAnswers.checkYourAnswersRequiredData(exampleSuccessAction)) mustBe exampleSuccessActionResult
+    }
+  }
 }
