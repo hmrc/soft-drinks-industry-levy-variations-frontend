@@ -295,6 +295,8 @@ correctReturn.repaymentMethod.hint = Repayment is not guaranteed. We may wish to
 correctReturn.repaymentMethod.bankAccount = Paid into the bank account for this business
 correctReturn.repaymentMethod.sdilAccount = Credited to our Soft Drinks Industry Levy account
 correctReturn.repaymentMethod.error.required = Select how you want the credit to be repaid
+correctReturn.repaymentMethod.checkYourAnswersLabel = Repayment method
+correctReturn.repaymentMethod.change.hidden = the repayment method
 
 correctReturn.addASmallProducer.title = Enter the registered small producer’s details
 correctReturn.addASmallProducer.hint1 = Small producer name (optional)
