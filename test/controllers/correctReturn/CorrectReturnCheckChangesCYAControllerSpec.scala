@@ -19,18 +19,18 @@ package controllers.correctReturn
 import base.SpecBase
 import controllers.correctReturn.routes._
 import models.SelectChange.CorrectReturn
-import models.correctReturn.AddASmallProducer
+import models.correctReturn.{AddASmallProducer, RepaymentMethod}
 import models.{LitresInBands, SmallProducer}
 import pages.correctReturn._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
 import views.html.correctReturn.CorrectReturnCheckChangesCYAView
-import views.summary.correctReturn.CorrectReturnBaseCYASummary
+import views.summary.correctReturn.{CorrectReturnBaseCYASummary, CorrectReturnCheckChangesSummary}
 
 class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryListFluency {
 
-  "Check Your Answers Controller" - {
+  "Check Changes Controller" - {
 
     "must return OK and the correct view for a GET" - {
       val litres = LitresInBands(2000, 4000)
@@ -51,6 +51,8 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         .set(HowManyClaimCreditsForExportsPage, litres).success.value
         .set(ClaimCreditsForLostDamagedPage, true).success.value
         .set(HowManyCreditsForLostDamagedPage, litres).success.value
+        .set(CorrectionReasonPage, "foo").success.value
+        .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -63,7 +65,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         val orgName = " Super Lemonade Plc"
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(orgName, CorrectReturnBaseCYASummary.summaryListAndHeadings(userAnswers, aSubscription),
+        contentAsString(result) mustEqual view(orgName, CorrectReturnCheckChangesSummary.summaryListAndHeadings(userAnswers, aSubscription),
           routes.CorrectReturnCheckChangesCYAController.onSubmit)(request, messages(application)).toString
       }
 
