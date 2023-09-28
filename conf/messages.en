@@ -618,5 +618,9 @@ checkYourAnswers.warehouse.checkYourAnswersLabel.one = You have 1 warehouse
 checkYourAnswers.sites.warehouse.change.hidden.one = the UK warehouse you use to store liable drinks
 checkYourAnswers.sites.warehouse.change.hidden.multiple = the UK warehouses you use to store liable drinks
 
+changeActivitySent.title = Update sent
+changeActivitySent.panel.returnMessage = We have received the update to your Soft Drinks Industry Levy details
+changeActivitySent.returnsDoneMessage = Your update for {0} was sent at {1} on the {2}. Changes can take up to 15 working days to process.
+
 litres.lowBandLevy = Low band levy
 litres.highBandLevy = High band levy

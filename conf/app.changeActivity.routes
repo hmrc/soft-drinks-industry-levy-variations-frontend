@@ -63,3 +63,5 @@ GET        /third-party-packagers                               controllers.chan
 POST       /third-party-packagers                               controllers.changeActivity.ThirdPartyPackagersController.onSubmit(mode: Mode = NormalMode)
 GET        /change-third-party-packagers                        controllers.changeActivity.ThirdPartyPackagersController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-third-party-packagers                        controllers.changeActivity.ThirdPartyPackagersController.onSubmit(mode: Mode = CheckMode)
+
+GET        /variation-done                                      controllers.changeActivity.ChangeActivitySentController.onPageLoad

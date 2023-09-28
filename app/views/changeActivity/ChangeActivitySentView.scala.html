@@ -1,0 +1,82 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import java.time.{LocalTime,LocalDate,ZoneId}
+@import java.time.format.DateTimeFormatter
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import java.time.format.DateTimeFormatter
+@import views.html.helpers._
+@import config.FrontendAppConfig
+
+
+@this(
+    layout: templates.Layout,
+    govukPanel : GovukPanel,
+    govukSummaryList: GovukSummaryList,
+    govukButton: GovukButton,
+    govukTable : GovukTable,
+    govukDetails : GovukDetails
+)
+
+@()(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+
+@layout(pageTitle = titleNoForm(messages("returnSent.title")), showBackLink = false){
+
+    @govukPanel(Panel(
+    title = Text(messages("changeActivitySent.title")),
+    content = HtmlContent(messages("changeActivitySent.panel.returnMessage"))
+    ))
+    <p class="govuk-body-m" id="printPage" xmlns="http://www.w3.org/1999/html">
+        <a href="javascript:window.print()" class="govuk-link">@messages("site.print")</a>
+    </p>
+
+    <p class="govuk-body" id="returnDone">
+        @messages("changeActivitySent.returnsDoneMessage",
+
+        LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase,
+        LocalDate.now.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
+        )
+    </p>
+
+    <h2 class="govuk-heading-m" id="whatNextHeader">
+        @messages("returnSent.headerOne")
+    </h2>
+
+    <p class="govuk-body" id="whatNextText">
+        <br>
+        <br>
+        @messages("returnSent.paymentsBlurb.nextReturn")
+    </p>
+
+    <h2 class="govuk-heading-m" id="helpWithThisServiceHeading">
+        @messages("returnSent.headerTwo")
+    </h2>
+
+    <p class="govuk-body" id="helpWithThisServiceText">
+        @messages("returnSent.points")
+    </p>
+
+    <p class="govuk-body" id="goToDashboard">
+        <a class="govuk-link" href=@config.sdilHomeUrl>@messages("returnSent.help.link")</a>
+    </p>
+
+    <ul class="govuk-list govuk-list--bullet">
+        <li>@messages("returnSent.list1")</li>
+        <li>@messages("returnSent.list2")</li>
+        <li>@messages("returnSent.list3")</li>
+        <li>@messages("returnSent.list4")</li>
+    </ul>
+}

@@ -42,7 +42,7 @@ class ChangeActivityCYAController @Inject()(
   }
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
-    Redirect(controllers.routes.IndexController.onPageLoad.url)
+    Redirect(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad)
   }
 
 }
