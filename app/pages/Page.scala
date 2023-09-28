@@ -20,7 +20,9 @@ import models.Mode
 
 import scala.language.implicitConversions
 
-trait Page
+trait Page {
+  val url: Mode => String = mode => controllers.routes.IndexController.onPageLoad.url
+}
 
 object Page {
 

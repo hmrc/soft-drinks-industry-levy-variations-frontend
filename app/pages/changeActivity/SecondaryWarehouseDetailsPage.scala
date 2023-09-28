@@ -16,6 +16,8 @@
 
 package pages.changeActivity
 
+import controllers.changeActivity.routes
+import models.Mode
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
@@ -25,4 +27,6 @@ case object SecondaryWarehouseDetailsPage extends QuestionPage[Boolean] {
 
   def journeyType: String = "changeActivity"
   override def toString: String = "secondaryWarehouseDetails"
+
+  override val url: Mode => String = mode => routes.SecondaryWarehouseDetailsController.onPageLoad.url
 }

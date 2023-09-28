@@ -39,28 +39,11 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
     }
   }
 
-  private val pageRouteMap: Map[Page, Mode => String] = Map(
-    AmountProducedPage -> (_ => routes.AmountProducedController.onPageLoad(CheckMode).url),
-    ChangeActivityCYAPage -> (_ => routes.ChangeActivityCYAController.onPageLoad.url),
-    ContractPackingPage -> (_ => routes.ContractPackingController.onPageLoad(CheckMode).url),
-    HowManyContractPackingPage -> (_ => routes.HowManyContractPackingController.onPageLoad(CheckMode).url),
-    HowManyImportsPage -> (_ => routes.HowManyImportsController.onPageLoad(CheckMode).url),
-    HowManyOperatePackagingSiteOwnBrandsPage -> (_ => routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url),
-    ImportsPage -> (_ => routes.ImportsController.onPageLoad(CheckMode).url),
-    OperatePackagingSiteOwnBrandsPage -> (_ => routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url),
-    PackagingSiteDetailsPage -> (_ => routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url),
-    PackAtBusinessAddressPage -> (_ => routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url),
-//    TODO: Need to add check mode to below in theory - can be a later ticket
-    SecondaryWarehouseDetailsPage -> (_ => routes.SecondaryWarehouseDetailsController.onPageLoad.url),
-    ThirdPartyPackagersPage -> (_ => routes.ThirdPartyPackagersController.onPageLoad(CheckMode).url)
-  )
-
   private[controllers] def checkYourAnswersRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
     val userAnswersMissing: List[RequiredPage[_,_,_]] = returnMissingAnswers(journey)
     if (userAnswersMissing.nonEmpty) {
       genericLogger.logger.warn(s"${request.userAnswers.id} has hit CYA and is missing $userAnswersMissing, user will be redirected to ${userAnswersMissing.head.pageRequired}")
-      val missingPage: Page = userAnswersMissing.head.pageRequired.asInstanceOf[Page]
-      Future.successful(Redirect(pageRouteMap(missingPage)(CheckMode)))
+      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(CheckMode)))
     } else {
       action
     }
@@ -100,6 +83,7 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
     val smallProducer = AmountProduced.enumerable.withName("small").get
     val noneProducer = AmountProduced.enumerable.withName("none").get
     val previousPageSmallOrNonProducer = PreviousPage(AmountProducedPage, List(smallProducer, noneProducer))(implicitly[Reads[AmountProduced]])
+
     val pagesRequiredForAmountProducedPage: List[List[PreviousPage[_, _]]] = List.empty
     val pagesRequiredForContractPackingPage: List[List[PreviousPage[_, _]]] = List.empty
     val pagesRequiredForHowManyContractPackingPage: List[List[PreviousPage[_, _]]] =
@@ -118,7 +102,6 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
       List(PreviousPage(AmountProducedPage, List(largeProducer))(implicitAmountProduced), PreviousPage(OperatePackagingSiteOwnBrandsPage, List(false))(implicitBoolean), PreviousPage(ContractPackingPage, List(true))(implicitBoolean)),
       List(PreviousPage(AmountProducedPage, List(largeProducer))(implicitAmountProduced), PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitBoolean), PreviousPage(ContractPackingPage, List(true, false))(implicitBoolean))
     )
-    //  TODO: Is below correct?
     val pagesRequiredForSecondaryWarehouseDetailsPage: List[List[PreviousPage[_, _]]] = List.empty
     val pagesRequiredForThirdPartyPackagersPage: List[List[PreviousPage[_, _]]] =
       List(List(PreviousPage(AmountProducedPage, List(smallProducer))(implicitAmountProduced)))

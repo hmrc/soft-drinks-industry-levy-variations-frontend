@@ -16,10 +16,13 @@
 
 package pages.changeActivity
 
+import controllers.changeActivity.routes
 import models.Mode
 import pages.Page
 
 case object ChangeActivityCYAPage extends Page {
 
   override def toString: String = "checkYourAnswers"
+
+  override val url: Mode => String = _ => routes.ChangeActivityCYAController.onPageLoad.url
 }
