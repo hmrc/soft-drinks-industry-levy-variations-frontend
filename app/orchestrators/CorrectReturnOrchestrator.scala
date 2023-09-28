@@ -48,8 +48,8 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
 
     for {
       sdilReturn <- getSdilReturn(retrievedSubscription, selectedReturnPeriod)
-      updatedUserAnswersWithSavedSdilReturn <- generateUAsWithSavedSdilReturn(userAnswers, sdilReturn)
-      updatedUserAnswers <- generateUserAnswersWithSdilReturn(updatedUserAnswersWithSavedSdilReturn, sdilReturn, selectedReturnPeriod)
+      userAnswersWithOriginalSdilReturn <- generateUAsWithOriginalSdilReturnSaved(userAnswers, sdilReturn)
+      updatedUserAnswers <- generateUserAnswersWithSdilReturn(userAnswersWithOriginalSdilReturn, sdilReturn, selectedReturnPeriod)
       _ <- EitherT(sessionService.set(updatedUserAnswers))
     } yield (): Unit
 
@@ -88,7 +88,7 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
       }
   }
 
-  private def generateUAsWithSavedSdilReturn(userAnswers: UserAnswers, sdilReturn: SdilReturn)
+  private def generateUAsWithOriginalSdilReturnSaved(userAnswers: UserAnswers, sdilReturn: SdilReturn)
                                                (implicit ec: ExecutionContext): VariationResult[UserAnswers] = EitherT {
     Future.fromTry(userAnswers
       .setOriginalSDILReturn(sdilReturn)

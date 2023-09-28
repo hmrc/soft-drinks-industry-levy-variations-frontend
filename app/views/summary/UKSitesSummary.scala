@@ -91,22 +91,27 @@ object UKSitesSummary {
       )
   }
 
-  def getHeadingAndSummaryForCorrectReturn(userAnswers: UserAnswers, isCheckAnswers: Boolean, subscription: RetrievedSubscription)
-                                          (implicit messages: Messages): Option[(String, SummaryList)] = {
+  def getHeadingAndSummary(userAnswers: UserAnswers, isCheckAnswers: Boolean, subscription: RetrievedSubscription)
+                          (implicit messages: Messages): Option[(String, SummaryList)] = {
     val optSummaryList = (
-      UserTypeCheck.isNewPacker(SdilReturn.apply(userAnswers), subscription),
-      UserTypeCheck.isNewImporter(SdilReturn.apply(userAnswers), subscription),
-      subscription.productionSites.isEmpty,
-      subscription.warehouseSites.isEmpty
+      userAnswers.packagingSiteList.nonEmpty,
+      userAnswers.warehouseList.nonEmpty
     ) match {
-      case (true, false, true, _) => Option(
+      case (true, false) => Option(
         SummaryListViewModel(
           Seq(
             getPackAtBusinessAddressRow(userAnswers, isCheckAnswers)
           )
         )
       )
-      case (true, true, true, true) => Option(
+      case (false, true) => Option(
+        SummaryListViewModel(
+          Seq(
+            getAskSecondaryWarehouseRow(userAnswers, isCheckAnswers)
+          )
+        )
+      )
+      case (true, true) => Option(
         SummaryListViewModel(
           Seq(
             getPackAtBusinessAddressRow(userAnswers, isCheckAnswers),
@@ -114,9 +119,35 @@ object UKSitesSummary {
           )
         )
       )
-      case (false, true, _, true) => Option(
+      case _ => None
+    }
+    optSummaryList.map(list => "checkYourAnswers.sites" -> list)
+  }
+
+  def getHeadingAndSummaryForCorrectReturn(userAnswers: UserAnswers, isCheckAnswers: Boolean, subscription: RetrievedSubscription)
+                                          (implicit messages: Messages): Option[(String, SummaryList)] = {
+    val optSummaryList = (
+      UserTypeCheck.isNewPacker(SdilReturn.apply(userAnswers), subscription) && subscription.productionSites.isEmpty,
+      UserTypeCheck.isNewImporter(SdilReturn.apply(userAnswers), subscription) && subscription.warehouseSites.isEmpty
+    ) match {
+      case (true, false) => Option(
         SummaryListViewModel(
           Seq(
+            getPackAtBusinessAddressRow(userAnswers, isCheckAnswers)
+          )
+        )
+      )
+      case (false, true) => Option(
+        SummaryListViewModel(
+          Seq(
+            getAskSecondaryWarehouseRow(userAnswers, isCheckAnswers)
+          )
+        )
+      )
+      case (true, true) => Option(
+        SummaryListViewModel(
+          Seq(
+            getPackAtBusinessAddressRow(userAnswers, isCheckAnswers),
             getAskSecondaryWarehouseRow(userAnswers, isCheckAnswers)
           )
         )

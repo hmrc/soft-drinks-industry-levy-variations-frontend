@@ -42,6 +42,7 @@ class CorrectReturnCheckChangesCYAController @Inject()(
   def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
       val orgName: String = " " + request.subscription.orgName
+      println(Console.YELLOW + request.userAnswers + Console.WHITE)
       val originalSDILReturn = request.userAnswers.getCorrectReturnOriginalSDILReturnData.get
       val currentSDILReturn = SdilReturn.apply(request.userAnswers)
       val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSDILReturn, currentSDILReturn)
