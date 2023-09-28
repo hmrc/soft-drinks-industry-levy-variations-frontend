@@ -48,7 +48,8 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
 
     for {
       sdilReturn <- getSdilReturn(retrievedSubscription, selectedReturnPeriod)
-      updatedUserAnswers <- generateUserAnswersWithSdilReturn(userAnswers, sdilReturn, selectedReturnPeriod)
+      userAnswersWithOriginalSdilReturn <- generateUAsWithOriginalSdilReturnSaved(userAnswers, sdilReturn)
+      updatedUserAnswers <- generateUserAnswersWithSdilReturn(userAnswersWithOriginalSdilReturn, sdilReturn, selectedReturnPeriod)
       _ <- EitherT(sessionService.set(updatedUserAnswers))
     } yield (): Unit
 
@@ -66,7 +67,7 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
     }
   }
 
-  private def getSdilReturn(retrievedSubscription: RetrievedSubscription,
+  def getSdilReturn(retrievedSubscription: RetrievedSubscription,
                             selectedReturnPeriod: ReturnPeriod)
                            (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[SdilReturn] = EitherT {
     connector.getReturn(retrievedSubscription.utr, selectedReturnPeriod).value.map {
@@ -87,4 +88,13 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
       }
   }
 
+  private def generateUAsWithOriginalSdilReturnSaved(userAnswers: UserAnswers, sdilReturn: SdilReturn)
+                                               (implicit ec: ExecutionContext): VariationResult[UserAnswers] = EitherT {
+    Future.fromTry(userAnswers
+      .setOriginalSDILReturn(sdilReturn)
+    ).map(Right(_))
+      .recover {
+        case _ => Left(FailedToAddDataToUserAnswers)
+      }
+  }
 }

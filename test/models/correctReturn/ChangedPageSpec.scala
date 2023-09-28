@@ -28,17 +28,19 @@ class ChangedPageSpec extends AnyFreeSpec with Matchers {
       val currentSdilReturn = SdilReturn((1, 1), (3, 4), List(SmallProducer("", "", (1, 1))), (5, 6), (33, 22), (32, 22), (22, 22), None)
       val res = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSdilReturn)
       res mustBe List(
-        ChangedPage(OperatePackagingSiteOwnBrandsPage, true),
-        ChangedPage(HowManyOperatePackagingSiteOwnBrandsPage, true),
-        ChangedPage(PackagedAsContractPackerPage, true),
-        ChangedPage(HowManyPackagedAsContractPackerPage, true),
-        ChangedPage(BroughtIntoUKPage, true),
-        ChangedPage(HowManyBroughtIntoUKPage, true),
-        ChangedPage(BroughtIntoUkFromSmallProducersPage, true),
-        ChangedPage(HowManyBroughtIntoUkFromSmallProducersPage, true),
-        ChangedPage(ClaimCreditsForExportsPage, true),
-        ChangedPage(HowManyClaimCreditsForExportsPage, true),
-        ChangedPage(ExemptionsForSmallProducersPage, true)
+        ChangedPage(OperatePackagingSiteOwnBrandsPage, answerChanged = true),
+        ChangedPage(HowManyOperatePackagingSiteOwnBrandsPage, answerChanged = true),
+        ChangedPage(PackagedAsContractPackerPage, answerChanged = true),
+        ChangedPage(HowManyPackagedAsContractPackerPage, answerChanged = true),
+        ChangedPage(BroughtIntoUKPage, answerChanged = true),
+        ChangedPage(HowManyBroughtIntoUKPage, answerChanged = true),
+        ChangedPage(BroughtIntoUkFromSmallProducersPage, answerChanged = true),
+        ChangedPage(HowManyBroughtIntoUkFromSmallProducersPage, answerChanged = true),
+        ChangedPage(ClaimCreditsForExportsPage, answerChanged = true),
+        ChangedPage(HowManyClaimCreditsForExportsPage, answerChanged = true),
+        ChangedPage(ClaimCreditsForLostDamagedPage, answerChanged = true),
+        ChangedPage(HowManyCreditsForLostDamagedPage, answerChanged = true),
+        ChangedPage(ExemptionsForSmallProducersPage, answerChanged = true)
       )
     }
     "should return all pages with answers changed false that have changed if all answers remain the same" in {
@@ -46,17 +48,19 @@ class ChangedPageSpec extends AnyFreeSpec with Matchers {
       val currentSdilReturn = SdilReturn((0, 0), (0, 0), List(), (0, 0), (0, 0), (0, 0), (0, 0), None)
       val res = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSdilReturn)
       res mustBe List(
-        ChangedPage(OperatePackagingSiteOwnBrandsPage, false),
-        ChangedPage(HowManyOperatePackagingSiteOwnBrandsPage, false),
-        ChangedPage(PackagedAsContractPackerPage, false),
-        ChangedPage(HowManyPackagedAsContractPackerPage, false),
-        ChangedPage(BroughtIntoUKPage, false),
-        ChangedPage(HowManyBroughtIntoUKPage, false),
-        ChangedPage(BroughtIntoUkFromSmallProducersPage, false),
-        ChangedPage(HowManyBroughtIntoUkFromSmallProducersPage, false),
-        ChangedPage(ClaimCreditsForExportsPage, false),
-        ChangedPage(HowManyClaimCreditsForExportsPage, false),
-        ChangedPage(ExemptionsForSmallProducersPage, false)
+        ChangedPage(OperatePackagingSiteOwnBrandsPage, answerChanged = false),
+        ChangedPage(HowManyOperatePackagingSiteOwnBrandsPage, answerChanged = false),
+        ChangedPage(PackagedAsContractPackerPage, answerChanged = false),
+        ChangedPage(HowManyPackagedAsContractPackerPage, answerChanged = false),
+        ChangedPage(BroughtIntoUKPage, answerChanged = false),
+        ChangedPage(HowManyBroughtIntoUKPage, answerChanged = false),
+        ChangedPage(BroughtIntoUkFromSmallProducersPage, answerChanged = false),
+        ChangedPage(HowManyBroughtIntoUkFromSmallProducersPage, answerChanged = false),
+        ChangedPage(ClaimCreditsForExportsPage, answerChanged = false),
+        ChangedPage(HowManyClaimCreditsForExportsPage, answerChanged = false),
+        ChangedPage(ClaimCreditsForLostDamagedPage, answerChanged = false),
+        ChangedPage(HowManyCreditsForLostDamagedPage, answerChanged = false),
+        ChangedPage(ExemptionsForSmallProducersPage, answerChanged = false)
       )
     }
     s"should return all pages answered change true bar the $ExemptionsForSmallProducersPage if the small producers literages has not changed" in {
@@ -64,17 +68,19 @@ class ChangedPageSpec extends AnyFreeSpec with Matchers {
       val currentSdilReturn = SdilReturn((1, 1), (3, 4), List(SmallProducer("", "", (1, 1))), (5, 6), (33, 22), (32, 22), (22, 22), None)
       val res = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSdilReturn)
        res mustBe List(
-        ChangedPage(OperatePackagingSiteOwnBrandsPage, true),
-        ChangedPage(HowManyOperatePackagingSiteOwnBrandsPage, true),
-        ChangedPage(PackagedAsContractPackerPage, true),
-        ChangedPage(HowManyPackagedAsContractPackerPage, true),
-        ChangedPage(BroughtIntoUKPage, true),
-        ChangedPage(HowManyBroughtIntoUKPage, true),
-        ChangedPage(BroughtIntoUkFromSmallProducersPage, true),
-        ChangedPage(HowManyBroughtIntoUkFromSmallProducersPage, true),
-        ChangedPage(ClaimCreditsForExportsPage, true),
-        ChangedPage(HowManyClaimCreditsForExportsPage, true),
-        ChangedPage(ExemptionsForSmallProducersPage, false)
+        ChangedPage(OperatePackagingSiteOwnBrandsPage, answerChanged = true),
+        ChangedPage(HowManyOperatePackagingSiteOwnBrandsPage, answerChanged =  true),
+        ChangedPage(PackagedAsContractPackerPage, answerChanged =  true),
+        ChangedPage(HowManyPackagedAsContractPackerPage, answerChanged =  true),
+        ChangedPage(BroughtIntoUKPage, answerChanged =  true),
+        ChangedPage(HowManyBroughtIntoUKPage, answerChanged =  true),
+        ChangedPage(BroughtIntoUkFromSmallProducersPage, answerChanged =  true),
+        ChangedPage(HowManyBroughtIntoUkFromSmallProducersPage, answerChanged =  true),
+        ChangedPage(ClaimCreditsForExportsPage, answerChanged =  true),
+        ChangedPage(HowManyClaimCreditsForExportsPage, answerChanged =  true),
+        ChangedPage(ClaimCreditsForLostDamagedPage, answerChanged = true),
+        ChangedPage(HowManyCreditsForLostDamagedPage, answerChanged = true),
+        ChangedPage(ExemptionsForSmallProducersPage, answerChanged =  false)
       )
     }
   }

@@ -22,7 +22,7 @@ import models.correctReturn.CorrectReturnUserAnswersData
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import play.api.libs.json.Json
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.{LocalDate, LocalDateTime, ZoneOffset}
 
 trait TestData {
 
@@ -164,10 +164,14 @@ trait TestData {
       .setForCorrectReturn(correctReturnData, smallProducers, returnPeriod.head).success.value
   }
 
+  val emptySdilReturn: SdilReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0), submittedOn =
+    Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
+
+  val userAnswersForCorrectReturnWithEmptySdilReturn:
+    UserAnswers = userAnswersForCorrectReturn(true).copy(data = Json.obj("originalSDILReturn" -> Json.toJson(emptySdilReturn)))
   val userAnswerTwoWarehouses: UserAnswers = userAnswersForCorrectReturn(true).copy(warehouseList = twoWarehouses)
+  val emptyUserAnswersForCancelRegistration: UserAnswers = UserAnswers(sdilNumber, SelectChange.CancelRegistration, contactAddress = contactAddress)
 
-  val emptyUserAnswersForCancelRegistration = UserAnswers(sdilNumber, SelectChange.CancelRegistration, contactAddress = contactAddress)
-
-  def emptyUserAnswersForSelectChange(selectChange: SelectChange) = UserAnswers(sdilNumber, selectChange, contactAddress = contactAddress)
+  def emptyUserAnswersForSelectChange(selectChange: SelectChange): UserAnswers = UserAnswers(sdilNumber, selectChange, contactAddress = contactAddress)
 
 }

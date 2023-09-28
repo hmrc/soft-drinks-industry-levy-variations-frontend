@@ -1,9 +1,11 @@
 package controllers.correctReturn
 
+import testSupport.SDILBackendTestData.aSubscription
 import controllers.CorrectReturnBaseCYASummaryISpecHelper
 import models.SelectChange.CorrectReturn
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import pages.correctReturn.PackAtBusinessAddressPage
 import play.api.http.HeaderNames
 import play.api.http.Status.OK
 import play.api.libs.json.Json
@@ -35,7 +37,9 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
 
     "when the user has populated all pages including litres" - {
       "should render the check your answers page with only the required details" in {
-        val userAnswers = userAnswerWithLitresForAllPages
+        val userAnswers = userAnswerWithLitresForAllPagesNilSdilReturn
+          .copy(packagingSiteList = packagingSitesFromSubscription, warehouseList = warehousesFromSubscription)
+          .set(PackAtBusinessAddressPage, true).success.value
         given
           .commonPrecondition
 
@@ -88,7 +92,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
             val siteDetailsSummaryListItem = page.getElementsByClass("govuk-summary-list").get(7)
 
             page.getElementsByTag("h2").get(7).text() mustBe "UK site details"
-            validateSiteDetailsSummary(siteDetailsSummaryListItem, 1, 2, true)
+            validateSiteDetailsSummary(userAnswers, aSubscription, siteDetailsSummaryListItem, 1, 2, true)
 
             page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCYAController.onSubmit.url
             page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Save and continue"
@@ -98,7 +102,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
 
       "and they have only populated the required pages and have no litres" - {
         "should render the check your answers page with expected summary items" in {
-          val userAnswers = userAnswerWithAllNos
+          val userAnswers = userAnswerWithAllNosWithOriginalSdilReturn
           given
             .commonPrecondition
 
@@ -153,30 +157,6 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
           }
         }
       }
-
-//      "and the user answers are no to own brands and yes to co-pack and import " +
-//        "then sites should be displayed" in {
-//        val userAnswers = userAnswerWithLitresForAllPages(Large)
-//          .set(OperatePackagingSitesPage, false).success.value
-//          .remove(HowManyOperatePackagingSitesPage).success.value
-//
-//        given
-//          .commonPrecondition
-//
-//        setAnswers(userAnswers)
-//
-//        WsTestClient.withClient { client =>
-//          val result = createClientRequestGet(client, baseUrl + route)
-//
-//          whenReady(result) { res =>
-//            res.status mustBe OK
-//            val page = Jsoup.parse(res.body)
-//            page.getElementsByTag("dt").text() must include("You have 3 packaging sites")
-//
-//          }
-//        }
-//      }
-
     }
 
     testUnauthorisedUser(baseUrl + route)

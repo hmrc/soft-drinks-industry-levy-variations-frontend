@@ -64,6 +64,14 @@ case class ChangedPage(page: Page, answerChanged: Boolean)
           answerChanged = original.export != current.export
         ),
         ChangedPage(
+          page = ClaimCreditsForLostDamagedPage,
+          answerChanged = original.wastage != current.wastage
+        ),
+        ChangedPage(
+          page = HowManyCreditsForLostDamagedPage,
+          answerChanged = original.wastage != current.wastage
+        ),
+        ChangedPage(
           page = ExemptionsForSmallProducersPage,
           answerChanged = SmallProducer.totalOfAllSmallProducers(original.packSmall) != SmallProducer.totalOfAllSmallProducers(current.packSmall)
         )

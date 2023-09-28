@@ -60,7 +60,7 @@ class CorrectReturnCheckChangesCYAViewSpec extends ViewSpecHelper {
     }
 
     "should have the expected post header caption" in {
-      document.getElementsByClass(Selectors.body).text() mustEqual "This update is for Super Lemonade Plc"
+      document.getElementsByClass(Selectors.body).get(0).text() mustEqual "This update is for Super Lemonade Plc"
     }
 
     "contain the correct button" in {
@@ -80,6 +80,11 @@ class CorrectReturnCheckChangesCYAViewSpec extends ViewSpecHelper {
         .getElementsByClass(Selectors.summaryRow)
         .first()
         .getElementsByClass(Selectors.summaryValue).first().text() mustBe "bang"
+    }
+
+    "contain a section before the submit action that contains the correct text" in {
+      document.getElementsByClass(Selectors.body).get(1).text() mustBe
+        "By sending this correction you are confirming that, to the best of your knowledge, the details you are providing are correct."
     }
 
     "contains a form with the correct action" in {

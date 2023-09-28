@@ -26,7 +26,7 @@
 @layout(pageTitle = titleNoForm(messages("correctReturn.checkYourAnswers.title"))) {
 
     <h1 class="govuk-heading-l">@messages("correctReturn.checkYourAnswers.title")</h1>
-    <span class="govuk-body">@messages("correctReturn.checkChanges.updateFor")@orgName</span>
+    <span class="govuk-body">@messages("correctReturn.checkYourAnswers.updateFor")@orgName</span>
 
     @for((heading, summaryList) <- seqSummaryList) {
         <h2 class="govuk-heading-m">@messages(heading)</h2>

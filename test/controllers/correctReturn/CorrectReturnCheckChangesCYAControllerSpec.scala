@@ -34,7 +34,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
 
     "must return OK and the correct view for a GET" - {
       val litres = LitresInBands(2000, 4000)
-      val userAnswers = emptyUserAnswersForCorrectReturn
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
           smallProducerList = List(SmallProducer("", "XZSDIL000000234", (2000, 4000))))
         .set(OperatePackagingSiteOwnBrandsPage, true).success.value
