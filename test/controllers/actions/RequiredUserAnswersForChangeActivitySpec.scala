@@ -21,7 +21,7 @@ import models.changeActivity.AmountProduced.{Large, None, Small}
 import models.changeActivity.AmountProduced
 import models.requests.{DataRequest, RequiredDataRequest}
 import models.{CheckMode, LitresInBands, UserAnswers}
-import pages.{Page, QuestionPage}
+import pages.QuestionPage
 import pages.changeActivity._
 import play.api.libs.json.Reads
 import play.api.mvc.Results.Ok
@@ -29,7 +29,6 @@ import play.api.mvc.{AnyContentAsEmpty, Result}
 import play.api.test.Helpers.{contentAsString, redirectLocation}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest}
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwaitTimeout {
@@ -177,27 +176,6 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
       }
     }
 
-//    s"should redirect to verify controller when missing answers for $ChangeActivityCYAPage" - {
-//      "with no answers" in {
-//        val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(emptyUserAnswersForChangeActivity)))
-//        res.get mustBe controllers.changeActivity.routes.VerifyController.onPageLoad(CheckMode).url
-//      }
-//      "with missing selection of pages and verify is not answered" in {
-//        val userAnswers = {
-//          emptyUserAnswersForChangeActivity
-//            .set(AmountProducedPage, Small).success.value
-//            .set(ThirdPartyPackagersPage, true).success.value
-//            .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-//            .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1, 1)).success.value
-//            .set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value
-//            .set(ImportsPage, true).success.value
-//            .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
-//            .set(PackagingSiteDetailsPage, true).success.value
-//        }
-//        val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers)))
-//        res.get mustBe controllers.changeActivity.routes.VerifyController.onPageLoad(CheckMode).url
-//      }
-//    }
     s"should redirect to the appropriate missing page when missing answers for $ChangeActivityCYAPage" - {
 
       s"when AmountProduced is $Large and contractPacking is false, OperatePackagingSites is true and pack at business address is not answered" in {
@@ -262,16 +240,15 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         res.get mustBe controllers.changeActivity.routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url
       }
       List[QuestionPage[_]](
-//        AmountProducedPage,
-//        ContractPackingPage,
-//        HowManyContractPackingPage,
-//        OperatePackagingSiteOwnBrandsPage,
-//        HowManyOperatePackagingSiteOwnBrandsPage,
-//        ImportsPage,
-//        HowManyImportsPage,
-//        PackAtBusinessAddressPage,
-//        PackagingSiteDetailsPage,
-        SecondaryWarehouseDetailsPage
+        AmountProducedPage,
+        ContractPackingPage,
+        HowManyContractPackingPage,
+        OperatePackagingSiteOwnBrandsPage,
+        HowManyOperatePackagingSiteOwnBrandsPage,
+        ImportsPage,
+        HowManyImportsPage,
+        PackAtBusinessAddressPage,
+        PackagingSiteDetailsPage
       ).foreach { eachPage =>
         s"when $eachPage is filtered out from a full list of user answers set to true, the user is taken to that page that is required for ${AmountProduced.Large}" in {
           val userAnswers = {
@@ -294,10 +271,10 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
       }
 
       List[QuestionPage[_]](
-//        AmountProducedPage,
-//        OperatePackagingSiteOwnBrandsPage,
-//        ImportsPage
-        ).foreach { eachPage =>
+        AmountProducedPage,
+        OperatePackagingSiteOwnBrandsPage,
+        ImportsPage
+      ).foreach { eachPage =>
         s"when $eachPage is filtered out from a full list of user answers set to false, the user is taken to that page that is required for ${AmountProduced.Large}" in {
           val userAnswers = {
             emptyUserAnswersForChangeActivity
@@ -315,17 +292,16 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
       }
 
       List[QuestionPage[_]](
-//        AmountProducedPage,
-//        ContractPackingPage,
-//        HowManyContractPackingPage,
-//        ThirdPartyPackagersPage,
-//        OperatePackagingSiteOwnBrandsPage,
-//        HowManyOperatePackagingSiteOwnBrandsPage,
-//        ImportsPage,
-//        HowManyImportsPage,
-//        PackAtBusinessAddressPage,
-//        PackagingSiteDetailsPage,
-        SecondaryWarehouseDetailsPage
+        AmountProducedPage,
+        ContractPackingPage,
+        HowManyContractPackingPage,
+        ThirdPartyPackagersPage,
+        OperatePackagingSiteOwnBrandsPage,
+        HowManyOperatePackagingSiteOwnBrandsPage,
+        ImportsPage,
+        HowManyImportsPage,
+        PackAtBusinessAddressPage,
+        PackagingSiteDetailsPage
       ).foreach { eachPage =>
         s"when $eachPage is filtered out from a full list of user answers of true, the user is taken to that page that is required for ${AmountProduced.Small}" in {
           val userAnswers = {
@@ -347,14 +323,14 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         }
       }
       List[QuestionPage[_]](
-//        AmountProducedPage,
-//        ContractPackingPage,
-//        ThirdPartyPackagersPage,
-//        OperatePackagingSiteOwnBrandsPage,
-//        ImportsPage,
-//        HowManyImportsPage,
-//        PackagingSiteDetailsPage
-         ).foreach { eachPage =>
+        AmountProducedPage,
+        ContractPackingPage,
+        ThirdPartyPackagersPage,
+        OperatePackagingSiteOwnBrandsPage,
+        ImportsPage,
+        HowManyImportsPage,
+        PackagingSiteDetailsPage
+      ).foreach { eachPage =>
         s"when $eachPage is filtered out from a full list of user answers of false, the user is taken to that page that is required for ${AmountProduced.Small}" in {
           val userAnswers = {
             emptyUserAnswersForChangeActivity
@@ -375,12 +351,11 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         }
       }
       List[QuestionPage[_]](
-//        AmountProducedPage,
-//        ContractPackingPage,
-//        HowManyContractPackingPage,
-//        ImportsPage,
-//        HowManyImportsPage,
-        SecondaryWarehouseDetailsPage
+        AmountProducedPage,
+        ContractPackingPage,
+        HowManyContractPackingPage,
+        ImportsPage,
+        HowManyImportsPage
       ).foreach { eachPage =>
         s"when $eachPage is filtered out from a full list of user answers of true, the user is taken to that page that is required for ${AmountProduced.None}" in {
           val userAnswers = {
@@ -402,10 +377,10 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         }
       }
       List[QuestionPage[_]](
-//        AmountProducedPage,
-//        ContractPackingPage,
-//        ImportsPage,
-//        HowManyImportsPage
+        AmountProducedPage,
+        ContractPackingPage,
+        ImportsPage,
+        HowManyImportsPage
       ).foreach { eachPage =>
         s"when $eachPage is filtered out from a full list of user answers of false, the user is taken to that page that is required for ${AmountProduced.None}" in {
           val userAnswers = {
