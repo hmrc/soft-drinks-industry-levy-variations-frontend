@@ -1,9 +1,11 @@
 package controllers.correctReturn
 
+import testSupport.SDILBackendTestData.aSubscription
 import controllers.CorrectReturnBaseCYASummaryISpecHelper
 import models.SelectChange.CorrectReturn
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import pages.correctReturn.PackAtBusinessAddressPage
 import play.api.http.HeaderNames
 import play.api.http.Status.OK
 import play.api.libs.json.Json
@@ -35,9 +37,11 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
 
     "when the user has populated all pages including litres" - {
       "should render the check your answers page with only the required details" in {
-        val userAnswers = userAnswerWithLitresForAllPagesNilSdilReturn.copy(warehouseList = warehousesFromSubscription)
+        val userAnswers = userAnswerWithLitresForAllPagesNilSdilReturn
+          .copy(packagingSiteList = packagingSitesFromSubscription, warehouseList = warehousesFromSubscription)
+          .set(PackAtBusinessAddressPage, true).success.value
         given
-          .commonPreconditionChangeSubscription(diffSubscription)
+          .commonPrecondition
 
         setAnswers(userAnswers)
 
@@ -88,7 +92,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
             val siteDetailsSummaryListItem = page.getElementsByClass("govuk-summary-list").get(7)
 
             page.getElementsByTag("h2").get(7).text() mustBe "UK site details"
-            validateSiteDetailsSummary(siteDetailsSummaryListItem, 1, 2, true)
+            validateSiteDetailsSummary(userAnswers, aSubscription, siteDetailsSummaryListItem, 1, 2, true)
 
             page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCYAController.onSubmit.url
             page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Save and continue"

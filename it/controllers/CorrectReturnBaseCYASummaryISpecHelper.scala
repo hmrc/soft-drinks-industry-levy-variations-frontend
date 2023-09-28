@@ -18,7 +18,7 @@ package controllers
 
 import controllers.correctReturn.routes
 import models.correctReturn.AddASmallProducer
-import models.{CheckMode, LitresInBands, SdilReturn, UserAnswers}
+import models.{CheckMode, LitresInBands, RetrievedSubscription, SdilReturn, UserAnswers}
 import org.jsoup.nodes.Element
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
@@ -26,6 +26,7 @@ import pages.QuestionPage
 import pages.correctReturn._
 import play.api.libs.json.Json
 import testSupport.SDILBackendTestData.{smallProducerList, submittedDateTime}
+import utilities.UserTypeCheck
 
 import java.time.ZoneOffset
 
@@ -53,7 +54,7 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
 
   def userAnswerWithLitresForAllPagesNilSdilReturn: UserAnswers = emptyUserAnswersForCorrectReturn
     .copy(data = Json.obj("originalSDILReturn" -> Json.toJson(emptyReturn)))
-    .copy(smallProducerList = smallProducersAddedList)
+    .copy(packagingSiteList = packagingSitesFromSubscription, warehouseList = warehousesFromSubscription, smallProducerList = smallProducersAddedList)
     .set(OperatePackagingSiteOwnBrandsPage, true).success.value
     .set(HowManyOperatePackagingSiteOwnBrandsPage, operatePackagingSiteLitres).success.value
     .set(PackagedAsContractPackerPage, true).success.value
@@ -68,8 +69,6 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     .set(HowManyClaimCreditsForExportsPage, importsLitres).success.value
     .set(ClaimCreditsForLostDamagedPage, true).success.value
     .set(HowManyCreditsForLostDamagedPage, importsLitres).success.value
-    .set(PackAtBusinessAddressPage, true).success.value
-    .set(PackagingSiteDetailsPage, false).success.value
     .set(AskSecondaryWarehouseInReturnPage, true).success.value
     .set(SecondaryWarehouseDetailsPage, false).success.value
 
@@ -454,7 +453,7 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     }
   }
 
-  def validateExportsWithNoLitresSummaryList(imports: Element, isCheckYourAnswers: Boolean) = {
+  def validateExportsWithNoLitresSummaryList(imports: Element, isCheckYourAnswers: Boolean): Assertion = {
     val rows = imports.getElementsByClass("govuk-summary-list__row")
     rows.size() mustBe 1
     val yesNoRow = rows.get(0)
@@ -517,7 +516,7 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
   }
 
   def validateLostOrDamagedWithNoLitresSummaryList(imports: Element,
-                                                   isCheckYourAnswers: Boolean) = {
+                                                   isCheckYourAnswers: Boolean): Assertion = {
     val rows = imports.getElementsByClass("govuk-summary-list__row")
     rows.size() mustBe 1
     val yesNoRow = rows.get(0)
@@ -534,18 +533,31 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     }
   }
 
-  def validateSiteDetailsSummary(summaryList: Element,
+  def validateIfNewPacker(userAnswers: UserAnswers, subscription: RetrievedSubscription): Boolean = {
+    UserTypeCheck.isNewPacker(SdilReturn.apply(userAnswers), subscription) && subscription.productionSites.isEmpty
+  }
+
+  def validateIfNewImporter(userAnswers: UserAnswers, subscription: RetrievedSubscription): Boolean = {
+    UserTypeCheck.isNewImporter(SdilReturn.apply(userAnswers), subscription) && subscription.warehouseSites.isEmpty
+  }
+
+
+  def validateSiteDetailsSummary(userAnswers: UserAnswers,
+                                 subscription: RetrievedSubscription,
+                                 summaryList: Element,
                                  numberOfPackagingSites: Int = 0,
                                  numberOfWarehouses: Int = 0,
                                  isCheckAnswers: Boolean = true): Unit = {
+    val newImporter = validateIfNewImporter(userAnswers, subscription)
+    val newPacker = validateIfNewPacker(userAnswers, subscription)
     val rows = summaryList.getElementsByClass("govuk-summary-list__row")
-    if (numberOfPackagingSites == 0  && numberOfWarehouses != 0) {
+    if (!newPacker && newImporter && numberOfWarehouses != 0) {
       rows.size() mustBe 1
       testWarehouseSitesRow(rows.get(0))
-    } else if (numberOfPackagingSites != 0 && numberOfWarehouses == 0) {
+    } else if (newPacker && numberOfPackagingSites != 0 && !newImporter) {
       rows.size() mustBe 1
       testPackingSitesRow(rows.get(0))
-    } else if (numberOfPackagingSites != 0 && numberOfWarehouses != 0) {
+    } else if (newPacker && numberOfPackagingSites != 0 && newImporter && numberOfWarehouses != 0) {
       rows.size() mustBe 2
       testPackingSitesRow(rows.get(0))
       testWarehouseSitesRow(rows.get(1))
@@ -554,7 +566,7 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     }
 
     def testPackingSitesRow(packingRow: Element) = {
-      if (isCheckAnswers) {
+      if (isCheckAnswers && newPacker) {
         val packingLink = routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
         packingRow.getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a")
           .first().attr("href") mustBe packingLink
@@ -575,7 +587,7 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     }
 
     def testWarehouseSitesRow(warehouseRow: Element) = {
-      if (isCheckAnswers) {
+      if (isCheckAnswers && newImporter) {
         val warehouseLink = if (numberOfWarehouses == 0) {
           routes.AskSecondaryWarehouseInReturnController.onPageLoad(CheckMode).url
         } else {

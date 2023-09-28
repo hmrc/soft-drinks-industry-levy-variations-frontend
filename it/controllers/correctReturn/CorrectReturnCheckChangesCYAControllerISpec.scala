@@ -9,6 +9,7 @@ import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import testSupport.SDILBackendTestData.aSubscription
 
 class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHelper {
 
@@ -17,7 +18,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
   "GET " + routes.CorrectReturnCheckChangesCYAController.onPageLoad.url - {
 
     "when the userAnswers contains no data" - {
-      "should result in a server error" in {
+      "should redirect to select change controller in a server error" in {
         given
           .commonPrecondition
 
@@ -27,7 +28,8 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
           val result = createClientRequestGet(client, baseUrl + route)
 
           whenReady(result) { res =>
-            res.status mustBe 500
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.SelectChangeController.onPageLoad.url)
           }
         }
       }
@@ -48,7 +50,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             res.status mustBe OK
             val page = Jsoup.parse(res.body)
             page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
-            page.getElementsByClass("govuk-summary-list").size() mustBe 7
+            page.getElementsByClass("govuk-summary-list").size() mustBe 8
 
             val operatePackagingSites = page.getElementsByClass("govuk-summary-list").get(0)
 
@@ -84,6 +86,11 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
             page.getElementsByTag("h2").get(6).text() mustBe "Lost or destroyed"
             validateLostOrDamagedWithLitresSummaryList(lostOrDamaged, importsLitres, true)
+
+            val siteDetailsSummaryListItem = page.getElementsByClass("govuk-summary-list").get(7)
+
+            page.getElementsByTag("h2").get(7).text() mustBe "UK site details"
+            validateSiteDetailsSummary(userAnswers, aSubscription, siteDetailsSummaryListItem, 0, 2, true)
 
             page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
             page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm details and send correction"
@@ -382,7 +389,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               val siteDetailsSummaryListItem = page.getElementsByClass("govuk-summary-list").get(1)
 
               page.getElementsByTag("h2").get(1).text() mustBe "UK site details"
-              validateSiteDetailsSummary(siteDetailsSummaryListItem, 0, numberOfWarehouses = 2, isCheckAnswers = true)
+              validateSiteDetailsSummary(userAnswers, aSubscription, siteDetailsSummaryListItem, 0, numberOfWarehouses = 2, isCheckAnswers = true)
 
               page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
               page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm details and send correction"
