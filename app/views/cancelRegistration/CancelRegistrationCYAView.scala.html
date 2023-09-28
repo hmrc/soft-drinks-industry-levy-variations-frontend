@@ -19,11 +19,12 @@
     govukSummaryList: GovukSummaryList
 )
 
-@(seqSummaryList: Seq[(String, SummaryList)])(implicit request: Request[_], messages: Messages)
+@(orgName: String, seqSummaryList: Seq[(String, SummaryList)])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
-    <h1 class="govuk-heading-l">@messages("checkYourAnswers.heading")</h1>
+    <h1 class="govuk-heading-l">@messages("changeActivity.suggestDeregistration.title")</h1>
+    <span class="govuk-body">@messages("changeActivity.Deregistration.subHeading")@orgName</span>
 
     @for((heading, summaryList) <- seqSummaryList) {
     <h2 class="govuk-heading-m">@heading</h2>

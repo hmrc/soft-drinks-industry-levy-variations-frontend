@@ -58,10 +58,12 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
           rows = Seq(ReasonSummary.row(userAnswers)))
         )
 
-        val list = Seq(cancelRegistrationDateSummary, reasonRegistrationDateSummary)
+        val list = Seq(reasonRegistrationDateSummary, cancelRegistrationDateSummary)
+
+        val orgName = " Super Lemonade Plc"
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(list)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(orgName ,list)(request, messages(application)).toString
       }
     }
 

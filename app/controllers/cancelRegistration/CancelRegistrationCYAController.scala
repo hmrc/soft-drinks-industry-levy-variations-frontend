@@ -38,6 +38,7 @@ class CancelRegistrationCYAController @Inject()(
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration) {
     implicit request =>
+      val orgName: String = " " + request.subscription.orgName
 
         val cancelRegistrationDateSummary : (String, SummaryList) = ("",SummaryListViewModel(
          rows = Seq(CancelRegistrationDateSummary.row(request.userAnswers)))
@@ -47,8 +48,8 @@ class CancelRegistrationCYAController @Inject()(
         rows = Seq(ReasonSummary.row(request.userAnswers)))
       )
 
-      val list = Seq(cancelRegistrationDateSummary, reasonRegistrationDateSummary)
+      val list = Seq(reasonRegistrationDateSummary, cancelRegistrationDateSummary)
 
-      Ok(view(list))
+      Ok(view(orgName, list))
   }
 }
