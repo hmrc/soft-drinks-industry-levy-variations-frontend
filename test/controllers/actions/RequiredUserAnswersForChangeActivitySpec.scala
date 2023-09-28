@@ -247,7 +247,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers)))
         res.get mustBe controllers.changeActivity.routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url
       }
-// TODO: URL STUFF BELOW
+
       s"when AmountProduced is $None and contractPacking is true and pack at business address is not answered" in {
         val userAnswers = {
           emptyUserAnswersForChangeActivity
@@ -409,20 +409,18 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
     }
   }
 
-//  "returnMissingAnswers" - {
-//    "should return all missing answers when user answers is empty" in {
-//      implicit val dataRequest: DataRequest[AnyContentAsEmpty.type] = DataRequest(
-//        FakeRequest(),"", hasCTEnrolment = false, None, emptyUserAnswersForChangeActivity, RosmWithUtr("", RosmRegistration("", None, None, UkAddress(List.empty,"", None)))
-//      )
-//      val res = requiredUserAnswers.returnMissingAnswers(requiredUserAnswers.journey)
-//      res mustBe
-//        List(
-//          RequiredPage(AmountProducedPage, List.empty)(implicitly[Reads[AmountProduced]]),
-//          RequiredPage(ContractPackingPage, List.empty)(implicitly[Reads[Boolean]]),
-//          RequiredPage(ImportsPage, List.empty)(implicitly[Reads[Boolean]]),
-//        )
-//    }
-//
+  "returnMissingAnswers" - {
+    "should return all missing answers when user answers is empty" in {
+      implicit val dataRequest: DataRequest[AnyContentAsEmpty.type] = RequiredDataRequest(FakeRequest(), "", aSubscription, emptyUserAnswersForChangeActivity)
+      val res = requiredUserAnswers.returnMissingAnswers(requiredUserAnswers.journey)
+      res mustBe
+        List(
+          RequiredPage(AmountProducedPage, List.empty)(implicitly[Reads[AmountProduced]]),
+          RequiredPage(ContractPackingPage, List.empty)(implicitly[Reads[Boolean]]),
+          RequiredPage(ImportsPage, List.empty)(implicitly[Reads[Boolean]]),
+        )
+    }
+
 //    "should return all but 1 missing answers when user answers is fully populated apart from 1 answer" in {
 //      val userAnswers = {
 //        emptyUserAnswersForChangeActivity
@@ -443,88 +441,88 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
 //        PreviousPage( List(true, false))
 //        (implicitly[Reads[Boolean]])))(implicitly[Reads[ContactDetails]]))
 //    }
-//
-//    s"should return 1 item on the missing answer list when producer is $Large, contractPacking is false, OperatePackagingSites " +
-//      "is true and pack at business address is not answered" in {
-//      val userAnswers = {
-//        emptyUserAnswersForChangeActivity
-//          .set(AmountProducedPage, Large).success.value
-//          .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-//          .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1, 1)).success.value
-//          .set(ContractPackingPage, false).success.value
-//          .set(ImportsPage, true).success.value
-//          .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
-//          .set(SecondaryWarehouseDetailsPage, true).success.value
-//      }
-//      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-//
-//      val res = requiredUserAnswers.returnMissingAnswers(requiredUserAnswers.journey)
-//      res mustBe List(RequiredPage(PackAtBusinessAddressPage, List(
-//        PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]]),
-//        PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitly[Reads[Boolean]]),
-//        PreviousPage(ContractPackingPage, List(true, false))(implicitly[Reads[Boolean]])))(implicitly[Reads[Boolean]]))
-//    }
-//
-//    s"should return 1 item on the missing answer list when producer is $Large, $ is true, $OperatePackagingSiteOwnBrandsPage " +
-//      "is true and PackAtBusinessAddress is not answered" in {
-//      val userAnswers = {
-//        emptyUserAnswersForChangeActivity
-//          .set(AmountProducedPage, Large).success.value
-//          .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-//          .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1, 1)).success.value
-//          .set(ContractPackingPage, true).success.value
-//          .set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value
-//          .set(ImportsPage, true).success.value
-//          .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
-//          .set(SecondaryWarehouseDetailsPage, true).success.value
-//      }
-//      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-//      val res = requiredUserAnswers.returnMissingAnswers(requiredUserAnswers.journey)
-//      res mustBe List(RequiredPage(PackAtBusinessAddressPage, List(
-//        PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]]),
-//        PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitly[Reads[Boolean]]),
-//        PreviousPage(ContractPackingPage, List(true, false))(implicitly[Reads[Boolean]])))(implicitly[Reads[Boolean]]))
-//    }
-//
-//    s"should return 1 item on the missing answer list when producer is $Small, $ContractPackingPage is true, $OperatePackagingSiteOwnBrandsPage " +
-//      "is true, and pack at business address is not answered" in {
-//      val userAnswers = {
-//        emptyUserAnswersForChangeActivity
-//          .set(AmountProducedPage, Small).success.value
-//          .set(ThirdPartyPackagersPage, true).success.value
-//          .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-//          .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1, 1)).success.value
-//          .set(ContractPackingPage, true).success.value
-//          .set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value
-//          .set(ImportsPage, true).success.value
-//          .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
-//          .set(SecondaryWarehouseDetailsPage, true).success.value
-//      }
-//      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-//      val res = requiredUserAnswers.returnMissingAnswers(requiredUserAnswers.journey)
-//      res mustBe List(RequiredPage(PackAtBusinessAddressPage, List(
-//        PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get,
-//          AmountProduced.enumerable.withName("none").get))(implicitly[Reads[AmountProduced]]),
-//        PreviousPage(ContractPackingPage, List(true))(implicitly[Reads[Boolean]])))(implicitly[Reads[Boolean]]))
-//    }
-//
-//    s"should return 1 item on the missing answer list when producer is $None, $ContractPackingPage is true, and pack at business address is not answered" in {
-//      val userAnswers = {
-//        emptyUserAnswersForChangeActivity
-//          .set(AmountProducedPage, AmountProduced.None).success.value
-//          .set(ContractPackingPage, true).success.value
-//          .set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value
-//          .set(ImportsPage, true).success.value
-//          .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
-//          .set(SecondaryWarehouseDetailsPage, true).success.value
-//      }
-//      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-//      val res = requiredUserAnswers.returnMissingAnswers(requiredUserAnswers.journey)
-//      res mustBe List(RequiredPage(PackAtBusinessAddressPage, List(
-//        PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get,
-//          AmountProduced.enumerable.withName("none").get))(implicitly[Reads[AmountProduced]]),
-//        PreviousPage(ContractPackingPage, List(true))(implicitly[Reads[Boolean]])))(implicitly[Reads[Boolean]]))
-//    }
+
+    s"should return 1 item on the missing answer list when producer is $Large, contractPacking is false, OperatePackagingSites " +
+      "is true and pack at business address is not answered" in {
+      val userAnswers = {
+        emptyUserAnswersForChangeActivity
+          .set(AmountProducedPage, Large).success.value
+          .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+          .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1, 1)).success.value
+          .set(ContractPackingPage, false).success.value
+          .set(ImportsPage, true).success.value
+          .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
+          .set(SecondaryWarehouseDetailsPage, true).success.value
+      }
+      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+
+      val res = requiredUserAnswers.returnMissingAnswers(requiredUserAnswers.journey)
+      res mustBe List(RequiredPage(PackAtBusinessAddressPage, List(
+        PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]]),
+        PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitly[Reads[Boolean]]),
+        PreviousPage(ContractPackingPage, List(true, false))(implicitly[Reads[Boolean]])))(implicitly[Reads[Boolean]]))
+    }
+
+    s"should return 1 item on the missing answer list when producer is $Large, $OperatePackagingSiteOwnBrandsPage " +
+      "is true and PackAtBusinessAddress is not answered" in {
+      val userAnswers = {
+        emptyUserAnswersForChangeActivity
+          .set(AmountProducedPage, Large).success.value
+          .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+          .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1, 1)).success.value
+          .set(ContractPackingPage, true).success.value
+          .set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value
+          .set(ImportsPage, true).success.value
+          .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
+          .set(SecondaryWarehouseDetailsPage, true).success.value
+      }
+      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+      val res = requiredUserAnswers.returnMissingAnswers(requiredUserAnswers.journey)
+      res mustBe List(RequiredPage(PackAtBusinessAddressPage, List(
+        PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]]),
+        PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitly[Reads[Boolean]]),
+        PreviousPage(ContractPackingPage, List(true, false))(implicitly[Reads[Boolean]])))(implicitly[Reads[Boolean]]))
+    }
+
+    s"should return 1 item on the missing answer list when producer is $Small, $ContractPackingPage is true, $OperatePackagingSiteOwnBrandsPage " +
+      "is true, and pack at business address is not answered" in {
+      val userAnswers = {
+        emptyUserAnswersForChangeActivity
+          .set(AmountProducedPage, Small).success.value
+          .set(ThirdPartyPackagersPage, true).success.value
+          .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+          .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1, 1)).success.value
+          .set(ContractPackingPage, true).success.value
+          .set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value
+          .set(ImportsPage, true).success.value
+          .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
+          .set(SecondaryWarehouseDetailsPage, true).success.value
+      }
+      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+      val res = requiredUserAnswers.returnMissingAnswers(requiredUserAnswers.journey)
+      res mustBe List(RequiredPage(PackAtBusinessAddressPage, List(
+        PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get,
+          AmountProduced.enumerable.withName("none").get))(implicitly[Reads[AmountProduced]]),
+        PreviousPage(ContractPackingPage, List(true))(implicitly[Reads[Boolean]])))(implicitly[Reads[Boolean]]))
+    }
+
+    s"should return 1 item on the missing answer list when producer is $None, $ContractPackingPage is true, and pack at business address is not answered" in {
+      val userAnswers = {
+        emptyUserAnswersForChangeActivity
+          .set(AmountProducedPage, AmountProduced.None).success.value
+          .set(ContractPackingPage, true).success.value
+          .set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value
+          .set(ImportsPage, true).success.value
+          .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
+          .set(SecondaryWarehouseDetailsPage, true).success.value
+      }
+      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+      val res = requiredUserAnswers.returnMissingAnswers(requiredUserAnswers.journey)
+      res mustBe List(RequiredPage(PackAtBusinessAddressPage, List(
+        PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get,
+          AmountProduced.enumerable.withName("none").get))(implicitly[Reads[AmountProduced]]),
+        PreviousPage(ContractPackingPage, List(true))(implicitly[Reads[Boolean]])))(implicitly[Reads[Boolean]]))
+    }
 //
 //    s"should return 1 item on the missing answer list when user changes a $StartDatePage required answer from CYA, " +
 //      s"such as change $ImportsPage from false to true" in {
@@ -636,7 +634,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
 //      val res = requiredUserAnswers.returnMissingAnswers(requiredPages)
 //      res mustBe List.empty
 //    }
-//  }
+  }
   "checkYourAnswersRequiredData" - {
     "should redirect to action when all answers answered" in {
       val userAnswers = {
