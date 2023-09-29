@@ -27,7 +27,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.correctReturn.CorrectReturnCheckChangesCYAView
-import views.summary.correctReturn.CorrectReturnBaseCYASummary
+import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 
 import scala.concurrent.ExecutionContext
 
@@ -45,12 +45,11 @@ class CorrectReturnCheckChangesCYAController @Inject()(
         val orgName: String = " " + request.subscription.orgName
         val currentSDILReturn = SdilReturn.apply(request.userAnswers)
         val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSDILReturn)
-        val sections = CorrectReturnBaseCYASummary.changedSummaryListAndHeadings(request.userAnswers, request.subscription, changedPages)
+        val sections = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(request.userAnswers, request.subscription, changedPages)
 
         Ok(view(orgName, sections, routes.CorrectReturnCheckChangesCYAController.onSubmit))
       }).getOrElse(Redirect(controllers.routes.SelectChangeController.onPageLoad.url))
   }
-
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
     Redirect(controllers.routes.IndexController.onPageLoad.url)

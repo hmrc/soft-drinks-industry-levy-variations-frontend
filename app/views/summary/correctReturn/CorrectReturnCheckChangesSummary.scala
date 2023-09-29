@@ -20,51 +20,35 @@ import config.FrontendAppConfig
 import models.correctReturn.ChangedPage
 import models.{RetrievedSubscription, UserAnswers}
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
-import viewmodels.summary.correctReturn.ExemptionsForSmallProducersSummary
-import views.summary.UKSitesSummary
-import views.summary.changeActivity.{AmountProducedSummary, OperatePackagingSiteOwnBrandsSummary}
 
 object CorrectReturnCheckChangesSummary {
 
-//  def summaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription)
-//                            (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
-//changedSummaryListAndHeadings(CorrectReturnBaseCYASummary.changedSummaryListAndHeadings(userAnswers, subscription, changedPage = true))
-//  })))
-//  }
-//  }
-
-
+  def changeSpecificSummaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription, changedPages: List[ChangedPage])
+                                          (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
+    val mainSection = CorrectReturnBaseCYASummary.changedSummaryListAndHeadings(userAnswers, subscription, changedPages)
+    val correctionSection = (correctionReasonSummarySection(userAnswers) ++ repaymentMethodSummarySection(userAnswers)).toSeq
+    mainSection ++ correctionSection
+  }
 
   private def correctionReasonSummarySection(userAnswers: UserAnswers)
-                                     (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
-    //    val correctionReasonSummary: Option[SummaryListRow] = CorrectionReasonSummary.row(userAnswers)
-    //    val correctionReasonList: Option[(String, SummaryList)] = if (correctionReasonSummary.isEmpty) None else {
-    //      Option(
-    //        "correctReturn.correctionReason.checkYourAnswersLabel" ->
-    //          correctionReasonSummary
-    //      )
-    //    }
-    //    correctionReasonList
-    //  }
+                                     (implicit messages: Messages): Option[(String, SummaryList)] = {
     val correctionReasonSummary: Option[SummaryListRow] = CorrectionReasonSummary.row(userAnswers)
-    val correctionReasonList: Option[(String, SummaryList)] = correctionReasonSummary.map(summary => {
-        "correctReturn.correctionReason.checkYourAnswersLabel" ->
-          SummaryList(Seq(summary))
-})
-    }
-    val amountProducedSummary: Option[SummaryListRow] = AmountProducedSummary.row(userAnswers)
-    val amountProducedSection: Option[(String, SummaryList)] = amountProducedSummary.map(summary => {
-      "changeActivity.checkYourAnswers.amountProducedSection" -> SummaryList(Seq(summary))
+    val correctionReasonSection: Option[(String, SummaryList)] = correctionReasonSummary.map(summary => {
+      "correctReturn.correctionReason.checkYourAnswersLabel" ->
+        SummaryList(Seq(summary))
     })
-    val ownBrandsSummary: SummaryList = OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = false)
-    val ownBrandsSection: Option[(String, SummaryList)] = if (ownBrandsSummary.rows.isEmpty) None else {
-      Option(
-        "changeActivity.checkYourAnswers.operatePackingSiteOwnBrandsSection" ->
-          OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = false)
-      )
-    }
+    correctionReasonSection
+  }
+
+  private def repaymentMethodSummarySection(userAnswers: UserAnswers)
+                                           (implicit messages: Messages): Option[(String, SummaryList)] = {
+    val repaymentMethodSummary: Option[SummaryListRow] = RepaymentMethodSummary.row(userAnswers)
+    val repaymentMethodSection: Option[(String, SummaryList)] = repaymentMethodSummary.map(summary => {
+      "correctReturn.repaymentMethod.checkYourAnswersLabel" ->
+        SummaryList(Seq(summary))
+    })
+    repaymentMethodSection
   }
 
 }

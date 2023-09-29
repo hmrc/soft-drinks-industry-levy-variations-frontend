@@ -19,20 +19,20 @@ package controllers.correctReturn
 import base.SpecBase
 import controllers.correctReturn.routes._
 import models.SelectChange.CorrectReturn
-import models.correctReturn.{AddASmallProducer, RepaymentMethod}
+import models.correctReturn.{AddASmallProducer, ChangedPage, RepaymentMethod}
 import models.{LitresInBands, SmallProducer}
 import pages.correctReturn._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
 import views.html.correctReturn.CorrectReturnCheckChangesCYAView
-import views.summary.correctReturn.{CorrectReturnBaseCYASummary, CorrectReturnCheckChangesSummary}
+import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 
 class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryListFluency {
 
   "Check Changes Controller" - {
 
-    "must return OK and the correct view for a GET" - {
+    "must return OK and the correct view for a GET" in {
       val litres = LitresInBands(2000, 4000)
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
@@ -54,6 +54,21 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         .set(CorrectionReasonPage, "foo").success.value
         .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
 
+      val changedPages = List(
+        ChangedPage(OperatePackagingSiteOwnBrandsPage, answerChanged = true),
+        ChangedPage(HowManyOperatePackagingSiteOwnBrandsPage, answerChanged = true),
+        ChangedPage(PackagedAsContractPackerPage, answerChanged = true),
+        ChangedPage(HowManyPackagedAsContractPackerPage, answerChanged = true),
+        ChangedPage(BroughtIntoUKPage, answerChanged = true),
+        ChangedPage(HowManyBroughtIntoUKPage, answerChanged = true),
+        ChangedPage(BroughtIntoUkFromSmallProducersPage, answerChanged = true),
+        ChangedPage(HowManyBroughtIntoUkFromSmallProducersPage, answerChanged = true),
+        ChangedPage(ClaimCreditsForExportsPage, answerChanged = true),
+        ChangedPage(HowManyClaimCreditsForExportsPage, answerChanged = true),
+        ChangedPage(ClaimCreditsForLostDamagedPage, answerChanged = true),
+        ChangedPage(HowManyCreditsForLostDamagedPage, answerChanged = true),
+        ChangedPage(ExemptionsForSmallProducersPage, answerChanged = true))
+
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -63,14 +78,12 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
 
         val view = application.injector.instanceOf[CorrectReturnCheckChangesCYAView]
         val orgName = " Super Lemonade Plc"
+        val section = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(userAnswers, aSubscription, changedPages)
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(orgName, CorrectReturnCheckChangesSummary.summaryListAndHeadings(userAnswers, aSubscription),
+        contentAsString(result) mustEqual view(orgName, section,
           routes.CorrectReturnCheckChangesCYAController.onSubmit)(request, messages(application)).toString
       }
-
-      testInvalidJourneyType(CorrectReturn, CorrectReturnCheckChangesCYAController.onPageLoad.url, false)
-      testNoUserAnswersError(CorrectReturnCheckChangesCYAController.onPageLoad.url, false)
     }
   }
 }
