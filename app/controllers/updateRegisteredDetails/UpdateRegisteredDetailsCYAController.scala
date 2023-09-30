@@ -24,8 +24,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.updateRegisteredDetails.UpdateRegisteredDetailsCYAView
-import views.summary.UKSitesSummary
-import views.summary.updateRegisteredDetails.{BusinessAddressSummary, PackagingSiteDetailsSummary, UpdateContactDetailsSummary, WarehouseDetailsSummary}
+import views.summary.updateRegisteredDetails.{BusinessAddressSummary, PackagingSiteDetailsSummary, UpdateContactDetailsSummary, WarehouseDetailsSummary, UKSitesSummary}
 
 import java.time.{LocalDateTime, ZoneId}
 

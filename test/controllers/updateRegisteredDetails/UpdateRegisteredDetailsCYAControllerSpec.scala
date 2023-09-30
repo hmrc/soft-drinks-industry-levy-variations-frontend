@@ -34,6 +34,7 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
   "Check Your Answers Controller" - {
 
     "must return OK and the correct view for a GET" in {
+//      TODO: Add site details to this test
       val contactDetails = ContactDetails("foo", "bar", "wizz", "bang")
       val businessAddress: UkAddress = UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")
       val userAnswers = emptyUserAnswersForUpdateRegisteredDetails

@@ -43,6 +43,8 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
       }
     }
 
+//    TODO: TEST PACKAGING SITE DETAILS HERE
+
     s"when the userAnswers contains the $UpdateContactDetailsPage" - {
       "should render the page with the contact details as a summary" in {
         given

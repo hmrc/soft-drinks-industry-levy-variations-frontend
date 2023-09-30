@@ -22,7 +22,6 @@ import models.{RetrievedSubscription, UserAnswers}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 import viewmodels.summary.correctReturn.ExemptionsForSmallProducersSummary
-import views.summary.UKSitesSummary
 
 object CorrectReturnBaseCYASummary {
 
@@ -173,6 +172,6 @@ object CorrectReturnBaseCYASummary {
   }
 
   private def siteDetailsSection(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit messages: Messages): Option[(String, SummaryList)] =
-    UKSitesSummary.getHeadingAndSummaryForCorrectReturn(userAnswers, isCheckAnswers = true, subscription)
+    UKSitesSummary.getHeadingAndSummary(userAnswers, isCheckAnswers = true, subscription)
 
 }

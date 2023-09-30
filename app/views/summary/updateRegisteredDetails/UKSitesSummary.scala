@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package views.summary
+package views.summary.updateRegisteredDetails
 
+import controllers.updateRegisteredDetails.routes
 import models.{CheckMode, RetrievedSubscription, SdilReturn, UserAnswers}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{SummaryList, Value}
@@ -26,7 +27,6 @@ import viewmodels.implicits._
 
 object UKSitesSummary {
 
-//  TODO: CORRECT ROUTING
   private def getPackAtBusinessAddressRow(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages): SummaryListRow = {
     val key = if (userAnswers.packagingSiteList.size != 1) {
       messages("checkYourAnswers.packing.checkYourAnswersLabel.multiple", userAnswers.packagingSiteList.size.toString)
@@ -40,11 +40,7 @@ object UKSitesSummary {
       ),
       value = Value(),
       actions = if (isCheckAnswers) {
-        val onwardRoute = if (userAnswers.packagingSiteList.nonEmpty) {
-          controllers.correctReturn.routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
-        } else {
-          controllers.correctReturn.routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url
-        }
+        val onwardRoute = routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
 
         Seq(
           if (userAnswers.packagingSiteList.size != 1) {
@@ -76,11 +72,7 @@ object UKSitesSummary {
       ),
       value = Value(),
       actions = if (isCheckAnswers) {
-        val onwardRoute = if (userAnswers.warehouseList.nonEmpty) {
-          controllers.correctReturn.routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url
-        } else {
-          controllers.correctReturn.routes.AskSecondaryWarehouseInReturnController.onPageLoad(CheckMode).url
-        }
+        val onwardRoute = routes.WarehouseDetailsController.onPageLoad(CheckMode).url
 
         Seq(
           if (userAnswers.warehouseList.size != 1) {
@@ -133,37 +125,5 @@ object UKSitesSummary {
     optSummaryList.map(list => messages("checkYourAnswers.sites") -> list)
   }
 
-  def getHeadingAndSummaryForCorrectReturn(userAnswers: UserAnswers, isCheckAnswers: Boolean, subscription: RetrievedSubscription)
-                                          (implicit messages: Messages): Option[(String, SummaryList)] = {
-    val optSummaryList = (
-      UserTypeCheck.isNewPacker(SdilReturn.apply(userAnswers), subscription) && subscription.productionSites.isEmpty,
-      UserTypeCheck.isNewImporter(SdilReturn.apply(userAnswers), subscription) && subscription.warehouseSites.isEmpty
-    ) match {
-      case (true, false) => Option(
-        SummaryListViewModel(
-          Seq(
-            getPackAtBusinessAddressRow(userAnswers, isCheckAnswers)
-          )
-        )
-      )
-      case (false, true) => Option(
-        SummaryListViewModel(
-          Seq(
-            getAskSecondaryWarehouseRow(userAnswers, isCheckAnswers)
-          )
-        )
-      )
-      case (true, true) => Option(
-        SummaryListViewModel(
-          Seq(
-            getPackAtBusinessAddressRow(userAnswers, isCheckAnswers),
-            getAskSecondaryWarehouseRow(userAnswers, isCheckAnswers)
-          )
-        )
-      )
-      case _ => None
-    }
-      optSummaryList.map(list => "checkYourAnswers.sites" -> list)
-    }
+}
 
-  }
