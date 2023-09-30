@@ -24,6 +24,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.updateRegisteredDetails.UpdateRegisteredDetailsCYAView
+import views.summary.UKSitesSummary
 import views.summary.updateRegisteredDetails.{BusinessAddressSummary, PackagingSiteDetailsSummary, UpdateContactDetailsSummary, WarehouseDetailsSummary}
 
 import java.time.{LocalDateTime, ZoneId}
@@ -37,14 +38,7 @@ class UpdateRegisteredDetailsCYAController @Inject()(
 
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
     implicit request =>
-//      TODO: Below two are getting answers - not list values
-      val packagingSiteDetailsSummary: Option[SummaryListRow] = PackagingSiteDetailsSummary.row(request.userAnswers)
-      val warehousesDetailsSummary: Option[SummaryListRow] = WarehouseDetailsSummary.row(request.userAnswers)
-      val ukSiteDetailsSummary: Option[(String, SummaryList)] = Option(
-//        TODO: PUT IN MESSAGES
-        "updateRegisteredDetails.checkYourAnswers.ukSiteDetails.title" ->
-          SummaryList(rows = List(packagingSiteDetailsSummary, warehousesDetailsSummary).flatten)
-      )
+      val ukSiteDetailsSummary: Option[(String, SummaryList)] = UKSitesSummary.getHeadingAndSummary(request.userAnswers, true)
       val updateContactDetailsSummary: Option[(String, SummaryList)] = UpdateContactDetailsSummary.rows(request.userAnswers)
       val businessAddressSummary: Option[(String, SummaryList)] = BusinessAddressSummary.rows(request.userAnswers)
       val summaryList = Seq(ukSiteDetailsSummary, updateContactDetailsSummary, businessAddressSummary).flatten

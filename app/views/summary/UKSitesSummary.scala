@@ -19,79 +19,88 @@ package views.summary
 import models.{CheckMode, RetrievedSubscription, SdilReturn, UserAnswers}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{SummaryList, Value}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
 import utilities.UserTypeCheck
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object UKSitesSummary {
 
+//  TODO: CORRECT ROUTING
   private def getPackAtBusinessAddressRow(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages): SummaryListRow = {
-      SummaryListRowViewModel(
-        key = if (userAnswers.packagingSiteList.size != 1) {
-          messages("checkYourAnswers.packing.checkYourAnswersLabel.multiple", userAnswers.packagingSiteList.size.toString)
+    val key = if (userAnswers.packagingSiteList.size != 1) {
+      messages("checkYourAnswers.packing.checkYourAnswersLabel.multiple", userAnswers.packagingSiteList.size.toString)
+    } else {
+      messages("checkYourAnswers.packing.checkYourAnswersLabel.one")
+    }
+    SummaryListRowViewModel(
+      key = Key(
+        content = key,
+        classes = "govuk-!-width-full"
+      ),
+      value = Value(),
+      actions = if (isCheckAnswers) {
+        val onwardRoute = if (userAnswers.packagingSiteList.nonEmpty) {
+          controllers.correctReturn.routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
         } else {
-          messages("checkYourAnswers.packing.checkYourAnswersLabel.one")
-        },
-        value = Value(),
-        actions = if (isCheckAnswers) {
-          val onwardRoute = if (userAnswers.packagingSiteList.nonEmpty) {
-            controllers.correctReturn.routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
-          } else {
-            controllers.correctReturn.routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url
-          }
-
-          Seq(
-            if (userAnswers.packagingSiteList.size != 1) {
-              ActionItemViewModel("site.change", onwardRoute)
-                .withAttribute(("id", "change-packaging-sites"))
-                .withVisuallyHiddenText(messages("checkYourAnswers.sites.packing.change.hidden.multiple"))
-            } else {
-              ActionItemViewModel("site.change", onwardRoute)
-                .withAttribute(("id", "change-packaging-sites"))
-                .withVisuallyHiddenText(messages("checkYourAnswers.sites.packing.change.hidden.one"))
-            }
-          )
-        } else {
-          Seq.empty
+          controllers.correctReturn.routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url
         }
-      )
+
+        Seq(
+          if (userAnswers.packagingSiteList.size != 1) {
+            ActionItemViewModel("site.change", onwardRoute)
+              .withAttribute(("id", "change-packaging-sites"))
+              .withVisuallyHiddenText(messages("checkYourAnswers.sites.packing.change.hidden.multiple"))
+          } else {
+            ActionItemViewModel("site.change", onwardRoute)
+              .withAttribute(("id", "change-packaging-sites"))
+              .withVisuallyHiddenText(messages("checkYourAnswers.sites.packing.change.hidden.one"))
+          }
+        )
+      } else {
+        Seq.empty
+      }
+    )
   }
 
   private def getAskSecondaryWarehouseRow (userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages): SummaryListRow = {
-      SummaryListRowViewModel(
-        key = if (userAnswers.warehouseList.size != 1) {
-          messages("checkYourAnswers.warehouse.checkYourAnswersLabel.multiple", userAnswers.warehouseList.size.toString)
+    val key = if (userAnswers.warehouseList.size != 1) {
+      messages("checkYourAnswers.warehouse.checkYourAnswersLabel.multiple", userAnswers.warehouseList.size.toString)
+    } else {
+      messages("checkYourAnswers.warehouse.checkYourAnswersLabel.one")
+    }
+    SummaryListRowViewModel(
+      key = Key(
+        content = key,
+        classes = "govuk-!-width-full"
+      ),
+      value = Value(),
+      actions = if (isCheckAnswers) {
+        val onwardRoute = if (userAnswers.warehouseList.nonEmpty) {
+          controllers.correctReturn.routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url
         } else {
-          messages("checkYourAnswers.warehouse.checkYourAnswersLabel.one")
-        },
-        value = Value(),
-        actions = if (isCheckAnswers) {
-          val onwardRoute = if (userAnswers.warehouseList.nonEmpty) {
-            controllers.correctReturn.routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url
-          } else {
-            controllers.correctReturn.routes.AskSecondaryWarehouseInReturnController.onPageLoad(CheckMode).url
-          }
-
-          Seq(
-            if (userAnswers.warehouseList.size != 1) {
-              ActionItemViewModel("site.change", onwardRoute)
-                .withAttribute(("id", "change-warehouse-sites"))
-                .withVisuallyHiddenText(messages("checkYourAnswers.sites.warehouse.change.hidden.multiple"))
-            } else {
-              ActionItemViewModel("site.change", onwardRoute)
-                .withAttribute(("id", "change-warehouse-sites"))
-                .withVisuallyHiddenText(messages("checkYourAnswers.sites.warehouse.change.hidden.one"))
-            }
-        )
-
-        } else {
-          Seq.empty
+          controllers.correctReturn.routes.AskSecondaryWarehouseInReturnController.onPageLoad(CheckMode).url
         }
+
+        Seq(
+          if (userAnswers.warehouseList.size != 1) {
+            ActionItemViewModel("site.change", onwardRoute)
+              .withAttribute(("id", "change-warehouse-sites"))
+              .withVisuallyHiddenText(messages("checkYourAnswers.sites.warehouse.change.hidden.multiple"))
+          } else {
+            ActionItemViewModel("site.change", onwardRoute)
+              .withAttribute(("id", "change-warehouse-sites"))
+              .withVisuallyHiddenText(messages("checkYourAnswers.sites.warehouse.change.hidden.one"))
+          }
       )
+
+      } else {
+        Seq.empty
+      }
+    )
   }
 
-  def getHeadingAndSummary(userAnswers: UserAnswers, isCheckAnswers: Boolean, subscription: RetrievedSubscription)
+  def getHeadingAndSummary(userAnswers: UserAnswers, isCheckAnswers: Boolean)
                           (implicit messages: Messages): Option[(String, SummaryList)] = {
     val optSummaryList = (
       userAnswers.packagingSiteList.nonEmpty,
@@ -121,7 +130,7 @@ object UKSitesSummary {
       )
       case _ => None
     }
-    optSummaryList.map(list => "checkYourAnswers.sites" -> list)
+    optSummaryList.map(list => messages("checkYourAnswers.sites") -> list)
   }
 
   def getHeadingAndSummaryForCorrectReturn(userAnswers: UserAnswers, isCheckAnswers: Boolean, subscription: RetrievedSubscription)
