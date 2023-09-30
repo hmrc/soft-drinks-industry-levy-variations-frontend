@@ -1,8 +1,9 @@
 package controllers.updateRegisteredDetails
 
 import controllers.ControllerITTestHelper
-import models.CheckMode
+import models.{CheckMode, Warehouse}
 import models.SelectChange.UpdateRegisteredDetails
+import models.backend.UkAddress
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
@@ -18,7 +19,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
   val route = "/change-registered-details/check-your-answers"
   "GET " + routes.UpdateRegisteredDetailsCYAController.onPageLoad.url - {
     "when the userAnswers contains business address only" - {
-      "should render the page" in {
+      "should render the page including uk site details summary for zero values" in {
         given
           .commonPrecondition
 
@@ -43,7 +44,58 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
       }
     }
 
-//    TODO: TEST PACKAGING SITE DETAILS HERE
+    "when the userAnswers contains a warehouse" - {
+      "should render the page with the warehouse details as a summary" in {
+        given
+          .commonPrecondition
+
+        setAnswers(emptyUserAnswersForUpdateRegisteredDetails
+          .copy(data = Json.obj(), warehouseList = Map(warehousesFromSubscription.head)))
+
+        WsTestClient.withClient { client =>
+          val result = createClientRequestGet(client, baseUrl + route)
+
+          whenReady(result) { res =>
+            res.status mustBe OK
+            val page = Jsoup.parse(res.body)
+            page.title must include(Messages("updateRegisteredDetails.checkYourAnswers.title"))
+            val elems = page.getElementsByClass("govuk-summary-list").first().getElementsByClass("govuk-summary-list__row")
+            elems.get(0).getElementsByClass("govuk-summary-list__key").first().text() mustBe
+              AddressFormattingHelper.addressFormatting(emptyUserAnswersForUpdateRegisteredDetails.contactAddress, None).toString().replace("<br>", " ")
+            elems.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change business address"
+            elems.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "business address"
+            page.getElementsByClass("govuk-summary-list").size() mustBe 1
+            page.getElementsByClass("govuk-summary-list__row").size() mustBe 1
+          }
+        }
+      }
+    }
+
+    "when the userAnswers contains a packaging site" - {
+      "should render the page with the packaging site details as a summary" in {
+        given
+          .commonPrecondition
+
+        setAnswers(emptyUserAnswersForUpdateRegisteredDetails.copy(data = Json.obj(), packagingSiteList = packagingSitesFromSubscription))
+
+        WsTestClient.withClient { client =>
+          val result = createClientRequestGet(client, baseUrl + route)
+
+          whenReady(result) { res =>
+            res.status mustBe OK
+            val page = Jsoup.parse(res.body)
+            page.title must include(Messages("updateRegisteredDetails.checkYourAnswers.title"))
+            val elems = page.getElementsByClass("govuk-summary-list").first().getElementsByClass("govuk-summary-list__row")
+            elems.get(0).getElementsByClass("govuk-summary-list__key").first().text() mustBe
+              AddressFormattingHelper.addressFormatting(emptyUserAnswersForUpdateRegisteredDetails.contactAddress, None).toString().replace("<br>", " ")
+            elems.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change business address"
+            elems.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "business address"
+            page.getElementsByClass("govuk-summary-list").size() mustBe 1
+            page.getElementsByClass("govuk-summary-list__row").size() mustBe 1
+          }
+        }
+      }
+    }
 
     s"when the userAnswers contains the $UpdateContactDetailsPage" - {
       "should render the page with the contact details as a summary" in {

@@ -21,24 +21,23 @@ import controllers.updateRegisteredDetails.routes._
 import models.SelectChange.UpdateRegisteredDetails
 import models.backend.UkAddress
 import models.updateRegisteredDetails.ContactDetails
-import pages.updateRegisteredDetails.{UpdateContactDetailsPage}
+import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.SummaryListFluency
 import views.html.updateRegisteredDetails.UpdateRegisteredDetailsCYAView
-import views.summary.updateRegisteredDetails.{BusinessAddressSummary, UpdateContactDetailsSummary}
+import views.summary.updateRegisteredDetails.{BusinessAddressSummary, UKSitesSummary, UpdateContactDetailsSummary}
 
 class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryListFluency {
 
   "Check Your Answers Controller" - {
 
     "must return OK and the correct view for a GET" in {
-//      TODO: Add site details to this test
       val contactDetails = ContactDetails("foo", "bar", "wizz", "bang")
       val businessAddress: UkAddress = UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")
       val userAnswers = emptyUserAnswersForUpdateRegisteredDetails
-        .copy(contactAddress = businessAddress)
+        .copy(contactAddress = businessAddress, packagingSiteList = Map("1" -> packingSite), warehouseList = Map("1" -> warehouse))
         .set(UpdateContactDetailsPage,contactDetails).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -49,6 +48,7 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
 
         val view = application.injector.instanceOf[UpdateRegisteredDetailsCYAView]
         val list: Seq[(String, SummaryList)] = Seq(
+          UKSitesSummary.getHeadingAndSummary(userAnswers, true),
           UpdateContactDetailsSummary.rows(userAnswers),
           BusinessAddressSummary.rows(userAnswers)
         ).flatten
