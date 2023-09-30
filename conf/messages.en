@@ -557,6 +557,7 @@ updateRegisteredDetails.packingSiteDetailsRemove.error.required = Select yes if 
 
 updateRegisteredDetails.checkYourAnswers.title = Check your answers before sending your update
 updateRegisteredDetails.checkYourAnswers.heading = Check your answers before sending your update
+updateRegisteredDetails.checkYourAnswers.ukSiteDetails.title = UK site details
 updateRegisteredDetails.checkYourAnswers.updateContactDetails.title = Soft Drinks Industry Levy contact
 updateRegisteredDetails.checkYourAnswers.businessAddress.title = Business address
 updateRegisteredDetails.updateContactDetails.change.hidden = Contact Details
