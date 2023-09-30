@@ -21,10 +21,10 @@ import controllers.actions.ControllerActions
 import models.SelectChange.UpdateRegisteredDetails
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.updateRegisteredDetails.UpdateRegisteredDetailsCYAView
-import views.summary.updateRegisteredDetails.{BusinessAddressSummary, PackagingSiteDetailsSummary, UpdateContactDetailsSummary, WarehouseDetailsSummary, UKSitesSummary}
+import views.summary.updateRegisteredDetails.{BusinessAddressSummary, UpdateContactDetailsSummary, UKSitesSummary}
 
 import java.time.{LocalDateTime, ZoneId}
 
