@@ -26,8 +26,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.updateRegisteredDetails.UpdateRegisteredDetailsCYAView
 import views.summary.updateRegisteredDetails.{BusinessAddressSummary, UpdateContactDetailsSummary, UKSitesSummary}
 
-import java.time.{LocalDateTime, ZoneId}
-
 class UpdateRegisteredDetailsCYAController @Inject()(
                                             override val messagesApi: MessagesApi,
                                             controllerActions: ControllerActions,
