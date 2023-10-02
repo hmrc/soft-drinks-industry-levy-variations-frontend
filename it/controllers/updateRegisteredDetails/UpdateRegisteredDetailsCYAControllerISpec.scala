@@ -34,14 +34,14 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
             page.getElementsByTag("h2").get(1).text() mustBe "Business address"
             val ukSiteElems = page.getElementsByClass("govuk-summary-list").first().getElementsByClass("govuk-summary-list__row")
             ukSiteElems.get(0).getElementsByClass("govuk-summary-list__key").first().text() mustBe "You have 0 packaging sites"
-            ukSiteElems.get(0).getElementsByClass("govuk-summary-list__key").get(1).text() mustBe "You have 0 warehouses"
+            ukSiteElems.get(1).getElementsByClass("govuk-summary-list__key").first.text() mustBe "You have 0 warehouses"
             val businessAddressElems = page.getElementsByClass("govuk-summary-list").get(1).getElementsByClass("govuk-summary-list__row")
             businessAddressElems.get(0).getElementsByClass("govuk-summary-list__key").first().text() mustBe
               AddressFormattingHelper.addressFormatting(emptyUserAnswersForUpdateRegisteredDetails.contactAddress, None).toString().replace("<br>", " ")
             businessAddressElems.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change business address"
             businessAddressElems.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "business address"
             page.getElementsByClass("govuk-summary-list").size() mustBe 2
-            page.getElementsByClass("govuk-summary-list__row").size() mustBe 4
+            page.getElementsByClass("govuk-summary-list__row").size() mustBe 3
           }
         }
       }
@@ -64,9 +64,9 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
             page.getElementsByTag("h2").first.text() mustBe "UK site details"
             val elems = page.getElementsByClass("govuk-summary-list").first().getElementsByClass("govuk-summary-list__row")
             elems.get(0).getElementsByClass("govuk-summary-list__key").first().text() mustBe "You have 1 packaging site"
-            elems.get(0).getElementsByClass("govuk-summary-list__key").get(1).text() mustBe "You have 0 warehouses"
+            elems.get(1).getElementsByClass("govuk-summary-list__key").first().text() mustBe "You have 0 warehouses"
             page.getElementsByClass("govuk-summary-list").size() mustBe 2
-            page.getElementsByClass("govuk-summary-list__row").size() mustBe 4
+            page.getElementsByClass("govuk-summary-list__row").size() mustBe 3
           }
         }
       }
@@ -90,9 +90,9 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
             page.getElementsByTag("h2").first.text() mustBe "UK site details"
             val elems = page.getElementsByClass("govuk-summary-list").first().getElementsByClass("govuk-summary-list__row")
             elems.get(0).getElementsByClass("govuk-summary-list__key").first().text() mustBe "You have 0 packaging sites"
-            elems.get(0).getElementsByClass("govuk-summary-list__key").get(1).text() mustBe "You have 1 warehouse"
+            elems.get(1).getElementsByClass("govuk-summary-list__key").first().text() mustBe "You have 1 warehouse"
             page.getElementsByClass("govuk-summary-list").size() mustBe 2
-            page.getElementsByClass("govuk-summary-list__row").size() mustBe 4
+            page.getElementsByClass("govuk-summary-list__row").size() mustBe 3
           }
         }
       }
