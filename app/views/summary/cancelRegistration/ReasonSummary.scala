@@ -27,7 +27,7 @@ import viewmodels.implicits._
 
 object ReasonSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
     answers.get(ReasonPage).map {
       answer =>
 
@@ -39,5 +39,5 @@ object ReasonSummary  {
               .withVisuallyHiddenText(messages("cancelRegistration.reason.change.hidden"))
           )
         )
-    }
+    }.getOrElse(throw new IllegalArgumentException(s"No reason given"))
 }

@@ -18,12 +18,20 @@ package controllers.cancelRegistration
 
 import base.SpecBase
 import controllers.cancelRegistration.routes._
+import forms.cancelRegistration.ReasonFormProvider
+import models.NormalMode
 import models.SelectChange.CancelRegistration
+
+import java.time.LocalDate
+import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
+import play.api.data.Form
+
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.SummaryListFluency
-import views.html.cancelRegistration.CancelRegistrationCYAView
+import viewmodels.summary.cancelRegistration.{CancelRegistrationDateSummary, ReasonSummary}
+import views.html.cancelRegistration.{CancelRegistrationCYAView, ReasonView}
 
 class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluency {
 
@@ -33,7 +41,11 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCancelRegistration)).build()
+      val userAnswers = emptyUserAnswersForChangeActivity
+        .set(ReasonPage, "No longer sell drinks").success.value
+        .set(CancelRegistrationDatePage, LocalDate.now()).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, cyaRoute)
@@ -41,10 +53,71 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[CancelRegistrationCYAView]
-        val list: Seq[(String, SummaryList)] = Seq.empty
+
+        val cancelRegistrationDateSummary : (String, SummaryList) = ("",SummaryListViewModel(
+          rows = Seq(CancelRegistrationDateSummary.row(userAnswers)))
+        )
+
+        val reasonRegistrationDateSummary : (String, SummaryList) = ("",SummaryListViewModel(
+          rows = Seq(ReasonSummary.row(userAnswers)))
+        )
+
+        val list = Seq(reasonRegistrationDateSummary, cancelRegistrationDateSummary)
+
+        val orgName = " Super Lemonade Plc"
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(list)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(orgName ,list)(request, messages(application)).toString
+      }
+    }
+
+    "must return Redirect to reason page when no user answers are present for the page reason page" in {
+
+      val userAnswers = emptyUserAnswersForChangeActivity
+        .set(CancelRegistrationDatePage, LocalDate.now()).success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, cyaRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-variations-frontend/cancel-registration/reason"
+      }
+    }
+
+    "must return Redirect to cancellation date page when no user answers are present for the page cancellation date page" in {
+
+      val userAnswers = emptyUserAnswersForChangeActivity
+        .set(ReasonPage, "No longer sell drinks").success.value
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, cyaRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-variations-frontend/cancel-registration/date"
+      }
+    }
+
+    "must return Redirect to cancellation reason page when no user answers are present" in {
+
+      val userAnswers = emptyUserAnswersForChangeActivity
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, cyaRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-variations-frontend/cancel-registration/reason"
       }
     }
 

@@ -160,7 +160,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.CancelRegistrationCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(sdilNumber).fold[Option[LocalDate]](None)(_.get(CancelRegistrationDatePage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe validCancellationDate
@@ -182,7 +182,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.CancelRegistrationCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(sdilNumber).fold[Option[LocalDate]](None)(_.get(CancelRegistrationDatePage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe validCancellationDate

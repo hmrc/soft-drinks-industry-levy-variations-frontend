@@ -18,23 +18,52 @@ package controllers.cancelRegistration
 
 import com.google.inject.Inject
 import controllers.actions.ControllerActions
-import models.SelectChange
+import models.{NormalMode, SelectChange}
+import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.govuk.SummaryListFluency
+import viewmodels.summary.cancelRegistration.{CancelRegistrationDateSummary, ReasonSummary}
 import views.html.cancelRegistration.CancelRegistrationCYAView
+import views.summary.changeActivity.OperatePackagingSiteOwnBrandsSummary
+
+import java.time.LocalDate
 
 class CancelRegistrationCYAController @Inject()(
                                             override val messagesApi: MessagesApi,
                                             controllerActions: ControllerActions,
                                             val controllerComponents: MessagesControllerComponents,
                                             view: CancelRegistrationCYAView
-                                          ) extends FrontendBaseController with I18nSupport {
+                                          ) extends FrontendBaseController with I18nSupport with SummaryListFluency {
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration) {
     implicit request =>
-      val list: Seq[(String, SummaryList)] = Seq.empty
-      Ok(view(list))
+
+      (request.userAnswers.get(CancelRegistrationDatePage), request.userAnswers.get(ReasonPage)) match {
+        case (Some(date: LocalDate), Some(reason: String)) =>
+          val orgName: String = " " + request.subscription.orgName
+
+          val cancelRegistrationDateSummary: (String, SummaryList) = ("", SummaryListViewModel(
+            rows = Seq(CancelRegistrationDateSummary.row(request.userAnswers)))
+          )
+
+          val reasonRegistrationDateSummary: (String, SummaryList) = ("", SummaryListViewModel(
+            rows = Seq(ReasonSummary.row(request.userAnswers)))
+          )
+
+          val list = Seq(reasonRegistrationDateSummary, cancelRegistrationDateSummary)
+          Ok(view(orgName, list))
+
+        case (None, Some(reason: String)) =>
+            Redirect(routes.CancelRegistrationDateController.onPageLoad(NormalMode))
+
+        case (Some(date: LocalDate), None) =>
+            Redirect(routes.ReasonController.onPageLoad(NormalMode))
+
+        case (None, None) =>
+          Redirect(routes.ReasonController.onPageLoad(NormalMode))
+      }
   }
 }
