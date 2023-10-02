@@ -17,7 +17,7 @@
 package views.summary.updateRegisteredDetails
 
 import controllers.updateRegisteredDetails.routes
-import models.{CheckMode, NormalMode, UserAnswers, Warehouse}
+import models.{CheckMode, Mode, NormalMode, UserAnswers, Warehouse}
 import pages.updateRegisteredDetails.WarehouseDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
@@ -45,7 +45,7 @@ object WarehouseDetailsSummary  {
         )
     }
 
-  def row2(warehouseList: Map[String, Warehouse])(implicit messages: Messages): List[SummaryListRow] = {
+  def row2(warehouseList: Map[String, Warehouse], mode: Mode)(implicit messages: Messages): List[SummaryListRow] = {
     warehouseList.map {
           warehouse =>
             SummaryListRow(
@@ -55,7 +55,7 @@ object WarehouseDetailsSummary  {
               ),
               actions = Some(Actions("",Seq(
                 ActionItemViewModel("site.remove",
-                  controllers.updateRegisteredDetails.routes.RemoveWarehouseDetailsController.onPageLoad(NormalMode, warehouse._1).url )
+                  controllers.updateRegisteredDetails.routes.RemoveWarehouseDetailsController.onPageLoad(mode, warehouse._1).url )
                   .withVisuallyHiddenText(messages("updateRegisteredDetails.warehouseDetails.remove.hidden",
                     warehouse._2.tradingName.getOrElse(""), warehouse._2.address.lines.head))
               )))

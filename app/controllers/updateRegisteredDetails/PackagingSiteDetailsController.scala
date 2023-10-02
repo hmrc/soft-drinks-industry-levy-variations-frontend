@@ -62,8 +62,7 @@ class PackagingSiteDetailsController @Inject()(
       }
 
       val siteList: SummaryList = SummaryListViewModel(
-//        TODO: Add mode
-        rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList)
+        rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList, mode)
       )
 
       Ok(view(preparedForm, mode, siteList))
@@ -73,8 +72,7 @@ class PackagingSiteDetailsController @Inject()(
     implicit request =>
 
       val siteList: SummaryList = SummaryListViewModel(
-        //          TODO: Add mode
-        rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList)
+        rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList, mode)
       )
       form.bindFromRequest().fold(
         formWithErrors =>
