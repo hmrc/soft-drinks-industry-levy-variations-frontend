@@ -40,7 +40,7 @@ object RepaymentMethodSummary  {
 
         SummaryListRowViewModel(
           key     = "correctReturn.repaymentMethod.checkYourAnswersLabel",
-          value   = value.withCssClass("govuk-!-text-align-right"),
+          value   = value,
           actions = Seq(
             ActionItemViewModel("site.change", routes.RepaymentMethodController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("correctReturn.repaymentMethod.change.hidden"))

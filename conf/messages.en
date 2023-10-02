@@ -508,6 +508,7 @@ correctReturn.askSecondaryWarehouseInReturn.detailsContent2 = Because you change
 
 correctReturn.checkChanges.updateFor = This update is for
 correctReturn.checkChanges.title = Check your answers before sending your correction
+correctReturn.correctionSection.checkYourAnswersLabel = Correction details
 correctReturn.checkChanges.confirmationStatement = By sending this correction you are confirming that, to the best of your knowledge, the details you are providing are correct.
 correctReturn.checkChanges.balanceHeader = Balance
 correctReturn.checkChanges.sendReturnHeader = Send your return

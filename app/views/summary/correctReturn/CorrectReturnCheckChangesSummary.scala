@@ -27,28 +27,20 @@ object CorrectReturnCheckChangesSummary {
   def changeSpecificSummaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription, changedPages: List[ChangedPage])
                                           (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
     val mainSection = CorrectReturnBaseCYASummary.changedSummaryListAndHeadings(userAnswers, subscription, changedPages)
-    val correctionSection = (correctionReasonSummarySection(userAnswers) ++ repaymentMethodSummarySection(userAnswers)).toSeq
-    mainSection ++ correctionSection
+    val correctionDetailsSection = correctionSection(userAnswers)
+    mainSection ++ correctionDetailsSection
   }
 
-  private def correctionReasonSummarySection(userAnswers: UserAnswers)
+  private def correctionSection(userAnswers: UserAnswers)
                                      (implicit messages: Messages): Option[(String, SummaryList)] = {
     val correctionReasonSummary: Option[SummaryListRow] = CorrectionReasonSummary.row(userAnswers)
-    val correctionReasonSection: Option[(String, SummaryList)] = correctionReasonSummary.map(summary => {
-      "correctReturn.correctionReason.checkYourAnswersLabel" ->
-        SummaryList(Seq(summary))
-    })
-    correctionReasonSection
-  }
-
-  private def repaymentMethodSummarySection(userAnswers: UserAnswers)
-                                           (implicit messages: Messages): Option[(String, SummaryList)] = {
     val repaymentMethodSummary: Option[SummaryListRow] = RepaymentMethodSummary.row(userAnswers)
-    val repaymentMethodSection: Option[(String, SummaryList)] = repaymentMethodSummary.map(summary => {
-      "correctReturn.repaymentMethod.checkYourAnswersLabel" ->
-        SummaryList(Seq(summary))
-    })
-    repaymentMethodSection
+
+    val correctionSection: Option[(String, SummaryList)] =  {
+     Option("correctReturn.correctionSection.checkYourAnswersLabel" ->
+        SummaryList(Seq(correctionReasonSummary.get, repaymentMethodSummary.get)))
+    }
+    correctionSection
   }
 
 }

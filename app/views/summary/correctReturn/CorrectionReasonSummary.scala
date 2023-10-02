@@ -32,7 +32,7 @@ object CorrectionReasonSummary  {
       answer =>
         SummaryListRowViewModel(
           key     = "correctReturn.correctionReason.checkYourAnswersLabel",
-          value   = ValueViewModel(HtmlFormat.escape(answer).toString).withCssClass("govuk-!-text-align-right"),
+          value   = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
             ActionItemViewModel("site.change", routes.CorrectionReasonController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("correctReturn.correctionReason.change.hidden"))
