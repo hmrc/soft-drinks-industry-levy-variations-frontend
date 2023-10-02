@@ -31,7 +31,7 @@ class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
   override val normalRoutes: Page => UserAnswers => Call = {
     case ChangeRegisteredDetailsPage => userAnswers => changeRegisteredDetailNavigation(userAnswers)
     case WarehouseDetailsPage => userAnswers => defaultCall
-    case RemoveWarehouseDetailsPage => userAnswers => routes.WarehouseDetailsController.onPageLoad(NormalMode)
+    case RemoveWarehouseDetailsPage => _ => routes.WarehouseDetailsController.onPageLoad(NormalMode)
     case PackagingSiteDetailsPage => userAnswers => PackagingSiteDetailsNavigation(userAnswers)
     case PackingSiteDetailsRemovePage => _ => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
     case UpdateContactDetailsPage => userAnswers => UpdateContactDetailsNavigation(userAnswers)
@@ -39,6 +39,7 @@ class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
   }
 
   override val checkRouteMap: Page => UserAnswers => Call = {
+    case RemoveWarehouseDetailsPage => _ => routes.WarehouseDetailsController.onPageLoad(CheckMode)
     case PackingSiteDetailsRemovePage => _ => routes.PackagingSiteDetailsController.onPageLoad(CheckMode)
     case _ => _ => routes.UpdateRegisteredDetailsCYAController.onPageLoad
   }
