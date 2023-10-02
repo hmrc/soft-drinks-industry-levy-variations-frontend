@@ -93,34 +93,6 @@ object UKSitesSummary {
 
   def getHeadingAndSummary(userAnswers: UserAnswers, isCheckAnswers: Boolean)
                           (implicit messages: Messages): Option[(String, SummaryList)] = {
-//    val optSummaryList = (
-//      userAnswers.packagingSiteList.nonEmpty,
-//      userAnswers.warehouseList.nonEmpty
-//    ) match {
-//      case (true, false) => Option(
-//        SummaryListViewModel(
-//          Seq(
-//            getPackagingSiteRow(userAnswers, isCheckAnswers)
-//          )
-//        )
-//      )
-//      case (false, true) => Option(
-//        SummaryListViewModel(
-//          Seq(
-//            getWarehousesRow(userAnswers, isCheckAnswers)
-//          )
-//        )
-//      )
-//      case (true, true) => Option(
-//        SummaryListViewModel(
-//          Seq(
-//            getPackagingSiteRow(userAnswers, isCheckAnswers),
-//            getWarehousesRow(userAnswers, isCheckAnswers)
-//          )
-//        )
-//      )
-//      case _ => None
-//    }
     val optSummaryList = Option(
       SummaryListViewModel(
         Seq(
