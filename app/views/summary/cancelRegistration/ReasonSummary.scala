@@ -33,7 +33,7 @@ object ReasonSummary  {
 
         SummaryListRowViewModel(
           key     = "cancelRegistration.reason.checkYourAnswersLabel",
-          value   = ValueViewModel(HtmlFormat.escape(answer).toString),
+          value   = ValueViewModel(answer),
           actions = Seq(
             ActionItemViewModel("site.change", routes.ReasonController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("cancelRegistration.reason.change.hidden"))

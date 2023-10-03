@@ -40,7 +40,7 @@ import java.time.{LocalDate, ZoneOffset}
 import scala.concurrent.Future
 
 class CancelRegistrationDateControllerSpec extends SpecBase with MockitoSugar {
-  val appConfig = application.injector.instanceOf[FrontendAppConfig]
+  val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
   val formProvider = new CancelRegistrationDateFormProvider(appConfig)
   private def form = formProvider()
 

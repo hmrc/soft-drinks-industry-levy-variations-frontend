@@ -146,7 +146,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
 
   s"POST " + normalRoutePath - {
     "when the user inserts a valid day, month and year" - {
-      "should update the session with the new value and redirect to the index controller" - {
+      "should update the session with the new value and redirect to the CYA controller" - {
         "when the session contains no data for page" in {
           given
             .commonPrecondition
@@ -194,8 +194,8 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
 
     "should return 400 with the correct error" - {
       dateMap.foreach { case (field, value) =>
-        val dateMapExculdingField = dateMap.removed(field)
-        val otherFields = dateMapExculdingField.keys.toArray
+        val dateMapExcludingField = dateMap.removed(field)
+        val otherFields = dateMapExcludingField.keys.toArray
 
         "when only the " + field + " is populated" in {
           given
@@ -228,7 +228,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          val invalidJson = dateMapExculdingField.foldLeft(Json.obj()) { (a, b) =>
+          val invalidJson = dateMapExcludingField.foldLeft(Json.obj()) { (a, b) =>
             a ++ Json.obj("cancelRegistrationDate." + b._1 -> b._2.toString)
           }
 
@@ -313,12 +313,13 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(cancelRegistrationBaseUrl + normalRoutePath, Some(Json.obj("cancelRegistrationDate" -> "true")))
     testAuthenticatedUserButNoUserAnswers(cancelRegistrationBaseUrl + normalRoutePath, Some(Json.obj("cancelRegistrationDate" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CancelRegistration, cancelRegistrationBaseUrl + normalRoutePath, Some(Json.obj("cancelRegistrationDate" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CancelRegistration, cancelRegistrationBaseUrl + normalRoutePath,
+      Some(Json.obj("cancelRegistrationDate" -> "true")))
   }
 
   s"POST " + checkRoutePath - {
     "when the user inserts a valid day, month and year" - {
-      "should update the session with the new value and redirect to the index controller" - {
+      "should update the session with the new value and redirect to the CYA controller" - {
         "when the session contains no data for page" in {
           given
             .commonPrecondition
@@ -366,8 +367,8 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
 
     "should return 400 with the correct error" - {
       dateMap.foreach { case (field, value) =>
-        val dateMapExculdingField = dateMap.removed(field)
-        val otherFields = dateMapExculdingField.keys.toArray
+        val dateMapExcludingField = dateMap.removed(field)
+        val otherFields = dateMapExcludingField.keys.toArray
 
         "when only the " + field + "is populated" in {
           given
@@ -400,7 +401,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          val invalidJson = dateMapExculdingField.foldLeft(Json.obj()) { (a, b) =>
+          val invalidJson = dateMapExcludingField.foldLeft(Json.obj()) { (a, b) =>
             a ++ Json.obj("cancelRegistrationDate." + b._1 -> b._2.toString)
           }
 
@@ -485,6 +486,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(cancelRegistrationBaseUrl + normalRoutePath, Some(Json.obj("cancelRegistrationDate" -> "true")))
     testAuthenticatedUserButNoUserAnswers(cancelRegistrationBaseUrl + normalRoutePath, Some(Json.obj("cancelRegistrationDate" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CancelRegistration, cancelRegistrationBaseUrl + checkRoutePath, Some(Json.obj("cancelRegistrationDate" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CancelRegistration, cancelRegistrationBaseUrl + checkRoutePath,
+      Some(Json.obj("cancelRegistrationDate" -> "true")))
   }
 }

@@ -18,30 +18,26 @@ package controllers.cancelRegistration
 
 import base.SpecBase
 import controllers.cancelRegistration.routes._
-import forms.cancelRegistration.ReasonFormProvider
-import models.NormalMode
 import models.SelectChange.CancelRegistration
-
-import java.time.LocalDate
 import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
-import play.api.data.Form
-
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.SummaryListFluency
 import viewmodels.summary.cancelRegistration.{CancelRegistrationDateSummary, ReasonSummary}
-import views.html.cancelRegistration.{CancelRegistrationCYAView, ReasonView}
+import views.html.cancelRegistration.CancelRegistrationCYAView
+
+import java.time.LocalDate
 
 class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluency {
 
-  val cyaRoute = CancelRegistrationCYAController.onPageLoad.url
+  val cyaRoute: String = CancelRegistrationCYAController.onPageLoad.url
 
-  "Check Your Answers Controller" - {
+  "Cancel Registration Check Your Answers Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val userAnswers = emptyUserAnswersForChangeActivity
+      val userAnswers = emptyUserAnswersForCancelRegistration
         .set(ReasonPage, "No longer sell drinks").success.value
         .set(CancelRegistrationDatePage, LocalDate.now()).success.value
 
@@ -67,13 +63,13 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
         val orgName = " Super Lemonade Plc"
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(orgName ,list)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(orgName ,list, routes.CancelRegistrationCYAController.onSubmit)(request, messages(application)).toString
       }
     }
 
-    "must return Redirect to reason page when no user answers are present for the page reason page" in {
+    "must return Redirect to reason page when no user answers are present for the reason page" in {
 
-      val userAnswers = emptyUserAnswersForChangeActivity
+      val userAnswers = emptyUserAnswersForCancelRegistration
         .set(CancelRegistrationDatePage, LocalDate.now()).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -88,9 +84,9 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
       }
     }
 
-    "must return Redirect to cancellation date page when no user answers are present for the page cancellation date page" in {
+    "must return Redirect to cancellation date page when no user answers are present for the cancellation date page" in {
 
-      val userAnswers = emptyUserAnswersForChangeActivity
+      val userAnswers = emptyUserAnswersForCancelRegistration
         .set(ReasonPage, "No longer sell drinks").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
