@@ -28,7 +28,7 @@ import viewmodels.implicits._
 
 object AmountProducedSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(AmountProducedPage).map {
       answer =>
 
@@ -41,10 +41,12 @@ object AmountProducedSummary  {
         SummaryListRowViewModel(
           key     = "changeActivity.amountProduced.checkYourAnswersLabel",
           value   = value.withCssClass("govuk-!-text-align-right"),
-          actions = Seq(
+          actions = if(isCheckAnswers){Seq(
             ActionItemViewModel("site.change", routes.AmountProducedController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("changeActivity.amountProduced.change.hidden"))
-          )
+          )}else{
+            Seq.empty
+          }
         )
     }
 }

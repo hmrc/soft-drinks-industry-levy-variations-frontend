@@ -19,10 +19,11 @@ package connectors
 import cats.data.EitherT
 import config.FrontendAppConfig
 import errors.UnexpectedResponseFromSDIL
-import models.{FinancialLineItem, OptPreviousSubmittedReturn, OptRetrievedSubscription, OptSmallProducer, RetrievedSubscription, ReturnPeriod, SdilReturn}
+import models.{FinancialLineItem, OptPreviousSubmittedReturn, OptRetrievedSubscription, OptSmallProducer, RetrievedSubscription, ReturnPeriod, SdilReturn, VariationsSubmission}
+import play.api.libs.json.Json
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import service.VariationResult
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import utilities.GenericLogger
 
 import javax.inject.Inject
@@ -169,6 +170,13 @@ class SoftDrinksIndustryLevyConnector @Inject()(
         }
     }.recover {
       case _ => Left(UnexpectedResponseFromSDIL)
+    }
+  }
+
+  def submitVariation(variation: VariationsSubmission, sdilNumber: String)(implicit hc: HeaderCarrier): Future[Option[Int]] = {
+    println(s"data we are submitting when updating contact details ${Json.toJson(variation)}")
+    http.POST[VariationsSubmission, HttpResponse](s"$sdilUrl/submit-variations/sdil/$sdilNumber", variation) map {
+      response => Some(response.status)
     }
   }
 

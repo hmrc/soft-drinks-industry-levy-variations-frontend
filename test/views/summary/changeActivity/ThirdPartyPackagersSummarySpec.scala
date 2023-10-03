@@ -26,7 +26,7 @@ class ThirdPartyPackagersSummarySpec extends SpecBase {
   "row" - {
 
     "should return nothing when no ThirdPartyPackagers answers are passed in" in {
-      val thirdPartyPackagersSummaryRow = ThirdPartyPackagersSummary.row(emptyUserAnswersForChangeActivity)
+      val thirdPartyPackagersSummaryRow = ThirdPartyPackagersSummary.row(emptyUserAnswersForChangeActivity, isCheckAnswers = true)
 
       thirdPartyPackagersSummaryRow mustBe None
     }
@@ -35,7 +35,7 @@ class ThirdPartyPackagersSummarySpec extends SpecBase {
       val userAnswersWithThirdPartyPackagers = UserAnswers(sdilNumber, SelectChange.ChangeActivity, Json.obj(
         "changeActivity" -> Json.obj("thirdPartyPackagers" -> true)), contactAddress = contactAddress)
 
-      val thirdPartyPackagersSummaryRow = ThirdPartyPackagersSummary.row(userAnswersWithThirdPartyPackagers)
+      val thirdPartyPackagersSummaryRow = ThirdPartyPackagersSummary.row(userAnswersWithThirdPartyPackagers, isCheckAnswers = true)
 
       thirdPartyPackagersSummaryRow.head.key.content.asHtml.toString mustBe "Use third party packagers?"
       thirdPartyPackagersSummaryRow.head.value.content.asHtml.toString mustBe "Yes"

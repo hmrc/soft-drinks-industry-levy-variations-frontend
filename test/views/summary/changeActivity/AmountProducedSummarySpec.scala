@@ -26,7 +26,7 @@ class AmountProducedSummarySpec extends SpecBase {
   "row" - {
 
     "should return nothing when no Amount Produced answers are passed in" in {
-      val amountProducedSummaryRow = AmountProducedSummary.row(emptyUserAnswersForChangeActivity)
+      val amountProducedSummaryRow = AmountProducedSummary.row(emptyUserAnswersForChangeActivity, isCheckAnswers = true)
 
       amountProducedSummaryRow mustBe None
     }
@@ -35,7 +35,7 @@ class AmountProducedSummarySpec extends SpecBase {
       val userAnswersWithAmountProduced = UserAnswers(sdilNumber, SelectChange.ChangeActivity, Json.obj(
         "changeActivity" -> Json.obj("amountProduced" -> "large")), contactAddress = contactAddress)
 
-      val amountProducedSummaryRow = AmountProducedSummary.row(userAnswersWithAmountProduced)
+      val amountProducedSummaryRow = AmountProducedSummary.row(userAnswersWithAmountProduced, isCheckAnswers = true)
 
       amountProducedSummaryRow.head.key.content.asHtml.toString mustBe "Own brand packaged in past 12 months?"
       amountProducedSummaryRow.head.value.content.asHtml.toString mustBe "1 million litres or more"

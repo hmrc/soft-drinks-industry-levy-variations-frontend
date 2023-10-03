@@ -621,6 +621,10 @@ checkYourAnswers.sites.warehouse.change.hidden.multiple = the UK warehouses you 
 changeActivitySent.title = Update sent
 changeActivitySent.panel.returnMessage = We have received the update to your Soft Drinks Industry Levy details
 changeActivitySent.returnsDoneMessage = Your update for {0} was sent at {1} on the {2}. Changes can take up to 15 working days to process.
+changeActivitySent.headerOne = What happens next
+changeActivitySent.whatNextBody = You don't need to do anything else. We will update your details with the information you've provided.
+changeActivitySent.returnHome = Go back to your Soft Drinks Industry Levy details
+changeActivitySent.details = View the details of your update
 
 litres.lowBandLevy = Low band levy
 litres.highBandLevy = High band levy

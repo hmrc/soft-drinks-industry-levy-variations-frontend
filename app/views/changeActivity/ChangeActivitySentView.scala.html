@@ -31,9 +31,22 @@
     govukDetails : GovukDetails
 )
 
-@()(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+
+
+@(orgName: String,
+  seqSummaryList: Seq[(String, SummaryList)])(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+
+@summary ={
+    @for((heading, summaryList) <- seqSummaryList){
+    <h2 class="govuk-heading-m">@messages(heading)</h2>
+    @govukSummaryList(summaryList)
+    }
+}
 
 @layout(pageTitle = titleNoForm(messages("returnSent.title")), showBackLink = false){
+
+
+
 
     @govukPanel(Panel(
     title = Text(messages("changeActivitySent.title")),
@@ -45,38 +58,27 @@
 
     <p class="govuk-body" id="returnDone">
         @messages("changeActivitySent.returnsDoneMessage",
-
+        orgName,
         LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase,
         LocalDate.now.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
         )
     </p>
 
     <h2 class="govuk-heading-m" id="whatNextHeader">
-        @messages("returnSent.headerOne")
+        @messages("changeActivitySent.headerOne")
     </h2>
 
-    <p class="govuk-body" id="whatNextText">
-        <br>
-        <br>
-        @messages("returnSent.paymentsBlurb.nextReturn")
-    </p>
-
-    <h2 class="govuk-heading-m" id="helpWithThisServiceHeading">
-        @messages("returnSent.headerTwo")
-    </h2>
-
-    <p class="govuk-body" id="helpWithThisServiceText">
-        @messages("returnSent.points")
+    <p class="govuk-body" id="whatNextBody">
+        @messages("changeActivitySent.whatNextBody")
     </p>
 
     <p class="govuk-body" id="goToDashboard">
-        <a class="govuk-link" href=@config.sdilHomeUrl>@messages("returnSent.help.link")</a>
+        <a class="govuk-link" href=@config.sdilHomeUrl>@messages("changeActivitySent.returnHome")</a>
     </p>
 
-    <ul class="govuk-list govuk-list--bullet">
-        <li>@messages("returnSent.list1")</li>
-        <li>@messages("returnSent.list2")</li>
-        <li>@messages("returnSent.list3")</li>
-        <li>@messages("returnSent.list4")</li>
-    </ul>
+    @govukDetails(Details(
+    summary = Text(Messages("changeActivitySent.details")),
+    content = HtmlContent(Html(s"${summary}"))
+    ))
+
 }

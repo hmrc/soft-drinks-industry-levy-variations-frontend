@@ -25,8 +25,9 @@ import scala.util.Try
 case class VariationsContact(
                               address: Option[UkAddress] = None,
                               telephoneNumber: Option[String] = None,
-                              emailAddress: Option[String] = None
-                            )
+                              emailAddress: Option[String] = None){
+  def nonEmpty: Boolean = Seq(address, telephoneNumber, emailAddress).flatten.nonEmpty
+}
 
 object VariationsContact {
 

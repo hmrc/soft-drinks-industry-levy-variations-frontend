@@ -24,6 +24,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.changeActivity.ChangeActivitySentView
+import views.summary.changeActivity.ChangeActivitySummary
 
 class ChangeActivitySentController @Inject()(
                                      override val messagesApi: MessagesApi,
@@ -35,7 +36,8 @@ class ChangeActivitySentController @Inject()(
 
  def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
   implicit request =>
-
-    Ok(view())
+    val alias: String = request.subscription.orgName
+    val sections = ChangeActivitySummary.summaryListsAndHeadings(request.userAnswers, isCheckAnswers = false)
+    Ok(view(alias: String, sections))
  }
 }
