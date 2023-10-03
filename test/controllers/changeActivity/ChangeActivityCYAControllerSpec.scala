@@ -73,7 +73,7 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency w
         }
       }
     }
-
+    
     "must redirect to return sent page on submit" in {
       val userAnswers = emptyUserAnswersForChangeActivity.set(AmountProducedPage, Large).success.value
         .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100L, 100L)).success.value

@@ -19,7 +19,7 @@ package generators
 import models.backend.UkAddress
 import models.{LitresInBands, SelectChange, UserAnswers}
 import models.changeActivity.AmountProduced
-import models.changeActivity.AmountProduced.{Large, Small, None => NoneProduced}
+import models.changeActivity.AmountProduced.{Large, Small, enumerable, None => NoneProduced}
 import org.scalatest.TryValues
 import pages.changeActivity._
 
@@ -106,31 +106,29 @@ object ChangeActivityCYAGenerators {
       .userAnswers
   }
 
-  val amountProducedValues: Map[String, Option[AmountProduced]] = Map(
-    "amount produced large" -> Some(Large),
-    "amount produced small" -> Some(Small),
-    "amount produced none" -> Some(NoneProduced),
-    "" -> None
+  object Answered extends Enumeration {
+    val Yes, No, Unanswered = Value
+  }
+
+  object APAnswered extends Enumeration {
+    val Large, Small, NoneProduced, Unanswered = Value
+  }
+
+  val amountProducedValues: Map[APAnswered.Value, (String, Option[AmountProduced])] = Map(
+    APAnswered.Large -> ("amount produced large", Some(Large)),
+    APAnswered.Small -> ("amount produced small", Some(Small)),
+    APAnswered.NoneProduced -> ("amount produced none", Some(NoneProduced)),
+    APAnswered.Unanswered -> ("", None)
   )
 
-  val thirdPartyPackagingValues: Map[String, Option[Boolean]] = Map("using third party packagers" -> Some(true), "not using third party packagers" -> Some(false), "" -> None)
-  val ownBrandsValues: Map[String, Option[Boolean]] = Map("producing own brands" -> Some(true), "not producing own brands" -> Some(false), "" -> None)
-  val contractValues: Map[String, Option[Boolean]] = Map("contract packing" -> Some(true), "not contract packing" -> Some(false), "" -> None)
-  val importValues: Map[String, Option[Boolean]] = Map("importing" -> Some(true), "not importing" -> Some(false), "" -> None)
-
-//  New code \/\/\/\/\/\/\ - Still think map would work with key/value
-
-  val amountProducedValuesTuples: List[(String, Option[AmountProduced])] = List(
-    "amount produced large" -> Some(Large),
-    "amount produced small" -> Some(Small),
-    "amount produced none" -> Some(NoneProduced),
-    "" -> None
-  )
-
-  val thirdPartyPackagingValuesTuples: List[(String, Option[Boolean])] = List("using third party packagers" -> Some(true), "not using third party packagers" -> Some(false), "" -> None)
-  val ownBrandsValuesTuples: List[(String, Option[Boolean])] = List("producing own brands" -> Some(true), "not producing own brands" -> Some(false), "" -> None)
-  val contractValuesTuples: List[(String, Option[Boolean])] = List("contract packing" -> Some(true), "not contract packing" -> Some(false), "" -> None)
-  val importValuesTuples: List[(String, Option[Boolean])] = List("importing" -> Some(true), "not importing" -> Some(false), "" -> None)
+  val thirdPartyPackagingValues: Map[Answered.Value, (String, Option[Boolean])] =
+    Map(Answered.Yes -> ("using third party packagers", Some(true)), Answered.No -> ("not using third party packagers", Some(false)), Answered.Unanswered -> ("", None))
+  val ownBrandsValues: Map[Answered.Value, (String, Option[Boolean])] =
+    Map(Answered.Yes -> ("producing own brands", Some(true)), Answered.No -> ("not producing own brands", Some(false)), Answered.Unanswered -> ("", None))
+  val contractValues: Map[Answered.Value, (String, Option[Boolean])] =
+    Map(Answered.Yes -> ("contract packing", Some(true)), Answered.No -> ("not contract packing", Some(false)), Answered.Unanswered -> ("", None))
+  val importValues: Map[Answered.Value, (String, Option[Boolean])] =
+    Map(Answered.Yes -> ("importing", Some(true)), Answered.No -> ("not importing", Some(false)), Answered.Unanswered -> ("", None))
 
   def makeKeyString(keyStrings: List[String]): String = keyStrings.filterNot(_.isEmpty).mkString(", ")
 
@@ -141,11 +139,41 @@ object ChangeActivityCYAGenerators {
                                 contractTuple: (String, Option[Boolean]),
                                 importTuple: (String, Option[Boolean]))
 
-  //    Probably best to extend these test cases and name them more sensibly (possibly by using map key, value to create tuple)
-
 
   val testCaseOptions: List[UserAnswerOptions] = List(
-    UserAnswerOptions(amountProducedValuesTuples.head, thirdPartyPackagingValuesTuples.head, ownBrandsValuesTuples(1), contractValuesTuples(1), importValuesTuples(0))
+//    TODO: Contract packing is always answered No here - this seems wrong
+    UserAnswerOptions(amountProducedValues(APAnswered.Large), thirdPartyPackagingValues(Answered.Yes), ownBrandsValues(Answered.No), contractValues(Answered.No), importValues(Answered.Yes)),
+    UserAnswerOptions(amountProducedValues(APAnswered.Large), thirdPartyPackagingValues(Answered.Yes), ownBrandsValues(Answered.No), contractValues(Answered.No), importValues(Answered.No)),
+    UserAnswerOptions(amountProducedValues(APAnswered.Large), thirdPartyPackagingValues(Answered.No), ownBrandsValues(Answered.No), contractValues(Answered.No), importValues(Answered.Yes)),
+    UserAnswerOptions(amountProducedValues(APAnswered.Large), thirdPartyPackagingValues(Answered.No), ownBrandsValues(Answered.No), contractValues(Answered.No), importValues(Answered.No)),
+    UserAnswerOptions(amountProducedValues(APAnswered.Large), thirdPartyPackagingValues(Answered.Unanswered), ownBrandsValues(Answered.No), contractValues(Answered.No), importValues(Answered.Yes)),
+    UserAnswerOptions(amountProducedValues(APAnswered.Large), thirdPartyPackagingValues(Answered.Unanswered), ownBrandsValues(Answered.No), contractValues(Answered.No), importValues(Answered.No)),
+    UserAnswerOptions(amountProducedValues(APAnswered.Small), thirdPartyPackagingValues(Answered.Yes), ownBrandsValues(Answered.Yes), contractValues(Answered.No), importValues(Answered.Yes)),
+    UserAnswerOptions(amountProducedValues(APAnswered.Small), thirdPartyPackagingValues(Answered.Yes), ownBrandsValues(Answered.Yes), contractValues(Answered.No), importValues(Answered.No)),
+    UserAnswerOptions(amountProducedValues(APAnswered.Small), thirdPartyPackagingValues(Answered.Yes), ownBrandsValues(Answered.No), contractValues(Answered.No), importValues(Answered.Yes)),
+    UserAnswerOptions(amountProducedValues(APAnswered.Small), thirdPartyPackagingValues(Answered.Yes), ownBrandsValues(Answered.No), contractValues(Answered.No), importValues(Answered.No)),
+    UserAnswerOptions(amountProducedValues(APAnswered.Small), thirdPartyPackagingValues(Answered.No), ownBrandsValues(Answered.Yes), contractValues(Answered.No), importValues(Answered.Yes)),
+    UserAnswerOptions(amountProducedValues(APAnswered.Small), thirdPartyPackagingValues(Answered.No), ownBrandsValues(Answered.Yes), contractValues(Answered.No), importValues(Answered.No)),
+    UserAnswerOptions(amountProducedValues(APAnswered.Small), thirdPartyPackagingValues(Answered.No), ownBrandsValues(Answered.No), contractValues(Answered.No), importValues(Answered.Yes)),
+    UserAnswerOptions(amountProducedValues(APAnswered.Small), thirdPartyPackagingValues(Answered.No), ownBrandsValues(Answered.No), contractValues(Answered.No), importValues(Answered.No)),
+    UserAnswerOptions(amountProducedValues(APAnswered.NoneProduced), thirdPartyPackagingValues(Answered.Yes), ownBrandsValues(Answered.Yes), contractValues(Answered.No), importValues(Answered.Yes)),
+    UserAnswerOptions(amountProducedValues(APAnswered.NoneProduced), thirdPartyPackagingValues(Answered.Yes), ownBrandsValues(Answered.Yes), contractValues(Answered.No), importValues(Answered.No)),
+    UserAnswerOptions(amountProducedValues(APAnswered.NoneProduced), thirdPartyPackagingValues(Answered.Yes), ownBrandsValues(Answered.No), contractValues(Answered.No), importValues(Answered.Yes)),
+    UserAnswerOptions(amountProducedValues(APAnswered.NoneProduced), thirdPartyPackagingValues(Answered.Yes), ownBrandsValues(Answered.No), contractValues(Answered.No), importValues(Answered.No)),
+    UserAnswerOptions(amountProducedValues(APAnswered.NoneProduced), thirdPartyPackagingValues(Answered.Yes), ownBrandsValues(Answered.Unanswered), contractValues(Answered.No), importValues(Answered.Yes)),
+    UserAnswerOptions(amountProducedValues(APAnswered.NoneProduced), thirdPartyPackagingValues(Answered.Yes), ownBrandsValues(Answered.Unanswered), contractValues(Answered.No), importValues(Answered.No)),
+    UserAnswerOptions(amountProducedValues(APAnswered.NoneProduced), thirdPartyPackagingValues(Answered.No), ownBrandsValues(Answered.Yes), contractValues(Answered.No), importValues(Answered.Yes)),
+    UserAnswerOptions(amountProducedValues(APAnswered.NoneProduced), thirdPartyPackagingValues(Answered.No), ownBrandsValues(Answered.Yes), contractValues(Answered.No), importValues(Answered.No)),
+    UserAnswerOptions(amountProducedValues(APAnswered.NoneProduced), thirdPartyPackagingValues(Answered.No), ownBrandsValues(Answered.No), contractValues(Answered.No), importValues(Answered.Yes)),
+    UserAnswerOptions(amountProducedValues(APAnswered.NoneProduced), thirdPartyPackagingValues(Answered.No), ownBrandsValues(Answered.No), contractValues(Answered.No), importValues(Answered.No)),
+    UserAnswerOptions(amountProducedValues(APAnswered.NoneProduced), thirdPartyPackagingValues(Answered.No), ownBrandsValues(Answered.Unanswered), contractValues(Answered.No), importValues(Answered.Yes)),
+    UserAnswerOptions(amountProducedValues(APAnswered.NoneProduced), thirdPartyPackagingValues(Answered.No), ownBrandsValues(Answered.Unanswered), contractValues(Answered.No), importValues(Answered.No)),
+    UserAnswerOptions(amountProducedValues(APAnswered.NoneProduced), thirdPartyPackagingValues(Answered.Unanswered), ownBrandsValues(Answered.Yes), contractValues(Answered.No), importValues(Answered.Yes)),
+    UserAnswerOptions(amountProducedValues(APAnswered.NoneProduced), thirdPartyPackagingValues(Answered.Unanswered), ownBrandsValues(Answered.Yes), contractValues(Answered.No), importValues(Answered.No)),
+    UserAnswerOptions(amountProducedValues(APAnswered.NoneProduced), thirdPartyPackagingValues(Answered.Unanswered), ownBrandsValues(Answered.No), contractValues(Answered.No), importValues(Answered.Yes)),
+    UserAnswerOptions(amountProducedValues(APAnswered.NoneProduced), thirdPartyPackagingValues(Answered.Unanswered), ownBrandsValues(Answered.No), contractValues(Answered.No), importValues(Answered.No)),
+    UserAnswerOptions(amountProducedValues(APAnswered.NoneProduced), thirdPartyPackagingValues(Answered.Unanswered), ownBrandsValues(Answered.Unanswered), contractValues(Answered.No), importValues(Answered.Yes)),
+    UserAnswerOptions(amountProducedValues(APAnswered.NoneProduced), thirdPartyPackagingValues(Answered.Unanswered), ownBrandsValues(Answered.Unanswered), contractValues(Answered.No), importValues(Answered.No)),
   )
 
   def getKeyStringFromUserAnswerOptions(userAnswerOptions: UserAnswerOptions): String = {
