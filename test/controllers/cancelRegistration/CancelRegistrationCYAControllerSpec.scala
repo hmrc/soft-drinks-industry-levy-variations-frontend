@@ -50,20 +50,16 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
 
         val view = application.injector.instanceOf[CancelRegistrationCYAView]
 
-        val cancelRegistrationDateSummary : (String, SummaryList) = ("",SummaryListViewModel(
-          rows = Seq(CancelRegistrationDateSummary.row(userAnswers)))
+        val cancelRegistrationSummary : (String, SummaryList) = ("",SummaryListViewModel(
+          rows = Seq(ReasonSummary.row(userAnswers), CancelRegistrationDateSummary.row(userAnswers)))
         )
 
-        val reasonRegistrationDateSummary : (String, SummaryList) = ("",SummaryListViewModel(
-          rows = Seq(ReasonSummary.row(userAnswers)))
-        )
-
-        val list = Seq(reasonRegistrationDateSummary, cancelRegistrationDateSummary)
+        val list = Seq(cancelRegistrationSummary)
 
         val orgName = " Super Lemonade Plc"
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(orgName ,list, routes.CancelRegistrationCYAController.onSubmit)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(orgName, list, routes.CancelRegistrationCYAController.onSubmit)(request, messages(application)).toString
       }
     }
 
@@ -113,7 +109,7 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-variations-frontend/cancel-registration/reason"
+        redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-variations-frontend/select-change"
       }
     }
 
