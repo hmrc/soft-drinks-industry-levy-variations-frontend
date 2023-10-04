@@ -17,7 +17,7 @@
 package controllers.updateRegisteredDetails
 
 import controllers.actions._
-import controllers.{ControllerHelper, routes}
+import controllers.ControllerHelper
 import forms.updateRegisteredDetails.RemoveWarehouseDetailsFormProvider
 import handlers.ErrorHandler
 import models.SelectChange.UpdateRegisteredDetails
@@ -56,7 +56,7 @@ class RemoveWarehouseDetailsController @Inject()(
         case Some(warehouse) =>
           val formattedAddress = AddressFormattingHelper.addressFormatting(warehouse.address, warehouse.tradingName)
           Ok(view(form, mode, formattedAddress, index))
-        case _ => indexNotFoundRedirect(index, request, routes.IndexController.onPageLoad)
+        case _ => indexNotFoundRedirect(index, request, routes.WarehouseDetailsController.onPageLoad(mode))
       }
   }
 
@@ -65,7 +65,7 @@ class RemoveWarehouseDetailsController @Inject()(
       val warehouseToRemove: Option[Warehouse] = request.userAnswers.warehouseList.get(index)
       warehouseToRemove match {
         case None =>
-          Future.successful(indexNotFoundRedirect(index, request, routes.IndexController.onPageLoad))
+          Future.successful(indexNotFoundRedirect(index, request, routes.WarehouseDetailsController.onPageLoad(mode)))
         case Some(warehouse) =>
           val formattedAddress: Html = AddressFormattingHelper.addressFormatting(warehouse.address, warehouse.tradingName)
           form.bindFromRequest().fold(

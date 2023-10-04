@@ -20,7 +20,7 @@ import base.SpecBase
 import base.SpecBase.userAnswerTwoWarehousesUpdateRegisteredDetails
 import errors.SessionDatabaseInsertError
 import forms.updateRegisteredDetails.WarehouseDetailsFormProvider
-import models.NormalMode
+import models.{CheckMode, Mode, NormalMode}
 import models.SelectChange.UpdateRegisteredDetails
 import models.updateRegisteredDetails.ChangeRegisteredDetails
 import navigation._
@@ -56,80 +56,88 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
   val form: Form[Boolean] = formProvider()
 
   lazy val warehouseDetailsRoute: String = routes.WarehouseDetailsController.onPageLoad(NormalMode).url
+  lazy val warehouseDetailsCheckRoute: String = routes.WarehouseDetailsController.onPageLoad(CheckMode).url
+
+  def warehouseDetailsRouteForMode(mode: Mode): String = if (mode == CheckMode) warehouseDetailsCheckRoute else warehouseDetailsRoute
 
   "WarehouseDetails Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    List(NormalMode, CheckMode).foreach(mode => {
+      s"must return OK and the correct view for a GET in $mode" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswerTwoWarehousesUpdateRegisteredDetails)).build()
+        val application = applicationBuilder(userAnswers = Some(userAnswerTwoWarehousesUpdateRegisteredDetails)).build()
 
-      running(application) {
-        val request = FakeRequest(GET, warehouseDetailsRoute)
+        running(application) {
+          val request = FakeRequest(GET, warehouseDetailsRouteForMode(mode))
 
-        val result = route(application, request).value
+          val result = route(application, request).value
 
-        val view = application.injector.instanceOf[WarehouseDetailsView]
+          val view = application.injector.instanceOf[WarehouseDetailsView]
 
-        val warehouseSummaryList: List[SummaryListRow] =
-          WarehouseDetailsSummary.row2(twoWarehouses)(messages(application))
+          val warehouseSummaryList: List[SummaryListRow] =
+            WarehouseDetailsSummary.row2(twoWarehouses, mode)(messages(application))
 
-        val summaryList: SummaryList = SummaryListViewModel(
-          rows = warehouseSummaryList
-        )
+          val summaryList: SummaryList = SummaryListViewModel(
+            rows = warehouseSummaryList
+          )
 
-        status(result) mustEqual OK
-        val summaryActions = doc(contentAsString(result)).getElementsByClass("govuk-summary-list__actions")
-        summaryActions.size() mustEqual 2
-        summaryActions.first.text() must include("Remove")
-        summaryActions.last.text() must include("Remove")
+          status(result) mustEqual OK
+          val summaryActions = doc(contentAsString(result)).getElementsByClass("govuk-summary-list__actions")
+          summaryActions.size() mustEqual 2
+          summaryActions.first.text() must include("Remove")
+          summaryActions.last.text() must include("Remove")
 
-        val removeLink = doc(contentAsString(result)).getElementsByClass("govuk-summary-list__actions")
-          .tagName("ul").tagName("li").last().getElementsByClass("govuk-link").last()
-        removeLink.attr("href") mustEqual "/soft-drinks-industry-levy-variations-frontend/change-registered-details/warehouse-details/remove/2"
-
-        contentAsString(result) mustEqual view(form, NormalMode, Some(summaryList))(request, messages(application)).toString
+          val removeLink = doc(contentAsString(result)).getElementsByClass("govuk-summary-list__actions")
+            .tagName("ul").tagName("li").last().getElementsByClass("govuk-link").last()
+          val changeLink = if (mode == CheckMode) {
+            "/soft-drinks-industry-levy-variations-frontend/change-registered-details/change-warehouse-details/remove/2"
+          } else {
+            "/soft-drinks-industry-levy-variations-frontend/change-registered-details/warehouse-details/remove/2"
+          }
+          removeLink.attr("href") mustEqual changeLink
+        }
       }
-    }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+      s"must populate the view correctly on a GET when the question has previously been answered in $mode" in {
 
-      val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(WarehouseDetailsPage, true).success.value
+        val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(WarehouseDetailsPage, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-      running(application) {
-        val request = FakeRequest(GET, warehouseDetailsRoute)
+        running(application) {
+          val request = FakeRequest(GET, warehouseDetailsRouteForMode(mode))
 
-        val view = application.injector.instanceOf[WarehouseDetailsView]
+          val view = application.injector.instanceOf[WarehouseDetailsView]
 
-        val result = route(application, request).value
+          val result = route(application, request).value
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, None)(request, messages(application)).toString
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual view(form.fill(true), mode, None)(request, messages(application)).toString
+        }
       }
-    }
 
-    "must populate the view correctly on a GET when the question has previously been answered with a warehouse in the list" in {
+      s"must populate the view correctly on a GET when the question has previously been answered with a warehouse in the list in $mode" in {
 
-      val summaryList = Some(SummaryListViewModel(
-        rows = WarehouseDetailsSummary.row2(Map("1" -> warehouse))
-      ))
+        val summaryList = Some(SummaryListViewModel(
+          rows = WarehouseDetailsSummary.row2(Map("1" -> warehouse), mode)
+        ))
 
-      val userAnswers = warehouseAddedToUserAnswersForUpdateRegisteredDetails.set(WarehouseDetailsPage, true).success.value
+        val userAnswers = warehouseAddedToUserAnswersForUpdateRegisteredDetails.set(WarehouseDetailsPage, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-      running(application) {
-        val request = FakeRequest(GET, warehouseDetailsRoute)
+        running(application) {
+          val request = FakeRequest(GET, warehouseDetailsRouteForMode(mode))
 
-        val view = application.injector.instanceOf[WarehouseDetailsView]
+          val view = application.injector.instanceOf[WarehouseDetailsView]
 
-        val result = route(application, request).value
+          val result = route(application, request).value
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, summaryList)(request, messages(application)).toString
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual view(form.fill(true), mode, summaryList)(request, messages(application)).toString
+        }
       }
-    }
+    })
 
     "must redirect to the next page when valid data is submitted (true)" in {
       val mockSessionRepository = mock[SessionRepository]
@@ -202,96 +210,96 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, warehouseDetailsRoute)
-            .withFormUrlEncodedBody(("value", ""))
-
-        val boundForm = form.bind(Map("value" -> ""))
-
-        val view = application.injector.instanceOf[WarehouseDetailsView]
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, None)(request, messages(application)).toString
-      }
-    }
-
     testInvalidJourneyType(UpdateRegisteredDetails, warehouseDetailsRoute)
     testNoUserAnswersError(warehouseDetailsRoute)
 
-    "must fail if the setting of userAnswers fails" in {
+    List(NormalMode, CheckMode).foreach(mode => {
+      s"must return a Bad Request and errors when invalid data is submitted in $mode" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(UpdateRegisteredDetails))).build()
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)).build()
 
-      running(application) {
-        val request =
-          FakeRequest(POST, warehouseDetailsRoute
-          )
+        running(application) {
+          val request =
+            FakeRequest(POST, warehouseDetailsRouteForMode(mode))
+              .withFormUrlEncodedBody(("value", ""))
+
+          val boundForm = form.bind(Map("value" -> ""))
+
+          val view = application.injector.instanceOf[WarehouseDetailsView]
+
+          val result = route(application, request).value
+
+          status(result) mustEqual BAD_REQUEST
+          contentAsString(result) mustEqual view(boundForm, mode, None)(request, messages(application)).toString
+        }
+      }
+
+      s"must fail if the setting of userAnswers fails in $mode" in {
+
+        val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(UpdateRegisteredDetails))).build()
+
+        running(application) {
+          val request = FakeRequest(POST, warehouseDetailsRouteForMode(mode))
             .withFormUrlEncodedBody(("value", "true"))
 
-        val result = route(application, request).value
+          val result = route(application, request).value
 
-        status(result) mustEqual INTERNAL_SERVER_ERROR
-        val page = Jsoup.parse(contentAsString(result))
-        page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - Soft Drinks Industry Levy - GOV.UK"
-      }
-    }
-
-    "should log an error message when internal server error is returned when user answers are not set in session repository" in {
-      val mockSessionService = mock[SessionService]
-
-      when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
-          .overrides(
-            bind[NavigatorForUpdateRegisteredDetails].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
-            bind[SessionService].toInstance(mockSessionService)
-          ).build()
-
-      running(application) {
-        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
-          val request =
-            FakeRequest(POST, warehouseDetailsRoute)
-              .withFormUrlEncodedBody(("value", "true"))
-
-          await(route(application, request).value)
-          events.toString() must include("Failed to set value in session repository while attempting set on warehouseDetails")
+          status(result) mustEqual INTERNAL_SERVER_ERROR
+          val page = Jsoup.parse(contentAsString(result))
+          page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - Soft Drinks Industry Levy - GOV.UK"
         }
       }
-    }
 
-    "should log an error when no answers are returned from the ChangeRegisteredDetailsPage" in {
-      val mockSessionRepository = mock[SessionRepository]
+      s"should log an error message when internal server error is returned when user answers are not set in session repository in $mode" in {
+        val mockSessionService = mock[SessionService]
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+        when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
-            bind[SessionRepository].toInstance(mockSessionRepository),
-          )
-          .build()
+        val application =
+          applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
+            .overrides(
+              bind[NavigatorForUpdateRegisteredDetails].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
+              bind[SessionService].toInstance(mockSessionService)
+            ).build()
 
-      running(application) {
-        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
-          val request =
-            FakeRequest(POST, warehouseDetailsRoute)
-              .withFormUrlEncodedBody(("value", "false"))
+        running(application) {
+          withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+            val request =
+              FakeRequest(POST, warehouseDetailsRouteForMode(mode))
+                .withFormUrlEncodedBody(("value", "true"))
 
-          await(route(application, request).value)
-
-          events.toString() must include("Failed to obtain which registered details to change from user answers while on warehouseDetails")
+            await(route(application, request).value)
+            events.toString() must include("Failed to set value in session repository while attempting set on warehouseDetails")
+          }
         }
       }
-    }
+
+      s"should log an error when no answers are returned from the ChangeRegisteredDetailsPage in $mode" in {
+        val mockSessionRepository = mock[SessionRepository]
+
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+        val application =
+          applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
+            .overrides(
+              bind[Navigator].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
+              bind[SessionRepository].toInstance(mockSessionRepository),
+            )
+            .build()
+
+        running(application) {
+          withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+            val request =
+              FakeRequest(POST, warehouseDetailsRoute)
+                .withFormUrlEncodedBody(("value", "false"))
+
+            await(route(application, request).value)
+
+            events.toString() must include("Failed to obtain which registered details to change from user answers while on warehouseDetails")
+          }
+        }
+      }
+    })
 
   }
 }

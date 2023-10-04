@@ -2,7 +2,7 @@ package controllers.updateRegisteredDetails
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.UpdateRegisteredDetails
-import models.{NormalMode, Warehouse}
+import models.{CheckMode, NormalMode, Warehouse}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.updateRegisteredDetails.RemoveWarehouseDetailsPage
@@ -29,7 +29,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
           whenReady(result) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+            res.header(HeaderNames.LOCATION) mustBe Some(routes.WarehouseDetailsController.onPageLoad(NormalMode).url)
           }
         }
       }
@@ -80,7 +80,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
           whenReady(result) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+            res.header(HeaderNames.LOCATION) mustBe Some(routes.WarehouseDetailsController.onPageLoad(CheckMode).url)
           }
         }
       }
@@ -136,7 +136,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.WarehouseDetailsController.onPageLoad(NormalMode).url)
               }
             }
           }
@@ -226,7 +226,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.WarehouseDetailsController.onPageLoad(CheckMode).url)
               }
             }
           }
@@ -245,7 +245,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.UpdateRegisteredDetailsCYAController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.WarehouseDetailsController.onPageLoad(CheckMode).url)
                 val userAnswersAfterTest = getAnswers(userAnswers.id)
                 val dataStoredForPage = userAnswersAfterTest.fold[Option[Boolean]](None)(_.get(RemoveWarehouseDetailsPage))
                 dataStoredForPage.nonEmpty mustBe true

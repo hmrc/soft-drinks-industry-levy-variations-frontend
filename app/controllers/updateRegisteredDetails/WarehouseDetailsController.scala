@@ -63,7 +63,7 @@ class WarehouseDetailsController @Inject()(
 
       val summaryList: Option[SummaryList] = request.userAnswers.warehouseList match {
         case warehouseList if warehouseList.nonEmpty => Some(SummaryListViewModel(
-          rows = WarehouseDetailsSummary.row2(warehouseList))
+          rows = WarehouseDetailsSummary.row2(warehouseList, mode))
         )
         case _ => None
       }
@@ -76,7 +76,7 @@ class WarehouseDetailsController @Inject()(
 
       val summaryList: Option[SummaryList] = request.userAnswers.warehouseList match {
         case warehouseList if warehouseList.nonEmpty => Some(SummaryListViewModel(
-          rows = WarehouseDetailsSummary.row2(warehouseList))
+          rows = WarehouseDetailsSummary.row2(warehouseList, mode))
         )
         case _ => None
       }

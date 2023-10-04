@@ -24,9 +24,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.updateRegisteredDetails.UpdateRegisteredDetailsCYAView
-import views.summary.updateRegisteredDetails.{BusinessAddressSummary, UpdateContactDetailsSummary}
-
-import java.time.{LocalDateTime, ZoneId}
+import views.summary.updateRegisteredDetails.{BusinessAddressSummary, UpdateContactDetailsSummary, UKSitesSummary}
 
 class UpdateRegisteredDetailsCYAController @Inject()(
                                             override val messagesApi: MessagesApi,
@@ -37,9 +35,10 @@ class UpdateRegisteredDetailsCYAController @Inject()(
 
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
     implicit request =>
+      val ukSiteDetailsSummary: Option[(String, SummaryList)] = UKSitesSummary.getHeadingAndSummary(request.userAnswers, true)
       val updateContactDetailsSummary: Option[(String, SummaryList)] = UpdateContactDetailsSummary.rows(request.userAnswers)
       val businessAddressSummary: Option[(String, SummaryList)] = BusinessAddressSummary.rows(request.userAnswers)
-      val summaryList = Seq(updateContactDetailsSummary, businessAddressSummary).flatten
+      val summaryList = Seq(ukSiteDetailsSummary, updateContactDetailsSummary, businessAddressSummary).flatten
 
       Ok(view(summaryList, routes.UpdateRegisteredDetailsCYAController.onSubmit))
   }
