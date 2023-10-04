@@ -49,8 +49,7 @@ object ChangeActivityCYAGenerators {
 
     def withThirdPartyPackaging(thirdPartyPackaging: Option[Boolean] = None): ChangeActivityCYAUserAnswers = {
       val userAnswersWithThirdPartyPackaging = thirdPartyPackaging match {
-        case Some(true) => userAnswers.set(ThirdPartyPackagersPage, true).success.value
-        case Some(false) => userAnswers.set(ThirdPartyPackagersPage, false).success.value
+        case Some(bool) => userAnswers.set(ThirdPartyPackagersPage, bool).success.value
         case None => userAnswers
       }
       ChangeActivityCYAUserAnswers(userAnswersWithThirdPartyPackaging)
@@ -88,6 +87,19 @@ object ChangeActivityCYAGenerators {
       }
       ChangeActivityCYAUserAnswers(userAnswersWithImport)
     }
+
+    def withPackAtBusinessAddress(packAtBusinessAddress: Option[Boolean] = None): ChangeActivityCYAUserAnswers = {
+      val userAnswersWithPackAtBusinessAddress = packAtBusinessAddress match {
+        case Some(true) => userAnswers
+          .set(PackAtBusinessAddressPage, true).success.value
+          .set(PackagingSiteDetailsPage, false).success.value
+        case Some(false) => userAnswers
+          .set(PackAtBusinessAddressPage, false).success.value
+          .set(PackagingSiteDetailsPage, false).success.value
+        case None => userAnswers
+      }
+      ChangeActivityCYAUserAnswers(userAnswersWithPackAtBusinessAddress)
+    }
   }
 
   def getUserAnswers(
@@ -95,7 +107,8 @@ object ChangeActivityCYAGenerators {
                       thirdPartyPackaging: Option[Boolean] = None,
                       ownBrands: Option[Boolean] = None,
                       contract: Option[Boolean] = None,
-                      imports: Option[Boolean] = None
+                      imports: Option[Boolean] = None,
+                      packAtBusinessAddress: Option[Boolean] = None
                     ): UserAnswers = {
     ChangeActivityCYAUserAnswers(emptyUserAnswersForChangeActivity)
       .withAmountProduced(amountProduced)
@@ -103,6 +116,7 @@ object ChangeActivityCYAGenerators {
       .withOwnBrands(ownBrands)
       .withContract(contract)
       .withImports(imports)
+      .withPackAtBusinessAddress(packAtBusinessAddress)
       .userAnswers
   }
 
@@ -131,6 +145,8 @@ object ChangeActivityCYAGenerators {
     Map(Answers.Yes -> ("contract packing", Some(true)), Answers.No -> ("not contract packing", Some(false)), Answers.Unanswered -> ("", None))
   val importValues: Map[Answers.Value, (String, Option[Boolean])] =
     Map(Answers.Yes -> ("importing", Some(true)), Answers.No -> ("not importing", Some(false)), Answers.Unanswered -> ("", None))
+  val packAtBusinessAddressValues: Map[Answers.Value, (String, Option[Boolean])] =
+    Map(Answers.Yes -> ("packing at business address", Some(true)), Answers.No -> ("not packing at business address", Some(false)), Answers.Unanswered -> ("", None))
 
   def makeKeyString(keyStrings: List[String]): String = keyStrings.filterNot(_.isEmpty).mkString(", ")
 
@@ -139,85 +155,54 @@ object ChangeActivityCYAGenerators {
                                 thirdPartyPackagingTuple: (String, Option[Boolean]),
                                 ownBrandsTuple: (String, Option[Boolean]),
                                 contractTuple: (String, Option[Boolean]),
-                                importTuple: (String, Option[Boolean]))
+                                importTuple: (String, Option[Boolean]),
+                                packAtBusinessAddressTuple: (String, Option[Boolean]))
 
-//  TODO: Add packAtBusinessAddress to this and test valid answers
-  val fullTestCaseOptions: List[UserAnswerOptions] = List(APAnswers.Large, APAnswers.Small, APAnswers.NoneProduced, APAnswers.Unanswered).map(apAnswer => {
-    val ap = amountProducedValues(apAnswer)
-    Answers.All.map(tppAnswer => {
-      val tpp = thirdPartyPackagingValues(tppAnswer)
-      Answers.All.map(obAnswer => {
-        val ob = ownBrandsValues(obAnswer)
-        Answers.All.map(contractAnswer => {
-          val contract = contractValues(contractAnswer)
-          Answers.All.map(importAnswer => {
-            val importV = importValues(importAnswer)
-            UserAnswerOptions(ap, tpp, ob, contract, importV)
-          })
-        })
+  val largeTestCaseOptions: List[UserAnswerOptions] = Answers.All.flatMap(tpp => {
+    Answers.Answered.map(imp => {
+      List(
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.Yes), contractValues(Answers.Yes), importValues(imp), packAtBusinessAddressValues(Answers.Yes)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.Yes), contractValues(Answers.Yes), importValues(imp), packAtBusinessAddressValues(Answers.No)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.Yes), contractValues(Answers.No), importValues(imp), packAtBusinessAddressValues(Answers.Yes)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.Yes), contractValues(Answers.No), importValues(imp), packAtBusinessAddressValues(Answers.No)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.No), contractValues(Answers.Yes), importValues(imp), packAtBusinessAddressValues(Answers.Yes)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.No), contractValues(Answers.Yes), importValues(imp), packAtBusinessAddressValues(Answers.No)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(imp), packAtBusinessAddressValues(Answers.Yes)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(imp), packAtBusinessAddressValues(Answers.No)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(imp), packAtBusinessAddressValues(Answers.Unanswered))
+      )
+    })
+  }).flatten
+
+  val smallTestCaseOptions: List[UserAnswerOptions] = Answers.Answered.flatMap(tpp => {
+    Answers.Answered.map(ob => {
+      Answers.Answered.map(imp => {
+        List(
+          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(imp), packAtBusinessAddressValues(Answers.Yes)),
+          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(imp), packAtBusinessAddressValues(Answers.No)),
+          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), packAtBusinessAddressValues(Answers.Yes)),
+          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), packAtBusinessAddressValues(Answers.No)),
+          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), packAtBusinessAddressValues(Answers.Unanswered))
+        )
       })
     })
-  }).flatten.flatten.flatten.flatten
+  }).flatten.flatten
 
-//  val testCaseOptions: List[UserAnswerOptions] = fullTestCaseOptions
-
-  val testCaseOptions: List[UserAnswerOptions] = List(
-//    TODO: Contract packing is always answered No here - add PackAtBusinessAddress questions
-//    Large, TPP x 3, OB No, Contact No, Import x 2
-    Answers.All.map(tpp => {
+  val noneTestCaseOptions: List[UserAnswerOptions] = Answers.All.flatMap(tpp => {
+    Answers.All.map(ob => {
       Answers.Answered.map(imp => {
-        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(imp))
+        List(
+          UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(imp), packAtBusinessAddressValues(Answers.Yes)),
+          UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(imp), packAtBusinessAddressValues(Answers.No)),
+          UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), packAtBusinessAddressValues(Answers.Yes)),
+          UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), packAtBusinessAddressValues(Answers.No)),
+          UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), packAtBusinessAddressValues(Answers.Unanswered))
+        )
       })
-    }).flatten,
-//    UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(Answers.Yes), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(Answers.Yes)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(Answers.Yes), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(Answers.No)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(Answers.No), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(Answers.Yes)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(Answers.No), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(Answers.No)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(Answers.Unanswered), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(Answers.Yes)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(Answers.Unanswered), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(Answers.No)),
-//    Small, TPP x 2, OB x 2, Contract No, Import x 2
-    Answers.Answered.map(tpp => {
-      Answers.Answered.map(ob => {
-        Answers.Answered.map(imp => {
-          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp))
-        })
-      })
-    }).flatten.flatten,
-//    UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(Answers.Yes), ownBrandsValues(Answers.Yes), contractValues(Answers.No), importValues(Answers.Yes)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(Answers.Yes), ownBrandsValues(Answers.Yes), contractValues(Answers.No), importValues(Answers.No)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(Answers.Yes), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(Answers.Yes)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(Answers.Yes), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(Answers.No)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(Answers.No), ownBrandsValues(Answers.Yes), contractValues(Answers.No), importValues(Answers.Yes)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(Answers.No), ownBrandsValues(Answers.Yes), contractValues(Answers.No), importValues(Answers.No)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(Answers.No), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(Answers.Yes)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(Answers.No), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(Answers.No)),
-//    NoneProducer, TPP x 3, OB x 3, Contract No, Import x 2
-    Answers.All.map(tpp => {
-      Answers.All.map(ob => {
-        Answers.Answered.map(imp => {
-          UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp))
-        })
-      })
-    }).flatten.flatten
-//    UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(Answers.Yes), ownBrandsValues(Answers.Yes), contractValues(Answers.No), importValues(Answers.Yes)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(Answers.Yes), ownBrandsValues(Answers.Yes), contractValues(Answers.No), importValues(Answers.No)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(Answers.Yes), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(Answers.Yes)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(Answers.Yes), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(Answers.No)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(Answers.Yes), ownBrandsValues(Answers.Unanswered), contractValues(Answers.No), importValues(Answers.Yes)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(Answers.Yes), ownBrandsValues(Answers.Unanswered), contractValues(Answers.No), importValues(Answers.No)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(Answers.No), ownBrandsValues(Answers.Yes), contractValues(Answers.No), importValues(Answers.Yes)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(Answers.No), ownBrandsValues(Answers.Yes), contractValues(Answers.No), importValues(Answers.No)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(Answers.No), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(Answers.Yes)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(Answers.No), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(Answers.No)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(Answers.No), ownBrandsValues(Answers.Unanswered), contractValues(Answers.No), importValues(Answers.Yes)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(Answers.No), ownBrandsValues(Answers.Unanswered), contractValues(Answers.No), importValues(Answers.No)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(Answers.Unanswered), ownBrandsValues(Answers.Yes), contractValues(Answers.No), importValues(Answers.Yes)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(Answers.Unanswered), ownBrandsValues(Answers.Yes), contractValues(Answers.No), importValues(Answers.No)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(Answers.Unanswered), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(Answers.Yes)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(Answers.Unanswered), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(Answers.No)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(Answers.Unanswered), ownBrandsValues(Answers.Unanswered), contractValues(Answers.No), importValues(Answers.Yes)),
-//    UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(Answers.Unanswered), ownBrandsValues(Answers.Unanswered), contractValues(Answers.No), importValues(Answers.No)),
-  ).flatten
+    })
+  }).flatten.flatten
+
+  val testCaseOptions: List[UserAnswerOptions] = largeTestCaseOptions ++ smallTestCaseOptions ++ noneTestCaseOptions
 
   def getKeyStringFromUserAnswerOptions(userAnswerOptions: UserAnswerOptions): String = {
     val keyStrings: List[String] = List(
@@ -225,7 +210,8 @@ object ChangeActivityCYAGenerators {
       userAnswerOptions.thirdPartyPackagingTuple._1,
       userAnswerOptions.ownBrandsTuple._1,
       userAnswerOptions.contractTuple._1,
-      userAnswerOptions.importTuple._1
+      userAnswerOptions.importTuple._1,
+      userAnswerOptions.packAtBusinessAddressTuple._1
     )
     makeKeyString(keyStrings)
   }
@@ -236,7 +222,8 @@ object ChangeActivityCYAGenerators {
       userAnswerOptions.thirdPartyPackagingTuple._2,
       userAnswerOptions.ownBrandsTuple._2,
       userAnswerOptions.contractTuple._2,
-      userAnswerOptions.importTuple._2
+      userAnswerOptions.importTuple._2,
+      userAnswerOptions.packAtBusinessAddressTuple._2
     )
   }
 
