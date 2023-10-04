@@ -18,7 +18,8 @@ package controllers.cancelRegistration
 
 import com.google.inject.Inject
 import controllers.actions.ControllerActions
-import models.{NormalMode, SelectChange}
+import models.NormalMode
+import models.SelectChange.CancelRegistration
 import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -27,7 +28,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.govuk.SummaryListFluency
 import viewmodels.summary.cancelRegistration.{CancelRegistrationDateSummary, ReasonSummary}
 import views.html.cancelRegistration.CancelRegistrationCYAView
-import views.summary.changeActivity.OperatePackagingSiteOwnBrandsSummary
 
 import java.time.LocalDate
 
@@ -38,32 +38,27 @@ class CancelRegistrationCYAController @Inject()(
                                             view: CancelRegistrationCYAView
                                           ) extends FrontendBaseController with I18nSupport with SummaryListFluency {
 
-  def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration) {
+  def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyData(CancelRegistration) {
     implicit request =>
-
       (request.userAnswers.get(CancelRegistrationDatePage), request.userAnswers.get(ReasonPage)) match {
         case (Some(date: LocalDate), Some(reason: String)) =>
           val orgName: String = " " + request.subscription.orgName
-
-          val cancelRegistrationDateSummary: (String, SummaryList) = ("", SummaryListViewModel(
-            rows = Seq(CancelRegistrationDateSummary.row(request.userAnswers)))
+          val cancelRegistrationSummary: (String, SummaryList) = ("", SummaryListViewModel(
+            rows = Seq(ReasonSummary.row(request.userAnswers), CancelRegistrationDateSummary.row(request.userAnswers)))
           )
-
-          val reasonRegistrationDateSummary: (String, SummaryList) = ("", SummaryListViewModel(
-            rows = Seq(ReasonSummary.row(request.userAnswers)))
-          )
-
-          val list = Seq(reasonRegistrationDateSummary, cancelRegistrationDateSummary)
-          Ok(view(orgName, list))
+          val list = Seq(cancelRegistrationSummary)
+          Ok(view(orgName, list, routes.CancelRegistrationCYAController.onSubmit))
 
         case (None, Some(reason: String)) =>
             Redirect(routes.CancelRegistrationDateController.onPageLoad(NormalMode))
-
         case (Some(date: LocalDate), None) =>
             Redirect(routes.ReasonController.onPageLoad(NormalMode))
-
         case (None, None) =>
-          Redirect(routes.ReasonController.onPageLoad(NormalMode))
+          Redirect(controllers.routes.SelectChangeController.onPageLoad)
       }
+  }
+
+  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CancelRegistration) {
+    Redirect(controllers.routes.IndexController.onPageLoad.url)
   }
 }

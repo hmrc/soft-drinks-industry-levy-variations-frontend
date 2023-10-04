@@ -17,6 +17,7 @@ site.saveContinue = Save and continue
 site.whatNext = What happens next
 site.print = Print this page
 site.updateReg = Update registration
+site.confirmCancellation = Confirm cancellation
 
 date.day = Day
 date.month = Month
@@ -154,7 +155,7 @@ changeActivity.volume.subtext = If you do not have the exact volumes you can ent
 cancelRegistration.cancelRegistrationDate.title = What date are you cancelling your registration from?
 cancelRegistration.cancelRegistrationDate.heading = What date are you cancelling your registration from?
 cancelRegistration.cancelRegistrationDate.hint = For example, 12 11 2007
-cancelRegistration.cancelRegistrationDate.checkYourAnswersLabel = Date of cancellation?
+cancelRegistration.cancelRegistrationDate.checkYourAnswersLabel = Date of cancellation
 
 
 cancelRegistrationDate.error.invalid = The date you are cancelling your registration must be a real date, like <span style="white-space: nowrap">31 7 2020</span>
@@ -169,7 +170,7 @@ cancelRegistrationDate.error.year.nan = Year must only include numbers
 cancelRegistrationDate.error.dayMonth.invalid = The day and month must be part of a real date, like <span style="white-space: nowrap">31 7 2020</span>
 cancelRegistrationDate.error.monthYear.invalid = The month and year must be part of a real date, like <span style="white-space: nowrap">31 7 2020</span>
 cancelRegistrationDate.error.dayYear.invalid = The day and year must be part of a real date, like <span style="white-space: nowrap">31 7 2020</span>
-cancelRegistrationDate.change.hidden = CancelRegistrationDate
+cancelRegistration.cancelRegistrationDate.change.hidden = cancel registration date
 
 cancelRegistration.fileReturnBeforeDereg.title = You cannot cancel your registration while you have returns to send
 cancelRegistration.fileReturnBeforeDereg.heading = You cannot cancel your registration while you have returns to send
@@ -177,6 +178,8 @@ cancelRegistration.fileReturnBeforeDereg.one-return = Before you can cancel your
 cancelRegistration.fileReturnBeforeDereg.many-returns = Before you can cancel your registration, you must send {0} returns and make any payments due.
 cancelRegistration.fileReturnBeforeDereg.continue = Go to your account
 
+cancelRegistration.checkYourAnswers.title = Cancel your Soft Drinks Industry Levy registration
+cancelRegistration.checkYourAnswers.subheading = Cancellation for
 
 changeActivity.imports.title = Do you bring liable drinks into the UK from anywhere outside of the UK?
 changeActivity.imports.checkYourAnswersLabel = Do you bring liable drinks into the UK?

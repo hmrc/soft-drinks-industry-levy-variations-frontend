@@ -14,20 +14,31 @@
  * limitations under the License.
  *@
 
+@import views.html.helpers.printLinkWithJs
+
 @this(
     layout: templates.Layout,
-    govukSummaryList: GovukSummaryList
+    govukSummaryList: GovukSummaryList,
+    formHelper: FormWithCSRF,
+    govukButton: GovukButton,
+    printLinkWithJs: printLinkWithJs
 )
 
-@(orgName: String, seqSummaryList: Seq[(String, SummaryList)])(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
+@(orgName: String, seqSummaryList: Seq[(String, SummaryList)], submitCall: Call)(implicit request: Request[_], messages: Messages)
 
-    <h1 class="govuk-heading-l">@messages("changeActivity.suggestDeregistration.title")</h1>
-    <span class="govuk-body">@messages("changeActivity.Deregistration.subHeading")@orgName</span>
+@layout(pageTitle = titleNoForm(messages("cancelRegistration.checkYourAnswers.title"))) {
+
+    <h1 class="govuk-heading-l">@messages("cancelRegistration.checkYourAnswers.title")</h1>
+    <p class="govuk-body">@messages("cancelRegistration.checkYourAnswers.subheading")@orgName</p>
 
     @for((heading, summaryList) <- seqSummaryList) {
-    <h2 class="govuk-heading-m">@heading</h2>
     @govukSummaryList(summaryList)
    }
+
+    @formHelper(action = submitCall, Symbol("autoComplete") -> "off") {
+        @govukButton(ButtonViewModel(messages("site.confirmCancellation")))
+    }
+
+    @printLinkWithJs(messages("site.print"))
 }
