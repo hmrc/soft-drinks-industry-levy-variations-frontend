@@ -181,6 +181,16 @@ cancelRegistration.fileReturnBeforeDereg.continue = Go to your account
 cancelRegistration.checkYourAnswers.title = Cancel your Soft Drinks Industry Levy registration
 cancelRegistration.checkYourAnswers.subheading = Cancellation for
 
+cancelRegistration.cancellationRequestDone.title = Cancellation request sent
+cancelRegistration.cancellationRequestDone.panel.message = We have received the update to your Soft Drinks Industry Levy details
+cancelRegistration.cancellationRequestDone.updateInfo = Your rquest to cancel {0} registration was sent on {1} at {2}. Changes can take up to 15 working days to process.
+cancelRegistration.cancellationRequestDone.whatNextText.p1 = You need to send a final return for the period January 2023 to March 2023 and make any outstanding payments.
+cancelRegistration.cancellationRequestDone.whatNextText.p2 = You will be able to send the final return from 1 April until 30 April 2023.
+cancelRegistration.cancellationRequestDone.whatNextText.p3 = Once you have sent this return and made any outstanding payments then we will process your request to cancel your registration.
+cancelRegistration.cancellationRequestDone.whatNextText.p4 = You do not need to do anything else. We will update your details with the information you have provided. We will send you confirmation that the changes have been made.
+cancelRegistration.cancellationRequestDone.accountHomeLink = Go back to your Soft Drinks Industry Levy details
+cancelRegistration.cancellationRequestDone.detailsSummary = View the details of your update
+
 changeActivity.imports.title = Do you bring liable drinks into the UK from anywhere outside of the UK?
 changeActivity.imports.checkYourAnswersLabel = Do you bring liable drinks into the UK?
 changeActivity.imports.error.required = Select yes if do you bring liable drinks into the UK from anywhere outside of the UK
