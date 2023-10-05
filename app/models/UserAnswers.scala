@@ -94,8 +94,7 @@ case class UserAnswers(
     }
   }
 
-  def setOriginalSDILReturn(originalSDILReturn: SdilReturn)
-                                 (implicit writes: Writes[CorrectReturnUserAnswersData]): Try[UserAnswers] = {
+  def setOriginalSDILReturn(originalSDILReturn: SdilReturn): Try[UserAnswers] = {
 
     val jsPath = JsPath \ "originalSDILReturn"
 

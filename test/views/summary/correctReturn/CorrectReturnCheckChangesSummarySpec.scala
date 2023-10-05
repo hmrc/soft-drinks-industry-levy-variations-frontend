@@ -17,13 +17,13 @@
 package views.summary.correctReturn
 
 import base.SpecBase
-import models.correctReturn.{AddASmallProducer, ChangedPage, RepaymentMethod}
+import models.correctReturn.{AddASmallProducer, RepaymentMethod}
 import models.{LitresInBands, SmallProducer}
 import pages.correctReturn._
 
 class CorrectReturnCheckChangesSummarySpec extends SpecBase {
 
-  "summaryList" - {
+  "Check Changes summaryList" - {
     val lowLitres = 1000
     val highLitres = 2000
     val litres = LitresInBands(lowLitres, highLitres)
@@ -64,4 +64,5 @@ class CorrectReturnCheckChangesSummarySpec extends SpecBase {
       repaymentMethodSummaryRow.head.actions.toList.head.items.head.content.asHtml.toString() must include("Change")
     }
   }
+
 }

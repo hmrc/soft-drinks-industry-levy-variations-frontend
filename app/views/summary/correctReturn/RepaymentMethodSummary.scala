@@ -17,9 +17,8 @@
 package views.summary.correctReturn
 
 import controllers.correctReturn.routes
-import models.correctReturn.RepaymentMethod
 import models.{CheckMode, UserAnswers}
-import pages.correctReturn.{CorrectionReasonPage, RepaymentMethodPage}
+import pages.correctReturn.RepaymentMethodPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent

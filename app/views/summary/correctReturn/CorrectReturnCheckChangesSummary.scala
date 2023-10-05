@@ -33,12 +33,14 @@ object CorrectReturnCheckChangesSummary {
 
   private def correctionSection(userAnswers: UserAnswers)
                                      (implicit messages: Messages): Option[(String, SummaryList)] = {
+
     val correctionReasonSummary: Option[SummaryListRow] = CorrectionReasonSummary.row(userAnswers)
     val repaymentMethodSummary: Option[SummaryListRow] = RepaymentMethodSummary.row(userAnswers)
 
     val correctionSection: Option[(String, SummaryList)] =  {
      Option("correctReturn.correctionSection.checkYourAnswersLabel" ->
-        SummaryList(Seq(correctionReasonSummary.get, repaymentMethodSummary.get)))
+        SummaryList(Seq(correctionReasonSummary.getOrElse(throw new RuntimeException("No correction reason")),
+          repaymentMethodSummary.getOrElse(throw new RuntimeException("No repayment method")))))
     }
     correctionSection
   }
