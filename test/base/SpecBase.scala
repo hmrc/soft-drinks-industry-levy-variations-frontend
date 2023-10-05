@@ -52,6 +52,18 @@ object SpecBase {
 
   val sdilNumber: String = "XKSDIL000000022"
 
+  val oneProductionSite: Map[String,Site] = Map(
+   "1" -> Site(
+      UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
+      Some("88"),
+      Some("Wild Lemonade Group"),
+      Some(LocalDate.of(2018, 2, 26)))
+  )
+
+  val oneWarehouses: Map[String,Warehouse] = Map(
+    "1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"))
+  )
+
   val twoWarehouses: Map[String,Warehouse] = Map(
     "1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
     "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"))
@@ -107,7 +119,7 @@ object SpecBase {
 }
 
 trait SpecBase
-  extends AnyFreeSpec
+    extends AnyFreeSpec
     with Matchers
     with TryValues
     with OptionValues

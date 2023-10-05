@@ -18,8 +18,8 @@ package controllers.changeActivity
 
 import base.SpecBase
 import controllers.changeActivity.routes._
-import models.SelectChange.ChangeActivity
 import generators.ChangeActivityCYAGenerators._
+import models.SelectChange.ChangeActivity
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
@@ -64,5 +64,12 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency {
 
     testInvalidJourneyType(ChangeActivity, ChangeActivityCYAController.onPageLoad.url, false)
     testNoUserAnswersError(ChangeActivityCYAController.onPageLoad.url, false)
+
+    "Check your Answers Controller onSubmit" - {
+      "should submit variation and redirect to variation sent" in {
+
+
+      }
+    }
   }
 }
