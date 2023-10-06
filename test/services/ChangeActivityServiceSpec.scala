@@ -23,12 +23,8 @@ import models.{DataHelper, Litreage, LitresInBands, VariationsSubmission}
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.changeActivity._
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
-
 import java.time.LocalDate
 import scala.concurrent.Future
-
-
 
 class ChangeActivityServiceSpec extends SpecBase with MockitoSugar with DataHelper{
 
@@ -79,7 +75,5 @@ class ChangeActivityServiceSpec extends SpecBase with MockitoSugar with DataHelp
         result mustBe ((): Unit)
       }
     }
-
   }
-
 }

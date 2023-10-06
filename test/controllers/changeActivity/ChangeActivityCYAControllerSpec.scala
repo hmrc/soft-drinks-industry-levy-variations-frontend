@@ -17,16 +17,32 @@
 package controllers.changeActivity
 
 import base.SpecBase
+import connectors.SoftDrinksIndustryLevyConnector
 import controllers.changeActivity.routes._
 import generators.ChangeActivityCYAGenerators._
+import models.{DataHelper, Litreage, LitresInBands, VariationsSubmission}
 import models.SelectChange.ChangeActivity
+import models.changeActivity.AmountProduced.Large
+import navigation.{FakeNavigatorForChangeActivity, NavigatorForChangeActivity}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.mock
+import pages.changeActivity.{AmountProducedPage, ContractPackingPage, HowManyContractPackingPage, HowManyImportsPage, HowManyOperatePackagingSiteOwnBrandsPage, ImportsPage}
+import play.api.mvc.Call
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.ChangeActivityService
 import viewmodels.govuk.SummaryListFluency
 import views.html.changeActivity.ChangeActivityCYAView
 import views.summary.changeActivity.ChangeActivitySummary
 
-class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency {
+import java.time.LocalDate
+import scala.concurrent.Future
+
+class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency with DataHelper{
+
+  def onwardRoute = Call("GET", "/foo")
 
   "Check Your Answers Controller" - {
 
@@ -62,14 +78,65 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency {
       }
     }
 
-    testInvalidJourneyType(ChangeActivity, ChangeActivityCYAController.onPageLoad.url, false)
-    testNoUserAnswersError(ChangeActivityCYAController.onPageLoad.url, false)
+    "must redirect to return sent page on submit" in {
+      val userAnswers = emptyUserAnswersForChangeActivity.set(AmountProducedPage, Large).success.value
+        .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100L, 100L)).success.value
+        .set(ContractPackingPage, true).success.value
+        .set(HowManyContractPackingPage, LitresInBands(100 , 100)).success.value
+        .set(ImportsPage, true).success.value
+        .set(HowManyImportsPage, LitresInBands(100, 100)).success.value
+        .copy(packagingSiteList = Map.empty,
+              warehouseList = Map.empty)
 
-    "Check your Answers Controller onSubmit" - {
-      "should submit variation and redirect to variation sent" in {
+      val mockConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
+      val mockChangeActivityService = mock[ChangeActivityService]
+
+      val retrievedActivityData = testRetrievedActivity()
+      val retrievedSubData = testRetrievedSubscription(
+        address = testAddress(),
+        activity = retrievedActivityData,
+        liabilityDate = LocalDate.now(),
+        productionSites = List.empty,
+        warehouseSites = List.empty,
+        contact = testContact(phoneNumber = "testnumber", email = "test@email.test")
+      )
+
+      val data: VariationsSubmission = testConvert(testRegistrationVariationData(
+        original = retrievedSubData,
+        updatedBusinessAddress = testAddress(),
+        producer = testProducer(isProducer = false),
+        updatedContactDetails = testContactDetails(),
+        packageOwn = Some(true),
+        packageOwnVol= Some(Litreage(100, 100)),
+        copackForOthers = true,
+        copackForOthersVol = Some(Litreage(100, 100)),
+        imports = true,
+        importsVol = Some(Litreage(100, 100)),
+      ))
 
 
+      when(mockChangeActivityService.submitVariation(retrievedSubData, userAnswers)) thenReturn Future.successful(Some(OK))
+      when(mockConnector.submitVariation(data, "testref")(hc)).thenReturn(Future.successful(Some(200)))
+
+      val application =
+        applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[ChangeActivityService].toInstance(mockChangeActivityService),
+          bind[SoftDrinksIndustryLevyConnector].toInstance(mockConnector)
+        )
+        .build()
+
+      running(application) {
+        val request =
+        FakeRequest(POST, ChangeActivityCYAController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
       }
     }
+    testInvalidJourneyType(ChangeActivity, ChangeActivityCYAController.onPageLoad.url, false)
+    testNoUserAnswersError(ChangeActivityCYAController.onPageLoad.url, false)
   }
 }
