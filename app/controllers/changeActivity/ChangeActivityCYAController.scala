@@ -58,8 +58,6 @@ class ChangeActivityCYAController @Inject()(
     (implicit request: DataRequest[AnyContent], hc: HeaderCarrier): Future[Unit] = {
     val subscription = request.subscription
     val userAnswers = request.userAnswers
-    for {
-      sr <- changeActivityService.submitVariation(subscription, userAnswers)
-    } yield sr
+    changeActivityService.submitVariation(subscription, userAnswers)
   }
 }

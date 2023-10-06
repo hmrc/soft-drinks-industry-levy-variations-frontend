@@ -133,7 +133,7 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency w
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual "soft-drinks-industry-levy-variations-frontend/change-activity/variation-done"
       }
     }
     testInvalidJourneyType(ChangeActivity, ChangeActivityCYAController.onPageLoad.url, false)
