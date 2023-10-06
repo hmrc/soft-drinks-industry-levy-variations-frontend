@@ -22,14 +22,13 @@ import models.backend.Site
 import models.{Convert, Litreage, Producer, RegistrationVariationData, RetrievedSubscription, UserAnswers, VariationsSubmission}
 import pages.changeActivity._
 import play.api.Logger
-import play.api.http.Status.NO_CONTENT
+import play.api.http.Status.OK
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ChangeActivityService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
-                                      config: FrontendAppConfig){
+class ChangeActivityService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector){
 
   val logger: Logger = Logger(this.getClass())
 
@@ -48,16 +47,16 @@ class ChangeActivityService @Inject()(sdilConnector: SoftDrinksIndustryLevyConne
         importsVol = userAnswers.get(HowManyImportsPage).map(litreage => Litreage(litreage.lowBand, litreage.highBand)),
         updatedProductionSites = userAnswers.packagingSiteList.values.toSeq,
         updatedWarehouseSites = userAnswers.warehouseList.values.map(warehouse => Site(address = warehouse.address, tradingName = warehouse.tradingName,ref =  None, closureDate = None)).toSeq
+      )
     )
-  )
   }
 
-  private def submitVariation(variation: VariationsSubmission, sdilRef: String)
+  private def submitVariationConnector(variation: VariationsSubmission, sdilRef: String)
                                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
     sdilConnector.submitVariation( variation, sdilRef).map {
-      case Some(NO_CONTENT) => logger.info(s"Return variation submitted for $sdilRef")
-      case _ => logger.error(s"Failed to submit return variation for $sdilRef")
-        throw new RuntimeException(s"Failed to submit return variation $sdilRef")
+      case Some(OK) => logger.info(s"variation submitted for ${sdilRef}")
+      case _ => logger.error(s"Failed to submit variation for ${sdilRef}")
+      throw new RuntimeException(s"Failed to submit variation ${sdilRef}")
     }
   }
 
@@ -65,7 +64,7 @@ class ChangeActivityService @Inject()(sdilConnector: SoftDrinksIndustryLevyConne
                      (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
     val changeActivityVariation = changeActivityVariationToBeSubmitted(subscription, userAnswers)
     for {
-      variation <- submitVariation(changeActivityVariation, subscription.sdilRef)
+      variation <- submitVariationConnector(changeActivityVariation, subscription.sdilRef)
     } yield variation
   }
 }

@@ -23,7 +23,7 @@ import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status.OK
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json}
 import repositories.{CacheMap, SDILSessionCache}
 import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 import utilities.GenericLogger
@@ -56,6 +56,38 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
         ) {
           response =>
             response mustEqual (Some(aSubscription))
+        }
+      }
+
+    "when there is no subscription in cache" in {
+      val identifierType: String = "sdil"
+      val sdilNumber: String = "XKSDIL000000022"
+      when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(),any())(any())).thenReturn(Future.successful(None))
+      when(mockHttp.GET[Option[RetrievedSubscription]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(aSubscription)))
+      when(mockSDILSessionCache.save[OptRetrievedSubscription](any(), any(),any())(any())).thenReturn(Future.successful(CacheMap("foo", Map("bar" -> Json.obj("wizz" -> "bang2")))))
+      val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
+
+      whenReady(
+        res.getOrElse(None)
+      ) {
+        response =>
+          response mustEqual Some(aSubscription)
+      }
+    }
+
+      "when there is no subscription in cache and no subscription in the database" in {
+        val identifierType: String = "sdil"
+        val sdilNumber: String = "XKSDIL000000022"
+        when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(),any())(any())).thenReturn(Future.successful(None))
+        when(mockHttp.GET[Option[RetrievedSubscription]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
+        when(mockSDILSessionCache.save[OptRetrievedSubscription](any,any,any)(any())).thenReturn(Future.successful(CacheMap("foo", Map("bar" -> Json.obj("wizz" -> "bang2")))))
+        val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
+
+        whenReady(
+          res.getOrElse(None)
+        ) {
+          response =>
+            response mustEqual None
         }
       }
 
@@ -115,7 +147,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
       }
     }
 
-    "post variation successfully" in {
+    "post variation successfully when valid data is given" in {
       val retrievedActivityData = testRetrievedActivity()
 
       val retrievedSubData = testRetrievedSubscription(
