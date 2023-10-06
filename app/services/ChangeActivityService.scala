@@ -53,10 +53,6 @@ class ChangeActivityService @Inject()(sdilConnector: SoftDrinksIndustryLevyConne
 
   private def submitVariationConnector(variation: VariationsSubmission, sdilRef: String)
                                    (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
-    val value = sdilConnector.submitVariation(variation, sdilRef)
-    println(s"variation -> $variation")
-    println(s"sdilRef -> $sdilRef")
-    println(s"connector ${value}")
     sdilConnector.submitVariation( variation, sdilRef).map {
       case Some(OK) => logger.info(s"variation submitted for ${sdilRef}")
       case _ => logger.error(s"Failed to submit variation for ${sdilRef}")

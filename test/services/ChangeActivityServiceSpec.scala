@@ -38,7 +38,7 @@ class ChangeActivityServiceSpec extends SpecBase with MockitoSugar with DataHelp
 
   "submitVariation" - {
 
-    "must return status code of 200 after successful submission " in {
+    "must return not through a exception after successful submission " in {
       val retrievedActivityData = testRetrievedActivity()
 
       val retrievedSubData = testRetrievedSubscription(
@@ -55,7 +55,6 @@ class ChangeActivityServiceSpec extends SpecBase with MockitoSugar with DataHelp
         updatedBusinessAddress = testAddress(),
         producer = testProducer(isProducer = false),
         updatedContactDetails = testContactDetails(),
-        deregDate = Some(LocalDate.now()),
         packageOwn = Some(true),
         packageOwnVol= Some(Litreage(100, 100)),
         copackForOthers = true,
@@ -65,8 +64,6 @@ class ChangeActivityServiceSpec extends SpecBase with MockitoSugar with DataHelp
       ))
 
       val userAnswers = emptyUserAnswersForChangeActivity.set(AmountProducedPage, Large).success.value
-        .set(ThirdPartyPackagersPage, true).success.value
-        .set(OperatePackagingSiteOwnBrandsPage, true).success.value
         .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100L, 100L)).success.value
         .set(ContractPackingPage, true).success.value
         .set(HowManyContractPackingPage, LitresInBands(100 , 100)).success.value
@@ -76,14 +73,11 @@ class ChangeActivityServiceSpec extends SpecBase with MockitoSugar with DataHelp
               warehouseList = Map.empty)
 
       when(mockConnector.submitVariation(data, "testref")(hc)).thenReturn(Future.successful(Some(200)))
-println(s"spec data -> $data")
-println(s"spec aSubscription.sdilRef -> ${aSubscription.sdilRef}")
       lazy val res = changeActivityService.submitVariation(subscription = retrievedSubData, userAnswers = userAnswers)
 
-      intercept[RuntimeException](await(res))
-//      whenReady(res) { result =>
-//        //result mustBe ((): Unit)
-//      }
+      whenReady(res) { result =>
+        result mustBe ((): Unit)
+      }
     }
 
   }
