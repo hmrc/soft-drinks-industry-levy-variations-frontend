@@ -17,7 +17,7 @@
 package views.summary.correctReturn
 
 import controllers.correctReturn.routes
-import models.{CheckMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import pages.correctReturn.RepaymentMethodPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -28,7 +28,7 @@ import viewmodels.implicits._
 
 object RepaymentMethodSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
     answers.get(RepaymentMethodPage).map {
       answer =>
         val value = ValueViewModel(
@@ -36,7 +36,6 @@ object RepaymentMethodSummary  {
             HtmlFormat.escape(messages(s"correctReturn.repaymentMethod.$answer"))
           )
         )
-
         SummaryListRowViewModel(
           key     = "correctReturn.repaymentMethod.checkYourAnswersLabel",
           value   = value,
@@ -45,5 +44,7 @@ object RepaymentMethodSummary  {
               .withVisuallyHiddenText(messages("correctReturn.repaymentMethod.change.hidden"))
           )
         )
-    }
+    }.getOrElse(SummaryListRowViewModel.apply("correctReturn.repaymentMethod.checkYourAnswersLabel", ValueViewModel("not answered"), actions = Seq(
+      ActionItemViewModel("site.change", routes.RepaymentMethodController.onPageLoad(NormalMode).url)
+        .withVisuallyHiddenText(messages("correctReturn.repaymentMethod.change.hidden")))))
 }

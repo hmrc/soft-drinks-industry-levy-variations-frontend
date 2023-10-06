@@ -421,42 +421,6 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
       }
     }
 
-    "should return 500, as a Runtime exception when " - {
-      "correction reason details are not available" in {
-        val userAnswers = userAnswerWithLitresForAllPagesNilSdilReturn
-          .set(CorrectionReasonPage, "no longer process drinks").success.value
-        given
-          .commonPrecondition
-
-        setAnswers(userAnswers)
-
-        WsTestClient.withClient { client =>
-          val result = createClientRequestGet(client, baseUrl + route)
-
-          whenReady(result) { res =>
-            res.status mustBe 500
-          }
-        }
-      }
-
-      "repayment method details are not available" in {
-        val userAnswers = userAnswerWithLitresForAllPagesNilSdilReturn
-          .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-        given
-          .commonPrecondition
-
-        setAnswers(userAnswers)
-
-        WsTestClient.withClient { client =>
-          val result = createClientRequestGet(client, baseUrl + route)
-
-          whenReady(result) { res =>
-            res.status mustBe 500
-          }
-        }
-      }
-    }
-
     testUnauthorisedUser(baseUrl + route)
     testAuthenticatedUserButNoUserAnswers(baseUrl + route)
   }

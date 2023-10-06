@@ -25,10 +25,11 @@ class RepaymentMethodSummarySpec extends SpecBase {
 
   "row" - {
 
-    s"should return nothing when the $RepaymentMethodPage has not been answered" in {
+    s"should return not answered when the $RepaymentMethodPage has not been answered" in {
       val repaymentMethodSummaryRow = RepaymentMethodSummary.row(emptyUserAnswersForCorrectReturn)
 
-      repaymentMethodSummaryRow mustBe None
+      repaymentMethodSummaryRow.value.content.asHtml.toString mustBe "not answered"
+
     }
 
     "should return a summary list row with credit to SDIL acct repayment method if this answer has been added" in {
@@ -37,9 +38,9 @@ class RepaymentMethodSummarySpec extends SpecBase {
 
       val repaymentMethodSummaryRow = RepaymentMethodSummary.row(userAnswersWithRepaymentMethod)
 
-      repaymentMethodSummaryRow.head.key.content.asHtml.toString mustBe "Repayment method"
-      repaymentMethodSummaryRow.head.value.content.asHtml.toString mustBe "Credited to our Soft Drinks Industry Levy account"
-      repaymentMethodSummaryRow.head.actions.toList.head.items.head.content.asHtml.toString() must include("Change")
+      repaymentMethodSummaryRow.key.content.asHtml.toString mustBe "Repayment method"
+      repaymentMethodSummaryRow.value.content.asHtml.toString mustBe "Credited to our Soft Drinks Industry Levy account"
+      repaymentMethodSummaryRow.actions.toList.head.items.head.content.asHtml.toString() must include("Change")
     }
 
     "should return a summary list row with deposit to bank acct repayment method if this answer has been added" in {
@@ -48,9 +49,9 @@ class RepaymentMethodSummarySpec extends SpecBase {
 
       val repaymentMethodSummaryRow = RepaymentMethodSummary.row(userAnswersWithRepaymentMethod)
 
-      repaymentMethodSummaryRow.head.key.content.asHtml.toString mustBe "Repayment method"
-      repaymentMethodSummaryRow.head.value.content.asHtml.toString mustBe "Paid into the bank account for this business"
-      repaymentMethodSummaryRow.head.actions.toList.head.items.head.content.asHtml.toString() must include("Change")
+      repaymentMethodSummaryRow.key.content.asHtml.toString mustBe "Repayment method"
+      repaymentMethodSummaryRow.value.content.asHtml.toString mustBe "Paid into the bank account for this business"
+      repaymentMethodSummaryRow.actions.toList.head.items.head.content.asHtml.toString() must include("Change")
     }
   }
 }

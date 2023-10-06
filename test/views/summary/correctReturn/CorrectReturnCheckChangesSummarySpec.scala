@@ -51,17 +51,17 @@ class CorrectReturnCheckChangesSummarySpec extends SpecBase {
     "should return a summary list row with the selected answer if Correction reason page has been answered" in {
       val correctionReasonSummaryRow = CorrectionReasonSummary.row(userAnswers)
 
-      correctionReasonSummaryRow.head.key.content.asHtml.toString mustBe "Reason for correcting"
-      correctionReasonSummaryRow.head.value.content.asHtml.toString mustBe "foo"
-      correctionReasonSummaryRow.head.actions.toList.head.items.head.content.asHtml.toString() must include("Change")
+      correctionReasonSummaryRow.key.content.asHtml.toString mustBe "Reason for correcting"
+      correctionReasonSummaryRow.value.content.asHtml.toString mustBe "foo"
+      correctionReasonSummaryRow.actions.toList.head.items.head.content.asHtml.toString() must include("Change")
     }
 
     "should return a summary list row with credit to SDIL acct repayment method if this answer has been added" in {
       val repaymentMethodSummaryRow = RepaymentMethodSummary.row(userAnswers)
 
-      repaymentMethodSummaryRow.head.key.content.asHtml.toString mustBe "Repayment method"
-      repaymentMethodSummaryRow.head.value.content.asHtml.toString mustBe "Paid into the bank account for this business"
-      repaymentMethodSummaryRow.head.actions.toList.head.items.head.content.asHtml.toString() must include("Change")
+      repaymentMethodSummaryRow.key.content.asHtml.toString mustBe "Repayment method"
+      repaymentMethodSummaryRow.value.content.asHtml.toString mustBe "Paid into the bank account for this business"
+      repaymentMethodSummaryRow.actions.toList.head.items.head.content.asHtml.toString() must include("Change")
     }
   }
 

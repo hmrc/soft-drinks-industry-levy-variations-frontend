@@ -17,7 +17,7 @@
 package views.summary.correctReturn
 
 import controllers.correctReturn.routes
-import models.{CheckMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import pages.correctReturn.CorrectionReasonPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -26,16 +26,18 @@ import viewmodels.implicits._
 
 object CorrectionReasonSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
     answers.get(CorrectionReasonPage).map {
       answer =>
         SummaryListRowViewModel(
-          key     = "correctReturn.correctionReason.checkYourAnswersLabel",
-          value   = ValueViewModel(answer),
+          key = "correctReturn.correctionReason.checkYourAnswersLabel",
+          value = ValueViewModel(answer),
           actions = Seq(
             ActionItemViewModel("site.change", routes.CorrectionReasonController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("correctReturn.correctionReason.change.hidden"))
           )
         )
-    }
+    }.getOrElse(SummaryListRowViewModel.apply("correctReturn.correctionReason.checkYourAnswersLabel", ValueViewModel("not answered"), actions = Seq(
+            ActionItemViewModel("site.change", routes.CorrectionReasonController.onPageLoad(NormalMode).url)
+              .withVisuallyHiddenText(messages("correctReturn.correctionReason.change.hidden")))))
 }

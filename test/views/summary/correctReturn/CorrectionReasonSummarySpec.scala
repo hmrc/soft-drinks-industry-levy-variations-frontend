@@ -24,21 +24,22 @@ class CorrectionReasonSummarySpec extends SpecBase {
 
   "row" - {
 
-    "should return nothing when the reason question page has not been answered" in {
+    "should return not answered when the reason question page has not been answered" in {
       val correctionReasonSummaryRow = CorrectionReasonSummary.row(emptyUserAnswersForCorrectReturn)
 
-      correctionReasonSummaryRow mustBe None
+      correctionReasonSummaryRow.value.content.asHtml.toString mustBe "not answered"
     }
 
     "should return a summary list row with the appropriate cancellation reason if an answer has been added" in {
       val userAnswersWithCorrectionReason = UserAnswers(sdilNumber, SelectChange.CorrectReturn,
-        Json.obj("correctReturn" -> Json.obj("correctionReason" -> "I was not paying close enough attention and I entered the wrong value")), contactAddress = contactAddress)
+        Json.obj("correctReturn" -> Json.obj(
+          "correctionReason" -> "I was not paying close enough attention and I entered the wrong value")), contactAddress = contactAddress)
 
       val correctionReasonSummaryRow = CorrectionReasonSummary.row(userAnswersWithCorrectionReason)
 
-      correctionReasonSummaryRow.head.key.content.asHtml.toString mustBe "Reason for correcting"
-      correctionReasonSummaryRow.head.value.content.asHtml.toString mustBe "I was not paying close enough attention and I entered the wrong value"
-      correctionReasonSummaryRow.head.actions.toList.head.items.head.content.asHtml.toString() must include("Change")
+      correctionReasonSummaryRow.key.content.asHtml.toString mustBe "Reason for correcting"
+      correctionReasonSummaryRow.value.content.asHtml.toString mustBe "I was not paying close enough attention and I entered the wrong value"
+      correctionReasonSummaryRow.actions.toList.head.items.head.content.asHtml.toString() must include("Change")
     }
   }
 }
