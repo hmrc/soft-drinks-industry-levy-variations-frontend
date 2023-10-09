@@ -23,7 +23,6 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.cancelRegistration.CancellationRequestDoneView
-import views.summary.updateRegisteredDetails.UpdateContactDetailsSummary
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, ZoneId}
@@ -39,13 +38,12 @@ class CancellationRequestDoneController @Inject()(
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(CancelRegistration) {
 
     implicit request =>
-      val summaryList = Seq(UpdateContactDetailsSummary.rows(request.userAnswers)).flatten
       val getSentDateTime = LocalDateTime.now(ZoneId.of("UTC")) //LocalDateTime.ofInstant(request.userAnswers.submittedOn.get, ZoneId.of("UTC"))
       val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
       val timeFormatter = DateTimeFormatter.ofPattern("H:MMa")
       val formattedDate = getSentDateTime.format(dateFormatter)
       val formattedTime = getSentDateTime.format(timeFormatter)
 
-      Ok(view(summaryList, formattedDate, formattedTime, request.subscription.orgName))
+      Ok(view(formattedDate, formattedTime, request.subscription.orgName))
   }
 }

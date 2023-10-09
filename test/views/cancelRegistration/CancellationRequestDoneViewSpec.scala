@@ -19,10 +19,8 @@ package views.cancelRegistration
 import config.FrontendAppConfig
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import views.ViewSpecHelper
 import views.html.cancelRegistration.CancellationRequestDoneView
-import views.summary.updateRegisteredDetails.UpdateContactDetailsSummary
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, ZoneId}
@@ -37,7 +35,6 @@ class CancellationRequestDoneViewSpec extends ViewSpecHelper {
   val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("H:MMa")
   val formattedDate: String = getSentDateTime.format(dateFormatter)
   val formattedTime: String = getSentDateTime.format(timeFormatter)
-  val summaryList: Seq[(String, SummaryList)] = Seq(UpdateContactDetailsSummary.rows(emptyUserAnswersForCancelRegistration)).flatten
   val orgName: String = aSubscription.orgName
   val config: FrontendAppConfig = frontendAppConfig
 
@@ -54,7 +51,7 @@ class CancellationRequestDoneViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view(summaryList, formattedDate, formattedTime, orgName)(request, messages(application), config)
+    val html = view(formattedDate, formattedTime, orgName)(request, messages(application), config)
     val document = doc(html)
     "should contain the expected title" in {
       document.title() mustBe "Cancellation request sent - Soft Drinks Industry Levy - GOV.UK"

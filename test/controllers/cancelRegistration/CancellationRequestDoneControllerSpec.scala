@@ -35,7 +35,6 @@ class CancellationRequestDoneControllerSpec extends SpecBase {
   val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("H:MMa")
   val formattedDate: String = getSentDateTime.format(dateFormatter)
   val formattedTime: String = getSentDateTime.format(timeFormatter)
-  val summaryList: Seq[(String, SummaryList)] = Seq(UpdateContactDetailsSummary.rows(emptyUserAnswersForUpdateRegisteredDetails)).flatten
   val orgName: String = aSubscription.orgName
   val config: FrontendAppConfig = frontendAppConfig
 
@@ -53,7 +52,7 @@ class CancellationRequestDoneControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[CancellationRequestDoneView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(summaryList, formattedDate, formattedTime, orgName)(request, messages(application), config).toString
+        contentAsString(result) mustEqual view(formattedDate, formattedTime, orgName)(request, messages(application), config).toString
       }
     }
   }
