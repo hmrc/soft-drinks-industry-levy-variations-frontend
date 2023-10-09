@@ -2,6 +2,7 @@ package controllers.correctReturn
 
 import controllers.CorrectReturnBaseCYASummaryISpecHelper
 import models.LitresInBands
+import models.correctReturn.RepaymentMethod
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import pages.correctReturn._
@@ -38,6 +39,8 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
     "when the user has changed all pages including litres" - {
       "should render the check changes page with all sections" in {
         val userAnswers = userAnswerWithLitresForAllPagesNilSdilReturn
+          .set(CorrectionReasonPage, "I forgot something").success.value
+          .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
         given
           .commonPrecondition
 
@@ -50,7 +53,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             res.status mustBe OK
             val page = Jsoup.parse(res.body)
             page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
-            page.getElementsByClass("govuk-summary-list").size() mustBe 8
+            page.getElementsByClass("govuk-summary-list").size() mustBe 9
 
             val operatePackagingSites = page.getElementsByClass("govuk-summary-list").get(0)
 
@@ -101,6 +104,9 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
       "and they have changed all answers to no and have no litres" - {
         "should render the check changes page with all summary items" in {
           val userAnswers = userAnswerWithAllNosWithOriginalSdilReturn
+            .set(CorrectionReasonPage, "I forgot something").success.value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+
           given
             .commonPrecondition
 
@@ -113,7 +119,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               res.status mustBe OK
               val page = Jsoup.parse(res.body)
               page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
-              page.getElementsByClass("govuk-summary-list").size() mustBe 7
+              page.getElementsByClass("govuk-summary-list").size() mustBe 8
 
               val operatePackagingSites = page.getElementsByClass("govuk-summary-list").get(0)
               page.getElementsByTag("h2").get(0).text() mustBe "Own brands packaged at your own site"
@@ -161,6 +167,8 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
       s"when the user has changed answers on $OperatePackagingSiteOwnBrandsPage" - {
         "should render the check changes page with only the own brands section" in {
           val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(OperatePackagingSiteOwnBrandsPage, HowManyOperatePackagingSiteOwnBrandsPage)
+            .set(CorrectionReasonPage, "I forgot something").success.value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
           given
             .commonPrecondition
 
@@ -173,7 +181,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               res.status mustBe OK
               val page = Jsoup.parse(res.body)
               page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
-              page.getElementsByClass("govuk-summary-list").size() mustBe 1
+              page.getElementsByClass("govuk-summary-list").size() mustBe 2
 
               val operatePackagingSites = page.getElementsByClass("govuk-summary-list").get(0)
 
@@ -190,6 +198,8 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
       s"when the user has changed answers on $PackagedAsContractPackerPage" - {
         "should render the check changes page with only the packaged as contract packer section" in {
           val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(PackagedAsContractPackerPage, HowManyPackagedAsContractPackerPage)
+            .set(CorrectionReasonPage, "I forgot something").success.value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
           given
             .commonPrecondition
 
@@ -202,7 +212,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               res.status mustBe OK
               val page = Jsoup.parse(res.body)
               page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
-              page.getElementsByClass("govuk-summary-list").size() mustBe 1
+              page.getElementsByClass("govuk-summary-list").size() mustBe 2
 
               val contractPacking = page.getElementsByClass("govuk-summary-list").get(0)
 
@@ -219,6 +229,8 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
       s"when the user has changed answers on $BroughtIntoUKPage" - {
         "should render the check changes page with only the Brought into the UK section" in {
           val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(BroughtIntoUKPage, HowManyBroughtIntoUKPage)
+            .set(CorrectionReasonPage, "I forgot something").success.value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
           given
             .commonPreconditionChangeSubscription(diffSubscriptionWithWarehouses)
 
@@ -232,7 +244,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
               val page = Jsoup.parse(res.body)
               page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
-              page.getElementsByClass("govuk-summary-list").size() mustBe 1
+              page.getElementsByClass("govuk-summary-list").size() mustBe 2
 
               val contractPacking = page.getElementsByClass("govuk-summary-list").get(0)
 
@@ -249,6 +261,8 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
       s"when the user has changed answers on $BroughtIntoUkFromSmallProducersPage" - {
         "should render the check changes page with only the Brought into the UK from small producers section" in {
           val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(BroughtIntoUkFromSmallProducersPage, HowManyBroughtIntoUkFromSmallProducersPage)
+            .set(CorrectionReasonPage, "I forgot something").success.value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
           given
             .commonPreconditionChangeSubscription(diffSubscriptionWithWarehouses)
 
@@ -261,7 +275,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               res.status mustBe OK
               val page = Jsoup.parse(res.body)
               page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
-              page.getElementsByClass("govuk-summary-list").size() mustBe 1
+              page.getElementsByClass("govuk-summary-list").size() mustBe 2
 
               val contractPacking = page.getElementsByClass("govuk-summary-list").get(0)
 
@@ -278,6 +292,8 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
       s"when the user has changed answers on $ClaimCreditsForExportsPage" - {
         "should render the check changes page with only the Exports section" in {
           val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(ClaimCreditsForExportsPage, HowManyClaimCreditsForExportsPage)
+            .set(CorrectionReasonPage, "I forgot something").success.value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
           given
             .commonPrecondition
 
@@ -290,7 +306,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               res.status mustBe OK
               val page = Jsoup.parse(res.body)
               page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
-              page.getElementsByClass("govuk-summary-list").size() mustBe 1
+              page.getElementsByClass("govuk-summary-list").size() mustBe 2
 
               val contractPacking = page.getElementsByClass("govuk-summary-list").get(0)
 
@@ -307,6 +323,8 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
       s"when the user has changed answers on $ClaimCreditsForLostDamagedPage" - {
         "should render the check changes page with only the Lost Destroyed section" in {
           val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage)
+            .set(CorrectionReasonPage, "I forgot something").success.value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
           given
             .commonPrecondition
 
@@ -319,7 +337,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               res.status mustBe OK
               val page = Jsoup.parse(res.body)
               page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
-              page.getElementsByClass("govuk-summary-list").size() mustBe 1
+              page.getElementsByClass("govuk-summary-list").size() mustBe 2
 
               val contractPacking = page.getElementsByClass("govuk-summary-list").get(0)
 
@@ -336,6 +354,8 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
       s"when the user has changed answers on $ExemptionsForSmallProducersPage" - {
         "should render the check changes page with only the exemptions from small producers section" in {
           val userAnswers = userAnswerWithExemptionSmallProducerPageUpdatedAndNilSdilReturn
+            .set(CorrectionReasonPage, "I forgot something").success.value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
           given
             .commonPrecondition
 
@@ -348,7 +368,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               res.status mustBe OK
               val page = Jsoup.parse(res.body)
               page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
-              page.getElementsByClass("govuk-summary-list").size() mustBe 1
+              page.getElementsByClass("govuk-summary-list").size() mustBe 2
 
               val contractPackedForSmallProducers = page.getElementsByClass("govuk-summary-list").get(0)
 
@@ -366,6 +386,8 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
         "should render the check changes page with the Brought into the UK and UK site sections" in {
           val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(BroughtIntoUKPage, HowManyBroughtIntoUKPage)
             .copy(warehouseList = warehousesFromSubscription)
+            .set(CorrectionReasonPage, "I forgot something").success.value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
           given
             .commonPrecondition
 
@@ -379,7 +401,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
               val page = Jsoup.parse(res.body)
               page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
-              page.getElementsByClass("govuk-summary-list").size() mustBe 2
+              page.getElementsByClass("govuk-summary-list").size() mustBe 3
 
               val contractPacking = page.getElementsByClass("govuk-summary-list").get(0)
 

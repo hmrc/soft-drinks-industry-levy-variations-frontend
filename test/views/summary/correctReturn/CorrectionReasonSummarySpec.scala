@@ -36,7 +36,7 @@ class CorrectionReasonSummarySpec extends SpecBase {
 
       val correctionReasonSummaryRow = CorrectionReasonSummary.row(userAnswersWithCorrectionReason)
 
-      correctionReasonSummaryRow.head.key.content.asHtml.toString mustBe "Reason for correcting this return"
+      correctionReasonSummaryRow.head.key.content.asHtml.toString mustBe "Reason for correcting"
       correctionReasonSummaryRow.head.value.content.asHtml.toString mustBe "I was not paying close enough attention and I entered the wrong value"
       correctionReasonSummaryRow.head.actions.toList.head.items.head.content.asHtml.toString() must include("Change")
     }

@@ -287,7 +287,7 @@ correctReturn.select.error.required = Select which return you need to correct
 correctReturn.select.change.hidden = which return you need to correct
 
 correctReturn.correctionReason.title = Why do you need to correct this return?
-correctReturn.correctionReason.checkYourAnswersLabel = Reason for correcting this return
+correctReturn.correctionReason.checkYourAnswersLabel = Reason for correcting
 correctReturn.correctionReason.characterCount = Enter up to 255 characters
 correctReturn.correctionReason.hint = Make sure you provide as much detail as you can.  We may get in touch with your contact person to discuss this.
 correctReturn.correctionReason.error.required = Enter a reason for correcting your return
@@ -300,6 +300,8 @@ correctReturn.repaymentMethod.hint = Repayment is not guaranteed. We may wish to
 correctReturn.repaymentMethod.bankAccount = Paid into the bank account for this business
 correctReturn.repaymentMethod.sdilAccount = Credited to our Soft Drinks Industry Levy account
 correctReturn.repaymentMethod.error.required = Select how you want the credit to be repaid
+correctReturn.repaymentMethod.checkYourAnswersLabel = Repayment method
+correctReturn.repaymentMethod.change.hidden = the repayment method
 
 correctReturn.addASmallProducer.title = Enter the registered small producer’s details
 correctReturn.addASmallProducer.hint1 = Small producer name (optional)
@@ -511,6 +513,7 @@ correctReturn.askSecondaryWarehouseInReturn.detailsContent2 = Because you change
 
 correctReturn.checkChanges.updateFor = This update is for
 correctReturn.checkChanges.title = Check your answers before sending your correction
+correctReturn.correctionSection.checkYourAnswersLabel = Correction details
 correctReturn.checkChanges.confirmationStatement = By sending this correction you are confirming that, to the best of your knowledge, the details you are providing are correct.
 correctReturn.checkChanges.balanceHeader = Balance
 correctReturn.checkChanges.sendReturnHeader = Send your return
