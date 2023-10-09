@@ -29,11 +29,11 @@ import java.time.{LocalDateTime, ZoneId}
 import javax.inject.Inject
 
 class CancellationRequestDoneController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                        controllerActions: ControllerActions,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: CancellationRequestDoneView
-                                     )(implicit config: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+                                                   override val messagesApi: MessagesApi,
+                                                   controllerActions: ControllerActions,
+                                                   val controllerComponents: MessagesControllerComponents,
+                                                   view: CancellationRequestDoneView
+                                                 )(implicit config: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(CancelRegistration) {
 
