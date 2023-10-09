@@ -25,7 +25,15 @@
         printLinkWithJs: printLinkWithJs
 )
 
-@(formattedDate: String, formattedTime: String, companyName: String)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+@(
+    formattedDate: String,
+    formattedTime: String,
+    nextPeriodStart: String,
+    nextPeriodEnd: String,
+    deadlineStart: String,
+    deadlineEnd: String,
+    companyName: String
+)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
 @layout(pageTitle = titleNoForm(messages("cancelRegistration.cancellationRequestDone.title")), showBackLink = false) {
 
@@ -51,11 +59,11 @@
         @messages("site.whatNext")
     </h2>
 
-    <p class="govuk-body" id="whatNextTextP1">@messages("cancelRegistration.cancellationRequestDone.whatNextText.p1")</p>
+    <p class="govuk-body" id="whatNextTextP1">@messages("cancelRegistration.cancellationRequestDone.whatNextText.p1", nextPeriodStart, nextPeriodEnd)</p>
 
     @govukInsetText(InsetText(
         id = Some("whatNextTextP2"),
-        content = messages("cancelRegistration.cancellationRequestDone.whatNextText.p2")
+        content = messages("cancelRegistration.cancellationRequestDone.whatNextText.p2", deadlineStart, deadlineEnd)
     ))
 
     <p class="govuk-body" id="whatNextTextP3">@messages("cancelRegistration.cancellationRequestDone.whatNextText.p3")</p>

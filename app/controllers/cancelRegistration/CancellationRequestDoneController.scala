@@ -18,6 +18,7 @@ package controllers.cancelRegistration
 
 import config.FrontendAppConfig
 import controllers.actions._
+import models.ReturnPeriod
 import models.SelectChange.CancelRegistration
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -27,6 +28,7 @@ import views.html.cancelRegistration.CancellationRequestDoneView
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, ZoneId}
 import javax.inject.Inject
+
 
 class CancellationRequestDoneController @Inject()(
                                                    override val messagesApi: MessagesApi,
@@ -44,6 +46,17 @@ class CancellationRequestDoneController @Inject()(
       val formattedDate = getSentDateTime.format(dateFormatter)
       val formattedTime = getSentDateTime.format(timeFormatter)
 
-      Ok(view(formattedDate, formattedTime, request.subscription.orgName))
+      val returnPeriodFormat = DateTimeFormatter.ofPattern("MMMM yyyy")
+      val nextReturnPeriod = ReturnPeriod(getSentDateTime.toLocalDate).next
+      val returnPeriodStart = nextReturnPeriod.start.format(returnPeriodFormat)
+      val returnPeriodEnd = nextReturnPeriod.end.format(returnPeriodFormat)
+
+      val deadlineStartFormat = DateTimeFormatter.ofPattern("d MMMM")
+      val deadlineStart = nextReturnPeriod.end.plusDays(1).format(deadlineStartFormat)
+
+      val deadlineEndFormat = DateTimeFormatter.ofPattern("d MMMM yyyy")
+      val deadlineEnd = nextReturnPeriod.deadline.format(deadlineEndFormat)
+
+      Ok(view(formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd, deadlineStart, deadlineEnd, request.subscription.orgName))
   }
 }
