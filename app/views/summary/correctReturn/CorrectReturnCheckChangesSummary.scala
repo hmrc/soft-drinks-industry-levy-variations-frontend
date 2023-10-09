@@ -36,11 +36,10 @@ object CorrectReturnCheckChangesSummary {
     val correctionReasonSummary: Option[SummaryListRow] = CorrectionReasonSummary.row(userAnswers)
     val repaymentMethodSummary: Option[SummaryListRow] = RepaymentMethodSummary.row(userAnswers)
 
-    val correctionSection: Option[(String, SummaryList)] =  {
-     Option("correctReturn.correctionSection.checkYourAnswersLabel" ->
-        SummaryList(Seq(correctionReasonSummary.get, repaymentMethodSummary.get)))
-    }
-    correctionSection
-  }
+    val correctionSectionSummaryList: Option[SummaryList] = for {
+      correctionReason <- correctionReasonSummary
+      repaymentMethod <- repaymentMethodSummary
+    } yield SummaryList(Seq(correctionReason, repaymentMethod))
+    correctionSectionSummaryList.map("correctReturn.correctionSection.checkYourAnswersLabel" -> _)}
 
 }
