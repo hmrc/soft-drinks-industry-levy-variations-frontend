@@ -14,3 +14,4 @@ GET        /change-date                         controllers.cancelRegistration.C
 POST       /change-date                         controllers.cancelRegistration.CancelRegistrationDateController.onSubmit(mode: Mode = CheckMode)
 
 GET        /file-return-before-deregistration   controllers.cancelRegistration.FileReturnBeforeDeregController.onPageLoad()
+POST       /file-return-before-deregistration   controllers.cancelRegistration.FileReturnBeforeDeregController.onSubmit()

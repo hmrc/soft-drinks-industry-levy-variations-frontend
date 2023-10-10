@@ -16,6 +16,7 @@
 
 package controllers.cancelRegistration
 
+import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.ControllerActions
 import controllers.routes
@@ -37,7 +38,7 @@ class FileReturnBeforeDeregController @Inject()(
                                                  val controllerComponents: MessagesControllerComponents,
                                                  view: FileReturnBeforeDeregView,
                                                  errorHandler: ErrorHandler
-                                               )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                               )(implicit ec: ExecutionContext, config: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration).async {
     implicit request =>
@@ -47,4 +48,9 @@ class FileReturnBeforeDeregController @Inject()(
       case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
     }
   }
+
+  def onSubmit(): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration) {
+    implicit request => Redirect(config.sdilHomeUrl)
+  }
+
 }

@@ -17,15 +17,20 @@
 package controllers.cancelRegistration
 
 import base.SpecBase
+import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
+import forms.cancelRegistration.CancelRegistrationDateFormProvider
 import models.SelectChange.CancelRegistration
+import navigation.{FakeNavigatorForCancelRegistration, NavigatorForCancelRegistration}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
 import play.api.inject
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.Html
+import services.SessionService
 import views.html.cancelRegistration.FileReturnBeforeDeregView
 
 class FileReturnBeforeDeregControllerSpec extends SpecBase {
@@ -33,6 +38,12 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
   lazy val fileReturnBeforDeregRoute: String = routes.FileReturnBeforeDeregController.onPageLoad().url
 
   val mockConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
+
+  val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
+  val formProvider = new CancelRegistrationDateFormProvider(appConfig)
+
+  def onwardRoute = Call("GET", "/foo")
+
 
   "FileReturnBeforeDereg Controller" - {
 
@@ -45,6 +56,8 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
       when(mockConnector.getPendingReturnsFromCache(any())(any())).thenReturn(createSuccessVariationResult(returnPeriods))
 
       running(application) {
+        val config = application.injector.instanceOf[FrontendAppConfig]
+
         val request = FakeRequest(GET, fileReturnBeforDeregRoute)
 
         val result = route(application, request).value
@@ -52,7 +65,7 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[FileReturnBeforeDeregView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(Html(s"Before you can cancel your registration, you must send ${2} returns and make any payments due."))(request, messages(application)).toString
+        contentAsString(result) mustEqual view(Html(s"Before you can cancel your registration, you must send ${2} returns and make any payments due."))(request, messages(application), config).toString
       }
     }
 
@@ -65,6 +78,8 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
       when(mockConnector.getPendingReturnsFromCache(any())(any())).thenReturn(createSuccessVariationResult(returnPeriod))
 
       running(application) {
+        val config = application.injector.instanceOf[FrontendAppConfig]
+
         val request = FakeRequest(GET, fileReturnBeforDeregRoute)
 
         val result = route(application, request).value
@@ -72,7 +87,7 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[FileReturnBeforeDeregView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(Html(s"Before you can cancel your registration, you must send a return for April to April 2018 and make any payments due."))(request, messages(application)).toString
+        contentAsString(result) mustEqual view(Html(s"Before you can cancel your registration, you must send a return for April to April 2018 and make any payments due."))(request, messages(application), config).toString
       }
     }
 
@@ -95,6 +110,32 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
     }
     testInvalidJourneyType(CancelRegistration, fileReturnBeforDeregRoute, false)
     testNoUserAnswersError(fileReturnBeforDeregRoute, false)
+
+    "must redirect to the next page when valid data is submitted" in {
+
+      val mockSessionService = mock[SessionService]
+
+      when(mockConnector.getPendingReturnsFromCache(any())(any())).thenReturn(createSuccessVariationResult(returnPeriods))
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForCancelRegistration))
+          .overrides(
+            inject.bind[NavigatorForCancelRegistration].toInstance(new FakeNavigatorForCancelRegistration(onwardRoute)),
+            inject.bind[SessionService].toInstance(mockSessionService)
+          )
+          .build()
+
+      running(application) {
+
+        val postRequest =
+          FakeRequest(POST, fileReturnBeforDeregRoute)
+
+        val result = route(application, postRequest).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual "http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"
+      }
+    }
 
   }
 }

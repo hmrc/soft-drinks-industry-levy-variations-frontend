@@ -14,20 +14,29 @@
  * limitations under the License.
  *@
 
+@import controllers.cancelRegistration.routes
+@import config.FrontendAppConfig
+
 @this(
         layout: templates.Layout,
-        govukButton: GovukButton
+        govukButton: GovukButton,
+        formHelper: FormWithCSRF
 )
 
-@(message:Html)(implicit request: Request[_], messages: Messages)
+@(message:Html)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
 @layout(pageTitle = titleNoForm(messages("cancelRegistration.fileReturnBeforeDereg.title"))) {
 
     <h1 class="govuk-heading-l">@messages("cancelRegistration.fileReturnBeforeDereg.heading")</h1>
     <p class="govuk-body">@message</p>
 
-    @govukButton(
-      ButtonViewModel(messages("cancelRegistration.fileReturnBeforeDereg.continue"))
-    )
-
+    @formHelper(action = routes.FileReturnBeforeDeregController.onSubmit(), Symbol("autoComplete") -> "off") {
+        @govukButton(
+            Button(
+                preventDoubleClick = Some(true),
+                content = Text(messages("cancelRegistration.fileReturnBeforeDereg.continue")),
+                href = Some(config.sdilHomeUrl),
+            )
+        )
+    }
 }
