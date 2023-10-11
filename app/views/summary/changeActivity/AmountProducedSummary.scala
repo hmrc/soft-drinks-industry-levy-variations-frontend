@@ -17,7 +17,7 @@
 package views.summary.changeActivity
 
 import controllers.changeActivity.routes
-import models.{CheckMode, UserAnswers}
+import models.{NormalMode, UserAnswers}
 import pages.changeActivity.AmountProducedPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -42,7 +42,7 @@ object AmountProducedSummary  {
           key     = "changeActivity.amountProduced.checkYourAnswersLabel",
           value   = value.withCssClass("govuk-!-text-align-right"),
           actions = if(isCheckAnswers){Seq(
-            ActionItemViewModel("site.change", routes.AmountProducedController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", routes.AmountProducedController.onPageLoad(NormalMode).url)
               .withVisuallyHiddenText(messages("changeActivity.amountProduced.change.hidden"))
           )}else{
             Seq.empty
