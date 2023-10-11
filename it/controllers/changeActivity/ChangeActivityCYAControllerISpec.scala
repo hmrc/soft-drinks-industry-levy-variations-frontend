@@ -2,7 +2,7 @@ package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
 import generators.ChangeActivityCYAGenerators._
-import models.CheckMode
+import models.{CheckMode, NormalMode}
 import models.changeActivity.AmountProduced
 import models.changeActivity.AmountProduced.{Large, Small, None => NoneProduced}
 import org.jsoup.Jsoup
@@ -53,7 +53,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
           amountProduced.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe answerToMatch
           amountProduced.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change how many litres of your own brands have been packaged globally"
           amountProduced.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "how many litres of your own brands have been packaged globally"
-          amountProduced.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.AmountProducedController.onPageLoad(CheckMode).url
+          amountProduced.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.AmountProducedController.onPageLoad(NormalMode).url
         }
       }
     }
