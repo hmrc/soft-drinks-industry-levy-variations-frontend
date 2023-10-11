@@ -23,12 +23,12 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, Summ
 
 object ChangeActivitySummary  {
 
-  def summaryListsAndHeadings(userAnswers: UserAnswers)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
-    val amountProducedSummary: Option[SummaryListRow] = AmountProducedSummary.row(userAnswers)
-    val thirdPartyPackagersSummary: Option[SummaryListRow] = ThirdPartyPackagersSummary.row(userAnswers)
-    val ownBrandsSummary: SummaryList = OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = false)
-    val contractSummary: SummaryList = ContractPackingSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = false)
-    val importsSummary: SummaryList = ImportsSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = false)
+  def summaryListsAndHeadings(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
+    val amountProducedSummary: Option[SummaryListRow] = AmountProducedSummary.row(userAnswers, isCheckAnswers)
+    val thirdPartyPackagersSummary: Option[SummaryListRow] = ThirdPartyPackagersSummary.row(userAnswers, isCheckAnswers)
+    val ownBrandsSummary: SummaryList = OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
+    val contractSummary: SummaryList = ContractPackingSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
+    val importsSummary: SummaryList = ImportsSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
     val amountProducedSection: Option[(String, SummaryList)] = amountProducedSummary.map(summary => {
       "changeActivity.checkYourAnswers.amountProducedSection" -> SummaryList(Seq(summary))
     })
@@ -38,19 +38,19 @@ object ChangeActivitySummary  {
     val ownBrandsSection: Option[(String, SummaryList)] = if (ownBrandsSummary.rows.isEmpty) None else {
       Option(
         "changeActivity.checkYourAnswers.operatePackingSiteOwnBrandsSection" ->
-          OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = false)
+          OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
       )
     }
     val contractSection: Option[(String, SummaryList)] = if (contractSummary.rows.isEmpty) None else {
       Option(
         "changeActivity.checkYourAnswers.contractPackingSection" ->
-          ContractPackingSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = false)
+          ContractPackingSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
       )
     }
     val importsSection: Option[(String, SummaryList)] = if (importsSummary.rows.isEmpty) None else {
       Option(
         "changeActivity.checkYourAnswers.importsSection" ->
-          ImportsSummary.summaryList(userAnswers, isCheckAnswers = true, includeLevyRows = false)
+          ImportsSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
       )
     }
     (amountProducedSection ++ thirdPartyPackagersSection ++ ownBrandsSection ++ contractSection ++ importsSection).toSeq

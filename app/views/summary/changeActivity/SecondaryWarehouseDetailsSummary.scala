@@ -17,7 +17,7 @@
 package views.summary.changeActivity
 
 import controllers.changeActivity.routes
-import models.{NormalMode, UserAnswers, Warehouse}
+import models.{UserAnswers, Warehouse}
 import pages.changeActivity.SecondaryWarehouseDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}

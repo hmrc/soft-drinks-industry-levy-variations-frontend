@@ -19,8 +19,7 @@ package navigation
 import controllers.cancelRegistration.routes
 import models.{NormalMode, UserAnswers}
 import pages.Page
-import pages.cancelRegistration.CancelRegistrationDatePage
-import pages.cancelRegistration.ReasonPage
+import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}

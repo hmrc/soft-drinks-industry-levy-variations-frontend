@@ -91,6 +91,10 @@ trait DataHelper {
     atHighRate = atHighRate
   )
 
+  def testConvert(vd: RegistrationVariationData): VariationsSubmission = Convert(
+    vd = vd
+  )
+
   def testRetrievedActivity(
                              smallProducer: Boolean = false,
                              largeProducer: Boolean = false,

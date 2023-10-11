@@ -16,12 +16,11 @@
 
 package controllers.changeActivity
 
+import controllers.ControllerHelper
 import controllers.actions._
-import controllers.{ControllerHelper, routes}
 import forms.changeActivity.RemoveWarehouseDetailsFormProvider
 import handlers.ErrorHandler
 import models.SelectChange.ChangeActivity
-import models.requests.DataRequest
 import models.{NormalMode, UserAnswers, Warehouse}
 import navigation._
 import pages.changeActivity.RemoveWarehouseDetailsPage

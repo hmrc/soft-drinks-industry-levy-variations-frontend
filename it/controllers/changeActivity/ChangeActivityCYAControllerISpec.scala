@@ -222,7 +222,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
           val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
           whenReady(result) { res =>
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+            res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
           }
         }
       }

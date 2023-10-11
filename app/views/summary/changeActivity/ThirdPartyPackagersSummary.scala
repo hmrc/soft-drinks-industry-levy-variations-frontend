@@ -26,7 +26,7 @@ import viewmodels.implicits._
 
 object ThirdPartyPackagersSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(ThirdPartyPackagersPage).map {
       answer =>
         val value = if (answer) "site.yes" else "site.no"
@@ -34,10 +34,12 @@ object ThirdPartyPackagersSummary {
         SummaryListRowViewModel(
           key     = "changeActivity.thirdPartyPackagers.checkYourAnswersLabel",
           value   = ValueViewModel(value).withCssClass("govuk-!-text-align-right"),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.ThirdPartyPackagersController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("changeActivity.thirdPartyPackagers.change.hidden"))
-          )
+          actions = if(isCheckAnswers) {
+            Seq(
+              ActionItemViewModel("site.change", routes.ThirdPartyPackagersController.onPageLoad(CheckMode).url)
+                .withVisuallyHiddenText(messages("changeActivity.thirdPartyPackagers.change.hidden"))
+            )
+          }else{Seq.empty}
         )
     }
 }
