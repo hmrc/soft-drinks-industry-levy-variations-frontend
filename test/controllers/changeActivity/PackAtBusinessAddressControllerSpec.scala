@@ -21,7 +21,7 @@ import connectors.SoftDrinksIndustryLevyConnector
 import errors.SessionDatabaseInsertError
 import forms.changeActivity.PackAtBusinessAddressFormProvider
 import models.SelectChange.ChangeActivity
-import models.backend.UkAddress
+import models.backend.{Site, UkAddress}
 import models.{NormalMode, RetrievedSubscription}
 import navigation._
 import org.jsoup.Jsoup
@@ -72,6 +72,22 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
         val address = AddressFormattingHelper.addressFormatting(businessAddress, Option(businessName))
         contentAsString(result) mustEqual view(form, NormalMode, address)(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to PackagingSiteDetails when packaging site list not empty" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity.copy(packagingSiteList = packingSiteMap))).build()
+
+      running(application) {
+        val request = FakeRequest(GET, packAtBusinessAddressRoute)
+        when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
+          createSuccessVariationResult(Some(aSubscription))
+        }
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
       }
     }
 
