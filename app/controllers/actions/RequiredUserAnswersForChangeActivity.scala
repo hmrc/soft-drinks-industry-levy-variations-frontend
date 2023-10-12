@@ -111,7 +111,8 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
       List(RequiredPage(ImportsPage, List.empty)(implicitBoolean)),
       pagesRequiredForHowManyImportsPage.map(RequiredPage(HowManyImportsPage, _)(implicitBands)),
       pagesRequiredForPackAtBusinessAddressPage.map(RequiredPage(PackAtBusinessAddressPage, _)(implicitBoolean)),
-      pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean))
+      pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean)),
+      List(RequiredPage(SecondaryWarehouseDetailsPage, List.empty)(implicitBoolean))
     ).flatten
   }
 }

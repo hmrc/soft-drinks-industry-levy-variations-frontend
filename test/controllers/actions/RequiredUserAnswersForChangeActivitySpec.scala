@@ -125,22 +125,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(OperatePackagingSiteOwnBrandsPage, false).success.value
             .set(ContractPackingPage, false).success.value
             .set(ImportsPage, false).success.value
-        }
-        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers))) mustBe exampleSuccessActionResult
-      }
-      "when warehouses are not required" in {
-        val userAnswers = {
-          emptyUserAnswersForChangeActivity
-            .set(AmountProducedPage, Small).success.value
-            .set(ThirdPartyPackagersPage, true).success.value
-            .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-            .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1, 1)).success.value
-            .set(ContractPackingPage, true).success.value
-            .set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value
-            .set(ImportsPage, true).success.value
-            .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
-            .set(PackAtBusinessAddressPage, true).success.value
-            .set(PackagingSiteDetailsPage, true).success.value
+            .set(SecondaryWarehouseDetailsPage, false).success.value
         }
         contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers))) mustBe exampleSuccessActionResult
       }
@@ -154,6 +139,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(OperatePackagingSiteOwnBrandsPage, false).success.value
             .set(ContractPackingPage, false).success.value
             .set(ImportsPage, false).success.value
+            .set(SecondaryWarehouseDetailsPage, false).success.value
         }
         contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers))) mustBe exampleSuccessActionResult
       }
@@ -168,6 +154,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1, 1)).success.value
             .set(ContractPackingPage, false).success.value
             .set(ImportsPage, false).success.value
+            .set(SecondaryWarehouseDetailsPage, false).success.value
         }
         contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers))) mustBe exampleSuccessActionResult
       }
@@ -410,6 +397,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
           RequiredPage(AmountProducedPage, List.empty)(implicitly[Reads[AmountProduced]]),
           RequiredPage(ContractPackingPage, List.empty)(implicitly[Reads[Boolean]]),
           RequiredPage(ImportsPage, List.empty)(implicitly[Reads[Boolean]]),
+          RequiredPage(SecondaryWarehouseDetailsPage, List.empty)(implicitly[Reads[Boolean]])
         )
     }
 
@@ -509,6 +497,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
           .set(HowManyImportsPage, LitresInBands(1,1)).success.value
           .set(PackAtBusinessAddressPage, true).success.value
           .set(PackagingSiteDetailsPage, true).success.value
+          .set(SecondaryWarehouseDetailsPage, false).success.value
       }
       implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
       contentAsString(requiredUserAnswers.checkYourAnswersRequiredData(exampleSuccessAction)) mustBe exampleSuccessActionResult

@@ -50,6 +50,7 @@ class PackAtBusinessAddressController @Inject()(
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
+//        TODO: Put guard on here and redirect on PackagingSiteList size > 0. If so, redirect to PackagingSiteDetails controller
     implicit request =>
       val formattedAddress = AddressFormattingHelper.addressFormatting(request.subscription.address, Option(request.subscription.orgName))
       val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {

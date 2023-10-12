@@ -21,6 +21,7 @@ import models.{LitresInBands, SelectChange, UserAnswers}
 import models.changeActivity.AmountProduced
 import models.changeActivity.AmountProduced.{Large, Small, enumerable, None => NoneProduced}
 import org.scalatest.TryValues
+import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import pages.changeActivity._
 
 object ChangeActivityCYAGenerators {
@@ -110,7 +111,7 @@ object ChangeActivityCYAGenerators {
                       imports: Option[Boolean] = None,
                       packAtBusinessAddress: Option[Boolean] = None
                     ): UserAnswers = {
-    ChangeActivityCYAUserAnswers(emptyUserAnswersForChangeActivity)
+    ChangeActivityCYAUserAnswers(emptyUserAnswersForChangeActivity.set(SecondaryWarehouseDetailsPage, false).success.value)
       .withAmountProduced(amountProduced)
       .withThirdPartyPackaging(thirdPartyPackaging)
       .withOwnBrands(ownBrands)
