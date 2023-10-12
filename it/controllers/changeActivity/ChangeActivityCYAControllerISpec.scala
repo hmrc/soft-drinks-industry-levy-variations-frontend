@@ -206,6 +206,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
     testUnauthorisedUser(baseUrl + route)
     testAuthenticatedUserButNoUserAnswers(baseUrl + route)
   }
+
   "POST " + routes.ChangeActivityCYAController.onSubmit.url - {
     "when the userAnswers contains no data" - {
       "should redirect to next page" in {

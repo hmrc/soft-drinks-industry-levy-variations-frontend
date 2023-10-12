@@ -23,17 +23,11 @@ import generators.ChangeActivityCYAGenerators._
 import models.{DataHelper, Litreage, LitresInBands, VariationsSubmission}
 import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced.Large
-import navigation.{FakeNavigatorForChangeActivity, NavigatorForChangeActivity}
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
-import pages.changeActivity.{AmountProducedPage, ContractPackingPage, HowManyContractPackingPage, HowManyImportsPage, HowManyOperatePackagingSiteOwnBrandsPage, ImportsPage}
+import pages.changeActivity._
 import play.api.mvc.Call
 import play.api.inject.bind
-import models.SelectChange.ChangeActivity
-import generators.ChangeActivityCYAGenerators.{sdilNumber, _}
-import models.{SelectChange, UserAnswers}
-import models.changeActivity.AmountProduced
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.ChangeActivityService
@@ -73,7 +67,7 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency w
         }
       }
     }
-    
+
     "must redirect to return sent page on submit" in {
       val userAnswers = emptyUserAnswersForChangeActivity.set(AmountProducedPage, Large).success.value
         .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100L, 100L)).success.value
@@ -132,38 +126,6 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency w
         redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-variations-frontend/change-activity/variation-done"
       }
     }
-
-//    amountProducedValues.foreach { case (amountProducedKey, amountProducedValue) =>
-//      thirdPartyPackagingValues.foreach { case (thirdPartyPackagingKey, thirdPartyPackagingValue) =>
-//        ownBrandsValues.foreach { case (ownBrandsKey, ownBrandsValue) =>
-//          contractValues.foreach { case (contractKey, contractValue) =>
-//            importValues.foreach { case (importKey, importValue) =>
-//              val key = List(amountProducedKey, thirdPartyPackagingKey, ownBrandsKey, contractKey, importKey).filterNot(_.isEmpty).mkString(", ")
-//              val userAnswers = getUserAnswers(amountProducedValue, thirdPartyPackagingValue, ownBrandsValue, contractValue, importValue)
-//              s"must return OK and the correct view for a GET for user answers $key" in {
-//
-//                val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-//
-//                running(application) {
-//                  val request = FakeRequest(GET, ChangeActivityCYAController.onPageLoad.url)
-//
-//                  val result = route(application, request).value
-//
-//                  val view = application.injector.instanceOf[ChangeActivityCYAView]
-//
-//                  status(result) mustEqual OK
-//                  contentAsString(result) mustEqual view(
-//                    aSubscription.orgName,
-//                    ChangeActivitySummary.summaryListsAndHeadings(userAnswers),
-//                    routes.ChangeActivityCYAController.onSubmit
-//                  )(request, messages(application)).toString
-//                }
-//              }
-//            }
-//          }
-//        }
-//      }
-//    }
 
     testInvalidJourneyType(ChangeActivity, ChangeActivityCYAController.onPageLoad.url, false)
     testNoUserAnswersError(ChangeActivityCYAController.onPageLoad.url, false)
