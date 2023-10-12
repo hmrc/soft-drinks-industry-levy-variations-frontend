@@ -1,0 +1,81 @@
+@*
+ * Copyright 2023 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.helpers.printLinkWithJs
+@import config.FrontendAppConfig
+
+@this(
+        layout: templates.Layout,
+        govukPanel : GovukPanel,
+        govukDetails: GovukDetails,
+        govukInsetText: GovukInsetText,
+        printLinkWithJs: printLinkWithJs
+)
+
+@(
+    formattedDate: String,
+    formattedTime: String,
+    nextPeriodStart: String,
+    nextPeriodEnd: String,
+    deadlineStart: String,
+    deadlineEnd: String,
+    companyName: String
+)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+
+@layout(pageTitle = titleNoForm(messages("cancelRegistration.cancellationRequestDone.title")), showBackLink = false) {
+
+    @govukPanel(Panel(
+        title = Text(messages("cancelRegistration.cancellationRequestDone.title")),
+        content = HtmlContent(messages("cancelRegistration.cancellationRequestDone.panel.message")),
+        classes = "panel-indent"
+    ))
+
+    @printLinkWithJs(messages("site.print"))
+
+    @if(companyName.length > 25) {
+        <p class="govuk-body-m">
+            @messages("cancelRegistration.cancellationRequestDone.updateInfoTwoPart1", companyName)
+            <br/>
+            @messages("cancelRegistration.cancellationRequestDone.updateInfoTwoPart2", formattedDate, formattedTime)
+        </p>
+    } else {
+        <p class="govuk-body-m">@messages("cancelRegistration.cancellationRequestDone.updateInfo", companyName, formattedDate, formattedTime)</p>
+    }
+
+    <h2 class="govuk-heading-m" id="whatNextHeader">
+        @messages("site.whatNext")
+    </h2>
+
+    <p class="govuk-body" id="whatNextTextP1">@messages("cancelRegistration.cancellationRequestDone.whatNextText.p1", nextPeriodStart, nextPeriodEnd)</p>
+
+    @govukInsetText(InsetText(
+        id = Some("whatNextTextP2"),
+        content = messages("cancelRegistration.cancellationRequestDone.whatNextText.p2", deadlineStart, deadlineEnd)
+    ))
+
+    <p class="govuk-body" id="whatNextTextP3">@messages("cancelRegistration.cancellationRequestDone.whatNextText.p3")</p>
+
+    <p class="govuk-body" id="whatNextTextP4">@messages("cancelRegistration.cancellationRequestDone.whatNextText.p4")</p>
+
+     <p class="govuk-body-m">
+        <a class="govuk-link" href="@config.sdilHomeUrl">@messages("cancelRegistration.cancellationRequestDone.accountHomeLink")</a>
+     </p>
+
+    @govukDetails(Details(
+        summary = Text(Messages("cancelRegistration.cancellationRequestDone.detailsSummary")),
+        content = Text("TODO: IMPLEMENT DETAILS OF YOUR REQUEST")
+    ))
+}
