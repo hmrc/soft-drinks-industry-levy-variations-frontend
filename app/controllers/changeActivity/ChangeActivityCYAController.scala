@@ -52,7 +52,6 @@ class ChangeActivityCYAController @Inject()(
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
-//      TODO: Make this async
       changeActivityService.submitVariation(request.subscription, request.userAnswers)
       Redirect(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad)
   }

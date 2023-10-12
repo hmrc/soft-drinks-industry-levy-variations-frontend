@@ -1,6 +1,7 @@
 package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
+import models.{CheckMode, NormalMode}
 import models.SelectChange.ChangeActivity
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
@@ -41,9 +42,37 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
       }
     }
 
+    "when the userAnswers contains data for the page with false selected and packaging site list empty" - {
+      "should return OK and render the PackAtBusinessAddress page with false populated" in {
+        given
+          .commonPrecondition
+
+        setAnswers(emptyUserAnswersForChangeActivity
+          .set(PackAtBusinessAddressPage, false).success.value
+          .copy(packagingSiteList = Map.empty)
+        )
+
+        WsTestClient.withClient { client =>
+          val result1 = createClientRequestGet(client, changeActivityBaseUrl + normalRoutePath)
+
+          whenReady(result1) { res =>
+            res.status mustBe 200
+            val page = Jsoup.parse(res.body)
+            page.title must include(Messages("changeActivity.packAtBusinessAddress" + ".title"))
+            val radioInputs = page.getElementsByClass("govuk-radios__input")
+            radioInputs.size() mustBe 2
+            radioInputs.get(0).attr("value") mustBe "true"
+            radioInputs.get(0).hasAttr("checked") mustBe false
+            radioInputs.get(1).attr("value") mustBe "false"
+            radioInputs.get(1).hasAttr("checked") mustBe true
+          }
+        }
+      }
+    }
+
     userAnswersForChangeActivityPackAtBusinessAddressPage.foreach { case (key, userAnswers) =>
-      s"when the userAnswers contains data for the page with " + key + " selected" - {
-        s"should return OK and render the page with " + key + " radio checked" in {
+      s"when the userAnswers contains data for the page with " + key + " selected and packaging site list not empty" - {
+        s"redirect to PackagingSiteDetails" in {
           given
             .commonPrecondition
 
@@ -53,20 +82,14 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
             val result1 = createClientRequestGet(client, changeActivityBaseUrl + normalRoutePath)
 
             whenReady(result1) { res =>
-              res.status mustBe 200
-              val page = Jsoup.parse(res.body)
-              page.title must include(Messages("changeActivity.packAtBusinessAddress" + ".title"))
-              val radioInputs = page.getElementsByClass("govuk-radios__input")
-              radioInputs.size() mustBe 2
-              radioInputs.get(0).attr("value") mustBe "true"
-              radioInputs.get(0).hasAttr("checked") mustBe key == "yes"
-              radioInputs.get(1).attr("value") mustBe "false"
-              radioInputs.get(1).hasAttr("checked") mustBe key == "no"
+              res.status mustBe 303
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
             }
           }
         }
       }
     }
+
     testUnauthorisedUser(changeActivityBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + normalRoutePath)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + normalRoutePath)
@@ -98,9 +121,37 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
       }
     }
 
+    "when the userAnswers contains data for the page with false selected and packaging site list empty" - {
+      "should return OK and render the PackAtBusinessAddress page with false populated" in {
+        given
+          .commonPrecondition
+
+        setAnswers(emptyUserAnswersForChangeActivity
+          .set(PackAtBusinessAddressPage, false).success.value
+          .copy(packagingSiteList = Map.empty)
+        )
+
+        WsTestClient.withClient { client =>
+          val result1 = createClientRequestGet(client, changeActivityBaseUrl + checkRoutePath)
+
+          whenReady(result1) { res =>
+            res.status mustBe 200
+            val page = Jsoup.parse(res.body)
+            page.title must include(Messages("changeActivity.packAtBusinessAddress" + ".title"))
+            val radioInputs = page.getElementsByClass("govuk-radios__input")
+            radioInputs.size() mustBe 2
+            radioInputs.get(0).attr("value") mustBe "true"
+            radioInputs.get(0).hasAttr("checked") mustBe false
+            radioInputs.get(1).attr("value") mustBe "false"
+            radioInputs.get(1).hasAttr("checked") mustBe true
+          }
+        }
+      }
+    }
+
     userAnswersForChangeActivityPackAtBusinessAddressPage.foreach { case (key, userAnswers) =>
-      s"when the userAnswers contains data for the page with " + key + " selected" - {
-        s"should return OK and render the page with " + key + " radio checked" in {
+      s"when the userAnswers contains data for the page with " + key + " selected and packaging site list not empty" - {
+        s"redirect to PackagingSiteDetails" in {
           given
             .commonPrecondition
 
@@ -110,15 +161,8 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
             val result1 = createClientRequestGet(client, changeActivityBaseUrl + checkRoutePath)
 
             whenReady(result1) { res =>
-              res.status mustBe 200
-              val page = Jsoup.parse(res.body)
-              page.title must include(Messages("changeActivity.packAtBusinessAddress" + ".title"))
-              val radioInputs = page.getElementsByClass("govuk-radios__input")
-              radioInputs.size() mustBe 2
-              radioInputs.get(0).attr("value") mustBe "true"
-              radioInputs.get(0).hasAttr("checked") mustBe key == "yes"
-              radioInputs.get(1).attr("value") mustBe "false"
-              radioInputs.get(1).hasAttr("checked") mustBe key == "no"
+              res.status mustBe 303
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
             }
           }
         }
