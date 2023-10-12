@@ -57,7 +57,7 @@ class CorrectionReasonViewSpec extends ViewSpecHelper {
       "that contains the expected hint text" in {
         formGroup.get(0).getElementsByClass(Selectors.hint)
           .text() mustBe
-          "Make sure you provide as much detail as you can. We may get in touch with your contact person to discuss this. Enter up to 255 characters"
+          "Make sure you provide as much detail as you can. We may get in touch with your contact person to discuss this. Enter a maximum of 255 characters"
       }
 
       "that contains a text area" in {
