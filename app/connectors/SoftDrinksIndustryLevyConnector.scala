@@ -174,7 +174,7 @@ class SoftDrinksIndustryLevyConnector @Inject()(
   }
 
   def submitVariation(variation: VariationsSubmission, sdilNumber: String)(implicit hc: HeaderCarrier): Future[Option[Int]] = {
-    println(s"data we are submitting when updating contact details ${Json.toJson(variation)}")
+    genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][submitVariation] - variation data we are submitting: ${Json.toJson(variation)}")
     http.POST[VariationsSubmission, HttpResponse](s"$sdilUrl/submit-variations/sdil/$sdilNumber", variation) map {
       response => Some(response.status)
     }

@@ -125,9 +125,6 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(OperatePackagingSiteOwnBrandsPage, false).success.value
             .set(ContractPackingPage, false).success.value
             .set(ImportsPage, false).success.value
-            .set(PackAtBusinessAddressPage, true).success.value
-            .set(PackagingSiteDetailsPage, true).success.value
-            .set(SecondaryWarehouseDetailsPage, true).success.value
         }
         contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers))) mustBe exampleSuccessActionResult
       }

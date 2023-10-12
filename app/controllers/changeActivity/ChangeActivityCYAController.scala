@@ -25,13 +25,11 @@ import pages.changeActivity.ChangeActivityCYAPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ChangeActivityService
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.changeActivity.ChangeActivityCYAView
 import views.summary.changeActivity.ChangeActivitySummary
 
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class ChangeActivityCYAController @Inject()(
                                             override val messagesApi: MessagesApi,
@@ -41,7 +39,7 @@ class ChangeActivityCYAController @Inject()(
                                             val controllerComponents: MessagesControllerComponents,
                                             changeActivityService: ChangeActivityService,
                                             view: ChangeActivityCYAView
-                                          ) extends FrontendBaseController with I18nSupport {
+                                          )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
@@ -54,13 +52,8 @@ class ChangeActivityCYAController @Inject()(
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
-      completeChangeActivityAndUpdateUserAnswers()
+//      TODO: Make this async
+      changeActivityService.submitVariation(request.subscription, request.userAnswers)
       Redirect(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad)
-  }
-
-  private def completeChangeActivityAndUpdateUserAnswers()(implicit request: DataRequest[AnyContent]): Future[Unit] = {
-    val subscription = request.subscription
-    val userAnswers = request.userAnswers
-    changeActivityService.submitVariation(subscription, userAnswers)
   }
 }
