@@ -19,39 +19,37 @@
 @this(govukCharacterCount : GovukCharacterCount)
 
 @(
-field: Field,
-id: String,
-name: String,
-label: String,
-isLabelHidden: Boolean = false,
-isPageHeading: Boolean = false,
-hint: Option[String] = None,
-maxLength: Option[Int],
-threshold: Option[Int] = Some(80)
+    field: Field,
+    id: String,
+    name: String,
+    label: String,
+    isLabelHidden: Boolean = false,
+    isPageHeading: Boolean = false,
+    hint: Option[Content] = None,
+    maxLength: Option[Int],
+    threshold: Option[Int] = Some(80)
 )(implicit messages: Messages)
 
 @labelClasses = @{
-if (isPageHeading) "govuk-label--l"
-else if (hint.isDefined) "govuk-!-font-weight-bold"
-else if (isLabelHidden) "govuk-visually-hidden"
-else ""
+    if (isPageHeading) "govuk-label--l"
+    else if (hint.isDefined) "govuk-!-font-weight-bold"
+    else if (isLabelHidden) "govuk-visually-hidden"
+    else ""
 }
 
 @govukCharacterCount(CharacterCount(
-id = id,
-name = name,
-maxLength = maxLength,
-threshold = threshold,
-label = Label(
-content = Text(label),
-isPageHeading = isPageHeading,
-classes = labelClasses
-),
-hint = hint.map(text => Hint(
-content = Text(text)
-)),
-value = field.value,
-errorMessage = field.error map { e =>
-ErrorMessage(content = Text(messages(e.message, e.args: _*)))
-}
+    id = id,
+    name = name,
+    maxLength = maxLength,
+    threshold = threshold,
+    label = Label(
+        content = Text(label),
+        isPageHeading = isPageHeading,
+        classes = labelClasses
+    ),
+    hint = hint.map(hintContent => Hint(content = hintContent)),
+    value = field.value,
+    errorMessage = field.error map { e =>
+        ErrorMessage(content = Text(messages(e.message, e.args: _*)))
+    }
 ))
