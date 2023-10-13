@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import models.UserAnswers
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import viewmodels.summary.changeActivity.PackagingSiteDetailsSummary
 
 object ChangeActivitySummary  {
 
@@ -29,6 +30,8 @@ object ChangeActivitySummary  {
     val ownBrandsSummary: SummaryList = OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
     val contractSummary: SummaryList = ContractPackingSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
     val importsSummary: SummaryList = ImportsSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
+    val packingSummary: Option[SummaryList] = PackagingSiteDetailsSummary.summaryList(userAnswers, isCheckAnswers)
+    val warehouseSummary: Option[SummaryList] = WarehouseDetailsSummary.summaryList(userAnswers, isCheckAnswers)
     val amountProducedSection: Option[(String, SummaryList)] = amountProducedSummary.map(summary => {
       "changeActivity.checkYourAnswers.amountProducedSection" -> SummaryList(Seq(summary))
     })
@@ -53,6 +56,16 @@ object ChangeActivitySummary  {
           ImportsSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
       )
     }
-    (amountProducedSection ++ thirdPartyPackagersSection ++ ownBrandsSection ++ contractSection ++ importsSection).toSeq
+
+    val sitesSection: Option[(String, SummaryList)] = if(packingSummary.isEmpty && warehouseSummary.isEmpty) None else {
+      (packingSummary,warehouseSummary) match {
+        case (Some(packingSites), Some(warehouseSites)) => Option("checkYourAnswers.sites" -> SummaryList(packingSites.rows ++ warehouseSites.rows))
+        case (Some(packingSites), None) => Option("checkYourAnswers.sites" -> packingSites)
+        case (None, Some(warehouseSites)) => Option("checkYourAnswers.sites" -> warehouseSites)
+      }
+    }
+
+
+    (amountProducedSection ++ thirdPartyPackagersSection ++ ownBrandsSection ++ contractSection ++ importsSection ++ sitesSection).toSeq
   }
 }

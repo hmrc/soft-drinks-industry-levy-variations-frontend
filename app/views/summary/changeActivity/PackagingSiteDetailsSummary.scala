@@ -21,9 +21,9 @@ import models.backend.Site
 import models.{CheckMode, NormalMode, UserAnswers}
 import pages.changeActivity.PackagingSiteDetailsPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import viewmodels.AddressFormattingHelper
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
@@ -63,4 +63,35 @@ object PackagingSiteDetailsSummary  {
           )
       }.toList
     }
+
+  def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)
+                 (implicit messages: Messages): Option[SummaryList] = {
+
+    userAnswers.packagingSiteList.nonEmpty match{
+      case true =>
+        Some(
+          SummaryListViewModel(
+            rows = Seq(SummaryListRowViewModel(
+              key = if(userAnswers.packagingSiteList.size > 1){
+                messages("checkYourAnswers.packing.checkYourAnswersLabel.multiple",  {userAnswers.packagingSiteList.size.toString})}else{
+                messages("checkYourAnswers.packing.checkYourAnswersLabel.one")
+              },
+              value = Value(),
+              actions = if (isCheckAnswers) {
+                Seq(
+                  ActionItemViewModel("site.change", routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
+                    .withAttribute(("id", "change-packaging-sites"))
+                    .withVisuallyHiddenText(messages("checkYourAnswers.sites.packing.change.hidden.one"))
+                )
+              } else {
+                Seq.empty
+              }
+            )
+            )
+          )
+        )
+      case _ => None
+    }
+  }
+
 }

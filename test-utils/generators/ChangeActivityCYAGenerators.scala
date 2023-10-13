@@ -16,13 +16,15 @@
 
 package generators
 
-import models.backend.UkAddress
-import models.{LitresInBands, SelectChange, UserAnswers}
+import models.backend.{Site, UkAddress}
+import models.{LitresInBands, SelectChange, UserAnswers, Warehouse}
 import models.changeActivity.AmountProduced
 import models.changeActivity.AmountProduced.{Large, Small, enumerable, None => NoneProduced}
 import org.scalatest.TryValues
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import pages.changeActivity._
+
+import java.time.LocalDate
 
 object ChangeActivityCYAGenerators {
 
@@ -101,6 +103,30 @@ object ChangeActivityCYAGenerators {
       }
       ChangeActivityCYAUserAnswers(userAnswersWithPackAtBusinessAddress)
     }
+
+    val twoWarehouses: Map[String,Warehouse] = Map(
+      "1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
+      "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"))
+    )
+
+    val oneProductionSite: Map[String,Site] = Map(
+      "1" -> Site(
+        UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
+        Some("88"),
+        Some("Wild Lemonade Group"),
+        Some(LocalDate.of(2018, 2, 26)))
+    )
+
+    def withSites (packingSites: Option[Site] = None, warehouse: Option[Warehouse] = None): ChangeActivityCYAUserAnswers = {
+      val userAnswersWithSites = (packingSites, warehouse) match {
+        case (Some(packingSites), Some(warehouseSites)) => userAnswers.copy(packagingSiteList = oneProductionSite, warehouseList = twoWarehouses)
+        case (Some(packingSites), None) => userAnswers.copy(packagingSiteList = oneProductionSite)
+        case (None, Some(warehouseSites)) => userAnswers.copy(warehouseList = twoWarehouses)
+        case (None, None) => userAnswers
+      }
+      ChangeActivityCYAUserAnswers(userAnswersWithSites)
+    }
+
   }
 
   def getUserAnswers(
@@ -109,6 +135,8 @@ object ChangeActivityCYAGenerators {
                       ownBrands: Option[Boolean] = None,
                       contract: Option[Boolean] = None,
                       imports: Option[Boolean] = None,
+                      packingSite: Option[Site] = None,
+                      warehouse: Option[Warehouse] = None,
                       packAtBusinessAddress: Option[Boolean] = None
                     ): UserAnswers = {
     ChangeActivityCYAUserAnswers(emptyUserAnswersForChangeActivity.set(SecondaryWarehouseDetailsPage, false).success.value)
@@ -118,6 +146,7 @@ object ChangeActivityCYAGenerators {
       .withContract(contract)
       .withImports(imports)
       .withPackAtBusinessAddress(packAtBusinessAddress)
+      .withSites(packingSite, warehouse)
       .userAnswers
   }
 
@@ -227,5 +256,19 @@ object ChangeActivityCYAGenerators {
       userAnswerOptions.packAtBusinessAddressTuple._2
     )
   }
+  val packingSitesValues: Map[String, Option[Site]] = Map(
+    "packing site" -> Some(Site(address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"), ref = None, tradingName = Some("Test trading name 1"), closureDate = None)),
+    "no packing site"-> None
+  )
+
+  val warehouseValues: Map[String, Option[Warehouse]] = Map(
+    "warehouse site" -> Some(Warehouse(address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"), tradingName = Some("Test trading name 1"))),
+    "no warehouse"-> None
+  )
+
+  val thirdPartyPackagingValues: Map[String, Option[Boolean]] = Map("using third party packagers" -> Some(true), "not using third party packagers" -> Some(false), "" -> None)
+  val ownBrandsValues: Map[String, Option[Boolean]] = Map("producing own brands" -> Some(true), "not producing own brands" -> Some(false), "" -> None)
+  val contractValues: Map[String, Option[Boolean]] = Map("contract packing" -> Some(true), "not contract packing" -> Some(false), "" -> None)
+  val importValues: Map[String, Option[Boolean]] = Map("importing" -> Some(true), "not importing" -> Some(false), "" -> None)
 
 }
