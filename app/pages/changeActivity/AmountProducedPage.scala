@@ -16,6 +16,8 @@
 
 package pages.changeActivity
 
+import controllers.changeActivity.routes
+import models.Mode
 import models.changeActivity.AmountProduced
 import play.api.libs.json.JsPath
 import pages.QuestionPage
@@ -26,4 +28,6 @@ case object AmountProducedPage extends QuestionPage[AmountProduced] {
 
   def journeyType: String = "changeActivity"
   override def toString: String = "amountProduced"
+
+  override val url: Mode => String = mode => routes.AmountProducedController.onPageLoad(mode).url
 }

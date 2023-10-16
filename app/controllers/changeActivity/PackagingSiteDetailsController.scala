@@ -55,17 +55,20 @@ class PackagingSiteDetailsController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
+      if (request.userAnswers.packagingSiteList.isEmpty && mode == CheckMode) {
+        Redirect(routes.PackAtBusinessAddressController.onPageLoad(mode).url)
+      } else {
+        val preparedForm = request.userAnswers.get(PackagingSiteDetailsPage) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
 
-      val preparedForm = request.userAnswers.get(PackagingSiteDetailsPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+        val siteList: SummaryList = SummaryListViewModel(
+          rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList)
+        )
+
+        Ok(view(preparedForm, mode, siteList))
       }
-
-      val siteList: SummaryList = SummaryListViewModel(
-        rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList)
-      )
-
-      Ok(view(preparedForm, mode, siteList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {

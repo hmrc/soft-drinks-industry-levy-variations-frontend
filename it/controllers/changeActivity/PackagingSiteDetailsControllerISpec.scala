@@ -2,7 +2,7 @@ package controllers.changeActivity
 
 import controllers.{ControllerITTestHelper, routes}
 import models.SelectChange.ChangeActivity
-import models.UserAnswers
+import models.{CheckMode, UserAnswers}
 import models.alf.init._
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
@@ -39,6 +39,29 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
             radioInputs.get(0).hasAttr("checked") mustBe false
             radioInputs.get(1).attr("value") mustBe "false"
             radioInputs.get(1).hasAttr("checked") mustBe false
+          }
+        }
+      }
+    }
+
+    s"when the userAnswers contains an empty packaging site list" - {
+      s"should return OK" in {
+        given
+          .commonPrecondition
+
+        setAnswers(emptyUserAnswersForChangeActivity.copy(packagingSiteList = Map.empty))
+
+        WsTestClient.withClient { client =>
+          val result1 = createClientRequestGet(client, changeActivityBaseUrl + normalRoutePath)
+
+          whenReady(result1) { res =>
+            res.status mustBe 200
+            val page = Jsoup.parse(res.body)
+            page.title must include(Messages("changeActivity.packagingSiteDetails" + ".title"))
+            val radioInputs = page.getElementsByClass("govuk-radios__input")
+            radioInputs.size() mustBe 2
+            radioInputs.get(0).attr("value") mustBe "true"
+            radioInputs.get(1).attr("value") mustBe "false"
           }
         }
       }
@@ -96,6 +119,24 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
             radioInputs.get(0).hasAttr("checked") mustBe false
             radioInputs.get(1).attr("value") mustBe "false"
             radioInputs.get(1).hasAttr("checked") mustBe false
+          }
+        }
+      }
+    }
+
+    s"when the userAnswers contains an empty packaging site list" - {
+      s"should redirect to PackAtBusinessAddress" in {
+        given
+          .commonPrecondition
+
+        setAnswers(emptyUserAnswersForChangeActivity.copy(packagingSiteList = Map.empty))
+
+        WsTestClient.withClient { client =>
+          val result1 = createClientRequestGet(client, changeActivityBaseUrl + checkRoutePath)
+
+          whenReady(result1) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url)
           }
         }
       }
