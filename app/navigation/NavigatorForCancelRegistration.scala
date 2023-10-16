@@ -34,7 +34,8 @@ class NavigatorForCancelRegistration @Inject()() extends Navigator {
   }
 
   override val checkRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => routes.CancelRegistrationCYAController.onPageLoad
+    case CancelRegistrationDatePage => _ => routes.CancelRegistrationCYAController.onPageLoad
     case ReasonPage => _ => routes.CancelRegistrationCYAController.onPageLoad
+    case _ => _ => routes.CancelRegistrationCYAController.onPageLoad
   }
 }

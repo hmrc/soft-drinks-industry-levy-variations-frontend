@@ -74,7 +74,7 @@ class CancelRegistrationCYAControllerISpec extends ControllerITTestHelper {
   }
 
   "POST " + routes.CancelRegistrationCYAController.onSubmit.url - {
-    "should redirect to Index controller when user answers empty" in {
+    "should redirect to Cancellation Request done controller" in {
       given
         .commonPrecondition
 
@@ -85,7 +85,7 @@ class CancelRegistrationCYAControllerISpec extends ControllerITTestHelper {
 
         whenReady(result) { res =>
           res.status mustBe 303
-          res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+          res.header(HeaderNames.LOCATION) mustBe Some(routes.CancellationRequestDoneController.onPageLoad.url)
         }
       }
     }
