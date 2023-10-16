@@ -155,7 +155,7 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
                 val dataStoredForPage = getAnswers(sdilNumber).fold[Option[RepaymentMethod]](None)(_.get(RepaymentMethodPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
@@ -177,7 +177,7 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[RepaymentMethod]](None)(_.get(RepaymentMethodPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
@@ -234,7 +234,7 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
                 val dataStoredForPage = getAnswers(sdilNumber).fold[Option[RepaymentMethod]](None)(_.get(RepaymentMethodPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
@@ -256,7 +256,7 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[RepaymentMethod]](None)(_.get(RepaymentMethodPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
