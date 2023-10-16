@@ -65,33 +65,26 @@ object PackagingSiteDetailsSummary  {
     }
 
   def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)
-                 (implicit messages: Messages): Option[SummaryList] = {
+                 (implicit messages: Messages): SummaryList = {
 
-    userAnswers.packagingSiteList.nonEmpty match{
-      case true =>
-        Some(
-          SummaryListViewModel(
-            rows = Seq(SummaryListRowViewModel(
-              key = if(userAnswers.packagingSiteList.size > 1){
-                messages("checkYourAnswers.packing.checkYourAnswersLabel.multiple",  {userAnswers.packagingSiteList.size.toString})}else{
-                messages("checkYourAnswers.packing.checkYourAnswersLabel.one")
-              },
-              value = Value(),
-              actions = if (isCheckAnswers) {
-                Seq(
-                  ActionItemViewModel("site.change", routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
-                    .withAttribute(("id", "change-packaging-sites"))
-                    .withVisuallyHiddenText(messages("checkYourAnswers.sites.packing.change.hidden.one"))
-                )
-              } else {
-                Seq.empty
-              }
-            )
-            )
+    SummaryListViewModel(
+      rows = Seq(SummaryListRowViewModel(
+        key = if(userAnswers.packagingSiteList.size > 1){
+          messages("checkYourAnswers.packing.checkYourAnswersLabel.multiple",  {userAnswers.packagingSiteList.size.toString})}else{
+          messages("checkYourAnswers.packing.checkYourAnswersLabel.one", {userAnswers.packagingSiteList.size.toString})
+        },
+        value = Value(),
+        actions = if (isCheckAnswers) {
+          Seq(
+            ActionItemViewModel("site.change", routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
+            .withAttribute(("id", "change-packaging-sites"))
+            .withVisuallyHiddenText(messages("checkYourAnswers.sites.packing.change.hidden.one"))
           )
+        } else {
+          Seq.empty
+        }
         )
-      case _ => None
+      )
+    )
     }
-  }
-
 }

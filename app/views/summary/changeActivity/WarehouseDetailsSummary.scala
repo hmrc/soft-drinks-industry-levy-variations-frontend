@@ -64,16 +64,13 @@ object WarehouseDetailsSummary  {
     }
 
   def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)
-                 (implicit messages: Messages): Option[SummaryList] = {
+                 (implicit messages: Messages): SummaryList = {
 
-    userAnswers.warehouseList.nonEmpty match{
-      case true =>
-        Some(
           SummaryListViewModel(
             rows = Seq(SummaryListRowViewModel(
               key = if(userAnswers.warehouseList.size > 1){
                 messages("checkYourAnswers.warehouse.checkYourAnswersLabel.multiple",  {userAnswers.warehouseList.size.toString})}else{
-                messages("checkYourAnswers.warehouse.checkYourAnswersLabel.one")
+                messages("checkYourAnswers.warehouse.checkYourAnswersLabel.one", {userAnswers.warehouseList.size.toString})
               },
               value = Value(),
               actions = if (isCheckAnswers) {
@@ -88,9 +85,6 @@ object WarehouseDetailsSummary  {
             )
             )
           )
-        )
-      case _ => None
-    }
   }
 
 }

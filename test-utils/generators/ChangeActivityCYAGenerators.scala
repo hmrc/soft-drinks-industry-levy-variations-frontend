@@ -119,9 +119,16 @@ object ChangeActivityCYAGenerators {
 
     def withSites (packingSites: Option[Site] = None, warehouse: Option[Warehouse] = None): ChangeActivityCYAUserAnswers = {
       val userAnswersWithSites = (packingSites, warehouse) match {
-        case (Some(packingSites), Some(warehouseSites)) => userAnswers.copy(packagingSiteList = oneProductionSite, warehouseList = twoWarehouses)
-        case (Some(packingSites), None) => userAnswers.copy(packagingSiteList = oneProductionSite)
-        case (None, Some(warehouseSites)) => userAnswers.copy(warehouseList = twoWarehouses)
+        case (Some(packingSites), Some(warehouseSites)) => userAnswers
+          .copy(packagingSiteList = oneProductionSite, warehouseList = twoWarehouses)
+          .set(PackagingSiteDetailsPage, true).success.value
+          .set(SecondaryWarehouseDetailsPage, true).success.value
+        case (Some(packingSites), None) => userAnswers
+          .copy(packagingSiteList = oneProductionSite)
+          .set(PackagingSiteDetailsPage, true).success.value
+        case (None, Some(warehouseSites)) => userAnswers
+          .copy(warehouseList = twoWarehouses)
+          .set(SecondaryWarehouseDetailsPage, true).success.value
         case (None, None) => userAnswers
       }
       ChangeActivityCYAUserAnswers(userAnswersWithSites)
