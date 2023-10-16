@@ -51,17 +51,13 @@ class PackAtBusinessAddressController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
-      if (request.userAnswers.packagingSiteList.nonEmpty) {
-        Redirect(routes.PackagingSiteDetailsController.onPageLoad(mode).url)
-      } else {
-        val formattedAddress = AddressFormattingHelper.addressFormatting(request.subscription.address, Option(request.subscription.orgName))
-        val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
-
-        Ok(view(preparedForm, mode, formattedAddress))
+      val formattedAddress = AddressFormattingHelper.addressFormatting(request.subscription.address, Option(request.subscription.orgName))
+      val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
+        case None => form
+        case Some(value) => form.fill(value)
       }
+
+      Ok(view(preparedForm, mode, formattedAddress))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {

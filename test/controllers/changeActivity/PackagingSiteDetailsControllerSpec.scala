@@ -19,7 +19,7 @@ package controllers.changeActivity
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.changeActivity.PackagingSiteDetailsFormProvider
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import models.SelectChange.ChangeActivity
 import navigation._
 import org.mockito.ArgumentMatchers
@@ -49,6 +49,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
   val form: Form[Boolean] = formProvider()
 
   lazy val packagingSiteDetailsRoute: String = routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
+  lazy val packagingSiteDetailsCheckRoute: String = routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
 
   "PackagingSiteDetails Controller" - {
 
@@ -69,6 +70,22 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode, summary)(request, messages(application)).toString
+      }
+    }
+
+    "must redirect to PackAtBusinessAddress when packaging site list empty and in CheckMode" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity.copy(packagingSiteList = Map.empty))).build()
+
+      running(application) {
+        val request = FakeRequest(GET, packagingSiteDetailsCheckRoute)
+//        when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
+//          createSuccessVariationResult(Some(aSubscription))
+//        }
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url
       }
     }
 

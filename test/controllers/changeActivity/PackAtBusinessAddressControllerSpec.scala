@@ -75,22 +75,6 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to PackagingSiteDetails when packaging site list not empty" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity.copy(packagingSiteList = packingSiteMap))).build()
-
-      running(application) {
-        val request = FakeRequest(GET, packAtBusinessAddressRoute)
-        when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
-          createSuccessVariationResult(Some(aSubscription))
-        }
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
-      }
-    }
-
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = emptyUserAnswersForChangeActivity.set(PackAtBusinessAddressPage, true).success.value

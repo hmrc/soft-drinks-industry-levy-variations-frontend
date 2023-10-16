@@ -92,9 +92,7 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
       List(List(PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitBoolean)))
     val pagesRequiredForOperatePackagingSiteOwnBrandsPage: List[List[PreviousPage[_, _]]] =
       List(List(PreviousPage(AmountProducedPage, List(smallProducer, largeProducer))(implicitAmountProduced)))
-    val pagesRequiredForPackagingSiteDetailsPage: List[List[PreviousPage[_, _]]] =
-      List(List(PreviousPage(PackAtBusinessAddressPage, List(true, false))(implicitBoolean)))
-    val pagesRequiredForPackAtBusinessAddressPage: List[List[PreviousPage[_, _]]] = List(
+    val pagesRequiredForPackagingSiteDetailsPage: List[List[PreviousPage[_, _]]] = List(
       List(previousPageSmallOrNonProducer, PreviousPage(ContractPackingPage, List(true))(implicitBoolean)),
       List(PreviousPage(AmountProducedPage, List(largeProducer))(implicitAmountProduced), PreviousPage(OperatePackagingSiteOwnBrandsPage, List(false))(implicitBoolean), PreviousPage(ContractPackingPage, List(true))(implicitBoolean)),
       List(PreviousPage(AmountProducedPage, List(largeProducer))(implicitAmountProduced), PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitBoolean), PreviousPage(ContractPackingPage, List(true, false))(implicitBoolean))
@@ -110,7 +108,6 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
       pagesRequiredForHowManyContractPackingPage.map(RequiredPage(HowManyContractPackingPage, _)(implicitBands)),
       List(RequiredPage(ImportsPage, List.empty)(implicitBoolean)),
       pagesRequiredForHowManyImportsPage.map(RequiredPage(HowManyImportsPage, _)(implicitBands)),
-      pagesRequiredForPackAtBusinessAddressPage.map(RequiredPage(PackAtBusinessAddressPage, _)(implicitBoolean)),
       pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean)),
       List(RequiredPage(SecondaryWarehouseDetailsPage, List.empty)(implicitBoolean))
     ).flatten

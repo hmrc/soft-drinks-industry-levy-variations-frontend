@@ -174,7 +174,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
         val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers)))
-        res.get mustBe controllers.changeActivity.routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url
+        res.get mustBe controllers.changeActivity.routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
       }
 
       s"when AmountProduced is $Large and contractPacking is true, OperatePackagingSites is false and pack at business address is not answered" in {
@@ -189,7 +189,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
         val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers)))
-        res.get mustBe controllers.changeActivity.routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url
+        res.get mustBe controllers.changeActivity.routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
       }
 
       s"when AmountProduced is $Small, $OperatePackagingSiteOwnBrandsPage is true, $ContractPackingPage is true, and " +
@@ -207,7 +207,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
         val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers)))
-        res.get mustBe controllers.changeActivity.routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url
+        res.get mustBe controllers.changeActivity.routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
       }
 
       s"when AmountProduced is $None and contractPacking is true and pack at business address is not answered" in {
@@ -221,7 +221,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
         val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers)))
-        res.get mustBe controllers.changeActivity.routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url
+        res.get mustBe controllers.changeActivity.routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
       }
       List[QuestionPage[_]](
         AmountProducedPage,
@@ -231,7 +231,6 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         HowManyOperatePackagingSiteOwnBrandsPage,
         ImportsPage,
         HowManyImportsPage,
-        PackAtBusinessAddressPage,
         PackagingSiteDetailsPage
       ).foreach { eachPage =>
         s"when $eachPage is filtered out from a full list of user answers set to true, the user is taken to that page that is required for ${AmountProduced.Large}" in {
@@ -284,7 +283,6 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         HowManyOperatePackagingSiteOwnBrandsPage,
         ImportsPage,
         HowManyImportsPage,
-        PackAtBusinessAddressPage,
         PackagingSiteDetailsPage
       ).foreach { eachPage =>
         s"when $eachPage is filtered out from a full list of user answers of true, the user is taken to that page that is required for ${AmountProduced.Small}" in {
@@ -312,8 +310,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         ThirdPartyPackagersPage,
         OperatePackagingSiteOwnBrandsPage,
         ImportsPage,
-        HowManyImportsPage,
-        PackagingSiteDetailsPage
+        HowManyImportsPage
       ).foreach { eachPage =>
         s"when $eachPage is filtered out from a full list of user answers of false, the user is taken to that page that is required for ${AmountProduced.Small}" in {
           val userAnswers = {
@@ -416,7 +413,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
       implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
 
       val res = requiredUserAnswers.returnMissingAnswers(requiredUserAnswers.journey)
-      res mustBe List(RequiredPage(PackAtBusinessAddressPage, List(
+      res mustBe List(RequiredPage(PackagingSiteDetailsPage, List(
         PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]]),
         PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitly[Reads[Boolean]]),
         PreviousPage(ContractPackingPage, List(true, false))(implicitly[Reads[Boolean]])))(implicitly[Reads[Boolean]]))
@@ -437,7 +434,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
       }
       implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
       val res = requiredUserAnswers.returnMissingAnswers(requiredUserAnswers.journey)
-      res mustBe List(RequiredPage(PackAtBusinessAddressPage, List(
+      res mustBe List(RequiredPage(PackagingSiteDetailsPage, List(
         PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]]),
         PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitly[Reads[Boolean]]),
         PreviousPage(ContractPackingPage, List(true, false))(implicitly[Reads[Boolean]])))(implicitly[Reads[Boolean]]))
@@ -459,7 +456,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
       }
       implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
       val res = requiredUserAnswers.returnMissingAnswers(requiredUserAnswers.journey)
-      res mustBe List(RequiredPage(PackAtBusinessAddressPage, List(
+      res mustBe List(RequiredPage(PackagingSiteDetailsPage, List(
         PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get,
           AmountProduced.enumerable.withName("none").get))(implicitly[Reads[AmountProduced]]),
         PreviousPage(ContractPackingPage, List(true))(implicitly[Reads[Boolean]])))(implicitly[Reads[Boolean]]))
@@ -477,7 +474,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
       }
       implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
       val res = requiredUserAnswers.returnMissingAnswers(requiredUserAnswers.journey)
-      res mustBe List(RequiredPage(PackAtBusinessAddressPage, List(
+      res mustBe List(RequiredPage(PackagingSiteDetailsPage, List(
         PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get,
           AmountProduced.enumerable.withName("none").get))(implicitly[Reads[AmountProduced]]),
         PreviousPage(ContractPackingPage, List(true))(implicitly[Reads[Boolean]])))(implicitly[Reads[Boolean]]))
