@@ -19,6 +19,7 @@ package navigation
 import base.SpecBase
 import models._
 import pages._
+import pages.correctReturn.RepaymentMethodPage
 
 class NavigatorForCorrectReturnSpec extends SpecBase {
 
@@ -32,6 +33,11 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
 
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress = contactAddress)) mustBe defaultCall
+      }
+
+      "must go from repayment method page to check changes page" in {
+        navigator.nextPage(RepaymentMethodPage, NormalMode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
+          contactAddress)) mustBe controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad
       }
     }
 
