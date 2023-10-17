@@ -2,7 +2,7 @@ package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.CorrectReturn
-import models.{ReturnPeriod, SmallProducer}
+import models.{CheckMode, NormalMode, ReturnPeriod, SmallProducer}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import play.api.i18n.Messages
@@ -209,7 +209,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
         whenReady(result) { res =>
           res.status mustBe 303
-          res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+          res.header(HeaderNames.LOCATION) mustBe Some(routes.SmallProducerDetailsController.onPageLoad(NormalMode).url)
           getAnswers(sdilNumber).map(userAnswers => userAnswers.smallProducerList) mustBe expectedResult
         }
 
@@ -335,7 +335,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
         whenReady(result) { res =>
           res.status mustBe 303
-          res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
+          res.header(HeaderNames.LOCATION) mustBe Some(routes.SmallProducerDetailsController.onPageLoad(CheckMode).url)
           getAnswers(sdilNumber).map(userAnswers => userAnswers.smallProducerList) mustBe expectedResult
         }
       }
