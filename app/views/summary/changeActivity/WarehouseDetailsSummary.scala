@@ -68,7 +68,7 @@ object WarehouseDetailsSummary  {
 
           SummaryListViewModel(
             rows = Seq(SummaryListRowViewModel(
-              key = if(userAnswers.warehouseList.size > 1){
+              key = if(userAnswers.warehouseList.size != 1){
                 messages("checkYourAnswers.warehouse.checkYourAnswersLabel.multiple",  {userAnswers.warehouseList.size.toString})}else{
                 messages("checkYourAnswers.warehouse.checkYourAnswersLabel.one", {userAnswers.warehouseList.size.toString})
               },

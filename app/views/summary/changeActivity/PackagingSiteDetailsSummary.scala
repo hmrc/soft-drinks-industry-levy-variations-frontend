@@ -69,7 +69,7 @@ object PackagingSiteDetailsSummary  {
 
     SummaryListViewModel(
       rows = Seq(SummaryListRowViewModel(
-        key = if(userAnswers.packagingSiteList.size > 1){
+        key = if(userAnswers.packagingSiteList.size != 1){
           messages("checkYourAnswers.packing.checkYourAnswersLabel.multiple",  {userAnswers.packagingSiteList.size.toString})}else{
           messages("checkYourAnswers.packing.checkYourAnswersLabel.one", {userAnswers.packagingSiteList.size.toString})
         },
