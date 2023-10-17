@@ -162,7 +162,6 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
 
       (packingSites,warehouseSites) match {
         case (Some(packingSites), Some(warehouseSites)) => sectionIndex map { sectionInd =>
-
           val sites = page.getElementsByClass("govuk-summary-list").get(sectionInd).getElementsByClass("govuk-summary-list__row")
           sites.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change the UK warehouse you use to store liable drinks"
           sites.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "the UK warehouse you use to store liable drinks"
@@ -201,6 +200,8 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
       val ownBrandsValue = userAnswerOptions.ownBrandsTuple._2
       val contractValue = userAnswerOptions.contractTuple._2
       val importValue = userAnswerOptions.importTuple._2
+      val warehouseValue = userAnswerOptions.warehouseSite._2
+      val packingSiteValue = userAnswerOptions.packingSite._2
 
       s"when the userAnswers contains $key" - {
         "should render the page" in {
@@ -222,8 +223,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
                 ownBrandsValue.nonEmpty,
                 contractValue.nonEmpty,
                 importValue.nonEmpty,
-                packingSitesValues.nonEmpty,
-                warehouseValues.nonEmpty
+                packingSitesValues.nonEmpty || warehouseValues.nonEmpty
               ).foldLeft(Seq[Option[Int]]()) { (indexes, sectionDefined) =>
                 indexes :+ (if (sectionDefined) Option(indexes.filter(_.nonEmpty).flatten.size) else None)
               }
@@ -233,7 +233,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
               testOwnBrandsSection(page, ownBrandsValue, sectionIndex = sectionIndexes(2))
               testContractSection(page, contractValue, sectionIndex = sectionIndexes(3))
               testImportSection(page, importValue, sectionIndex = sectionIndexes(4))
-              testSiteSection(page, packingSitesValues, warehouseValues, sectionIndex = sectionIndexes(5))
+              testSiteSection(page, packingSiteValue, warehouseValue, sectionIndex = sectionIndexes(5))
               page.getElementsByTag("form").first().attr("action") mustBe routes.ChangeActivityCYAController.onSubmit.url
               page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm updates and send"
             }

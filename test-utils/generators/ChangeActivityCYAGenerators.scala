@@ -184,6 +184,15 @@ object ChangeActivityCYAGenerators {
     Map(Answers.Yes -> ("importing", Some(true)), Answers.No -> ("not importing", Some(false)), Answers.Unanswered -> ("", None))
   val packAtBusinessAddressValues: Map[Answers.Value, (String, Option[Boolean])] =
     Map(Answers.Yes -> ("packing at business address", Some(true)), Answers.No -> ("not packing at business address", Some(false)), Answers.Unanswered -> ("", None))
+  val packingSitesValues: Map[Answers.Value, (String, Option[Site])] =
+    Map(Answers.Yes -> ("added a packing site" -> Some(Site(address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"), ref = None, tradingName = Some("Test trading name 1"), closureDate = None))),
+    Answers.No -> ("had a packing site" -> Some(Site(address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"), ref = None, tradingName = Some("Test trading name 1"), closureDate = None))),
+    Answers.Unanswered -> ("no packing site", None))
+  val warehouseValues: Map[Answers.Value, (String, Option[Warehouse])] = Map(
+    Answers.Yes -> ("added a warehouse site" -> Some(Warehouse(address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"), tradingName = Some("Test trading name 1")))),
+    Answers.No -> ("had a warehouse site" -> Some(Warehouse(address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"), tradingName = Some("Test trading name 1")))),
+    Answers.Unanswered -> ("no warehouse"-> None)
+  )
 
   def makeKeyString(keyStrings: List[String]): String = keyStrings.filterNot(_.isEmpty).mkString(", ")
 
@@ -193,20 +202,22 @@ object ChangeActivityCYAGenerators {
                                 ownBrandsTuple: (String, Option[Boolean]),
                                 contractTuple: (String, Option[Boolean]),
                                 importTuple: (String, Option[Boolean]),
+                                warehouseSite: (String, Option[Warehouse]),
+                                packingSite: (String, Option[Site]),
                                 packAtBusinessAddressTuple: (String, Option[Boolean]))
 
   val largeTestCaseOptions: List[UserAnswerOptions] = Answers.All.flatMap(tpp => {
     Answers.Answered.map(imp => {
       List(
-        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.Yes), contractValues(Answers.Yes), importValues(imp), packAtBusinessAddressValues(Answers.Yes)),
-        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.Yes), contractValues(Answers.Yes), importValues(imp), packAtBusinessAddressValues(Answers.No)),
-        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.Yes), contractValues(Answers.No), importValues(imp), packAtBusinessAddressValues(Answers.Yes)),
-        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.Yes), contractValues(Answers.No), importValues(imp), packAtBusinessAddressValues(Answers.No)),
-        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.No), contractValues(Answers.Yes), importValues(imp), packAtBusinessAddressValues(Answers.Yes)),
-        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.No), contractValues(Answers.Yes), importValues(imp), packAtBusinessAddressValues(Answers.No)),
-        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(imp), packAtBusinessAddressValues(Answers.Yes)),
-        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(imp), packAtBusinessAddressValues(Answers.No)),
-        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(imp), packAtBusinessAddressValues(Answers.Unanswered))
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.Yes), contractValues(Answers.Yes), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.Yes)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.Yes), contractValues(Answers.Yes), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.No)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.Yes), contractValues(Answers.No), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.Yes)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.Yes), contractValues(Answers.No), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.No)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.No), contractValues(Answers.Yes), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.Yes)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.No), contractValues(Answers.Yes), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.No)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.Yes)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.No)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.Unanswered))
       )
     })
   }).flatten
@@ -215,11 +226,11 @@ object ChangeActivityCYAGenerators {
     Answers.Answered.map(ob => {
       Answers.Answered.map(imp => {
         List(
-          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(imp), packAtBusinessAddressValues(Answers.Yes)),
-          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(imp), packAtBusinessAddressValues(Answers.No)),
-          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), packAtBusinessAddressValues(Answers.Yes)),
-          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), packAtBusinessAddressValues(Answers.No)),
-          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), packAtBusinessAddressValues(Answers.Unanswered))
+          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.Yes)),
+          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.No)),
+          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.Yes)),
+          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.No)),
+          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.Unanswered))
         )
       })
     })
@@ -229,11 +240,11 @@ object ChangeActivityCYAGenerators {
     Answers.All.map(ob => {
       Answers.Answered.map(imp => {
         List(
-          UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(imp), packAtBusinessAddressValues(Answers.Yes)),
-          UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(imp), packAtBusinessAddressValues(Answers.No)),
-          UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), packAtBusinessAddressValues(Answers.Yes)),
-          UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), packAtBusinessAddressValues(Answers.No)),
-          UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), packAtBusinessAddressValues(Answers.Unanswered))
+          UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.Yes)),
+          UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.No)),
+          UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.Yes)),
+          UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.No)),
+          UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.Unanswered))
         )
       })
     })
@@ -248,6 +259,8 @@ object ChangeActivityCYAGenerators {
       userAnswerOptions.ownBrandsTuple._1,
       userAnswerOptions.contractTuple._1,
       userAnswerOptions.importTuple._1,
+      userAnswerOptions.packingSite._1,
+      userAnswerOptions.warehouseSite._1,
       userAnswerOptions.packAtBusinessAddressTuple._1
     )
     makeKeyString(keyStrings)
@@ -260,22 +273,9 @@ object ChangeActivityCYAGenerators {
       userAnswerOptions.ownBrandsTuple._2,
       userAnswerOptions.contractTuple._2,
       userAnswerOptions.importTuple._2,
+      userAnswerOptions.packingSite._2,
+      userAnswerOptions.warehouseSite._2,
       userAnswerOptions.packAtBusinessAddressTuple._2
     )
   }
-  val packingSitesValues: Map[String, Option[Site]] = Map(
-    "packing site" -> Some(Site(address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"), ref = None, tradingName = Some("Test trading name 1"), closureDate = None)),
-    "no packing site"-> None
-  )
-
-  val warehouseValues: Map[String, Option[Warehouse]] = Map(
-    "warehouse site" -> Some(Warehouse(address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"), tradingName = Some("Test trading name 1"))),
-    "no warehouse"-> None
-  )
-
-  val thirdPartyPackagingValues: Map[String, Option[Boolean]] = Map("using third party packagers" -> Some(true), "not using third party packagers" -> Some(false), "" -> None)
-  val ownBrandsValues: Map[String, Option[Boolean]] = Map("producing own brands" -> Some(true), "not producing own brands" -> Some(false), "" -> None)
-  val contractValues: Map[String, Option[Boolean]] = Map("contract packing" -> Some(true), "not contract packing" -> Some(false), "" -> None)
-  val importValues: Map[String, Option[Boolean]] = Map("importing" -> Some(true), "not importing" -> Some(false), "" -> None)
-
 }
