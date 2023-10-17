@@ -1,8 +1,10 @@
 package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
+import controllers.changeActivity.routes.SecondaryWarehouseDetailsController
 import generators.ChangeActivityCYAGenerators._
-import models.{CheckMode, NormalMode}
+import models.backend.Site
+import models.{CheckMode, NormalMode, Warehouse}
 import models.changeActivity.AmountProduced
 import models.changeActivity.AmountProduced.{Large, Small, None => NoneProduced}
 import org.jsoup.Jsoup
@@ -156,6 +158,39 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
       }
     }
 
+    def testSiteSection(page: Document, packingSites: Option[Site], warehouseSites: Option[Warehouse], sectionIndex: Option[Int]): Unit = {
+
+      (packingSites,warehouseSites) match {
+        case (Some(packingSites), Some(warehouseSites)) => sectionIndex map { sectionInd =>
+          val sites = page.getElementsByClass("govuk-summary-list").get(sectionInd).getElementsByClass("govuk-summary-list__row")
+          sites.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change the UK warehouse you use to store liable drinks"
+          sites.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "the UK warehouse you use to store liable drinks"
+          sites.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe SecondaryWarehouseDetailsController.onPageLoad.url
+          sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change the UK packaging site that you operate to produce liable drinks"
+          sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "the UK packaging site that you operate to produce liable drinks"
+          sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
+        }
+        case (Some(packingSites), None) =>
+          sectionIndex map { sectionInd =>
+
+          val sites = page.getElementsByClass("govuk-summary-list").get(sectionInd).getElementsByClass("govuk-summary-list__row")
+          sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change the UK packaging site that you operate to produce liable drinks"
+          sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "the UK packaging site that you operate to produce liable drinks"
+          sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
+          }
+        case (None, Some(warehouseSites)) =>
+          sectionIndex map { sectionInd =>
+
+            val sites = page.getElementsByClass("govuk-summary-list").get(sectionInd).getElementsByClass("govuk-summary-list__row")
+            sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change the UK warehouse you use to store liable drinks"
+            sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "the UK warehouse you use to store liable drinks"
+            sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe SecondaryWarehouseDetailsController.onPageLoad.url
+          }
+        case (None, None) => None
+      }
+
+    }
+
     testCaseOptions.foreach { case userAnswerOptions =>
 
       val key = getKeyStringFromUserAnswerOptions(userAnswerOptions)
@@ -165,6 +200,8 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
       val ownBrandsValue = userAnswerOptions.ownBrandsTuple._2
       val contractValue = userAnswerOptions.contractTuple._2
       val importValue = userAnswerOptions.importTuple._2
+      val warehouseValue = userAnswerOptions.warehouseSite._2
+      val packingSiteValue = userAnswerOptions.packingSite._2
 
       s"when the userAnswers contains $key" - {
         "should render the page" in {
@@ -185,7 +222,8 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
                 thirdPartyPackagingValue.nonEmpty,
                 ownBrandsValue.nonEmpty,
                 contractValue.nonEmpty,
-                importValue.nonEmpty
+                importValue.nonEmpty,
+                packingSitesValues.nonEmpty || warehouseValues.nonEmpty
               ).foldLeft(Seq[Option[Int]]()) { (indexes, sectionDefined) =>
                 indexes :+ (if (sectionDefined) Option(indexes.filter(_.nonEmpty).flatten.size) else None)
               }
@@ -195,6 +233,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
               testOwnBrandsSection(page, ownBrandsValue, sectionIndex = sectionIndexes(2))
               testContractSection(page, contractValue, sectionIndex = sectionIndexes(3))
               testImportSection(page, importValue, sectionIndex = sectionIndexes(4))
+              testSiteSection(page, packingSiteValue, warehouseValue, sectionIndex = sectionIndexes(5))
               page.getElementsByTag("form").first().attr("action") mustBe routes.ChangeActivityCYAController.onSubmit.url
               page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm updates and send"
             }
