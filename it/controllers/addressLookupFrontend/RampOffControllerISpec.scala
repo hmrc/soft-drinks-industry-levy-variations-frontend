@@ -1,7 +1,7 @@
 package controllers.addressLookupFrontend
 
 import controllers.ControllerITTestHelper
-import models.{NormalMode, Warehouse}
+import models.NormalMode
 import models.backend.{Site, UkAddress}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
@@ -32,8 +32,8 @@ class RampOffControllerISpec extends ControllerITTestHelper {
             updatedUserAnswers.packagingSiteList mustBe emptyUserAnswersForUpdateRegisteredDetails.packagingSiteList
             updatedUserAnswers.submitted mustBe emptyUserAnswersForUpdateRegisteredDetails.submitted
             updatedUserAnswers.smallProducerList mustBe emptyUserAnswersForUpdateRegisteredDetails.smallProducerList
-            updatedUserAnswers.warehouseList mustBe Map(sdilId -> Warehouse(Some("soft drinks ltd"),
-              UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId))))
+            updatedUserAnswers.warehouseList mustBe Map(sdilId -> Site(
+              UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), Some("soft drinks ltd")))
 
             res.status mustBe SEE_OTHER
             res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.WarehouseDetailsController.onPageLoad(NormalMode).url)
@@ -45,7 +45,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
         val sdilId: String = "foo"
         val alfId: String = "bar"
         val userAnswersBefore = emptyUserAnswersForUpdateRegisteredDetails.copy(
-          warehouseList = Map(sdilId -> Warehouse(None, UkAddress(List.empty, "foo", Some("wizz")))))
+          warehouseList = Map(sdilId -> Site(UkAddress(List.empty, "foo", Some("wizz")))))
         given
           .commonPrecondition
           .alf.getAddress(alfId)
@@ -61,8 +61,8 @@ class RampOffControllerISpec extends ControllerITTestHelper {
             updatedUserAnswers.packagingSiteList mustBe emptyUserAnswersForUpdateRegisteredDetails.packagingSiteList
             updatedUserAnswers.submitted mustBe emptyUserAnswersForUpdateRegisteredDetails.submitted
             updatedUserAnswers.smallProducerList mustBe emptyUserAnswersForUpdateRegisteredDetails.smallProducerList
-            updatedUserAnswers.warehouseList mustBe Map(sdilId -> Warehouse(Some("soft drinks ltd"),
-              UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId))))
+            updatedUserAnswers.warehouseList mustBe Map(sdilId -> Site(
+              UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), Some("soft drinks ltd")))
 
             res.status mustBe SEE_OTHER
             res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.WarehouseDetailsController.onPageLoad(NormalMode).url)

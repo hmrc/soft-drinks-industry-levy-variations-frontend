@@ -20,8 +20,8 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.changeActivity.SecondaryWarehouseDetailsFormProvider
 import models.SelectChange.ChangeActivity
-import models.backend.UkAddress
-import models.{UserAnswers, Warehouse}
+import models.UserAnswers
+import models.backend.{Site, UkAddress}
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -109,7 +109,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
     }
 
     "must populate the view correctly on a GET when the question has previously been answered with multiple warehouses in the list" in {
-      val warehouses = Map("1" -> warehouse, "2" -> Warehouse(Some("DEF Ltd"), UkAddress(List("34 Rhes Priordy"),"WR53 7CX")))
+      val warehouses = Map("1" -> warehouse, "2" -> Site(UkAddress(List("34 Rhes Priordy"),"WR53 7CX"), Some("DEF Ltd")))
       val summaryList = Some(SummaryListViewModel(rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouses)))
 
       val userAnswers = UserAnswers(userAnswersId, ChangeActivity, warehouseList = warehouses, contactAddress = contactAddress)

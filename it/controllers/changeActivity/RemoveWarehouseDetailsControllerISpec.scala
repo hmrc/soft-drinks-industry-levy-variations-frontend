@@ -2,7 +2,7 @@ package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.ChangeActivity
-import models.Warehouse
+import models.backend.Site
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import pages.changeActivity._
@@ -127,7 +127,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
         setAnswers(
           emptyUserAnswersForChangeActivity
-            .copy(warehouseList = Map(indexOfWarehouseToBeRemoved -> Warehouse(None, ukAddress))))
+            .copy(warehouseList = Map(indexOfWarehouseToBeRemoved -> Site(ukAddress))))
         getAnswers(emptyUserAnswersForChangeActivity.id).get.warehouseList.size mustBe 1
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(

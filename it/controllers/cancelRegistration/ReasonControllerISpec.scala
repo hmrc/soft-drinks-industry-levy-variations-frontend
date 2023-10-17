@@ -5,7 +5,7 @@ import models.SelectChange.CancelRegistration
 import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
+import pages.cancelRegistration.ReasonPage
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.Json

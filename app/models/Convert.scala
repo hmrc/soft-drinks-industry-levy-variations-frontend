@@ -47,7 +47,7 @@ object Convert {
       val original = vd.original.address
 
       VariationsContact(
-        if (address != original.lines || address.postCode != original.postCode) {
+        if (address.lines != original.lines || address.postCode != original.postCode) {
           Some(address)
         } else {
           None

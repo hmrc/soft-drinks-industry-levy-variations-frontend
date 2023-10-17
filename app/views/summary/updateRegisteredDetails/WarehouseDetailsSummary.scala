@@ -17,7 +17,8 @@
 package views.summary.updateRegisteredDetails
 
 import controllers.updateRegisteredDetails.routes
-import models.{CheckMode, Mode, NormalMode, UserAnswers, Warehouse}
+import models.backend.Site
+import models.{CheckMode, Mode, UserAnswers}
 import pages.updateRegisteredDetails.WarehouseDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
@@ -45,7 +46,7 @@ object WarehouseDetailsSummary  {
         )
     }
 
-  def row2(warehouseList: Map[String, Warehouse], mode: Mode)(implicit messages: Messages): List[SummaryListRow] = {
+  def row2(warehouseList: Map[String, Site], mode: Mode)(implicit messages: Messages): List[SummaryListRow] = {
     warehouseList.map {
           warehouse =>
             SummaryListRow(

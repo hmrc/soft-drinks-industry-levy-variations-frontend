@@ -4,9 +4,9 @@ import controllers.ControllerITTestHelper
 import controllers.changeActivity.routes.SecondaryWarehouseDetailsController
 import generators.ChangeActivityCYAGenerators._
 import models.backend.Site
-import models.{CheckMode, NormalMode, Warehouse}
 import models.changeActivity.AmountProduced
 import models.changeActivity.AmountProduced.{Large, Small, None => NoneProduced}
+import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
@@ -158,7 +158,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
       }
     }
 
-    def testSiteSection(page: Document, packingSites: Option[Site], warehouseSites: Option[Warehouse], sectionIndex: Option[Int]): Unit = {
+    def testSiteSection(page: Document, packingSites: Option[Site], warehouseSites: Option[Site], sectionIndex: Option[Int]): Unit = {
 
       (packingSites,warehouseSites) match {
         case (Some(packingSites), Some(warehouseSites)) => sectionIndex map { sectionInd =>

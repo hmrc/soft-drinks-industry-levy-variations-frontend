@@ -1,7 +1,7 @@
 package testSupport
 
 import models.backend.Site
-import models.{ReturnPeriod, SelectChange, UserAnswers, Warehouse}
+import models.{ReturnPeriod, SelectChange, UserAnswers}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import pages.correctReturn._
 import play.api.libs.json.Json
@@ -27,11 +27,11 @@ trait ITCoreTestDataForCorrectReturn extends ITSharedCoreTestData  {
 
   def userAnswersForCorrectReturnRemoveWarehouseDetailsPage(index: String): Map[String, UserAnswers] = {
     val yesSelected = emptyUserAnswersForCorrectReturn
-      .copy(warehouseList = Map(index -> Warehouse(None, ukAddress)))
+      .copy(warehouseList = Map(index -> Site(ukAddress)))
       .set(RemoveWarehouseDetailsPage, true).success.value
 
     val noSelected = emptyUserAnswersForCorrectReturn
-      .copy(warehouseList = Map(index -> Warehouse(None, ukAddress)))
+      .copy(warehouseList = Map(index -> Site(ukAddress)))
       .set(RemoveWarehouseDetailsPage, false).success.value
     Map("yes" -> yesSelected, "no" -> noSelected)
   }

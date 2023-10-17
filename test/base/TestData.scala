@@ -99,9 +99,9 @@ trait TestData {
   val submittedDateTime = LocalDateTime.of(2023, 1, 1, 11, 0)
 
 
-  val twoWarehouses: Map[String, Warehouse] = Map(
-    "1" -> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London", "Line 3", "Line 4"), "WR53 7CX")),
-    "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London", "Line 3", ""), "SA13 7CE"))
+  val twoWarehouses: Map[String, Site] = Map(
+    "1" -> Site(UkAddress(List("33 Rhes Priordy", "East London", "Line 3", "Line 4"), "WR53 7CX"), Some("ABC Ltd")),
+    "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London", "Line 3", ""), "SA13 7CE"), Some("Super Cola Ltd"))
   )
 
   val returnPeriodsFor2020 = List(ReturnPeriod(2020, 3), ReturnPeriod(2020, 2), ReturnPeriod(2020, 1), ReturnPeriod(2020, 0))
@@ -114,7 +114,7 @@ trait TestData {
     Json.toJson(ReturnPeriod(2022, 0)), Json.toJson(ReturnPeriod(2022, 1)),
     Json.toJson(ReturnPeriod(2022, 2)), Json.toJson(ReturnPeriod(2022, 3)))
 
-  lazy val warehouse = Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy"), "WR53 7CX"))
+  lazy val warehouse = Site(UkAddress(List("33 Rhes Priordy"), "WR53 7CX"), Some("ABC Ltd"))
   lazy val packingSite = Site(
     UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
     Some("88"),

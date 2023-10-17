@@ -21,7 +21,8 @@ import controllers.actions._
 import forms.changeActivity.RemoveWarehouseDetailsFormProvider
 import handlers.ErrorHandler
 import models.SelectChange.ChangeActivity
-import models.{NormalMode, UserAnswers, Warehouse}
+import models.backend.Site
+import models.{NormalMode, UserAnswers}
 import navigation._
 import pages.changeActivity.RemoveWarehouseDetailsPage
 import play.api.data.Form
@@ -62,7 +63,7 @@ class RemoveWarehouseDetailsController @Inject()(
 
   def onSubmit(index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
-      val warehouseToRemove: Option[Warehouse] = request.userAnswers.warehouseList.get(index)
+      val warehouseToRemove: Option[Site] = request.userAnswers.warehouseList.get(index)
       warehouseToRemove match {
         case None =>
           Future.successful(indexNotFoundRedirect(index, request, controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad))

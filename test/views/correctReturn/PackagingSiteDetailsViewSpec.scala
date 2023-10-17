@@ -238,13 +238,13 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
   "View should contain the correct heading and summary row details" - {
     lazy val pSite = Site(
       UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-      Some("88"),
       Some("Wild Lemonade Group"),
+      Some("88"),
       Some(LocalDate.of(2018, 2, 26)))
     lazy val pSite2 = Site(
       UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-      Some("88"),
       None,
+      Some("88"),
       Some(LocalDate.of(2018, 2, 26)))
     lazy val packagingSites2 = Map("000001" -> pSite, "00002" -> pSite2)
     lazy val packagingSites = Map("00213" -> pSite)

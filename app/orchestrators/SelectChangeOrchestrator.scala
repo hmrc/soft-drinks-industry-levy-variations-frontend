@@ -23,7 +23,7 @@ import connectors.SoftDrinksIndustryLevyConnector
 import errors.{ReturnsStillPending, VariationsErrors}
 import models.backend.Site
 import models.updateRegisteredDetails.ContactDetails
-import models.{RetrievedSubscription, SelectChange, UserAnswers, Warehouse}
+import models.{RetrievedSubscription, SelectChange, UserAnswers}
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import service.VariationResult
 import services.SessionService
@@ -86,8 +86,8 @@ class SelectChangeOrchestrator @Inject()(sessionService: SessionService,
     UserAnswers(id = subscription.sdilRef,
       journeyType = value,
       contactAddress = subscription.address,
-      packagingSiteList = getNoneClosedPackagingSites(subscription.productionSites),
-      warehouseList = getNoneClosedWarehouses(subscription.warehouseSites),
+      packagingSiteList = getNoneClosedSites(subscription.productionSites),
+      warehouseList = getNoneClosedSites(subscription.warehouseSites),
       lastUpdated = timeNow)
   }
 
@@ -96,26 +96,19 @@ class SelectChangeOrchestrator @Inject()(sessionService: SessionService,
     Future.fromTry(UserAnswers(id = subscription.sdilRef,
       journeyType = SelectChange.UpdateRegisteredDetails,
       contactAddress = subscription.address,
-      packagingSiteList = getNoneClosedPackagingSites(subscription.productionSites),
-      warehouseList = getNoneClosedWarehouses(subscription.warehouseSites),
+      packagingSiteList = getNoneClosedSites(subscription.productionSites),
+      warehouseList = getNoneClosedSites(subscription.warehouseSites),
       lastUpdated = timeNow)
       .set(UpdateContactDetailsPage, contactDetails)
     )
 
   }
 
-  private def getNoneClosedPackagingSites(productionSites: List[Site]): Map[String, Site] = {
-    val productionSitesNotClosed = productionSites.filter(site => site.closureDate.forall(_.isAfter(LocalDate.now)))
-    productionSitesNotClosed.zipWithIndex
+  private def getNoneClosedSites(sites: List[Site]): Map[String, Site] = {
+    val sitesNotClosed = sites.filter(site => site.closureDate.forall(_.isAfter(LocalDate.now)))
+    sitesNotClosed.zipWithIndex
       .map { case (site, index) => (index.toString, site) }
       .toMap[String, Site]
-  }
-
-  private def getNoneClosedWarehouses(warehouses: List[Site]): Map[String, Warehouse] = {
-    val productionSitesNotClosed = warehouses.filter(site => site.closureDate.forall(_.isAfter(LocalDate.now)))
-    productionSitesNotClosed.zipWithIndex
-      .map { case (site, index) => (index.toString, Warehouse.fromSite(site)) }
-      .toMap[String, Warehouse]
   }
 
   def timeNow: Instant = Instant.now()

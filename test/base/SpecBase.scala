@@ -23,8 +23,8 @@ import controllers.actions._
 import controllers.routes
 import errors.VariationsErrors
 import helpers.LoggerHelper
-import models.{RetrievedActivity, _}
 import models.backend.{Site, UkAddress}
+import models.{RetrievedActivity, _}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -62,18 +62,18 @@ object SpecBase {
   val oneProductionSite: Map[String,Site] = Map(
    "1" -> Site(
       UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-      Some("88"),
-      Some("Wild Lemonade Group"),
+     Some("Wild Lemonade Group"),
+     Some("88"),
       Some(LocalDate.of(2018, 2, 26)))
   )
 
-  val oneWarehouses: Map[String,Warehouse] = Map(
-    "1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"))
+  val oneWarehouses: Map[String,Site] = Map(
+    "1"-> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), Some("ABC Ltd"))
   )
 
-  val twoWarehouses: Map[String,Warehouse] = Map(
-    "1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
-    "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"))
+  val twoWarehouses: Map[String,Site] = Map(
+    "1"-> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), Some("ABC Ltd")),
+    "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), Some("Super Cola Ltd"))
   )
 
 

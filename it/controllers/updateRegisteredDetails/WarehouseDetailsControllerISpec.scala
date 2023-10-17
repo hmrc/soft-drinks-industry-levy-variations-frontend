@@ -2,11 +2,11 @@ package controllers.updateRegisteredDetails
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.{UpdateRegisteredDetails, writes}
-import models.{NormalMode, UserAnswers, Warehouse}
 import models.alf.init._
-import models.backend.UkAddress
+import models.backend.{Site, UkAddress}
 import models.updateRegisteredDetails.ChangeRegisteredDetails
 import models.updateRegisteredDetails.ChangeRegisteredDetails.{BusinessAddress, ContactDetails, Sites}
+import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.updateRegisteredDetails.{ChangeRegisteredDetailsPage, WarehouseDetailsPage}
@@ -67,7 +67,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForUpdateRegisteredDetails.copy(warehouseList =
-            Map("1" -> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy"), "WR53 7CX")))))
+            Map("1" -> Site(UkAddress(List("33 Rhes Priordy"), "WR53 7CX"), Some("ABC Ltd")))))
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, updateRegisteredDetailsBaseUrl + normalRoutePath)

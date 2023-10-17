@@ -2,7 +2,8 @@ package controllers.updateRegisteredDetails
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.UpdateRegisteredDetails
-import models.{CheckMode, NormalMode, Warehouse}
+import models.backend.Site
+import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.updateRegisteredDetails.RemoveWarehouseDetailsPage
@@ -179,7 +180,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
         setAnswers(
           emptyUserAnswersForUpdateRegisteredDetails
-            .copy(warehouseList = Map(indexOfWarehouseToBeRemoved -> Warehouse(None, ukAddress))))
+            .copy(warehouseList = Map(indexOfWarehouseToBeRemoved -> Site(ukAddress))))
         getAnswers(emptyUserAnswersForUpdateRegisteredDetails.id).get.warehouseList.size mustBe 1
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
@@ -269,7 +270,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
         setAnswers(
           emptyUserAnswersForUpdateRegisteredDetails
-            .copy(warehouseList = Map(indexOfWarehouseToBeRemoved -> Warehouse(None, ukAddress))))
+            .copy(warehouseList = Map(indexOfWarehouseToBeRemoved -> Site(ukAddress))))
         getAnswers(emptyUserAnswersForUpdateRegisteredDetails.id).get.warehouseList.size mustBe 1
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(

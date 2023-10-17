@@ -50,7 +50,7 @@ class FileReturnBeforeDeregController @Inject()(
   }
 
   def onSubmit(): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration) {
-    implicit request => Redirect(config.sdilHomeUrl)
+    _ => Redirect(config.sdilHomeUrl)
   }
 
 }

@@ -21,9 +21,7 @@ import config.FrontendAppConfig
 import models.ReturnPeriod
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import views.html.cancelRegistration.CancellationRequestDoneView
-import views.summary.updateRegisteredDetails.UpdateContactDetailsSummary
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, ZoneId}

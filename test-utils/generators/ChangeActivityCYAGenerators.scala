@@ -17,9 +17,9 @@
 package generators
 
 import models.backend.{Site, UkAddress}
-import models.{LitresInBands, SelectChange, UserAnswers, Warehouse}
 import models.changeActivity.AmountProduced
 import models.changeActivity.AmountProduced.{Large, Small, enumerable, None => NoneProduced}
+import models.{LitresInBands, SelectChange, UserAnswers}
 import org.scalatest.TryValues
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import pages.changeActivity._
@@ -104,9 +104,9 @@ object ChangeActivityCYAGenerators {
       ChangeActivityCYAUserAnswers(userAnswersWithPackAtBusinessAddress)
     }
 
-    val twoWarehouses: Map[String,Warehouse] = Map(
-      "1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
-      "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"))
+    val twoWarehouses: Map[String,Site] = Map(
+      "1"-> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), Some("ABC Ltd")),
+      "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), Some("Super Cola Ltd"))
     )
 
     val oneProductionSite: Map[String,Site] = Map(
@@ -117,7 +117,7 @@ object ChangeActivityCYAGenerators {
         Some(LocalDate.of(2018, 2, 26)))
     )
 
-    def withSites (packingSites: Option[Site] = None, warehouse: Option[Warehouse] = None): ChangeActivityCYAUserAnswers = {
+    def withSites (packingSites: Option[Site] = None, warehouse: Option[Site] = None): ChangeActivityCYAUserAnswers = {
       val userAnswersWithSites = (packingSites, warehouse) match {
         case (Some(packingSites), Some(warehouseSites)) => userAnswers
           .copy(packagingSiteList = oneProductionSite, warehouseList = twoWarehouses)
@@ -143,7 +143,7 @@ object ChangeActivityCYAGenerators {
                       contract: Option[Boolean] = None,
                       imports: Option[Boolean] = None,
                       packingSite: Option[Site] = None,
-                      warehouse: Option[Warehouse] = None,
+                      warehouse: Option[Site] = None,
                       packAtBusinessAddress: Option[Boolean] = None
                     ): UserAnswers = {
     ChangeActivityCYAUserAnswers(emptyUserAnswersForChangeActivity.set(SecondaryWarehouseDetailsPage, false).success.value)
@@ -188,9 +188,9 @@ object ChangeActivityCYAGenerators {
     Map(Answers.Yes -> ("added a packing site" -> Some(Site(address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"), ref = None, tradingName = Some("Test trading name 1"), closureDate = None))),
     Answers.No -> ("had a packing site" -> Some(Site(address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"), ref = None, tradingName = Some("Test trading name 1"), closureDate = None))),
     Answers.Unanswered -> ("no packing site", None))
-  val warehouseValues: Map[Answers.Value, (String, Option[Warehouse])] = Map(
-    Answers.Yes -> ("added a warehouse site" -> Some(Warehouse(address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"), tradingName = Some("Test trading name 1")))),
-    Answers.No -> ("had a warehouse site" -> Some(Warehouse(address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"), tradingName = Some("Test trading name 1")))),
+  val warehouseValues: Map[Answers.Value, (String, Option[Site])] = Map(
+    Answers.Yes -> ("added a warehouse site" -> Some(Site(address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"), tradingName = Some("Test trading name 1")))),
+    Answers.No -> ("had a warehouse site" -> Some(Site(address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"), tradingName = Some("Test trading name 1")))),
     Answers.Unanswered -> ("no warehouse"-> None)
   )
 
@@ -202,7 +202,7 @@ object ChangeActivityCYAGenerators {
                                 ownBrandsTuple: (String, Option[Boolean]),
                                 contractTuple: (String, Option[Boolean]),
                                 importTuple: (String, Option[Boolean]),
-                                warehouseSite: (String, Option[Warehouse]),
+                                warehouseSite: (String, Option[Site]),
                                 packingSite: (String, Option[Site]),
                                 packAtBusinessAddressTuple: (String, Option[Boolean]))
 
