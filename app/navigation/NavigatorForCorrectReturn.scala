@@ -62,7 +62,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     } else if(mode == CheckMode){
       routes.CorrectReturnCYAController.onPageLoad
     } else {
-      defaultCall
+      routes.ExemptionsForSmallProducersController.onPageLoad(mode)
     }
   }
 
@@ -109,7 +109,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case HowManyCreditsForLostDamagedPage => userAnswers => defaultCall
     case RepaymentMethodPage => userAnswers => routes.CorrectReturnCheckChangesCYAController.onPageLoad
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, NormalMode)
-    case HowManyPackagedAsContractPackerPage => _ => defaultCall
+    case HowManyPackagedAsContractPackerPage => _ => routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
     case AddASmallProducerPage => userAnswers => defaultCall
     case _ => _ => defaultCall
   }

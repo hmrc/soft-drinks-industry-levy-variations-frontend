@@ -20,6 +20,9 @@ import base.SpecBase
 import models._
 import pages._
 import pages.correctReturn.RepaymentMethodPage
+import play.api.libs.json.Json
+import controllers.correctReturn.routes
+import pages.correctReturn.PackagedAsContractPackerPage
 
 class NavigatorForCorrectReturnSpec extends SpecBase {
 
@@ -33,6 +36,29 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
 
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress = contactAddress)) mustBe defaultCall
+      }
+
+      "Packaged as a contract packer" - {
+
+        def navigate(value: Boolean, mode: Mode = NormalMode) = navigator.nextPage(PackagedAsContractPackerPage,
+          mode,
+          emptyUserAnswersForCorrectReturn.set(PackagedAsContractPackerPage , value).success.value)
+
+        "select Yes to navigate to How Many packaged as contract packer" in {
+          val result = navigate(value = true)
+          result mustBe routes.HowManyPackagedAsContractPackerController.onPageLoad(NormalMode)
+        }
+
+        "select No to navigate to exemptions for small producers page" in {
+          val result = navigate(value = false)
+          result mustBe routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
+        }
+
+        "Should navigate to Check Your Answers page when no is selected in check mode" in {
+          val result = navigate(value = false, CheckMode)
+          result mustBe routes.CorrectReturnCYAController.onPageLoad
+        }
+
       }
 
       "must go from repayment method page to check changes page" in {

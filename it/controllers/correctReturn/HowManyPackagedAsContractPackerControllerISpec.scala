@@ -19,7 +19,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
 
   List(NormalMode, CheckMode).foreach { mode =>
     val (path, redirectLocation) = if(mode == NormalMode) {
-      (normalRoutePath, defaultCall.url)
+      (normalRoutePath, routes.ExemptionsForSmallProducersController.onPageLoad(mode).url)
     } else {
       (checkRoutePath, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
     }
