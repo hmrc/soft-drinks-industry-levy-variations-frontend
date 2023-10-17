@@ -59,6 +59,6 @@ class CancelRegistrationCYAController @Inject()(
   }
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CancelRegistration) {
-    Redirect(controllers.routes.IndexController.onPageLoad.url)
+    Redirect(routes.CancellationRequestDoneController.onPageLoad.url)
   }
 }

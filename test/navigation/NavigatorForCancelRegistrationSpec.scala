@@ -42,6 +42,18 @@ class NavigatorForCancelRegistrationSpec extends SpecBase {
           UserAnswers("id", SelectChange.CancelRegistration, Json.obj(ReasonPage.toString -> "I don't want to anymore"), contactAddress = contactAddress))
         result mustBe routes.CancelRegistrationDateController.onPageLoad(NormalMode)
       }
+
+      s"must go from $CancelRegistrationDatePage to CancelRegistrationCYA in NormalMode" in {
+        val result = navigator.nextPage(CancelRegistrationDatePage, NormalMode,
+          UserAnswers("id", SelectChange.CancelRegistration, Json.obj(ReasonPage.toString -> "I don't want to anymore"), contactAddress = contactAddress))
+        result mustBe routes.CancelRegistrationCYAController.onPageLoad
+      }
+
+      s"must go from $CancelRegistrationDatePage to CancelRegistrationCYA in CheckMode" in {
+        val result = navigator.nextPage(CancelRegistrationDatePage, CheckMode,
+          UserAnswers("id", SelectChange.CancelRegistration, Json.obj(ReasonPage.toString -> "I don't want to anymore"), contactAddress = contactAddress))
+        result mustBe routes.CancelRegistrationCYAController.onPageLoad
+      }
     }
 
     "in Check mode" - {
