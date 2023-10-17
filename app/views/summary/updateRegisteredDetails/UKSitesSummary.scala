@@ -30,7 +30,7 @@ object UKSitesSummary {
     val key = if (userAnswers.packagingSiteList.size != 1) {
       messages("checkYourAnswers.packing.checkYourAnswersLabel.multiple", userAnswers.packagingSiteList.size.toString)
     } else {
-      messages("checkYourAnswers.packing.checkYourAnswersLabel.one")
+      messages("checkYourAnswers.packing.checkYourAnswersLabel.one", userAnswers.packagingSiteList.size.toString)
     }
     SummaryListRowViewModel(
       key = Key(
@@ -62,7 +62,7 @@ object UKSitesSummary {
     val key = if (userAnswers.warehouseList.size != 1) {
       messages("checkYourAnswers.warehouse.checkYourAnswersLabel.multiple", userAnswers.warehouseList.size.toString)
     } else {
-      messages("checkYourAnswers.warehouse.checkYourAnswersLabel.one")
+      messages("checkYourAnswers.warehouse.checkYourAnswersLabel.one", {userAnswers.warehouseList.size.toString})
     }
     SummaryListRowViewModel(
       key = Key(

@@ -1,14 +1,16 @@
 package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
+import controllers.changeActivity.routes.SecondaryWarehouseDetailsController
 import generators.ChangeActivityCYAGenerators._
-import models.{CheckMode, NormalMode}
+import models.backend.Site
 import models.changeActivity.AmountProduced
 import models.changeActivity.AmountProduced.{Large, Small, None => NoneProduced}
+import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import play.api.http.Status.OK
+import play.api.http.Status.{OK, SEE_OTHER}
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
@@ -20,7 +22,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
 
   "GET " + routes.ChangeActivityCYAController.onPageLoad.url - {
     "when the userAnswers contains no data" - {
-      "should render the page" in {
+      "should redirect the page as there are missing user answers" in {
         given
           .commonPrecondition
 
@@ -30,10 +32,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
           val result = createClientRequestGet(client, baseUrl + route)
 
           whenReady(result) { res =>
-            res.status mustBe OK
-            val page = Jsoup.parse(res.body)
-            page.title must include(Messages("changeActivity.checkYourAnswers.title"))
-            page.getElementsByClass("govuk-summary-list").size() mustBe 0
+            res.status mustBe SEE_OTHER
           }
         }
       }
@@ -159,57 +158,94 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
       }
     }
 
-    amountProducedValues.foreach { case (amountProducedKey, amountProducedValue) =>
-      thirdPartyPackagingValues.foreach { case (thirdPartyPackagingKey, thirdPartyPackagingValue) =>
-        ownBrandsValues.foreach { case (ownBrandsKey, ownBrandsValue) =>
-          contractValues.foreach { case (contractKey, contractValue) =>
-            importValues.foreach { case (importKey, importValue) =>
-              val key = List(amountProducedKey, thirdPartyPackagingKey, ownBrandsKey, contractKey, importKey).filterNot(_.isEmpty).mkString(", ")
-              s"when the userAnswers contains $key" - {
-                "should render the page" in {
-                  given
-                    .commonPrecondition
+    def testSiteSection(page: Document, packingSites: Option[Site], warehouseSites: Option[Site], sectionIndex: Option[Int]): Unit = {
 
-                  val userAnswers = getUserAnswers(amountProducedValue, thirdPartyPackagingValue, ownBrandsValue, contractValue, importValue)
-                  setAnswers(userAnswers)
+      (packingSites,warehouseSites) match {
+        case (Some(packingSites), Some(warehouseSites)) => sectionIndex map { sectionInd =>
+          val sites = page.getElementsByClass("govuk-summary-list").get(sectionInd).getElementsByClass("govuk-summary-list__row")
+          sites.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change the UK warehouse you use to store liable drinks"
+          sites.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "the UK warehouse you use to store liable drinks"
+          sites.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe SecondaryWarehouseDetailsController.onPageLoad.url
+          sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change the UK packaging site that you operate to produce liable drinks"
+          sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "the UK packaging site that you operate to produce liable drinks"
+          sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
+        }
+        case (Some(packingSites), None) =>
+          sectionIndex map { sectionInd =>
 
-                  withClient { client =>
-                    val result = createClientRequestGet(client, baseUrl + route)
+          val sites = page.getElementsByClass("govuk-summary-list").get(sectionInd).getElementsByClass("govuk-summary-list__row")
+          sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change the UK packaging site that you operate to produce liable drinks"
+          sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "the UK packaging site that you operate to produce liable drinks"
+          sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
+          }
+        case (None, Some(warehouseSites)) =>
+          sectionIndex map { sectionInd =>
 
-                    whenReady(result) { res =>
-                      res.status mustBe OK
-                      val page = Jsoup.parse(res.body)
-                      page.title must include(Messages("changeActivity.checkYourAnswers.title"))
-                      page.getElementsByClass("govuk-caption-l").text() mustBe "Super Lemonade Plc"
-                      val sectionIndexes: Seq[Option[Int]] = List(
-                        amountProducedValue.nonEmpty,
-                        thirdPartyPackagingValue.nonEmpty,
-                        ownBrandsValue.nonEmpty,
-                        contractValue.nonEmpty,
-                        importValue.nonEmpty
-                      ).foldLeft(Seq[Option[Int]]()) { (indexes, sectionDefined) =>
-                        indexes :+ (if (sectionDefined) Option(indexes.filter(_.nonEmpty).flatten.size) else None)
-                      }
-                      page.getElementsByClass("govuk-summary-list").size() mustBe sectionIndexes.filter(_.nonEmpty).flatten.size
-                      testAmountProducedSection(page, amountProducedValue, sectionIndex = sectionIndexes(0))
-                      testThirdPartyPackagingSection(page, thirdPartyPackagingValue, sectionIndex = sectionIndexes(1))
-                      testOwnBrandsSection(page, ownBrandsValue, sectionIndex = sectionIndexes(2))
-                      testContractSection(page, contractValue, sectionIndex = sectionIndexes(3))
-                      testImportSection(page, importValue, sectionIndex = sectionIndexes(4))
-                      page.getElementsByTag("form").first().attr("action") mustBe routes.ChangeActivityCYAController.onSubmit.url
-                      page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm updates and send"
-                    }
-                  }
-                }
+            val sites = page.getElementsByClass("govuk-summary-list").get(sectionInd).getElementsByClass("govuk-summary-list__row")
+            sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change the UK warehouse you use to store liable drinks"
+            sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "the UK warehouse you use to store liable drinks"
+            sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe SecondaryWarehouseDetailsController.onPageLoad.url
+          }
+        case (None, None) => None
+      }
+
+    }
+
+    testCaseOptions.foreach { case userAnswerOptions =>
+
+      val key = getKeyStringFromUserAnswerOptions(userAnswerOptions)
+      val userAnswers = getUserAnswersFromUserAnswerOptions(userAnswerOptions)
+      val amountProducedValue = userAnswerOptions.amountProducedTuple._2
+      val thirdPartyPackagingValue = userAnswerOptions.thirdPartyPackagingTuple._2
+      val ownBrandsValue = userAnswerOptions.ownBrandsTuple._2
+      val contractValue = userAnswerOptions.contractTuple._2
+      val importValue = userAnswerOptions.importTuple._2
+      val warehouseValue = userAnswerOptions.warehouseSite._2
+      val packingSiteValue = userAnswerOptions.packingSite._2
+
+      s"when the userAnswers contains $key" - {
+        "should render the page" in {
+          given
+            .commonPrecondition
+          setAnswers(userAnswers)
+
+          WsTestClient.withClient { client =>
+            val result = createClientRequestGet(client, baseUrl + route)
+
+            whenReady(result) { res =>
+              res.status mustBe OK
+              val page = Jsoup.parse(res.body)
+              page.title must include(Messages("changeActivity.checkYourAnswers.title"))
+              page.getElementsByClass("govuk-caption-l").text() mustBe "Super Lemonade Plc"
+              val sectionIndexes: Seq[Option[Int]] = List(
+                amountProducedValue.nonEmpty,
+                thirdPartyPackagingValue.nonEmpty,
+                ownBrandsValue.nonEmpty,
+                contractValue.nonEmpty,
+                importValue.nonEmpty,
+                packingSitesValues.nonEmpty || warehouseValues.nonEmpty
+              ).foldLeft(Seq[Option[Int]]()) { (indexes, sectionDefined) =>
+                indexes :+ (if (sectionDefined) Option(indexes.filter(_.nonEmpty).flatten.size) else None)
               }
+              page.getElementsByClass("govuk-summary-list").size() mustBe sectionIndexes.filter(_.nonEmpty).flatten.size
+              testAmountProducedSection(page, amountProducedValue, sectionIndex = sectionIndexes(0))
+              testThirdPartyPackagingSection(page, thirdPartyPackagingValue, sectionIndex = sectionIndexes(1))
+              testOwnBrandsSection(page, ownBrandsValue, sectionIndex = sectionIndexes(2))
+              testContractSection(page, contractValue, sectionIndex = sectionIndexes(3))
+              testImportSection(page, importValue, sectionIndex = sectionIndexes(4))
+              testSiteSection(page, packingSiteValue, warehouseValue, sectionIndex = sectionIndexes(5))
+              page.getElementsByTag("form").first().attr("action") mustBe routes.ChangeActivityCYAController.onSubmit.url
+              page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm updates and send"
             }
           }
         }
       }
     }
+
     testUnauthorisedUser(baseUrl + route)
     testAuthenticatedUserButNoUserAnswers(baseUrl + route)
   }
+
   "POST " + routes.ChangeActivityCYAController.onSubmit.url - {
     "when the userAnswers contains no data" - {
       "should redirect to next page" in {

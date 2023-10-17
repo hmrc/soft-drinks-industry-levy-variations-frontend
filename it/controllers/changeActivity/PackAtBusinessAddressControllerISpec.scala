@@ -1,6 +1,7 @@
 package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
+import models.{CheckMode, NormalMode}
 import models.SelectChange.ChangeActivity
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
@@ -42,8 +43,8 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
     }
 
     userAnswersForChangeActivityPackAtBusinessAddressPage.foreach { case (key, userAnswers) =>
-      s"when the userAnswers contains data for the page with " + key + " selected" - {
-        s"should return OK and render the page with " + key + " radio checked" in {
+      s"when the userAnswers contains data for the page with $key selected" - {
+        s"should return OK and render the PackAtBusinessAddress page with $key populated" in {
           given
             .commonPrecondition
 
@@ -67,6 +68,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
         }
       }
     }
+
     testUnauthorisedUser(changeActivityBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + normalRoutePath)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + normalRoutePath)
@@ -99,8 +101,8 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
     }
 
     userAnswersForChangeActivityPackAtBusinessAddressPage.foreach { case (key, userAnswers) =>
-      s"when the userAnswers contains data for the page with " + key + " selected" - {
-        s"should return OK and render the page with " + key + " radio checked" in {
+      s"when the userAnswers contains data for the page with $key selected" - {
+        s"should return OK and render the PackAtBusinessAddress page with $key populated" in {
           given
             .commonPrecondition
 

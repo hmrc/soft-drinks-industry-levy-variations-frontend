@@ -56,13 +56,24 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     }
   }
 
+  private def navigationForExemptionsForSmallProducers(userAnswers: UserAnswers, mode: Mode): Call = {
+    if (userAnswers.get(page = ExemptionsForSmallProducersPage).contains(true)) {
+      routes.AddASmallProducerController.onPageLoad(mode)
+    } else if(mode == CheckMode){
+      routes.CorrectReturnCYAController.onPageLoad
+    } else {
+      routes.BroughtIntoUKController.onPageLoad(mode)
+    }
+  }
+
+
   private def navigationForPackagedAsContractPacker(userAnswers: UserAnswers, mode: Mode): Call = {
     if (userAnswers.get(page = PackagedAsContractPackerPage).contains(true)) {
       routes.HowManyPackagedAsContractPackerController.onPageLoad(mode)
     } else if(mode == CheckMode){
       routes.CorrectReturnCYAController.onPageLoad
     } else {
-      defaultCall
+      routes.ExemptionsForSmallProducersController.onPageLoad(mode)
     }
   }
 
@@ -99,7 +110,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case ReturnChangeRegistrationPage => _ => defaultCall
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, NormalMode)
     case HowManyBroughtIntoUKPage => _ => defaultCall
-    case ExemptionsForSmallProducersPage => _ => defaultCall
+    case ExemptionsForSmallProducersPage => userAnswers => navigationForExemptionsForSmallProducers(userAnswers, NormalMode)
     case RemoveSmallProducerConfirmPage => _ => defaultCall
     case RemoveWarehouseDetailsPage => userAnswers => defaultCall
     case CorrectionReasonPage => _ => routes.RepaymentMethodController.onPageLoad(NormalMode)
@@ -107,9 +118,9 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => routes.PackagedAsContractPackerController.onPageLoad(NormalMode)
     case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamaged(userAnswers, NormalMode)
     case HowManyCreditsForLostDamagedPage => userAnswers => defaultCall
-    case RepaymentMethodPage => userAnswers => defaultCall
+    case RepaymentMethodPage => userAnswers => routes.CorrectReturnCheckChangesCYAController.onPageLoad
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, NormalMode)
-    case HowManyPackagedAsContractPackerPage => _ => defaultCall
+    case HowManyPackagedAsContractPackerPage => _ => routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
     case AddASmallProducerPage => userAnswers => defaultCall
     case _ => _ => defaultCall
   }
@@ -124,6 +135,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => routes.CorrectReturnCYAController.onPageLoad
     case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamaged(userAnswers, CheckMode)
+    case RepaymentMethodPage => userAnswers => routes.CorrectReturnCheckChangesCYAController.onPageLoad
     case _ => _ => routes.CorrectReturnCYAController.onPageLoad
   }
 }

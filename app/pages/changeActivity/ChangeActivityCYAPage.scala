@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package pages
+package pages.changeActivity
 
+import controllers.changeActivity.routes
 import models.Mode
+import pages.Page
 
-import scala.language.implicitConversions
+case object ChangeActivityCYAPage extends Page {
 
-trait Page {
-  val url: Mode => String = mode => controllers.routes.IndexController.onPageLoad.url
-}
+  override def toString: String = "checkYourAnswers"
 
-object Page {
-
-  implicit def toString(page: Page): String =
-    page.toString
+  override val url: Mode => String = _ => routes.ChangeActivityCYAController.onPageLoad.url
 }

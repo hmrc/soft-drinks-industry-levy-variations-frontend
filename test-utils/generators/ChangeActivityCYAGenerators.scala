@@ -16,12 +16,15 @@
 
 package generators
 
-import models.backend.UkAddress
-import models.{LitresInBands, SelectChange, UserAnswers}
+import models.backend.{Site, UkAddress}
 import models.changeActivity.AmountProduced
-import models.changeActivity.AmountProduced.{Large, Small, None => NoneProduced}
+import models.changeActivity.AmountProduced.{Large, Small, enumerable, None => NoneProduced}
+import models.{LitresInBands, SelectChange, UserAnswers}
 import org.scalatest.TryValues
+import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import pages.changeActivity._
+
+import java.time.LocalDate
 
 object ChangeActivityCYAGenerators {
 
@@ -49,8 +52,7 @@ object ChangeActivityCYAGenerators {
 
     def withThirdPartyPackaging(thirdPartyPackaging: Option[Boolean] = None): ChangeActivityCYAUserAnswers = {
       val userAnswersWithThirdPartyPackaging = thirdPartyPackaging match {
-        case Some(true) => userAnswers.set(ThirdPartyPackagersPage, true).success.value
-        case Some(false) => userAnswers.set(ThirdPartyPackagersPage, false).success.value
+        case Some(bool) => userAnswers.set(ThirdPartyPackagersPage, bool).success.value
         case None => userAnswers
       }
       ChangeActivityCYAUserAnswers(userAnswersWithThirdPartyPackaging)
@@ -88,6 +90,50 @@ object ChangeActivityCYAGenerators {
       }
       ChangeActivityCYAUserAnswers(userAnswersWithImport)
     }
+
+    def withPackAtBusinessAddress(packAtBusinessAddress: Option[Boolean] = None): ChangeActivityCYAUserAnswers = {
+      val userAnswersWithPackAtBusinessAddress = packAtBusinessAddress match {
+        case Some(true) => userAnswers
+          .set(PackAtBusinessAddressPage, true).success.value
+          .set(PackagingSiteDetailsPage, false).success.value
+        case Some(false) => userAnswers
+          .set(PackAtBusinessAddressPage, false).success.value
+          .set(PackagingSiteDetailsPage, false).success.value
+        case None => userAnswers
+      }
+      ChangeActivityCYAUserAnswers(userAnswersWithPackAtBusinessAddress)
+    }
+
+    val twoWarehouses: Map[String,Site] = Map(
+      "1"-> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), Some("ABC Ltd")),
+      "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), Some("Super Cola Ltd"))
+    )
+
+    val oneProductionSite: Map[String,Site] = Map(
+      "1" -> Site(
+        UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
+        Some("88"),
+        Some("Wild Lemonade Group"),
+        Some(LocalDate.of(2018, 2, 26)))
+    )
+
+    def withSites (packingSites: Option[Site] = None, warehouse: Option[Site] = None): ChangeActivityCYAUserAnswers = {
+      val userAnswersWithSites = (packingSites, warehouse) match {
+        case (Some(packingSites), Some(warehouseSites)) => userAnswers
+          .copy(packagingSiteList = oneProductionSite, warehouseList = twoWarehouses)
+          .set(PackagingSiteDetailsPage, true).success.value
+          .set(SecondaryWarehouseDetailsPage, true).success.value
+        case (Some(packingSites), None) => userAnswers
+          .copy(packagingSiteList = oneProductionSite)
+          .set(PackagingSiteDetailsPage, true).success.value
+        case (None, Some(warehouseSites)) => userAnswers
+          .copy(warehouseList = twoWarehouses)
+          .set(SecondaryWarehouseDetailsPage, true).success.value
+        case (None, None) => userAnswers
+      }
+      ChangeActivityCYAUserAnswers(userAnswersWithSites)
+    }
+
   }
 
   def getUserAnswers(
@@ -95,27 +141,141 @@ object ChangeActivityCYAGenerators {
                       thirdPartyPackaging: Option[Boolean] = None,
                       ownBrands: Option[Boolean] = None,
                       contract: Option[Boolean] = None,
-                      imports: Option[Boolean] = None
+                      imports: Option[Boolean] = None,
+                      packingSite: Option[Site] = None,
+                      warehouse: Option[Site] = None,
+                      packAtBusinessAddress: Option[Boolean] = None
                     ): UserAnswers = {
-    ChangeActivityCYAUserAnswers(emptyUserAnswersForChangeActivity)
+    ChangeActivityCYAUserAnswers(emptyUserAnswersForChangeActivity.set(SecondaryWarehouseDetailsPage, false).success.value)
       .withAmountProduced(amountProduced)
       .withThirdPartyPackaging(thirdPartyPackaging)
       .withOwnBrands(ownBrands)
       .withContract(contract)
       .withImports(imports)
+      .withPackAtBusinessAddress(packAtBusinessAddress)
+      .withSites(packingSite, warehouse)
       .userAnswers
   }
 
-  val amountProducedValues: Map[String, Option[AmountProduced]] = Map(
-    "amount produced large" -> Some(Large),
-    "amount produced small" -> Some(Small),
-    "amount produced none" -> Some(NoneProduced),
-    "" -> None
+  object Answers extends Enumeration {
+    val Yes, No, Unanswered = Value
+    val Answered = List(Yes, No)
+    val All = List(Yes, No, Unanswered)
+  }
+
+  object APAnswers extends Enumeration {
+    val Large, Small, NoneProduced, Unanswered = Value
+  }
+
+  val amountProducedValues: Map[APAnswers.Value, (String, Option[AmountProduced])] = Map(
+    APAnswers.Large -> ("amount produced large", Some(Large)),
+    APAnswers.Small -> ("amount produced small", Some(Small)),
+    APAnswers.NoneProduced -> ("amount produced none", Some(NoneProduced)),
+    APAnswers.Unanswered -> ("", None)
   )
 
-  val thirdPartyPackagingValues: Map[String, Option[Boolean]] = Map("using third party packagers" -> Some(true), "not using third party packagers" -> Some(false), "" -> None)
-  val ownBrandsValues: Map[String, Option[Boolean]] = Map("producing own brands" -> Some(true), "not producing own brands" -> Some(false), "" -> None)
-  val contractValues: Map[String, Option[Boolean]] = Map("contract packing" -> Some(true), "not contract packing" -> Some(false), "" -> None)
-  val importValues: Map[String, Option[Boolean]] = Map("importing" -> Some(true), "not importing" -> Some(false), "" -> None)
+  val thirdPartyPackagingValues: Map[Answers.Value, (String, Option[Boolean])] =
+    Map(Answers.Yes -> ("using third party packagers", Some(true)), Answers.No -> ("not using third party packagers", Some(false)), Answers.Unanswered -> ("", None))
+  val ownBrandsValues: Map[Answers.Value, (String, Option[Boolean])] =
+    Map(Answers.Yes -> ("producing own brands", Some(true)), Answers.No -> ("not producing own brands", Some(false)), Answers.Unanswered -> ("", None))
+  val contractValues: Map[Answers.Value, (String, Option[Boolean])] =
+    Map(Answers.Yes -> ("contract packing", Some(true)), Answers.No -> ("not contract packing", Some(false)), Answers.Unanswered -> ("", None))
+  val importValues: Map[Answers.Value, (String, Option[Boolean])] =
+    Map(Answers.Yes -> ("importing", Some(true)), Answers.No -> ("not importing", Some(false)), Answers.Unanswered -> ("", None))
+  val packAtBusinessAddressValues: Map[Answers.Value, (String, Option[Boolean])] =
+    Map(Answers.Yes -> ("packing at business address", Some(true)), Answers.No -> ("not packing at business address", Some(false)), Answers.Unanswered -> ("", None))
+  val packingSitesValues: Map[Answers.Value, (String, Option[Site])] =
+    Map(Answers.Yes -> ("added a packing site" -> Some(Site(address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"), ref = None, tradingName = Some("Test trading name 1"), closureDate = None))),
+    Answers.No -> ("had a packing site" -> Some(Site(address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"), ref = None, tradingName = Some("Test trading name 1"), closureDate = None))),
+    Answers.Unanswered -> ("no packing site", None))
+  val warehouseValues: Map[Answers.Value, (String, Option[Site])] = Map(
+    Answers.Yes -> ("added a warehouse site" -> Some(Site(address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"), tradingName = Some("Test trading name 1")))),
+    Answers.No -> ("had a warehouse site" -> Some(Site(address = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX"), tradingName = Some("Test trading name 1")))),
+    Answers.Unanswered -> ("no warehouse"-> None)
+  )
 
+  def makeKeyString(keyStrings: List[String]): String = keyStrings.filterNot(_.isEmpty).mkString(", ")
+
+  case class UserAnswerOptions(
+                                amountProducedTuple: (String, Option[AmountProduced]),
+                                thirdPartyPackagingTuple: (String, Option[Boolean]),
+                                ownBrandsTuple: (String, Option[Boolean]),
+                                contractTuple: (String, Option[Boolean]),
+                                importTuple: (String, Option[Boolean]),
+                                warehouseSite: (String, Option[Site]),
+                                packingSite: (String, Option[Site]),
+                                packAtBusinessAddressTuple: (String, Option[Boolean]))
+
+  val largeTestCaseOptions: List[UserAnswerOptions] = Answers.All.flatMap(tpp => {
+    Answers.Answered.map(imp => {
+      List(
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.Yes), contractValues(Answers.Yes), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.Yes)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.Yes), contractValues(Answers.Yes), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.No)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.Yes), contractValues(Answers.No), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.Yes)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.Yes), contractValues(Answers.No), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.No)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.No), contractValues(Answers.Yes), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.Yes)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.No), contractValues(Answers.Yes), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.No)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.Yes)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.No)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Large), thirdPartyPackagingValues(tpp), ownBrandsValues(Answers.No), contractValues(Answers.No), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.Unanswered))
+      )
+    })
+  }).flatten
+
+  val smallTestCaseOptions: List[UserAnswerOptions] = Answers.Answered.flatMap(tpp => {
+    Answers.Answered.map(ob => {
+      Answers.Answered.map(imp => {
+        List(
+          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.Yes)),
+          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.No)),
+          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.Yes)),
+          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.No)),
+          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.Unanswered))
+        )
+      })
+    })
+  }).flatten.flatten
+
+  val noneTestCaseOptions: List[UserAnswerOptions] = Answers.All.flatMap(tpp => {
+    Answers.All.map(ob => {
+      Answers.Answered.map(imp => {
+        List(
+          UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.Yes)),
+          UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.No)),
+          UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.Yes)),
+          UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.No)),
+          UserAnswerOptions(amountProducedValues(APAnswers.NoneProduced), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), warehouseValues(tpp), packingSitesValues(tpp), packAtBusinessAddressValues(Answers.Unanswered))
+        )
+      })
+    })
+  }).flatten.flatten
+
+  val testCaseOptions: List[UserAnswerOptions] = largeTestCaseOptions ++ smallTestCaseOptions ++ noneTestCaseOptions
+
+  def getKeyStringFromUserAnswerOptions(userAnswerOptions: UserAnswerOptions): String = {
+    val keyStrings: List[String] = List(
+      userAnswerOptions.amountProducedTuple._1,
+      userAnswerOptions.thirdPartyPackagingTuple._1,
+      userAnswerOptions.ownBrandsTuple._1,
+      userAnswerOptions.contractTuple._1,
+      userAnswerOptions.importTuple._1,
+      userAnswerOptions.packingSite._1,
+      userAnswerOptions.warehouseSite._1,
+      userAnswerOptions.packAtBusinessAddressTuple._1
+    )
+    makeKeyString(keyStrings)
+  }
+
+  def getUserAnswersFromUserAnswerOptions(userAnswerOptions: UserAnswerOptions): UserAnswers = {
+    getUserAnswers(
+      userAnswerOptions.amountProducedTuple._2,
+      userAnswerOptions.thirdPartyPackagingTuple._2,
+      userAnswerOptions.ownBrandsTuple._2,
+      userAnswerOptions.contractTuple._2,
+      userAnswerOptions.importTuple._2,
+      userAnswerOptions.packingSite._2,
+      userAnswerOptions.warehouseSite._2,
+      userAnswerOptions.packAtBusinessAddressTuple._2
+    )
+  }
 }

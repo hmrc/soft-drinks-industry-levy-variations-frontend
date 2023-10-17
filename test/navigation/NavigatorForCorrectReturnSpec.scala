@@ -17,8 +17,12 @@
 package navigation
 
 import base.SpecBase
+import base.SpecBase._
 import models._
 import pages._
+import pages.correctReturn.{ExemptionsForSmallProducersPage, RepaymentMethodPage, PackagedAsContractPackerPage}
+import controllers.correctReturn.routes
+import play.api.libs.json.Json
 
 class NavigatorForCorrectReturnSpec extends SpecBase {
 
@@ -33,6 +37,59 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress = contactAddress)) mustBe defaultCall
       }
+
+      "must go from repayment method page to check changes page" in {
+        navigator.nextPage(RepaymentMethodPage, NormalMode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
+          contactAddress)) mustBe controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad
+      }
+
+      "Packaged as a contract packer" - {
+
+        def navigate(value: Boolean, mode: Mode = NormalMode) = navigator.nextPage(PackagedAsContractPackerPage,
+          mode,
+          emptyUserAnswersForCorrectReturn.set(PackagedAsContractPackerPage , value).success.value)
+
+        "select Yes to navigate to How Many packaged as contract packer" in {
+          val result = navigate(value = true)
+          result mustBe routes.HowManyPackagedAsContractPackerController.onPageLoad(NormalMode)
+        }
+
+        "select No to navigate to exemptions for small producers page" in {
+          val result = navigate(value = false)
+          result mustBe routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
+        }
+
+        "Should navigate to Check Your Answers page when no is selected in check mode" in {
+          val result = navigate(value = false, CheckMode)
+          result mustBe routes.CorrectReturnCYAController.onPageLoad
+        }
+
+      }
+
+      "Exemptions for small producers" - {
+
+        def navigate(value: Boolean, mode: Mode = NormalMode) = navigator.nextPage(ExemptionsForSmallProducersPage,
+          mode,
+          emptyUserAnswersForCorrectReturn.set(ExemptionsForSmallProducersPage, value).success.value)
+
+        "select Yes to navigate to Add small producer pager" in {
+          val result = navigate(value = true)
+          result mustBe routes.AddASmallProducerController.onPageLoad(NormalMode)
+        }
+
+
+        "select No to navigate to brought into uk page" in {
+          val result = navigate(value = false)
+          result mustBe routes.BroughtIntoUKController.onPageLoad(NormalMode)
+        }
+
+        "Should navigate to Check Your Answers page when no is selected in check mode" in {
+          val result = navigate(value = false, CheckMode)
+          result mustBe routes.CorrectReturnCYAController.onPageLoad
+        }
+
+      }
+
     }
 
     "in Check mode" - {

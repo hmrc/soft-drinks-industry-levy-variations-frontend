@@ -16,8 +16,9 @@
 
 package pages.changeActivity
 
+import controllers.changeActivity.routes
 import play.api.libs.json.JsPath
-import models.LitresInBands
+import models.{LitresInBands, Mode}
 import pages.QuestionPage
 
 case object HowManyImportsPage extends QuestionPage[LitresInBands] {
@@ -26,4 +27,6 @@ case object HowManyImportsPage extends QuestionPage[LitresInBands] {
 
   def journeyType: String = "changeActivity"
   override def toString: String = "howManyImports"
+
+  override val url: Mode => String = mode => routes.HowManyImportsController.onPageLoad(mode).url
 }

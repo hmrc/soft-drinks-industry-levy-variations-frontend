@@ -20,6 +20,7 @@ import cats.data.EitherT
 import config.FrontendAppConfig
 import errors.UnexpectedResponseFromSDIL
 import models.{FinancialLineItem, OptPreviousSubmittedReturn, OptRetrievedSubscription, OptSmallProducer, RetrievedSubscription, ReturnPeriod, SdilReturn, VariationsSubmission}
+import play.api.Logger
 import play.api.libs.json.Json
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import service.VariationResult
@@ -174,7 +175,7 @@ class SoftDrinksIndustryLevyConnector @Inject()(
   }
 
   def submitVariation(variation: VariationsSubmission, sdilNumber: String)(implicit hc: HeaderCarrier): Future[Option[Int]] = {
-    println(s"data we are submitting when updating contact details ${Json.toJson(variation)}")
+    Logger(s"[SoftDrinksIndustryLevyConnector][submitVariation] - variation data we are submitting: ${Json.toJson(variation)}")
     http.POST[VariationsSubmission, HttpResponse](s"$sdilUrl/submit-variations/sdil/$sdilNumber", variation) map {
       response => Some(response.status)
     }

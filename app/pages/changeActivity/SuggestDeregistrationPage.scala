@@ -16,6 +16,8 @@
 
 package pages.changeActivity
 
+import controllers.changeActivity.routes
+import models.Mode
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
@@ -25,4 +27,6 @@ case object SuggestDeregistrationPage extends QuestionPage[String] {
 
   def journeyType: String = "changeActivity"
   override def toString: String = "suggestDeregistration"
+
+  override val url: Mode => String = _ => routes.SuggestDeregistrationController.onPageLoad.url
 }

@@ -18,8 +18,11 @@ package views.summary.changeActivity
 
 import config.FrontendAppConfig
 import models.UserAnswers
+import pages.changeActivity.SecondaryWarehouseDetailsPage
+import pages.changeActivity.PackagingSiteDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import viewmodels.summary.changeActivity.PackagingSiteDetailsSummary
 
 object ChangeActivitySummary  {
 
@@ -29,6 +32,8 @@ object ChangeActivitySummary  {
     val ownBrandsSummary: SummaryList = OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
     val contractSummary: SummaryList = ContractPackingSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
     val importsSummary: SummaryList = ImportsSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
+    val packingSummary: SummaryList = PackagingSiteDetailsSummary.summaryList(userAnswers, isCheckAnswers)
+    val warehouseSummary: SummaryList = WarehouseDetailsSummary.summaryList(userAnswers, isCheckAnswers)
     val amountProducedSection: Option[(String, SummaryList)] = amountProducedSummary.map(summary => {
       "changeActivity.checkYourAnswers.amountProducedSection" -> SummaryList(Seq(summary))
     })
@@ -53,6 +58,17 @@ object ChangeActivitySummary  {
           ImportsSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
       )
     }
-    (amountProducedSection ++ thirdPartyPackagersSection ++ ownBrandsSection ++ contractSection ++ importsSection).toSeq
+
+    val sitesSection: Option[(String, SummaryList)] = {
+      (userAnswers.get(PackagingSiteDetailsPage), userAnswers.get(SecondaryWarehouseDetailsPage)) match {
+        case (Some(packingSites) , Some(warehouseSites))  => Option("checkYourAnswers.sites" -> SummaryList(packingSummary.rows ++ warehouseSummary.rows))
+        case (Some(packingSites) , None )  => Option("checkYourAnswers.sites" -> packingSummary)
+        case (None , Some(warehouseSites))  => Option("checkYourAnswers.sites" -> warehouseSummary)
+        case (None , None) => None
+      }
+    }
+
+
+    (amountProducedSection ++ thirdPartyPackagersSection ++ ownBrandsSection ++ contractSection ++ importsSection ++ sitesSection).toSeq
   }
 }
