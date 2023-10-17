@@ -19,7 +19,6 @@ package services
 import base.SpecBase
 import connectors.AddressLookupConnector
 import controllers.routes
-import models.Warehouse
 import models.alf.init._
 import models.alf.{AlfAddress, AlfResponse}
 import models.backend.{Site, UkAddress}
@@ -72,10 +71,10 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       val addressLookupState = WarehouseDetails
       val sdilId: String = "foo"
       val alfId: String = "bar"
-      val warehouseMap = Map("1" -> Warehouse(Some("super cola"), UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")))
+      val warehouseMap = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), Some("super cola")))
       val addedWarehouse = Map(
-        "1" -> Warehouse(Some("super cola"), UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")),
-        sdilId -> Warehouse(Some(organisation), UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode, alfId = Some(alfId))))
+        "1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), Some("super cola")),
+        sdilId -> Site(UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode, alfId = Some(alfId)), Some(organisation)))
 
       val res = service.addAddressUserAnswers(addressLookupState = addressLookupState,
         address = customerAddressMax.address,
@@ -90,9 +89,9 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       val sdilId: String = "foo"
       val alfId: String = "bar"
       val warehouseMap = Map(sdilId ->
-        Warehouse(Some("super cola"), UkAddress(List("foo", "bar"), "wizz")))
+        Site(UkAddress(List("foo", "bar"), "wizz"), Some("super cola")))
       val updatedWarehouseMap = Map(sdilId ->
-        Warehouse(Some("soft drinks ltd"), UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId))))
+        Site(UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), Some("soft drinks ltd")))
 
       val res = service.addAddressUserAnswers(addressLookupState = addressLookupState,
         address = customerAddressMax.address,
@@ -107,9 +106,9 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       val addressLookupState = WarehouseDetails
       val sdilId: String = "foo"
       val alfId: String = "bar"
-      val warehouseMap = Map("1" -> Warehouse(Some("super cola"), UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")))
-      val addedWarehouseMissingLines = Map("1" -> Warehouse(Some("super cola"), UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")),
-        sdilId -> Warehouse(Some(organisation), UkAddress(List(addressLine1, addressLine2), postcode, alfId = Some(alfId))))
+      val warehouseMap = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), Some("super cola")))
+      val addedWarehouseMissingLines = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), Some("super cola")),
+        sdilId -> Site(UkAddress(List(addressLine1, addressLine2), postcode, alfId = Some(alfId)), Some(organisation)))
       val customerAddressMissingLines: AlfAddress =
         AlfAddress(
           Some(organisation),
@@ -131,7 +130,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       val addressLookupState = WarehouseDetails
       val sdilId: String = "foo"
       val alfId: String = "bar"
-      val warehouseMap = Map("1" -> Warehouse(Some("super cola"), UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")))
+      val warehouseMap = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), Some("super cola")))
 
       val res = service.addAddressUserAnswers(addressLookupState = addressLookupState,
         address = AlfAddress(Some(organisation),
@@ -143,10 +142,10 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
         alfId = alfId,
         sdilId = sdilId)
 
-      res.warehouseList mustBe Map("1" -> Warehouse(Some("super cola"),
-        UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")),
-        sdilId -> Warehouse(Some(organisation),
-          UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode, alfId = Some(alfId))))
+      res.warehouseList mustBe Map("1" -> Site(
+        UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), Some("super cola")),
+        sdilId -> Site(
+          UkAddress(List(addressLine1, addressLine2, addressLine3, addressLine4), postcode, alfId = Some(alfId)), Some(organisation)))
     }
 
     s"add to the cache the address of a $PackingDetails when a user returns from address lookup frontend with missing address lines" in {
@@ -242,7 +241,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
 
     "don't add to userAnswers when no details are added in alf and throw exception" in {
       val addressLookupState = WarehouseDetails
-      val warehouseMap = Map("1" -> Warehouse(Some("super cola"), UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")))
+      val warehouseMap = Map("1" -> Site(UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"), Some("super cola")))
       val customerAddressMissingLinesAndName: AlfAddress = AlfAddress(
         None,
         List(),

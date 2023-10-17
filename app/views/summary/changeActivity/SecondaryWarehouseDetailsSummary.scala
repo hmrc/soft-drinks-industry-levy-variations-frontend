@@ -17,7 +17,8 @@
 package views.summary.changeActivity
 
 import controllers.changeActivity.routes
-import models.{UserAnswers, Warehouse}
+import models.UserAnswers
+import models.backend.Site
 import pages.changeActivity.SecondaryWarehouseDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
@@ -45,7 +46,7 @@ object SecondaryWarehouseDetailsSummary  {
         )
     }
 
-  def summaryRows(warehouseList: Map[String, Warehouse])(implicit messages: Messages): List[SummaryListRow] = {
+  def summaryRows(warehouseList: Map[String, Site])(implicit messages: Messages): List[SummaryListRow] = {
     warehouseList.map {
       warehouse =>
         SummaryListRow(

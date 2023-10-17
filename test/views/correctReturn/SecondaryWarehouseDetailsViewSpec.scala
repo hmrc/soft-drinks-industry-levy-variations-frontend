@@ -18,8 +18,8 @@ package views.correctReturn
 
 import controllers.correctReturn.routes
 import forms.correctReturn.SecondaryWarehouseDetailsFormProvider
-import models.backend.UkAddress
-import models.{CheckMode, NormalMode, Warehouse}
+import models.backend.{Site, UkAddress}
+import models.{CheckMode, NormalMode}
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
@@ -51,9 +51,9 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
   }
 
   "View" - {
-    val WarehouseMap: Map[String,Warehouse] =
-      Map("1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
-        "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
+    val WarehouseMap: Map[String,Site] =
+      Map("1"-> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), Some("ABC Ltd")),
+        "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), Some("Super Cola Ltd")))
 
     val warehouseSummaryList: List[SummaryListRow] =
       SecondaryWarehouseDetailsSummary.row2(WarehouseMap)(messages(application))
@@ -110,9 +110,9 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
     }
 
     "when the form is preoccupied with yes and has no errors" - {
-      val WarehouseMap: Map[String,Warehouse] =
-        Map("1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
-          "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
+      val WarehouseMap: Map[String,Site] =
+        Map("1"-> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), Some("ABC Ltd")),
+          "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), Some("Super Cola Ltd")))
 
       val warehouseSummaryList: List[SummaryListRow] =
         SecondaryWarehouseDetailsSummary.row2(WarehouseMap)(messages(application))
@@ -156,9 +156,9 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
     }
 
     "when the form is preoccupied with no and has no errors" - {
-      val WarehouseMap: Map[String,Warehouse] =
-        Map("1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
-          "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
+      val WarehouseMap: Map[String,Site] =
+        Map("1"-> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), Some("ABC Ltd")),
+          "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), Some("Super Cola Ltd")))
 
       val warehouseSummaryList: List[SummaryListRow] =
         SecondaryWarehouseDetailsSummary.row2(WarehouseMap)(messages(application))
@@ -207,9 +207,9 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
 
     "contains a form with the correct action" - {
       "when in CheckMode" - {
-        val WarhouseMap: Map[String,Warehouse] =
-          Map("1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
-            "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
+        val WarhouseMap: Map[String,Site] =
+          Map("1"-> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), Some("ABC Ltd")),
+            "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), Some("Super Cola Ltd")))
 
         val warehouseSummaryList: List[SummaryListRow] =
           SecondaryWarehouseDetailsSummary.row2(WarhouseMap)(messages(application))
@@ -236,9 +236,9 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
       }
 
       "when in NormalMode" - {
-        val WarhouseMap: Map[String,Warehouse] =
-          Map("1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
-            "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
+        val WarhouseMap: Map[String,Site] =
+          Map("1"-> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), Some("ABC Ltd")),
+            "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), Some("Super Cola Ltd")))
 
         val warehouseSummaryList: List[SummaryListRow] =
           SecondaryWarehouseDetailsSummary.row2(WarhouseMap)(messages(application))
@@ -265,9 +265,9 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
     }
 
     "when there are form errors" - {
-      val WarehouseMap: Map[String,Warehouse] =
-        Map("1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
-          "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
+      val WarehouseMap: Map[String,Site] =
+        Map("1"-> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), Some("ABC Ltd")),
+          "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), Some("Super Cola Ltd")))
 
       val warehouseSummaryList: List[SummaryListRow] =
         SecondaryWarehouseDetailsSummary.row2(WarehouseMap)(messages(application))

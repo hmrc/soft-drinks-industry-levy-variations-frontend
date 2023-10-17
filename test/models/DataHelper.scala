@@ -154,7 +154,7 @@ trait DataHelper {
   def testWarehouse(
                      tradingName: String = "test trading name",
                      address: UkAddress
-                   ): Warehouse = Warehouse(
+                   ): Site = Site(
     tradingName = Some(tradingName),
     address = address
   )

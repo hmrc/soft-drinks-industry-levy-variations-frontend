@@ -20,7 +20,8 @@ import controllers.actions._
 import controllers.{ControllerHelper, routes}
 import forms.correctReturn.RemoveWarehouseDetailsFormProvider
 import handlers.ErrorHandler
-import models.{Mode, UserAnswers, Warehouse}
+import models.backend.Site
+import models.{Mode, UserAnswers}
 import navigation._
 import pages.correctReturn.RemoveWarehouseDetailsPage
 import play.api.data.Form
@@ -61,7 +62,7 @@ class RemoveWarehouseDetailsController @Inject()(
 
   def onSubmit(mode: Mode, index: String): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-      val warehouseToRemove: Option[Warehouse] = request.userAnswers.warehouseList.get(index)
+      val warehouseToRemove: Option[Site] = request.userAnswers.warehouseList.get(index)
       warehouseToRemove match {
         case None =>
           Future.successful(indexNotFoundRedirect(index, request, routes.IndexController.onPageLoad))

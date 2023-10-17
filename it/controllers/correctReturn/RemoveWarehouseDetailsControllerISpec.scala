@@ -2,7 +2,7 @@ package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.CorrectReturn
-import models.Warehouse
+import models.backend.Site
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.correctReturn.RemoveWarehouseDetailsPage
@@ -179,7 +179,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
         setAnswers(
           emptyUserAnswersForCorrectReturn
-            .copy(warehouseList = Map(indexOfWarehouseToBeRemoved -> Warehouse(None, ukAddress))))
+            .copy(warehouseList = Map(indexOfWarehouseToBeRemoved -> Site(ukAddress))))
         getAnswers(emptyUserAnswersForCorrectReturn.id).get.warehouseList.size mustBe 1
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
@@ -269,7 +269,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
         setAnswers(
           emptyUserAnswersForCorrectReturn
-            .copy(warehouseList = Map(indexOfWarehouseToBeRemoved -> Warehouse(None, ukAddress))))
+            .copy(warehouseList = Map(indexOfWarehouseToBeRemoved -> Site(ukAddress))))
         getAnswers(emptyUserAnswersForCorrectReturn.id).get.warehouseList.size mustBe 1
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(

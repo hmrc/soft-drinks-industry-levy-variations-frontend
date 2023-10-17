@@ -18,7 +18,6 @@ package controllers.correctReturn
 
 import base.SpecBase
 import controllers.correctReturn.routes._
-import models.SelectChange.CorrectReturn
 import models.correctReturn.{AddASmallProducer, ChangedPage, RepaymentMethod}
 import models.{LitresInBands, SmallProducer}
 import pages.correctReturn._

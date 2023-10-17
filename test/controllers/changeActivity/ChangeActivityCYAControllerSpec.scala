@@ -20,16 +20,14 @@ import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.changeActivity.routes._
 import generators.ChangeActivityCYAGenerators._
-import models.{DataHelper, Litreage, LitresInBands, VariationsSubmission}
 import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced.Large
-import navigation.{FakeNavigatorForChangeActivity, NavigatorForChangeActivity}
-import org.mockito.ArgumentMatchers.any
+import models.{DataHelper, Litreage, LitresInBands, VariationsSubmission}
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
-import pages.changeActivity.{AmountProducedPage, ContractPackingPage, HowManyContractPackingPage, HowManyImportsPage, HowManyOperatePackagingSiteOwnBrandsPage, ImportsPage}
-import play.api.mvc.Call
+import pages.changeActivity._
 import play.api.inject.bind
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.ChangeActivityService

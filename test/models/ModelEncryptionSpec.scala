@@ -35,7 +35,7 @@ class ModelEncryptionSpec extends SpecBase {
         Json.obj("foo" -> "bar"),
         List(SmallProducer("foo", "bar", (1,1))),
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")),Some("foo"), Some("foo"),Some(LocalDate.now()))),
-        Map("foo" -> Warehouse(Some("foo"),UkAddress(List("foo"),"foo", Some("foo")))),
+        Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")), Some("foo"))),
         UkAddress(List("123 Main Street", "Anytown"), "AB12 C34", alfId = Some("123456")),
         None,
         false,
@@ -49,7 +49,7 @@ class ModelEncryptionSpec extends SpecBase {
       Json.parse(encryption.crypto.decrypt(result._4, userAnswers.id)).as[List[SmallProducer]] mustBe userAnswers.smallProducerList
       Json.parse(encryption.crypto.decrypt(result._5.head._2, userAnswers.id)).as[Site] mustBe userAnswers.packagingSiteList.head._2
       result._5.head._1 mustBe userAnswers.packagingSiteList.head._1
-      Json.parse(encryption.crypto.decrypt(result._6.head._2, userAnswers.id)).as[Warehouse] mustBe userAnswers.warehouseList.head._2
+      Json.parse(encryption.crypto.decrypt(result._6.head._2, userAnswers.id)).as[Site] mustBe userAnswers.warehouseList.head._2
       result._6.head._1 mustBe userAnswers.warehouseList.head._1
       Json.parse(encryption.crypto.decrypt(result._7, userAnswers.id)).as[UkAddress] mustBe userAnswers.contactAddress
       result._9 mustBe userAnswers.submitted
@@ -64,7 +64,7 @@ class ModelEncryptionSpec extends SpecBase {
         Json.obj("foo" -> "bar"),
         List(SmallProducer("foo", "bar", (1,1))),
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")),Some("foo"), Some("foo"),Some(LocalDate.now()))),
-        Map("foo" -> Warehouse(Some("foo"),UkAddress(List("foo"),"foo", Some("foo")))),
+        Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")), Some("foo"))),
         UkAddress(List("123 Main Street", "Anytown"), "AB12 C34", alfId = Some("123456")), Some(ReturnPeriod(2023, 1)),
         false,
         Option(Instant.ofEpochSecond(1)),

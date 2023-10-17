@@ -20,9 +20,9 @@ import base.SpecBase
 import base.SpecBase.userAnswerTwoWarehousesUpdateRegisteredDetails
 import errors.SessionDatabaseInsertError
 import forms.updateRegisteredDetails.WarehouseDetailsFormProvider
-import models.{CheckMode, Mode, NormalMode}
 import models.SelectChange.UpdateRegisteredDetails
 import models.updateRegisteredDetails.ChangeRegisteredDetails
+import models.{CheckMode, Mode, NormalMode}
 import navigation._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -39,7 +39,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.{AddressLookupService, SessionService, WarehouseDetails}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import views.html.updateRegisteredDetails.WarehouseDetailsView
@@ -71,15 +70,6 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
           val request = FakeRequest(GET, warehouseDetailsRouteForMode(mode))
 
           val result = route(application, request).value
-
-          val view = application.injector.instanceOf[WarehouseDetailsView]
-
-          val warehouseSummaryList: List[SummaryListRow] =
-            WarehouseDetailsSummary.row2(twoWarehouses, mode)(messages(application))
-
-          val summaryList: SummaryList = SummaryListViewModel(
-            rows = warehouseSummaryList
-          )
 
           status(result) mustEqual OK
           val summaryActions = doc(contentAsString(result)).getElementsByClass("govuk-summary-list__actions")

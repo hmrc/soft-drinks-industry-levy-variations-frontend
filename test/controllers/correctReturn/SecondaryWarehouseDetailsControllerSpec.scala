@@ -17,10 +17,13 @@
 package controllers.correctReturn
 
 import base.SpecBase
+import errors.SessionDatabaseInsertError
 import forms.correctReturn.SecondaryWarehouseDetailsFormProvider
-import models.{NormalMode, Warehouse}
+import models.NormalMode
 import models.SelectChange.CorrectReturn
+import models.backend.{Site, UkAddress}
 import navigation._
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -30,18 +33,13 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
-import views.html.correctReturn.SecondaryWarehouseDetailsView
-import utilities.GenericLogger
-import errors.SessionDatabaseInsertError
-import models.backend.UkAddress
-
-import scala.concurrent.Future
-import org.jsoup.Jsoup
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import viewmodels.summary.correctReturn.SecondaryWarehouseDetailsSummary
+import views.html.correctReturn.SecondaryWarehouseDetailsView
 
-import scala.collection.immutable.Map
+import scala.concurrent.Future
 
 class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with SummaryListFluency {
 
@@ -136,9 +134,9 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
       running(application) {
 
-        val WarhouseMap: Map[String,Warehouse] =
-          Map("1"-> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX")),
-            "2" -> Warehouse(Some("Super Cola Ltd"), UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE")))
+        val WarhouseMap: Map[String,Site] =
+          Map("1"-> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), Some("ABC Ltd")),
+            "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), Some("Super Cola Ltd")))
 
         val warehouseSummaryList: List[SummaryListRow] =
           SecondaryWarehouseDetailsSummary.row2(WarhouseMap)(messages(application))

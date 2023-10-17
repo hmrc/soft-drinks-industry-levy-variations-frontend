@@ -49,7 +49,7 @@ class PackingSiteDetailsRemoveControllerSpec extends SpecBase with MockitoSugar 
   val addressOfPackingSite: UkAddress = UkAddress(List("foo"),"bar", None)
   val packingSiteTradingName: String = "a name for a packing site here"
   val userAnswersWithPackingSite: UserAnswers = emptyUserAnswersForUpdateRegisteredDetails
-    .copy(packagingSiteList = Map(indexOfPackingSiteToBeRemoved -> Site(addressOfPackingSite, None, Some(packingSiteTradingName), None)))
+    .copy(packagingSiteList = Map(indexOfPackingSiteToBeRemoved -> Site(addressOfPackingSite, Some(packingSiteTradingName), None, None)))
 
   "PackingSiteDetailsRemove Controller" - {
 

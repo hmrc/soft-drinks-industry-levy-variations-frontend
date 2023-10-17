@@ -14,18 +14,11 @@
  * limitations under the License.
  */
 
-package models
+package models.backend
 
-import models.backend.{Site, UkAddress}
-import play.api.libs.json.{Format, Json}
+import models.updateRegisteredDetails.Submission.VariationsContact
 
-case class Warehouse(tradingName: Option[String],
-                     address: UkAddress)
-
-object Warehouse {
-  implicit val format: Format[Warehouse] = Json.format[Warehouse]
-
-  def fromSite(site: Site): Warehouse = {
-    Warehouse(site.tradingName, site.address)
-  }
-}
+case class VariationsSite(tradingName: String,
+                          siteReference: String,
+                          variationsContact: VariationsContact,
+                          typeOfSite: String)

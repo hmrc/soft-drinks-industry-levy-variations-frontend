@@ -17,7 +17,7 @@
 package connectors
 
 import base.SpecBase
-import models.{DataHelper, FinancialLineItem, Litreage, OptRetrievedSubscription, RetrievedSubscription, ReturnPeriod, SdilReturn, VariationsSubmission}
+import models.{DataHelper, FinancialLineItem, Litreage, OptRetrievedSubscription, RetrievedSubscription, ReturnPeriod, VariationsSubmission}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures

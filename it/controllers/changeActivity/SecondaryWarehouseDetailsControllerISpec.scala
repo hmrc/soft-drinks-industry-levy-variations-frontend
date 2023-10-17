@@ -2,9 +2,8 @@ package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.ChangeActivity
-import models.Warehouse
 import models.alf.init._
-import models.backend.UkAddress
+import models.backend.{Site, UkAddress}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import pages.changeActivity.SecondaryWarehouseDetailsPage
@@ -50,8 +49,8 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
     "GET "  - {
       "when the userAnswers contains some warehouses" - {
-        val singleWarehouse = Map("1" -> Warehouse(Some("ABC Ltd"), UkAddress(List("33 Rhes Priordy"), "WR53 7CX")))
-        val multipleWarehouses = singleWarehouse ++ Map("2" -> Warehouse(Some("ACME Soft Drinks"), UkAddress(List("1 Watch Street"), "DF4 3WE")))
+        val singleWarehouse = Map("1" -> Site(UkAddress(List("33 Rhes Priordy"), "WR53 7CX"), Some("ABC Ltd")))
+        val multipleWarehouses = singleWarehouse ++ Map("2" -> Site(UkAddress(List("1 Watch Street"), "DF4 3WE"), Some("ACME Soft Drinks")))
         List(singleWarehouse, multipleWarehouses).foreach { warehouseList =>
           "should return OK and render the SecondaryWarehouseDetails page with no data populated " +
             s"(with message displaying summary list of warehouses) for warehouse list size ${warehouseList.size}" in {

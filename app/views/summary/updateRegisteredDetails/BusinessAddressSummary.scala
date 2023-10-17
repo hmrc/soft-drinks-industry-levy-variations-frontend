@@ -18,7 +18,6 @@ package views.summary.updateRegisteredDetails
 
 import models.UserAnswers
 import models.backend.UkAddress
-import pages.updateRegisteredDetails.BusinessAddressPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent

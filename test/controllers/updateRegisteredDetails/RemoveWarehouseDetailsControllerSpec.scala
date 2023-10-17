@@ -20,8 +20,8 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.updateRegisteredDetails.RemoveWarehouseDetailsFormProvider
 import models.SelectChange.UpdateRegisteredDetails
-import models.backend.UkAddress
-import models.{NormalMode, UserAnswers, Warehouse}
+import models.backend.{Site, UkAddress}
+import models.{NormalMode, UserAnswers}
 import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -49,7 +49,7 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
   val addressOfWarehouse: UkAddress = UkAddress(List("foo"),"bar", None)
   val warehouseTradingName: String = "a name for a warehouse here"
   val userAnswersWithWarehouse: UserAnswers = emptyUserAnswersForUpdateRegisteredDetails
-    .copy(warehouseList = Map(indexOfWarehouseToBeRemoved -> Warehouse(Some(warehouseTradingName), addressOfWarehouse)))
+    .copy(warehouseList = Map(indexOfWarehouseToBeRemoved -> Site(addressOfWarehouse, Some(warehouseTradingName))))
 
   "RemoveWarehouseDetails Controller" - {
 

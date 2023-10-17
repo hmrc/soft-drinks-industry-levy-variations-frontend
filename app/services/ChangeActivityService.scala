@@ -16,7 +16,6 @@
 
 package services
 
-import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import models.backend.Site
 import models.{Convert, Litreage, Producer, RegistrationVariationData, RetrievedSubscription, UserAnswers, VariationsSubmission}

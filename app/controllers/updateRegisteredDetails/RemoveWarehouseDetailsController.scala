@@ -16,12 +16,13 @@
 
 package controllers.updateRegisteredDetails
 
-import controllers.actions._
 import controllers.ControllerHelper
+import controllers.actions._
 import forms.updateRegisteredDetails.RemoveWarehouseDetailsFormProvider
 import handlers.ErrorHandler
 import models.SelectChange.UpdateRegisteredDetails
-import models.{Mode, UserAnswers, Warehouse}
+import models.backend.Site
+import models.{Mode, UserAnswers}
 import navigation._
 import pages.updateRegisteredDetails.RemoveWarehouseDetailsPage
 import play.api.data.Form
@@ -62,7 +63,7 @@ class RemoveWarehouseDetailsController @Inject()(
 
   def onSubmit(mode: Mode, index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails).async {
     implicit request =>
-      val warehouseToRemove: Option[Warehouse] = request.userAnswers.warehouseList.get(index)
+      val warehouseToRemove: Option[Site] = request.userAnswers.warehouseList.get(index)
       warehouseToRemove match {
         case None =>
           Future.successful(indexNotFoundRedirect(index, request, routes.WarehouseDetailsController.onPageLoad(mode)))
