@@ -51,6 +51,13 @@ object SpecBase {
   lazy val contactAddress: UkAddress = UkAddress(List("19 Rhes Priordy", "East London"), "E73 2RP")
 
   val sdilNumber: String = "XKSDIL000000022"
+  val litreage = (10L, 20L)
+  val id = "id"
+  val superColaProducerAlias = "Super Cola Ltd"
+  val superJuiceProducerAlias = "Super Juice Ltd"
+  val referenceNumber1 = "XZSDIL000000234"
+  val referenceNumber2 = "XZSDIL000000235"
+  val utr = "0000000022"
 
   val oneProductionSite: Map[String,Site] = Map(
    "1" -> Site(

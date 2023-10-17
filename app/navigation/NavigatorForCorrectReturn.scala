@@ -56,6 +56,17 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     }
   }
 
+  private def navigationForExemptionsForSmallProducers(userAnswers: UserAnswers, mode: Mode): Call = {
+    if (userAnswers.get(page = ExemptionsForSmallProducersPage).contains(true)) {
+      routes.AddASmallProducerController.onPageLoad(mode)
+    } else if(mode == CheckMode){
+      routes.CorrectReturnCYAController.onPageLoad
+    } else {
+      routes.BroughtIntoUKController.onPageLoad(mode)
+    }
+  }
+
+
   private def navigationForPackagedAsContractPacker(userAnswers: UserAnswers, mode: Mode): Call = {
     if (userAnswers.get(page = PackagedAsContractPackerPage).contains(true)) {
       routes.HowManyPackagedAsContractPackerController.onPageLoad(mode)
@@ -99,7 +110,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case ReturnChangeRegistrationPage => _ => defaultCall
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, NormalMode)
     case HowManyBroughtIntoUKPage => _ => defaultCall
-    case ExemptionsForSmallProducersPage => _ => defaultCall
+    case ExemptionsForSmallProducersPage => userAnswers => navigationForExemptionsForSmallProducers(userAnswers, NormalMode)
     case RemoveSmallProducerConfirmPage => _ => defaultCall
     case RemoveWarehouseDetailsPage => userAnswers => defaultCall
     case CorrectionReasonPage => _ => routes.RepaymentMethodController.onPageLoad(NormalMode)

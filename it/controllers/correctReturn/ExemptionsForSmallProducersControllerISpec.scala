@@ -1,6 +1,7 @@
 package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
+import models.NormalMode
 import models.SelectChange.CorrectReturn
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
@@ -90,9 +91,12 @@ class ExemptionsForSmallProducersControllerISpec extends ControllerITTestHelper 
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  val expectedLocation = if (route == normalRoutePath) {
-                    defaultCall.url
-                  } else {
+                  val expectedLocation = if (route == normalRoutePath && key == "yes") {
+                    routes.AddASmallProducerController.onPageLoad(NormalMode).url
+                  }else if(route == normalRoutePath && key != "yes"){
+                    routes.BroughtIntoUKController.onPageLoad(NormalMode).url
+                  }
+                  else {
                     routes.CorrectReturnCYAController.onPageLoad.url
                   }
                   res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
@@ -117,9 +121,12 @@ class ExemptionsForSmallProducersControllerISpec extends ControllerITTestHelper 
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  val expectedLocation = if (route == normalRoutePath) {
-                    defaultCall.url
-                  } else {
+                  val expectedLocation = if (route == normalRoutePath && key == "yes") {
+                    routes.AddASmallProducerController.onPageLoad(NormalMode).url
+                  }else if(route == normalRoutePath && key != "yes"){
+                    routes.BroughtIntoUKController.onPageLoad(NormalMode).url
+                  }
+                  else {
                     routes.CorrectReturnCYAController.onPageLoad.url
                   }
                   res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
