@@ -21,6 +21,7 @@ import models._
 import pages._
 import pages.correctReturn._
 import controllers.correctReturn.routes
+import play.api.libs.json.Json
 
 class NavigatorForCorrectReturnSpec extends SpecBase {
 
@@ -96,7 +97,20 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
     }
   }
 
+  "Add A Small Producer " - {
+
+    "Should navigate to small producer details controller when data is entered" in {
+      navigator.nextPage(AddASmallProducerPage,
+        CheckMode,
+        emptyUserAnswersForCorrectReturn.copy(data = Json.obj("addASmallProducer" -> Json.obj("lowBand" -> "10000", "highBand" -> "20000")))
+      ) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+    }
+  }
+
   "Exemptions for small producers" - {
+
+
+      "Exemptions for small producers" - {
 
     def navigateFromExemptionsForSmallProducers(value: Boolean, mode: Mode) =
       navigator.nextPage(ExemptionsForSmallProducersPage, mode, emptyUserAnswersForCorrectReturn.set(ExemptionsForSmallProducersPage, value).success.value)
