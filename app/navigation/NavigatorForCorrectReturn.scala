@@ -98,7 +98,11 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   }
 
   private def navigationForRemoveSmallProducerConfirm(userAnswers: UserAnswers, mode: Mode): Call = {
-    routes.SmallProducerDetailsController.onPageLoad(mode)
+    if (userAnswers.smallProducerList.isEmpty) {
+      routes.ExemptionsForSmallProducersController.onPageLoad(mode)
+    } else {
+      routes.SmallProducerDetailsController.onPageLoad(mode)
+    }
   }
 
   override val normalRoutes: Page => UserAnswers => Call = {
