@@ -68,10 +68,8 @@ class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
       userAnswers match {
         case userAnswers if userAnswers.packagingSiteList.nonEmpty =>
           routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
-        case userAnswers if userAnswers.warehouseList.nonEmpty =>
-          routes.WarehouseDetailsController.onPageLoad(NormalMode)
         case _ =>
-          defaultCall
+          routes.WarehouseDetailsController.onPageLoad(NormalMode)
       }
     } else if (changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.ContactDetails)) {
       routes.UpdateContactDetailsController.onPageLoad(NormalMode)
