@@ -17,12 +17,10 @@
 package navigation
 
 import base.SpecBase
-import base.SpecBase._
 import models._
 import pages._
-import pages.correctReturn.{ExemptionsForSmallProducersPage, RepaymentMethodPage, PackagedAsContractPackerPage}
+import pages.correctReturn._
 import controllers.correctReturn.routes
-import play.api.libs.json.Json
 
 class NavigatorForCorrectReturnSpec extends SpecBase {
 
@@ -45,22 +43,21 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
 
       "Packaged as a contract packer" - {
 
-        def navigate(value: Boolean, mode: Mode = NormalMode) = navigator.nextPage(PackagedAsContractPackerPage,
-          mode,
-          emptyUserAnswersForCorrectReturn.set(PackagedAsContractPackerPage , value).success.value)
+        def navigateFromPackagedAsContractPackerPage(value: Boolean, mode: Mode = NormalMode) =
+          navigator.nextPage(PackagedAsContractPackerPage, mode, emptyUserAnswersForCorrectReturn.set(PackagedAsContractPackerPage , value).success.value)
 
         "select Yes to navigate to How Many packaged as contract packer" in {
-          val result = navigate(value = true)
+          val result = navigateFromPackagedAsContractPackerPage(value = true)
           result mustBe routes.HowManyPackagedAsContractPackerController.onPageLoad(NormalMode)
         }
 
         "select No to navigate to exemptions for small producers page" in {
-          val result = navigate(value = false)
+          val result = navigateFromPackagedAsContractPackerPage(value = false)
           result mustBe routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
         }
 
         "Should navigate to Check Your Answers page when no is selected in check mode" in {
-          val result = navigate(value = false, CheckMode)
+          val result = navigateFromPackagedAsContractPackerPage(value = false, CheckMode)
           result mustBe routes.CorrectReturnCYAController.onPageLoad
         }
 
@@ -90,6 +87,12 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
 
       }
 
+      List(NormalMode, CheckMode).foreach(mode => {
+        s"must go from $AddASmallProducerPage to $SmallProducerDetailsPage in $mode" in {
+          navigator.nextPage(AddASmallProducerPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
+            contactAddress)) mustBe controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(mode)
+        }
+      })
     }
 
     "in Check mode" - {
