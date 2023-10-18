@@ -15,6 +15,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
 
   val sdilRefPartyDrinks = "XZSDIL000000234"
   val sdilRefSuperCola = "XZSDIL000000235"
+  val anotherSdilRef = "XZSDIL000000236"
   val aliasPartyDrinks = "Party Drinks Group"
   val aliasSuperCola = "Super Cola"
   val litreMax: Long = 100000000000000L
@@ -83,13 +84,18 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
 
   s"POST " + normalRoutePath - {
     userAnswersForCorrectReturnRemoveSmallProducerConfirmPage.foreach { case (key, userAnswers) =>
-      "when the user selects " + key - {
-        "should update the session with the new value and redirect to the index controller" - {
+      val userAnswersWithTwoSmallProducers = userAnswers
+        .copy(smallProducerList = List(
+          SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, (smallLitre, largeLitre)),
+          SmallProducer(aliasPartyDrinks, anotherSdilRef, (smallLitre, largeLitre))
+        ))
+      "when the user selects " + key + "and initially has more than one small producer" - {
+        "should update the session with the new value and redirect to the small producer details" - {
           "when the session contains no data for page" in {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, (smallLitre, largeLitre)))))
+            setAnswers(userAnswersWithTwoSmallProducers)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -110,7 +116,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(userAnswers.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, (smallLitre, largeLitre)))))
+            setAnswers(userAnswersWithTwoSmallProducers)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -120,6 +126,62 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(routes.SmallProducerDetailsController.onPageLoad(NormalMode).url)
+                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(RemoveSmallProducerConfirmPage))
+                dataStoredForPage.nonEmpty mustBe true
+                dataStoredForPage.get mustBe yesSelected
+              }
+            }
+          }
+        }
+      }
+      val userAnswersWithOneSmallProducer = userAnswers.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, (smallLitre, largeLitre))))
+      "when the user selects " + key + "and initially has one small producer" - {
+        "should update the session with the new value and redirect to the small producer details page for false and exemptions for small producers for true" - {
+          "when the session contains no data for page" in {
+            given
+              .commonPrecondition
+
+            setAnswers(userAnswersWithOneSmallProducer)
+            WsTestClient.withClient { client =>
+              val yesSelected = key == "yes"
+              val result = createClientRequestPOST(
+                client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> yesSelected.toString)
+              )
+
+              whenReady(result) { res =>
+                res.status mustBe 303
+                val onwardRoute = if (yesSelected) {
+                  routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode).url
+                } else {
+                  routes.SmallProducerDetailsController.onPageLoad(NormalMode).url
+                }
+                res.header(HeaderNames.LOCATION) mustBe Some(onwardRoute)
+                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(RemoveSmallProducerConfirmPage))
+                dataStoredForPage.nonEmpty mustBe true
+                dataStoredForPage.get mustBe yesSelected
+              }
+            }
+          }
+
+          "when the session already contains data for page" in {
+            given
+              .commonPrecondition
+
+            setAnswers(userAnswersWithOneSmallProducer)
+            WsTestClient.withClient { client =>
+              val yesSelected = key == "yes"
+              val result = createClientRequestPOST(
+                client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> yesSelected.toString)
+              )
+
+              whenReady(result) { res =>
+                res.status mustBe 303
+                val onwardRoute = if (yesSelected) {
+                  routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode).url
+                } else {
+                  routes.SmallProducerDetailsController.onPageLoad(NormalMode).url
+                }
+                res.header(HeaderNames.LOCATION) mustBe Some(onwardRoute)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(RemoveSmallProducerConfirmPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe yesSelected
@@ -219,13 +281,18 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
 
   s"POST " + checkRoutePath - {
     userAnswersForCorrectReturnRemoveSmallProducerConfirmPage.foreach { case (key, userAnswers) =>
-      "when the user selects " + key - {
-        "should update the session with the new value and redirect to the index controller" - {
+      val userAnswersWithTwoSmallProducers = userAnswers
+        .copy(smallProducerList = List(
+          SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, (smallLitre, largeLitre)),
+          SmallProducer(aliasPartyDrinks, anotherSdilRef, (smallLitre, largeLitre))
+        ))
+      "when the user selects " + key + "and initially has more than one small producer" - {
+        "should update the session with the new value and redirect to the small producer details" - {
           "when the session contains no data for page" in {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, (smallLitre, largeLitre)))))
+            setAnswers(userAnswersWithTwoSmallProducers)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -246,7 +313,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(userAnswers.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, (smallLitre, largeLitre)))))
+            setAnswers(userAnswersWithTwoSmallProducers)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -256,6 +323,62 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(routes.SmallProducerDetailsController.onPageLoad(CheckMode).url)
+                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(RemoveSmallProducerConfirmPage))
+                dataStoredForPage.nonEmpty mustBe true
+                dataStoredForPage.get mustBe yesSelected
+              }
+            }
+          }
+        }
+      }
+      val userAnswersWithOneSmallProducer = userAnswers.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, (smallLitre, largeLitre))))
+      "when the user selects " + key + "and initially has one small producer" - {
+        "should update the session with the new value and redirect to the small producer details page for false and exemptions for small producers for true" - {
+          "when the session contains no data for page" in {
+            given
+              .commonPrecondition
+
+            setAnswers(userAnswersWithOneSmallProducer)
+            WsTestClient.withClient { client =>
+              val yesSelected = key == "yes"
+              val result = createClientRequestPOST(
+                client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> yesSelected.toString)
+              )
+
+              whenReady(result) { res =>
+                res.status mustBe 303
+                val onwardRoute = if (yesSelected) {
+                  routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
+                } else {
+                  routes.SmallProducerDetailsController.onPageLoad(CheckMode).url
+                }
+                res.header(HeaderNames.LOCATION) mustBe Some(onwardRoute)
+                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(RemoveSmallProducerConfirmPage))
+                dataStoredForPage.nonEmpty mustBe true
+                dataStoredForPage.get mustBe yesSelected
+              }
+            }
+          }
+
+          "when the session already contains data for page" in {
+            given
+              .commonPrecondition
+
+            setAnswers(userAnswersWithOneSmallProducer)
+            WsTestClient.withClient { client =>
+              val yesSelected = key == "yes"
+              val result = createClientRequestPOST(
+                client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> yesSelected.toString)
+              )
+
+              whenReady(result) { res =>
+                res.status mustBe 303
+                val onwardRoute = if (yesSelected) {
+                  routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
+                } else {
+                  routes.SmallProducerDetailsController.onPageLoad(CheckMode).url
+                }
+                res.header(HeaderNames.LOCATION) mustBe Some(onwardRoute)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(RemoveSmallProducerConfirmPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe yesSelected
