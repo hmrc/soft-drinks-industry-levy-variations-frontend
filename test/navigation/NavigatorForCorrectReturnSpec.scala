@@ -109,9 +109,6 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
 
   "Exemptions for small producers" - {
 
-
-    "Exemptions for small producers" - {
-
       def navigateFromExemptionsForSmallProducers(value: Boolean, mode: Mode) =
         navigator.nextPage(ExemptionsForSmallProducersPage, mode, emptyUserAnswersForCorrectReturn.set(ExemptionsForSmallProducersPage, value).success.value)
 
