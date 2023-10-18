@@ -93,6 +93,13 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
             contactAddress)) mustBe controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(mode)
         }
       })
+
+      List(NormalMode, CheckMode).foreach(mode => {
+        s"must go from $RemoveSmallProducerConfirmPage to $SmallProducerDetailsPage in $mode" in {
+          navigator.nextPage(RemoveSmallProducerConfirmPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
+            contactAddress)) mustBe controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(mode)
+        }
+      })
     }
 
     "in Check mode" - {

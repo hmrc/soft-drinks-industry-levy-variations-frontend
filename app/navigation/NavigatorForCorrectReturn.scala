@@ -97,6 +97,10 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     }
   }
 
+  private def navigationForRemoveSmallProducerConfirm(userAnswers: UserAnswers, mode: Mode): Call = {
+    routes.SmallProducerDetailsController.onPageLoad(mode)
+  }
+
   override val normalRoutes: Page => UserAnswers => Call = {
     case RemovePackagingSiteConfirmPage => _ => defaultCall
     case SecondaryWarehouseDetailsPage => _ => defaultCall
@@ -111,7 +115,6 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, NormalMode)
     case HowManyBroughtIntoUKPage => _ => defaultCall
     case ExemptionsForSmallProducersPage => userAnswers => navigationForExemptionsForSmallProducers(userAnswers, NormalMode)
-    case RemoveSmallProducerConfirmPage => _ => defaultCall
     case RemoveWarehouseDetailsPage => userAnswers => defaultCall
     case CorrectionReasonPage => _ => routes.RepaymentMethodController.onPageLoad(NormalMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
@@ -122,6 +125,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, NormalMode)
     case HowManyPackagedAsContractPackerPage => _ => routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
     case AddASmallProducerPage => _ => routes.SmallProducerDetailsController.onPageLoad(NormalMode)
+    case RemoveSmallProducerConfirmPage => userAnswers => navigationForRemoveSmallProducerConfirm(userAnswers, NormalMode)
     case _ => _ => defaultCall
   }
 
@@ -137,6 +141,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamaged(userAnswers, CheckMode)
     case RepaymentMethodPage => userAnswers => routes.CorrectReturnCheckChangesCYAController.onPageLoad
     case AddASmallProducerPage => _ => routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+    case RemoveSmallProducerConfirmPage => userAnswers => navigationForRemoveSmallProducerConfirm(userAnswers, CheckMode)
     case _ => _ => routes.CorrectReturnCYAController.onPageLoad
   }
 }

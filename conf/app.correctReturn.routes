@@ -18,11 +18,6 @@ POST       /repayment-method                                    controllers.corr
 GET        /change-repayment-method                             controllers.correctReturn.RepaymentMethodController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-repayment-method                             controllers.correctReturn.RepaymentMethodController.onSubmit(mode: Mode = CheckMode)
 
-GET        /add-small-producer                                  controllers.correctReturn.AddASmallProducerController.onPageLoad(mode: Mode = NormalMode)
-POST       /add-small-producer                                  controllers.correctReturn.AddASmallProducerController.onSubmit(mode: Mode = NormalMode)
-GET        /change-add-small-producer                           controllers.correctReturn.AddASmallProducerController.onPageLoad(mode: Mode = CheckMode)
-POST       /change-add-small-producer                           controllers.correctReturn.AddASmallProducerController.onSubmit(mode: Mode = CheckMode)
-
 GET        /claim-credits-for-lost-damaged                      controllers.correctReturn.ClaimCreditsForLostDamagedController.onPageLoad(mode: Mode = NormalMode)
 POST       /claim-credits-for-lost-damaged                      controllers.correctReturn.ClaimCreditsForLostDamagedController.onSubmit(mode: Mode = NormalMode)
 GET        /change-claim-credits-for-lost-damaged               controllers.correctReturn.ClaimCreditsForLostDamagedController.onPageLoad(mode: Mode = CheckMode)
@@ -58,6 +53,16 @@ POST       /small-producer-details                              controllers.corr
 GET        /change-small-producer-details                       controllers.correctReturn.SmallProducerDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-small-producer-details                       controllers.correctReturn.SmallProducerDetailsController.onSubmit(mode: Mode = CheckMode)
 
+GET        /add-small-producer                                  controllers.correctReturn.AddASmallProducerController.onPageLoad(mode: Mode = NormalMode)
+POST       /add-small-producer                                  controllers.correctReturn.AddASmallProducerController.onSubmit(mode: Mode = NormalMode)
+GET        /change-add-small-producer                           controllers.correctReturn.AddASmallProducerController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-add-small-producer                           controllers.correctReturn.AddASmallProducerController.onSubmit(mode: Mode = CheckMode)
+
+GET        /remove-small-producer-confirm/:sdil                 controllers.correctReturn.RemoveSmallProducerConfirmController.onPageLoad(mode: Mode = NormalMode, sdil: String)
+POST       /remove-small-producer-confirm/:sdil                 controllers.correctReturn.RemoveSmallProducerConfirmController.onSubmit(mode: Mode = NormalMode, sdil: String)
+GET        /change-remove-small-producer-confirm/:sdil          controllers.correctReturn.RemoveSmallProducerConfirmController.onPageLoad(mode: Mode = CheckMode, sdil: String)
+POST       /change-remove-small-producer-confirm/:sdil          controllers.correctReturn.RemoveSmallProducerConfirmController.onSubmit(mode: Mode = CheckMode, sdil: String)
+
 GET        /brought-into-uk                                     controllers.correctReturn.BroughtIntoUKController.onPageLoad(mode: Mode = NormalMode)
 POST       /brought-into-uk                                     controllers.correctReturn.BroughtIntoUKController.onSubmit(mode: Mode = NormalMode)
 GET        /change-brought-into-uk                              controllers.correctReturn.BroughtIntoUKController.onPageLoad(mode: Mode = CheckMode)
@@ -80,9 +85,6 @@ GET        /how-many-into-uk-small-producers                    controllers.corr
 POST       /how-many-into-uk-small-producers                    controllers.correctReturn.HowManyBroughtIntoUkFromSmallProducersController.onSubmit(mode: Mode = NormalMode)
 GET        /change-how-many-into-uk-small-producers             controllers.correctReturn.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-how-many-into-uk-small-producers             controllers.correctReturn.HowManyBroughtIntoUkFromSmallProducersController.onSubmit(mode: Mode = CheckMode)
-
-GET        /remove-small-producer-confirm/:sdil                  controllers.correctReturn.RemoveSmallProducerConfirmController.onPageLoad(mode: Mode = NormalMode, sdil: String)
-POST       /remove-small-producer-confirm/:sdil                  controllers.correctReturn.RemoveSmallProducerConfirmController.onSubmit(mode: Mode = NormalMode, sdil: String)
 
 GET        /claim-credits-for-exports                           controllers.correctReturn.ClaimCreditsForExportsController.onPageLoad(mode: Mode = NormalMode)
 POST       /claim-credits-for-exports                           controllers.correctReturn.ClaimCreditsForExportsController.onSubmit(mode: Mode = NormalMode)

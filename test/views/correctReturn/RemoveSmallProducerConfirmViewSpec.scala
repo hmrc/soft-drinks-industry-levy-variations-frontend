@@ -176,12 +176,12 @@ class RemoveSmallProducerConfirmViewSpec extends ViewSpecHelper {
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
           documentYesSelected.select(Selectors.form)
-            .attr("action") mustEqual routes.RemoveSmallProducerConfirmController.onSubmit(sdilNumber).url
+            .attr("action") mustEqual routes.RemoveSmallProducerConfirmController.onSubmit(NormalMode, sdilNumber).url
         }
 
         "and no is selected" in {
           documentNoSelected.select(Selectors.form)
-            .attr("action") mustEqual routes.RemoveSmallProducerConfirmController.onSubmit(sdilNumber).url
+            .attr("action") mustEqual routes.RemoveSmallProducerConfirmController.onSubmit(NormalMode, sdilNumber).url
         }
       }
     }
