@@ -115,6 +115,10 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     case _ => _ => routes.ChangeActivityCYAController.onPageLoad
   }
 
+  override val editRouteMap: Page => UserAnswers => Call = {
+    case _ => _ => defaultCall
+  }
+
   private def navigationFollowingImports(userAnswers: UserAnswers): Call = {
     userAnswers.get(AmountProducedPage) match {
       case Some(AmountProduced.Large) => navigateForLargeAmountProducedFollowingImports(userAnswers)

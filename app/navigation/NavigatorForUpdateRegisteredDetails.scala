@@ -44,6 +44,10 @@ class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
     case _ => _ => routes.UpdateRegisteredDetailsCYAController.onPageLoad
   }
 
+  override val editRouteMap: Page => UserAnswers => Call = {
+    case _ => _ => defaultCall
+  }
+
   def PackagingSiteDetailsNavigation(userAnswers: UserAnswers): Call = {
     val changeRegisteredDetailsPageAnswers = userAnswers.get(ChangeRegisteredDetailsPage).head
     if (changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.ContactDetails)) {

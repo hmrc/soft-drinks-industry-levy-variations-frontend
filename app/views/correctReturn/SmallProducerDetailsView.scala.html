@@ -40,7 +40,7 @@
         } else {
             <h1 class="govuk-heading-l">@messages("correctReturn.smallProducerDetails.heading", smallProducerList.length)</h1>
         }
-        @govukSummaryList(SmallProducerDetailsSummary.producerList(smallProducerList))
+        @govukSummaryList(SmallProducerDetailsSummary.producerList(mode, smallProducerList))
 
         @govukRadios(
             RadiosViewModel.yesNo(
