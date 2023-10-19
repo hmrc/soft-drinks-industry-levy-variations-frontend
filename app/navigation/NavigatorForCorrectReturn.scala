@@ -111,8 +111,8 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     }
   }
 
-  private def navigationForRemoveSmallProducerConfirm(userAnswers: UserAnswers, mode: Mode) = {
-    if (userAnswers.get(page = RemoveSmallProducerConfirmPage).contains(true) && userAnswers.smallProducerList.isEmpty) {
+  private def navigationForRemoveSmallProducerConfirm(userAnswers: UserAnswers, mode: Mode):Call = {
+    if (userAnswers.smallProducerList.isEmpty) {
       routes.ExemptionsForSmallProducersController.onPageLoad(mode)
     } else {
       routes.SmallProducerDetailsController.onPageLoad(mode)

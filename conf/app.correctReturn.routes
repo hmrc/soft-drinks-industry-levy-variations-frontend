@@ -29,8 +29,8 @@ POST       /change-add-small-producer                           controllers.corr
 
 GET        /remove-small-producer-confirm/:sdil                 controllers.correctReturn.RemoveSmallProducerConfirmController.onPageLoad(mode: Mode = NormalMode, sdil: String)
 POST       /remove-small-producer-confirm/:sdil                 controllers.correctReturn.RemoveSmallProducerConfirmController.onSubmit(mode: Mode = NormalMode, sdil: String)
-GET        /remove-small-producer-confirm/:sdil                 controllers.correctReturn.RemoveSmallProducerConfirmController.onPageLoad(mode: Mode = CheckMode, sdil: String)
-POST       /remove-small-producer-confirm/:sdil                 controllers.correctReturn.RemoveSmallProducerConfirmController.onSubmit(mode: Mode = CheckMode, sdil: String)
+GET        /change-remove-small-producer-confirm/:sdil          controllers.correctReturn.RemoveSmallProducerConfirmController.onPageLoad(mode: Mode = CheckMode, sdil: String)
+POST       /change-remove-small-producer-confirm/:sdil          controllers.correctReturn.RemoveSmallProducerConfirmController.onSubmit(mode: Mode = CheckMode, sdil: String)
 
 GET        /claim-credits-for-lost-damaged                      controllers.correctReturn.ClaimCreditsForLostDamagedController.onPageLoad(mode: Mode = NormalMode)
 POST       /claim-credits-for-lost-damaged                      controllers.correctReturn.ClaimCreditsForLostDamagedController.onSubmit(mode: Mode = NormalMode)
