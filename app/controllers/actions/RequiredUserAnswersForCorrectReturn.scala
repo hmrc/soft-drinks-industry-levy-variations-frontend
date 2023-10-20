@@ -54,19 +54,24 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
     }
   }
 
-  private[controllers] def returnMissingAnswers[A: ClassTag, B: ClassTag](list: List[CorrectReturnRequiredPage[_,_,_]])(implicit request: DataRequest[_]): List[CorrectReturnRequiredPage[_,_,_]] = {
+  private[controllers] def returnMissingAnswers[A: ClassTag, B: ClassTag](list: List[CorrectReturnRequiredPage[_,_,_]])
+                                                                         (implicit request: DataRequest[_]): List[CorrectReturnRequiredPage[_,_,_]] = {
     list.filterNot { listItem =>
-      val currentPage: Option[A] = request.userAnswers.get(listItem.pageRequired.asInstanceOf[QuestionPage[A]])(listItem.reads.asInstanceOf[Reads[A]])
+      val currentPage: Option[A] = request.userAnswers
+        .get(listItem.pageRequired.asInstanceOf[QuestionPage[A]])(listItem.reads.asInstanceOf[Reads[A]])
       (currentPage.isDefined, listItem.basedOnCorrectReturnPreviousPage.isDefined) match {
         case (false, true) =>
-            val CorrectReturnPreviousPage: CorrectReturnPreviousPage[QuestionPage[B], B] = listItem.basedOnCorrectReturnPreviousPage.get.asInstanceOf[CorrectReturnPreviousPage[QuestionPage[B], B]]
-            val CorrectReturnPreviousPageAnswer: Option[B] = request.userAnswers.get(CorrectReturnPreviousPage.page)(CorrectReturnPreviousPage.reads)
+            val CorrectReturnPreviousPage: CorrectReturnPreviousPage[QuestionPage[B], B] = listItem.basedOnCorrectReturnPreviousPage
+              .get.asInstanceOf[CorrectReturnPreviousPage[QuestionPage[B], B]]
+            val CorrectReturnPreviousPageAnswer: Option[B] = request.userAnswers
+              .get(CorrectReturnPreviousPage.page)(CorrectReturnPreviousPage.reads)
             !CorrectReturnPreviousPageAnswer.contains(CorrectReturnPreviousPage.CorrectReturnPreviousPageAnswerRequired)
         case (false, _) => false
         case _ => true
       }
     }
   }
+
   private[controllers] def smallProducerCheck(subscription: RetrievedSubscription): List[CorrectReturnRequiredPage[_, _,_]] = {
     if (subscription.activity.smallProducer) {
       List.empty

@@ -96,8 +96,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
     }
     "should allow user to continue if all user answers are filled in and user is NOT newImporter && NOT co packer && NOT small producer" in {
       val completedUserAnswers = emptyUserAnswersForCorrectReturn.copy(data =
-        Json.obj("ownBrands" -> false,
-          "packagedContractPacker" -> true,
+        Json.obj("operatePackagingSiteOwnBrands" -> false,
+          "packagedAsContractPacker" -> true,
           "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
           "exemptionsForSmallProducers" -> false,
           "broughtIntoUK" -> false,
@@ -140,15 +140,15 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
 
     s"should check for $CorrectReturnBaseCYAPage and allow the user to continue when all answers are complete" in {
       val completedUserAnswers = emptyUserAnswersForCorrectReturn.copy(data =
-        Json.obj("ownBrands" -> false,
-          "packagedContractPacker" -> true,
-        "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
-        "exemptionsForSmallProducers" -> false,
-        "broughtIntoUK" -> false,
-        "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923),
-        "broughtIntoUkFromSmallProducers" -> false,
-        "claimCreditsForExports" -> false,
-        "claimCreditsForLostDamaged" -> false))
+        Json.obj("operatePackagingSiteOwnBrands" -> false,
+          "packagedAsContractPacker" -> true,
+          "howManyPackagedAsContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
+          "exemptionsForSmallProducers" -> false,
+          "broughtIntoUK" -> false,
+          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923),
+          "broughtIntoUkFromSmallProducers" -> false,
+          "claimCreditsForExports" -> false,
+          "claimCreditsForLostDamaged" -> false))
       val res =
         requiredUserAnswers.requireData(CorrectReturnBaseCYAPage)(Future.successful(Ok("")))(basicRequestWithEmptyAnswers
           .copy(userAnswers = completedUserAnswers))
@@ -169,7 +169,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
     }
     "should return SOME missing answers when SOME answers are populated" in {
       val someAnswersCompleted = emptyUserAnswersForCorrectReturn.copy(data =
-        Json.obj("ownBrands" -> false,
+        Json.obj("operatePackagingSiteOwnBrands" -> false,
           "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
           "exemptionsForSmallProducers" -> false,
           "broughtIntoUK" -> false,
@@ -257,8 +257,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
     }
     "should return all correct answers if user is NOT newImporter && NOT new co packer && NOT small producer" in {
       val completedUserAnswers = emptyUserAnswersForCorrectReturn.copy(data =
-        Json.obj("ownBrands" -> false,
-          "packagedContractPacker" -> true,
+        Json.obj("operatePackagingSiteOwnBrands" -> false,
+          "packagedAsContractPacker" -> true,
           "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
           "exemptionsForSmallProducers" -> false,
           "broughtIntoUK" -> false,
@@ -288,8 +288,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
     }
     "should be correct if user is a new packer" in {
       val completedUserAnswers = emptyUserAnswersForCorrectReturn.copy(data =
-        Json.obj("ownBrands" -> false,
-          "packagedContractPacker" -> true,
+        Json.obj("operatePackagingSiteOwnBrands" -> false,
+          "packagedAsContractPacker" -> true,
           "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
           "exemptionsForSmallProducers" -> false,
           "broughtIntoUK" -> false,
@@ -317,11 +317,11 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
     }
     "should be correct if user is a new importer" in {
       val completedUserAnswers = emptyUserAnswersForCorrectReturn.copy(data =
-        Json.obj("ownBrands" -> false,
-          "packagedContractPacker" -> true,
+        Json.obj("operatePackagingSiteOwnBrands" -> false,
+          "packagedAsContractPacker" -> true,
           "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
           "exemptionsForSmallProducers" -> false,
-          "broughtIntoUK" -> false,
+          "broughtIntoUK" -> true,
           "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923),
           "broughtIntoUkFromSmallProducers" -> false,
           "claimCreditsForExports" -> false,
