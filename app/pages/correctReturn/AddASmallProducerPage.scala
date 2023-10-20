@@ -16,6 +16,8 @@
 
 package pages.correctReturn
 
+import controllers.correctReturn.routes
+import models.Mode
 import models.correctReturn.AddASmallProducer
 import pages.QuestionPage
 import play.api.libs.json.JsPath
@@ -27,4 +29,6 @@ case object AddASmallProducerPage extends QuestionPage[AddASmallProducer] {
   def journeyType: String = "correctReturn"
 
   override def toString: String = "addASmallProducer"
+
+  override val url: Mode => String = mode => routes.AddASmallProducerController.onPageLoad(mode).url
 }

@@ -16,7 +16,8 @@
 
 package pages.correctReturn
 
-import models.LitresInBands
+import controllers.correctReturn.routes
+import models.{LitresInBands, Mode}
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
@@ -25,4 +26,6 @@ case object HowManyCreditsForLostDamagedPage extends QuestionPage[LitresInBands]
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "howManyCreditsForLostDamaged"
+
+  override val url: Mode => String = mode => routes.HowManyCreditsForLostDamagedController.onPageLoad(mode).url
 }

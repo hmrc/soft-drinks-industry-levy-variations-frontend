@@ -81,11 +81,11 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
 
   "checkYourAnswersRequiredData" - {
 
-    "should return Redirect to start page when user answers is empty and the small producer is true" in {
+    "should return redirect to Packaged as Contract Packer page when user answers is empty and the small producer is true" in {
       val res = requiredUserAnswers.checkYourAnswersRequiredData(Future.successful(Ok("")))(basicRequestWithEmptyAnswers)
       redirectLocation(res).get mustBe routes.PackagedAsContractPackerController.onPageLoad(NormalMode).url
     }
-    "should return Redirect to start page when user answers is empty and the small producer is false" in {
+    "should return Redirect to Own brands page when user answers is empty and the small producer is false" in {
       val subscription = RetrievedSubscription(
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = false,largeProducer = true,contractPacker = true,importer = true,voluntaryRegistration = true),
