@@ -48,7 +48,7 @@ class BusinessAddressControllerSpec extends SpecBase {
           .build()
 
       when(mockAddressLookupService
-        .initJourneyAndReturnOnRampUrl(ArgumentMatchers.eq(ContactDetails), ArgumentMatchers.any())(
+        .initJourneyAndReturnOnRampUrl(ArgumentMatchers.eq(ContactDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
           ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       ).thenReturn(Future.successful("woohooherewegoo!"))
 
@@ -70,7 +70,7 @@ class BusinessAddressControllerSpec extends SpecBase {
           .build()
 
       when(mockAddressLookupService
-        .initJourneyAndReturnOnRampUrl(ArgumentMatchers.eq(ContactDetails), ArgumentMatchers.any())(
+        .initJourneyAndReturnOnRampUrl(ArgumentMatchers.eq(ContactDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
           ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       ).thenReturn(Future.failed(new Exception("uh oh spagetio")))
 

@@ -20,6 +20,7 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.SecondaryWarehouseDetailsFormProvider
 import handlers.ErrorHandler
+import models.NormalMode
 import models.SelectChange.ChangeActivity
 import navigation._
 import pages.changeActivity.SecondaryWarehouseDetailsPage
@@ -94,7 +95,7 @@ class SecondaryWarehouseDetailsController @Inject()(
   private def getOnwardUrl(value: Boolean)
                           (implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages, requestHeader: RequestHeader): Future[String] = {
     if (value) {
-      addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails)(hc, ec, messages, requestHeader)
+      addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = NormalMode)(hc, ec, messages, requestHeader)
     } else {
       Future.successful(routes.ChangeActivityCYAController.onPageLoad.url)
     }
