@@ -23,7 +23,6 @@ import models.correctReturn.AddASmallProducer
 import models.requests.CorrectReturnDataRequest
 import models.{Contact, LitresInBands, NormalMode, RetrievedActivity, RetrievedSubscription, ReturnPeriod}
 import pages.correctReturn._
-import pages.{QuestionPage, correctReturn}
 import play.api.libs.json.{Json, Reads}
 import play.api.mvc.Results.Ok
 import play.api.test.Helpers._
@@ -40,7 +39,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
     RetrievedSubscription(
       "","","", UkAddress(List.empty, "", None),
       RetrievedActivity(smallProducer = true,largeProducer = true,contractPacker = true,importer = true,voluntaryRegistration = true),
-      LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None),
+      LocalDate.now(),List.empty, List.empty,Contact(None,None,"",""),None),
     emptyUserAnswersForCorrectReturn,
     ReturnPeriod(2022, 3)
   )
@@ -95,15 +94,16 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
       redirectLocation(res).get mustBe routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
     }
     "should allow user to continue if all user answers are filled in and user is NOT newImporter && NOT co packer && NOT small producer" in {
-      val completedUserAnswers = emptyUserAnswersForCorrectReturn.copy(data =
-        Json.obj("operatePackagingSiteOwnBrands" -> false,
-          "packagedAsContractPacker" -> true,
-          "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
-          "exemptionsForSmallProducers" -> false,
-          "broughtIntoUK" -> false,
-          "broughtIntoUkFromSmallProducers" -> false,
-          "claimCreditsForExports" -> false,
-          "claimCreditsForLostDamaged" -> false))
+      val completedUserAnswers = emptyUserAnswersForCorrectReturn
+          .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+          .set(PackagedAsContractPackerPage, true).success.value
+          .set(HowManyPackagedAsContractPackerPage, LitresInBands(100, 652)).success.value
+          .set(ExemptionsForSmallProducersPage, false).success.value
+          .set(BroughtIntoUKPage, false).success.value
+          .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+          .set(ClaimCreditsForExportsPage, false).success.value
+          .set(ClaimCreditsForLostDamagedPage, false).success.value
+
       val res =
         requiredUserAnswers.checkYourAnswersRequiredData(Future.successful(Ok("")))(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers))
       status(res) mustBe OK
@@ -119,8 +119,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
       s"nil return and small producer is false" in {
       val subscription = RetrievedSubscription(
         "","","", UkAddress(List.empty, "", None),
-        RetrievedActivity(smallProducer = false,largeProducer = true,contractPacker = true,importer = true,voluntaryRegistration = true),
-        LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
+        RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
+        LocalDate.now(), List.empty, List.empty, Contact(None,None,"",""), None)
 
       val res = requiredUserAnswers.requireData(CorrectReturnBaseCYAPage)(Future.successful(Ok("")))(basicRequestWithEmptyAnswers.copy(
         subscription = subscription, userAnswers = emptyUserAnswersForCorrectReturn.copy(data = Json.obj("foo" -> "bar"))))
@@ -139,16 +139,16 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
     }
 
     s"should check for $CorrectReturnBaseCYAPage and allow the user to continue when all answers are complete" in {
-      val completedUserAnswers = emptyUserAnswersForCorrectReturn.copy(data =
-        Json.obj("operatePackagingSiteOwnBrands" -> false,
-          "packagedAsContractPacker" -> true,
-          "howManyPackagedAsContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
-          "exemptionsForSmallProducers" -> false,
-          "broughtIntoUK" -> false,
-          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923),
-          "broughtIntoUkFromSmallProducers" -> false,
-          "claimCreditsForExports" -> false,
-          "claimCreditsForLostDamaged" -> false))
+      val completedUserAnswers = emptyUserAnswersForCorrectReturn
+        .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+        .set(PackagedAsContractPackerPage, true).success.value
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(100, 652)).success.value
+        .set(ExemptionsForSmallProducersPage, false).success.value
+        .set(BroughtIntoUKPage, false).success.value
+        .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+        .set(ClaimCreditsForExportsPage, false).success.value
+        .set(ClaimCreditsForLostDamagedPage, false).success.value
+
       val res =
         requiredUserAnswers.requireData(CorrectReturnBaseCYAPage)(Future.successful(Ok("")))(basicRequestWithEmptyAnswers
           .copy(userAnswers = completedUserAnswers))
@@ -167,15 +167,15 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         CorrectReturnRequiredPage(ClaimCreditsForExportsPage, None)(implicitly[Reads[Boolean]]),
         CorrectReturnRequiredPage(ClaimCreditsForLostDamagedPage, None)(implicitly[Reads[Boolean]]))
     }
+
     "should return SOME missing answers when SOME answers are populated" in {
-      val someAnswersCompleted = emptyUserAnswersForCorrectReturn.copy(data =
-        Json.obj("operatePackagingSiteOwnBrands" -> false,
-          "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
-          "exemptionsForSmallProducers" -> false,
-          "broughtIntoUK" -> false,
-          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923),
-          "broughtIntoUkFromSmallProducers" -> false,
-          "claimCreditsForLostDamaged" -> false))
+      val someAnswersCompleted = emptyUserAnswersForCorrectReturn
+        .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(100, 652)).success.value
+        .set(ExemptionsForSmallProducersPage, false).success.value
+        .set(BroughtIntoUKPage, false).success.value
+        .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+        .set(ClaimCreditsForLostDamagedPage, false).success.value
 
       implicit val request = basicRequestWithEmptyAnswers.copy(userAnswers = someAnswersCompleted)
       val res = requiredUserAnswers.returnMissingAnswers(requiredUserAnswers.mainRoute)
@@ -187,10 +187,10 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
   "mainRoute" - {
 
     "should return all correct answers if user is newImporter && newCopacker && small producer true" in {
-      val completedUserAnswers = emptyUserAnswersForCorrectReturn.copy(data =
-        Json.obj(
-          "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
-          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923)))
+      val completedUserAnswers = emptyUserAnswersForCorrectReturn
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(100, 652)).success.value
+        .set(HowManyBroughtIntoUKPage, LitresInBands(259, 923)).success.value
+
       val subscription = RetrievedSubscription(
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true, largeProducer = false, contractPacker =false, importer = false,voluntaryRegistration = false),
@@ -199,11 +199,11 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
 
       res mustBe basicJourney ++ coPackerFalseJourney ++ importerFalseJourney
     }
+
     "should return all correct answers if user is newImporter && NOT newCopacker && small producer true" in {
-      val completedUserAnswers = emptyUserAnswersForCorrectReturn.copy(data =
-        Json.obj(
-          "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
-          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923)))
+      val completedUserAnswers = emptyUserAnswersForCorrectReturn
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(100, 652)).success.value
+        .set(HowManyBroughtIntoUKPage, LitresInBands(259, 923)).success.value
       val subscription = RetrievedSubscription(
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true,largeProducer = true, contractPacker =true,importer = false,voluntaryRegistration = true),
@@ -213,11 +213,11 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
 
       res mustBe basicJourney ++ importerFalseJourney
     }
+
     "should return all correct answers if user is NOT newImporter && newCopacker && small producer true" in {
-      val completedUserAnswers = emptyUserAnswersForCorrectReturn.copy(data =
-        Json.obj(
-          "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
-          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923)))
+      val completedUserAnswers = emptyUserAnswersForCorrectReturn
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(100, 652)).success.value
+        .set(HowManyBroughtIntoUKPage, LitresInBands(259, 923)).success.value
       val subscription = RetrievedSubscription(
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = false, importer = true,voluntaryRegistration = true),
@@ -227,85 +227,88 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
 
       res mustBe basicJourney ++ coPackerFalseJourney
     }
+
     "should return all correct answers if user is NOT newImporter && NOT newcopacker &&  small producer true" in {
-      val completedUserAnswers = emptyUserAnswersForCorrectReturn.copy(data =
-        Json.obj(
-          "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
-          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923)))
+      val completedUserAnswers = emptyUserAnswersForCorrectReturn
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(100, 652)).success.value
+        .set(HowManyBroughtIntoUKPage, LitresInBands(259, 923)).success.value
       val subscription = RetrievedSubscription(
         "","","", UkAddress(List.empty, "", None),
-        RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = true, importer = true,voluntaryRegistration = true),
-        LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
+        RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
+        LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
 
-      val res = requiredUserAnswers.mainRoute(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers,subscription = subscription))
+      val res = requiredUserAnswers.mainRoute(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers, subscription = subscription))
 
       res mustBe basicJourney
     }
+
     "should return all correct answers if user is newImporter && newcopacker && small producer false" in {
-      val completedUserAnswers = emptyUserAnswersForCorrectReturn.copy(data =
-        Json.obj(
-          "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
-          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923)))
+      val completedUserAnswers = emptyUserAnswersForCorrectReturn
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(100, 652)).success.value
+        .set(HowManyBroughtIntoUKPage, LitresInBands(259, 923)).success.value
       val subscription = RetrievedSubscription(
         "","","", UkAddress(List.empty, "", None),
-        RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false, importer = false,voluntaryRegistration = true),
-        LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
+        RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = true),
+        LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
 
       val res = requiredUserAnswers.mainRoute(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers, subscription = subscription))
 
       res mustBe smallProducerFalseJourney ++ basicJourney ++ coPackerFalseJourney ++ importerFalseJourney
     }
+
     "should return all correct answers if user is NOT newImporter && NOT new co packer && NOT small producer" in {
-      val completedUserAnswers = emptyUserAnswersForCorrectReturn.copy(data =
-        Json.obj("operatePackagingSiteOwnBrands" -> false,
-          "packagedAsContractPacker" -> true,
-          "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
-          "exemptionsForSmallProducers" -> false,
-          "broughtIntoUK" -> false,
-          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923),
-          "broughtIntoUkFromSmallProducers" -> false,
-          "claimCreditsForExports" -> false,
-          "claimCreditsForLostDamaged" -> false))
+      val completedUserAnswers = emptyUserAnswersForCorrectReturn
+        .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+        .set(PackagedAsContractPackerPage, true).success.value
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(100, 652)).success.value
+        .set(ExemptionsForSmallProducersPage, false).success.value
+        .set(BroughtIntoUKPage, false).success.value
+        .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+        .set(ClaimCreditsForExportsPage, false).success.value
+        .set(ClaimCreditsForLostDamagedPage, false).success.value
+
       val subscription = RetrievedSubscription(
         "","","", UkAddress(List.empty, "", None),
-        RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = true,importer = true,voluntaryRegistration = true),
-        LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
+        RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
+        LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
 
-      val res = requiredUserAnswers.mainRoute(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers,subscription = subscription))
+      val res = requiredUserAnswers.mainRoute(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers, subscription = subscription))
 
       res mustBe smallProducerFalseJourney ++ basicJourney
     }
   }
+
   "packingListReturnChange" - {
     "should be correct if user is NOT a new packer" in {
       val subscription = RetrievedSubscription(
         "","","", UkAddress(List.empty, "", None),
-        RetrievedActivity(true,largeProducer = true,contractPacker = true,importer = true,voluntaryRegistration = true),
-        LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
+        RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
+        LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
       val res = requiredUserAnswers.packingListReturnChange(basicRequestWithEmptyAnswers.copy(subscription = subscription))
 
       res mustBe List.empty
     }
+
     "should be correct if user is a new packer" in {
-      val completedUserAnswers = emptyUserAnswersForCorrectReturn.copy(data =
-        Json.obj("operatePackagingSiteOwnBrands" -> false,
-          "packagedAsContractPacker" -> true,
-          "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
-          "exemptionsForSmallProducers" -> false,
-          "broughtIntoUK" -> false,
-          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923),
-          "broughtIntoUkFromSmallProducers" -> false,
-          "claimCreditsForExports" -> false,
-          "claimCreditsForLostDamaged" -> false))
+      val completedUserAnswers = emptyUserAnswersForCorrectReturn
+        .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+        .set(PackagedAsContractPackerPage, true).success.value
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(100, 652)).success.value
+        .set(ExemptionsForSmallProducersPage, false).success.value
+        .set(BroughtIntoUKPage, false).success.value
+        .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+        .set(ClaimCreditsForExportsPage, false).success.value
+        .set(ClaimCreditsForLostDamagedPage, false).success.value
+
       val subscription = RetrievedSubscription(
         "","","", UkAddress(List.empty, "", None),
-        RetrievedActivity(smallProducer = true,largeProducer = true, contractPacker = false,importer = true,voluntaryRegistration = true),
-        LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
+        RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = false, importer = true, voluntaryRegistration = true),
+        LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
       val res = requiredUserAnswers.packingListReturnChange(basicRequestWithEmptyAnswers.copy(subscription = subscription, userAnswers = completedUserAnswers))
-
       res mustBe coPackerFalseJourney
     }
   }
+
   "warehouseListReturnChange" - {
     "should be correct if user is NOT a new importer" in {
       val subscription = RetrievedSubscription(
@@ -315,44 +318,46 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
       val res = requiredUserAnswers.warehouseListReturnChange(basicRequestWithEmptyAnswers.copy(subscription = subscription))
       res mustBe List.empty
     }
+
     "should be correct if user is a new importer" in {
-      val completedUserAnswers = emptyUserAnswersForCorrectReturn.copy(data =
-        Json.obj("operatePackagingSiteOwnBrands" -> false,
-          "packagedAsContractPacker" -> true,
-          "howManyAsAContractPacker" -> Json.obj("lowBand" -> 100, "highBand" -> 652),
-          "exemptionsForSmallProducers" -> false,
-          "broughtIntoUK" -> true,
-          "HowManyBroughtIntoUk" -> Json.obj("lowBand" -> 259, "highBand" -> 923),
-          "broughtIntoUkFromSmallProducers" -> false,
-          "claimCreditsForExports" -> false,
-          "claimCreditsForLostDamaged" -> false))
+      val completedUserAnswers = emptyUserAnswersForCorrectReturn
+        .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+        .set(PackagedAsContractPackerPage, true).success.value
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(100, 652)).success.value
+        .set(ExemptionsForSmallProducersPage, false).success.value
+        .set(BroughtIntoUKPage, true).success.value
+        .set(HowManyBroughtIntoUKPage, LitresInBands(259, 923)).success.value
+        .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+        .set(ClaimCreditsForExportsPage, false).success.value
+        .set(ClaimCreditsForLostDamagedPage, false).success.value
 
       val subscription = RetrievedSubscription(
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = true, importer = false, voluntaryRegistration = true),
-        LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
+        LocalDate.now(),List.empty, List.empty, Contact(None, None, "", ""), None)
       val res = requiredUserAnswers.warehouseListReturnChange(basicRequestWithEmptyAnswers
         .copy(subscription = subscription, userAnswers = completedUserAnswers))
 
       res mustBe importerFalseJourney
     }
   }
+
   "smallProducerCheck" - {
     "should be correct if user is NOT a new small producer" in {
       val subscription = RetrievedSubscription(
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
-        LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
+        LocalDate.now(),List.empty, List.empty, Contact(None, None, "", ""), None)
 
       val res = requiredUserAnswers.smallProducerCheck(subscription)
       res mustBe List.empty
-
     }
-    "should be correct if user is a small producer" in {
+
+    "should be correct if user is a new small producer" in {
       val subscription = RetrievedSubscription(
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
-        LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
+        LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
 
       val res = requiredUserAnswers.smallProducerCheck(subscription)
 

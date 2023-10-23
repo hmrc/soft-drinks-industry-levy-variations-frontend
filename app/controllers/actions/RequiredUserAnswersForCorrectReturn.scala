@@ -59,7 +59,7 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
     list.filterNot { listItem =>
       val currentPage: Option[A] = request.userAnswers
         .get(listItem.pageRequired.asInstanceOf[QuestionPage[A]])(listItem.reads.asInstanceOf[Reads[A]])
-      (currentPage.isDefined, listItem.basedOnCorrectReturnPreviousPage.isDefined) match {
+      (currentPage.isDefined, listItem.basedOnCorrectReturnPreviousPage.nonEmpty) match {
         case (false, true) =>
             val CorrectReturnPreviousPage: CorrectReturnPreviousPage[QuestionPage[B], B] = listItem.basedOnCorrectReturnPreviousPage
               .get.asInstanceOf[CorrectReturnPreviousPage[QuestionPage[B], B]]
@@ -125,7 +125,8 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
   }
 }
 
-case class CorrectReturnRequiredPage[+A >: QuestionPage[C], +B >: CorrectReturnPreviousPage[_, _], C](pageRequired: A, basedOnCorrectReturnPreviousPage: Option[B])(val reads: Reads[C])
+case class CorrectReturnRequiredPage[+A >: QuestionPage[C], +B >: CorrectReturnPreviousPage[_, _], C]
+  (pageRequired: A, basedOnCorrectReturnPreviousPage: Option[B])(val reads: Reads[C])
 case class CorrectReturnPreviousPage[+B >: QuestionPage[C],C](page: B, CorrectReturnPreviousPageAnswerRequired: C)(val reads: Reads[C])
 
 
