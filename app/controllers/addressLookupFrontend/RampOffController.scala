@@ -17,7 +17,7 @@
 package controllers.addressLookupFrontend
 
 import controllers.actions.ControllerActions
-import models.{NormalMode, SelectChange}
+import models.{Mode, NormalMode, SelectChange}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{AddressLookupService, ContactDetails, PackingDetails, WarehouseDetails}
@@ -32,7 +32,7 @@ class RampOffController @Inject()(controllerActions: ControllerActions,
                                   val controllerComponents: MessagesControllerComponents)
                                  (implicit val ex: ExecutionContext) extends FrontendBaseController {
 
-  def secondaryWareHouseDetailsOffRamp(sdilId: String, alfId: String): Action[AnyContent] = controllerActions.withRequiredData.async {
+  def secondaryWareHouseDetailsOffRamp(sdilId: String, alfId: String, mode: Mode): Action[AnyContent] = controllerActions.withRequiredData.async {
     implicit request =>
       for {
         alfResponse <- addressLookupService.getAddress(alfId)
@@ -40,7 +40,7 @@ class RampOffController @Inject()(controllerActions: ControllerActions,
         _ <- sessionRepository.set(updatedUserAnswers)
       } yield {
         val redirectUrl = updatedUserAnswers.journeyType match {
-          case SelectChange.UpdateRegisteredDetails => controllers.updateRegisteredDetails.routes.WarehouseDetailsController.onPageLoad(NormalMode)
+          case SelectChange.UpdateRegisteredDetails => controllers.updateRegisteredDetails.routes.WarehouseDetailsController.onPageLoad(mode)
           case SelectChange.ChangeActivity => controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad
           case _ => controllers.routes.IndexController.onPageLoad
         }
@@ -48,7 +48,7 @@ class RampOffController @Inject()(controllerActions: ControllerActions,
       }
   }
 
-  def packingSiteDetailsOffRamp(sdilId: String, alfId: String): Action[AnyContent] = controllerActions.withRequiredData.async {
+  def packingSiteDetailsOffRamp(sdilId: String, alfId: String, mode: Mode): Action[AnyContent] = controllerActions.withRequiredData.async {
     implicit request =>
       for {
         alfResponse <- addressLookupService.getAddress(alfId)
@@ -56,15 +56,15 @@ class RampOffController @Inject()(controllerActions: ControllerActions,
         _ <- sessionRepository.set(updatedUserAnswers)
       } yield {
         val redirectUrl = updatedUserAnswers.journeyType match {
-          case SelectChange.ChangeActivity => controllers.changeActivity.routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
-          case SelectChange.UpdateRegisteredDetails => controllers.updateRegisteredDetails.routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
+          case SelectChange.ChangeActivity => controllers.changeActivity.routes.PackagingSiteDetailsController.onPageLoad(mode)
+          case SelectChange.UpdateRegisteredDetails => controllers.updateRegisteredDetails.routes.PackagingSiteDetailsController.onPageLoad(mode)
           case _ => controllers.routes.IndexController.onPageLoad
         }
         Redirect(redirectUrl)
       }
   }
 
-  def contactDetailsOffRamp(sdilId: String, alfId: String): Action[AnyContent] = controllerActions.withRequiredData.async {
+  def contactDetailsOffRamp(sdilId: String, alfId: String, mode: Mode): Action[AnyContent] = controllerActions.withRequiredData.async {
     implicit request =>
       for {
         alfResponse <- addressLookupService.getAddress(alfId)
