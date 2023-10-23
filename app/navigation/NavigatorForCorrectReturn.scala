@@ -49,10 +49,10 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   private def navigationForBroughtIntoUK(userAnswers: UserAnswers, mode: Mode): Call = {
     if (userAnswers.get(page = BroughtIntoUKPage).contains(true)) {
       routes.HowManyBroughtIntoUKController.onPageLoad(mode)
-    } else if(mode == CheckMode){
+    } else if (mode == CheckMode) {
       routes.CorrectReturnCYAController.onPageLoad
     } else {
-      defaultCall
+      routes.BroughtIntoUkFromSmallProducersController.onPageLoad(mode)
     }
   }
 
@@ -117,7 +117,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case HowManyClaimCreditsForExportsPage => _ => defaultCall
     case ReturnChangeRegistrationPage => _ => defaultCall
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, NormalMode)
-    case HowManyBroughtIntoUKPage => _ => defaultCall
+    case HowManyBroughtIntoUKPage => _ => routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode)
     case ExemptionsForSmallProducersPage => userAnswers => navigationForExemptionsForSmallProducers(userAnswers, NormalMode)
     case RemoveWarehouseDetailsPage => userAnswers => defaultCall
     case CorrectionReasonPage => _ => routes.RepaymentMethodController.onPageLoad(NormalMode)
@@ -138,6 +138,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case BroughtIntoUkFromSmallProducersPage => userAnswers => navigationForBroughtIntoUkFromSmallProducers(userAnswers, CheckMode)
     case ClaimCreditsForExportsPage => userAnswers => navigationForClaimCreditsForExports(userAnswers, CheckMode)
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, CheckMode)
+    case HowManyBroughtIntoUKPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case ExemptionsForSmallProducersPage => _ =>  routes.CorrectReturnCYAController.onPageLoad
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, CheckMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)

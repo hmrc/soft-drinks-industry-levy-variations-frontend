@@ -19,8 +19,8 @@ class HowManyBroughtIntoUKControllerISpec extends LitresISpecHelper {
   val userAnswers = emptyUserAnswersForCorrectReturn.set(HowManyBroughtIntoUKPage, litresInBands).success.value
 
   List(NormalMode, CheckMode).foreach { mode =>
-    val (path, redirectLocation) = if(mode == NormalMode) {
-      (normalRoutePath, defaultCall.url)
+    val (path, redirectLocation) = if (mode == NormalMode) {
+      (normalRoutePath, routes.BroughtIntoUkFromSmallProducersController.onPageLoad(mode).url)
     } else {
       (checkRoutePath, routes.CorrectReturnCYAController.onPageLoad.url)
     }

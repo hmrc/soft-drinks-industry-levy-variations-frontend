@@ -134,7 +134,7 @@ class BroughtIntoUKControllerISpec extends ControllerITTestHelper {
   s"POST " + normalRoutePath - {
     userAnswersForCorrectReturnBroughtIntoUKPage.foreach { case (key, userAnswers) =>
       "when the user selects " + key - {
-        "should update the session with the new value and redirect to the index controller" - {
+        "should update the session with the new value and redirect to the expected controller" - {
           "when the session contains no data for page" in {
             given
               .commonPrecondition
@@ -151,7 +151,7 @@ class BroughtIntoUKControllerISpec extends ControllerITTestHelper {
                 val expectedLocation = if (yesSelected) {
                   routes.HowManyBroughtIntoUKController.onPageLoad(NormalMode).url
                 } else {
-                  defaultCall.url
+                  routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode).url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(BroughtIntoUKPage))
@@ -177,7 +177,7 @@ class BroughtIntoUKControllerISpec extends ControllerITTestHelper {
                 val expectedLocation = if (yesSelected) {
                   routes.HowManyBroughtIntoUKController.onPageLoad(NormalMode).url
                 } else {
-                  defaultCall.url
+                  routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode).url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(BroughtIntoUKPage))
@@ -223,7 +223,6 @@ class BroughtIntoUKControllerISpec extends ControllerITTestHelper {
   s"POST " + checkRoutePath - {
     userAnswersForCorrectReturnBroughtIntoUKPage.foreach { case (key, userAnswers) =>
       "when the user selects " + key - {
-        val yesSelected = key == "yes"
         "should update the session with the new value and redirect to the checkAnswers controller" - {
           "when the session contains no data for page" in {
             given
@@ -231,6 +230,7 @@ class BroughtIntoUKControllerISpec extends ControllerITTestHelper {
 
             setAnswers(emptyUserAnswersForCorrectReturn)
             WsTestClient.withClient { client =>
+              val yesSelected = key == "yes"
               val result = createClientRequestPOST(
                 client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> yesSelected.toString)
               )
