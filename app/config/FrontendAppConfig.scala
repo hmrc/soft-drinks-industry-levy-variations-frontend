@@ -18,6 +18,7 @@ package config
 
 import com.google.inject.{Inject, Singleton}
 import com.typesafe.config.Config
+import models.Mode
 import play.api.Configuration
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
@@ -78,20 +79,20 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
 
     object WarehouseDetails {
 
-      def offRampUrl(sdilId: String): String = {
-        s"$addressLookupOffRampUrl${controllers.addressLookupFrontend.routes.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
+      def offRampUrl(sdilId: String, mode: Mode): String = {
+        s"$addressLookupOffRampUrl${controllers.addressLookupFrontend.routes.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId, "", mode).url.replace("?id=", "")}"
       }
     }
 
     object PackingDetails {
-      def offRampUrl(sdilId: String): String = {
-        s"$addressLookupOffRampUrl${controllers.addressLookupFrontend.routes.RampOffController.packingSiteDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
+      def offRampUrl(sdilId: String, mode: Mode): String = {
+        s"$addressLookupOffRampUrl${controllers.addressLookupFrontend.routes.RampOffController.packingSiteDetailsOffRamp(sdilId, "", mode).url.replace("?id=", "")}"
       }
     }
 
     object ContactDetails {
-      def offRampUrl(sdilId: String): String = {
-        s"$addressLookupOffRampUrl${controllers.addressLookupFrontend.routes.RampOffController.contactDetailsOffRamp(sdilId, "").url.replace("?id=", "")}"
+      def offRampUrl(sdilId: String, mode: Mode): String = {
+        s"$addressLookupOffRampUrl${controllers.addressLookupFrontend.routes.RampOffController.contactDetailsOffRamp(sdilId, "", mode).url.replace("?id=", "")}"
       }
     }
   }
