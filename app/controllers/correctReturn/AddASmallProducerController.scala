@@ -100,9 +100,8 @@ class AddASmallProducerController @Inject()(
     controllerActions.withCorrectReturnJourneyData.async {
       implicit request =>
 
-        val userAnswers = request.userAnswers
-        val form = formProvider(userAnswers)
-        val targetSmallProducer = userAnswers.smallProducerList.find(producer => producer.sdilRef == sdilReference)
+        val form = formProvider(request.userAnswers)
+        val targetSmallProducer = request.userAnswers.smallProducerList.find(producer => producer.sdilRef == sdilReference)
 
         targetSmallProducer match {
           case Some(producer) =>
@@ -119,16 +118,15 @@ class AddASmallProducerController @Inject()(
     controllerActions.withCorrectReturnJourneyData.async {
       implicit request =>
 
-        val userAnswers = request.userAnswers
-        val returnPeriod = request.returnPeriod
-        val form = formProvider(userAnswers)
+        val form = formProvider(request.userAnswers)
 
         form.bindFromRequest().fold(
           formWithErrors => {
-            Future.successful(BadRequest(view(formWithErrors, mode, Some(sdilReference)))) },
+            Future.successful(BadRequest(view(formWithErrors, mode, Some(sdilReference))))
+          },
           formData => {
             val smallProducerList = request.userAnswers.smallProducerList
-            isValidSDILRef(sdilReference, formData.referenceNumber, smallProducerList, returnPeriod).flatMap({
+            isValidSDILRef(sdilReference, formData.referenceNumber, smallProducerList, request.returnPeriod).flatMap({
               case Left(AlreadyExists) =>
                 Future.successful(
                   BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.exists")), mode, Some(sdilReference)))
@@ -139,7 +137,7 @@ class AddASmallProducerController @Inject()(
                     mode, Some(sdilReference)))
                 )
               case Right(_) =>
-                updateSmallProducerList(formData, userAnswers, sdilReference).map(updatedAnswersFinal =>
+                updateSmallProducerList(formData, request.userAnswers, sdilReference).map(updatedAnswersFinal =>
                   Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal)))
             })
           }
