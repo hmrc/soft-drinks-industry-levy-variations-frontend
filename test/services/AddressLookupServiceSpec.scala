@@ -278,11 +278,6 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
 
   List(NormalMode, CheckMode).foreach(mode => {
     s"initJourneyAndReturnOnRampUrl in $mode" - {
-      //    val (path, redirectLocation) = if (mode == NormalMode) {
-      //      (normalRoutePath, defaultCall.url)
-      //    } else {
-      //      (checkRoutePath, routes.CorrectReturnCYAController.onPageLoad.url)
-      //    }
       s"should return Successful future when connector returns success for $PackingDetails" in {
         val sdilId = "Foobar"
         val expectedJourneyConfigToBePassedToConnector = JourneyConfig(
