@@ -2,7 +2,8 @@ package controllers.correctReturn
 
 import testSupport.SDILBackendTestData.aSubscription
 import controllers.CorrectReturnBaseCYASummaryISpecHelper
-import models.SelectChange.CorrectReturn
+import models.SelectChange.{CorrectReturn, UpdateRegisteredDetails}
+import models.UserAnswers
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import pages.correctReturn.PackAtBusinessAddressPage
@@ -10,7 +11,6 @@ import play.api.http.HeaderNames
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
-
 
 class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHelper {
 
@@ -22,14 +22,14 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForSelectChange(CorrectReturn))
+        setAnswers(emptyUserAnswersForSelectChange(UpdateRegisteredDetails))
 
         WsTestClient.withClient { client =>
           val result = createClientRequestGet(client, baseUrl + route)
 
           whenReady(result) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some(routes.SelectController.onPageLoad.url)
+            res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.SelectChangeController.onPageLoad.url)
           }
         }
       }
