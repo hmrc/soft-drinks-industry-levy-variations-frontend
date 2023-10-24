@@ -2,6 +2,7 @@ package controllers.correctReturn
 
 import controllers.CorrectReturnBaseCYASummaryISpecHelper
 import models.LitresInBands
+import models.SelectChange.UpdateRegisteredDetails
 import models.correctReturn.RepaymentMethod
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
@@ -23,7 +24,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setAnswers(emptyUserAnswersForSelectChange(UpdateRegisteredDetails))
 
         WsTestClient.withClient { client =>
           val result = createClientRequestGet(client, baseUrl + route)

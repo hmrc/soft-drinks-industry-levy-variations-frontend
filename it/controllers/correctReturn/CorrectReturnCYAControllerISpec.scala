@@ -1,6 +1,7 @@
 package controllers.correctReturn
 
 import controllers.CorrectReturnBaseCYASummaryISpecHelper
+import models.NormalMode
 import models.SelectChange.{CorrectReturn, UpdateRegisteredDetails}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
@@ -163,7 +164,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
   }
 
   "POST " + routes.CorrectReturnCYAController.onPageLoad.url - {
-    "should redirect to Index controller when user answers empty" in {
+    "should redirect to Correction Reason controller" in {
       given
         .commonPrecondition
 
@@ -174,7 +175,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
 
         whenReady(result) { res =>
           res.status mustBe 303
-          res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+          res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectionReasonController.onPageLoad(NormalMode).url)
         }
       }
     }
