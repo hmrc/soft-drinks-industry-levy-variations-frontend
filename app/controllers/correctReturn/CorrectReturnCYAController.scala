@@ -18,7 +18,8 @@ package controllers.correctReturn
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions.{ControllerActions, RequiredUserAnswersForCorrectReturn}
+import controllers.actions._
+import models.NormalMode
 import models.SelectChange.CorrectReturn
 import pages.correctReturn.CorrectReturnBaseCYAPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -29,15 +30,15 @@ import views.summary.correctReturn.CorrectReturnBaseCYASummary
 
 import scala.concurrent.Future
 
-class CorrectReturnCYAController @Inject()(
-                                            override val messagesApi: MessagesApi,
-                                            controllerActions: ControllerActions,
-                                            val controllerComponents: MessagesControllerComponents,
-                                            requiredUserAnswers: RequiredUserAnswersForCorrectReturn,
-                                            view: CorrectReturnCYAView
-                                          )(implicit config: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+class CorrectReturnCYAController @Inject()(override
+                                           val messagesApi: MessagesApi,
+                                           controllerActions: ControllerActions,
+                                           val controllerComponents: MessagesControllerComponents,
+                                           requiredUserAnswers: RequiredUserAnswersForCorrectReturn,
+                                           view: CorrectReturnCYAView)
+                                          (implicit config: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
+  def onPageLoad: Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
       requiredUserAnswers.requireData(CorrectReturnBaseCYAPage) {
         val orgName: String = " " + request.subscription.orgName
@@ -47,6 +48,6 @@ class CorrectReturnCYAController @Inject()(
   }
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
-    Redirect(controllers.routes.IndexController.onPageLoad.url)
+    Redirect(routes.CorrectionReasonController.onPageLoad(NormalMode).url)
   }
 }

@@ -1,9 +1,7 @@
 package controllers.correctReturn
 
-import testSupport.SDILBackendTestData.aSubscription
 import controllers.CorrectReturnBaseCYASummaryISpecHelper
 import models.SelectChange.{CorrectReturn, UpdateRegisteredDetails}
-import models.UserAnswers
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import pages.correctReturn.PackAtBusinessAddressPage
@@ -11,6 +9,7 @@ import play.api.http.HeaderNames
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
+import testSupport.SDILBackendTestData.aSubscription
 
 class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHelper {
 

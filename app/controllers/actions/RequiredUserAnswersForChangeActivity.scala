@@ -16,12 +16,11 @@
 
 package controllers.actions
 
-import controllers.changeActivity.routes
 import models.changeActivity.AmountProduced
-import models.{CheckMode, LitresInBands, Mode}
 import models.requests.DataRequest
-import pages.{Page, QuestionPage}
+import models.{CheckMode, LitresInBands}
 import pages.changeActivity._
+import pages.{Page, QuestionPage}
 import play.api.libs.json.Reads
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect

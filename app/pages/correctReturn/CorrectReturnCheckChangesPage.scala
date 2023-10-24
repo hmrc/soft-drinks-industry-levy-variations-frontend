@@ -19,12 +19,11 @@ package pages.correctReturn
 import controllers.correctReturn.routes
 import models.Mode
 import pages.Page
-import play.api.libs.json.JsPath
 
-case object CorrectReturnBaseCYAPage extends Page {
+case object CorrectReturnCheckChangesPage extends Page {
 
   def journeyType: String = "correctReturn"
-  override def toString: String = "checkYourAnswers"
-  override val url: Mode => String = _ => routes.CorrectReturnCYAController.onPageLoad.url
+  override def toString: String = "checkChanges"
+  override val url: Mode => String = _ => routes.CorrectReturnCheckChangesCYAController.onPageLoad.url
 
 }
