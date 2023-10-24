@@ -18,9 +18,11 @@ package navigation
 
 import base.SpecBase
 import controllers.changeActivity.routes
+import generators.ChangeActivityCYAGenerators.APAnswers.{Large, Small}
 import models._
+import models.changeActivity.AmountProduced
 import pages._
-import pages.changeActivity.{RemoveWarehouseDetailsPage, SecondaryWarehouseDetailsPage}
+import pages.changeActivity.{AmountProducedPage, HowManyImportsPage, RemoveWarehouseDetailsPage, SecondaryWarehouseDetailsPage}
 import play.api.libs.json.Json
 
 class NavigatorForChangeActivitySpec extends SpecBase {
@@ -46,8 +48,60 @@ class NavigatorForChangeActivitySpec extends SpecBase {
 
     "in Check mode" - {
 
-      "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
+      "must navigate from the how many imports page correctly" - {
+        def navigateFromHowManyImportsPage(userAnswers: UserAnswers,mode: Mode = CheckMode) =
+          navigator.nextPage(HowManyImportsPage, mode, userAnswers)
 
+        "to the checkAnswers page when the imports page has already been populated and the user is a large producer" in {
+          val result = navigateFromHowManyImportsPage(
+            emptyUserAnswersForChangeActivity
+              .set(AmountProducedPage, AmountProduced.Large).success.value
+              .set(HowManyImportsPage , LitresInBands(10L, 10L)).success.value
+              .set(SecondaryWarehouseDetailsPage, true).success.value
+          )
+          result mustBe routes.ChangeActivityCYAController.onPageLoad
+        }
+
+        "to the checkAnswers page when the imports page has already been populated and the user is a small producer" in {
+          val result = navigateFromHowManyImportsPage(
+            emptyUserAnswersForChangeActivity
+              .set(AmountProducedPage, AmountProduced.Small).success.value
+              .set(HowManyImportsPage , LitresInBands(10L, 10L)).success.value
+              .set(SecondaryWarehouseDetailsPage, true).success.value
+          )
+          result mustBe routes.ChangeActivityCYAController.onPageLoad
+        }
+
+        "the secondary imports details page when the user has not answered the secondary imports page amd is a small producer" in {
+          val result = navigateFromHowManyImportsPage(
+            emptyUserAnswersForChangeActivity
+              .set(AmountProducedPage, AmountProduced.Small).success.value
+              .set(HowManyImportsPage , LitresInBands(10L, 10L)).success.value
+          )
+          result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad
+        }
+
+        "to the checkAnswers page when the imports page has already been populated and the user is not a producer" in {
+          val result = navigateFromHowManyImportsPage(
+            emptyUserAnswersForChangeActivity
+              .set(AmountProducedPage, AmountProduced.None).success.value
+              .set(HowManyImportsPage , LitresInBands(10L, 10L)).success.value
+              .set(SecondaryWarehouseDetailsPage, true).success.value
+          )
+          result mustBe routes.ChangeActivityCYAController.onPageLoad
+        }
+
+        "the secondary imports details page when the user has not answered the secondary imports page amd is not a producer" in {
+          val result = navigateFromHowManyImportsPage(
+            emptyUserAnswersForChangeActivity
+              .set(AmountProducedPage, AmountProduced.None).success.value
+              .set(HowManyImportsPage , LitresInBands(10L, 10L)).success.value
+          )
+          result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad
+        }
+      }
+
+      "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress = contactAddress)) mustBe routes.ChangeActivityCYAController.onPageLoad
       }
