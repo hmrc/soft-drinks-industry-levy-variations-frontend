@@ -19,7 +19,7 @@ package controllers.actions
 import base.SpecBase
 import controllers.correctReturn.routes
 import models.backend.UkAddress
-import models.correctReturn.AddASmallProducer
+import models.correctReturn.{AddASmallProducer, RepaymentMethod}
 import models.requests.CorrectReturnDataRequest
 import models.{Contact, LitresInBands, NormalMode, RetrievedActivity, RetrievedSubscription, ReturnPeriod}
 import pages.correctReturn._
@@ -155,6 +155,34 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
       status(res) mustBe OK
     }
   }
+
+  "checkChangesRequiredData" - {
+
+    "should return Redirect to Correction Reason page when user answers past check your answers is empty" in {
+      val res = requiredUserAnswers.checkChangesRequiredData(Future.successful(Ok("")))(basicRequestWithEmptyAnswers)
+      redirectLocation(res).get mustBe routes.CorrectionReasonController.onPageLoad(NormalMode).url
+    }
+
+    "should return Redirect to Repayment reason page if it is not filled in" in {
+      val completedUserAnswers = emptyUserAnswersForCorrectReturn
+        .set(CorrectionReasonPage, "some info").success.value
+
+      val res =
+        requiredUserAnswers.checkChangesRequiredData(Future.successful(Ok("")))(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers))
+      redirectLocation(res).get mustBe routes.RepaymentMethodController.onPageLoad(NormalMode).url
+    }
+
+    "should allow user to continue if all user answers are filled in" in {
+      val completedUserAnswers = emptyUserAnswersForCorrectReturn
+        .set(CorrectionReasonPage, "some info").success.value
+        .set(RepaymentMethodPage, RepaymentMethod.BankAccount).success.value
+
+      val res =
+        requiredUserAnswers.checkChangesRequiredData(Future.successful(Ok("")))(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers))
+      status(res) mustBe OK
+    }
+  }
+
 
   "returnMissingAnswers" - {
     "should return all missing answers in a list when user answers is empty" in {
