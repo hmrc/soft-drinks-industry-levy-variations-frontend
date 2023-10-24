@@ -20,7 +20,7 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
 
   List(NormalMode, CheckMode).foreach { mode =>
     val (path, redirectLocation) = if(mode == NormalMode) {
-      (normalRoutePath, defaultCall.url)
+      (normalRoutePath, routes.ClaimCreditsForExportsController.onPageLoad(mode).url)
     } else {
       (checkRoutePath, routes.CorrectReturnCYAController.onPageLoad.url)
     }

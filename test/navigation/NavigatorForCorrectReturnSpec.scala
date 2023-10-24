@@ -75,6 +75,58 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
     }
   }
 
+  "How many brought into UK" - {
+    def navigateFromHowManyBroughtIntoUkPage(mode: Mode) =
+      navigator.nextPage(HowManyBroughtIntoUKPage, mode, emptyUserAnswersForCorrectReturn.set(HowManyBroughtIntoUKPage, LitresInBands(1, 1)).success.value)
+
+    "navigate to brought into uk from small producers page in NormalMode" in {
+      val result = navigateFromHowManyBroughtIntoUkPage(NormalMode)
+      result mustBe routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode)
+    }
+
+    "navigate to Check Your Answers page in CheckMode" in {
+      val result = navigateFromHowManyBroughtIntoUkPage(CheckMode)
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+  }
+
+  "Brought into UK from small producers" - {
+    def navigateFromBroughtIntoUkFromSmallProducersPage(value: Boolean, mode: Mode) =
+      navigator.nextPage(BroughtIntoUkFromSmallProducersPage, mode, emptyUserAnswersForCorrectReturn.set(BroughtIntoUkFromSmallProducersPage, value).success.value)
+
+    List(NormalMode, CheckMode).foreach(mode => {
+      s"select Yes to navigate to How many brought into UK in $mode" in {
+        val result = navigateFromBroughtIntoUkFromSmallProducersPage(value = true, mode)
+        result mustBe routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(mode)
+      }
+    })
+
+    "select No to navigate to brought into uk from small producers page in NormalMode" in {
+      val result = navigateFromBroughtIntoUkFromSmallProducersPage(value = false, NormalMode)
+      result mustBe routes.ClaimCreditsForExportsController.onPageLoad(NormalMode)
+    }
+
+    "Should No to navigate to Check Your Answers page in CheckMode" in {
+      val result = navigateFromBroughtIntoUkFromSmallProducersPage(value = false, CheckMode)
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+  }
+
+  "How many brought into UK from small producers" - {
+    def navigateFromHowManyBroughtIntoUkFromSmallProducersPage(mode: Mode) =
+      navigator.nextPage(HowManyBroughtIntoUkFromSmallProducersPage, mode, emptyUserAnswersForCorrectReturn.set(HowManyBroughtIntoUkFromSmallProducersPage, LitresInBands(1, 1)).success.value)
+
+    "navigate to brought into uk from small producers page in NormalMode" in {
+      val result = navigateFromHowManyBroughtIntoUkFromSmallProducersPage(NormalMode)
+      result mustBe routes.ClaimCreditsForExportsController.onPageLoad(NormalMode)
+    }
+
+    "navigate to Check Your Answers page in CheckMode" in {
+      val result = navigateFromHowManyBroughtIntoUkFromSmallProducersPage(CheckMode)
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+  }
+
   "Packaged as a contract packer" - {
     def navigateFromPackagedAsContractPackerPage(value: Boolean, mode: Mode) =
       navigator.nextPage(PackagedAsContractPackerPage, mode, emptyUserAnswersForCorrectReturn.set(PackagedAsContractPackerPage, value).success.value)
@@ -97,6 +149,43 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
     }
   }
 
+  "How many packaged as contract packer" - {
+    def navigateFromHowManyPackagedAsContractPackerPage(mode: Mode) =
+      navigator.nextPage(HowManyPackagedAsContractPackerPage, mode, emptyUserAnswersForCorrectReturn.set(HowManyPackagedAsContractPackerPage, LitresInBands(1, 1)).success.value)
+
+    "navigate to navigate to exemptions for small producers page in NormalMode" in {
+      val result = navigateFromHowManyPackagedAsContractPackerPage(NormalMode)
+      result mustBe routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
+    }
+
+    "navigate to Check Your Answers page in CheckMode" in {
+      val result = navigateFromHowManyPackagedAsContractPackerPage(CheckMode)
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+  }
+
+  "Exemptions for small producers" - {
+
+    def navigateFromExemptionsForSmallProducers(value: Boolean, mode: Mode) =
+      navigator.nextPage(ExemptionsForSmallProducersPage, mode, emptyUserAnswersForCorrectReturn.set(ExemptionsForSmallProducersPage, value).success.value)
+
+    "select Yes to navigate to Add small producer pager in NormalMode" in {
+      val result = navigateFromExemptionsForSmallProducers(value = true, NormalMode)
+      result mustBe routes.AddASmallProducerController.onPageLoad(NormalMode)
+    }
+
+    "select No to navigate to brought into uk page in NormalMode" in {
+      val result = navigateFromExemptionsForSmallProducers(value = false, NormalMode)
+      result mustBe routes.BroughtIntoUKController.onPageLoad(NormalMode)
+    }
+
+    "Should navigate to Check Your Answers page when no is selected in CheckMode" in {
+      val result = navigateFromExemptionsForSmallProducers(value = false, CheckMode)
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+
+  }
+
   "Add A Small Producer " - {
 
     "Should navigate to small producer details controller when data is entered" in {
@@ -107,52 +196,26 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
     }
   }
 
-  "Exemptions for small producers" - {
-
-
-    "Exemptions for small producers" - {
-
-      def navigateFromExemptionsForSmallProducers(value: Boolean, mode: Mode) =
-        navigator.nextPage(ExemptionsForSmallProducersPage, mode, emptyUserAnswersForCorrectReturn.set(ExemptionsForSmallProducersPage, value).success.value)
-
-      "select Yes to navigate to Add small producer pager in NormalMode" in {
-        val result = navigateFromExemptionsForSmallProducers(value = true, NormalMode)
-        result mustBe routes.AddASmallProducerController.onPageLoad(NormalMode)
-      }
-
-      "select No to navigate to brought into uk page in NormalMode" in {
-        val result = navigateFromExemptionsForSmallProducers(value = false, NormalMode)
-        result mustBe routes.BroughtIntoUKController.onPageLoad(NormalMode)
-      }
-
-      "Should navigate to Check Your Answers page when no is selected in CheckMode" in {
-        val result = navigateFromExemptionsForSmallProducers(value = false, CheckMode)
-        result mustBe routes.CorrectReturnCYAController.onPageLoad
-      }
-
-    }
-
-    s"must go from $AddASmallProducerPage to $SmallProducerDetailsPage in EditMode" in {
-      navigator.nextPage(AddASmallProducerPage, EditMode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
-        contactAddress)) mustBe controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(NormalMode)
-    }
-
-    List(NormalMode, CheckMode).foreach(mode => {
-      s"must go from $AddASmallProducerPage to $SmallProducerDetailsPage in $mode" in {
-        navigator.nextPage(AddASmallProducerPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
-          contactAddress)) mustBe controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(mode)
-      }
-
-
-      s"must go from $RemoveSmallProducerConfirmPage to $ExemptionsForSmallProducersPage in $mode when zero small producers left" in {
-        navigator.nextPage(RemoveSmallProducerConfirmPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
-          contactAddress).set(RemoveSmallProducerConfirmPage, true).success.value) mustBe controllers.correctReturn.routes.ExemptionsForSmallProducersController.onPageLoad(mode)
-      }
-
-      s"must go from $RemoveSmallProducerConfirmPage to $SmallProducerDetailsPage in $mode when one or more small producers left" in {
-        navigator.nextPage(RemoveSmallProducerConfirmPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
-          contactAddress, smallProducerList = smallProducerList)) mustBe controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(mode)
-      }
-    })
+  s"must go from $AddASmallProducerPage to $SmallProducerDetailsPage in EditMode" in {
+    navigator.nextPage(AddASmallProducerPage, EditMode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
+      contactAddress)) mustBe controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(NormalMode)
   }
+
+  List(NormalMode, CheckMode).foreach(mode => {
+    s"must go from $AddASmallProducerPage to $SmallProducerDetailsPage in $mode" in {
+      navigator.nextPage(AddASmallProducerPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
+        contactAddress)) mustBe controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(mode)
+    }
+
+
+    s"must go from $RemoveSmallProducerConfirmPage to $ExemptionsForSmallProducersPage in $mode when zero small producers left" in {
+      navigator.nextPage(RemoveSmallProducerConfirmPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
+        contactAddress).set(RemoveSmallProducerConfirmPage, true).success.value) mustBe controllers.correctReturn.routes.ExemptionsForSmallProducersController.onPageLoad(mode)
+    }
+
+    s"must go from $RemoveSmallProducerConfirmPage to $SmallProducerDetailsPage in $mode when one or more small producers left" in {
+      navigator.nextPage(RemoveSmallProducerConfirmPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
+        contactAddress, smallProducerList = smallProducerList)) mustBe controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(mode)
+    }
+  })
 }
