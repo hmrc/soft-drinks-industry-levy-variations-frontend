@@ -23,29 +23,42 @@ import pages.changeActivity.SecondaryWarehouseDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow, Value}
 import viewmodels.AddressFormattingHelper
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-//TODO: What is the difference between this and WarehouseDetailsSummary
+//TODO: Refactor this?
 object SecondaryWarehouseDetailsSummary  {
 
-  def cyaRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SecondaryWarehouseDetailsPage).map {
-      answer =>
+  def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)
+                 (implicit messages: Messages): SummaryList = {
 
-        val value = if (answer) "site.yes" else "site.no"
-
-        SummaryListRowViewModel(
-          key     = "changeActivity.secondaryWarehouseDetails.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("changeActivity.secondaryWarehouseDetails.change.hidden"))
+    SummaryListViewModel(
+      rows = Seq(SummaryListRowViewModel(
+        key = if (userAnswers.warehouseList.size != 1) {
+          messages("checkYourAnswers.warehouse.checkYourAnswersLabel.multiple", {
+            userAnswers.warehouseList.size.toString
+          })
+        } else {
+          messages("checkYourAnswers.warehouse.checkYourAnswersLabel.one", {
+            userAnswers.warehouseList.size.toString
+          })
+        },
+        value = Value(),
+        actions = if (isCheckAnswers) {
+          Seq(
+            ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
+              .withAttribute(("id", "change-packaging-sites"))
+              .withVisuallyHiddenText(messages("checkYourAnswers.sites.warehouse.change.hidden.one"))
           )
-        )
-    }
+        } else {
+          Seq.empty
+        }
+      )
+      )
+    )
+  }
 
   def summaryRows(warehouseList: Map[String, Site], mode: Mode)(implicit messages: Messages): List[SummaryListRow] = {
     warehouseList.map {

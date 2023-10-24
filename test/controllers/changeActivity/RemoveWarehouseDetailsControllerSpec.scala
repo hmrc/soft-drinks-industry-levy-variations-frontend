@@ -45,6 +45,7 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
   val form = formProvider()
 
   val indexOfWarehouseToBeRemoved: String = "foobar"
+//  TODO: Add tests for CheckMode
   lazy val warehouseDetailsRemoveRoute = routes.RemoveWarehouseDetailsController.onPageLoad(indexOfWarehouseToBeRemoved, NormalMode).url
   val addressOfWarehouse: UkAddress = UkAddress(List("foo"),"bar", None)
   val warehouseTradingName: String = "a name for a packing site here"

@@ -48,6 +48,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
   val formProvider = new SecondaryWarehouseDetailsFormProvider()
   val form: Form[Boolean] = formProvider()
 
+  //  TODO: Add tests for CheckMode
   lazy val warehouseDetailsRoute: String = routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url
 
   "SecondaryWarehouseDetails Controller" - {

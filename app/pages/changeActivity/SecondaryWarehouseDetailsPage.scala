@@ -17,7 +17,7 @@
 package pages.changeActivity
 
 import controllers.changeActivity.routes
-import models.{Mode, NormalMode}
+import models.Mode
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 

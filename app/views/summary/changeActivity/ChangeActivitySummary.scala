@@ -33,7 +33,7 @@ object ChangeActivitySummary  {
     val contractSummary: SummaryList = ContractPackingSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
     val importsSummary: SummaryList = ImportsSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
     val packingSummary: SummaryList = PackagingSiteDetailsSummary.summaryList(userAnswers, isCheckAnswers)
-    val warehouseSummary: SummaryList = WarehouseDetailsSummary.summaryList(userAnswers, isCheckAnswers)
+    val warehouseSummary: SummaryList = SecondaryWarehouseDetailsSummary.summaryList(userAnswers, isCheckAnswers)
     val amountProducedSection: Option[(String, SummaryList)] = amountProducedSummary.map(summary => {
       "changeActivity.checkYourAnswers.amountProducedSection" -> SummaryList(Seq(summary))
     })
