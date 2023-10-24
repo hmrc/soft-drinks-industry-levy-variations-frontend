@@ -218,4 +218,42 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
         contactAddress, smallProducerList = smallProducerList)) mustBe controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(mode)
     }
   })
+
+  "Correct Return, Claim Credits for Exports " - {
+    def navigateFromClaimCreditsForExportsPage(value: Boolean, mode: Mode) =
+      navigator.nextPage(ClaimCreditsForExportsPage, mode, emptyUserAnswersForCorrectReturn.set(ClaimCreditsForExportsPage, value).success.value)
+
+    List(NormalMode, CheckMode).foreach(mode => {
+      s"select Yes to navigate to How many claim credits for exports in $mode" in {
+        val result = navigateFromClaimCreditsForExportsPage(value = true, mode)
+        result mustBe routes.HowManyClaimCreditsForExportsController.onPageLoad(mode)
+      }
+    })
+
+    "select No to navigate to Claim credits for lost/damaged page in NormalMode" in {
+      val result = navigateFromClaimCreditsForExportsPage(value = false, NormalMode)
+      result mustBe routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
+    }
+
+    "Should navigate to Check Your Answers page in CheckMode" in {
+      val result = navigateFromClaimCreditsForExportsPage(value = false, CheckMode)
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+  }
+
+  "How many claim credits for exports " - {
+    def navigateFromHowManyClaimCreditsForExportsPage(mode: Mode) =
+      navigator.nextPage(HowManyClaimCreditsForExportsPage, mode, emptyUserAnswersForCorrectReturn
+        .set(HowManyClaimCreditsForExportsPage, LitresInBands(1, 1)).success.value)
+
+    "navigate to claim credits for lost/damaged in NormalMode" in {
+      val result = navigateFromHowManyClaimCreditsForExportsPage(NormalMode)
+      result mustBe routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
+    }
+
+    "navigate to Check Your Answers page in CheckMode" in {
+      val result = navigateFromHowManyClaimCreditsForExportsPage(CheckMode)
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+  }
 }

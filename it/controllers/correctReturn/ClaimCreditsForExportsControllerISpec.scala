@@ -151,7 +151,7 @@ class ClaimCreditsForExportsControllerISpec extends ControllerITTestHelper {
                 val expectedLocation = if (yesSelected) {
                   routes.HowManyClaimCreditsForExportsController.onPageLoad(NormalMode).url
                 } else {
-                  defaultCall.url
+                  routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode).url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ClaimCreditsForExportsPage))
@@ -177,7 +177,7 @@ class ClaimCreditsForExportsControllerISpec extends ControllerITTestHelper {
                 val expectedLocation = if (yesSelected) {
                   routes.HowManyClaimCreditsForExportsController.onPageLoad(NormalMode).url
                 } else {
-                  defaultCall.url
+                  routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode).url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ClaimCreditsForExportsPage))

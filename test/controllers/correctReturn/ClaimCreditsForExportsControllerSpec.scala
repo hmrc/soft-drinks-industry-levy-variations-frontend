@@ -33,17 +33,19 @@ import services.SessionService
 import views.html.correctReturn.ClaimCreditsForExportsView
 import utilities.GenericLogger
 import errors.SessionDatabaseInsertError
+
 import scala.concurrent.Future
 import org.jsoup.Jsoup
+import play.api.data.Form
 
 class ClaimCreditsForExportsControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new ClaimCreditsForExportsFormProvider()
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  lazy val claimCreditsForExportsRoute = routes.ClaimCreditsForExportsController.onPageLoad(NormalMode).url
+  lazy val claimCreditsForExportsRoute: String = routes.ClaimCreditsForExportsController.onPageLoad(NormalMode).url
 
   "ClaimCreditsForExports Controller" - {
 

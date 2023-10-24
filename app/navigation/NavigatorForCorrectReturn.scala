@@ -42,7 +42,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     } else if(mode == CheckMode){
         routes.CorrectReturnCYAController.onPageLoad
     } else {
-        defaultCall
+      routes.ClaimCreditsForLostDamagedController.onPageLoad(mode)
     }
   }
 
