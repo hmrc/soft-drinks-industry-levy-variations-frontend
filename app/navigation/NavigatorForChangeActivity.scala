@@ -111,7 +111,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     case ImportsPage => userAnswers => navigationForImports(userAnswers, CheckMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.ChangeActivityCYAController.onPageLoad
-    case RemoveWarehouseDetailsPage => _ => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+    case RemoveWarehouseDetailsPage => _ => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
     case _ => _ => routes.ChangeActivityCYAController.onPageLoad
   }
 
@@ -125,8 +125,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
   }
 
   private def navigateForAmountProducedNoneFollowingImports(userAnswers: UserAnswers): Call =
-    userAnswers.get(ContractPackingPage)
-    match {
+    userAnswers.get(ContractPackingPage) match {
       case Some(true) if userAnswers.packagingSiteList.isEmpty =>
         routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
       case Some(true) =>

@@ -63,39 +63,39 @@ class SecondaryWarehouseDetailsController @Inject()(
 
       val summaryList: Option[SummaryList] = request.userAnswers.warehouseList match {
         case warehouseList if warehouseList.nonEmpty => Some(SummaryListViewModel(
-          rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouseList))
+          rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouseList, mode))
         )
         case _ => None
       }
 
-      Ok(view(preparedForm, summaryList))
+      Ok(view(preparedForm, summaryList, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
       val summaryList: Option[SummaryList] = request.userAnswers.warehouseList match {
         case warehouseList if warehouseList.nonEmpty => Some(SummaryListViewModel(
-          rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouseList))
+          rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouseList, mode))
         )
         case _ => None
       }
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, summaryList))),
+          Future.successful(BadRequest(view(formWithErrors, summaryList, mode))),
             value => {
               updateDatabaseWithoutRedirect(request.userAnswers.set(SecondaryWarehouseDetailsPage, value), SecondaryWarehouseDetailsPage).flatMap {
-                case true => getOnwardUrl(value).map(Redirect(_))
+                case true => getOnwardUrl(value, mode).map(Redirect(_))
                 case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
               }
         }
       )
   }
 
-  private def getOnwardUrl(value: Boolean)
+  private def getOnwardUrl(value: Boolean, mode: Mode)
                           (implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages, requestHeader: RequestHeader): Future[String] = {
     if (value) {
-      addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = NormalMode)(hc, ec, messages, requestHeader)
+      addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = mode)(hc, ec, messages, requestHeader)
     } else {
       Future.successful(routes.ChangeActivityCYAController.onPageLoad.url)
     }

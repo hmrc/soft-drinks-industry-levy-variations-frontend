@@ -17,7 +17,7 @@
 package views.summary.changeActivity
 
 import controllers.changeActivity.routes
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import models.backend.Site
 import pages.changeActivity.SecondaryWarehouseDetailsPage
 import play.api.i18n.Messages
@@ -28,6 +28,7 @@ import viewmodels.AddressFormattingHelper
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
+//TODO: What is the difference between this and WarehouseDetailsSummary
 object SecondaryWarehouseDetailsSummary  {
 
   def cyaRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
@@ -40,20 +41,20 @@ object SecondaryWarehouseDetailsSummary  {
           key     = "changeActivity.secondaryWarehouseDetails.checkYourAnswersLabel",
           value   = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
+            ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("changeActivity.secondaryWarehouseDetails.change.hidden"))
           )
         )
     }
 
-  def summaryRows(warehouseList: Map[String, Site])(implicit messages: Messages): List[SummaryListRow] = {
+  def summaryRows(warehouseList: Map[String, Site], mode: Mode)(implicit messages: Messages): List[SummaryListRow] = {
     warehouseList.map {
       warehouse =>
         SummaryListRow(
           key = Key(HtmlContent(AddressFormattingHelper.addressFormatting(warehouse._2.address, warehouse._2.tradingName))),
           classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds",
           actions = Some(Actions("", Seq(
-            ActionItemViewModel("site.remove", routes.RemoveWarehouseDetailsController.onPageLoad(warehouse._1, NormalMode).url)
+            ActionItemViewModel("site.remove", routes.RemoveWarehouseDetailsController.onPageLoad(warehouse._1, mode).url)
               .withVisuallyHiddenText(messages("changeActivity.secondaryWarehouseDetails.remove.hidden",
                 warehouse._2.tradingName.getOrElse(""), warehouse._2.address.lines.head))
           )))

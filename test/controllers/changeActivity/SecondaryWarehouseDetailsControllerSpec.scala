@@ -64,7 +64,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
         val view = application.injector.instanceOf[SecondaryWarehouseDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, None)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, None, NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -82,14 +82,14 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), None)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), None, NormalMode)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered with a single warehouse in the list" in {
 
       val summaryList = Some(SummaryListViewModel(
-        rows = SecondaryWarehouseDetailsSummary.summaryRows(Map("1" -> warehouse))
+        rows = SecondaryWarehouseDetailsSummary.summaryRows(Map("1" -> warehouse), NormalMode)
       ))
 
       val userAnswers = warehouseAddedToUserAnswersForChangeActivity.set(SecondaryWarehouseDetailsPage, true).success.value
@@ -104,13 +104,13 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual  view(form.fill(true), summaryList)(request, messages(application)).toString
+        contentAsString(result) mustEqual  view(form.fill(true), summaryList, NormalMode)(request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered with multiple warehouses in the list" in {
       val warehouses = Map("1" -> warehouse, "2" -> Site(UkAddress(List("34 Rhes Priordy"),"WR53 7CX"), Some("DEF Ltd")))
-      val summaryList = Some(SummaryListViewModel(rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouses)))
+      val summaryList = Some(SummaryListViewModel(rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouses, NormalMode)))
 
       val userAnswers = UserAnswers(userAnswersId, ChangeActivity, warehouseList = warehouses, contactAddress = contactAddress)
         .set(SecondaryWarehouseDetailsPage, true).success.value
@@ -125,7 +125,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), summaryList)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), summaryList, NormalMode)(request, messages(application)).toString
       }
     }
 
@@ -195,7 +195,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, None)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, None, NormalMode)(request, messages(application)).toString
       }
     }
 

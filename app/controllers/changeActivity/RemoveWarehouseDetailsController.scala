@@ -56,8 +56,8 @@ class RemoveWarehouseDetailsController @Inject()(
       request.userAnswers.warehouseList.get(index) match {
         case Some(warehouse) =>
           val formattedAddress = AddressFormattingHelper.addressFormatting(warehouse.address, warehouse.tradingName)
-          Ok(view(form, formattedAddress, index))
-        case _ => indexNotFoundRedirect(index, request, controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode))
+          Ok(view(form, formattedAddress, index, mode))
+        case _ => indexNotFoundRedirect(index, request, controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(mode))
       }
   }
 
@@ -66,19 +66,19 @@ class RemoveWarehouseDetailsController @Inject()(
       val warehouseToRemove: Option[Site] = request.userAnswers.warehouseList.get(index)
       warehouseToRemove match {
         case None =>
-          Future.successful(indexNotFoundRedirect(index, request, controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)))
+          Future.successful(indexNotFoundRedirect(index, request, controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(mode)))
         case Some(warehouse) =>
           val formattedAddress: Html = AddressFormattingHelper.addressFormatting(warehouse.address, warehouse.tradingName)
           form.bindFromRequest().fold(
             formWithErrors =>
-              Future.successful(BadRequest(view(formWithErrors, formattedAddress, index))),
+              Future.successful(BadRequest(view(formWithErrors, formattedAddress, index, mode))),
             value => {
               val updatedAnswersFinal: UserAnswers = if (value) {
                 request.userAnswers.copy(warehouseList = request.userAnswers.warehouseList.removed(index))
               } else {
                 request.userAnswers
               }
-              updateDatabaseAndRedirect(updatedAnswersFinal, RemoveWarehouseDetailsPage, mode = NormalMode)
+              updateDatabaseAndRedirect(updatedAnswersFinal, RemoveWarehouseDetailsPage, mode = mode)
             }
           )
       }

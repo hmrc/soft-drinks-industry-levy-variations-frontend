@@ -28,7 +28,8 @@ import viewmodels.AddressFormattingHelper
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object WarehouseDetailsSummary  {
+//TODO: What is the difference between this and SecondaryWarehouseDetailsSummary
+object WarehouseDetailsSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(WarehouseDetailsPage).map {
