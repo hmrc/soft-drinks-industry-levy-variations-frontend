@@ -42,7 +42,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
 
                 res.status mustBe SEE_OTHER
                 val expectedLocation = if (changeSelected == ChangeActivity) {
-                  controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url
+                  controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(mode).url
                 } else if (changeSelected == UpdateRegisteredDetails) {
                   controllers.updateRegisteredDetails.routes.WarehouseDetailsController.onPageLoad(mode).url
                 }
@@ -76,7 +76,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
 
                 res.status mustBe SEE_OTHER
                 val expectedLocation = if (changeSelected == ChangeActivity) {
-                  controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url
+                  controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(mode).url
                 } else if (changeSelected == UpdateRegisteredDetails) {
                   controllers.updateRegisteredDetails.routes.WarehouseDetailsController.onPageLoad(mode).url
                 }
