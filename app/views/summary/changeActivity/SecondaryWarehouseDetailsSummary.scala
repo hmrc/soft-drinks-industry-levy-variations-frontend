@@ -17,7 +17,7 @@
 package views.summary.changeActivity
 
 import controllers.changeActivity.routes
-import models.UserAnswers
+import models.{NormalMode, UserAnswers}
 import models.backend.Site
 import pages.changeActivity.SecondaryWarehouseDetailsPage
 import play.api.i18n.Messages
@@ -40,7 +40,7 @@ object SecondaryWarehouseDetailsSummary  {
           key     = "changeActivity.secondaryWarehouseDetails.checkYourAnswersLabel",
           value   = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad.url)
+            ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
               .withVisuallyHiddenText(messages("changeActivity.secondaryWarehouseDetails.change.hidden"))
           )
         )
@@ -53,7 +53,7 @@ object SecondaryWarehouseDetailsSummary  {
           key = Key(HtmlContent(AddressFormattingHelper.addressFormatting(warehouse._2.address, warehouse._2.tradingName))),
           classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds",
           actions = Some(Actions("", Seq(
-            ActionItemViewModel("site.remove", routes.RemoveWarehouseDetailsController.onPageLoad(warehouse._1).url)
+            ActionItemViewModel("site.remove", routes.RemoveWarehouseDetailsController.onPageLoad(warehouse._1, NormalMode).url)
               .withVisuallyHiddenText(messages("changeActivity.secondaryWarehouseDetails.remove.hidden",
                 warehouse._2.tradingName.getOrElse(""), warehouse._2.address.lines.head))
           )))

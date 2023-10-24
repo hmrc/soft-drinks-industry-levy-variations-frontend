@@ -1,6 +1,7 @@
 package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
+import models.NormalMode
 import models.SelectChange.ChangeActivity
 import models.backend.Site
 import org.jsoup.Jsoup
@@ -28,7 +29,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
           whenReady(result) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad.url)
+            res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
           }
         }
       }
@@ -85,7 +86,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
               }
             }
           }
@@ -104,7 +105,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
                 val userAnswersAfterTest = getAnswers(userAnswers.id)
                 val dataStoredForPage = userAnswersAfterTest.fold[Option[Boolean]](None)(_.get(RemoveWarehouseDetailsPage))
                 if(yesSelected) {

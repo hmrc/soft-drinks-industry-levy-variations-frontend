@@ -41,7 +41,7 @@ class RampOffController @Inject()(controllerActions: ControllerActions,
       } yield {
         val redirectUrl = updatedUserAnswers.journeyType match {
           case SelectChange.UpdateRegisteredDetails => controllers.updateRegisteredDetails.routes.WarehouseDetailsController.onPageLoad(mode)
-          case SelectChange.ChangeActivity => controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad
+          case SelectChange.ChangeActivity => controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
           case _ => controllers.routes.IndexController.onPageLoad
         }
         Redirect(redirectUrl)

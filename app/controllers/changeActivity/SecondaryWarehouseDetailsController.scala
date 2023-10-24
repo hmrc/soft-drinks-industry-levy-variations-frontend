@@ -20,7 +20,7 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.SecondaryWarehouseDetailsFormProvider
 import handlers.ErrorHandler
-import models.NormalMode
+import models.{Mode, NormalMode}
 import models.SelectChange.ChangeActivity
 import navigation._
 import pages.changeActivity.SecondaryWarehouseDetailsPage
@@ -53,7 +53,7 @@ class SecondaryWarehouseDetailsController @Inject()(
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
 
       val preparedForm = request.userAnswers.get(SecondaryWarehouseDetailsPage) match {
@@ -71,7 +71,7 @@ class SecondaryWarehouseDetailsController @Inject()(
       Ok(view(preparedForm, summaryList))
   }
 
-  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
       val summaryList: Option[SummaryList] = request.userAnswers.warehouseList match {
         case warehouseList if warehouseList.nonEmpty => Some(SummaryListViewModel(

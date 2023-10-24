@@ -30,7 +30,7 @@
 
 @layout(pageTitle = title(form, messages("changeActivity.secondaryWarehouseDetails.title"))) {
 
-    @formHelper(action = routes.SecondaryWarehouseDetailsController.onSubmit, Symbol("autoComplete") -> "off") {
+    @formHelper(action = routes.SecondaryWarehouseDetailsController.onSubmit(NormalMode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

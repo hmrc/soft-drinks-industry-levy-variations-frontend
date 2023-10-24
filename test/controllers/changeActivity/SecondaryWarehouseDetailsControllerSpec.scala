@@ -20,7 +20,7 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.changeActivity.SecondaryWarehouseDetailsFormProvider
 import models.SelectChange.ChangeActivity
-import models.UserAnswers
+import models.{NormalMode, UserAnswers}
 import models.backend.{Site, UkAddress}
 import navigation._
 import org.jsoup.Jsoup
@@ -48,7 +48,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
   val formProvider = new SecondaryWarehouseDetailsFormProvider()
   val form: Form[Boolean] = formProvider()
 
-  lazy val warehouseDetailsRoute: String = routes.SecondaryWarehouseDetailsController.onPageLoad.url
+  lazy val warehouseDetailsRoute: String = routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url
 
   "SecondaryWarehouseDetails Controller" - {
 

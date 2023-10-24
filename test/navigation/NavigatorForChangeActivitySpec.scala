@@ -40,7 +40,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
       s"must navigate back to $SecondaryWarehouseDetailsPage when either choice is selected" in {
         val result = navigator.nextPage(RemoveWarehouseDetailsPage, NormalMode,
           UserAnswers("id", SelectChange.ChangeActivity, Json.obj(RemoveWarehouseDetailsPage.toString -> "true"), contactAddress = contactAddress))
-        result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad
+        result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
       }
     }
 

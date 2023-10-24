@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.changeActivity.PackagingSiteDetailsFormProvider
 import handlers.ErrorHandler
 import models.SelectChange.ChangeActivity
-import models.{CheckMode, Mode}
+import models.{CheckMode, Mode, NormalMode}
 import navigation._
 import pages.changeActivity.PackagingSiteDetailsPage
 import play.api.data.Form
@@ -97,7 +97,7 @@ class PackagingSiteDetailsController @Inject()(
     } else if(mode == CheckMode) {
       Future.successful(controllers.changeActivity.routes.ChangeActivityCYAController.onPageLoad.url)
     } else {
-      Future.successful(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad.url)
+      Future.successful(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
     }
   }
 }

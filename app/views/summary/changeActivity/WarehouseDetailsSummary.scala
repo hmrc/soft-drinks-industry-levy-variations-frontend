@@ -18,7 +18,7 @@ package views.summary.changeActivity
 
 import controllers.changeActivity.routes._
 import models.backend.Site
-import models.{Mode, UserAnswers}
+import models.{Mode, NormalMode, UserAnswers}
 import pages.updateRegisteredDetails.WarehouseDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key, SummaryList, Value}
@@ -40,7 +40,7 @@ object WarehouseDetailsSummary  {
           key     = "updateRegisteredDetails.warehouseDetails.checkYourAnswersLabel",
           value   = ValueViewModel(value),
           actions = Seq(
-            ActionItemViewModel("site.change", SecondaryWarehouseDetailsController.onPageLoad.url)
+            ActionItemViewModel("site.change", SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
               .withVisuallyHiddenText(messages("updateRegisteredDetails.warehouseDetails.change.hidden"))
           )
         )
@@ -76,7 +76,7 @@ object WarehouseDetailsSummary  {
               value = Value(),
               actions = if (isCheckAnswers) {
                 Seq(
-                  ActionItemViewModel("site.change", SecondaryWarehouseDetailsController.onPageLoad.url)
+                  ActionItemViewModel("site.change", SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
                     .withAttribute(("id", "change-packaging-sites"))
                     .withVisuallyHiddenText(messages("checkYourAnswers.sites.warehouse.change.hidden.one"))
                 )

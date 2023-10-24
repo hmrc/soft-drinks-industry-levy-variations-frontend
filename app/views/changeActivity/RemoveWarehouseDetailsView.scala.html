@@ -28,7 +28,7 @@
 
 @layout(pageTitle = title(form, messages("changeActivity.removeWarehouseDetails.title"))) {
 
-    @formHelper(action = routes.RemoveWarehouseDetailsController.onSubmit(index), Symbol("autoComplete") -> "off") {
+    @formHelper(action = routes.RemoveWarehouseDetailsController.onSubmit(index, NormalMode), Symbol("autoComplete") -> "off") {
 
 
         @if(form.errors.nonEmpty) {

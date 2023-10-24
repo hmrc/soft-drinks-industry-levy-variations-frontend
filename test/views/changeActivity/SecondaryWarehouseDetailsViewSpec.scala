@@ -18,6 +18,7 @@ package views.changeActivity
 
 import controllers.changeActivity.routes
 import forms.changeActivity.SecondaryWarehouseDetailsFormProvider
+import models.NormalMode
 import play.api.data.Form
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -186,12 +187,12 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
       val documentNoSelected = doc(htmlNoSelected)
       "and yes is selected" in {
         documentYesSelected.select(Selectors.form)
-          .attr("action") mustEqual routes.SecondaryWarehouseDetailsController.onSubmit.url
+          .attr("action") mustEqual routes.SecondaryWarehouseDetailsController.onSubmit(NormalMode).url
       }
 
       "and no is selected" in {
         documentNoSelected.select(Selectors.form)
-          .attr("action") mustEqual routes.SecondaryWarehouseDetailsController.onSubmit.url
+          .attr("action") mustEqual routes.SecondaryWarehouseDetailsController.onSubmit(NormalMode).url
       }
     }
 

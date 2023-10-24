@@ -22,7 +22,7 @@ import forms.changeActivity.RemoveWarehouseDetailsFormProvider
 import handlers.ErrorHandler
 import models.SelectChange.ChangeActivity
 import models.backend.Site
-import models.{NormalMode, UserAnswers}
+import models.{Mode, NormalMode, UserAnswers}
 import navigation._
 import pages.changeActivity.RemoveWarehouseDetailsPage
 import play.api.data.Form
@@ -51,22 +51,22 @@ class RemoveWarehouseDetailsController @Inject()(
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
+  def onPageLoad(index: String, mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
       request.userAnswers.warehouseList.get(index) match {
         case Some(warehouse) =>
           val formattedAddress = AddressFormattingHelper.addressFormatting(warehouse.address, warehouse.tradingName)
           Ok(view(form, formattedAddress, index))
-        case _ => indexNotFoundRedirect(index, request, controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad)
+        case _ => indexNotFoundRedirect(index, request, controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode))
       }
   }
 
-  def onSubmit(index: String): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
+  def onSubmit(index: String, mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
       val warehouseToRemove: Option[Site] = request.userAnswers.warehouseList.get(index)
       warehouseToRemove match {
         case None =>
-          Future.successful(indexNotFoundRedirect(index, request, controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad))
+          Future.successful(indexNotFoundRedirect(index, request, controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)))
         case Some(warehouse) =>
           val formattedAddress: Html = AddressFormattingHelper.addressFormatting(warehouse.address, warehouse.tradingName)
           form.bindFromRequest().fold(
