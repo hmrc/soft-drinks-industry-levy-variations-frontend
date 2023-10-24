@@ -2,7 +2,7 @@ package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.CorrectReturn
-import models.SmallProducer
+import models.{CheckMode, NormalMode, SmallProducer}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import pages.correctReturn.SmallProducerDetailsPage
@@ -190,10 +190,17 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
-                dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe yesSelected
+                if(key == "yes"){
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.AddASmallProducerController.onPageLoad(NormalMode).url)
+                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
+                  dataStoredForPage.nonEmpty mustBe true
+                  dataStoredForPage.get mustBe yesSelected
+                }else{
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.BroughtIntoUKController.onPageLoad(NormalMode).url)
+                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
+                  dataStoredForPage.nonEmpty mustBe true
+                  dataStoredForPage.get mustBe yesSelected
+                }
               }
             }
           }
@@ -211,10 +218,17 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
-                dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe yesSelected
+                if(key == "yes"){
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.AddASmallProducerController.onPageLoad(NormalMode).url)
+                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
+                  dataStoredForPage.nonEmpty mustBe true
+                  dataStoredForPage.get mustBe yesSelected
+                }else{
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.BroughtIntoUKController.onPageLoad(NormalMode).url)
+                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
+                  dataStoredForPage.nonEmpty mustBe true
+                  dataStoredForPage.get mustBe yesSelected
+                }
               }
             }
           }
@@ -269,10 +283,17 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
-                dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe yesSelected
+                if(key == "yes"){
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.AddASmallProducerController.onPageLoad(CheckMode).url)
+                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
+                  dataStoredForPage.nonEmpty mustBe true
+                  dataStoredForPage.get mustBe yesSelected
+                }else{
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
+                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
+                  dataStoredForPage.nonEmpty mustBe true
+                  dataStoredForPage.get mustBe yesSelected
+                }
               }
             }
           }
@@ -290,10 +311,17 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
-                dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe yesSelected
+                if(key == "yes"){
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.AddASmallProducerController.onPageLoad(CheckMode).url)
+                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
+                  dataStoredForPage.nonEmpty mustBe true
+                  dataStoredForPage.get mustBe yesSelected
+                }else{
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
+                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
+                  dataStoredForPage.nonEmpty mustBe true
+                  dataStoredForPage.get mustBe yesSelected
+                }
               }
             }
           }

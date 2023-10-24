@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.correctReturn.routes
 import forms.correctReturn.AddASmallProducerFormProvider
 import models.correctReturn.AddASmallProducer
-import models.{CheckMode, LitresInBands, NormalMode}
+import models.{CheckMode, EditMode, LitresInBands, Mode, NormalMode}
 import org.jsoup.nodes.Document
 import play.api.data.Form
 import play.api.i18n.Messages
@@ -121,10 +121,15 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
     }
   }
 
-  def testAction(document: Document, expectedAction: String): Unit = {
+  def testAction(mode: Mode, document: Document, expectedAction: String): Unit = {
     "should contains a form with the correct action" in {
-      document.select(Selectors.form)
-        .attr("action") mustEqual expectedAction
+      val action = document.select(Selectors.form).attr("action")
+      mode match{
+        case NormalMode => action mustEqual s"/soft-drinks-industry-levy-variations-frontend/correct-return/add-small-producer"
+        case EditMode => action mustEqual s"/soft-drinks-industry-levy-variations-frontend/correct-return/change-add-small-producer-edit?sdilReference="
+        case CheckMode => action mustEqual s"/soft-drinks-industry-levy-variations-frontend/correct-return/change-add-small-producer-edit?sdilReference="
+      }
+
     }
   }
 
@@ -309,7 +314,7 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
         testLitresInBandsWithPrepopulatedData(documentWithValidData, numberOfPrecedingInputs = 2)
         
         testButton(document)
-        testAction(document, routes.AddASmallProducerController.onSubmit(mode).url)
+        testAction(mode, document, routes.AddASmallProducerController.onSubmit(mode).url)
 
         "and the form has errors" - {
           val errorTitle = "Error: Enter the registered small producer’s details - Soft Drinks Industry Levy - GOV.UK"

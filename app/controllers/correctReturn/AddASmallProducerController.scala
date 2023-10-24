@@ -22,13 +22,15 @@ import controllers.actions._
 import forms.correctReturn.AddASmallProducerFormProvider
 import handlers.ErrorHandler
 import models.correctReturn.AddASmallProducer
-import models.{Mode, SmallProducer, UserAnswers}
+import models.errors.{AlreadyExists, NotASmallProducer, SDILReferenceErrors}
+import models.{LitresInBands, Mode, ReturnPeriod, SmallProducer, UserAnswers}
 import navigation._
 import pages.correctReturn.AddASmallProducerPage
 import play.api.data.{Form, FormError}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
+import uk.gov.hmrc.http.HeaderCarrier
 import utilities.GenericLogger
 import views.html.correctReturn.AddASmallProducerView
 
@@ -92,5 +94,86 @@ class AddASmallProducerController @Inject()(
           }
         }
       )
+  }
+
+  def onEditPageLoad(mode: Mode, sdilReference: String): Action[AnyContent] =
+    controllerActions.withCorrectReturnJourneyData.async {
+      implicit request =>
+
+        val form = formProvider(request.userAnswers)
+        val targetSmallProducer = request.userAnswers.smallProducerList.find(producer => producer.sdilRef == sdilReference)
+
+        targetSmallProducer match {
+          case Some(producer) =>
+            val addASmallProducer = AddASmallProducer(Some(producer.alias), producer.sdilRef, LitresInBands(producer.litreage._1,
+              producer.litreage._2))
+            val preparedForm = form.fill(addASmallProducer)
+            Future.successful(Ok(view(preparedForm, mode, Some(sdilReference))))
+          case _ =>
+            throw new RuntimeException("No such small producer exists")
+        }
+    }
+
+  def onEditPageSubmit(mode: Mode, sdilReference: String): Action[AnyContent] =
+    controllerActions.withCorrectReturnJourneyData.async {
+      implicit request =>
+
+        val form = formProvider(request.userAnswers)
+
+        form.bindFromRequest().fold(
+          formWithErrors => {
+            Future.successful(BadRequest(view(formWithErrors, mode, Some(sdilReference))))
+          },
+          formData => {
+            val smallProducerList = request.userAnswers.smallProducerList
+            isValidSDILRef(sdilReference, formData.referenceNumber, smallProducerList, request.returnPeriod).flatMap({
+              case Left(AlreadyExists) =>
+                Future.successful(
+                  BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.exists")), mode, Some(sdilReference)))
+                )
+              case Left(NotASmallProducer) =>
+                Future.successful(
+                  BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")),
+                    mode, Some(sdilReference)))
+                )
+              case Right(_) =>
+                updateSmallProducerList(formData, request.userAnswers, sdilReference).map(updatedAnswersFinal =>
+                  Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal)))
+            })
+          }
+        )
+    }
+
+  private def isValidSDILRef(currentSDILRef: String, addASmallProducerSDILRef: String,
+                             smallProducerList: Seq[SmallProducer], returnPeriod: ReturnPeriod)
+                            (implicit hc: HeaderCarrier): Future[Either[SDILReferenceErrors, Unit]] = {
+    if (currentSDILRef == addASmallProducerSDILRef) {
+      Future.successful(Right(()))
+    } else if (smallProducerList.map(_.sdilRef).contains(addASmallProducerSDILRef)) {
+      Future.successful(Left(AlreadyExists))
+    } else {
+      sdilConnector.checkSmallProducerStatus(addASmallProducerSDILRef, returnPeriod).value.flatMap {
+        case Right(Some(false)) =>
+          Future.successful(
+            Left(NotASmallProducer)
+          )
+        case _ => Future.successful(Right(()))
+      }
+    }
+  }
+
+  private def smallProducerInfoFormatted(data: AddASmallProducer): SmallProducer = {
+    SmallProducer(data.producerName.getOrElse(""), data.referenceNumber, (data.litres.lowBand, data.litres.highBand))
+  }
+
+  private def updateSmallProducerList(formData: AddASmallProducer, userAnswers: UserAnswers, sdilUnderEdit: String): Future[UserAnswers] = {
+    for {
+      updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, formData))
+      newListWithOldSPRemoved = updatedAnswers.smallProducerList.filterNot(_.sdilRef == sdilUnderEdit)
+      updatedAnswersFinal = updatedAnswers.copy(smallProducerList = smallProducerInfoFormatted(formData) :: newListWithOldSPRemoved)
+      _ <- updateDatabaseWithoutRedirect(Try(updatedAnswersFinal), AddASmallProducerPage)
+    } yield {
+      updatedAnswersFinal
+    }
   }
 }

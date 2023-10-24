@@ -21,6 +21,7 @@ import models._
 import pages._
 import pages.correctReturn._
 import controllers.correctReturn.routes
+import play.api.libs.json.Json
 
 class NavigatorForCorrectReturnSpec extends SpecBase {
 
@@ -76,7 +77,7 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
 
   "Packaged as a contract packer" - {
     def navigateFromPackagedAsContractPackerPage(value: Boolean, mode: Mode) =
-      navigator.nextPage(PackagedAsContractPackerPage, mode, emptyUserAnswersForCorrectReturn.set(PackagedAsContractPackerPage , value).success.value)
+      navigator.nextPage(PackagedAsContractPackerPage, mode, emptyUserAnswersForCorrectReturn.set(PackagedAsContractPackerPage, value).success.value)
 
     List(NormalMode, CheckMode).foreach(mode => {
       s"select Yes to navigate to How Many packaged as contract packer in $mode" in {
@@ -96,42 +97,62 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
     }
   }
 
-  "Exemptions for small producers" - {
+  "Add A Small Producer " - {
 
-    def navigateFromExemptionsForSmallProducers(value: Boolean, mode: Mode) =
-      navigator.nextPage(ExemptionsForSmallProducersPage, mode, emptyUserAnswersForCorrectReturn.set(ExemptionsForSmallProducersPage, value).success.value)
-
-    "select Yes to navigate to Add small producer pager in NormalMode" in {
-      val result = navigateFromExemptionsForSmallProducers(value = true, NormalMode)
-      result mustBe routes.AddASmallProducerController.onPageLoad(NormalMode)
+    "Should navigate to small producer details controller when data is entered" in {
+      navigator.nextPage(AddASmallProducerPage,
+        CheckMode,
+        emptyUserAnswersForCorrectReturn.copy(data = Json.obj("addASmallProducer" -> Json.obj("lowBand" -> "10000", "highBand" -> "20000")))
+      ) mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
     }
-
-    "select No to navigate to brought into uk page in NormalMode" in {
-      val result = navigateFromExemptionsForSmallProducers(value = false, NormalMode)
-      result mustBe routes.BroughtIntoUKController.onPageLoad(NormalMode)
-    }
-
-    "Should navigate to Check Your Answers page when no is selected in CheckMode" in {
-      val result = navigateFromExemptionsForSmallProducers(value = false, CheckMode)
-      result mustBe routes.CorrectReturnCYAController.onPageLoad
-    }
-
   }
 
-  List(NormalMode, CheckMode).foreach(mode => {
-    s"must go from $AddASmallProducerPage to $SmallProducerDetailsPage in $mode" in {
-      navigator.nextPage(AddASmallProducerPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
-        contactAddress)) mustBe controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(mode)
+  "Exemptions for small producers" - {
+
+
+    "Exemptions for small producers" - {
+
+      def navigateFromExemptionsForSmallProducers(value: Boolean, mode: Mode) =
+        navigator.nextPage(ExemptionsForSmallProducersPage, mode, emptyUserAnswersForCorrectReturn.set(ExemptionsForSmallProducersPage, value).success.value)
+
+      "select Yes to navigate to Add small producer pager in NormalMode" in {
+        val result = navigateFromExemptionsForSmallProducers(value = true, NormalMode)
+        result mustBe routes.AddASmallProducerController.onPageLoad(NormalMode)
+      }
+
+      "select No to navigate to brought into uk page in NormalMode" in {
+        val result = navigateFromExemptionsForSmallProducers(value = false, NormalMode)
+        result mustBe routes.BroughtIntoUKController.onPageLoad(NormalMode)
+      }
+
+      "Should navigate to Check Your Answers page when no is selected in CheckMode" in {
+        val result = navigateFromExemptionsForSmallProducers(value = false, CheckMode)
+        result mustBe routes.CorrectReturnCYAController.onPageLoad
+      }
+
     }
 
-    s"must go from $RemoveSmallProducerConfirmPage to $ExemptionsForSmallProducersPage in $mode when zero small producers left" in {
-      navigator.nextPage(RemoveSmallProducerConfirmPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
-        contactAddress)) mustBe controllers.correctReturn.routes.ExemptionsForSmallProducersController.onPageLoad(mode)
+    s"must go from $AddASmallProducerPage to $SmallProducerDetailsPage in EditMode" in {
+      navigator.nextPage(AddASmallProducerPage, EditMode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
+        contactAddress)) mustBe controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(NormalMode)
     }
 
-    s"must go from $RemoveSmallProducerConfirmPage to $SmallProducerDetailsPage in $mode when one or more small producers left" in {
-      navigator.nextPage(RemoveSmallProducerConfirmPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
-        contactAddress, smallProducerList = smallProducerList)) mustBe controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(mode)
-    }
-  })
+    List(NormalMode, CheckMode).foreach(mode => {
+      s"must go from $AddASmallProducerPage to $SmallProducerDetailsPage in $mode" in {
+        navigator.nextPage(AddASmallProducerPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
+          contactAddress)) mustBe controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(mode)
+      }
+
+
+      s"must go from $RemoveSmallProducerConfirmPage to $ExemptionsForSmallProducersPage in $mode when zero small producers left" in {
+        navigator.nextPage(RemoveSmallProducerConfirmPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
+          contactAddress).set(RemoveSmallProducerConfirmPage, true).success.value) mustBe controllers.correctReturn.routes.ExemptionsForSmallProducersController.onPageLoad(mode)
+      }
+
+      s"must go from $RemoveSmallProducerConfirmPage to $SmallProducerDetailsPage in $mode when one or more small producers left" in {
+        navigator.nextPage(RemoveSmallProducerConfirmPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
+          contactAddress, smallProducerList = smallProducerList)) mustBe controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(mode)
+      }
+    })
+  }
 }

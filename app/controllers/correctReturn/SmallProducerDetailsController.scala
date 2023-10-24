@@ -60,7 +60,7 @@ class SmallProducerDetailsController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-      val smallProducerList:List[SmallProducer] = request.userAnswers.smallProducerList
+      val smallProducerList: List[SmallProducer] = request.userAnswers.smallProducerList
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, smallProducerList))),
@@ -71,5 +71,4 @@ class SmallProducerDetailsController @Inject()(
         }
       )
   }
-
 }
