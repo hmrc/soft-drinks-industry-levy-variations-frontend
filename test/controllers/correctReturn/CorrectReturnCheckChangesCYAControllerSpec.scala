@@ -77,7 +77,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
 
         val view = application.injector.instanceOf[CorrectReturnCheckChangesCYAView]
         val orgName = " Super Lemonade Plc"
-        val section = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(userAnswers, aSubscription, changedPages)
+        val section = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(userAnswers, aSubscription, changedPages, amounts)
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(orgName, section,

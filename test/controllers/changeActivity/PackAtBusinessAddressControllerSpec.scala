@@ -21,7 +21,7 @@ import connectors.SoftDrinksIndustryLevyConnector
 import errors.SessionDatabaseInsertError
 import forms.changeActivity.PackAtBusinessAddressFormProvider
 import models.SelectChange.ChangeActivity
-import models.backend.{Site, UkAddress}
+import models.backend.UkAddress
 import models.{NormalMode, RetrievedSubscription}
 import navigation._
 import org.jsoup.Jsoup

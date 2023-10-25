@@ -29,6 +29,8 @@ trait TestData {
   val userAnswersId: String = "id"
   val sdilNumber: String = "XKSDIL000000022"
 
+  val amounts = Amounts(originalReturnTotal = 100,newReturnTotal = 200, accountBalance = 300, adjustedAmount = 400)
+
   val aSubscription: RetrievedSubscription = RetrievedSubscription(
     utr = "0000000022",
     sdilRef = "XKSDIL000000022",
