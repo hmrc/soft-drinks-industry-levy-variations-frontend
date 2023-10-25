@@ -11,6 +11,7 @@ import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import sttp.model.StatusCode.SeeOther
 import testSupport.SDILBackendTestData.aSubscription
 
 class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHelper {
@@ -47,6 +48,8 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
         setAnswers(userAnswers)
 
+        given.sdilBackend.balance(userAnswers.id, false)
+
         WsTestClient.withClient { client =>
           val result = createClientRequestGet(client, baseUrl + route)
 
@@ -54,7 +57,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             res.status mustBe OK
             val page = Jsoup.parse(res.body)
             page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
-            page.getElementsByClass("govuk-summary-list").size() mustBe 9
+            page.getElementsByClass("govuk-summary-list").size() mustBe 10
 
             val operatePackagingSites = page.getElementsByClass("govuk-summary-list").get(0)
 
@@ -113,6 +116,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
           setAnswers(userAnswers)
 
+          given.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
 
@@ -120,7 +124,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               res.status mustBe OK
               val page = Jsoup.parse(res.body)
               page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
-              page.getElementsByClass("govuk-summary-list").size() mustBe 8
+              page.getElementsByClass("govuk-summary-list").size() mustBe 9
 
               val operatePackagingSites = page.getElementsByClass("govuk-summary-list").get(0)
               page.getElementsByTag("h2").get(0).text() mustBe "Own brands packaged at your own site"
@@ -175,6 +179,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
           setAnswers(userAnswers)
 
+          given.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
 
@@ -182,7 +187,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               res.status mustBe OK
               val page = Jsoup.parse(res.body)
               page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
-              page.getElementsByClass("govuk-summary-list").size() mustBe 2
+              page.getElementsByClass("govuk-summary-list").size() mustBe 3
 
               val operatePackagingSites = page.getElementsByClass("govuk-summary-list").get(0)
 
@@ -206,6 +211,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
           setAnswers(userAnswers)
 
+          given.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
 
@@ -213,7 +219,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               res.status mustBe OK
               val page = Jsoup.parse(res.body)
               page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
-              page.getElementsByClass("govuk-summary-list").size() mustBe 2
+              page.getElementsByClass("govuk-summary-list").size() mustBe 3
 
               val contractPacking = page.getElementsByClass("govuk-summary-list").get(0)
 
@@ -237,6 +243,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
           setAnswers(userAnswers)
 
+          given.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
 
@@ -245,7 +252,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
               val page = Jsoup.parse(res.body)
               page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
-              page.getElementsByClass("govuk-summary-list").size() mustBe 2
+              page.getElementsByClass("govuk-summary-list").size() mustBe 3
 
               val contractPacking = page.getElementsByClass("govuk-summary-list").get(0)
 
@@ -269,6 +276,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
           setAnswers(userAnswers)
 
+          given.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
 
@@ -276,7 +284,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               res.status mustBe OK
               val page = Jsoup.parse(res.body)
               page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
-              page.getElementsByClass("govuk-summary-list").size() mustBe 2
+              page.getElementsByClass("govuk-summary-list").size() mustBe 3
 
               val contractPacking = page.getElementsByClass("govuk-summary-list").get(0)
 
@@ -300,6 +308,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
           setAnswers(userAnswers)
 
+          given.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
 
@@ -307,7 +316,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               res.status mustBe OK
               val page = Jsoup.parse(res.body)
               page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
-              page.getElementsByClass("govuk-summary-list").size() mustBe 2
+              page.getElementsByClass("govuk-summary-list").size() mustBe 3
 
               val contractPacking = page.getElementsByClass("govuk-summary-list").get(0)
 
@@ -329,6 +338,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
           given
             .commonPrecondition
 
+          given.sdilBackend.balance(userAnswers.id, false)
           setAnswers(userAnswers)
 
           WsTestClient.withClient { client =>
@@ -338,7 +348,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               res.status mustBe OK
               val page = Jsoup.parse(res.body)
               page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
-              page.getElementsByClass("govuk-summary-list").size() mustBe 2
+              page.getElementsByClass("govuk-summary-list").size() mustBe 3
 
               val contractPacking = page.getElementsByClass("govuk-summary-list").get(0)
 
@@ -362,6 +372,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
           setAnswers(userAnswers)
 
+          given.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
 
@@ -369,7 +380,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               res.status mustBe OK
               val page = Jsoup.parse(res.body)
               page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
-              page.getElementsByClass("govuk-summary-list").size() mustBe 2
+              page.getElementsByClass("govuk-summary-list").size() mustBe 3
 
               val contractPackedForSmallProducers = page.getElementsByClass("govuk-summary-list").get(0)
 
@@ -394,6 +405,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
           setAnswers(userAnswers)
 
+          given.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
 
@@ -402,7 +414,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
               val page = Jsoup.parse(res.body)
               page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
-              page.getElementsByClass("govuk-summary-list").size() mustBe 3
+              page.getElementsByClass("govuk-summary-list").size() mustBe 4
 
               val contractPacking = page.getElementsByClass("govuk-summary-list").get(0)
 
@@ -420,6 +432,29 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
           }
         }
       }
+
+      s"when the balance has failed" - {
+        "the user should be redirected to select change and the error should be logged" in {
+          val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(BroughtIntoUKPage, HowManyBroughtIntoUKPage)
+            .copy(warehouseList = warehousesFromSubscription)
+            .set(CorrectionReasonPage, "I forgot something").success.value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+          given
+            .commonPrecondition
+
+          setAnswers(userAnswers)
+
+          given.sdilBackend.balance("", false)
+          WsTestClient.withClient { client =>
+            val result = createClientRequestGet(client, baseUrl + route)
+
+            whenReady(result) { res =>
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.SelectChangeController.onPageLoad.url)
+            }
+          }
+        }
+      }
+
     }
 
     testUnauthorisedUser(baseUrl + route)

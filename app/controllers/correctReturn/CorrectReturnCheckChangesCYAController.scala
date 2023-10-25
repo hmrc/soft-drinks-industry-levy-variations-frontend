@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.ControllerActions
+import errors.UnexpectedResponseFromSDIL
 import models.{Amounts, SdilReturn}
 import models.SelectChange.CorrectReturn
 import models.correctReturn.ChangedPage
@@ -30,6 +31,7 @@ import services.ReturnService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilities.GenericLogger
 import views.html.correctReturn.CorrectReturnCheckChangesCYAView
 import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 
@@ -41,7 +43,8 @@ class CorrectReturnCheckChangesCYAController @Inject()(
                                             val controllerComponents: MessagesControllerComponents,
                                             val correctReturnOrchestrator: CorrectReturnOrchestrator,
                                             view: CorrectReturnCheckChangesCYAView,
-                                            returnService: ReturnService
+                                            returnService: ReturnService,
+                                            genericLogger: GenericLogger
                                           )(implicit config: FrontendAppConfig, ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
@@ -66,9 +69,12 @@ class CorrectReturnCheckChangesCYAController @Inject()(
           )
         }
 
-        accountBalance.map(accountBalance =>
+        accountBalance.map(accountBalance => {
         Ok(view(orgName, sections(accountBalance: BigDecimal), routes.CorrectReturnCheckChangesCYAController.onSubmit))
-        )
+        }).recoverWith {
+          case _ => genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][Balance] - unexpected response for ${request.sdilEnrolment}")
+            Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url))
+        }
         }).getOrElse(Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url)))
   }
 
