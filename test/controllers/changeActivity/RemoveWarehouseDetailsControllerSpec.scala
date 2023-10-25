@@ -21,7 +21,7 @@ import errors.SessionDatabaseInsertError
 import forms.changeActivity.RemoveWarehouseDetailsFormProvider
 import models.SelectChange.ChangeActivity
 import models.backend.{Site, UkAddress}
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -45,8 +45,8 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
   val form = formProvider()
 
   val indexOfWarehouseToBeRemoved: String = "foobar"
-//  TODO: Add tests for CheckMode
   lazy val warehouseDetailsRemoveRoute = routes.RemoveWarehouseDetailsController.onPageLoad(indexOfWarehouseToBeRemoved, NormalMode).url
+  lazy val warehouseDetailsRemoveCheckRoute = routes.RemoveWarehouseDetailsController.onPageLoad(indexOfWarehouseToBeRemoved, CheckMode).url
   val addressOfWarehouse: UkAddress = UkAddress(List("foo"),"bar", None)
   val warehouseTradingName: String = "a name for a packing site here"
   val userAnswersWithWarehouse: UserAnswers = emptyUserAnswersForChangeActivity
@@ -54,70 +54,73 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
 
   "RemoveWarehouseDetails Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    List(NormalMode, CheckMode).foreach { mode =>
+      val path = if (mode == NormalMode) warehouseDetailsRemoveRoute else warehouseDetailsRemoveCheckRoute
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithWarehouse)).build()
+      s"must return OK and the correct view for a GET in $mode" in {
 
-      running(application) {
-        val request = FakeRequest(GET, warehouseDetailsRemoveRoute)
+        val application = applicationBuilder(userAnswers = Some(userAnswersWithWarehouse)).build()
 
-        val result = route(application, request).value
+        running(application) {
+          val request = FakeRequest(GET, path)
 
-        val view = application.injector.instanceOf[RemoveWarehouseDetailsView]
+          val result = route(application, request).value
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual
-          view(form, AddressFormattingHelper.addressFormatting(addressOfWarehouse,
-            Some(warehouseTradingName)), indexOfWarehouseToBeRemoved, NormalMode)(request, messages(application)).toString
+          val view = application.injector.instanceOf[RemoveWarehouseDetailsView]
+
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual view(form,
+            AddressFormattingHelper.addressFormatting(addressOfWarehouse, Some(warehouseTradingName)),
+            indexOfWarehouseToBeRemoved, mode)(request, messages(application)).toString
+        }
       }
-    }
 
-    "must redirect to the next page when valid data is submitted" in {
+      s"must redirect to the next page when valid data is submitted in $mode" in {
 
-      val mockSessionService = mock[SessionService]
+        val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+        when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
-      val application =
-        applicationBuilder(userAnswers = Some(userAnswersWithWarehouse))
-          .overrides(
-            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute)),
-            bind[SessionService].toInstance(mockSessionService)
-          )
-          .build()
+        val application =
+          applicationBuilder(userAnswers = Some(userAnswersWithWarehouse))
+            .overrides(
+              bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute)),
+              bind[SessionService].toInstance(mockSessionService)
+            )
+            .build()
 
-      running(application) {
-        val request =
-          FakeRequest(POST, warehouseDetailsRemoveRoute)
-            .withFormUrlEncodedBody(("value", "true"))
+        running(application) {
+          val request =
+            FakeRequest(POST, path)
+              .withFormUrlEncodedBody(("value", "true"))
 
-        val result = route(application, request).value
+          val result = route(application, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual onwardRoute.url
+        }
       }
-    }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+      s"must return a Bad Request and errors when invalid data is submitted in $mode" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithWarehouse)).build()
+        val application = applicationBuilder(userAnswers = Some(userAnswersWithWarehouse)).build()
 
-      running(application) {
-        val request =
-          FakeRequest(POST, warehouseDetailsRemoveRoute)
-            .withFormUrlEncodedBody(("value", ""))
+        running(application) {
+          val request =
+            FakeRequest(POST, path)
+              .withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = form.bind(Map("value" -> ""))
+          val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[RemoveWarehouseDetailsView]
+          val view = application.injector.instanceOf[RemoveWarehouseDetailsView]
 
-        val result = route(application, request).value
+          val result = route(application, request).value
 
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual
-          view(boundForm, AddressFormattingHelper.addressFormatting(addressOfWarehouse,
-            Some(warehouseTradingName)),
-            indexOfWarehouseToBeRemoved, NormalMode)(request, messages(application)).toString
+          status(result) mustEqual BAD_REQUEST
+          contentAsString(result) mustEqual view(boundForm,
+            AddressFormattingHelper.addressFormatting(addressOfWarehouse, Some(warehouseTradingName)),
+            indexOfWarehouseToBeRemoved, mode)(request, messages(application)).toString
+        }
       }
     }
 
