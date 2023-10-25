@@ -20,7 +20,7 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.changeActivity.SecondaryWarehouseDetailsFormProvider
 import models.SelectChange.ChangeActivity
-import models.UserAnswers
+import models.{CheckMode, NormalMode, UserAnswers}
 import models.backend.{Site, UkAddress}
 import navigation._
 import org.jsoup.Jsoup
@@ -48,154 +48,155 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
   val formProvider = new SecondaryWarehouseDetailsFormProvider()
   val form: Form[Boolean] = formProvider()
 
-  lazy val warehouseDetailsRoute: String = routes.SecondaryWarehouseDetailsController.onPageLoad.url
+  lazy val warehouseDetailsRoute: String = routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url
+  lazy val warehouseDetailsCheckRoute: String = routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url
 
   "SecondaryWarehouseDetails Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    List(NormalMode, CheckMode).foreach { mode =>
+      val path = if (mode == NormalMode) warehouseDetailsRoute else warehouseDetailsCheckRoute
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+      s"must return OK and the correct view for a GET in $mode" in {
 
-      running(application) {
-        val request = FakeRequest(GET, warehouseDetailsRoute)
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
 
-        val result = route(application, request).value
+        running(application) {
+          val request = FakeRequest(GET, path)
 
-        val view = application.injector.instanceOf[SecondaryWarehouseDetailsView]
+          val result = route(application, request).value
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, None)(request, messages(application)).toString
+          val view = application.injector.instanceOf[SecondaryWarehouseDetailsView]
+
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual view(form, None, mode)(request, messages(application)).toString
+        }
       }
-    }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+      s"must populate the view correctly on a GET when the question has previously been answered in $mode" in {
 
-      val userAnswers = emptyUserAnswersForChangeActivity.set(SecondaryWarehouseDetailsPage, true).success.value
+        val userAnswers = emptyUserAnswersForChangeActivity.set(SecondaryWarehouseDetailsPage, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-      running(application) {
-        val request = FakeRequest(GET, warehouseDetailsRoute)
+        running(application) {
+          val request = FakeRequest(GET, path)
 
-        val view = application.injector.instanceOf[SecondaryWarehouseDetailsView]
+          val view = application.injector.instanceOf[SecondaryWarehouseDetailsView]
 
-        val result = route(application, request).value
+          val result = route(application, request).value
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), None)(request, messages(application)).toString
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual view(form.fill(true), None, mode)(request, messages(application)).toString
+        }
       }
-    }
 
-    "must populate the view correctly on a GET when the question has previously been answered with a single warehouse in the list" in {
+      s"must populate the view correctly on a GET when the question has previously been answered with a single warehouse in the list in $mode" in {
 
-      val summaryList = Some(SummaryListViewModel(
-        rows = SecondaryWarehouseDetailsSummary.summaryRows(Map("1" -> warehouse))
-      ))
+        val summaryList = Some(SummaryListViewModel(
+          rows = SecondaryWarehouseDetailsSummary.summaryRows(Map("1" -> warehouse), mode)
+        ))
 
-      val userAnswers = warehouseAddedToUserAnswersForChangeActivity.set(SecondaryWarehouseDetailsPage, true).success.value
+        val userAnswers = warehouseAddedToUserAnswersForChangeActivity.set(SecondaryWarehouseDetailsPage, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-      running(application) {
-        val request = FakeRequest(GET, warehouseDetailsRoute)
+        running(application) {
+          val request = FakeRequest(GET, path)
 
-        val view = application.injector.instanceOf[SecondaryWarehouseDetailsView]
+          val view = application.injector.instanceOf[SecondaryWarehouseDetailsView]
 
-        val result = route(application, request).value
+          val result = route(application, request).value
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual  view(form.fill(true), summaryList)(request, messages(application)).toString
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual  view(form.fill(true), summaryList, mode)(request, messages(application)).toString
+        }
       }
-    }
 
-    "must populate the view correctly on a GET when the question has previously been answered with multiple warehouses in the list" in {
-      val warehouses = Map("1" -> warehouse, "2" -> Site(UkAddress(List("34 Rhes Priordy"),"WR53 7CX"), Some("DEF Ltd")))
-      val summaryList = Some(SummaryListViewModel(rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouses)))
+      s"must populate the view correctly on a GET when the question has previously been answered with multiple warehouses in the list in $mode" in {
+        val warehouses = Map("1" -> warehouse, "2" -> Site(UkAddress(List("34 Rhes Priordy"),"WR53 7CX"), Some("DEF Ltd")))
+        val summaryList = Some(SummaryListViewModel(rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouses, mode)))
 
-      val userAnswers = UserAnswers(userAnswersId, ChangeActivity, warehouseList = warehouses, contactAddress = contactAddress)
-        .set(SecondaryWarehouseDetailsPage, true).success.value
+        val userAnswers = UserAnswers(userAnswersId, ChangeActivity, warehouseList = warehouses, contactAddress = contactAddress)
+          .set(SecondaryWarehouseDetailsPage, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-      running(application) {
-        val request = FakeRequest(GET, warehouseDetailsRoute)
+        running(application) {
+          val request = FakeRequest(GET, path)
 
-        val view = application.injector.instanceOf[SecondaryWarehouseDetailsView]
+          val view = application.injector.instanceOf[SecondaryWarehouseDetailsView]
 
-        val result = route(application, request).value
+          val result = route(application, request).value
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), summaryList)(request, messages(application)).toString
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual view(form.fill(true), summaryList, mode)(request, messages(application)).toString
+        }
       }
-    }
 
-    "must redirect to the next page when valid data is submitted" in {
+      s"must redirect to the next page when valid data is submitted in $mode" in {
 
-      val mockSessionService = mock[SessionService]
+        val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+        when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
-      val applicationSetup =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
-          .overrides(
-            bind[SessionService].toInstance(mockSessionService)
-          )
-          .build()
+        val applicationSetup =
+          applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
+            .overrides(
+              bind[SessionService].toInstance(mockSessionService)
+            )
+            .build()
 
-      running(applicationSetup) {
-        val request =
-          FakeRequest(POST, warehouseDetailsRoute)
-            .withFormUrlEncodedBody(("value", "false"))
+        running(applicationSetup) {
+          val request =
+            FakeRequest(POST, path)
+              .withFormUrlEncodedBody(("value", "false"))
 
-        val result = route(applicationSetup, request).value
+          val result = route(applicationSetup, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ChangeActivityCYAController.onPageLoad.url
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.ChangeActivityCYAController.onPageLoad.url
+        }
       }
-    }
 
-    "must redirect to the next page when valid data (warehouses in the list) is submitted" in {
+      s"must redirect to the next page when valid data (warehouses in the list) is submitted in $mode" in {
 
-      val mockSessionService = mock[SessionService]
+        val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+        when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
-      val application =
-        applicationBuilder(userAnswers = Some(warehouseAddedToUserAnswersForChangeActivity))
-          .overrides(
-            bind[SessionService].toInstance(mockSessionService)
-          )
-          .build()
+        val application =
+          applicationBuilder(userAnswers = Some(warehouseAddedToUserAnswersForChangeActivity))
+            .overrides(
+              bind[SessionService].toInstance(mockSessionService)
+            )
+            .build()
 
-      running(application) {
-        val request =
-          FakeRequest(POST, warehouseDetailsRoute)
-            .withFormUrlEncodedBody(("value", "false"))
+        running(application) {
+          val request = FakeRequest(POST, path).withFormUrlEncodedBody(("value", "false"))
 
-        val result = route(application, request).value
+          val result = route(application, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ChangeActivityCYAController.onPageLoad.url
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.ChangeActivityCYAController.onPageLoad.url
+        }
       }
-    }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+      s"must return a Bad Request and errors when invalid data is submitted in $mode" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
 
-      running(application) {
-        val request =
-          FakeRequest(POST, warehouseDetailsRoute)
-            .withFormUrlEncodedBody(("value", ""))
+        running(application) {
+          val request = FakeRequest(POST, path).withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = form.bind(Map("value" -> ""))
+          val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[SecondaryWarehouseDetailsView]
+          val view = application.injector.instanceOf[SecondaryWarehouseDetailsView]
 
-        val result = route(application, request).value
+          val result = route(application, request).value
 
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, None)(request, messages(application)).toString
+          status(result) mustEqual BAD_REQUEST
+          contentAsString(result) mustEqual view(boundForm, None, mode)(request, messages(application)).toString
+        }
       }
     }
 

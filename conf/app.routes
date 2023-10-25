@@ -25,6 +25,9 @@ GET         /unauthorised                                controllers.Unauthorise
 GET        /select-change                                controllers.SelectChangeController.onPageLoad
 POST       /select-change                                controllers.SelectChangeController.onSubmit
 
-GET       /off-ramp/secondary-warehouses/:sdilId         controllers.addressLookupFrontend.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId: String, id: String)
-GET       /off-ramp/packing-site-details/:sdilId         controllers.addressLookupFrontend.RampOffController.packingSiteDetailsOffRamp(sdilId: String, id: String)
-GET       /off-ramp/business-address/:sdilId             controllers.addressLookupFrontend.RampOffController.contactDetailsOffRamp(sdilId: String, id: String)
+GET       /off-ramp/secondary-warehouses/:sdilId         controllers.addressLookupFrontend.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId: String, id: String, mode: Mode = NormalMode)
+GET       /off-ramp/change-secondary-warehouses/:sdilId  controllers.addressLookupFrontend.RampOffController.secondaryWareHouseDetailsOffRamp(sdilId: String, id: String, mode: Mode = CheckMode)
+GET       /off-ramp/packing-site-details/:sdilId         controllers.addressLookupFrontend.RampOffController.packingSiteDetailsOffRamp(sdilId: String, id: String, mode: Mode = NormalMode)
+GET       /off-ramp/change-packing-site-details/:sdilId  controllers.addressLookupFrontend.RampOffController.packingSiteDetailsOffRamp(sdilId: String, id: String, mode: Mode = CheckMode)
+GET       /off-ramp/business-address/:sdilId             controllers.addressLookupFrontend.RampOffController.contactDetailsOffRamp(sdilId: String, id: String, mode: Mode = NormalMode)
+GET       /off-ramp/change-business-address/:sdilId      controllers.addressLookupFrontend.RampOffController.contactDetailsOffRamp(sdilId: String, id: String, mode: Mode = CheckMode)

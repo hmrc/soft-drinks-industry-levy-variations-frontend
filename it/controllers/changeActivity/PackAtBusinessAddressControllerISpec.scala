@@ -1,7 +1,6 @@
 package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
-import models.{CheckMode, NormalMode}
 import models.SelectChange.ChangeActivity
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}

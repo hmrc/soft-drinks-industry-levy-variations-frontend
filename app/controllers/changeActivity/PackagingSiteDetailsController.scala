@@ -93,11 +93,11 @@ class PackagingSiteDetailsController @Inject()(
     (implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages, requestHeader: RequestHeader): Future[String] = {
 
     if(addPackagingSite) {
-      addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails)(hc, ec, messages, requestHeader)
+      addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode)(hc, ec, messages, requestHeader)
     } else if(mode == CheckMode) {
       Future.successful(controllers.changeActivity.routes.ChangeActivityCYAController.onPageLoad.url)
     } else {
-      Future.successful(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad.url)
+      Future.successful(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(mode).url)
     }
   }
 }

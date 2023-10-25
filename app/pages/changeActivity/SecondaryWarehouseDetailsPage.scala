@@ -28,5 +28,5 @@ case object SecondaryWarehouseDetailsPage extends QuestionPage[Boolean] {
   def journeyType: String = "changeActivity"
   override def toString: String = "secondaryWarehouseDetails"
 
-  override val url: Mode => String = mode => routes.SecondaryWarehouseDetailsController.onPageLoad.url
+  override val url: Mode => String = mode => routes.SecondaryWarehouseDetailsController.onPageLoad(mode).url
 }

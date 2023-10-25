@@ -106,7 +106,7 @@ class WarehouseDetailsController @Inject()(
   private def getOnwardUrl(value: Boolean, addContactDetails: Boolean, addBusinessAddress: Boolean, mode: Mode)
                           (implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages, requestHeader: RequestHeader): Future[String] = {
     if (value) {
-      addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails)(hc, ec, messages, requestHeader)
+      addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = mode)(hc, ec, messages, requestHeader)
     } else {
       Future.successful((mode, addContactDetails, addBusinessAddress) match {
         case (CheckMode, _, _) => controllers.updateRegisteredDetails.routes.UpdateRegisteredDetailsCYAController.onPageLoad.url
