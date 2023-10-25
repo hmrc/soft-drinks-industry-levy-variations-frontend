@@ -20,13 +20,13 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.HowManyLitresFormProvider
 import handlers.ErrorHandler
-import models.Mode
+import models.{Mode, SdilReturn}
 import navigation._
 import pages.correctReturn.HowManyCreditsForLostDamagedPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
-import utilities.GenericLogger
+import utilities.{GenericLogger, UserTypeCheck}
 import views.html.correctReturn.HowManyCreditsForLostDamagedView
 
 import javax.inject.Inject
@@ -59,6 +59,7 @@ class HowManyCreditsForLostDamagedController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
+      val subscription = request.subscription
 
       form.bindFromRequest().fold(
         formWithErrors =>
@@ -66,8 +67,14 @@ class HowManyCreditsForLostDamagedController @Inject()(
 
         value => {
           val updatedAnswers = request.userAnswers.set(HowManyCreditsForLostDamagedPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, HowManyCreditsForLostDamagedPage, mode)
+          updateDatabaseWithoutRedirect(updatedAnswers, HowManyCreditsForLostDamagedPage)
         }
       )
+        if (UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), subscription) || UserTypeCheck.isNewImporter(
+          SdilReturn.apply(request.userAnswers), subscription)) {
+          Future.successful(Redirect(routes.ReturnChangeRegistrationController.onPageLoad().url))
+        } else {
+          Future.successful(Redirect(routes.CorrectReturnCYAController.onPageLoad.url))
+        }
   }
 }

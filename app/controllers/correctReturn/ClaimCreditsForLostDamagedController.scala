@@ -20,13 +20,13 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.correctReturn.ClaimCreditsForLostDamagedFormProvider
 import handlers.ErrorHandler
-import models.Mode
+import models.{Mode, SdilReturn}
 import navigation._
 import pages.correctReturn.{ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
-import utilities.GenericLogger
+import utilities.{GenericLogger, UserTypeCheck}
 import views.html.correctReturn.ClaimCreditsForLostDamagedView
 
 import javax.inject.Inject
@@ -59,15 +59,28 @@ class ClaimCreditsForLostDamagedController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-
+      val subscription = request.subscription
+      println(Console.YELLOW + subscription + Console.WHITE)
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value => {
           val updatedAnswers = request.userAnswers.setAndRemoveLitresIfReq(ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, ClaimCreditsForLostDamagedPage, mode)
+          updateDatabaseWithoutRedirect(updatedAnswers, ClaimCreditsForLostDamagedPage)
+
+
+          if (value) {
+            Future.successful(Redirect(routes.HowManyCreditsForLostDamagedController.onPageLoad(mode).url))
+          } else {
+            if (UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), subscription) || UserTypeCheck.isNewImporter(
+              SdilReturn.apply(request.userAnswers), subscription)) {
+              Future.successful(Redirect(routes.ReturnChangeRegistrationController.onPageLoad().url))
+            } else {
+              Future.successful(Redirect(routes.CorrectReturnCYAController.onPageLoad.url))
+            }
           }
+        }
       )
-  }
+    }
 }

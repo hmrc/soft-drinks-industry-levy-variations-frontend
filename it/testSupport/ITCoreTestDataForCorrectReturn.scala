@@ -1,7 +1,7 @@
 package testSupport
 
 import models.backend.Site
-import models.{ReturnPeriod, SelectChange, UserAnswers}
+import models.{LitresInBands, ReturnPeriod, SelectChange, UserAnswers}
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import pages.correctReturn._
 import play.api.libs.json.Json
@@ -118,5 +118,18 @@ trait ITCoreTestDataForCorrectReturn extends ITSharedCoreTestData  {
     contactAddress = ukAddress,
     correctReturnPeriod = Some(ReturnPeriod(2023, 0))
   )
+
+  def completedUserAnswersForCorrectReturnNewPackerOrImporter: UserAnswers = UserAnswers(sdilNumber, SelectChange.CorrectReturn,
+    Json.obj(), packagingSiteList = Map.empty, warehouseList = Map.empty, contactAddress = ukAddress,
+    correctReturnPeriod = Some(ReturnPeriod(2023, 0)))
+    .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+    .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(32432, 34839)).success.value
+    .set(PackagedAsContractPackerPage, true).success.value
+    .set(HowManyPackagedAsContractPackerPage, LitresInBands(20248, 2342)).success.value
+    .set(ExemptionsForSmallProducersPage, false).success.value
+    .set(BroughtIntoUKPage, true).success.value
+    .set(HowManyBroughtIntoUKPage, LitresInBands(21312, 12312)).success.value
+    .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+    .set(ClaimCreditsForExportsPage, false).success.value
 
 }

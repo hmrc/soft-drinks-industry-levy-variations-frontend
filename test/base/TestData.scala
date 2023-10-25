@@ -20,6 +20,7 @@ import models._
 import models.backend.{Site, UkAddress}
 import models.correctReturn.CorrectReturnUserAnswersData
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
+import pages.correctReturn._
 import play.api.libs.json.Json
 
 import java.time.{LocalDate, LocalDateTime, ZoneOffset}
@@ -174,4 +175,21 @@ trait TestData {
 
   def emptyUserAnswersForSelectChange(selectChange: SelectChange): UserAnswers = UserAnswers(sdilNumber, selectChange, contactAddress = contactAddress)
 
+  val changedUserSdilNumber = "XKSDIL000000023"
+  val updatedSubscriptionWithChangedActivityToNewImporterAndPacker: RetrievedSubscription = aSubscription.copy(utr = "0000000023",
+    sdilRef = "XKSDIL000000023", activity = RetrievedActivity(
+    smallProducer = false, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = false))
+
+  def completedUserAnswersForCorrectReturnNewPackerOrImporter: UserAnswers = UserAnswers(changedUserSdilNumber, SelectChange.CorrectReturn,
+    Json.obj(), packagingSiteList = Map.empty, warehouseList = Map.empty, contactAddress = updatedContactAddress,
+    correctReturnPeriod = Some(ReturnPeriod(2023, 0)))
+    .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+    .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(32432, 34839)).success.value
+    .set(PackagedAsContractPackerPage, true).success.value
+    .set(HowManyPackagedAsContractPackerPage, LitresInBands(20248, 2342)).success.value
+    .set(ExemptionsForSmallProducersPage, false).success.value
+    .set(BroughtIntoUKPage, true).success.value
+    .set(HowManyBroughtIntoUKPage, LitresInBands(21312, 12312)).success.value
+    .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+    .set(ClaimCreditsForExportsPage, false).success.value
 }

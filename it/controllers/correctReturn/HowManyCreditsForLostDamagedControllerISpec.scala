@@ -5,7 +5,7 @@ import models.SelectChange.CorrectReturn
 import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import pages.correctReturn.HowManyCreditsForLostDamagedPage
+import pages.correctReturn.{ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage}
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
@@ -19,7 +19,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
 
   List(NormalMode, CheckMode).foreach { mode =>
     val (path, redirectLocation) = if(mode == NormalMode) {
-      (normalRoutePath, controllers.routes.IndexController.onPageLoad.url)
+      (normalRoutePath, routes.CorrectReturnCYAController.onPageLoad.url)
     } else {
       (checkRoutePath, routes.CorrectReturnCYAController.onPageLoad.url)
     }
@@ -115,7 +115,8 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
       }
 
       "should return 400 with required error" - {
-        val errorTitle = "Error: How many credits do you want to claim for liable drinks which have been lost or destroyed? - Soft Drinks Industry Levy - GOV.UK"
+        val errorTitle =
+          "Error: How many credits do you want to claim for liable drinks which have been lost or destroyed? - Soft Drinks Industry Levy - GOV.UK"
 
         "when no questions are answered" in {
           given
@@ -230,5 +231,27 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
       testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
       testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
     }
+
+    "Post - when user is a new importer or new packer " - {
+      "should redirect to Change Registration in Returns controller" in {
+        given
+          .commonPreconditionChangeSubscription(diffSubscription)
+
+
+        setAnswers(completedUserAnswersForCorrectReturnNewPackerOrImporter.set(ClaimCreditsForLostDamagedPage, true).success.value)
+
+        WsTestClient.withClient { client =>
+          val result = createClientRequestPOST(
+            client, correctReturnBaseUrl + path, Json.toJson(litresInBandsObj)
+          )
+
+          whenReady(result) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION) mustBe Some(routes.ReturnChangeRegistrationController.onPageLoad().url)
+          }
+        }
+      }
+    }
   }
+
 }

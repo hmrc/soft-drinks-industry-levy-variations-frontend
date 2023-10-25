@@ -309,4 +309,25 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
   }
+
+  "Post - when user is a new importer or new packer " - {
+    "and selects No, should redirect to Change Registration in Returns controller" in {
+      given
+        .commonPreconditionChangeSubscription(diffSubscription)
+
+      setAnswers(completedUserAnswersForCorrectReturnNewPackerOrImporter)
+
+      WsTestClient.withClient { client =>
+        val result = createClientRequestPOST(
+          client, correctReturnBaseUrl + normalRoutePath, Json.toJson(false)
+        )
+
+        whenReady(result) { res =>
+          res.status mustBe 303
+          res.header(HeaderNames.LOCATION) mustBe Some(routes.ReturnChangeRegistrationController.onPageLoad().url)
+        }
+      }
+    }
+  }
+
 }

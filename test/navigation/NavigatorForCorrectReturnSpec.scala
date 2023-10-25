@@ -256,4 +256,5 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
       result mustBe routes.CorrectReturnCYAController.onPageLoad
     }
   }
+
 }
