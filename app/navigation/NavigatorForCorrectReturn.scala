@@ -42,7 +42,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     } else if(mode == CheckMode){
         routes.CorrectReturnCYAController.onPageLoad
     } else {
-        defaultCall
+      routes.ClaimCreditsForLostDamagedController.onPageLoad(mode)
     }
   }
 
@@ -129,7 +129,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case BroughtIntoUkFromSmallProducersPage => userAnswers => navigationForBroughtIntoUkFromSmallProducers(userAnswers, NormalMode)
     case HowManyBroughtIntoUkFromSmallProducersPage => _ => routes.ClaimCreditsForExportsController.onPageLoad(NormalMode)
     case ClaimCreditsForExportsPage => userAnswers => navigationForClaimCreditsForExports(userAnswers, NormalMode)
-    case HowManyClaimCreditsForExportsPage => _ => defaultCall
+    case HowManyClaimCreditsForExportsPage => _ => routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
     case ExemptionsForSmallProducersPage => userAnswers => navigationForExemptionsForSmallProducers(userAnswers, NormalMode)
     case RemoveWarehouseDetailsPage => userAnswers => defaultCall
     case CorrectionReasonPage => _ => routes.RepaymentMethodController.onPageLoad(NormalMode)
@@ -152,6 +152,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case BroughtIntoUkFromSmallProducersPage => userAnswers => navigationForBroughtIntoUkFromSmallProducers(userAnswers, CheckMode)
     case HowManyBroughtIntoUkFromSmallProducersPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case ClaimCreditsForExportsPage => userAnswers => navigationForClaimCreditsForExports(userAnswers, CheckMode)
+    case HowManyClaimCreditsForExportsPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case ExemptionsForSmallProducersPage => _ =>  routes.CorrectReturnCYAController.onPageLoad
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, CheckMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)

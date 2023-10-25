@@ -1,7 +1,7 @@
 package controllers.correctReturn
 
 import controllers.LitresISpecHelper
-import models.{CheckMode, LitresInBands, NormalMode}
+import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
 import models.SelectChange.CorrectReturn
 import org.jsoup.Jsoup
 import pages.correctReturn.HowManyClaimCreditsForExportsPage
@@ -16,11 +16,11 @@ class HowManyClaimCreditsForExportsControllerISpec extends LitresISpecHelper {
   val normalRoutePath = "/how-many-credits-for-exports"
   val checkRoutePath = "/change-how-many-credits-for-exports"
 
-  val userAnswers = emptyUserAnswersForCorrectReturn.set(HowManyClaimCreditsForExportsPage, litresInBands).success.value
+  val userAnswers: UserAnswers = emptyUserAnswersForCorrectReturn.set(HowManyClaimCreditsForExportsPage, litresInBands).success.value
 
   List(NormalMode, CheckMode).foreach { mode =>
     val (path, redirectLocation) = if(mode == NormalMode) {
-      (normalRoutePath, defaultCall.url)
+      (normalRoutePath, routes.ClaimCreditsForLostDamagedController.onPageLoad(mode).url)
     } else {
       (checkRoutePath, routes.CorrectReturnCYAController.onPageLoad.url)
     }
