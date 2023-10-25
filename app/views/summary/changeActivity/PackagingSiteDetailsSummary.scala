@@ -66,25 +66,31 @@ object PackagingSiteDetailsSummary  {
 
   def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)
                  (implicit messages: Messages): SummaryList = {
+    val key = if (userAnswers.warehouseList.size != 1) {
+      messages("checkYourAnswers.packing.checkYourAnswersLabel.multiple", userAnswers.packagingSiteList.size.toString)
+    } else {
+      messages("checkYourAnswers.packing.checkYourAnswersLabel.one", userAnswers.packagingSiteList.size.toString)
+    }
+    val visuallyHiddenChangeText = if (userAnswers.packagingSiteList.size != 1) {
+      messages("checkYourAnswers.sites.packing.change.hidden.multiple")
+    } else {
+      messages("checkYourAnswers.sites.packing.change.hidden.one")
+    }
 
     SummaryListViewModel(
       rows = Seq(SummaryListRowViewModel(
-        key = if(userAnswers.packagingSiteList.size != 1){
-          messages("checkYourAnswers.packing.checkYourAnswersLabel.multiple",  {userAnswers.packagingSiteList.size.toString})}else{
-          messages("checkYourAnswers.packing.checkYourAnswersLabel.one", {userAnswers.packagingSiteList.size.toString})
-        },
+        key = key,
         value = Value(),
         actions = if (isCheckAnswers) {
           Seq(
             ActionItemViewModel("site.change", routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
-            .withAttribute(("id", "change-packaging-sites"))
-            .withVisuallyHiddenText(messages("checkYourAnswers.sites.packing.change.hidden.one"))
+              .withAttribute(("id", "change-packaging-sites"))
+              .withVisuallyHiddenText(visuallyHiddenChangeText)
           )
         } else {
           Seq.empty
         }
-        )
-      )
+      ))
     )
-    }
+  }
 }

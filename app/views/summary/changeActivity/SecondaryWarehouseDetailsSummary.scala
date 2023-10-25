@@ -28,35 +28,35 @@ import viewmodels.AddressFormattingHelper
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-//TODO: Refactor this?
 object SecondaryWarehouseDetailsSummary  {
 
   def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)
                  (implicit messages: Messages): SummaryList = {
+    val key = if (userAnswers.warehouseList.size != 1) {
+      messages("checkYourAnswers.warehouse.checkYourAnswersLabel.multiple", userAnswers.warehouseList.size.toString)
+    } else {
+      messages("checkYourAnswers.warehouse.checkYourAnswersLabel.one", userAnswers.warehouseList.size.toString)
+    }
+    val visuallyHiddenChangeText = if (userAnswers.warehouseList.size != 1) {
+      messages("checkYourAnswers.sites.warehouse.change.hidden.multiple")
+    } else {
+      messages("checkYourAnswers.sites.warehouse.change.hidden.one")
+    }
 
     SummaryListViewModel(
       rows = Seq(SummaryListRowViewModel(
-        key = if (userAnswers.warehouseList.size != 1) {
-          messages("checkYourAnswers.warehouse.checkYourAnswersLabel.multiple", {
-            userAnswers.warehouseList.size.toString
-          })
-        } else {
-          messages("checkYourAnswers.warehouse.checkYourAnswersLabel.one", {
-            userAnswers.warehouseList.size.toString
-          })
-        },
+        key = key,
         value = Value(),
         actions = if (isCheckAnswers) {
           Seq(
-            ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
-              .withAttribute(("id", "change-packaging-sites"))
-              .withVisuallyHiddenText(messages("checkYourAnswers.sites.warehouse.change.hidden.one"))
+            ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
+              .withAttribute(("id", "change-warehouses"))
+              .withVisuallyHiddenText(visuallyHiddenChangeText)
           )
         } else {
           Seq.empty
         }
-      )
-      )
+      ))
     )
   }
 
