@@ -50,7 +50,7 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
         genericLogger.logger.info(s"${request.userAnswers.id} now has option to add warehouse")
         Future.successful(Redirect(page.url(CheckMode)))
       case Some(page) => genericLogger.logger.warn(s"${request.userAnswers.id} has hit correct return base CYA and is missing $userAnswersMissing")
-        Future.successful(Redirect(page.url(NormalMode)))
+        Future.successful(Redirect(page.url(CheckMode)))
       case None => action
     }
   }
@@ -59,7 +59,7 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
     val userAnswersMissing: List[CorrectReturnRequiredPage[_, _, _]] = returnMissingAnswers(correctChangesJourney)
     userAnswersMissing.headOption.map(_.pageRequired.asInstanceOf[Page]) match {
       case Some(page) => genericLogger.logger.warn(s"${request.userAnswers.id} has hit check changes CYA and is missing $userAnswersMissing")
-        Future.successful(Redirect(page.url(NormalMode)))
+        Future.successful(Redirect(page.url(CheckMode)))
       case None => action
     }
   }

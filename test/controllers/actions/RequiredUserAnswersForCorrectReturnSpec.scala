@@ -104,8 +104,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
           .set(ClaimCreditsForExportsPage, false).success.value
           .set(ClaimCreditsForLostDamagedPage, false).success.value
 
-      val res =
-        requiredUserAnswers.checkYourAnswersRequiredData(Future.successful(Ok("")))(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers))
+      val res = requiredUserAnswers.checkYourAnswersRequiredData(Future.successful(Ok("")))(basicRequestWithEmptyAnswers
+        .copy(userAnswers = completedUserAnswers))
       status(res) mustBe OK
     }
   }
