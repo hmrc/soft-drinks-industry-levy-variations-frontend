@@ -2,7 +2,7 @@ package controllers.correctReturn
 
 import controllers.CorrectReturnBaseCYASummaryISpecHelper
 import models.NormalMode
-import models.SelectChange.{CorrectReturn, UpdateRegisteredDetails}
+import models.SelectChange.CorrectReturn
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import pages.correctReturn.PackAtBusinessAddressPage
@@ -17,19 +17,19 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
   val route = "/correct-return/check-your-answers"
 
   "GET " + routes.CorrectReturnCYAController.onPageLoad.url - {
-    "when the userAnswers contains no data" - {
+    "when the userAnswers contains no data for return to correct" - {
       "should redirect to Select Return controller" in {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForSelectChange(UpdateRegisteredDetails))
+        setAnswers(emptyUserAnswersForSelectChange(CorrectReturn))
 
         WsTestClient.withClient { client =>
           val result = createClientRequestGet(client, baseUrl + route)
 
           whenReady(result) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.SelectChangeController.onPageLoad.url)
+            res.header(HeaderNames.LOCATION) mustBe Some(routes.SelectController.onPageLoad.url)
           }
         }
       }

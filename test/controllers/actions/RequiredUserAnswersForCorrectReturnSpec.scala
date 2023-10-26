@@ -21,7 +21,7 @@ import controllers.correctReturn.routes
 import models.backend.UkAddress
 import models.correctReturn.{AddASmallProducer, RepaymentMethod}
 import models.requests.CorrectReturnDataRequest
-import models.{Contact, LitresInBands, NormalMode, RetrievedActivity, RetrievedSubscription, ReturnPeriod}
+import models.{CheckMode, Contact, LitresInBands, NormalMode, RetrievedActivity, RetrievedSubscription, ReturnPeriod}
 import pages.correctReturn._
 import play.api.libs.json.{Json, Reads}
 import play.api.mvc.Results.Ok
@@ -82,7 +82,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
 
     "should return redirect to Packaged as Contract Packer page when user answers is empty and the small producer is true" in {
       val res = requiredUserAnswers.checkYourAnswersRequiredData(Future.successful(Ok("")))(basicRequestWithEmptyAnswers)
-      redirectLocation(res).get mustBe routes.PackagedAsContractPackerController.onPageLoad(NormalMode).url
+      redirectLocation(res).get mustBe routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
     }
     "should return Redirect to Own brands page when user answers is empty and the small producer is false" in {
       val subscription = RetrievedSubscription(
@@ -91,7 +91,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
 
       val res = requiredUserAnswers.checkYourAnswersRequiredData(Future.successful(Ok("")))(basicRequestWithEmptyAnswers.copy(subscription = subscription))
-      redirectLocation(res).get mustBe routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
+      redirectLocation(res).get mustBe routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
     }
     "should allow user to continue if all user answers are filled in and user is NOT newImporter && NOT co packer && NOT small producer" in {
       val completedUserAnswers = emptyUserAnswersForCorrectReturn
@@ -124,18 +124,18 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
 
       val res = requiredUserAnswers.requireData(CorrectReturnBaseCYAPage)(Future.successful(Ok("")))(basicRequestWithEmptyAnswers.copy(
         subscription = subscription, userAnswers = emptyUserAnswersForCorrectReturn.copy(data = Json.obj("foo" -> "bar"))))
-      redirectLocation(res).get mustBe routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
+      redirectLocation(res).get mustBe routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
     }
 
     s"should check for $CorrectReturnBaseCYAPage and redirect to missing page when answers incomplete but not a nil return and small producer is true" in {
       val res = requiredUserAnswers.requireData(CorrectReturnBaseCYAPage)(Future.successful(Ok("")))(basicRequestWithEmptyAnswers.copy(
         userAnswers = emptyUserAnswersForCorrectReturn
           .copy(data = Json.obj("foo" -> "bar"))))
-      redirectLocation(res).get mustBe routes.PackagedAsContractPackerController.onPageLoad(NormalMode).url
+      redirectLocation(res).get mustBe routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
     }
     s"should check for $CorrectReturnBaseCYAPage and redirect to start page when answers data is empty" in {
       val res = requiredUserAnswers.requireData(CorrectReturnBaseCYAPage)(Future.successful(Ok("foo")))(basicRequestWithEmptyAnswers)
-      redirectLocation(res).get mustBe routes.PackagedAsContractPackerController.onPageLoad(NormalMode).url
+      redirectLocation(res).get mustBe routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
     }
 
     s"should check for $CorrectReturnBaseCYAPage and allow the user to continue when all answers are complete" in {
@@ -160,7 +160,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
 
     "should return Redirect to Correction Reason page when user answers past check your answers is empty" in {
       val res = requiredUserAnswers.checkChangesRequiredData(Future.successful(Ok("")))(basicRequestWithEmptyAnswers)
-      redirectLocation(res).get mustBe routes.CorrectionReasonController.onPageLoad(NormalMode).url
+      redirectLocation(res).get mustBe routes.CorrectionReasonController.onPageLoad(CheckMode).url
     }
 
     "should return Redirect to Repayment reason page if it is not filled in" in {
@@ -169,7 +169,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
 
       val res =
         requiredUserAnswers.checkChangesRequiredData(Future.successful(Ok("")))(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers))
-      redirectLocation(res).get mustBe routes.RepaymentMethodController.onPageLoad(NormalMode).url
+      redirectLocation(res).get mustBe routes.RepaymentMethodController.onPageLoad(CheckMode).url
     }
 
     "should allow user to continue if all user answers are filled in" in {
