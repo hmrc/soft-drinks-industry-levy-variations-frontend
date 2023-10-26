@@ -147,25 +147,25 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
         routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
       case (Some(false), _, NormalMode) =>
         routes.SecondaryWarehouseDetailsController.onPageLoad
-      case (_, _ , NormalMode) =>
-        routes.SecondaryWarehouseDetailsController.onPageLoad
       case (_, Some(_), CheckMode) =>
         routes.ChangeActivityCYAController.onPageLoad
+      case (_, _ , NormalMode) =>
+        routes.SecondaryWarehouseDetailsController.onPageLoad
       case (_, _, CheckMode) => routes.SecondaryWarehouseDetailsController.onPageLoad
     }
 
   private def navigateForLargeAmountProducedFollowingImports(userAnswers: UserAnswers, mode: Mode): Call =
     (userAnswers.get(OperatePackagingSiteOwnBrandsPage), userAnswers.get(ContractPackingPage), mode) match {
+      case (Some(opsob), Some(cp), NormalMode) if (opsob || cp) && userAnswers.packagingSiteList.isEmpty =>
+        routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
+      case (Some(opsob), Some(cp), NormalMode) if opsob || cp =>
+        routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
+      case (Some(_), Some(_), NormalMode) =>
+        routes.SecondaryWarehouseDetailsController.onPageLoad
+      case (Some(_), _, NormalMode) =>
+        routes.ContractPackingController.onPageLoad(NormalMode)
       case (_, _, CheckMode) =>
         routes.ChangeActivityCYAController.onPageLoad
-      case (Some(opsob), Some(cp), mode) if (opsob || cp) && userAnswers.packagingSiteList.isEmpty =>
-        routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
-      case (Some(opsob), Some(cp), mode) if opsob || cp =>
-        routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
-      case (Some(_), Some(_), mode) =>
-        routes.SecondaryWarehouseDetailsController.onPageLoad
-      case (Some(_), _, mode) =>
-        routes.ContractPackingController.onPageLoad(NormalMode)
       case _ =>
         routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode)
     }
