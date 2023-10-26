@@ -97,7 +97,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
               .set(AmountProducedPage, AmountProduced.None).success.value
               .set(HowManyImportsPage , LitresInBands(10L, 10L)).success.value
           )
-          result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+          result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
         }
       }
 
