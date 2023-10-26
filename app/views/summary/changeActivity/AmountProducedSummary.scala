@@ -17,7 +17,7 @@
 package views.summary.changeActivity
 
 import controllers.changeActivity.routes
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, UserAnswers}
 import pages.changeActivity.AmountProducedPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -29,24 +29,22 @@ import viewmodels.implicits._
 object AmountProducedSummary  {
 
   def row(answers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(AmountProducedPage).map {
-      answer =>
-
-        val value = ValueViewModel(
-          HtmlContent(
-            HtmlFormat.escape(messages(s"changeActivity.amountProduced.$answer"))
-          )
+    answers.get(AmountProducedPage).map { answer =>
+      val value = ValueViewModel(
+        HtmlContent(
+          HtmlFormat.escape(messages(s"changeActivity.amountProduced.$answer"))
         )
+      )
 
-        SummaryListRowViewModel(
-          key     = "changeActivity.amountProduced.checkYourAnswersLabel",
-          value   = value.withCssClass("govuk-!-text-align-right"),
-          actions = if(isCheckAnswers){Seq(
-            ActionItemViewModel("site.change", routes.AmountProducedController.onPageLoad(NormalMode).url)
-              .withVisuallyHiddenText(messages("changeActivity.amountProduced.change.hidden"))
-          )}else{
-            Seq.empty
-          }
-        )
+      SummaryListRowViewModel(
+        key     = "changeActivity.amountProduced.checkYourAnswersLabel",
+        value   = value.withCssClass("govuk-!-text-align-right"),
+        actions = if (isCheckAnswers) {
+          Seq(ActionItemViewModel("site.change", routes.AmountProducedController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("changeActivity.amountProduced.change.hidden")))
+        } else {
+          Seq.empty
+        }
+      )
     }
 }

@@ -18,8 +18,8 @@ package views.summary.changeActivity
 
 import config.FrontendAppConfig
 import models.UserAnswers
-import pages.changeActivity.SecondaryWarehouseDetailsPage
-import pages.changeActivity.PackagingSiteDetailsPage
+import models.changeActivity.AmountProduced.Small
+import pages.changeActivity.{AmountProducedPage, PackagingSiteDetailsPage, SecondaryWarehouseDetailsPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import viewmodels.summary.changeActivity.PackagingSiteDetailsSummary
@@ -37,9 +37,11 @@ object ChangeActivitySummary  {
     val amountProducedSection: Option[(String, SummaryList)] = amountProducedSummary.map(summary => {
       "changeActivity.checkYourAnswers.amountProducedSection" -> SummaryList(Seq(summary))
     })
-    val thirdPartyPackagersSection: Option[(String, SummaryList)] = thirdPartyPackagersSummary.map(summary => {
-      "changeActivity.checkYourAnswers.thirdPartyPackagersSection" -> SummaryList(Seq(summary))
-    })
+    val thirdPartyPackagersSection: Option[(String, SummaryList)] = if (userAnswers.get(AmountProducedPage).contains(Small)) {
+      thirdPartyPackagersSummary.map(summary => {
+        "changeActivity.checkYourAnswers.thirdPartyPackagersSection" -> SummaryList(Seq(summary))
+      })
+    } else None
     val ownBrandsSection: Option[(String, SummaryList)] = if (ownBrandsSummary.rows.isEmpty) None else {
       Option(
         "changeActivity.checkYourAnswers.operatePackingSiteOwnBrandsSection" ->
@@ -58,16 +60,9 @@ object ChangeActivitySummary  {
           ImportsSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
       )
     }
-
     val sitesSection: Option[(String, SummaryList)] = {
-      (userAnswers.get(PackagingSiteDetailsPage), userAnswers.get(SecondaryWarehouseDetailsPage)) match {
-        case (Some(packingSites) , Some(warehouseSites))  => Option("checkYourAnswers.sites" -> SummaryList(packingSummary.rows ++ warehouseSummary.rows))
-        case (Some(packingSites) , None )  => Option("checkYourAnswers.sites" -> packingSummary)
-        case (None , Some(warehouseSites))  => Option("checkYourAnswers.sites" -> warehouseSummary)
-        case (None , None) => None
-      }
+      Option("checkYourAnswers.sites" -> SummaryList(packingSummary.rows ++ warehouseSummary.rows))
     }
-
 
     (amountProducedSection ++ thirdPartyPackagersSection ++ ownBrandsSection ++ contractSection ++ importsSection ++ sitesSection).toSeq
   }
