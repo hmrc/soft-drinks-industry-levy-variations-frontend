@@ -64,7 +64,9 @@ class CorrectReturnCheckChangesCYAController @Inject()(
               originalReturnTotal = originalSdilReturn.total,
               newReturnTotal = SdilReturn(request.userAnswers).total,
               accountBalance = accountBalance * -1,
-              adjustedAmount = (SdilReturn(request.userAnswers).total + accountBalance) * -1
+              adjustedAmount = if(accountBalance == 0){SdilReturn(request.userAnswers).total + accountBalance} else {
+                (SdilReturn(request.userAnswers).total ) + (accountBalance * -1)
+              }
             )
           )
         }

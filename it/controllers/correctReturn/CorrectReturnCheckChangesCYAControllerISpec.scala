@@ -11,7 +11,6 @@ import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
-import sttp.model.StatusCode.SeeOther
 import testSupport.SDILBackendTestData.aSubscription
 
 class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHelper {
@@ -427,6 +426,44 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               validateSiteDetailsSummary(userAnswers, aSubscription, siteDetailsSummaryListItem, 0, numberOfWarehouses = 2, isCheckAnswers = true)
 
               page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
+              page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm details and send correction"
+            }
+          }
+        }
+      }
+
+      s"when the user has made there changes" - {
+        "should render the check changes page with balance" in {
+          val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(BroughtIntoUKPage, HowManyBroughtIntoUKPage)
+            .copy(warehouseList = warehousesFromSubscription)
+            .set(CorrectionReasonPage, "I forgot something").success.value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+          given
+            .commonPrecondition
+
+          setAnswers(userAnswers)
+
+          given.sdilBackend.balance(userAnswers.id, false)
+          WsTestClient.withClient { client =>
+            val result = createClientRequestGet(client, baseUrl + route)
+
+            whenReady(result) { res =>
+              res.status mustBe OK
+
+              val page = Jsoup.parse(res.body)
+              page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
+              page.getElementsByClass("govuk-summary-list").size() mustBe 4
+
+              page.getElementsByTag("h2").get(3).text() mustBe "Balance"
+              page.getElementsByClass("govuk-summary-list__key").get(8).text() mustBe "Original return total"
+              page.getElementsByClass("govuk-summary-list__value  original-return-total sdil-right-align--desktop").get(0).text() mustBe "£0.00"
+              page.getElementsByClass("govuk-summary-list__key").get(9).text() mustBe "New return total"
+              page.getElementsByClass("govuk-summary-list__value  new-return-total sdil-right-align--desktop").get(0).text() mustBe "£660.00"
+              page.getElementsByClass("govuk-summary-list__key").get(10).text() mustBe "Account balance"
+              page.getElementsByClass("govuk-summary-list__value  balance-brought-forward sdil-right-align--desktop").get(0).text() mustBe "−£1,000.00"
+              page.getElementsByClass("govuk-summary-list__key").get(11).text() mustBe "Net adjusted amount"
+              page.getElementsByClass("govuk-summary-list__value  total sdil-right-align--desktop govuk-!-font-weight-bold").get(0).text() mustBe "−£340.00"
+
               page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm details and send correction"
             }
           }

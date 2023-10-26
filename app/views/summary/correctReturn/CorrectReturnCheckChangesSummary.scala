@@ -29,7 +29,7 @@ object CorrectReturnCheckChangesSummary {
                                           (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
     val mainSection = CorrectReturnBaseCYASummary.changedSummaryListAndHeadings(userAnswers, subscription, changedPages)
     val correctionDetailsSection = correctionSection(userAnswers)
-    val BalanceSection = Map("balance"-> AmountToPaySummary.amountToPaySummary(amounts))
+    val BalanceSection = Map("correctReturn.balance"-> AmountToPaySummary.amountToPaySummary(amounts))
     mainSection ++ correctionDetailsSection ++ BalanceSection
   }
 

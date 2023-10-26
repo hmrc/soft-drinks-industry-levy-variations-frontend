@@ -35,11 +35,13 @@ object AmountToPaySummary  {
     SummaryListViewModel(rows = Seq(
       SummaryListRowViewModel(
         key = "correctReturn.originalReturnTotal",
-        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(originalReturnTotal).replace("-", "&minus;"))).withCssClass("total-for-quarter sdil-right-align--desktop")
+        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(originalReturnTotal).replace("-", "&minus;")))
+          .withCssClass("original-return-total sdil-right-align--desktop")
       ),
       SummaryListRowViewModel(
         key = "correctReturn.newReturnTotal",
-        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(newReturnTotal).replace("-", "&minus;"))).withCssClass("total-for-quarter sdil-right-align--desktop")
+        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(newReturnTotal).replace("-", "&minus;")))
+          .withCssClass("new-return-total sdil-right-align--desktop")
       ),
       SummaryListRowViewModel(
         key = "correctReturn.accountBalance",
@@ -48,7 +50,8 @@ object AmountToPaySummary  {
       ),
       SummaryListRowViewModel(
         key = "correctReturn.adjustedAmount",
-        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(adjustedAmount).replace("-", "&minus;"))).withCssClass("total sdil-right-align--desktop govuk-!-font-weight-bold")
+        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(adjustedAmount).replace("-", "&minus;")))
+          .withCssClass("total sdil-right-align--desktop govuk-!-font-weight-bold")
       ))
     )
   }
