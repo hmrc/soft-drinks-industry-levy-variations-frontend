@@ -22,7 +22,7 @@ import forms.HowManyLitresFormProvider
 import handlers.ErrorHandler
 import models.{Mode, SdilReturn}
 import navigation._
-import pages.correctReturn.HowManyCreditsForLostDamagedPage
+import pages.correctReturn.{ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
@@ -48,7 +48,7 @@ class HowManyCreditsForLostDamagedController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
-
+      println(Console.YELLOW + "getting to on page load of how many " + request.userAnswers + Console.WHITE)
       val preparedForm = request.userAnswers.get(HowManyCreditsForLostDamagedPage) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -67,14 +67,14 @@ class HowManyCreditsForLostDamagedController @Inject()(
 
         value => {
           val updatedAnswers = request.userAnswers.set(HowManyCreditsForLostDamagedPage, value)
-          updateDatabaseWithoutRedirect(updatedAnswers, HowManyCreditsForLostDamagedPage)
+          updateDatabaseAndRedirect(updatedAnswers, HowManyCreditsForLostDamagedPage, mode)
         }
       )
-        if (UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), subscription) || UserTypeCheck.isNewImporter(
-          SdilReturn.apply(request.userAnswers), subscription)) {
-          Future.successful(Redirect(routes.ReturnChangeRegistrationController.onPageLoad().url))
-        } else {
-          Future.successful(Redirect(routes.CorrectReturnCYAController.onPageLoad.url))
-        }
+//        if (UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), subscription) || UserTypeCheck.isNewImporter(
+//          SdilReturn.apply(request.userAnswers), subscription)) {
+//          Future.successful(Redirect(routes.ReturnChangeRegistrationController.onPageLoad().url))
+//        } else {
+//          Future.successful(Redirect(routes.CorrectReturnCYAController.onPageLoad.url))
+//        }
   }
 }

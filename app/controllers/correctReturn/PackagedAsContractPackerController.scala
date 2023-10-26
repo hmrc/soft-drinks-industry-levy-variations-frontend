@@ -22,7 +22,7 @@ import forms.correctReturn.PackagedAsContractPackerFormProvider
 import handlers.ErrorHandler
 import models.Mode
 import navigation._
-import pages.correctReturn.{HowManyPackagedAsContractPackerPage, PackagedAsContractPackerPage}
+import pages.correctReturn.{HowManyPackagedAsContractPackerPage, IsImporterPage, IsPackerPage, PackagedAsContractPackerPage}
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
@@ -48,7 +48,8 @@ class PackagedAsContractPackerController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
-
+      val setIsPackerFromSubscription = request.userAnswers.set(IsPackerPage, request.subscription.activity.contractPacker)
+      updateDatabaseWithoutRedirect(setIsPackerFromSubscription, IsPackerPage)
       val preparedForm = request.userAnswers.get(PackagedAsContractPackerPage) match {
         case None => form
         case Some(value) => form.fill(value)

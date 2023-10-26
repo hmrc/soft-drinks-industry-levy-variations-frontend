@@ -22,8 +22,9 @@ import forms.correctReturn.ClaimCreditsForLostDamagedFormProvider
 import handlers.ErrorHandler
 import models.{Mode, SdilReturn}
 import navigation._
-import pages.correctReturn.{ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage}
+import pages.correctReturn.{ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage, IsImporterPage}
 import play.api.i18n.MessagesApi
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
 import utilities.{GenericLogger, UserTypeCheck}
@@ -48,7 +49,6 @@ class ClaimCreditsForLostDamagedController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(ClaimCreditsForLostDamagedPage) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -59,27 +59,30 @@ class ClaimCreditsForLostDamagedController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-      val subscription = request.subscription
-      println(Console.YELLOW + subscription + Console.WHITE)
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value => {
+//          val answersWithSubscription = request.userAnswers.set(IsImporterPage, true)
+//          //copy(data =Json.obj("isImporter" -> Json.toJson(request.subscription.activity.importer), "isPacker" -> Json.toJson(request.subscription.activity.contractPacker)))
+//          updateDatabaseWithoutRedirect(answersWithSubscription, IsImporterPage)
+//          Thread.sleep(500)
           val updatedAnswers = request.userAnswers.setAndRemoveLitresIfReq(ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage, value)
-          updateDatabaseWithoutRedirect(updatedAnswers, ClaimCreditsForLostDamagedPage)
+          println(Console.YELLOW + "getting this far" + updatedAnswers + Console.WHITE)
+          updateDatabaseAndRedirect(updatedAnswers, ClaimCreditsForLostDamagedPage, mode)
 
 
-          if (value) {
-            Future.successful(Redirect(routes.HowManyCreditsForLostDamagedController.onPageLoad(mode).url))
-          } else {
-            if (UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), subscription) || UserTypeCheck.isNewImporter(
-              SdilReturn.apply(request.userAnswers), subscription)) {
-              Future.successful(Redirect(routes.ReturnChangeRegistrationController.onPageLoad().url))
-            } else {
-              Future.successful(Redirect(routes.CorrectReturnCYAController.onPageLoad.url))
-            }
-          }
+//          if (value) {
+//            Future.successful(Redirect(routes.HowManyCreditsForLostDamagedController.onPageLoad(mode).url))
+//          } else {
+//            if (UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), subscription) || UserTypeCheck.isNewImporter(
+//              SdilReturn.apply(request.userAnswers), subscription)) {
+//              Future.successful(Redirect(routes.ReturnChangeRegistrationController.onPageLoad().url))
+//            } else {
+//              Future.successful(Redirect(routes.CorrectReturnCYAController.onPageLoad.url))
+//            }
+//          }
         }
       )
     }

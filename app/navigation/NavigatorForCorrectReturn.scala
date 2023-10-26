@@ -166,7 +166,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case CorrectionReasonPage => _ => routes.RepaymentMethodController.onPageLoad(NormalMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => routes.PackagedAsContractPackerController.onPageLoad(NormalMode)
-//    case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamaged(userAnswers, NormalMode)
+    case ClaimCreditsForLostDamagedPage => userAnswers => routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode)//navigationForCreditsForLostDamaged(userAnswers, NormalMode)
 //    case HowManyCreditsForLostDamagedPage => userAnswers => navigationForHowManyCreditsForLostDamaged(userAnswers, NormalMode)
     case RepaymentMethodPage => userAnswers => routes.CorrectReturnCheckChangesCYAController.onPageLoad
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, NormalMode)
