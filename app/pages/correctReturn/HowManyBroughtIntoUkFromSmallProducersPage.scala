@@ -16,8 +16,9 @@
 
 package pages.correctReturn
 
+import controllers.correctReturn.routes
 import play.api.libs.json.JsPath
-import models.LitresInBands
+import models.{LitresInBands, Mode}
 import pages.QuestionPage
 
 case object HowManyBroughtIntoUkFromSmallProducersPage extends QuestionPage[LitresInBands] {
@@ -26,4 +27,6 @@ case object HowManyBroughtIntoUkFromSmallProducersPage extends QuestionPage[Litr
 
   def journeyType: String = "correctReturn"
   override def toString: String = "howManyBroughtIntoUkFromSmallProducers"
+
+  override val url: Mode => String = mode => routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(mode).url
 }

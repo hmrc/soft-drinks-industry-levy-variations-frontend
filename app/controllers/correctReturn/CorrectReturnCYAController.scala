@@ -18,30 +18,36 @@ package controllers.correctReturn
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions.ControllerActions
+import controllers.actions._
+import models.NormalMode
 import models.SelectChange.CorrectReturn
+import pages.correctReturn.CorrectReturnBaseCYAPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.correctReturn.CorrectReturnCYAView
 import views.summary.correctReturn.CorrectReturnBaseCYASummary
 
-class CorrectReturnCYAController @Inject()(
-                                            override val messagesApi: MessagesApi,
-                                            controllerActions: ControllerActions,
-                                            val controllerComponents: MessagesControllerComponents,
-                                            view: CorrectReturnCYAView
-                                          )(implicit config: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+import scala.concurrent.Future
 
-  def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
+class CorrectReturnCYAController @Inject()(override
+                                           val messagesApi: MessagesApi,
+                                           controllerActions: ControllerActions,
+                                           val controllerComponents: MessagesControllerComponents,
+                                           requiredUserAnswers: RequiredUserAnswersForCorrectReturn,
+                                           view: CorrectReturnCYAView)
+                                          (implicit config: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+
+  def onPageLoad: Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-      val orgName: String = " " + request.subscription.orgName
-      val sections = CorrectReturnBaseCYASummary.summaryListAndHeadings(request.userAnswers, request.subscription)
-
-      Ok(view(orgName, sections, routes.CorrectReturnCYAController.onSubmit))
+      requiredUserAnswers.requireData(CorrectReturnBaseCYAPage) {
+        val orgName: String = " " + request.subscription.orgName
+        val sections = CorrectReturnBaseCYASummary.summaryListAndHeadings(request.userAnswers, request.subscription)
+        Future.successful(Ok(view(orgName, sections, routes.CorrectReturnCYAController.onSubmit)))
+      }
   }
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
-    Redirect(controllers.routes.IndexController.onPageLoad.url)
+    Redirect(routes.CorrectionReasonController.onPageLoad(NormalMode).url)
   }
 }
