@@ -78,7 +78,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
               .set(AmountProducedPage, AmountProduced.Small).success.value
               .set(HowManyImportsPage , LitresInBands(10L, 10L)).success.value
           )
-          result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad
+          result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
         }
 
         "to the checkAnswers page when the imports page has already been populated and the user is not a producer" in {
@@ -97,7 +97,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
               .set(AmountProducedPage, AmountProduced.None).success.value
               .set(HowManyImportsPage , LitresInBands(10L, 10L)).success.value
           )
-          result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad
+          result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
         }
       }
 

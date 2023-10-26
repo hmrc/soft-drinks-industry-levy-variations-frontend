@@ -3,7 +3,7 @@ package controllers.changeActivity
 import controllers.LitresISpecHelper
 import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced
-import models.{LitresInBands, NormalMode, UserAnswers}
+import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.changeActivity._
@@ -710,7 +710,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad.url)
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
                   val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
@@ -851,7 +851,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad.url)
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
                   val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
@@ -901,7 +901,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad.url)
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
                   val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
@@ -1095,7 +1095,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBands

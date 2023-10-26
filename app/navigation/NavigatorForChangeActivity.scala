@@ -133,7 +133,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     (userAnswers.get(SecondaryWarehouseDetailsPage), mode)
     match {
       case (Some(_), CheckMode) => routes.ChangeActivityCYAController.onPageLoad
-      case (_ ,  CheckMode)  => routes.SecondaryWarehouseDetailsController.onPageLoad
+      case (_ ,  CheckMode)  => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
       case (_, _) => defaultCall
     }
   }
@@ -146,12 +146,12 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
       case (Some(true), _, NormalMode) =>
         routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
       case (Some(false), _, NormalMode) =>
-        routes.SecondaryWarehouseDetailsController.onPageLoad
+        routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
       case (_, Some(_), CheckMode) =>
         routes.ChangeActivityCYAController.onPageLoad
       case (_, _ , NormalMode) =>
-        routes.SecondaryWarehouseDetailsController.onPageLoad
-      case (_, _, CheckMode) => routes.SecondaryWarehouseDetailsController.onPageLoad
+        routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+      case (_, _, CheckMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
     }
 
   private def navigateForLargeAmountProducedFollowingImports(userAnswers: UserAnswers, mode: Mode): Call =
@@ -161,7 +161,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
       case (Some(opsob), Some(cp), NormalMode) if opsob || cp =>
         routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
       case (Some(_), Some(_), NormalMode) =>
-        routes.SecondaryWarehouseDetailsController.onPageLoad
+        routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
       case (Some(_), _, NormalMode) =>
         routes.ContractPackingController.onPageLoad(NormalMode)
       case (_, _, CheckMode) =>
