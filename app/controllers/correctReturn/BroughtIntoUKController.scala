@@ -49,7 +49,6 @@ class BroughtIntoUKController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
-      println(Console.YELLOW + request.subscription.activity + Console.WHITE)
       val setIsImporterFromSubscription = request.userAnswers.set(IsImporterPage, request.subscription.activity.importer)
       updateDatabaseWithoutRedirect(setIsImporterFromSubscription, IsImporterPage)
       val preparedForm = request.userAnswers.get(BroughtIntoUKPage) match {
