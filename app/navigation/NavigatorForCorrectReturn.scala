@@ -17,12 +17,11 @@
 package navigation
 
 import controllers.correctReturn.routes
-import models.{CheckMode, Mode, NormalMode, RetrievedSubscription, SdilReturn, UserAnswers}
+import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages._
 import pages.correctReturn._
 import play.api.Logger
 import play.api.mvc.Call
-import utilities.UserTypeCheck
 
 import javax.inject.{Inject, Singleton}
 
