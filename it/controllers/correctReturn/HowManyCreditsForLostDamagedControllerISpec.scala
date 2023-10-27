@@ -18,7 +18,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
   val userAnswers: UserAnswers = emptyUserAnswersForCorrectReturn.set(HowManyCreditsForLostDamagedPage, litresInBands).success.value
 
   List(NormalMode, CheckMode).foreach { mode =>
-    val (path, redirectLocation) = if(mode == NormalMode) {
+    val (path, redirectLocation) = if (mode == NormalMode) {
       (normalRoutePath, routes.CorrectReturnCYAController.onPageLoad.url)
     } else {
       (checkRoutePath, routes.CorrectReturnCYAController.onPageLoad.url)
@@ -230,10 +230,9 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
       testUnauthorisedUser(correctReturnBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
       testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
       testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
-    }
 
-    "Post - when user is a new importer or new packer " - {
-      "should redirect to Change Registration in Returns controller" in {
+
+      "should redirect to Change Registration in Returns controller when user is a new packer or importer" in {
         given
           .commonPreconditionChangeSubscription(diffSubscription)
 
@@ -242,16 +241,19 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
 
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, correctReturnBaseUrl + path, Json.toJson(litresInBandsObj)
+            client, correctReturnBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
           )
 
           whenReady(result) { res =>
+            val page = Jsoup.parse(res.body)
+
             res.status mustBe 303
             res.header(HeaderNames.LOCATION) mustBe Some(routes.ReturnChangeRegistrationController.onPageLoad().url)
           }
         }
       }
+
+
     }
   }
-
 }

@@ -150,7 +150,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
                 val expectedLocation = if (yesSelected) {
                   routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode).url
                 } else {
-                  controllers.routes.IndexController.onPageLoad.url
+                  routes.CorrectReturnCYAController.onPageLoad.url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ClaimCreditsForLostDamagedPage))
@@ -176,7 +176,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
                 val expectedLocation = if (yesSelected) {
                   routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode).url
                 } else {
-                  controllers.routes.IndexController.onPageLoad.url
+                  routes.CorrectReturnCYAController.onPageLoad.url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ClaimCreditsForLostDamagedPage))
@@ -319,7 +319,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
 
       WsTestClient.withClient { client =>
         val result = createClientRequestPOST(
-          client, correctReturnBaseUrl + normalRoutePath, Json.toJson(false)
+          client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> false)
         )
 
         whenReady(result) { res =>

@@ -41,32 +41,34 @@ class BroughtIntoUKControllerISpec extends ControllerITTestHelper {
         }
       }
 
-    userAnswersForCorrectReturnBroughtIntoUKPage.foreach { case (key, userAnswers) =>
-      s"when the userAnswers contains data for the page with " + key + " selected" - {
-        s"should return OK and render the page with " + key + " radio checked" in {
-          given
-            .commonPrecondition
+      userAnswersForCorrectReturnBroughtIntoUKPage.foreach { case (key, userAnswers) =>
+        s"when the userAnswers contains data for the page with " + key + " selected" - {
+          s"should return OK and render the page with " + key + " radio checked" in {
+            given
+              .commonPrecondition
 
-          setAnswers(userAnswers)
+            setAnswers(userAnswers)
 
-          WsTestClient.withClient { client =>
-            val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
+            WsTestClient.withClient { client =>
+              val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
 
-            whenReady(result1) { res =>
-              res.status mustBe 200
-              val page = Jsoup.parse(res.body)
-              page.title must include(Messages("correctReturn.broughtIntoUK" + ".title"))
-              val radioInputs = page.getElementsByClass("govuk-radios__input")
-              radioInputs.size() mustBe 2
-              radioInputs.get(0).attr("value") mustBe "true"
-              radioInputs.get(0).hasAttr("checked") mustBe key == "yes"
-              radioInputs.get(1).attr("value") mustBe "false"
-              radioInputs.get(1).hasAttr("checked") mustBe key == "no"
+              whenReady(result1) { res =>
+                res.status mustBe 200
+                val page = Jsoup.parse(res.body)
+                page.title must include(Messages("correctReturn.broughtIntoUK" + ".title"))
+                val radioInputs = page.getElementsByClass("govuk-radios__input")
+                radioInputs.size() mustBe 2
+                radioInputs.get(0).attr("value") mustBe "true"
+                radioInputs.get(0).hasAttr("checked") mustBe key == "yes"
+                radioInputs.get(1).attr("value") mustBe "false"
+                radioInputs.get(1).hasAttr("checked") mustBe key == "no"
+              }
             }
           }
         }
       }
     }
+
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath)

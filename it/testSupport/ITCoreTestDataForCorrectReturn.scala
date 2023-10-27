@@ -131,5 +131,7 @@ trait ITCoreTestDataForCorrectReturn extends ITSharedCoreTestData  {
     .set(HowManyBroughtIntoUKPage, LitresInBands(21312, 12312)).success.value
     .set(BroughtIntoUkFromSmallProducersPage, false).success.value
     .set(ClaimCreditsForExportsPage, false).success.value
+    .set(IsImporterPage, false).success.value
+    .set(IsPackerPage, false).success.value
 
 }
