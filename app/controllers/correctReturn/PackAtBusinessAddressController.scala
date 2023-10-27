@@ -74,10 +74,10 @@ class PackAtBusinessAddressController @Inject()(
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PackAtBusinessAddressPage, value))
             onwardUrl <-
-              if(value){
+              if (value) {
                 updateDatabaseWithoutRedirect(Try(updatedAnswers.copy(
                   packagingSiteList = updatedAnswers.packagingSiteList ++ Map(
-                    generateId ->
+                    "1" ->
                       Site(
                         address = request.subscription.address,
                         ref = None,
@@ -94,16 +94,5 @@ class PackAtBusinessAddressController @Inject()(
             Redirect(onwardUrl)
           }
       )
-  }
-
-  private def updatedPackagingSiteList(packagingSiteList: Map[String, Site],
-                                       businessAddress: UkAddress,
-                                       businessName: String,
-                                       value: Boolean): Map[String, Site] = {
-    if (value) {
-      packagingSiteList ++ Map("1" -> Site(address = businessAddress, ref = None, tradingName = Some(businessName), closureDate = None))
-    } else {
-      packagingSiteList - "1"
-    }
   }
 }

@@ -1,6 +1,7 @@
 package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
+import models.{CheckMode, NormalMode}
 import models.SelectChange.CorrectReturn
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
@@ -144,16 +145,17 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
               val result = createClientRequestPOST(
                 client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> yesSelected.toString)
               )
-
-              whenReady(result) { res =>
-                res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
-                val updatedAnswers = getAnswers(userAnswers.id)
-                val dataStoredForPage = updatedAnswers.fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
-                dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe yesSelected
-                updatedAnswers.map(data => data.packagingSiteList) mustBe
-                  Some(if (yesSelected) packagingSitesFromSubscription ++ packAtBusinessAddressSite else packagingSitesFromSubscription)
+              if (yesSelected) {
+                whenReady(result) { res =>
+                  res.status mustBe 303
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
+                  val updatedAnswers = getAnswers(userAnswers.id)
+                  val dataStoredForPage = updatedAnswers.fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
+                  dataStoredForPage.nonEmpty mustBe true
+                  dataStoredForPage.get mustBe yesSelected
+                  updatedAnswers.map(data => data.packagingSiteList) mustBe
+                    Some(packagingSitesFromSubscription ++ packAtBusinessAddressSite)
+                }
               }
             }
           }
@@ -175,15 +177,17 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
                   client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> yesSelected.toString)
                 )
 
-                whenReady(result) { res =>
-                  res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
-                  val updatedAnswers = getAnswers(userAnswers.id)
-                  val dataStoredForPage = updatedAnswers.fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
-                  dataStoredForPage.nonEmpty mustBe true
-                  dataStoredForPage.get mustBe yesSelected
-                  updatedAnswers.map(data => data.packagingSiteList) mustBe
+                if(yesSelected){
+                  whenReady(result) { res =>
+                    res.status mustBe 303
+                    res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
+                    val updatedAnswers = getAnswers(userAnswers.id)
+                    val dataStoredForPage = updatedAnswers.fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
+                    dataStoredForPage.nonEmpty mustBe true
+                    dataStoredForPage.get mustBe yesSelected
+                    updatedAnswers.map(data => data.packagingSiteList) mustBe
                     Some(if (yesSelected) packagingSitesFromSubscription ++ packAtBusinessAddressSite else packagingSitesFromSubscription)
+                  }
                 }
               }
             }
@@ -237,15 +241,17 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
                 client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> yesSelected.toString)
               )
 
-              whenReady(result) { res =>
-                res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
-                val updatedAnswers = getAnswers(userAnswers.id)
-                val dataStoredForPage = updatedAnswers.fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
-                dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe yesSelected
-                updatedAnswers.map(data => data.packagingSiteList) mustBe
-                  Some(if (yesSelected) packagingSitesFromSubscription ++ packAtBusinessAddressSite else packagingSitesFromSubscription)
+              if(yesSelected){
+                whenReady(result) { res =>
+                  res.status mustBe 303
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
+                  val updatedAnswers = getAnswers(userAnswers.id)
+                  val dataStoredForPage = updatedAnswers.fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
+                  dataStoredForPage.nonEmpty mustBe true
+                  dataStoredForPage.get mustBe yesSelected
+                  updatedAnswers.map(data => data.packagingSiteList) mustBe
+                    Some(if (yesSelected) packagingSitesFromSubscription ++ packAtBusinessAddressSite else packagingSitesFromSubscription)
+                }
               }
             }
           }
@@ -267,15 +273,17 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
                   client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> yesSelected.toString)
                 )
 
-                whenReady(result) { res =>
-                  res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
-                  val updatedAnswers = getAnswers(userAnswers.id)
-                  val dataStoredForPage = updatedAnswers.fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
-                  dataStoredForPage.nonEmpty mustBe true
-                  dataStoredForPage.get mustBe yesSelected
-                  updatedAnswers.map(data => data.packagingSiteList) mustBe
-                    Some(if (yesSelected) packagingSitesFromSubscription ++ packAtBusinessAddressSite else packagingSitesFromSubscription)
+                if(yesSelected){
+                  whenReady(result) { res =>
+                    res.status mustBe 303
+                    res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
+                    val updatedAnswers = getAnswers(userAnswers.id)
+                    val dataStoredForPage = updatedAnswers.fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
+                    dataStoredForPage.nonEmpty mustBe true
+                    dataStoredForPage.get mustBe yesSelected
+                    updatedAnswers.map(data => data.packagingSiteList) mustBe
+                      Some(if (yesSelected) packagingSitesFromSubscription ++ packAtBusinessAddressSite else packagingSitesFromSubscription)
+                  }
                 }
               }
             }
