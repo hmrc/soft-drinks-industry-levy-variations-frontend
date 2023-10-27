@@ -40,7 +40,6 @@ class BroughtIntoUKControllerISpec extends ControllerITTestHelper {
           }
         }
       }
-    }
 
     userAnswersForCorrectReturnBroughtIntoUKPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {

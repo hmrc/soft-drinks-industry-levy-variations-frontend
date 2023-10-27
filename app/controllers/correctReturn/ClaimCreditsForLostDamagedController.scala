@@ -20,14 +20,13 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.correctReturn.ClaimCreditsForLostDamagedFormProvider
 import handlers.ErrorHandler
-import models.{Mode, SdilReturn}
+import models.Mode
 import navigation._
-import pages.correctReturn.{ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage, IsImporterPage}
+import pages.correctReturn.{ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage}
 import play.api.i18n.MessagesApi
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
-import utilities.{GenericLogger, UserTypeCheck}
+import utilities.GenericLogger
 import views.html.correctReturn.ClaimCreditsForLostDamagedView
 
 import javax.inject.Inject
@@ -64,25 +63,8 @@ class ClaimCreditsForLostDamagedController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value => {
-//          val answersWithSubscription = request.userAnswers.set(IsImporterPage, true)
-//          //copy(data =Json.obj("isImporter" -> Json.toJson(request.subscription.activity.importer), "isPacker" -> Json.toJson(request.subscription.activity.contractPacker)))
-//          updateDatabaseWithoutRedirect(answersWithSubscription, IsImporterPage)
-//          Thread.sleep(500)
           val updatedAnswers = request.userAnswers.setAndRemoveLitresIfReq(ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage, value)
-          println(Console.YELLOW + "getting this far" + updatedAnswers + Console.WHITE)
           updateDatabaseAndRedirect(updatedAnswers, ClaimCreditsForLostDamagedPage, mode)
-
-
-//          if (value) {
-//            Future.successful(Redirect(routes.HowManyCreditsForLostDamagedController.onPageLoad(mode).url))
-//          } else {
-//            if (UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), subscription) || UserTypeCheck.isNewImporter(
-//              SdilReturn.apply(request.userAnswers), subscription)) {
-//              Future.successful(Redirect(routes.ReturnChangeRegistrationController.onPageLoad().url))
-//            } else {
-//              Future.successful(Redirect(routes.CorrectReturnCYAController.onPageLoad.url))
-//            }
-//          }
         }
       )
     }

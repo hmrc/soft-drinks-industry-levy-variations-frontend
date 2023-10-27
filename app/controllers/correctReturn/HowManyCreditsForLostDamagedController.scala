@@ -20,13 +20,14 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.HowManyLitresFormProvider
 import handlers.ErrorHandler
-import models.{Mode, SdilReturn}
+import models.{LitresInBands, Mode}
 import navigation._
-import pages.correctReturn.{ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage}
+import pages.correctReturn.HowManyCreditsForLostDamagedPage
+import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
-import utilities.{GenericLogger, UserTypeCheck}
+import utilities.GenericLogger
 import views.html.correctReturn.HowManyCreditsForLostDamagedView
 
 import javax.inject.Inject
@@ -44,11 +45,10 @@ class HowManyCreditsForLostDamagedController @Inject()(
                                          val errorHandler: ErrorHandler
                                  )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
+  val form: Form[LitresInBands] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
-      println(Console.YELLOW + "getting to on page load of how many " + request.userAnswers + Console.WHITE)
       val preparedForm = request.userAnswers.get(HowManyCreditsForLostDamagedPage) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -59,7 +59,6 @@ class HowManyCreditsForLostDamagedController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-      val subscription = request.subscription
 
       form.bindFromRequest().fold(
         formWithErrors =>
@@ -70,11 +69,5 @@ class HowManyCreditsForLostDamagedController @Inject()(
           updateDatabaseAndRedirect(updatedAnswers, HowManyCreditsForLostDamagedPage, mode)
         }
       )
-//        if (UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), subscription) || UserTypeCheck.isNewImporter(
-//          SdilReturn.apply(request.userAnswers), subscription)) {
-//          Future.successful(Redirect(routes.ReturnChangeRegistrationController.onPageLoad().url))
-//        } else {
-//          Future.successful(Redirect(routes.CorrectReturnCYAController.onPageLoad.url))
-//        }
   }
 }

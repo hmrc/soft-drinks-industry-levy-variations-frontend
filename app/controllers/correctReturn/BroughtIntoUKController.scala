@@ -23,6 +23,7 @@ import handlers.ErrorHandler
 import models.Mode
 import navigation._
 import pages.correctReturn.{BroughtIntoUKPage, HowManyBroughtIntoUKPage, IsImporterPage}
+import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
@@ -44,10 +45,11 @@ class BroughtIntoUKController @Inject()(
                                           val errorHandler: ErrorHandler
                                  )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
+      println(Console.YELLOW + request.subscription.activity + Console.WHITE)
       val setIsImporterFromSubscription = request.userAnswers.set(IsImporterPage, request.subscription.activity.importer)
       updateDatabaseWithoutRedirect(setIsImporterFromSubscription, IsImporterPage)
       val preparedForm = request.userAnswers.get(BroughtIntoUKPage) match {
