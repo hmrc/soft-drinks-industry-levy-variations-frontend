@@ -15,6 +15,10 @@ import testSupport.SDILBackendTestData.aSubscription
 
 class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHelper {
 
+  override def configParams: Map[String, Any] = Map(
+    "balanceAll.enabled" -> false
+  )
+
   val route = "/correct-return/check-changes"
 
   "GET " + routes.CorrectReturnCheckChangesCYAController.onPageLoad.url - {
