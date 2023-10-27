@@ -58,7 +58,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
 
       val summary = SummaryListViewModel(
-        rows = PackagingSiteDetailsSummary.row2(Map.empty)
+        rows = PackagingSiteDetailsSummary.row2(Map.empty, NormalMode)
       )
 
       running(application) {
@@ -92,7 +92,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
       val summary = SummaryListViewModel(
-        rows = PackagingSiteDetailsSummary.row2(Map.empty)
+        rows = PackagingSiteDetailsSummary.row2(Map.empty, NormalMode)
       )
 
       val userAnswers = emptyUserAnswersForChangeActivity.set(PackagingSiteDetailsPage, true).success.value
@@ -151,7 +151,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val summary = SummaryListViewModel(
-        rows = PackagingSiteDetailsSummary.row2(Map.empty)
+        rows = PackagingSiteDetailsSummary.row2(Map.empty, NormalMode)
       )
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
