@@ -69,16 +69,16 @@ class CorrectReturnCheckChangesSummarySpec extends SpecBase {
       val correctionReasonSummaryRow = AmountToPaySummary.amountToPaySummary(amounts = amounts)
 
       correctionReasonSummaryRow.rows.head.key.content.asHtml.toString mustBe "Original return total"
-      correctionReasonSummaryRow.rows.head.value.content.asHtml.toString mustBe "£100.00"
+      correctionReasonSummaryRow.rows.head.value.content.asHtml.toString mustBe "£0.00"
 
       correctionReasonSummaryRow.rows(1).key.content.asHtml.toString mustBe "New return total"
-      correctionReasonSummaryRow.rows(1).value.content.asHtml.toString mustBe "£200.00"
+      correctionReasonSummaryRow.rows(1).value.content.asHtml.toString mustBe "£1,320.00"
 
       correctionReasonSummaryRow.rows(2).key.content.asHtml.toString mustBe "Account balance"
-      correctionReasonSummaryRow.rows(2).value.content.asHtml.toString mustBe "£300.00"
+      correctionReasonSummaryRow.rows(2).value.content.asHtml.toString mustBe "£502.75"
 
       correctionReasonSummaryRow.rows(3).key.content.asHtml.toString mustBe "Net adjusted amount"
-      correctionReasonSummaryRow.rows(3).value.content.asHtml.toString mustBe "£400.00"
+      correctionReasonSummaryRow.rows(3).value.content.asHtml.toString mustBe "£1,822.75"
 
       correctionReasonSummaryRow.rows.size mustBe 4
     }
