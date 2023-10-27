@@ -32,7 +32,7 @@ import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.{status, _}
 import services.{AddressLookupService, PackingDetails, SessionService}
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
@@ -53,7 +53,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
 
   "PackagingSiteDetails Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET in NormalMode" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
 
@@ -73,23 +73,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
       }
     }
 
-    "must redirect to PackAtBusinessAddress when packaging site list empty and in CheckMode" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity.copy(packagingSiteList = Map.empty))).build()
-
-      running(application) {
-        val request = FakeRequest(GET, packagingSiteDetailsCheckRoute)
-//        when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
-//          createSuccessVariationResult(Some(aSubscription))
-//        }
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url
-      }
-    }
-
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "must populate the view correctly on a GET when the question has previously been answered in NormalMode" in {
 
       val summary = SummaryListViewModel(
         rows = PackagingSiteDetailsSummary.row2(Map.empty, NormalMode)
@@ -110,98 +94,116 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    List(NormalMode, CheckMode).foreach { mode =>
+      val path = if (mode == NormalMode) packagingSiteDetailsRoute else packagingSiteDetailsCheckRoute
 
-      val mockSessionService = mock[SessionService]
-      val mockAddressLookupService = mock[AddressLookupService]
-      val onwardUrlForALF = "foobarwizz"
+      s"must redirect to the next page when valid data is submitted in $mode" in {
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
-      when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
-        ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-        ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
-        .thenReturn(Future.successful(onwardUrlForALF))
+        val mockSessionService = mock[SessionService]
+        val mockAddressLookupService = mock[AddressLookupService]
+        val onwardUrlForALF = "foobarwizz"
 
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
-          .overrides(
-            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute)),
-            bind[SessionService].toInstance(mockSessionService),
-            bind[AddressLookupService].toInstance(mockAddressLookupService)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, packagingSiteDetailsRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardUrlForALF
-
-        verify(mockAddressLookupService, times(1)).initJourneyAndReturnOnRampUrl(
+        when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+        when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
           ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
+          .thenReturn(Future.successful(onwardUrlForALF))
+
+
+        val application =
+          applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
+            .overrides(
+              bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute)),
+              bind[SessionService].toInstance(mockSessionService),
+              bind[AddressLookupService].toInstance(mockAddressLookupService)
+            )
+            .build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, path)
+              .withFormUrlEncodedBody(("value", "true"))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual onwardUrlForALF
+
+          verify(mockAddressLookupService, times(1)).initJourneyAndReturnOnRampUrl(
+            ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
+            ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+        }
+      }
+
+      s"must return a Bad Request and errors when invalid data is submitted in $mode" in {
+
+        val summary = SummaryListViewModel(
+          rows = PackagingSiteDetailsSummary.row2(Map.empty, mode)
+        )
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, path)
+              .withFormUrlEncodedBody(("value", ""))
+
+          val boundForm = form.bind(Map("value" -> ""))
+
+          val view = application.injector.instanceOf[PackagingSiteDetailsView]
+
+          val result = route(application, request).value
+
+          status(result) mustEqual BAD_REQUEST
+          contentAsString(result) mustEqual view(boundForm, mode, summary)(request, messages(application)).toString
+        }
+      }
+
+      s"should log an error message when internal server error is returned when user answers are not set in session repository in $mode" in {
+        val mockSessionService = mock[SessionService]
+
+        when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+
+        val application =
+          applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
+            .overrides(
+              bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity (onwardRoute)),
+              bind[SessionService].toInstance(mockSessionService)
+            ).build()
+
+        running(application) {
+          withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+            val request =
+              FakeRequest(POST, path)
+                .withFormUrlEncodedBody(("value", "false"))
+
+            await(route(application, request).value)
+
+            events.collectFirst {
+              case event =>
+                event.getLevel.levelStr mustBe "ERROR"
+                event.getMessage mustEqual "Failed to set value in session repository while attempting set on packagingSiteDetails"
+            }.getOrElse(fail("No logging captured"))
+          }
+        }
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "must redirect to PackAtBusinessAddress when packaging site list empty and in CheckMode" in {
 
-      val summary = SummaryListViewModel(
-        rows = PackagingSiteDetailsSummary.row2(Map.empty, NormalMode)
-      )
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity.copy(packagingSiteList = Map.empty))).build()
 
       running(application) {
-        val request =
-          FakeRequest(POST, packagingSiteDetailsRoute)
-            .withFormUrlEncodedBody(("value", ""))
-
-        val boundForm = form.bind(Map("value" -> ""))
-
-        val view = application.injector.instanceOf[PackagingSiteDetailsView]
-
+        val request = FakeRequest(GET, packagingSiteDetailsCheckRoute)
         val result = route(application, request).value
 
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, summary)(request, messages(application)).toString
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url
       }
     }
 
     testInvalidJourneyType(ChangeActivity, packagingSiteDetailsRoute)
     testNoUserAnswersError(packagingSiteDetailsRoute)
 
-    "should log an error message when internal server error is returned when user answers are not set in session repository" in {
-      val mockSessionService = mock[SessionService]
-
-      when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
-          .overrides(
-            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity (onwardRoute)),
-            bind[SessionService].toInstance(mockSessionService)
-          ).build()
-
-      running(application) {
-        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
-          val request =
-            FakeRequest(POST, packagingSiteDetailsRoute)
-          .withFormUrlEncodedBody(("value", "false"))
-
-          await(route(application, request).value)
-
-          events.collectFirst {
-            case event =>
-              event.getLevel.levelStr mustBe "ERROR"
-              event.getMessage mustEqual "Failed to set value in session repository while attempting set on packagingSiteDetails"
-          }.getOrElse(fail("No logging captured"))
-        }
-      }
-    }
   }
 }
