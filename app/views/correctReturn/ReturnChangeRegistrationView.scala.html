@@ -14,7 +14,6 @@
  * limitations under the License.
  *@
 
-@import models.correctReturn._
 @import controllers.correctReturn.routes
 
 @this(
@@ -23,7 +22,7 @@
   govukButton: GovukButton
 )
 
-@(urlLink: String)(implicit request: Request[_], messages: Messages)
+@(mode: Mode, urlLink: String)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("correctReturn.returnChangeRegistration.title"))) {
   @formHelper(action = routes.ReturnChangeRegistrationController.onSubmit(), Symbol("autoComplete") -> "off") {

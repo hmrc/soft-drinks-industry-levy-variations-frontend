@@ -17,6 +17,7 @@
 package controllers.correctReturn
 
 import base.SpecBase
+import models.NormalMode
 import models.SelectChange.CorrectReturn
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -44,7 +45,7 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[ReturnChangeRegistrationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view("/soft-drinks-industry-levy-variations-frontend")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(NormalMode, "/soft-drinks-industry-levy-variations-frontend")(request, messages(application)).toString
       }
     }
 
