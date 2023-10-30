@@ -17,18 +17,17 @@
 package views.summary.changeActivity
 
 import controllers.changeActivity.routes
-import models.{CheckMode, Mode, NormalMode, UserAnswers}
+import models.{CheckMode, Mode, UserAnswers}
 import models.backend.Site
-import pages.changeActivity.SecondaryWarehouseDetailsPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
+import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow, Value}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryList, SummaryListRow, Value}
 import viewmodels.AddressFormattingHelper
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object SecondaryWarehouseDetailsSummary  {
+object SecondaryWarehouseDetailsSummary {
 
   def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)
                  (implicit messages: Messages): SummaryList = {
@@ -45,7 +44,10 @@ object SecondaryWarehouseDetailsSummary  {
 
     SummaryListViewModel(
       rows = Seq(SummaryListRowViewModel(
-        key = key,
+        key = Key(
+          content = key,
+          classes = "govuk-!-width-full"
+        ),
         value = Value(),
         actions = if (isCheckAnswers) {
           Seq(
