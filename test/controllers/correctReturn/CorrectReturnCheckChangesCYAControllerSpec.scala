@@ -27,7 +27,7 @@ import org.mockito.Mockito.when
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.{ReturnService, SessionService}
+import services.ReturnService
 import viewmodels.govuk.SummaryListFluency
 import views.html.correctReturn.CorrectReturnCheckChangesCYAView
 import views.summary.correctReturn.CorrectReturnCheckChangesSummary
@@ -83,8 +83,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
 
       running(application) {
         val request = FakeRequest(GET, CorrectReturnCheckChangesCYAController.onPageLoad.url)
-
-        when (mockReturnService.getBalanceBroughtForward(sdilRef = sdilReference)) thenReturn Future.successful(0)
+        when (mockReturnService.getBalanceBroughtForward(any())(any(),any())) thenReturn Future.successful(-502.75)
 
         val result = route(application, request).value
 
