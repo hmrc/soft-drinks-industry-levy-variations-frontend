@@ -75,6 +75,7 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
     }
   }
 
+//  TODO: Need to add PackerImportPageNavigation to this
   "How many brought into UK" - {
     def navigateFromHowManyBroughtIntoUkPage(mode: Mode) =
       navigator.nextPage(HowManyBroughtIntoUKPage, mode, emptyUserAnswersForCorrectReturn.set(HowManyBroughtIntoUKPage, LitresInBands(1, 1)).success.value)
@@ -149,6 +150,7 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
     }
   }
 
+  //  TODO: Need to add PackerImportPageNavigation to this
   "How many packaged as contract packer" - {
     def navigateFromHowManyPackagedAsContractPackerPage(mode: Mode) =
       navigator.nextPage(HowManyPackagedAsContractPackerPage, mode, emptyUserAnswersForCorrectReturn.set(HowManyPackagedAsContractPackerPage, LitresInBands(1, 1)).success.value)
@@ -256,5 +258,8 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
       result mustBe routes.CorrectReturnCYAController.onPageLoad
     }
   }
+
+  //  TODO: Need to add PackerImportPageNavigation for Credits For Lost Damaged
+  //  TODO: Need to add PackerImportPageNavigation for How Many Credits For Lost Damaged
 
 }
