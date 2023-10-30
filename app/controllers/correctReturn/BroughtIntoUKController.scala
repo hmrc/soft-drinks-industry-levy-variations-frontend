@@ -49,6 +49,7 @@ class BroughtIntoUKController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
+//      TODO: Remove need for this - pass subscription into Navigator in way that does not affect too many other files
       val setIsImporterFromSubscription = request.userAnswers.set(IsImporterPage, request.subscription.activity.importer)
       updateDatabaseWithoutRedirect(setIsImporterFromSubscription, IsImporterPage)
       val preparedForm = request.userAnswers.get(BroughtIntoUKPage) match {

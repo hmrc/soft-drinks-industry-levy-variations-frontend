@@ -28,8 +28,6 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class NavigatorForCorrectReturn @Inject()() extends Navigator {
 
-  val logger: Logger = Logger(this.getClass)
-
   private def navigationForBroughtIntoUkFromSmallProducers(userAnswers: UserAnswers, mode: Mode): Call = {
     if (userAnswers.get(page = BroughtIntoUkFromSmallProducersPage).contains(true)) {
       routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(mode)
@@ -73,7 +71,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   private def navigationForPackagedAsContractPacker(userAnswers: UserAnswers, mode: Mode): Call = {
     if (userAnswers.get(page = PackagedAsContractPackerPage).contains(true)) {
       routes.HowManyPackagedAsContractPackerController.onPageLoad(mode)
-    } else if(mode == CheckMode){
+    } else if (mode == CheckMode) {
       routes.CorrectReturnCYAController.onPageLoad
     } else {
       routes.ExemptionsForSmallProducersController.onPageLoad(mode)
@@ -113,7 +111,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   }
 
   private def navigationForCreditsForLostDamaged(userAnswers: UserAnswers, mode: Mode) = {
-
+// TODO: Tidy
     if (userAnswers.get(page = ClaimCreditsForLostDamagedPage).contains(true)) {
       routes.HowManyCreditsForLostDamagedController.onPageLoad(mode)
     } else if (mode == CheckMode) {
@@ -127,15 +125,17 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     if (mode == CheckMode) {
       routes.CorrectReturnCYAController.onPageLoad
     } else {
-    packerImporterPageNavigation(userAnswers, mode)
+      packerImporterPageNavigation(userAnswers, mode)
     }
   }
 
   private def packerImporterPageNavigation(userAnswers: UserAnswers, mode: Mode) = {
+//    TODO: Add CheckMode to ReturnChangeRegistrationController
     val alreadyAPacker = userAnswers.get(IsPackerPage).contains(true)
     val alreadyAnImporter = userAnswers.get(IsImporterPage).contains(true)
     val yesOnCoPacker = userAnswers.get(PackagedAsContractPackerPage).contains(true)
     val yesOnImporter = userAnswers.get(BroughtIntoUKPage).contains(true)
+//   TODO: Should this be the case for when in CheckMode
     if (alreadyAPacker && alreadyAnImporter) {
       routes.CorrectReturnCYAController.onPageLoad
     } else if ((!alreadyAPacker && yesOnCoPacker) || (!alreadyAnImporter && yesOnImporter)) {
@@ -174,6 +174,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
 
   override val checkRouteMap: Page => UserAnswers => Call = {
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, CheckMode)
+//    TODO: Why is this only in CheckMode
     case HowManyBroughtIntoUKPage => userAnswers => packerImporterPageNavigation(userAnswers, CheckMode)
     case BroughtIntoUkFromSmallProducersPage => userAnswers => navigationForBroughtIntoUkFromSmallProducers(userAnswers, CheckMode)
     case HowManyBroughtIntoUkFromSmallProducersPage => _ => routes.CorrectReturnCYAController.onPageLoad
@@ -183,8 +184,10 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, CheckMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.CorrectReturnCYAController.onPageLoad
+//    TODO: Why is this only in CheckMode
     case HowManyPackagedAsContractPackerPage => userAnswers => packerImporterPageNavigation(userAnswers, CheckMode)
     case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamaged(userAnswers, CheckMode)
+//    TODO: Add for HowManyClaimCreditsForLostDamagedPage in CheckMode
     case AddASmallProducerPage => _ => navigationForAddASmallProducer(CheckMode)
     case SmallProducerDetailsPage => userAnswers => navigationForSmallProducerDetails(userAnswers, CheckMode)
     case RemoveSmallProducerConfirmPage => userAnswers => navigationForRemoveSmallProducerConfirm(userAnswers, CheckMode)

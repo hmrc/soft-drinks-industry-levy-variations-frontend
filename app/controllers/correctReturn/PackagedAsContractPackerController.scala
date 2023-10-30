@@ -48,6 +48,7 @@ class PackagedAsContractPackerController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
+//      TODO: Remove need for this - pass subscription into Navigator in way that does not affect too many other files
       val setIsPackerFromSubscription = request.userAnswers.set(IsPackerPage, request.subscription.activity.contractPacker)
       updateDatabaseWithoutRedirect(setIsPackerFromSubscription, IsPackerPage)
       val preparedForm = request.userAnswers.get(PackagedAsContractPackerPage) match {

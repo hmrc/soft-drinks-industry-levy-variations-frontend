@@ -67,5 +67,5 @@ class ClaimCreditsForLostDamagedController @Inject()(
           updateDatabaseAndRedirect(updatedAnswers, ClaimCreditsForLostDamagedPage, mode)
         }
       )
-    }
+  }
 }
