@@ -101,6 +101,8 @@ POST       /change-how-many-credits-for-exports                 controllers.corr
 
 GET        /return-change-registration                          controllers.correctReturn.ReturnChangeRegistrationController.onPageLoad(mode: Mode = NormalMode)
 POST       /return-change-registration                          controllers.correctReturn.ReturnChangeRegistrationController.onSubmit(mode: Mode = NormalMode)
+GET        /change-return-change-registration                   controllers.correctReturn.ReturnChangeRegistrationController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-return-change-registration                   controllers.correctReturn.ReturnChangeRegistrationController.onSubmit(mode: Mode = CheckMode)
 
 GET        /packaging-site-details                              controllers.correctReturn.PackagingSiteDetailsController.onPageLoad(mode: Mode = NormalMode)
 POST       /packaging-site-details                              controllers.correctReturn.PackagingSiteDetailsController.onSubmit(mode: Mode = NormalMode)

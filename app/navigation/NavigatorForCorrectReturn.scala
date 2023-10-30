@@ -37,6 +37,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
       routes.ClaimCreditsForExportsController.onPageLoad(mode)
     }
   }
+
   private def navigationForClaimCreditsForExports(userAnswers: UserAnswers, mode: Mode): Call = {
     if (userAnswers.get(page = ClaimCreditsForExportsPage).contains(true)) {
       routes.HowManyClaimCreditsForExportsController.onPageLoad(mode)
@@ -66,7 +67,6 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
       routes.BroughtIntoUKController.onPageLoad(mode)
     }
   }
-
 
   private def navigationForPackagedAsContractPacker(userAnswers: UserAnswers, mode: Mode): Call = {
     if (userAnswers.get(page = PackagedAsContractPackerPage).contains(true)) {
@@ -111,14 +111,12 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   }
 
   private def navigationForCreditsForLostDamaged(userAnswers: UserAnswers, mode: Mode) = {
-// TODO: Tidy
     if (userAnswers.get(page = ClaimCreditsForLostDamagedPage).contains(true)) {
       routes.HowManyCreditsForLostDamagedController.onPageLoad(mode)
     } else if (mode == CheckMode) {
       routes.CorrectReturnCYAController.onPageLoad
     } else {
-//      NOTE: This is because it is the last page in the NormalMode flow
-      packerImporterPageNavigation(userAnswers, mode)
+      navigationToReturnChangeRegistrationIfRequired(userAnswers, mode)
     }
   }
 
@@ -126,24 +124,21 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     if (mode == CheckMode) {
       routes.CorrectReturnCYAController.onPageLoad
     } else {
-//      NOTE: This is because it is the last page in the NormalMode flow
-      packerImporterPageNavigation(userAnswers, mode)
+      navigationToReturnChangeRegistrationIfRequired(userAnswers, mode)
     }
   }
 
-  private def packerImporterPageNavigation(userAnswers: UserAnswers, mode: Mode) = {
-//    TODO: Add CheckMode to ReturnChangeRegistrationController
+  private def navigationToReturnChangeRegistrationIfRequired(userAnswers: UserAnswers, mode: Mode) = {
     val alreadyAPacker = userAnswers.get(IsPackerPage).contains(true)
     val alreadyAnImporter = userAnswers.get(IsImporterPage).contains(true)
     val yesOnCoPacker = userAnswers.get(PackagedAsContractPackerPage).contains(true)
     val yesOnImporter = userAnswers.get(BroughtIntoUKPage).contains(true)
-//   TODO: Should this be the case for when in CheckMode
     if (alreadyAPacker && alreadyAnImporter) {
       routes.CorrectReturnCYAController.onPageLoad
     } else if ((!alreadyAPacker && yesOnCoPacker) || (!alreadyAnImporter && yesOnImporter)) {
-        routes.ReturnChangeRegistrationController.onPageLoad()
+      routes.ReturnChangeRegistrationController.onPageLoad(mode)
     } else {
-        routes.CorrectReturnCYAController.onPageLoad
+      routes.CorrectReturnCYAController.onPageLoad
     }
   }
 
@@ -176,8 +171,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
 
   override val checkRouteMap: Page => UserAnswers => Call = {
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, CheckMode)
-//    TODO: Why is this only in CheckMode
-    case HowManyBroughtIntoUKPage => userAnswers => packerImporterPageNavigation(userAnswers, CheckMode)
+    case HowManyBroughtIntoUKPage => userAnswers => navigationToReturnChangeRegistrationIfRequired(userAnswers, CheckMode)
     case BroughtIntoUkFromSmallProducersPage => userAnswers => navigationForBroughtIntoUkFromSmallProducers(userAnswers, CheckMode)
     case HowManyBroughtIntoUkFromSmallProducersPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case ClaimCreditsForExportsPage => userAnswers => navigationForClaimCreditsForExports(userAnswers, CheckMode)
@@ -186,10 +180,9 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, CheckMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.CorrectReturnCYAController.onPageLoad
-//    TODO: Why is this only in CheckMode
-    case HowManyPackagedAsContractPackerPage => userAnswers => packerImporterPageNavigation(userAnswers, CheckMode)
+    case HowManyPackagedAsContractPackerPage => userAnswers => navigationToReturnChangeRegistrationIfRequired(userAnswers, CheckMode)
     case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamaged(userAnswers, CheckMode)
-//    TODO: Add for HowManyClaimCreditsForLostDamagedPage in CheckMode
+    case HowManyCreditsForLostDamagedPage => userAnswers => navigationForHowManyCreditsForLostDamaged(userAnswers, CheckMode)
     case AddASmallProducerPage => _ => navigationForAddASmallProducer(CheckMode)
     case SmallProducerDetailsPage => userAnswers => navigationForSmallProducerDetails(userAnswers, CheckMode)
     case RemoveSmallProducerConfirmPage => userAnswers => navigationForRemoveSmallProducerConfirm(userAnswers, CheckMode)
