@@ -26,7 +26,7 @@ import play.api.libs.json.Json
 class NavigatorForCorrectReturnSpec extends SpecBase {
 
   val navigator = new NavigatorForCorrectReturn
-
+// TODO: These will have to use subscription when IsImporterPage/IsPackerPage are removed
   val newImporterUserAnswers = emptyUserAnswersForCorrectReturn
     .set(IsImporterPage, false).success.value
     .set(BroughtIntoUKPage, true).success.value

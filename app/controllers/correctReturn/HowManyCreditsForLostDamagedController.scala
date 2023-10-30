@@ -64,6 +64,7 @@ class HowManyCreditsForLostDamagedController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
+//        TODO: Pass in request.subscription for navigation
         value => {
           val updatedAnswers = request.userAnswers.set(HowManyCreditsForLostDamagedPage, value)
           updateDatabaseAndRedirect(updatedAnswers, HowManyCreditsForLostDamagedPage, mode)

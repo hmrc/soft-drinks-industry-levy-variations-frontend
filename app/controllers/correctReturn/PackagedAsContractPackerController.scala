@@ -66,6 +66,7 @@ class PackagedAsContractPackerController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
+        //        TODO: Pass in request.subscription for navigation
         value => {
           val updatedAnswers = request.userAnswers.setAndRemoveLitresIfReq(PackagedAsContractPackerPage, HowManyPackagedAsContractPackerPage, value)
           updateDatabaseAndRedirect(updatedAnswers, PackagedAsContractPackerPage, mode)

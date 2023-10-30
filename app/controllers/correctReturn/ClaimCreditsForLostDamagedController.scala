@@ -62,6 +62,7 @@ class ClaimCreditsForLostDamagedController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
+        //        TODO: Pass in request.subscription for navigation
         value => {
           val updatedAnswers = request.userAnswers.setAndRemoveLitresIfReq(ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage, value)
           updateDatabaseAndRedirect(updatedAnswers, ClaimCreditsForLostDamagedPage, mode)

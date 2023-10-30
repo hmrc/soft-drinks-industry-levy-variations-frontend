@@ -17,7 +17,7 @@
 package navigation
 
 import controllers.correctReturn.routes
-import models.{CheckMode, Mode, NormalMode, UserAnswers}
+import models.{CheckMode, Mode, NormalMode, RetrievedSubscription, UserAnswers}
 import pages._
 import pages.correctReturn._
 import play.api.Logger
@@ -169,6 +169,10 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case _ => _ => defaultCall
   }
 
+  override val normalRoutesWithSubscription: Page => (UserAnswers, RetrievedSubscription) => Call = {
+    case _ => (_, _) => defaultCall
+  }
+
   override val checkRouteMap: Page => UserAnswers => Call = {
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, CheckMode)
     case HowManyBroughtIntoUKPage => userAnswers => navigationToReturnChangeRegistrationIfRequired(userAnswers, CheckMode)
@@ -188,6 +192,10 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case RemoveSmallProducerConfirmPage => userAnswers => navigationForRemoveSmallProducerConfirm(userAnswers, CheckMode)
     case RepaymentMethodPage => userAnswers => routes.CorrectReturnCheckChangesCYAController.onPageLoad
     case _ => _ => routes.CorrectReturnCYAController.onPageLoad
+  }
+
+  override val checkRouteMapWithSubscription: Page => (UserAnswers, RetrievedSubscription) => Call = {
+    case _ => (_, _) => defaultCall
   }
 
   override val editRouteMap: Page => UserAnswers => Call = {
