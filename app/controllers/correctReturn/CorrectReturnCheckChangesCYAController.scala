@@ -18,18 +18,14 @@ package controllers.correctReturn
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.ControllerActions
-import errors.UnexpectedResponseFromSDIL
 import models.{Amounts, SdilReturn}
 import models.SelectChange.CorrectReturn
 import models.correctReturn.ChangedPage
-import orchestrators.CorrectReturnOrchestrator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReturnService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilities.GenericLogger
 import views.html.correctReturn.CorrectReturnCheckChangesCYAView
@@ -41,7 +37,6 @@ class CorrectReturnCheckChangesCYAController @Inject()(
                                             override val messagesApi: MessagesApi,
                                             controllerActions: ControllerActions,
                                             val controllerComponents: MessagesControllerComponents,
-                                            val correctReturnOrchestrator: CorrectReturnOrchestrator,
                                             view: CorrectReturnCheckChangesCYAView,
                                             returnService: ReturnService,
                                             genericLogger: GenericLogger
