@@ -27,7 +27,7 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase {
 
   def onwardRoute: Call = Call("GET", "/foo")
 
-  lazy val returnChangeRegistrationRoute = routes.ReturnChangeRegistrationController.onPageLoad().url
+  lazy val returnChangeRegistrationRoute = routes.ReturnChangeRegistrationController.onPageLoad(NormalMode).url
 
   lazy val submittedAnswers = emptyUserAnswersForCorrectReturn.copy(submitted = true)
 
@@ -54,7 +54,7 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, routes.ReturnChangeRegistrationController.onPageLoad().url)
+          FakeRequest(POST, routes.ReturnChangeRegistrationController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value

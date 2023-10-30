@@ -248,7 +248,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
             val page = Jsoup.parse(res.body)
 
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some(routes.ReturnChangeRegistrationController.onPageLoad().url)
+            res.header(HeaderNames.LOCATION) mustBe Some(routes.ReturnChangeRegistrationController.onPageLoad(NormalMode).url)
           }
         }
       }

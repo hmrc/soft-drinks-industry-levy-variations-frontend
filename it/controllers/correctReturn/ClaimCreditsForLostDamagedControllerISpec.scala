@@ -324,7 +324,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
 
         whenReady(result) { res =>
           res.status mustBe 303
-          res.header(HeaderNames.LOCATION) mustBe Some(routes.ReturnChangeRegistrationController.onPageLoad().url)
+          res.header(HeaderNames.LOCATION) mustBe Some(routes.ReturnChangeRegistrationController.onPageLoad(NormalMode).url)
         }
       }
     }
