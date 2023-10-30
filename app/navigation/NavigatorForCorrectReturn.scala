@@ -117,6 +117,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     } else if (mode == CheckMode) {
       routes.CorrectReturnCYAController.onPageLoad
     } else {
+//      NOTE: This is because it is the last page in the NormalMode flow
       packerImporterPageNavigation(userAnswers, mode)
     }
   }
@@ -125,6 +126,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     if (mode == CheckMode) {
       routes.CorrectReturnCYAController.onPageLoad
     } else {
+//      NOTE: This is because it is the last page in the NormalMode flow
       packerImporterPageNavigation(userAnswers, mode)
     }
   }
