@@ -14,12 +14,19 @@
  * limitations under the License.
  */
 
-package models
+package models.submission
 
-import play.api.libs.json.{Format, Json}
+import models.LitresInBands
+import play.api.libs.json.{Json, OFormat}
 
-case class OptSmallProducer(optSmallProducer: Option[Boolean])
+case class Litreage(lower: Long, upper: Long) {
+  val total: BigDecimal = (lower + upper)
+}
 
-object OptSmallProducer {
-  implicit val format: Format[OptSmallProducer] = Json.format[OptSmallProducer]
+object Litreage {
+  def fromLitresInBands(litresInBands: LitresInBands): Litreage = Litreage(
+    lower = litresInBands.lowBand, upper = litresInBands.highBand
+  )
+
+  implicit val format: OFormat[Litreage] = Json.format[Litreage]
 }

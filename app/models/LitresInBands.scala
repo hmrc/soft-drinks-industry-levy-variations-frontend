@@ -18,7 +18,9 @@ package models
 
 import play.api.libs.json.Json
 
-case class LitresInBands(lowBand: Long, highBand: Long)
+case class LitresInBands(lowBand: Long, highBand: Long) {
+  def total = lowBand + highBand
+}
 
 object LitresInBands {
   implicit val format = Json.format[LitresInBands]

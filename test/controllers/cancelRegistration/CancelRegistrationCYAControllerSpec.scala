@@ -19,7 +19,12 @@ package controllers.cancelRegistration
 import base.SpecBase
 import controllers.cancelRegistration.routes._
 import models.SelectChange.CancelRegistration
+import orchestrators.CancelRegistrationOrchestrator
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.mock
 import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -63,53 +68,111 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
       }
     }
 
-    "must return Redirect to reason page when no user answers are present for the reason page" in {
-
+    "must return Redirect to reason page when no user answers are present for the reason page" - {
       val userAnswers = emptyUserAnswersForCancelRegistration
         .set(CancelRegistrationDatePage, LocalDate.now()).success.value
+      def application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      "on a GET" in {
+        running(application) {
+          val request = FakeRequest(GET, cyaRoute)
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+          val result = route(application, request).value
 
-      running(application) {
-        val request = FakeRequest(GET, cyaRoute)
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-variations-frontend/cancel-registration/reason"
+        }
+      }
 
-        val result = route(application, request).value
+      "on a POST" in {
+        running(application) {
+          val request = FakeRequest(POST, cyaRoute).withFormUrlEncodedBody()
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-variations-frontend/cancel-registration/reason"
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-variations-frontend/cancel-registration/reason"
+        }
       }
     }
 
-    "must return Redirect to cancellation date page when no user answers are present for the cancellation date page" in {
-
+    "must return Redirect to cancellation date page when no user answers are present for the cancellation date page" - {
       val userAnswers = emptyUserAnswersForCancelRegistration
         .set(ReasonPage, "No longer sell drinks").success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      def application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      "on a GET" in {
+        running(application) {
+          val request = FakeRequest(GET, cyaRoute)
 
-      running(application) {
-        val request = FakeRequest(GET, cyaRoute)
+          val result = route(application, request).value
 
-        val result = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-variations-frontend/cancel-registration/date"
+        }
+      }
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-variations-frontend/cancel-registration/date"
+      "on a POST" in {
+        running(application) {
+          val request = FakeRequest(GET, cyaRoute).withFormUrlEncodedBody()
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-variations-frontend/cancel-registration/date"
+        }
       }
     }
 
-    "must return Redirect to cancellation reason page when no user answers are present" in {
+    "must return Redirect to cancellation reason page when no user answers are present" - {
 
-      val userAnswers = emptyUserAnswersForChangeActivity
+      val userAnswers = emptyUserAnswersForCancelRegistration
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      def application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      "on a GET" in {
+        running(application) {
+          val request = FakeRequest(GET, cyaRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-variations-frontend/select-change"
+        }
+      }
+
+      "on a POST" in {
+        running(application) {
+          val request = FakeRequest(POST, cyaRoute).withFormUrlEncodedBody()
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-variations-frontend/select-change"
+        }
+      }
+    }
+
+
+    "must redirect to cancel registration done when data is correct for POST" in {
+      val mockOrchestrator: CancelRegistrationOrchestrator = mock[CancelRegistrationOrchestrator]
+      val userAnswers = emptyUserAnswersForCancelRegistration
+        .set(ReasonPage, "No longer sell drinks").success.value
+        .set(CancelRegistrationDatePage, LocalDate.now()).success.value
+      val application = applicationBuilder(
+        userAnswers = Some(userAnswers),
+        subscription = Some(aSubscription))
+        .overrides(
+          bind[CancelRegistrationOrchestrator].toInstance(mockOrchestrator)
+        )
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, cyaRoute)
+        val request = FakeRequest(POST, CancelRegistrationCYAController.onPageLoad.url).withFormUrlEncodedBody()
+        when(mockOrchestrator.submitVariation(any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-variations-frontend/select-change"
+        redirectLocation(result).value mustEqual CancellationRequestDoneController.onPageLoad.url
       }
     }
 

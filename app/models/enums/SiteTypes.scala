@@ -14,11 +14,16 @@
  * limitations under the License.
  */
 
-package models.backend
+package models.enums
 
-import models.updateRegisteredDetails.Submission.VariationsContact
+import play.api.libs.json.{Format, Reads, Writes}
 
-case class VariationsSite(tradingName: String,
-                          siteReference: String,
-                          variationsContact: VariationsContact,
-                          typeOfSite: String)
+object SiteTypes extends Enumeration {
+
+  val PRODUCTION_SITE = Value("Production Site")
+  val WAREHOUSE = Value("Warehouse")
+
+  implicit val format: Format[SiteTypes.Value] =
+    Format[SiteTypes.Value](Reads.enumNameReads(SiteTypes), Writes.enumNameWrites)
+
+}

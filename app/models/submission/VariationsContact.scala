@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-package models.updateRegisteredDetails.Submission
+package models.submission
 
-import models.backend.UkAddress
-import models.{RetrievedSubscription, UserAnswers}
+import models.backend.{RetrievedSubscription, Site, UkAddress}
+import models.updateRegisteredDetails.ContactDetails
+import models.UserAnswers
 import play.api.libs.json.{JsString, JsValue, Json, Writes}
 
 import scala.util.Try
@@ -39,19 +40,31 @@ object VariationsContact {
     }
   }
 
-  def generateBusinessContact(userAnswers: UserAnswers, subscription: RetrievedSubscription): Option[VariationsContact] = {
+  def generateForSiteContact(contactDetails: ContactDetails, site: Site): VariationsContact = {
+    VariationsContact(
+      Some(site.address),
+      Some(contactDetails.phoneNumber),
+      Some(contactDetails.email)
+    )
+  }
+
+  def generateForBusinessContact(userAnswers: UserAnswers,
+                                 subscription: RetrievedSubscription,
+                                 updatedContactDetails: Option[VariationsPersonalDetails]): Option[VariationsContact] = {
 
     val variationsContact: Option[UkAddress] = findDifInAddress(userAnswers.contactAddress, subscription.address)
-
-    val personalDetails:Option[VariationsPersonalDetails] =  VariationsPersonalDetails.apply(userAnswers, subscription)
-
-    variationsContact match {
-      case None => None
-      case Some(answers) => Some(VariationsContact(
+    lazy val telephoneNumber = updatedContactDetails.fold[Option[String]](None)(_.telephoneNumber)
+    lazy val emailAddress = updatedContactDetails.fold[Option[String]](None)(_.emailAddress)
+    if(variationsContact.nonEmpty || Seq(telephoneNumber, emailAddress).flatten.nonEmpty) {
+      Some(
+        VariationsContact(
         variationsContact,
-        personalDetails.fold(Option.empty[String])(_.telephoneNumber),
-        personalDetails.fold(Option.empty[String])(_.emailAddress)
-      ))
+        telephoneNumber,
+        emailAddress
+        )
+      )
+    } else {
+      None
     }
   }
 

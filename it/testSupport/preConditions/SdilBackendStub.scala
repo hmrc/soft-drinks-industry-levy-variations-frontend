@@ -1,7 +1,8 @@
 package testSupport.preConditions
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.{FinancialLineItem, RetrievedSubscription, ReturnPeriod, SdilReturn}
+import models.backend.{FinancialLineItem, RetrievedSubscription}
+import models.{ReturnPeriod, SdilReturn}
 import play.api.libs.json.Json
 import testSupport.SDILBackendTestData._
 

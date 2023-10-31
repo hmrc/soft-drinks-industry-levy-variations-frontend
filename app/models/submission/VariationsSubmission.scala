@@ -14,11 +14,9 @@
  * limitations under the License.
  */
 
-package models
+package models.submission
 
 import models.backend.UkAddress
-import models.changeActivity.submission.SdilActivity
-import models.updateRegisteredDetails.Submission.{VariationsContact, VariationsPersonalDetails}
 import play.api.libs.json.{Json, Writes}
 
 import java.time.LocalDate
@@ -32,10 +30,10 @@ case class VariationsSubmission(
                                  tradingName: Option[String] = None,
                                  displayOrgName: String,
                                  ppobAddress: UkAddress,
-                                 businessContact: Option[VariationsContact],
-                                 correspondenceContact: Option[VariationsContact],
-                                 primaryPersonContact: Option[VariationsPersonalDetails],
-                                 sdilActivity: Option[SdilActivity],
+                                 businessContact: Option[VariationsContact] = None,
+                                 correspondenceContact: Option[VariationsContact] = None,
+                                 primaryPersonContact: Option[VariationsPersonalDetails] = None,
+                                 sdilActivity: Option[SdilActivity] = None,
                                  deregistrationText: Option[String] = None,
                                  deregistrationDate: Option[LocalDate] = None,
                                  newSites: List[VariationsSite] = Nil,

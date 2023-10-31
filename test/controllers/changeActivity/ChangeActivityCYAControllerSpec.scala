@@ -17,12 +17,15 @@
 package controllers.changeActivity
 
 import base.SpecBase
-import connectors.SoftDrinksIndustryLevyConnector
+import models.LitresInBands
 import controllers.changeActivity.routes._
 import generators.ChangeActivityCYAGenerators._
-import models.{DataHelper, Litreage, LitresInBands, VariationsSubmission}
+import models.DataHelper
 import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced.Large
+import models.submission.{Litreage, VariationsSubmission}
+import orchestrators.ChangeActivityOrchestrator
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
 import pages.changeActivity._
@@ -30,7 +33,6 @@ import play.api.mvc.Call
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.ChangeActivityService
 import viewmodels.govuk.SummaryListFluency
 import views.html.changeActivity.ChangeActivityCYAView
 import views.summary.changeActivity.ChangeActivitySummary
@@ -78,41 +80,14 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency w
         .copy(packagingSiteList = Map.empty,
               warehouseList = Map.empty)
 
-      val mockConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
-      val mockChangeActivityService = mock[ChangeActivityService]
+      val mockOrchestrator: ChangeActivityOrchestrator = mock[ChangeActivityOrchestrator]
 
-      val retrievedActivityData = testRetrievedActivity()
-      val retrievedSubData = testRetrievedSubscription(
-        address = testAddress(),
-        activity = retrievedActivityData,
-        liabilityDate = LocalDate.now(),
-        productionSites = List.empty,
-        warehouseSites = List.empty,
-        contact = testContact(phoneNumber = "testnumber", email = "test@email.test")
-      )
-
-      val data: VariationsSubmission = testConvert(testRegistrationVariationData(
-        original = retrievedSubData,
-        updatedBusinessAddress = testAddress(),
-        producer = testProducer(isProducer = false),
-        updatedContactDetails = testContactDetails(),
-        packageOwn = Some(true),
-        packageOwnVol= Some(Litreage(100, 100)),
-        copackForOthers = true,
-        copackForOthersVol = Some(Litreage(100, 100)),
-        imports = true,
-        importsVol = Some(Litreage(100, 100)),
-      ))
-
-
-      when(mockChangeActivityService.submitVariation(retrievedSubData, userAnswers)) thenReturn Future.successful(Some(OK))
-      when(mockConnector.submitVariation(data, "testref")(hc)).thenReturn(Future.successful(Some(200)))
+      when(mockOrchestrator.submitVariation(any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
-          bind[ChangeActivityService].toInstance(mockChangeActivityService),
-          bind[SoftDrinksIndustryLevyConnector].toInstance(mockConnector)
+          bind[ChangeActivityOrchestrator].toInstance(mockOrchestrator)
         )
         .build()
 

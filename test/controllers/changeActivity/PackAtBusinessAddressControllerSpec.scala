@@ -20,9 +20,9 @@ import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import errors.SessionDatabaseInsertError
 import forms.changeActivity.PackAtBusinessAddressFormProvider
+import models.NormalMode
 import models.SelectChange.ChangeActivity
-import models.backend.{Site, UkAddress}
-import models.{NormalMode, RetrievedSubscription}
+import models.backend.{RetrievedSubscription, UkAddress}
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}

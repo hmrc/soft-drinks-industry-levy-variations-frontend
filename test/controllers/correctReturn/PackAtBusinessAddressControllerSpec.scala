@@ -21,8 +21,8 @@ import connectors.SoftDrinksIndustryLevyConnector
 import errors.SessionDatabaseInsertError
 import forms.correctReturn.PackAtBusinessAddressFormProvider
 import models.SelectChange.CorrectReturn
-import models.backend.UkAddress
-import models.{NormalMode, RetrievedSubscription}
+import models.backend.{RetrievedSubscription, UkAddress}
+import models.NormalMode
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}

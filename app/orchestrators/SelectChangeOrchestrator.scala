@@ -21,9 +21,9 @@ import cats.implicits._
 import com.google.inject.{Inject, Singleton}
 import connectors.SoftDrinksIndustryLevyConnector
 import errors.{ReturnsStillPending, VariationsErrors}
-import models.backend.Site
+import models.backend.{RetrievedSubscription, Site}
 import models.updateRegisteredDetails.ContactDetails
-import models.{RetrievedSubscription, SelectChange, UserAnswers}
+import models.{SelectChange, UserAnswers}
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import service.VariationResult
 import services.SessionService

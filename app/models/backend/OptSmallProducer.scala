@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.backend
 
-import models.updateRegisteredDetails.Submission.VariationsContact
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.{Format, Json}
 
-object VariationsSite {
-  implicit val writes: Writes[VariationsSite] = Json.writes[VariationsSite]
+case class OptSmallProducer(optSmallProducer: Option[Boolean])
+
+object OptSmallProducer {
+  implicit val format: Format[OptSmallProducer] = Json.format[OptSmallProducer]
 }
-
-case class VariationsSite(
-                           tradingName: String,
-                           siteReference: String,
-                           variationsContact: VariationsContact,
-                           typeOfSite: String)

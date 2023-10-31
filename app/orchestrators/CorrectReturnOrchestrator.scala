@@ -20,8 +20,9 @@ import cats.data.EitherT
 import com.google.inject.{Inject, Singleton}
 import connectors.SoftDrinksIndustryLevyConnector
 import errors.{FailedToAddDataToUserAnswers, NoSdilReturnForPeriod, NoVariableReturns}
+import models.backend.RetrievedSubscription
 import models.correctReturn.CorrectReturnUserAnswersData
-import models.{RetrievedSubscription, ReturnPeriod, SdilReturn, UserAnswers}
+import models.{ReturnPeriod, SdilReturn, UserAnswers}
 import service.VariationResult
 import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier

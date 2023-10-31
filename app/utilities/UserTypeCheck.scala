@@ -16,7 +16,8 @@
 
 package utilities
 
-import models.{RetrievedSubscription, SdilReturn}
+import models.SdilReturn
+import models.backend.RetrievedSubscription
 
 
 object UserTypeCheck {

@@ -16,32 +16,12 @@
 
 package models
 
-import models.backend.{Site, UkAddress}
+import models.backend.{RetrievedActivity, RetrievedSubscription, Site, UkAddress}
 import models.updateRegisteredDetails.ContactDetails
-import play.api.mvc.Call
 
 import java.time.LocalDate
 
 trait DataHelper {
-
-  def testReturnVariationData(
-                               original: SdilReturn,
-                               revised: SdilReturn,
-                               period: ReturnPeriod,
-                               orgName: String,
-                               address: UkAddress,
-                               reason: String,
-                               repaymentMethod: Option[String] = None
-                             ): ReturnVariationData = {
-    ReturnVariationData(
-      original,
-      revised,
-      period,
-      orgName,
-      address,
-      reason,
-      repaymentMethod)
-  }
 
   def testSdilReturn(ownBrand: (Long, Long) = (15, 12),
                      packLarge: (Long, Long) = (15, 12),
@@ -73,26 +53,6 @@ trait DataHelper {
     alias = alias,
     sdilRef = sdilRef,
     litreage = litreage
-  )
-
-  def testProducer(
-                    isProducer: Boolean,
-                    isLarge: Option[Boolean] = None
-                  ): Producer = Producer(
-    isProducer = isProducer,
-    isLarge = isLarge
-  )
-
-  def testLiterage(
-                    atLowRate: BigDecimal,
-                    atHighRate: BigDecimal
-                  ): Litreage = Litreage(
-    atLowRate = atLowRate,
-    atHighRate = atHighRate
-  )
-
-  def testConvert(vd: RegistrationVariationData): VariationsSubmission = Convert(
-    vd = vd
   )
 
   def testRetrievedActivity(
@@ -151,14 +111,6 @@ trait DataHelper {
     postCode = "AA111AA"
   )
 
-  def testWarehouse(
-                     tradingName: String = "test trading name",
-                     address: UkAddress
-                   ): Site = Site(
-    tradingName = Some(tradingName),
-    address = address
-  )
-
 
   def testRetrievedSubscription(
                                  utr: String = "testutr",
@@ -181,42 +133,6 @@ trait DataHelper {
     productionSites = productionSites,
     warehouseSites = warehouseSites,
     contact = contact,
-    deregDate = deregDate
-  )
-
-  def testRegistrationVariationData(
-                                     original: RetrievedSubscription,
-                                     updatedBusinessAddress: UkAddress,
-                                     producer: Producer,
-                                     usesCopacker: Option[Boolean] = None,
-                                     packageOwn: Option[Boolean] = None,
-                                     packageOwnVol: Option[Litreage] = None,
-                                     copackForOthers: Boolean = false,
-                                     copackForOthersVol: Option[Litreage] = None,
-                                     imports: Boolean = false,
-                                     importsVol: Option[Litreage] = None,
-                                     updatedProductionSites: Seq[Site] = Seq.empty,
-                                     updatedWarehouseSites: Seq[Site] = Seq.empty,
-                                     updatedContactDetails: ContactDetails,
-                                     previousPages: Seq[Call] = Seq.empty,
-                                     reason: Option[String] = None,
-                                     deregDate: Option[LocalDate] = None
-                                   ): RegistrationVariationData = RegistrationVariationData(
-    original = original,
-    updatedBusinessAddress = updatedBusinessAddress,
-    producer = producer,
-    usesCopacker = usesCopacker,
-    packageOwn = packageOwn,
-    packageOwnVol = packageOwnVol,
-    copackForOthers = copackForOthers,
-    copackForOthersVol = copackForOthersVol,
-    imports = imports,
-    importsVol = importsVol,
-    updatedProductionSites = updatedProductionSites,
-    updatedWarehouseSites = updatedWarehouseSites,
-    updatedContactDetails = updatedContactDetails,
-    previousPages = previousPages,
-    reason = reason,
     deregDate = deregDate
   )
 }

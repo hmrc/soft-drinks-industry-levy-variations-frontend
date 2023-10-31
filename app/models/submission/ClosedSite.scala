@@ -14,17 +14,19 @@
  * limitations under the License.
  */
 
-package models
+package models.submission
 
-import play.api.libs.json.{Json, OFormat}
+import models.backend.Site
+import play.api.libs.json.{Json, Writes}
 
-case class Litreage(atLowRate: BigDecimal, atHighRate: BigDecimal) {
-  val total: BigDecimal = atLowRate + atHighRate
+object ClosedSite {
+
+  def fromSite(site: Site): ClosedSite = ClosedSite(
+    tradingName = site.tradingName.getOrElse(""),
+    siteReference = site.ref.getOrElse("1"),
+    reasonOfClosure = "This site is no longer open."
+  )
+  implicit val writes: Writes[ClosedSite] = Json.writes[ClosedSite]
 }
 
-object Litreage {
-  def apply(litresInBands: LitresInBands): Litreage = {
-    Litreage(litresInBands.lowBand,litresInBands.highBand)
-  }
-  implicit val format: OFormat[Litreage] = Json.format[Litreage]
-}
+case class ClosedSite(tradingName: String, siteReference: String, reasonOfClosure: String)

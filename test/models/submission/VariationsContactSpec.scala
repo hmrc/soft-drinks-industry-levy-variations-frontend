@@ -14,17 +14,15 @@
  * limitations under the License.
  */
 
-package models.UpdateRegisteredDetails
+package models.submission
 
 import base.SpecBase
 import models.backend.UkAddress
-import models.updateRegisteredDetails.Submission.VariationsContact
 import models.updateRegisteredDetails.ContactDetails
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.libs.json.Json
 
 class VariationsContactSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with SpecBase{
@@ -61,59 +59,82 @@ class VariationsContactSpec extends AnyFreeSpec with Matchers with ScalaCheckPro
       }
     }
 
-    "generateBusinessContact" - {
-      "when i have submitted no changes to an address" in {
+    "generateForBusinessContact" - {
+      "should return None" - {
+        "when the contact address is the same and variation personal details are not supplied" in {
+          val res = VariationsContact.generateForBusinessContact(
+            emptyUserAnswersForUpdateRegisteredDetails.copy(contactAddress = aSubscription.address),
+            aSubscription, None)
 
+          res mustEqual None
+        }
 
+        "when the contact address is the same and the variation personal details don't have an update phone or email" in {
+          val varPDs = VariationsPersonalDetails()
+          val res = VariationsContact.generateForBusinessContact(
+            emptyUserAnswersForUpdateRegisteredDetails.copy(contactAddress = aSubscription.address),
+            aSubscription, Some(varPDs))
 
-       VariationsContact.generateBusinessContact(
-         emptyUserAnswersForUpdateRegisteredDetails,
-         aSubscription.copy(address = emptyUserAnswersForUpdateRegisteredDetails.contactAddress)
-       ) mustEqual None
+          res mustEqual None
+        }
       }
 
-      "when i have submitted a change to address line 1" in {
-        lazy val subscriptionAddress = UkAddress(List("12 Bishop Street", "East London"), "E73 2RP")
+      "should return the expected model" - {
+        "when the address is different but contact details are unchanged" in {
+          val res = VariationsContact.generateForBusinessContact(
+            emptyUserAnswersForUpdateRegisteredDetails.copy(contactAddress = updatedContactAddress),
+            aSubscription, None)
 
-        VariationsContact.generateBusinessContact(
-          emptyUserAnswersForUpdateRegisteredDetails,
-          aSubscription.copy(address = subscriptionAddress)
-        ) mustEqual Some(VariationsContact(Some(emptyUserAnswersForUpdateRegisteredDetails.contactAddress),None, None))
+          val expectedResult = VariationsContact(Some(updatedContactAddress))
+
+          res mustEqual Some(expectedResult)
+        }
+
+        "when only the phoneNumber has changed" in {
+          val updatedPhoneNumber = "0800483922"
+          val res = VariationsContact.generateForBusinessContact(
+            emptyUserAnswersForUpdateRegisteredDetails.copy(contactAddress = aSubscription.address),
+            aSubscription, Some(VariationsPersonalDetails(telephoneNumber = Some(updatedPhoneNumber))))
+
+          val expectedResult = VariationsContact(telephoneNumber = Some(updatedPhoneNumber))
+
+          res mustEqual Some(expectedResult)
+        }
+
+        "when only the email has changed" in {
+          val updatedEmail = "test1@example.com"
+          val res = VariationsContact.generateForBusinessContact(
+            emptyUserAnswersForUpdateRegisteredDetails.copy(contactAddress = aSubscription.address),
+            aSubscription, Some(VariationsPersonalDetails(emailAddress = Some(updatedEmail))))
+
+          val expectedResult = VariationsContact(emailAddress = Some(updatedEmail))
+
+          res mustEqual Some(expectedResult)
+        }
+
+        "when address, telephone and email are all updated" in {
+          val updatedPhoneNumber = "0800483922"
+          val updatedEmail = "test1@example.com"
+          val res = VariationsContact.generateForBusinessContact(
+            emptyUserAnswersForUpdateRegisteredDetails.copy(contactAddress = updatedContactAddress),
+            aSubscription, Some(VariationsPersonalDetails(telephoneNumber = Some(updatedPhoneNumber), emailAddress = Some(updatedEmail))))
+
+          val expectedResult = VariationsContact(Some(updatedContactAddress), Some(updatedPhoneNumber), Some(updatedEmail))
+
+          res mustEqual Some(expectedResult)
+        }
       }
+    }
 
-      "when i have submitted a change to postcode" in {
-        lazy val subscriptionAddress = UkAddress(List("19 Rhes Priordy", "East London"), "F23 9RJ")
+    "generateForSiteContact" - {
+      "must return the expected Variations contact" - {
+        "when provided with contact details and site" in {
+          val contactDetails = ContactDetails("full name", "job", "0897484949", "test@email.com")
+          val res = VariationsContact.generateForSiteContact(contactDetails, packingSite)
+          val expectedResult = VariationsContact(Some(packingSite.address), Some("0897484949"), Some("test@email.com"))
 
-        VariationsContact.generateBusinessContact(
-          emptyUserAnswersForUpdateRegisteredDetails,
-          aSubscription.copy(address = subscriptionAddress)
-        ) mustEqual Some(VariationsContact(Some(emptyUserAnswersForUpdateRegisteredDetails.contactAddress),None, None))
-      }
-
-      "when i have submitted no changes to an address but have made changes to email address and phone number" in {
-        val contactDetails = ContactDetails("foo", "bar", "123456789", "email@test.com")
-
-        VariationsContact.generateBusinessContact(
-          emptyUserAnswersForUpdateRegisteredDetails.set(UpdateContactDetailsPage, contactDetails).success.value,
-          aSubscription.copy(address = emptyUserAnswersForUpdateRegisteredDetails.contactAddress)
-        ) mustEqual None
-      }
-
-      "when i have submitted changes to the address line 1,  email address and phone number" in {
-        lazy val contactDetails = ContactDetails("foo", "bar", "123456789", "email@test.com")
-        lazy val subscriptionAddress = UkAddress(List("19 Rhes Priordy", "East London"), "F23 9RJ")
-
-        VariationsContact.generateBusinessContact(
-          emptyUserAnswersForUpdateRegisteredDetails.set(UpdateContactDetailsPage, contactDetails).success.value,
-          aSubscription.copy(address = subscriptionAddress)
-        ) mustEqual
-          Some(
-            VariationsContact(
-              Some(emptyUserAnswersForUpdateRegisteredDetails.contactAddress),
-              Some("123456789"),
-              Some("email@test.com")
-            )
-          )
+          res mustEqual expectedResult
+        }
       }
     }
 

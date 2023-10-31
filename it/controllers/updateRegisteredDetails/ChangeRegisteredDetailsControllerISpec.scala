@@ -1,8 +1,9 @@
 package controllers.updateRegisteredDetails
 
 import controllers.ControllerITTestHelper
-import models.{NormalMode, RetrievedActivity}
+import models.NormalMode
 import models.SelectChange.UpdateRegisteredDetails
+import models.backend.RetrievedActivity
 import models.updateRegisteredDetails.ChangeRegisteredDetails
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, not}

@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package models
+package models.backend
 
-import models.backend.{Site, UkAddress}
+import models.Contact
 import play.api.libs.json.Json
 
 import java.time.LocalDate

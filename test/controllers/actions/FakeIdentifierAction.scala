@@ -18,7 +18,8 @@ package controllers.actions
 
 import base.TestData
 import models.requests.IdentifierRequest
-import models.{RetrievedSubscription, ReturnPeriod}
+import models.ReturnPeriod
+import models.backend.RetrievedSubscription
 import play.api.mvc._
 
 import javax.inject.Inject

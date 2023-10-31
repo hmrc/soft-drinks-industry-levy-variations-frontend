@@ -14,33 +14,29 @@
  * limitations under the License.
  */
 
-package models.changeActivity.submission
+package models.submission
 
-import models.Litreage
-import play.api.libs.json.{Format, JsResult, JsValue, Json}
+import models.changeActivity.ChangeActivityData
+import play.api.libs.json.{Format, Json}
 
 case class Activity(
                      ProducedOwnBrand: Option[Litreage],
                      Imported: Option[Litreage],
                      CopackerAll: Option[Litreage],
                      Copackee: Option[Litreage],
-                     isLarge: Boolean) {
-
-  def nonEmpty: Boolean = Seq(ProducedOwnBrand, Imported, CopackerAll, Copackee).flatten.nonEmpty
-}
+                     isLarge: Boolean)
 
 object Activity {
-  private implicit val litreageFormat: Format[Litreage] = new Format[Litreage] {
-    override def writes(o: Litreage): JsValue = Json.obj("lower" -> o.atLowRate, "upper" -> o.atHighRate)
-
-    override def reads(json: JsValue): JsResult[Litreage] =
-      for {
-        atLowRate  <- (json \ "lower").validate[BigDecimal]
-        atHighRate <- (json \ "upper").validate[BigDecimal]
-      } yield {
-        Litreage(atLowRate, atHighRate)
-      }
-  }
-
   implicit val format: Format[Activity] = Json.format[Activity]
+  def fromChangeActivityData(changeActivityData: ChangeActivityData): Activity = {
+    val copackee = if(changeActivityData.isCopackee) {Some(Litreage(1, 1)) } else {None}
+
+    Activity(
+      changeActivityData.ownBrandsProduced.map(Litreage.fromLitresInBands),
+      changeActivityData.imported.map(Litreage.fromLitresInBands),
+      changeActivityData.copackerAll.map(Litreage.fromLitresInBands),
+      copackee,
+      changeActivityData.isLarge
+    )
+  }
 }

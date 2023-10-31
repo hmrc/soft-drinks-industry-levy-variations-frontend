@@ -18,7 +18,8 @@ package views.summary.correctReturn
 
 import config.FrontendAppConfig
 import models.correctReturn.ChangedPage
-import models.{RetrievedSubscription, UserAnswers}
+import models.UserAnswers
+import models.backend.RetrievedSubscription
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 import viewmodels.summary.correctReturn.ExemptionsForSmallProducersSummary

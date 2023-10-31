@@ -21,7 +21,12 @@ import controllers.updateRegisteredDetails.routes._
 import models.SelectChange.UpdateRegisteredDetails
 import models.backend.UkAddress
 import models.updateRegisteredDetails.ContactDetails
+import orchestrators.UpdateRegisteredDetailsOrchestrator
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.mock
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -59,10 +64,19 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
     }
 
     "must redirect to update done when data is correct for POST" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)).build()
+      val mockOrchestrator: UpdateRegisteredDetailsOrchestrator = mock[UpdateRegisteredDetailsOrchestrator]
+
+      val application = applicationBuilder(
+        userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails),
+        subscription = Some(aSubscription))
+        .overrides(
+          bind[UpdateRegisteredDetailsOrchestrator].toInstance(mockOrchestrator)
+        )
+        .build()
 
       running(application) {
         val request = FakeRequest(POST, UpdateRegisteredDetailsCYAController.onPageLoad.url).withFormUrlEncodedBody()
+        when(mockOrchestrator.submitVariation(any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
 
         val result = route(application, request).value
 

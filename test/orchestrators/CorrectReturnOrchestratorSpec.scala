@@ -153,7 +153,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
                                              returnPeriod: ReturnPeriod)
                                             (implicit writes: Writes[CorrectReturnUserAnswersData]): Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
             override def setOriginalSDILReturn(originalSDILReturn: SdilReturn)
-                                              (implicit writes: Writes[CorrectReturnUserAnswersData]):
+                                              (implicit writes: Writes[SdilReturn]):
               Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
           }
           when(mockSdilConnector.getReturn(aSubscription.utr, returnPeriods.head)(hc)).thenReturn(createSuccessVariationResult(Some(emptyReturn)))

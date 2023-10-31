@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-package models
+package models.backend
 
-import play.api.libs.json.{Json, Writes}
+import models.SdilReturn
+import play.api.libs.json.{Format, Json}
 
-object ClosedSite {
-  implicit val writes: Writes[ClosedSite] = Json.writes[ClosedSite]
+case class OptPreviousSubmittedReturn(optReturn: Option[SdilReturn])
+
+object OptPreviousSubmittedReturn {
+  implicit val format: Format[OptPreviousSubmittedReturn] = Json.format[OptPreviousSubmittedReturn]
 }
-
-case class ClosedSite(tradingName: String, siteReference: String, reasonOfClosure: String)

@@ -1,8 +1,8 @@
 package testSupport
 
 import controllers.routes
-import models.{Contact, RetrievedActivity, RetrievedSubscription}
-import models.backend.{Site, UkAddress}
+import models.{Contact, backend, submission}
+import models.backend.{RetrievedActivity, RetrievedSubscription, Site, UkAddress}
 import org.scalatest.TryValues
 import play.api.libs.json.Json
 
@@ -54,7 +54,7 @@ trait ITCoreTestData
     deregDate = None
   )
 
-  val diffSubscriptionWithWarehouses: RetrievedSubscription = RetrievedSubscription(
+  val diffSubscriptionWithWarehouses: RetrievedSubscription = backend.RetrievedSubscription(
     utr = "0000001611",
     sdilRef = "XKSDIL000000022",
     orgName = "Super Lemonade Plc",
