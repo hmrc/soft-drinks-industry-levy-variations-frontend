@@ -110,21 +110,19 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     }
   }
 
-  private def navigationForCreditsForLostDamaged(userAnswers: UserAnswers, mode: Mode, subscription: Option[RetrievedSubscription] = None) = {
+  private def navigationForCreditsForLostDamagedInNormalMode(userAnswers: UserAnswers, subscription: RetrievedSubscription) = {
     if (userAnswers.get(page = ClaimCreditsForLostDamagedPage).contains(true)) {
-      routes.HowManyCreditsForLostDamagedController.onPageLoad(mode)
-    } else if (mode == CheckMode) {
-      routes.CorrectReturnCYAController.onPageLoad
+      routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode)
     } else {
-      navigationToReturnChangeRegistrationIfRequired(userAnswers, subscription.get, mode)
+      navigationToReturnChangeRegistrationIfRequired(userAnswers, subscription, NormalMode)
     }
   }
 
-  private def navigationForHowManyCreditsForLostDamaged(userAnswers: UserAnswers, mode: Mode, subscription: Option[RetrievedSubscription] = None) = {
-    if (mode == CheckMode) {
-      routes.CorrectReturnCYAController.onPageLoad
+  private def navigationForCreditsForLostDamagedInCheckMode(userAnswers: UserAnswers) = {
+    if (userAnswers.get(page = ClaimCreditsForLostDamagedPage).contains(true)) {
+      routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode)
     } else {
-      navigationToReturnChangeRegistrationIfRequired(userAnswers, subscription.get, mode)
+      routes.CorrectReturnCYAController.onPageLoad
     }
   }
 
@@ -168,8 +166,8 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   }
 
   override val normalRoutesWithSubscription: Page => (UserAnswers, RetrievedSubscription) => Call = {
-    case ClaimCreditsForLostDamagedPage => (userAnswers, subscription) => navigationForCreditsForLostDamaged(userAnswers, NormalMode, Option(subscription))
-    case HowManyCreditsForLostDamagedPage => (userAnswers, subscription) => navigationForHowManyCreditsForLostDamaged(userAnswers, NormalMode, Option(subscription))
+    case ClaimCreditsForLostDamagedPage => (userAnswers, subscription) => navigationForCreditsForLostDamagedInNormalMode(userAnswers, subscription)
+    case HowManyCreditsForLostDamagedPage => (userAnswers, subscription) => navigationToReturnChangeRegistrationIfRequired(userAnswers, subscription, NormalMode)
     case _ => (_, _) => defaultCall
   }
 
@@ -183,8 +181,8 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, CheckMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.CorrectReturnCYAController.onPageLoad
-    case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamaged(userAnswers, CheckMode)
-    case HowManyCreditsForLostDamagedPage => userAnswers => navigationForHowManyCreditsForLostDamaged(userAnswers, CheckMode)
+    case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamagedInCheckMode(userAnswers)
+    case HowManyCreditsForLostDamagedPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case AddASmallProducerPage => _ => navigationForAddASmallProducer(CheckMode)
     case SmallProducerDetailsPage => userAnswers => navigationForSmallProducerDetails(userAnswers, CheckMode)
     case RemoveSmallProducerConfirmPage => userAnswers => navigationForRemoveSmallProducerConfirm(userAnswers, CheckMode)
