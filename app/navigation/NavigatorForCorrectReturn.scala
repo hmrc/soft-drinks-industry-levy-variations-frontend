@@ -158,8 +158,6 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case CorrectionReasonPage => _ => routes.RepaymentMethodController.onPageLoad(NormalMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => routes.PackagedAsContractPackerController.onPageLoad(NormalMode)
-    case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamaged(userAnswers, NormalMode)
-    case HowManyCreditsForLostDamagedPage => userAnswers => navigationForHowManyCreditsForLostDamaged(userAnswers, NormalMode)
     case RepaymentMethodPage => userAnswers => routes.CorrectReturnCheckChangesCYAController.onPageLoad
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, NormalMode)
     case HowManyPackagedAsContractPackerPage => _ => routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
@@ -170,12 +168,13 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   }
 
   override val normalRoutesWithSubscription: Page => (UserAnswers, RetrievedSubscription) => Call = {
+    case ClaimCreditsForLostDamagedPage => (userAnswers, subscription) => navigationForCreditsForLostDamaged(userAnswers, NormalMode)
+    case HowManyCreditsForLostDamagedPage => (userAnswers, subscription) => navigationForHowManyCreditsForLostDamaged(userAnswers, NormalMode)
     case _ => (_, _) => defaultCall
   }
 
   override val checkRouteMap: Page => UserAnswers => Call = {
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, CheckMode)
-    case HowManyBroughtIntoUKPage => userAnswers => navigationToReturnChangeRegistrationIfRequired(userAnswers, CheckMode)
     case BroughtIntoUkFromSmallProducersPage => userAnswers => navigationForBroughtIntoUkFromSmallProducers(userAnswers, CheckMode)
     case HowManyBroughtIntoUkFromSmallProducersPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case ClaimCreditsForExportsPage => userAnswers => navigationForClaimCreditsForExports(userAnswers, CheckMode)
@@ -184,7 +183,6 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, CheckMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.CorrectReturnCYAController.onPageLoad
-    case HowManyPackagedAsContractPackerPage => userAnswers => navigationToReturnChangeRegistrationIfRequired(userAnswers, CheckMode)
     case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamaged(userAnswers, CheckMode)
     case HowManyCreditsForLostDamagedPage => userAnswers => navigationForHowManyCreditsForLostDamaged(userAnswers, CheckMode)
     case AddASmallProducerPage => _ => navigationForAddASmallProducer(CheckMode)
@@ -195,6 +193,8 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   }
 
   override val checkRouteMapWithSubscription: Page => (UserAnswers, RetrievedSubscription) => Call = {
+    case HowManyBroughtIntoUKPage => (userAnswers, subscription) => navigationToReturnChangeRegistrationIfRequired(userAnswers, CheckMode)
+    case HowManyPackagedAsContractPackerPage => (userAnswers, subscription) => navigationToReturnChangeRegistrationIfRequired(userAnswers, CheckMode)
     case _ => (_, _) => defaultCall
   }
 

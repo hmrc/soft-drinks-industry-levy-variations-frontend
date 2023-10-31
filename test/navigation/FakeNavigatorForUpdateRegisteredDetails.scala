@@ -18,10 +18,10 @@ package navigation
 
 import play.api.mvc.Call
 import pages.Page
-import models.{Mode, UserAnswers}
+import models.{Mode, RetrievedSubscription, UserAnswers}
 
 class FakeNavigatorForUpdateRegisteredDetails(desiredRoute: Call) extends NavigatorForUpdateRegisteredDetails {
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call =
+  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers, subscription: Option[RetrievedSubscription] = None): Call =
     desiredRoute
 }
