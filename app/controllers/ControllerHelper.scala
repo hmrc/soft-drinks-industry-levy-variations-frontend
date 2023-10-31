@@ -41,7 +41,6 @@ trait ControllerHelper extends FrontendBaseController with I18nSupport {
 
   private def sessionRepo500ErrorMessage(page: Page): String = s"$internalServerErrorBaseMessage while attempting set on ${page.toString}"
 
-//  TODO: Will have to add subscription option in here, after passing in from controllers
   def updateDatabaseAndRedirect(updatedAnswers: Try[UserAnswers], page: Page, mode: Mode, subscription: Option[RetrievedSubscription] = None)
                                (implicit ec: ExecutionContext, request: Request[AnyContent]): Future[Result] = {
     updatedAnswers match {
@@ -56,10 +55,10 @@ trait ControllerHelper extends FrontendBaseController with I18nSupport {
     }
   }
 
-  def updateDatabaseAndRedirect(updatedAnswers: UserAnswers, page: Page, mode: Mode, subscription: Option[RetrievedSubscription] = None)
+  def updateDatabaseAndRedirect(updatedAnswers: UserAnswers, page: Page, mode: Mode)
                                (implicit ec: ExecutionContext, request: Request[AnyContent]): Future[Result] = {
     sessionService.set(updatedAnswers).map {
-      case Right(_) => Redirect(navigator.nextPage(page, mode, updatedAnswers, subscription))
+      case Right(_) => Redirect(navigator.nextPage(page, mode, updatedAnswers))
       case Left(_) =>
         genericLogger.logger.error(sessionRepo500ErrorMessage(page))
         InternalServerError(errorHandler.internalServerErrorTemplate)
