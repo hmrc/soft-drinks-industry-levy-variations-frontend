@@ -48,9 +48,9 @@ class PackagedAsContractPackerController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
-//      TODO: Remove need for this - pass subscription into Navigator in way that does not affect too many other files
-      val setIsPackerFromSubscription = request.userAnswers.set(IsPackerPage, request.subscription.activity.contractPacker)
-      updateDatabaseWithoutRedirect(setIsPackerFromSubscription, IsPackerPage)
+////      TODO: Remove need for this - pass subscription into Navigator in way that does not affect too many other files
+//      val setIsPackerFromSubscription = request.userAnswers.set(IsPackerPage, request.subscription.activity.contractPacker)
+//      updateDatabaseWithoutRedirect(setIsPackerFromSubscription, IsPackerPage)
       val preparedForm = request.userAnswers.get(PackagedAsContractPackerPage) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -66,11 +66,10 @@ class PackagedAsContractPackerController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
-        //        TODO: Pass in request.subscription for navigation
         value => {
           val updatedAnswers = request.userAnswers.setAndRemoveLitresIfReq(PackagedAsContractPackerPage, HowManyPackagedAsContractPackerPage, value)
           updateDatabaseAndRedirect(updatedAnswers, PackagedAsContractPackerPage, mode)
-          }
+        }
       )
   }
 }

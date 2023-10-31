@@ -27,15 +27,11 @@ trait Navigator {
 
   val normalRoutes: Page => UserAnswers => Call
 
-  val normalRoutesWithSubscription: Page => (UserAnswers, RetrievedSubscription) => Call = {
-    case _ => (_, _) => defaultCall
-  }
+  val normalRoutesWithSubscription: Page => (UserAnswers, RetrievedSubscription) => Call = _ => (_, _) => defaultCall
 
   val checkRouteMap: Page => UserAnswers => Call
 
-  val checkRouteMapWithSubscription: Page => (UserAnswers, RetrievedSubscription) => Call = {
-    case _ => (_, _) => defaultCall
-  }
+  val checkRouteMapWithSubscription: Page => (UserAnswers, RetrievedSubscription) => Call = _ => (_, _) => defaultCall
 
   val editRouteMap: Page => UserAnswers => Call
 

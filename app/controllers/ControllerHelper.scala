@@ -18,7 +18,7 @@ package controllers
 
 import handlers.ErrorHandler
 import models.requests.DataRequest
-import models.{Mode, UserAnswers}
+import models.{Mode, RetrievedSubscription, UserAnswers}
 import navigation.Navigator
 import pages.Page
 import play.api.i18n.I18nSupport
@@ -42,24 +42,24 @@ trait ControllerHelper extends FrontendBaseController with I18nSupport {
   private def sessionRepo500ErrorMessage(page: Page): String = s"$internalServerErrorBaseMessage while attempting set on ${page.toString}"
 
 //  TODO: Will have to add subscription option in here, after passing in from controllers
-  def updateDatabaseAndRedirect(updatedAnswers: Try[UserAnswers], page: Page, mode: Mode)
+  def updateDatabaseAndRedirect(updatedAnswers: Try[UserAnswers], page: Page, mode: Mode, subscription: Option[RetrievedSubscription] = None)
                                (implicit ec: ExecutionContext, request: Request[AnyContent]): Future[Result] = {
     updatedAnswers match {
       case Failure(_) =>
         genericLogger.logger.error(s"Failed to resolve user answers while on ${page.toString}")
         Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
       case Success(answers) => sessionService.set(answers).map {
-        case Right(_) => Redirect(navigator.nextPage(page, mode, answers))
+        case Right(_) => Redirect(navigator.nextPage(page, mode, answers, subscription))
         case Left(_) => genericLogger.logger.error(sessionRepo500ErrorMessage(page))
           InternalServerError(errorHandler.internalServerErrorTemplate)
       }
     }
   }
 
-  def updateDatabaseAndRedirect(updatedAnswers: UserAnswers, page: Page, mode: Mode)
+  def updateDatabaseAndRedirect(updatedAnswers: UserAnswers, page: Page, mode: Mode, subscription: Option[RetrievedSubscription] = None)
                                (implicit ec: ExecutionContext, request: Request[AnyContent]): Future[Result] = {
     sessionService.set(updatedAnswers).map {
-      case Right(_) => Redirect(navigator.nextPage(page, mode, updatedAnswers))
+      case Right(_) => Redirect(navigator.nextPage(page, mode, updatedAnswers, subscription))
       case Left(_) =>
         genericLogger.logger.error(sessionRepo500ErrorMessage(page))
         InternalServerError(errorHandler.internalServerErrorTemplate)

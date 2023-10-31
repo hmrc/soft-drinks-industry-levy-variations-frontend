@@ -20,7 +20,7 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.HowManyLitresFormProvider
 import handlers.ErrorHandler
-import models.{LitresInBands, Mode}
+import models.{LitresInBands, Mode, NormalMode}
 import navigation._
 import pages.correctReturn.HowManyCreditsForLostDamagedPage
 import play.api.data.Form
@@ -64,10 +64,10 @@ class HowManyCreditsForLostDamagedController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
-//        TODO: Pass in request.subscription for navigation
         value => {
           val updatedAnswers = request.userAnswers.set(HowManyCreditsForLostDamagedPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, HowManyCreditsForLostDamagedPage, mode)
+          val subscription = if (mode == NormalMode) Some(request.subscription) else None
+          updateDatabaseAndRedirect(updatedAnswers, HowManyCreditsForLostDamagedPage, mode, subscription)
         }
       )
   }
