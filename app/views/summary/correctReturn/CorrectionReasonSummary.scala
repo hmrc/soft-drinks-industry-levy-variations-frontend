@@ -26,13 +26,13 @@ import viewmodels.implicits._
 
 object CorrectionReasonSummary  {
 
-  def row(answers: UserAnswers, noChangeAction: Boolean = false)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers, isCheckAnswers: Boolean = true)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(CorrectionReasonPage).map {
       answer =>
         SummaryListRowViewModel(
           key     = "correctReturn.correctionReason.checkYourAnswersLabel",
           value   = ValueViewModel(answer),
-          actions = if (noChangeAction) Seq.empty else {
+          actions = if (!isCheckAnswers) Seq.empty else {
             Seq(
               ActionItemViewModel("site.change", routes.CorrectionReasonController.onPageLoad(CheckMode).url)
                 .withVisuallyHiddenText(messages("correctReturn.correctionReason.change.hidden"))

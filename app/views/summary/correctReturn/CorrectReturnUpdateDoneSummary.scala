@@ -24,22 +24,23 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, Summ
 
 object CorrectReturnUpdateDoneSummary {
 
-  def changeSpecificSummaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription, changedPages: List[ChangedPage], noChangeAction: Boolean = false)
+  def changeSpecificSummaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription, changedPages: List[ChangedPage], isCheckAnswers: Boolean = true)
                                           (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
-    val mainSection = CorrectReturnBaseCYASummary.changedSummaryListAndHeadings(userAnswers, subscription, changedPages, noChangeAction)
-    val correctionDetailsSection = correctionSection(userAnswers, noChangeAction)
+    val mainSection = CorrectReturnBaseCYASummary.changedSummaryListAndHeadings(userAnswers, subscription, changedPages, isCheckAnswers)
+    val correctionDetailsSection = correctionSection(userAnswers, isCheckAnswers)
     mainSection ++ correctionDetailsSection
   }
 
-  private def correctionSection(userAnswers: UserAnswers, noChangeAction: Boolean = false)
+  private def correctionSection(userAnswers: UserAnswers, isCheckAnswers: Boolean = true)
                                      (implicit messages: Messages): Option[(String, SummaryList)] = {
-    val correctionReasonSummary: Option[SummaryListRow] = CorrectionReasonSummary.row(userAnswers, noChangeAction)
-    val repaymentMethodSummary: Option[SummaryListRow] = RepaymentMethodSummary.row(userAnswers, noChangeAction)
+    val correctionReasonSummary: Option[SummaryListRow] = CorrectionReasonSummary.row(userAnswers, isCheckAnswers)
+    val repaymentMethodSummary: Option[SummaryListRow] = RepaymentMethodSummary.row(userAnswers, isCheckAnswers)
 
     val correctionSectionSummaryList: Option[SummaryList] = for {
       correctionReason <- correctionReasonSummary
       repaymentMethod <- repaymentMethodSummary
     } yield SummaryList(Seq(correctionReason, repaymentMethod))
-    correctionSectionSummaryList.map("correctReturn.correctionSection.checkYourAnswersLabel" -> _)}
+    correctionSectionSummaryList.map("correctReturn.correctionSection.checkYourAnswersLabel" -> _)
+  }
 
 }

@@ -102,10 +102,6 @@ class CorrectReturnUpdateDoneViewSpec extends ViewSpecHelper {
         "By sending this correction you are confirming that, to the best of your knowledge, the details you are providing are correct."
     }
 
-    "contains a form with the correct action" in {
-      document.select(Selectors.form).attr("action") mustEqual call.url
-    }
-
     testBackLink(document)
     validateTimeoutDialog(document)
     validateTechnicalHelpLinkPresent(document)

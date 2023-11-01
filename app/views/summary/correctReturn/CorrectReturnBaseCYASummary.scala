@@ -33,22 +33,22 @@ object CorrectReturnBaseCYASummary {
       claimCreditsForLostDamagedSection(userAnswers) ++ siteDetailsSection(userAnswers, subscription)).toSeq
   }
 
-  def changedSummaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription, changedPages: List[ChangedPage], noChangeAction: Boolean = false)
+  def changedSummaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription, changedPages: List[ChangedPage], isCheckAnswers: Boolean = true)
                             (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
-    (ownBrandsSummarySection(userAnswers, changedPages.head.answerChanged, noChangeAction) ++
-      contractPackerSummarySection(userAnswers, changedPages.apply(2).answerChanged, noChangeAction) ++
-      contractPackedForRegisteredSmallProducersSection(userAnswers, changedPages.apply(12).answerChanged, noChangeAction) ++
-      broughtIntoUKSection(userAnswers, changedPages.apply(4).answerChanged, noChangeAction) ++
-      broughtIntoUkFromSmallProducersSection(userAnswers, changedPages.apply(6).answerChanged, noChangeAction) ++
-      claimCreditsForExportsSection(userAnswers, changedPages.apply(8).answerChanged, noChangeAction) ++
-      claimCreditsForLostDamagedSection(userAnswers, changedPages.apply(10).answerChanged, noChangeAction) ++
-      siteDetailsSection(userAnswers, subscription, noChangeAction)
+    (ownBrandsSummarySection(userAnswers, changedPages.head.answerChanged, isCheckAnswers) ++
+      contractPackerSummarySection(userAnswers, changedPages.apply(2).answerChanged, isCheckAnswers) ++
+      contractPackedForRegisteredSmallProducersSection(userAnswers, changedPages.apply(12).answerChanged, isCheckAnswers) ++
+      broughtIntoUKSection(userAnswers, changedPages.apply(4).answerChanged, isCheckAnswers) ++
+      broughtIntoUkFromSmallProducersSection(userAnswers, changedPages.apply(6).answerChanged, isCheckAnswers) ++
+      claimCreditsForExportsSection(userAnswers, changedPages.apply(8).answerChanged, isCheckAnswers) ++
+      claimCreditsForLostDamagedSection(userAnswers, changedPages.apply(10).answerChanged, isCheckAnswers) ++
+      siteDetailsSection(userAnswers, subscription, isCheckAnswers)
       ).toSeq
   }
 
-  private def ownBrandsSummarySection(userAnswers: UserAnswers, changedPage: Boolean = true, noChangeAction: Boolean = false)
+  private def ownBrandsSummarySection(userAnswers: UserAnswers, changedPage: Boolean = true, isCheckAnswers: Boolean = true)
                                      (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Option[(String, SummaryList)] = {
-    val ownBrandsSummary: SummaryList = OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers = true)
+    val ownBrandsSummary: SummaryList = OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers)
     val ownBrandsSummaryList: Option[(String, SummaryList)] = if (ownBrandsSummary.rows.isEmpty) None else {
       Option(
         "correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader" ->
@@ -62,9 +62,9 @@ object CorrectReturnBaseCYASummary {
     }
     showOwnBrandsSummaryList
   }
-  private def contractPackerSummarySection(userAnswers: UserAnswers, changedPage: Boolean = true, noChangeAction: Boolean = false)
+  private def contractPackerSummarySection(userAnswers: UserAnswers, changedPage: Boolean = true, isCheckAnswers: Boolean = true)
                                           (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Option[(String, SummaryList)] = {
-    val contractPackedOwnSiteSummary: SummaryList = PackagedAsContractPackerSummary.summaryList(userAnswers, isCheckAnswers = true)
+    val contractPackedOwnSiteSummary: SummaryList = PackagedAsContractPackerSummary.summaryList(userAnswers, isCheckAnswers)
     val contractPackedOwnSiteList: Option[(String, SummaryList)] = if (contractPackedOwnSiteSummary.rows.isEmpty) None else {
       Option(
         "correctReturn.packagedAsContractPacker.checkYourAnswersSectionHeader" ->
@@ -79,11 +79,11 @@ object CorrectReturnBaseCYASummary {
     showContractPackedOwnSiteList
   }
 
-  private def contractPackedForRegisteredSmallProducersSection(userAnswers: UserAnswers, changedPage: Boolean = true, noChangeAction: Boolean = false)
+  private def contractPackedForRegisteredSmallProducersSection(userAnswers: UserAnswers, changedPage: Boolean = true, isCheckAnswers: Boolean = true)
                                                               (implicit messages: Messages, frontendAppConfig: FrontendAppConfig)
   : Option[(String, SummaryList)] = {
     val contractPackedForRegisteredSmallProducers: SummaryList =
-      ExemptionsForSmallProducersSummary.summaryList(userAnswers, isCheckAnswers = true)
+      ExemptionsForSmallProducersSummary.summaryList(userAnswers, isCheckAnswers)
     val contractPackedForRegisteredSmallProducersList: Option[(String, SummaryList)] = {
       if (contractPackedForRegisteredSmallProducers.rows.isEmpty) None else {
         Option(
@@ -100,9 +100,9 @@ object CorrectReturnBaseCYASummary {
     showContractPackedForRegisteredSmallProducersList
   }
 
-  private def broughtIntoUKSection(userAnswers: UserAnswers, changedPage: Boolean = true, noChangeAction: Boolean = false)
+  private def broughtIntoUKSection(userAnswers: UserAnswers, changedPage: Boolean = true, isCheckAnswers: Boolean = true)
                                   (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Option[(String, SummaryList)] = {
-    val broughtIntoUKSummary: SummaryList = BroughtIntoUKSummary.summaryList(userAnswers, isCheckAnswers = true)
+    val broughtIntoUKSummary: SummaryList = BroughtIntoUKSummary.summaryList(userAnswers, isCheckAnswers)
     val broughtIntoUKList: Option[(String, SummaryList)] = if (broughtIntoUKSummary.rows.isEmpty) None else {
       Option(
         "correctReturn.broughtIntoUK.checkYourAnswersSectionHeader" ->
@@ -117,10 +117,10 @@ object CorrectReturnBaseCYASummary {
     showBroughtIntoUKList
   }
 
-  private def broughtIntoUkFromSmallProducersSection(userAnswers: UserAnswers, changedPage: Boolean = true, noChangeAction: Boolean = false)
+  private def broughtIntoUkFromSmallProducersSection(userAnswers: UserAnswers, changedPage: Boolean = true, isCheckAnswers: Boolean = true)
                                                     (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Option[(String, SummaryList)] = {
     val broughtIntoUkFromSmallProducersSummary: SummaryList =
-      BroughtIntoUkFromSmallProducersSummary.summaryList(userAnswers, isCheckAnswers = true)
+      BroughtIntoUkFromSmallProducersSummary.summaryList(userAnswers, isCheckAnswers)
     val broughtIntoUkFromSmallProducersList: Option[(String, SummaryList)] = {
       if (broughtIntoUkFromSmallProducersSummary.rows.isEmpty) None else {
         Option(
@@ -137,9 +137,9 @@ object CorrectReturnBaseCYASummary {
     showBroughtIntoUkFromSmallProducersList
   }
 
-  private def claimCreditsForExportsSection(userAnswers: UserAnswers, changedPage: Boolean = true, noChangeAction: Boolean = false)
+  private def claimCreditsForExportsSection(userAnswers: UserAnswers, changedPage: Boolean = true, isCheckAnswers: Boolean = true)
                                            (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Option[(String, SummaryList)] = {
-    val claimCreditsForExportsSummary: SummaryList = ClaimCreditsForExportsSummary.summaryList(userAnswers, isCheckAnswers = true)
+    val claimCreditsForExportsSummary: SummaryList = ClaimCreditsForExportsSummary.summaryList(userAnswers, isCheckAnswers)
     val claimCreditsForExportsList: Option[(String, SummaryList)] = if (claimCreditsForExportsSummary.rows.isEmpty) None else {
       Option(
         "correctReturn.claimCreditsForExports.checkYourAnswersSectionHeader" ->
@@ -154,9 +154,9 @@ object CorrectReturnBaseCYASummary {
     showClaimCreditsForExportsList
   }
 
-  private def claimCreditsForLostDamagedSection(userAnswers: UserAnswers, changedPage: Boolean = true, noChangeAction: Boolean = false)
+  private def claimCreditsForLostDamagedSection(userAnswers: UserAnswers, changedPage: Boolean = true, isCheckAnswers: Boolean = true)
                                                (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Option[(String, SummaryList)] = {
-    val claimCreditsForLostDamagedSummary: SummaryList = ClaimCreditsForLostDestroyedSummary.summaryList(userAnswers, isCheckAnswers = true)
+    val claimCreditsForLostDamagedSummary: SummaryList = ClaimCreditsForLostDestroyedSummary.summaryList(userAnswers, isCheckAnswers)
     val claimCreditsForLostDamagedList: Option[(String, SummaryList)] = if (claimCreditsForLostDamagedSummary.rows.isEmpty) None else {
       Option(
         "correctReturn.claimCreditsForLostDamaged.checkYourAnswersSectionHeader" ->
@@ -171,7 +171,7 @@ object CorrectReturnBaseCYASummary {
     showClaimCreditsForLostDamagedList
   }
 
-  private def siteDetailsSection(userAnswers: UserAnswers, subscription: RetrievedSubscription, noChangeAction: Boolean = false)(implicit messages: Messages): Option[(String, SummaryList)] =
-    UKSitesSummary.getHeadingAndSummary(userAnswers, isCheckAnswers = true, subscription)
+  private def siteDetailsSection(userAnswers: UserAnswers, subscription: RetrievedSubscription, isCheckAnswers: Boolean = true)(implicit messages: Messages): Option[(String, SummaryList)] =
+    UKSitesSummary.getHeadingAndSummary(userAnswers, isCheckAnswers, subscription)
 
 }
