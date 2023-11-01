@@ -27,6 +27,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.correctReturn.HowManyCreditsForLostDamagedPage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -39,12 +40,12 @@ import scala.concurrent.Future
 
 class HowManyCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new HowManyLitresFormProvider
-  val form = formProvider()
+  val form: Form[LitresInBands] = formProvider()
 
-  lazy val howManyCreditsForLostDamagedRoute = routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode).url
+  lazy val howManyCreditsForLostDamagedRoute: String = routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode).url
 
   "HowManyCreditsForLostDamaged Controller" - {
 

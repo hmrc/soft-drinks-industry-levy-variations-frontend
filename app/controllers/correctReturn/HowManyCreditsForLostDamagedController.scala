@@ -20,9 +20,10 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.HowManyLitresFormProvider
 import handlers.ErrorHandler
-import models.Mode
+import models.{LitresInBands, Mode, NormalMode}
 import navigation._
 import pages.correctReturn.HowManyCreditsForLostDamagedPage
+import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
@@ -44,11 +45,10 @@ class HowManyCreditsForLostDamagedController @Inject()(
                                          val errorHandler: ErrorHandler
                                  )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
+  val form: Form[LitresInBands] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(HowManyCreditsForLostDamagedPage) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -66,7 +66,8 @@ class HowManyCreditsForLostDamagedController @Inject()(
 
         value => {
           val updatedAnswers = request.userAnswers.set(HowManyCreditsForLostDamagedPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, HowManyCreditsForLostDamagedPage, mode)
+          val subscription = if (mode == NormalMode) Some(request.subscription) else None
+          updateDatabaseAndRedirect(updatedAnswers, HowManyCreditsForLostDamagedPage, mode, subscription)
         }
       )
   }

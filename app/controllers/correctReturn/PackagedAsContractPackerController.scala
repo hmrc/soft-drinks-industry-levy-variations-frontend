@@ -48,7 +48,6 @@ class PackagedAsContractPackerController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(PackagedAsContractPackerPage) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -67,7 +66,7 @@ class PackagedAsContractPackerController @Inject()(
         value => {
           val updatedAnswers = request.userAnswers.setAndRemoveLitresIfReq(PackagedAsContractPackerPage, HowManyPackagedAsContractPackerPage, value)
           updateDatabaseAndRedirect(updatedAnswers, PackagedAsContractPackerPage, mode)
-          }
+        }
       )
   }
 }

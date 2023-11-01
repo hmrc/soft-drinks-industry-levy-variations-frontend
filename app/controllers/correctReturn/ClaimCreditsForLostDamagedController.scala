@@ -20,7 +20,7 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.correctReturn.ClaimCreditsForLostDamagedFormProvider
 import handlers.ErrorHandler
-import models.Mode
+import models.{Mode, NormalMode}
 import navigation._
 import pages.correctReturn.{ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage}
 import play.api.i18n.MessagesApi
@@ -48,7 +48,6 @@ class ClaimCreditsForLostDamagedController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(ClaimCreditsForLostDamagedPage) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -59,15 +58,15 @@ class ClaimCreditsForLostDamagedController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value => {
           val updatedAnswers = request.userAnswers.setAndRemoveLitresIfReq(ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, ClaimCreditsForLostDamagedPage, mode)
-          }
+          val subscription = if (mode == NormalMode) Some(request.subscription) else None
+          updateDatabaseAndRedirect(updatedAnswers, ClaimCreditsForLostDamagedPage, mode, subscription)
+        }
       )
   }
 }

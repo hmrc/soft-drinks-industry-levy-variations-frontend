@@ -23,6 +23,7 @@ import handlers.ErrorHandler
 import models.Mode
 import navigation._
 import pages.correctReturn.{BroughtIntoUKPage, HowManyBroughtIntoUKPage}
+import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
@@ -44,11 +45,10 @@ class BroughtIntoUKController @Inject()(
                                           val errorHandler: ErrorHandler
                                  )(implicit ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
-
       val preparedForm = request.userAnswers.get(BroughtIntoUKPage) match {
         case None => form
         case Some(value) => form.fill(value)
@@ -67,7 +67,7 @@ class BroughtIntoUKController @Inject()(
         value => {
           val updatedAnswers = request.userAnswers.setAndRemoveLitresIfReq(BroughtIntoUKPage, HowManyBroughtIntoUKPage, value)
           updateDatabaseAndRedirect(updatedAnswers, BroughtIntoUKPage, mode)
-          }
+        }
       )
   }
 }

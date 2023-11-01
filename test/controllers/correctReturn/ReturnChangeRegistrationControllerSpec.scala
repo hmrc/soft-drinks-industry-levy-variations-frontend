@@ -17,6 +17,7 @@
 package controllers.correctReturn
 
 import base.SpecBase
+import models.NormalMode
 import models.SelectChange.CorrectReturn
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -26,7 +27,7 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase {
 
   def onwardRoute: Call = Call("GET", "/foo")
 
-  lazy val returnChangeRegistrationRoute = routes.ReturnChangeRegistrationController.onPageLoad().url
+  lazy val returnChangeRegistrationRoute = routes.ReturnChangeRegistrationController.onPageLoad(NormalMode).url
 
   lazy val submittedAnswers = emptyUserAnswersForCorrectReturn.copy(submitted = true)
 
@@ -44,7 +45,7 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[ReturnChangeRegistrationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view("/soft-drinks-industry-levy-variations-frontend")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(NormalMode, "/soft-drinks-industry-levy-variations-frontend")(request, messages(application)).toString
       }
     }
 
@@ -53,7 +54,7 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, routes.ReturnChangeRegistrationController.onPageLoad().url)
+          FakeRequest(POST, routes.ReturnChangeRegistrationController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value

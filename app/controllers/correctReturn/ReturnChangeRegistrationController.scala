@@ -18,7 +18,7 @@ package controllers.correctReturn
 
 import controllers.actions._
 import controllers.routes
-import models.NormalMode
+import models.{Mode, NormalMode}
 import navigation.NavigatorForCorrectReturn
 import pages.correctReturn.ReturnChangeRegistrationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -36,14 +36,14 @@ class ReturnChangeRegistrationController @Inject()(
                                                     view: ReturnChangeRegistrationView
                                                   ) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
-        Ok(view(routes.IndexController.onPageLoad.url))
+        Ok(view(mode, routes.IndexController.onPageLoad.url))
   }
 
-  def onSubmit(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
+  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
-      Redirect(navigator.nextPage(ReturnChangeRegistrationPage, NormalMode, request.userAnswers))
+      Redirect(navigator.nextPage(ReturnChangeRegistrationPage, mode, request.userAnswers))
   }
 
 }
