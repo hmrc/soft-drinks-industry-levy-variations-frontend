@@ -16,20 +16,24 @@
 
 package controllers.correctReturn
 
-import controllers.ControllerHelper
+import controllers.{ControllerHelper, routes}
 import controllers.actions._
 import forms.correctReturn.PackagingSiteDetailsFormProvider
 import handlers.ErrorHandler
-import models.Mode
+import models.{Mode, NormalMode, SdilReturn}
 import models.backend.Site
 import navigation._
 import pages.correctReturn.PackagingSiteDetailsPage
 import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.SessionService
-import utilities.GenericLogger
+import services.{AddressLookupService, PackingDetails, SessionService}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import uk.gov.hmrc.http.HeaderCarrier
+import utilities.{GenericLogger, UserTypeCheck}
+import viewmodels.govuk.SummaryListFluency
 import views.html.correctReturn.PackagingSiteDetailsView
+import views.summary.correctReturn.PackagingSiteDetailsSummary
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,11 +44,12 @@ class PackagingSiteDetailsController @Inject()(
                                        val navigator: NavigatorForCorrectReturn,
                                        controllerActions: ControllerActions,
                                        formProvider: PackagingSiteDetailsFormProvider,
+                                       addressLookupService: AddressLookupService,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: PackagingSiteDetailsView,
                                        val genericLogger: GenericLogger,
                                        val errorHandler: ErrorHandler
-                                     )(implicit ec: ExecutionContext) extends ControllerHelper {
+                                     )(implicit ec: ExecutionContext) extends ControllerHelper with SummaryListFluency  {
 
   val form: Form[Boolean] = formProvider()
 
@@ -56,24 +61,53 @@ class PackagingSiteDetailsController @Inject()(
         case Some(value) => form.fill(value)
       }
 
-      val packagingSites: Map[String, Site] = request.userAnswers.packagingSiteList
+      val siteList: SummaryList = SummaryListViewModel(
+        rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList, mode)
+      )
 
-      Ok(view(preparedForm, mode, packagingSites))
+      Ok(view(preparedForm, mode, siteList))
+
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-
-      val packagingSites: Map[String, Site] = request.userAnswers.packagingSiteList
+      val siteList: SummaryList = SummaryListViewModel(
+        rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList, mode)
+      )
 
       form.bindFromRequest().fold(
         formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, packagingSites))),
+          Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
 
-        value => {
-          val updatedAnswers = request.userAnswers.set(PackagingSiteDetailsPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, PackagingSiteDetailsPage, mode)
-        }
+        value =>
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(PackagingSiteDetailsPage, value))
+            onwardUrl:String <-
+              if(value){
+                updateDatabaseWithoutRedirect(request.userAnswers.set(PackagingSiteDetailsPage, value), PackagingSiteDetailsPage).flatMap(_ =>
+                  addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode))
+              } else {
+                updateDatabaseWithoutRedirect(request.userAnswers.set(PackagingSiteDetailsPage, value), PackagingSiteDetailsPage).flatMap(_ =>
+                  (Some(SdilReturn.apply(updatedAnswers)), Some(request.subscription)) match {
+                    case (Some(sdilReturn), Some(subscription)) =>
+                      if (UserTypeCheck.isNewImporter (sdilReturn, subscription) && mode == NormalMode) {
+                        Future.successful(controllers.correctReturn.routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url)
+                      } else {
+                        Future.successful(controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+                      }
+                    case (_, Some(subscription)) =>
+                      genericLogger.logger.warn(s"SDIL return not provided for ${subscription.sdilRef}")
+                      Future.successful(routes.JourneyRecoveryController.onPageLoad().url)
+                    case _ =>
+                      genericLogger.logger.warn("SDIL return or subscription not provided for current unknown user")
+                      Future.successful(routes.JourneyRecoveryController.onPageLoad().url)
+                  }
+                )
+              }
+          } yield {
+            Redirect(onwardUrl)
+          }
       )
   }
 }
+

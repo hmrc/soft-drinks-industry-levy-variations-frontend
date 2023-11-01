@@ -17,6 +17,7 @@
 package views.summary.correctReturn
 
 import base.SpecBase
+import models.NormalMode
 import models.backend.{Site, UkAddress}
 
 import java.time.LocalDate
@@ -46,7 +47,7 @@ class PackagingSiteDetailsSummarySpec extends SpecBase {
 
     "should return a summary list row with the correct information and action links" in {
 
-      val packagingSiteDetailsSummaryRow = PackagingSiteDetailsSummary.row2(packagingSites2)
+      val packagingSiteDetailsSummaryRow = PackagingSiteDetailsSummary.row2(packagingSites2, NormalMode)
       val rowActionListItems = packagingSiteDetailsSummaryRow.head.actions.toList.head.items
 
       packagingSiteDetailsSummaryRow.head.key.content.asHtml.toString mustBe "Wild Lemonade Group<br>33 Rhes Priordy, East London<br>E73 2RP"
@@ -58,19 +59,19 @@ class PackagingSiteDetailsSummarySpec extends SpecBase {
 
   "row should contain the same number of rows as the number of small producers" - {
     "should have 2 rows" in {
-      val packagingSiteDetailsSummaryRow = PackagingSiteDetailsSummary.row2(packagingSites2)
+      val packagingSiteDetailsSummaryRow = PackagingSiteDetailsSummary.row2(packagingSites2, NormalMode)
 
       packagingSiteDetailsSummaryRow.size mustBe 2
     }
 
     "should have 1 row" in {
-      val packagingSiteDetailsSummaryRow = PackagingSiteDetailsSummary.row2(packagingSite1)
+      val packagingSiteDetailsSummaryRow = PackagingSiteDetailsSummary.row2(packagingSite1, NormalMode)
 
       packagingSiteDetailsSummaryRow.size mustBe 1
     }
 
     "should have 3 rows" in {
-      val packagingSiteDetailsSummaryRow = PackagingSiteDetailsSummary.row2(packagingSites3)
+      val packagingSiteDetailsSummaryRow = PackagingSiteDetailsSummary.row2(packagingSites3, NormalMode)
 
       packagingSiteDetailsSummaryRow.size mustBe 3
     }
