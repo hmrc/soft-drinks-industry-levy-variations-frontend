@@ -23,9 +23,18 @@ import pages.correctReturn._
 import controllers.correctReturn.routes
 import play.api.libs.json.Json
 
-class NavigatorForCorrectReturnSpec extends SpecBase {
+class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
 
   val navigator = new NavigatorForCorrectReturn
+
+  val newImporterUserAnswers = emptyUserAnswersForCorrectReturn
+    .set(BroughtIntoUKPage, true).success.value
+
+  val newCoPackerUserAnswers = emptyUserAnswersForCorrectReturn
+    .set(PackagedAsContractPackerPage, true).success.value
+
+  val currentImporterSubscription = Option(aSubscription.copy(activity = testRetrievedActivity(importer = true)))
+  val currentCoPackerSubscription = Option(aSubscription.copy(activity = testRetrievedActivity(contractPacker = true)))
 
   "Navigator" - {
 
@@ -84,9 +93,39 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
       result mustBe routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode)
     }
 
-    "navigate to Check Your Answers page in CheckMode" in {
-      val result = navigateFromHowManyBroughtIntoUkPage(CheckMode)
+    "navigate to Check Your Answers page in CheckMode (when not new importer or new copacker)" in {
+      val userAnswers = emptyUserAnswersForCorrectReturn
+        .set(HowManyBroughtIntoUKPage, LitresInBands(1, 1)).success.value
+      val result = navigator.nextPage(HowManyBroughtIntoUKPage, CheckMode, userAnswers, Some(aSubscription))
       result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+
+    "navigate to Check Your Answers page in CheckMode (when currently importer)" in {
+      val userAnswers = newImporterUserAnswers
+        .set(HowManyBroughtIntoUKPage, LitresInBands(1, 1)).success.value
+      val result = navigator.nextPage(HowManyBroughtIntoUKPage, CheckMode, userAnswers, currentImporterSubscription)
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+
+    "navigate to Check Your Answers page in CheckMode (when currently copacker)" in {
+      val userAnswers = newCoPackerUserAnswers
+        .set(HowManyBroughtIntoUKPage, LitresInBands(1, 1)).success.value
+      val result = navigator.nextPage(HowManyBroughtIntoUKPage, CheckMode, userAnswers, currentCoPackerSubscription)
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+
+    "navigate to Return Change Registration page in CheckMode (when new importer)" in {
+      val userAnswers = newImporterUserAnswers
+        .set(HowManyBroughtIntoUKPage, LitresInBands(1, 1)).success.value
+      val result = navigator.nextPage(HowManyBroughtIntoUKPage, CheckMode, userAnswers, Some(aSubscription))
+      result mustBe routes.ReturnChangeRegistrationController.onPageLoad(CheckMode)
+    }
+
+    "navigate to Return Change Registration page in CheckMode (when new copacker)" in {
+      val userAnswers = newCoPackerUserAnswers
+        .set(HowManyBroughtIntoUKPage, LitresInBands(1, 1)).success.value
+      val result = navigator.nextPage(HowManyBroughtIntoUKPage, CheckMode, userAnswers, Some(aSubscription))
+      result mustBe routes.ReturnChangeRegistrationController.onPageLoad(CheckMode)
     }
   }
 
@@ -158,9 +197,39 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
       result mustBe routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
     }
 
-    "navigate to Check Your Answers page in CheckMode" in {
-      val result = navigateFromHowManyPackagedAsContractPackerPage(CheckMode)
+    "navigate to Check Your Answers page in CheckMode (when not new importer or new copacker)" in {
+      val userAnswers = emptyUserAnswersForCorrectReturn
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(1, 1)).success.value
+      val result = navigator.nextPage(HowManyPackagedAsContractPackerPage, CheckMode, userAnswers, Some(aSubscription))
       result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+
+    "navigate to Check Your Answers page in CheckMode (when currently importer)" in {
+      val userAnswers = newImporterUserAnswers
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(1, 1)).success.value
+      val result = navigator.nextPage(HowManyPackagedAsContractPackerPage, CheckMode, userAnswers, currentImporterSubscription)
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+
+    "navigate to Check Your Answers page in CheckMode (when currently copacker)" in {
+      val userAnswers = newCoPackerUserAnswers
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(1, 1)).success.value
+      val result = navigator.nextPage(HowManyPackagedAsContractPackerPage, CheckMode, userAnswers, currentCoPackerSubscription)
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+
+    "navigate to Return Change Registration page in CheckMode (when new importer)" in {
+      val userAnswers = newImporterUserAnswers
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(1, 1)).success.value
+      val result = navigator.nextPage(HowManyPackagedAsContractPackerPage, CheckMode, userAnswers, Some(aSubscription))
+      result mustBe routes.ReturnChangeRegistrationController.onPageLoad(CheckMode)
+    }
+
+    "navigate to Return Change Registration page in CheckMode (when new copacker)" in {
+      val userAnswers = newCoPackerUserAnswers
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(1, 1)).success.value
+      val result = navigator.nextPage(HowManyPackagedAsContractPackerPage, CheckMode, userAnswers, Some(aSubscription))
+      result mustBe routes.ReturnChangeRegistrationController.onPageLoad(CheckMode)
     }
   }
 
@@ -219,7 +288,7 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
     }
   })
 
-  "Correct Return, Claim Credits for Exports " - {
+  "Claim Credits for Exports " - {
     def navigateFromClaimCreditsForExportsPage(value: Boolean, mode: Mode) =
       navigator.nextPage(ClaimCreditsForExportsPage, mode, emptyUserAnswersForCorrectReturn.set(ClaimCreditsForExportsPage, value).success.value)
 
@@ -256,4 +325,101 @@ class NavigatorForCorrectReturnSpec extends SpecBase {
       result mustBe routes.CorrectReturnCYAController.onPageLoad
     }
   }
+
+  "Claim Credits for Lost Damaged " - {
+    def navigateFromClaimCreditsForLostDamagedPage(value: Boolean, mode: Mode, subscription: Option[RetrievedSubscription] = None) =
+      navigator.nextPage(ClaimCreditsForLostDamagedPage, mode,
+        emptyUserAnswersForCorrectReturn.set(ClaimCreditsForLostDamagedPage, value).success.value, subscription)
+
+    List(NormalMode, CheckMode).foreach(mode => {
+      s"select Yes to navigate to How many claim credits for lost damaged in $mode" in {
+        val subscription = if (mode == NormalMode) Some(aSubscription) else None
+        val result = navigateFromClaimCreditsForLostDamagedPage(value = true, mode, subscription)
+        result mustBe routes.HowManyCreditsForLostDamagedController.onPageLoad(mode)
+      }
+    })
+
+    "select No to navigate to Check Your Answers page in NormalMode (when not new importer or new copacker)" in {
+      val result = navigateFromClaimCreditsForLostDamagedPage(value = false, NormalMode, Some(aSubscription))
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+
+    "select no to navigate to Check Your Answers page in NormalMode (when currently importer)" in {
+      val userAnswers = newImporterUserAnswers
+        .set(ClaimCreditsForLostDamagedPage, false).success.value
+      val result = navigator.nextPage(ClaimCreditsForLostDamagedPage, NormalMode, userAnswers, currentImporterSubscription)
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+
+    "select no to navigate to Check Your Answers page in NormalMode (when currently copacker)" in {
+      val userAnswers = newCoPackerUserAnswers
+        .set(ClaimCreditsForLostDamagedPage, false).success.value
+      val result = navigator.nextPage(ClaimCreditsForLostDamagedPage, NormalMode, userAnswers, currentCoPackerSubscription)
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+
+    "select no to navigate to Return Change Registration page in NormalMode (when new importer)" in {
+      val userAnswers = newImporterUserAnswers
+        .set(ClaimCreditsForLostDamagedPage, false).success.value
+      val result = navigator.nextPage(ClaimCreditsForLostDamagedPage, NormalMode, userAnswers, Some(aSubscription))
+      result mustBe routes.ReturnChangeRegistrationController.onPageLoad(NormalMode)
+    }
+
+    "select no to navigate to Return Change Registration page in NormalMode (when new copacker)" in {
+      val userAnswers = newCoPackerUserAnswers
+        .set(ClaimCreditsForLostDamagedPage, false).success.value
+      val result = navigator.nextPage(ClaimCreditsForLostDamagedPage, NormalMode, userAnswers, Some(aSubscription))
+      result mustBe routes.ReturnChangeRegistrationController.onPageLoad(NormalMode)
+    }
+
+    "Should navigate to Check Your Answers page in CheckMode" in {
+      val result = navigateFromClaimCreditsForLostDamagedPage(value = false, CheckMode)
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+  }
+
+  "How many claim credits for lost damaged " - {
+    def navigateFromHowManyClaimCreditsForLostDamagedPage(mode: Mode, subscription: Option[RetrievedSubscription] = None) =
+      navigator.nextPage(HowManyCreditsForLostDamagedPage, mode,
+        emptyUserAnswersForCorrectReturn.set(HowManyCreditsForLostDamagedPage, LitresInBands(1, 1)).success.value, subscription)
+
+    "navigate to Check Your Answers page in NormalMode (when not new importer or new copacker)" in {
+      val result = navigateFromHowManyClaimCreditsForLostDamagedPage(NormalMode, Some(aSubscription))
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+
+    "navigate to Check Your Answers page in NormalMode (when currently importer)" in {
+      val userAnswers = newImporterUserAnswers
+        .set(HowManyCreditsForLostDamagedPage, LitresInBands(1, 1)).success.value
+      val result = navigator.nextPage(HowManyCreditsForLostDamagedPage, NormalMode, userAnswers, currentImporterSubscription)
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+
+    "navigate to Check Your Answers page in NormalMode (when currently copacker)" in {
+      val userAnswers = newCoPackerUserAnswers
+        .set(HowManyCreditsForLostDamagedPage, LitresInBands(1, 1)).success.value
+      val result = navigator.nextPage(HowManyCreditsForLostDamagedPage, NormalMode, userAnswers, currentCoPackerSubscription)
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+
+    "navigate to Return Change Registration page in NormalMode (when new importer)" in {
+      val userAnswers = newImporterUserAnswers
+        .set(HowManyCreditsForLostDamagedPage, LitresInBands(1, 1)).success.value
+      val result = navigator.nextPage(HowManyCreditsForLostDamagedPage, NormalMode, userAnswers, Some(aSubscription))
+      result mustBe routes.ReturnChangeRegistrationController.onPageLoad(NormalMode)
+    }
+
+    "navigate to Return Change Registration page in NormalMode (when new copacker)" in {
+      val userAnswers = newImporterUserAnswers
+        .set(HowManyCreditsForLostDamagedPage, LitresInBands(1, 1)).success.value
+      val result = navigator.nextPage(HowManyCreditsForLostDamagedPage, NormalMode, userAnswers, Some(aSubscription))
+      result mustBe routes.ReturnChangeRegistrationController.onPageLoad(NormalMode)
+    }
+
+    "navigate to Check Your Answers page in CheckMode" in {
+      val result = navigateFromHowManyClaimCreditsForLostDamagedPage(CheckMode)
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+  }
+
 }

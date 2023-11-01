@@ -16,6 +16,7 @@
 
 package views.correctReturn
 
+import models.NormalMode
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -32,7 +33,7 @@ class ReturnChangeRegistrationViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view("")(request, messages(application))
+    val html = view(NormalMode, "")(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
       document.title() must include(Messages("You changed your soft drinks business activity"))

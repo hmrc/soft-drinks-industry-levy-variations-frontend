@@ -17,9 +17,10 @@
 package navigation
 
 import controllers.correctReturn.routes
-import models.{CheckMode, Mode, NormalMode, UserAnswers}
-import pages.Page
+import models.{CheckMode, Mode, NormalMode, RetrievedSubscription, UserAnswers}
+import pages._
 import pages.correctReturn._
+import play.api.Logger
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -36,6 +37,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
       routes.ClaimCreditsForExportsController.onPageLoad(mode)
     }
   }
+
   private def navigationForClaimCreditsForExports(userAnswers: UserAnswers, mode: Mode): Call = {
     if (userAnswers.get(page = ClaimCreditsForExportsPage).contains(true)) {
       routes.HowManyClaimCreditsForExportsController.onPageLoad(mode)
@@ -66,11 +68,10 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     }
   }
 
-
   private def navigationForPackagedAsContractPacker(userAnswers: UserAnswers, mode: Mode): Call = {
     if (userAnswers.get(page = PackagedAsContractPackerPage).contains(true)) {
       routes.HowManyPackagedAsContractPackerController.onPageLoad(mode)
-    } else if(mode == CheckMode){
+    } else if (mode == CheckMode) {
       routes.CorrectReturnCYAController.onPageLoad
     } else {
       routes.ExemptionsForSmallProducersController.onPageLoad(mode)
@@ -84,16 +85,6 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
       routes.CorrectReturnCYAController.onPageLoad
     } else {
       routes.PackagedAsContractPackerController.onPageLoad(mode)
-    }
-  }
-
-  private def navigationForCreditsForLostDamaged(userAnswers: UserAnswers, mode: Mode): Call = {
-    if (userAnswers.get(page = ClaimCreditsForLostDamagedPage).contains(true)) {
-      routes.HowManyCreditsForLostDamagedController.onPageLoad(mode)
-    } else if (mode == CheckMode) {
-      routes.CorrectReturnCYAController.onPageLoad
-    } else {
-      controllers.routes.IndexController.onPageLoad
     }
   }
 
@@ -119,6 +110,36 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     }
   }
 
+  private def navigationForCreditsForLostDamagedInNormalMode(userAnswers: UserAnswers, subscription: RetrievedSubscription) = {
+    if (userAnswers.get(page = ClaimCreditsForLostDamagedPage).contains(true)) {
+      routes.HowManyCreditsForLostDamagedController.onPageLoad(NormalMode)
+    } else {
+      navigationToReturnChangeRegistrationIfRequired(userAnswers, subscription, NormalMode)
+    }
+  }
+
+  private def navigationForCreditsForLostDamagedInCheckMode(userAnswers: UserAnswers) = {
+    if (userAnswers.get(page = ClaimCreditsForLostDamagedPage).contains(true)) {
+      routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode)
+    } else {
+      routes.CorrectReturnCYAController.onPageLoad
+    }
+  }
+
+  private def navigationToReturnChangeRegistrationIfRequired(userAnswers: UserAnswers, subscription: RetrievedSubscription, mode: Mode) = {
+    val alreadyAPacker = subscription.activity.contractPacker
+    val alreadyAnImporter = subscription.activity.importer
+    val yesOnCoPacker = userAnswers.get(PackagedAsContractPackerPage).contains(true)
+    val yesOnImporter = userAnswers.get(BroughtIntoUKPage).contains(true)
+    if (alreadyAPacker && alreadyAnImporter) {
+      routes.CorrectReturnCYAController.onPageLoad
+    } else if ((!alreadyAPacker && yesOnCoPacker) || (!alreadyAnImporter && yesOnImporter)) {
+      routes.ReturnChangeRegistrationController.onPageLoad(mode)
+    } else {
+      routes.CorrectReturnCYAController.onPageLoad
+    }
+  }
+
   override val normalRoutes: Page => UserAnswers => Call = {
     case SecondaryWarehouseDetailsPage => _ => defaultCall
     case AskSecondaryWarehouseInReturnPage => _ => defaultCall
@@ -135,8 +156,6 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case CorrectionReasonPage => _ => routes.RepaymentMethodController.onPageLoad(NormalMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => routes.PackagedAsContractPackerController.onPageLoad(NormalMode)
-    case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamaged(userAnswers, NormalMode)
-    case HowManyCreditsForLostDamagedPage => userAnswers => defaultCall
     case RepaymentMethodPage => userAnswers => routes.CorrectReturnCheckChangesCYAController.onPageLoad
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, NormalMode)
     case HowManyPackagedAsContractPackerPage => _ => routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
@@ -146,9 +165,14 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case _ => _ => defaultCall
   }
 
+  override val normalRoutesWithSubscription: Page => (UserAnswers, RetrievedSubscription) => Call = {
+    case ClaimCreditsForLostDamagedPage => (userAnswers, subscription) => navigationForCreditsForLostDamagedInNormalMode(userAnswers, subscription)
+    case HowManyCreditsForLostDamagedPage => (userAnswers, subscription) => navigationToReturnChangeRegistrationIfRequired(userAnswers, subscription, NormalMode)
+    case _ => (_, _) => defaultCall
+  }
+
   override val checkRouteMap: Page => UserAnswers => Call = {
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, CheckMode)
-    case HowManyBroughtIntoUKPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case BroughtIntoUkFromSmallProducersPage => userAnswers => navigationForBroughtIntoUkFromSmallProducers(userAnswers, CheckMode)
     case HowManyBroughtIntoUkFromSmallProducersPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case ClaimCreditsForExportsPage => userAnswers => navigationForClaimCreditsForExports(userAnswers, CheckMode)
@@ -156,13 +180,20 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case ExemptionsForSmallProducersPage => _ =>  routes.CorrectReturnCYAController.onPageLoad
     case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, CheckMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
-    case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => routes.CorrectReturnCYAController.onPageLoad
-    case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamaged(userAnswers, CheckMode)
+    case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.CorrectReturnCYAController.onPageLoad
+    case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamagedInCheckMode(userAnswers)
+    case HowManyCreditsForLostDamagedPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case AddASmallProducerPage => _ => navigationForAddASmallProducer(CheckMode)
     case SmallProducerDetailsPage => userAnswers => navigationForSmallProducerDetails(userAnswers, CheckMode)
     case RemoveSmallProducerConfirmPage => userAnswers => navigationForRemoveSmallProducerConfirm(userAnswers, CheckMode)
     case RepaymentMethodPage => userAnswers => routes.CorrectReturnCheckChangesCYAController.onPageLoad
     case _ => _ => routes.CorrectReturnCYAController.onPageLoad
+  }
+
+  override val checkRouteMapWithSubscription: Page => (UserAnswers, RetrievedSubscription) => Call = {
+    case HowManyBroughtIntoUKPage => (userAnswers, subscription) => navigationToReturnChangeRegistrationIfRequired(userAnswers, subscription, CheckMode)
+    case HowManyPackagedAsContractPackerPage => (userAnswers, subscription) => navigationToReturnChangeRegistrationIfRequired(userAnswers, subscription, CheckMode)
+    case _ => (_, _) => defaultCall
   }
 
   override val editRouteMap: Page => UserAnswers => Call = {

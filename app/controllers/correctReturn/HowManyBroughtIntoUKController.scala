@@ -20,7 +20,7 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.HowManyLitresFormProvider
 import handlers.ErrorHandler
-import models.Mode
+import models.{CheckMode, Mode}
 import navigation._
 import pages.correctReturn.HowManyBroughtIntoUKPage
 import play.api.i18n.MessagesApi
@@ -66,7 +66,8 @@ class HowManyBroughtIntoUKController @Inject()(
 
         value => {
           val updatedAnswers = request.userAnswers.set(HowManyBroughtIntoUKPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, HowManyBroughtIntoUKPage, mode)
+          val subscription = if (mode == CheckMode) Some(request.subscription) else None
+          updateDatabaseAndRedirect(updatedAnswers, HowManyBroughtIntoUKPage, mode, subscription)
         }
       )
   }
