@@ -79,18 +79,20 @@ class SecondaryWarehouseDetailsController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
 
         value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(SecondaryWarehouseDetailsPage, value))
-            _ <- updateDatabaseWithoutRedirect(Try(updatedAnswers), SecondaryWarehouseDetailsPage)
-            onwardUrl <- if (value) {
-              addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = NormalMode)
-            } else {
-              Future.successful(routes.CorrectReturnCYAController.onPageLoad.url)
-            }
-          } yield Redirect(onwardUrl)
-
+          updateDatabaseWithoutRedirect(request.userAnswers.set(SecondaryWarehouseDetailsPage, value), SecondaryWarehouseDetailsPage).flatMap {
+            case true => getOnwardUrl(value, mode).map(Redirect(_))
+            case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+          }
       )
   }
 
+  private def getOnwardUrl(value: Boolean, mode: Mode)(implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages,
+                                                       requestHeader: RequestHeader): Future[String] = {
+    if (value) {
+      addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = mode)(hc, ec, messages, requestHeader)
+    } else {
+        Future.successful(controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+    }
+  }
 
 }
