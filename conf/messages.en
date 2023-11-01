@@ -521,19 +521,24 @@ correctReturn.askSecondaryWarehouseInReturn.detailsLink = Why should I register 
 correctReturn.askSecondaryWarehouseInReturn.detailsContent1 = You can delay when you have to report liable drinks in your quarterly return and pay the levy on them if you register the warehouses you use to store them.
 correctReturn.askSecondaryWarehouseInReturn.detailsContent2 = Because you changed your business activity, you can choose to register any of the UK warehouses you use to store liable drinks.
 
+correctReturn.correctionSection.checkYourAnswersLabel = Correction details
+
+correctReturn.checkYourAnswers.updateFor = This update is for
+correctReturn.checkYourAnswers.title = Check your answers before sending your update
+
 correctReturn.checkChanges.updateFor = This update is for
 correctReturn.checkChanges.title = Check your answers before sending your correction
-correctReturn.correctionSection.checkYourAnswersLabel = Correction details
 correctReturn.checkChanges.confirmationStatement = By sending this correction you are confirming that, to the best of your knowledge, the details you are providing are correct.
 correctReturn.checkChanges.balanceHeader = Balance
 correctReturn.checkChanges.sendReturnHeader = Send your return
 correctReturn.checkChanges.confirmAndSend = Confirm details and send correction
 
-correctReturn.checkYourAnswers.updateFor = This update is for
-correctReturn.checkYourAnswers.title = Check your answers before sending your update
-
-
-
+correctReturn.updateDone.updateFor = This update is for
+correctReturn.updateDone.title = Check your answers before sending your correction
+correctReturn.updateDone.confirmationStatement = By sending this correction you are confirming that, to the best of your knowledge, the details you are providing are correct.
+correctReturn.updateDone.balanceHeader = Balance
+correctReturn.updateDone.sendReturnHeader = Send your return
+correctReturn.updateDone.confirmAndSend = Confirm details and send correction
 
 updateRegisteredDetails.contactDetails.title = Change person''s details
 updateRegisteredDetails.contactDetails.heading = Change person''s details
