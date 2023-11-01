@@ -52,6 +52,7 @@ class CorrectReturnUpdateDoneController @Inject()(
           val orgName: String = " " + request.subscription.orgName
           val currentSDILReturn = SdilReturn.apply(request.userAnswers)
           val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSDILReturn)
+//          TODO: REMOVE CHANGE FROM HERE
           val sections = CorrectReturnUpdateDoneSummary.changeSpecificSummaryListAndHeadings(request.userAnswers, request.subscription, changedPages)
 
           val getSentDateTime = LocalDateTime.now(ZoneId.of("UTC")) //LocalDateTime.ofInstant(request.userAnswers.submittedOn.get, ZoneId.of("UTC"))
