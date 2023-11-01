@@ -14,29 +14,59 @@
  * limitations under the License.
  *@
 
+@import views.html.helpers.printLinkWithJs
+
 @this(
     layout: templates.Layout,
+    govukWarningText: GovukWarningText,
     govukSummaryList: GovukSummaryList,
+    govukPanel : GovukPanel,
     formHelper: FormWithCSRF,
-    govukButton: GovukButton
+    printLinkWithJs: printLinkWithJs
 )
 
-@(orgName: String, seqSummaryList: Seq[(String, SummaryList)], submitCall: Call)(implicit request: Request[_], messages: Messages)
+@(
+    orgName: String,
+    seqSummaryList: Seq[(String, SummaryList)],
+    formattedDate: String,
+    formattedTime: String,
+    nextPeriodStart: String,
+    nextPeriodEnd: String,
+    deadlineStart: String,
+    deadlineEnd: String,
+    companyName: String,
+    sdilHomeUrl: String
+)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("correctReturn.updateDone.title"))) {
 
-    <h1 class="govuk-heading-l">@messages("correctReturn.updateDone.title")</h1>
+    @govukPanel(Panel(
+        title = Text(messages("correctReturn.updateDone.title")),
+        content = HtmlContent(messages("correctReturn.updateDone.panel.message")),
+        classes = "panel-indent"
+    ))
 
-    <span class="govuk-body">@messages("correctReturn.updateDone.updateFor")@orgName</span>
+    @printLinkWithJs(messages("site.print"))
+
+    <p class="govuk-body-m">@messages("correctReturn.updateDone.updateInfo.p1", nextPeriodStart, nextPeriodEnd, companyName, formattedDate, formattedTime)</p>
+
+    @govukWarningText(WarningText(
+        iconFallbackText = Some("Warning"),
+        content = messages("correctReturn.updateDone.updateInfo.p2")
+    ))
+
+    <h2 class="govuk-heading-m" id="whatNextHeader">
+        @messages("site.whatNext")
+    </h2>
+
+    <p class="govuk-body" id="whatNextTextP1">@messages("correctReturn.updateDone.whatNextText")</p>
+
+    <p class="govuk-body-m">
+        <a class="govuk-link" href="@sdilHomeUrl">@messages("correctReturn.updateDone.accountHomeLink")</a>
+    </p>
 
     @for((heading, summaryList) <- seqSummaryList) {
-    <h2 class="govuk-heading-m">@messages(heading)</h2>
-    @govukSummaryList(summaryList)
-    }
-
-    <p class="govuk-body">@messages("correctReturn.updateDone.confirmationStatement")</p>
-
-    @formHelper(action = submitCall, Symbol("autoComplete") -> "off") {
-        @govukButton(ButtonViewModel(messages("correctReturn.updateDone.confirmAndSend")))
+        <h2 class="govuk-heading-m">@messages(heading)</h2>
+        @govukSummaryList(summaryList)
     }
 }

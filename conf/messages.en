@@ -533,12 +533,12 @@ correctReturn.checkChanges.balanceHeader = Balance
 correctReturn.checkChanges.sendReturnHeader = Send your return
 correctReturn.checkChanges.confirmAndSend = Confirm details and send correction
 
-correctReturn.updateDone.updateFor = This update is for
-correctReturn.updateDone.title = Check your answers before sending your correction
-correctReturn.updateDone.confirmationStatement = By sending this correction you are confirming that, to the best of your knowledge, the details you are providing are correct.
-correctReturn.updateDone.balanceHeader = Balance
-correctReturn.updateDone.sendReturnHeader = Send your return
-correctReturn.updateDone.confirmAndSend = Confirm details and send correction
+correctReturn.updateDone.title = Correction sent
+correctReturn.updateDone.panel.message = We will review the details you updated and get back to you
+correctReturn.updateDone.updateInfo.p1 = The corrected {0} to {1} return for {2} was sent on {3} at {4}.
+correctReturn.updateDone.updateInfo.p2 = Do not make any payments until we have confirmed how much you need to page, as you will be charged interest on your adjusted amount.
+correctReturn.updateDone.whatNextText = We may get in touch with your contact person to discuss your changes. Once we have approved your correction, your account balance will be updated.
+correctReturn.updateDone.accountHomeLink = Go back to your Soft Drinks Industry Levy details
 
 updateRegisteredDetails.contactDetails.title = Change person''s details
 updateRegisteredDetails.contactDetails.heading = Change person''s details

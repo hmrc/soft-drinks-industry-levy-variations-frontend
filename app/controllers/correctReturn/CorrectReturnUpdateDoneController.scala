@@ -19,8 +19,7 @@ package controllers.correctReturn
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{ControllerActions, RequiredUserAnswersForCorrectReturn}
-import models.SdilReturn
-import models.SelectChange.CorrectReturn
+import models.{ReturnPeriod, SdilReturn}
 import models.correctReturn.ChangedPage
 import orchestrators.CorrectReturnOrchestrator
 import pages.correctReturn.CorrectReturnUpdateDonePage
@@ -30,6 +29,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.correctReturn.CorrectReturnUpdateDoneView
 import views.summary.correctReturn.CorrectReturnUpdateDoneSummary
 
+import java.time.{LocalDateTime, ZoneId}
+import java.time.format.DateTimeFormatter
 import scala.concurrent.{ExecutionContext, Future}
 
 class CorrectReturnUpdateDoneController @Inject()(
@@ -50,13 +51,26 @@ class CorrectReturnUpdateDoneController @Inject()(
           val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSDILReturn)
           val sections = CorrectReturnUpdateDoneSummary.changeSpecificSummaryListAndHeadings(request.userAnswers, request.subscription, changedPages)
 
-          Future.successful(Ok(view(orgName, sections, routes.CorrectReturnUpdateDoneController.onSubmit)))
+          val getSentDateTime = LocalDateTime.now(ZoneId.of("UTC")) //LocalDateTime.ofInstant(request.userAnswers.submittedOn.get, ZoneId.of("UTC"))
+          val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+          val timeFormatter = DateTimeFormatter.ofPattern("H:MMa")
+          val formattedDate = getSentDateTime.format(dateFormatter)
+          val formattedTime = getSentDateTime.format(timeFormatter)
+
+          val returnPeriodFormat = DateTimeFormatter.ofPattern("MMMM yyyy")
+          val nextReturnPeriod = ReturnPeriod(getSentDateTime.toLocalDate).next
+          val returnPeriodStart = nextReturnPeriod.start.format(returnPeriodFormat)
+          val returnPeriodEnd = nextReturnPeriod.end.format(returnPeriodFormat)
+
+          val deadlineStartFormat = DateTimeFormatter.ofPattern("d MMMM")
+          val deadlineStart = nextReturnPeriod.end.plusDays(1).format(deadlineStartFormat)
+
+          val deadlineEndFormat = DateTimeFormatter.ofPattern("d MMMM yyyy")
+          val deadlineEnd = nextReturnPeriod.deadline.format(deadlineEndFormat)
+
+          Future.successful(Ok(view(orgName, sections, formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd, deadlineStart, deadlineEnd, request.subscription.orgName, config.sdilHomeUrl)))
         }).getOrElse(Future(Redirect(controllers.routes.SelectChangeController.onPageLoad.url)))
       }
-  }
-
-  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
-    Redirect(controllers.routes.IndexController.onPageLoad.url)
   }
 
 }

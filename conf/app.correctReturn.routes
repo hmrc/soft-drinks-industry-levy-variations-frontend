@@ -6,7 +6,6 @@ GET        /check-changes                                       controllers.corr
 POST       /check-changes                                       controllers.correctReturn.CorrectReturnCheckChangesCYAController.onSubmit
 
 GET        /update-done                                         controllers.correctReturn.CorrectReturnUpdateDoneController.onPageLoad
-POST       /update-done                                         controllers.correctReturn.CorrectReturnUpdateDoneController.onSubmit
 
 GET        /select                                              controllers.correctReturn.SelectController.onPageLoad
 POST       /select                                              controllers.correctReturn.SelectController.onSubmit
