@@ -39,14 +39,11 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
           smallProducerList = List(SmallProducer("", "XZSDIL000000234", (2000, 4000))))
         .set(OperatePackagingSiteOwnBrandsPage, true).success.value
         .set(HowManyOperatePackagingSiteOwnBrandsPage, litres).success.value
-        .set(PackagedAsContractPackerPage, true).success.value
-        .set(HowManyPackagedAsContractPackerPage, litres).success.value
+        .set(PackagedAsContractPackerPage, false).success.value
         .set(ExemptionsForSmallProducersPage, true).success.value
         .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", litres)).success.value
-        .set(BroughtIntoUKPage, true).success.value
-        .set(HowManyBroughtIntoUKPage, litres).success.value
-        .set(BroughtIntoUkFromSmallProducersPage, true).success.value
-        .set(HowManyBroughtIntoUkFromSmallProducersPage, litres).success.value
+        .set(BroughtIntoUKPage, false).success.value
+        .set(BroughtIntoUkFromSmallProducersPage, false).success.value
         .set(ClaimCreditsForExportsPage, true).success.value
         .set(HowManyClaimCreditsForExportsPage, litres).success.value
         .set(ClaimCreditsForLostDamagedPage, true).success.value

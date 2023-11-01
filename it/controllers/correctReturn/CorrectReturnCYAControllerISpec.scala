@@ -1,7 +1,7 @@
 package controllers.correctReturn
 
-import testSupport.SDILBackendTestData.aSubscription
 import controllers.CorrectReturnBaseCYASummaryISpecHelper
+import models.NormalMode
 import models.SelectChange.CorrectReturn
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
@@ -10,14 +10,14 @@ import play.api.http.HeaderNames
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
-
+import testSupport.SDILBackendTestData.aSubscription
 
 class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHelper {
 
   val route = "/correct-return/check-your-answers"
 
   "GET " + routes.CorrectReturnCYAController.onPageLoad.url - {
-    "when the userAnswers contains no data" - {
+    "when the userAnswers contains no data for return to correct" - {
       "should redirect to Select Return controller" in {
         given
           .commonPrecondition
@@ -164,7 +164,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
   }
 
   "POST " + routes.CorrectReturnCYAController.onPageLoad.url - {
-    "should redirect to Index controller when user answers empty" in {
+    "should redirect to Correction Reason controller" in {
       given
         .commonPrecondition
 
@@ -175,7 +175,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
 
         whenReady(result) { res =>
           res.status mustBe 303
-          res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+          res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectionReasonController.onPageLoad(NormalMode).url)
         }
       }
     }

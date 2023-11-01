@@ -18,35 +18,41 @@ package controllers.correctReturn
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions.ControllerActions
+import controllers.actions.{ControllerActions, RequiredUserAnswersForCorrectReturn}
 import models.SdilReturn
 import models.SelectChange.CorrectReturn
 import models.correctReturn.ChangedPage
 import orchestrators.CorrectReturnOrchestrator
+import pages.correctReturn.CorrectReturnCheckChangesPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.correctReturn.CorrectReturnCheckChangesCYAView
 import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 
+import scala.concurrent.{ExecutionContext, Future}
+
 class CorrectReturnCheckChangesCYAController @Inject()(
                                             override val messagesApi: MessagesApi,
                                             controllerActions: ControllerActions,
+                                            val requiredUserAnswers: RequiredUserAnswersForCorrectReturn,
                                             val controllerComponents: MessagesControllerComponents,
                                             val correctReturnOrchestrator: CorrectReturnOrchestrator,
                                             view: CorrectReturnCheckChangesCYAView
-                                          )(implicit config: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+                                          )(implicit config: FrontendAppConfig, ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
+  def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-      request.userAnswers.getCorrectReturnOriginalSDILReturnData.map(originalSdilReturn => {
-        val orgName: String = " " + request.subscription.orgName
-        val currentSDILReturn = SdilReturn.apply(request.userAnswers)
-        val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSDILReturn)
-        val sections = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(request.userAnswers, request.subscription, changedPages)
+      requiredUserAnswers.requireData(CorrectReturnCheckChangesPage) {
+        request.userAnswers.getCorrectReturnOriginalSDILReturnData.map(originalSdilReturn => {
+          val orgName: String = " " + request.subscription.orgName
+          val currentSDILReturn = SdilReturn.apply(request.userAnswers)
+          val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSDILReturn)
+          val sections = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(request.userAnswers, request.subscription, changedPages)
 
-        Ok(view(orgName, sections, routes.CorrectReturnCheckChangesCYAController.onSubmit))
-      }).getOrElse(Redirect(controllers.routes.SelectChangeController.onPageLoad.url))
+          Future.successful(Ok(view(orgName, sections, routes.CorrectReturnCheckChangesCYAController.onSubmit)))
+        }).getOrElse(Future(Redirect(controllers.routes.SelectChangeController.onPageLoad.url)))
+      }
   }
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {

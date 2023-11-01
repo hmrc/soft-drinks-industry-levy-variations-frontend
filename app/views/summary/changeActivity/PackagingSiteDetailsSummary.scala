@@ -18,12 +18,12 @@ package viewmodels.summary.changeActivity
 
 import controllers.changeActivity.routes
 import models.backend.Site
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{CheckMode, Mode, UserAnswers}
 import pages.changeActivity.PackagingSiteDetailsPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key, Value}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryList, SummaryListRow}
 import viewmodels.AddressFormattingHelper
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
@@ -46,7 +46,7 @@ object PackagingSiteDetailsSummary  {
         )
     }
 
-  def row2(packingSiteList: Map[String, Site])(implicit messages: Messages): List[SummaryListRow] = {
+  def row2(packingSiteList: Map[String, Site], mode: Mode)(implicit messages: Messages): List[SummaryListRow] = {
     packingSiteList.map {
         packingSite =>
           SummaryListRow(
@@ -54,10 +54,12 @@ object PackagingSiteDetailsSummary  {
               content = HtmlContent(AddressFormattingHelper.addressFormatting(packingSite._2.address, packingSite._2.tradingName)),
               classes = "govuk-!-font-weight-regular govuk-!-width-full"
             ),
-            actions = if(packingSiteList.size > 1){ Some(Actions("",Seq(
-              ActionItemViewModel("site.remove", controllers.changeActivity.routes.RemovePackagingSiteDetailsController.onPageLoad(NormalMode, packingSite._1).url)
-                .withVisuallyHiddenText(messages("changeActivity.packagingSiteDetails.remove.hidden", packingSite._2.tradingName.getOrElse(""), packingSite._2.address.lines.head))
-            )))} else {
+            actions = if (packingSiteList.size > 1) {
+              Some(Actions("", Seq(
+                ActionItemViewModel("site.remove", controllers.changeActivity.routes.RemovePackagingSiteDetailsController.onPageLoad(mode, packingSite._1).url)
+                  .withVisuallyHiddenText(messages("changeActivity.packagingSiteDetails.remove.hidden", packingSite._2.tradingName.getOrElse(""), packingSite._2.address.lines.head))
+              )))
+            } else {
               None
             }
           )
@@ -66,25 +68,34 @@ object PackagingSiteDetailsSummary  {
 
   def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)
                  (implicit messages: Messages): SummaryList = {
+    val key = if (userAnswers.warehouseList.size != 1) {
+      messages("checkYourAnswers.packing.checkYourAnswersLabel.multiple", userAnswers.packagingSiteList.size.toString)
+    } else {
+      messages("checkYourAnswers.packing.checkYourAnswersLabel.one", userAnswers.packagingSiteList.size.toString)
+    }
+    val visuallyHiddenChangeText = if (userAnswers.packagingSiteList.size != 1) {
+      messages("checkYourAnswers.sites.packing.change.hidden.multiple")
+    } else {
+      messages("checkYourAnswers.sites.packing.change.hidden.one")
+    }
 
     SummaryListViewModel(
       rows = Seq(SummaryListRowViewModel(
-        key = if(userAnswers.packagingSiteList.size != 1){
-          messages("checkYourAnswers.packing.checkYourAnswersLabel.multiple",  {userAnswers.packagingSiteList.size.toString})}else{
-          messages("checkYourAnswers.packing.checkYourAnswersLabel.one", {userAnswers.packagingSiteList.size.toString})
-        },
+        key = Key(
+          content = key,
+          classes = "govuk-!-width-full"
+        ),
         value = Value(),
         actions = if (isCheckAnswers) {
           Seq(
             ActionItemViewModel("site.change", routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
-            .withAttribute(("id", "change-packaging-sites"))
-            .withVisuallyHiddenText(messages("checkYourAnswers.sites.packing.change.hidden.one"))
+              .withAttribute(("id", "change-packaging-sites"))
+              .withVisuallyHiddenText(visuallyHiddenChangeText)
           )
         } else {
           Seq.empty
         }
-        )
-      )
+      ))
     )
-    }
+  }
 }

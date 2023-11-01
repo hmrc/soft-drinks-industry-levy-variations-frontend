@@ -64,7 +64,7 @@ class PackagingSiteDetailsController @Inject()(
         }
 
         val siteList: SummaryList = SummaryListViewModel(
-          rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList)
+          rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList, mode)
         )
 
         Ok(view(preparedForm, mode, siteList))
@@ -74,7 +74,7 @@ class PackagingSiteDetailsController @Inject()(
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
       val siteList: SummaryList = SummaryListViewModel(
-        rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList)
+        rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList, mode)
       )
       form.bindFromRequest().fold(
         formWithErrors =>
@@ -93,11 +93,11 @@ class PackagingSiteDetailsController @Inject()(
     (implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages, requestHeader: RequestHeader): Future[String] = {
 
     if(addPackagingSite) {
-      addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails)(hc, ec, messages, requestHeader)
+      addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode)(hc, ec, messages, requestHeader)
     } else if(mode == CheckMode) {
       Future.successful(controllers.changeActivity.routes.ChangeActivityCYAController.onPageLoad.url)
     } else {
-      Future.successful(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad.url)
+      Future.successful(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(mode).url)
     }
   }
 }

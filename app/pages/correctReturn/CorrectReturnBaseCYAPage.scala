@@ -17,15 +17,13 @@
 package pages.correctReturn
 
 import controllers.correctReturn.routes
-import models.{LitresInBands, Mode}
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import models.Mode
+import pages.Page
 
-case object HowManyCreditsForLostDamagedPage extends QuestionPage[LitresInBands] {
+case object CorrectReturnBaseCYAPage extends Page {
 
-  override def path: JsPath = JsPath \ toString
+  def journeyType: String = "correctReturn"
+  override def toString: String = "checkYourAnswers"
+  override val url: Mode => String = _ => routes.CorrectReturnCYAController.onPageLoad.url
 
-  override def toString: String = "howManyCreditsForLostDamaged"
-
-  override val url: Mode => String = mode => routes.HowManyCreditsForLostDamagedController.onPageLoad(mode).url
 }

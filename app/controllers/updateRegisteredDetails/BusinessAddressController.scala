@@ -17,6 +17,7 @@
 package controllers.updateRegisteredDetails
 
 import controllers.actions._
+import models.NormalMode
 import models.SelectChange.UpdateRegisteredDetails
 import navigation.NavigatorForUpdateRegisteredDetails
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -49,7 +50,7 @@ class BusinessAddressController @Inject()(
 
   def changeAddress: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails).async {
     implicit request =>
-        addressLookupService.initJourneyAndReturnOnRampUrl(ContactDetails).map(
+        addressLookupService.initJourneyAndReturnOnRampUrl(ContactDetails, mode = NormalMode).map(
           initUrl => Redirect(initUrl)
         )
   }

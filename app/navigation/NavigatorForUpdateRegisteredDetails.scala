@@ -44,6 +44,10 @@ class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
     case _ => _ => routes.UpdateRegisteredDetailsCYAController.onPageLoad
   }
 
+  override val editRouteMap: Page => UserAnswers => Call = {
+    case _ => _ => defaultCall
+  }
+
   def PackagingSiteDetailsNavigation(userAnswers: UserAnswers): Call = {
     val changeRegisteredDetailsPageAnswers = userAnswers.get(ChangeRegisteredDetailsPage).head
     if (changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.ContactDetails)) {
@@ -68,10 +72,8 @@ class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
       userAnswers match {
         case userAnswers if userAnswers.packagingSiteList.nonEmpty =>
           routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
-        case userAnswers if userAnswers.warehouseList.nonEmpty =>
-          routes.WarehouseDetailsController.onPageLoad(NormalMode)
         case _ =>
-          defaultCall
+          routes.WarehouseDetailsController.onPageLoad(NormalMode)
       }
     } else if (changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.ContactDetails)) {
       routes.UpdateContactDetailsController.onPageLoad(NormalMode)

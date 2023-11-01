@@ -134,7 +134,7 @@ class BroughtIntoUkFromSmallProducersControllerISpec extends ControllerITTestHel
   s"POST " + normalRoutePath - {
     userAnswersForCorrectReturnBroughtIntoUkFromSmallProducersPage.foreach { case (key, userAnswers) =>
       "when the user selects " + key - {
-        "should update the session with the new value and redirect to the index controller" - {
+        "should update the session with the new value and redirect to the expected controller" - {
           "when the session contains no data for page" in {
             given
               .commonPrecondition
@@ -151,7 +151,7 @@ class BroughtIntoUkFromSmallProducersControllerISpec extends ControllerITTestHel
                 val expectedLocation = if (yesSelected) {
                   routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode).url
                 } else {
-                  defaultCall.url
+                  routes.ClaimCreditsForExportsController.onPageLoad(NormalMode).url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(BroughtIntoUkFromSmallProducersPage))
@@ -177,7 +177,7 @@ class BroughtIntoUkFromSmallProducersControllerISpec extends ControllerITTestHel
                 val expectedLocation = if (yesSelected) {
                   routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode).url
                 } else {
-                  defaultCall.url
+                  routes.ClaimCreditsForExportsController.onPageLoad(NormalMode).url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(BroughtIntoUkFromSmallProducersPage))

@@ -16,7 +16,8 @@
 
 package pages.correctReturn
 
-import models.LitresInBands
+import controllers.correctReturn.routes
+import models.{LitresInBands, Mode}
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
@@ -26,4 +27,6 @@ case object HowManyOperatePackagingSiteOwnBrandsPage extends QuestionPage[Litres
 
   def journeyType: String = "correctReturn"
   override def toString: String = "howManyOperatePackagingSiteOwnBrands"
+
+  override val url: Mode => String = mode => routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(mode).url
 }

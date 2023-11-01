@@ -6,7 +6,7 @@ import generators.ChangeActivityCYAGenerators._
 import models.backend.Site
 import models.changeActivity.AmountProduced
 import models.changeActivity.AmountProduced.{Large, Small, None => NoneProduced}
-import models.{CheckMode, NormalMode}
+import models.CheckMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
@@ -52,7 +52,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
           amountProduced.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe answerToMatch
           amountProduced.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change how many litres of your own brands have been packaged globally"
           amountProduced.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "how many litres of your own brands have been packaged globally"
-          amountProduced.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.AmountProducedController.onPageLoad(NormalMode).url
+          amountProduced.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.AmountProducedController.onPageLoad(CheckMode).url
         }
       }
     }
@@ -165,7 +165,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
           val sites = page.getElementsByClass("govuk-summary-list").get(sectionInd).getElementsByClass("govuk-summary-list__row")
           sites.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change the UK warehouse you use to store liable drinks"
           sites.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "the UK warehouse you use to store liable drinks"
-          sites.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe SecondaryWarehouseDetailsController.onPageLoad.url
+          sites.get(1).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url
           sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change the UK packaging site that you operate to produce liable drinks"
           sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "the UK packaging site that you operate to produce liable drinks"
           sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
@@ -184,7 +184,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
             val sites = page.getElementsByClass("govuk-summary-list").get(sectionInd).getElementsByClass("govuk-summary-list__row")
             sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().text() mustBe "Change the UK warehouse you use to store liable drinks"
             sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByClass("govuk-visually-hidden").first().text() mustBe "the UK warehouse you use to store liable drinks"
-            sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe SecondaryWarehouseDetailsController.onPageLoad.url
+            sites.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").first().attr("href") mustBe SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url
           }
         case (None, None) => None
       }
@@ -219,7 +219,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
               page.getElementsByClass("govuk-caption-l").text() mustBe "Super Lemonade Plc"
               val sectionIndexes: Seq[Option[Int]] = List(
                 amountProducedValue.nonEmpty,
-                thirdPartyPackagingValue.nonEmpty,
+                thirdPartyPackagingValue.nonEmpty && amountProducedValue.contains(Small),
                 ownBrandsValue.nonEmpty,
                 contractValue.nonEmpty,
                 importValue.nonEmpty,

@@ -38,4 +38,8 @@ class NavigatorForCancelRegistration @Inject()() extends Navigator {
     case ReasonPage => _ => routes.CancelRegistrationCYAController.onPageLoad
     case _ => _ => routes.CancelRegistrationCYAController.onPageLoad
   }
+
+  override val editRouteMap: Page => UserAnswers => Call = {
+    case _ => _ => defaultCall
+  }
 }

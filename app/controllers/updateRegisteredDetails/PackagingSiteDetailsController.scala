@@ -89,7 +89,7 @@ class PackagingSiteDetailsController @Inject()(
   private def getOnwardUrl(value: Boolean, mode: Mode)(implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages,
                                                        requestHeader: RequestHeader): Future[String] = {
     if (value) {
-      addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails)(hc, ec, messages, requestHeader)
+      addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode)(hc, ec, messages, requestHeader)
     } else {
       if (mode == CheckMode) {
         Future.successful(controllers.updateRegisteredDetails.routes.UpdateRegisteredDetailsCYAController.onPageLoad.url)

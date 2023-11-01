@@ -16,6 +16,8 @@
 
 package pages.correctReturn
 
+import controllers.correctReturn.routes
+import models.Mode
 import play.api.libs.json.JsPath
 import pages.QuestionPage
 
@@ -25,4 +27,6 @@ case object SmallProducerDetailsPage extends QuestionPage[Boolean] {
 
   def journeyType: String = "correctReturn"
   override def toString: String = "smallProducerDetails"
+
+  override val url: Mode => String = mode => routes.SmallProducerDetailsController.onPageLoad(mode).url
 }

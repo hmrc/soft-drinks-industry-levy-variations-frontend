@@ -17,43 +17,59 @@
 package views.summary.changeActivity
 
 import controllers.changeActivity.routes
-import models.UserAnswers
+import models.{CheckMode, Mode, UserAnswers}
 import models.backend.Site
-import pages.changeActivity.SecondaryWarehouseDetailsPage
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
+import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryList, SummaryListRow, Value}
 import viewmodels.AddressFormattingHelper
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object SecondaryWarehouseDetailsSummary  {
+object SecondaryWarehouseDetailsSummary {
 
-  def cyaRow(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SecondaryWarehouseDetailsPage).map {
-      answer =>
-
-        val value = if (answer) "site.yes" else "site.no"
-
-        SummaryListRowViewModel(
-          key     = "changeActivity.secondaryWarehouseDetails.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad.url)
-              .withVisuallyHiddenText(messages("changeActivity.secondaryWarehouseDetails.change.hidden"))
-          )
-        )
+  def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)
+                 (implicit messages: Messages): SummaryList = {
+    val key = if (userAnswers.warehouseList.size != 1) {
+      messages("checkYourAnswers.warehouse.checkYourAnswersLabel.multiple", userAnswers.warehouseList.size.toString)
+    } else {
+      messages("checkYourAnswers.warehouse.checkYourAnswersLabel.one", userAnswers.warehouseList.size.toString)
+    }
+    val visuallyHiddenChangeText = if (userAnswers.warehouseList.size != 1) {
+      messages("checkYourAnswers.sites.warehouse.change.hidden.multiple")
+    } else {
+      messages("checkYourAnswers.sites.warehouse.change.hidden.one")
     }
 
-  def summaryRows(warehouseList: Map[String, Site])(implicit messages: Messages): List[SummaryListRow] = {
+    SummaryListViewModel(
+      rows = Seq(SummaryListRowViewModel(
+        key = Key(
+          content = key,
+          classes = "govuk-!-width-full"
+        ),
+        value = Value(),
+        actions = if (isCheckAnswers) {
+          Seq(
+            ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
+              .withAttribute(("id", "change-warehouses"))
+              .withVisuallyHiddenText(visuallyHiddenChangeText)
+          )
+        } else {
+          Seq.empty
+        }
+      ))
+    )
+  }
+
+  def summaryRows(warehouseList: Map[String, Site], mode: Mode)(implicit messages: Messages): List[SummaryListRow] = {
     warehouseList.map {
       warehouse =>
         SummaryListRow(
           key = Key(HtmlContent(AddressFormattingHelper.addressFormatting(warehouse._2.address, warehouse._2.tradingName))),
           classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds",
           actions = Some(Actions("", Seq(
-            ActionItemViewModel("site.remove", routes.RemoveWarehouseDetailsController.onPageLoad(warehouse._1).url)
+            ActionItemViewModel("site.remove", routes.RemoveWarehouseDetailsController.onPageLoad(warehouse._1, mode).url)
               .withVisuallyHiddenText(messages("changeActivity.secondaryWarehouseDetails.remove.hidden",
                 warehouse._2.tradingName.getOrElse(""), warehouse._2.address.lines.head))
           )))

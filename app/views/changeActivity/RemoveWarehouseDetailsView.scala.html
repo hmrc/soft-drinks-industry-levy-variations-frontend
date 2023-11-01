@@ -24,11 +24,11 @@
     govukButton: GovukButton
 )
 
-@(form: Form[_], address: Html, index: String)(implicit request: Request[_], messages: Messages)
+@(form: Form[_], address: Html, index: String, mode: Mode)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("changeActivity.removeWarehouseDetails.title"))) {
 
-    @formHelper(action = routes.RemoveWarehouseDetailsController.onSubmit(index), Symbol("autoComplete") -> "off") {
+    @formHelper(action = routes.RemoveWarehouseDetailsController.onSubmit(index, mode), Symbol("autoComplete") -> "off") {
 
 
         @if(form.errors.nonEmpty) {

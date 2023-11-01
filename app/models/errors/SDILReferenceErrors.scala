@@ -14,18 +14,9 @@
  * limitations under the License.
  */
 
-package pages.correctReturn
+package models.errors
 
-import controllers.correctReturn.routes
-import models.{LitresInBands, Mode}
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+sealed trait SDILReferenceErrors
 
-case object HowManyCreditsForLostDamagedPage extends QuestionPage[LitresInBands] {
-
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "howManyCreditsForLostDamaged"
-
-  override val url: Mode => String = mode => routes.HowManyCreditsForLostDamagedController.onPageLoad(mode).url
-}
+case object AlreadyExists extends SDILReferenceErrors
+case object NotASmallProducer extends SDILReferenceErrors
