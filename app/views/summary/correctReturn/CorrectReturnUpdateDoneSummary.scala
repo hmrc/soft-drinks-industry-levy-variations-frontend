@@ -24,17 +24,17 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, Summ
 
 object CorrectReturnUpdateDoneSummary {
 
-  def changeSpecificSummaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription, changedPages: List[ChangedPage])
+  def changeSpecificSummaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription, changedPages: List[ChangedPage], noChangeAction: Boolean = false)
                                           (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
-    val mainSection = CorrectReturnBaseCYASummary.changedSummaryListAndHeadings(userAnswers, subscription, changedPages)
-    val correctionDetailsSection = correctionSection(userAnswers)
+    val mainSection = CorrectReturnBaseCYASummary.changedSummaryListAndHeadings(userAnswers, subscription, changedPages, noChangeAction)
+    val correctionDetailsSection = correctionSection(userAnswers, noChangeAction)
     mainSection ++ correctionDetailsSection
   }
 
-  private def correctionSection(userAnswers: UserAnswers)
+  private def correctionSection(userAnswers: UserAnswers, noChangeAction: Boolean = false)
                                      (implicit messages: Messages): Option[(String, SummaryList)] = {
-    val correctionReasonSummary: Option[SummaryListRow] = CorrectionReasonSummary.row(userAnswers)
-    val repaymentMethodSummary: Option[SummaryListRow] = RepaymentMethodSummary.row(userAnswers)
+    val correctionReasonSummary: Option[SummaryListRow] = CorrectionReasonSummary.row(userAnswers, noChangeAction)
+    val repaymentMethodSummary: Option[SummaryListRow] = RepaymentMethodSummary.row(userAnswers, noChangeAction)
 
     val correctionSectionSummaryList: Option[SummaryList] = for {
       correctionReason <- correctionReasonSummary

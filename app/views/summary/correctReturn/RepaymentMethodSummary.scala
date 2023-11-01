@@ -28,7 +28,7 @@ import viewmodels.implicits._
 
 object RepaymentMethodSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers, noChangeAction: Boolean = false)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(RepaymentMethodPage).map {
       answer =>
         val value = ValueViewModel(
@@ -40,10 +40,12 @@ object RepaymentMethodSummary  {
         SummaryListRowViewModel(
           key     = "correctReturn.repaymentMethod.checkYourAnswersLabel",
           value   = value,
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.RepaymentMethodController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("correctReturn.repaymentMethod.change.hidden"))
-          )
+          actions = if (noChangeAction) Seq.empty else {
+            Seq(
+              ActionItemViewModel("site.change", routes.RepaymentMethodController.onPageLoad(CheckMode).url)
+                .withVisuallyHiddenText(messages("correctReturn.repaymentMethod.change.hidden"))
+            )
+          }
         )
     }
 }
