@@ -30,11 +30,8 @@
     seqSummaryList: Seq[(String, SummaryList)],
     formattedDate: String,
     formattedTime: String,
-    nextPeriodStart: String,
-    nextPeriodEnd: String,
-    deadlineStart: String,
-    deadlineEnd: String,
-    companyName: String,
+    periodStart: String,
+    periodEnd: String,
     sdilHomeUrl: String
 )(implicit request: Request[_], messages: Messages)
 
@@ -48,7 +45,7 @@
 
     @printLinkWithJs(messages("site.print"))
 
-    <p class="govuk-body-m">@messages("correctReturn.updateDone.updateInfo.p1", nextPeriodStart, nextPeriodEnd, companyName, formattedDate, formattedTime)</p>
+    <p class="govuk-body-m">@messages("correctReturn.updateDone.updateInfo.p1", periodStart, periodEnd, orgName, formattedDate, formattedTime)</p>
 
     @govukWarningText(WarningText(
         iconFallbackText = Some("Warning"),

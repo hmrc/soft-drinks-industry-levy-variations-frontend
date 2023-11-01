@@ -45,7 +45,10 @@ class CorrectReturnUpdateDoneController @Inject()(
   def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
       requiredUserAnswers.requireData(CorrectReturnUpdateDonePage) {
-        request.userAnswers.getCorrectReturnOriginalSDILReturnData.map(originalSdilReturn => {
+        (for {
+          originalSdilReturn <- request.userAnswers.getCorrectReturnOriginalSDILReturnData
+          returnPeriod <- request.userAnswers.correctReturnPeriod
+        } yield {
           val orgName: String = " " + request.subscription.orgName
           val currentSDILReturn = SdilReturn.apply(request.userAnswers)
           val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSDILReturn)
@@ -58,17 +61,10 @@ class CorrectReturnUpdateDoneController @Inject()(
           val formattedTime = getSentDateTime.format(timeFormatter)
 
           val returnPeriodFormat = DateTimeFormatter.ofPattern("MMMM yyyy")
-          val nextReturnPeriod = ReturnPeriod(getSentDateTime.toLocalDate).next
-          val returnPeriodStart = nextReturnPeriod.start.format(returnPeriodFormat)
-          val returnPeriodEnd = nextReturnPeriod.end.format(returnPeriodFormat)
+          val returnPeriodStart = returnPeriod.start.format(returnPeriodFormat)
+          val returnPeriodEnd = returnPeriod.end.format(returnPeriodFormat)
 
-          val deadlineStartFormat = DateTimeFormatter.ofPattern("d MMMM")
-          val deadlineStart = nextReturnPeriod.end.plusDays(1).format(deadlineStartFormat)
-
-          val deadlineEndFormat = DateTimeFormatter.ofPattern("d MMMM yyyy")
-          val deadlineEnd = nextReturnPeriod.deadline.format(deadlineEndFormat)
-
-          Future.successful(Ok(view(orgName, sections, formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd, deadlineStart, deadlineEnd, request.subscription.orgName, config.sdilHomeUrl)))
+          Future.successful(Ok(view(orgName, sections, formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd, config.sdilHomeUrl)))
         }).getOrElse(Future(Redirect(controllers.routes.SelectChangeController.onPageLoad.url)))
       }
   }
