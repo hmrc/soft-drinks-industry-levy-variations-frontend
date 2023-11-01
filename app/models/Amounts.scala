@@ -18,7 +18,7 @@ package models
 
 import play.api.libs.json.{Json, Reads, Writes}
 
-case class Amounts(originalReturnTotal: BigDecimal, newReturnTotal: BigDecimal, accountBalance: BigDecimal, adjustedAmount:BigDecimal)
+case class Amounts(originalReturnTotal: BigDecimal, newReturnTotal: BigDecimal, balanceBroughtForward: BigDecimal, adjustedAmount:BigDecimal)
 
 object Amounts {
   implicit val format = Json.format[Amounts]

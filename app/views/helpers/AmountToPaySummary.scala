@@ -29,7 +29,7 @@ object AmountToPaySummary  {
 
     val originalReturnTotal: BigDecimal = amounts.originalReturnTotal
     val newReturnTotal: BigDecimal = amounts.newReturnTotal
-    val accountBalance: BigDecimal = amounts.accountBalance
+    val balanceBroughtForward: BigDecimal = amounts.balanceBroughtForward
     val adjustedAmount: BigDecimal = amounts.adjustedAmount
 
     SummaryListViewModel(rows = Seq(
@@ -44,8 +44,8 @@ object AmountToPaySummary  {
           .withCssClass("new-return-total sdil-right-align--desktop")
       ),
       SummaryListRowViewModel(
-        key = "correctReturn.accountBalance",
-        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(accountBalance).replace("-", "&minus;")))
+        key = "correctReturn.balanceBroughtForward",
+        value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(balanceBroughtForward).replace("-", "&minus;")))
           .withCssClass("balance-brought-forward sdil-right-align--desktop")
       ),
       SummaryListRowViewModel(

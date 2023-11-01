@@ -642,7 +642,7 @@ changeActivitySent.details = View the details of your update
 correctReturn.balance = Balance
 correctReturn.originalReturnTotal = Original return total
 correctReturn.newReturnTotal = New return total
-correctReturn.accountBalance = Account balance
+correctReturn.balanceBroughtForward = Account balance
 correctReturn.adjustedAmount = Net adjusted amount
 
 litres.lowBandLevy = Low band levy

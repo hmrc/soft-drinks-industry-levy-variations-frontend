@@ -20,11 +20,8 @@ import cats.data.EitherT
 import com.google.inject.{Inject, Singleton}
 import connectors.SoftDrinksIndustryLevyConnector
 import errors.{FailedToAddDataToUserAnswers, NoSdilReturnForPeriod, NoVariableReturns}
-import models.core.ErrorModel
 import models.correctReturn.CorrectReturnUserAnswersData
-import models.{Amounts, RetrievedSubscription, ReturnPeriod, SdilReturn, UserAnswers}
-import play.api.Logger
-import play.api.http.Status
+import models.{RetrievedSubscription, ReturnPeriod, SdilReturn, UserAnswers}
 import service.VariationResult
 import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier

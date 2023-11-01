@@ -45,12 +45,12 @@ class CorrectReturnCheckChangesCYAController @Inject()(
   def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
       request.userAnswers.getCorrectReturnOriginalSDILReturnData.map(originalSdilReturn => {
-        val accountBalance = returnService.getBalanceBroughtForward(request.sdilEnrolment)
+        val balanceBroughtForward = returnService.getBalanceBroughtForward(request.sdilEnrolment)
         val orgName: String = " " + request.subscription.orgName
         val currentSDILReturn = SdilReturn.apply(request.userAnswers)
         val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSDILReturn)
 
-        def sections(accountBalance: BigDecimal): Seq[(String, SummaryList)] = {
+        def sections(balanceBroughtForward: BigDecimal): Seq[(String, SummaryList)] = {
           CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(
             request.userAnswers,
             request.subscription,
@@ -58,16 +58,16 @@ class CorrectReturnCheckChangesCYAController @Inject()(
             amounts = Amounts(
               originalReturnTotal = originalSdilReturn.total,
               newReturnTotal = SdilReturn(request.userAnswers).total,
-              accountBalance = accountBalance * -1,
-              adjustedAmount = if(accountBalance == 0){SdilReturn(request.userAnswers).total + accountBalance} else {
-                (SdilReturn(request.userAnswers).total ) + (accountBalance * -1)
+              balanceBroughtForward = balanceBroughtForward * -1,
+              adjustedAmount = if(balanceBroughtForward == 0){SdilReturn(request.userAnswers).total + balanceBroughtForward} else {
+                (SdilReturn(request.userAnswers).total ) + (balanceBroughtForward * -1)
               }
             )
           )
         }
 
-        accountBalance.map(accountBalance => {
-        Ok(view(orgName, sections(accountBalance: BigDecimal), routes.CorrectReturnCheckChangesCYAController.onSubmit))
+        balanceBroughtForward.map(balanceBroughtForward => {
+        Ok(view(orgName, sections(balanceBroughtForward: BigDecimal), routes.CorrectReturnCheckChangesCYAController.onSubmit))
         }).recoverWith {
           case _ => genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][Balance] - unexpected response for ${request.sdilEnrolment}")
             Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url))
