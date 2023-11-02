@@ -25,7 +25,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
 import views.html.correctReturn.CorrectReturnUpdateDoneView
-import views.summary.correctReturn.CorrectReturnUpdateDoneSummary
+import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 
 import java.time.{LocalDateTime, ZoneId}
 import java.time.format.DateTimeFormatter
@@ -91,7 +91,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         val view = application.injector.instanceOf[CorrectReturnUpdateDoneView]
         val orgName = " Super Lemonade Plc"
-        val section = CorrectReturnUpdateDoneSummary.changeSpecificSummaryListAndHeadings(userAnswers, aSubscription, changedPages)
+        val section = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(userAnswers, aSubscription, changedPages)
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(orgName, section,

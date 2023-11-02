@@ -19,7 +19,7 @@ package controllers.correctReturn
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{ControllerActions, RequiredUserAnswersForCorrectReturn}
-import models.{ReturnPeriod, SdilReturn}
+import models.SdilReturn
 import models.correctReturn.ChangedPage
 import orchestrators.CorrectReturnOrchestrator
 import pages.correctReturn.CorrectReturnUpdateDonePage
@@ -27,7 +27,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.correctReturn.CorrectReturnUpdateDoneView
-import views.summary.correctReturn.CorrectReturnUpdateDoneSummary
+import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 
 import java.time.{LocalDateTime, ZoneId}
 import java.time.format.DateTimeFormatter
@@ -52,7 +52,7 @@ class CorrectReturnUpdateDoneController @Inject()(
           val orgName: String = " " + request.subscription.orgName
           val currentSDILReturn = SdilReturn.apply(request.userAnswers)
           val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSDILReturn)
-          val sections = CorrectReturnUpdateDoneSummary.changeSpecificSummaryListAndHeadings(
+          val sections = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(
             request.userAnswers, request.subscription, changedPages, isCheckAnswers = false)
 
           val getSentDateTime = LocalDateTime.now(ZoneId.of("UTC")) //LocalDateTime.ofInstant(request.userAnswers.submittedOn.get, ZoneId.of("UTC"))
