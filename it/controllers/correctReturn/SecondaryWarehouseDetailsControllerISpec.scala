@@ -133,12 +133,12 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
   s"POST " + normalRoutePath - {
     userAnswersForCorrectReturnSecondaryWarehouseDetailsPage.foreach { case (key, userAnswers) =>
       "when the user selects " + key - {
-        "should update the session with the new value and redirect to the index controller" - {
+        "should update the session with the new value and redirect to the expected controller" - {
           "when the session contains no data for page" in {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForCorrectReturn)
+            setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -217,7 +217,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForCorrectReturn)
+            setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(

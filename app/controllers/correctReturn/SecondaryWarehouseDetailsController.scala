@@ -20,7 +20,7 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.correctReturn.SecondaryWarehouseDetailsFormProvider
 import handlers.ErrorHandler
-import models.{CheckMode, Mode, NormalMode}
+import models.Mode
 import navigation._
 import pages.correctReturn.SecondaryWarehouseDetailsPage
 import play.api.i18n.{Messages, MessagesApi}
@@ -35,7 +35,6 @@ import views.html.correctReturn.SecondaryWarehouseDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 class SecondaryWarehouseDetailsController @Inject()(
                                                      override val messagesApi: MessagesApi,
