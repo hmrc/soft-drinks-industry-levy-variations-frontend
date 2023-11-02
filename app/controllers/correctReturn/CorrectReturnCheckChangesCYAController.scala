@@ -18,15 +18,16 @@ package controllers.correctReturn
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions.{ControllerActions, RequiredUserAnswersForCorrectReturn}
-import models.SdilReturn
+import controllers.actions.ControllerActions
+import models.{Amounts, SdilReturn}
 import models.SelectChange.CorrectReturn
 import models.correctReturn.ChangedPage
-import orchestrators.CorrectReturnOrchestrator
-import pages.correctReturn.{CorrectReturnBaseCYAPage, CorrectReturnCheckChangesPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.ReturnService
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilities.GenericLogger
 import views.html.correctReturn.CorrectReturnCheckChangesCYAView
 import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 
@@ -35,24 +36,43 @@ import scala.concurrent.{ExecutionContext, Future}
 class CorrectReturnCheckChangesCYAController @Inject()(
                                             override val messagesApi: MessagesApi,
                                             controllerActions: ControllerActions,
-                                            val requiredUserAnswers: RequiredUserAnswersForCorrectReturn,
                                             val controllerComponents: MessagesControllerComponents,
-                                            val correctReturnOrchestrator: CorrectReturnOrchestrator,
-                                            view: CorrectReturnCheckChangesCYAView
+                                            view: CorrectReturnCheckChangesCYAView,
+                                            returnService: ReturnService,
+                                            genericLogger: GenericLogger
                                           )(implicit config: FrontendAppConfig, ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-      requiredUserAnswers.requireData(CorrectReturnCheckChangesPage) {
-        request.userAnswers.getCorrectReturnOriginalSDILReturnData.map(originalSdilReturn => {
-          val orgName: String = " " + request.subscription.orgName
-          val currentSDILReturn = SdilReturn.apply(request.userAnswers)
-          val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSDILReturn)
-          val sections = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(request.userAnswers, request.subscription, changedPages)
+      request.userAnswers.getCorrectReturnOriginalSDILReturnData.map(originalSdilReturn => {
+        val balanceBroughtForward = returnService.getBalanceBroughtForward(request.sdilEnrolment)
+        val orgName: String = " " + request.subscription.orgName
+        val currentSDILReturn = SdilReturn.apply(request.userAnswers)
+        val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSDILReturn)
 
-          Future.successful(Ok(view(orgName, sections, routes.CorrectReturnCheckChangesCYAController.onSubmit)))
-        }).getOrElse(Future(Redirect(controllers.routes.SelectChangeController.onPageLoad.url)))
-      }
+        def sections(balanceBroughtForward: BigDecimal): Seq[(String, SummaryList)] = {
+          CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(
+            request.userAnswers,
+            request.subscription,
+            changedPages,
+            amounts = Amounts(
+              originalReturnTotal = originalSdilReturn.total,
+              newReturnTotal = SdilReturn(request.userAnswers).total,
+              balanceBroughtForward = balanceBroughtForward * -1,
+              adjustedAmount = if(balanceBroughtForward == 0){SdilReturn(request.userAnswers).total + balanceBroughtForward} else {
+                (SdilReturn(request.userAnswers).total ) + (balanceBroughtForward * -1)
+              }
+            )
+          )
+        }
+
+        balanceBroughtForward.map(balanceBroughtForward => {
+        Ok(view(orgName, sections(balanceBroughtForward: BigDecimal), routes.CorrectReturnCheckChangesCYAController.onSubmit))
+        }).recoverWith {
+          case _ => genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][Balance] - unexpected response for ${request.sdilEnrolment}")
+            Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url))
+        }
+        }).getOrElse(Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url)))
   }
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {

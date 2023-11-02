@@ -639,5 +639,11 @@ changeActivitySent.whatNextBody = You don't need to do anything else. We will up
 changeActivitySent.returnHome = Go back to your Soft Drinks Industry Levy details
 changeActivitySent.details = View the details of your update
 
+correctReturn.balance = Balance
+correctReturn.originalReturnTotal = Original return total
+correctReturn.newReturnTotal = New return total
+correctReturn.balanceBroughtForward = Account balance
+correctReturn.adjustedAmount = Net adjusted amount
+
 litres.lowBandLevy = Low band levy
 litres.highBandLevy = High band levy

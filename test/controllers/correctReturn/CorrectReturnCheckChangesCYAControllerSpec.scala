@@ -20,14 +20,23 @@ import base.SpecBase
 import controllers.correctReturn.routes._
 import models.correctReturn.{AddASmallProducer, ChangedPage, RepaymentMethod}
 import models.{LitresInBands, SmallProducer}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar.mock
 import pages.correctReturn._
+import org.mockito.Mockito.when
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.ReturnService
 import viewmodels.govuk.SummaryListFluency
 import views.html.correctReturn.CorrectReturnCheckChangesCYAView
 import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 
+import scala.concurrent.Future
+
 class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryListFluency {
+
+  val mockReturnService: ReturnService = mock[ReturnService]
 
   "Check Changes Controller" - {
 
@@ -68,16 +77,19 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         ChangedPage(HowManyCreditsForLostDamagedPage, answerChanged = true),
         ChangedPage(ExemptionsForSmallProducersPage, answerChanged = true))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+        bind[ReturnService].toInstance(mockReturnService))
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        when (mockReturnService.getBalanceBroughtForward(any())(any(),any())) thenReturn Future.successful(-502.75)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[CorrectReturnCheckChangesCYAView]
         val orgName = " Super Lemonade Plc"
-        val section = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(userAnswers, aSubscription, changedPages)
+        val section = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(userAnswers, aSubscription, changedPages, amounts)
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(orgName, section,

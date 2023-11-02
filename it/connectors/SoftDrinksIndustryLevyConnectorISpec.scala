@@ -346,38 +346,13 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
           "and return the balance when sucessful" in {
             given
               .sdilBackend
-              .balance(aSubscription.sdilRef, true)
+              .balance(aSubscription.sdilRef, withAssessment = true)
 
             val res = sdilConnector.balance(aSubscription.sdilRef, true)
 
-            whenReady(res.value) { result =>
-              result mustBe Right(BigDecimal(1000))
+            whenReady(res) { result =>
+              result mustBe BigDecimal(1000)
             }
-          }
-
-          "and return UnexpectedResponseFromSDIL when call fails" in {
-            given
-              .sdilBackend
-              .balancefailure(aSubscription.sdilRef, true)
-
-            val res = sdilConnector.balance(aSubscription.sdilRef, true)
-
-            whenReady(res.value) { result =>
-              result mustBe Left(UnexpectedResponseFromSDIL)
-            }
-          }
-        }
-      }
-
-      "and the balance is in the cache" - {
-        "should return the balance" in {
-          val res = for {
-            _ <- EitherT.right[VariationsErrors](sdilSessionCache.save(SDIL_REF, SDILSessionKeys.balance(true), BigDecimal(1000)))
-            result <- sdilConnector.balance(aSubscription.sdilRef, true)
-          } yield result
-
-          whenReady(res.value) { result =>
-            result mustBe Right(BigDecimal(1000))
           }
         }
       }
@@ -392,34 +367,9 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
 
             val res = sdilConnector.balance(aSubscription.sdilRef, false)
 
-            whenReady(res.value) { result =>
-              result mustBe Right(BigDecimal(1000))
+            whenReady(res) { result =>
+              result mustBe BigDecimal(1000)
             }
-          }
-
-          "and return UnexpectedResponseFromSDIL when call fails" in {
-            given
-              .sdilBackend
-              .balancefailure(aSubscription.sdilRef, false)
-
-            val res = sdilConnector.balance(aSubscription.sdilRef, false)
-
-            whenReady(res.value) { result =>
-              result mustBe Left(UnexpectedResponseFromSDIL)
-            }
-          }
-        }
-      }
-
-      "and the balance is in the cache" - {
-        "should return the balance from the cache" in {
-          val res = for {
-            _ <- EitherT.right[VariationsErrors](sdilSessionCache.save(SDIL_REF, SDILSessionKeys.balance(false), BigDecimal(1000)))
-            result <- sdilConnector.balance(aSubscription.sdilRef, false)
-          } yield result
-
-          whenReady(res.value) { result =>
-            result mustBe Right(BigDecimal(1000))
           }
         }
       }
@@ -437,20 +387,8 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
 
             val res = sdilConnector.balanceHistory(aSubscription.sdilRef, true)
 
-            whenReady(res.value) { result =>
-              result mustBe Right(allFinicialItems)
-            }
-          }
-
-          "and return UnexpectedResponseFromSDIL when call fails" in {
-            given
-              .sdilBackend
-              .balanceHistoryfailure(aSubscription.sdilRef, true)
-
-            val res = sdilConnector.balanceHistory(aSubscription.sdilRef, true)
-
-            whenReady(res.value) { result =>
-              result mustBe Left(UnexpectedResponseFromSDIL)
+            whenReady(res) { result =>
+              result mustBe allFinicialItems
             }
           }
         }
@@ -459,12 +397,12 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
       "and the balanceHistory is in the cache" - {
         "should return the balanceHistory" in {
           val res = for {
-            _ <- EitherT.right[VariationsErrors](sdilSessionCache.save[List[FinancialLineItem]](SDIL_REF, SDILSessionKeys.balanceHistory(true), allFinicialItems))
+            _ <- sdilSessionCache.save[List[FinancialLineItem]](SDIL_REF, SDILSessionKeys.balanceHistory(true), allFinicialItems)
             result <- sdilConnector.balanceHistory(aSubscription.sdilRef, true)
           } yield result
 
-          whenReady(res.value) { result =>
-            result mustBe Right(allFinicialItems)
+          whenReady(res) { result =>
+            result mustBe allFinicialItems
           }
         }
       }
@@ -479,20 +417,8 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
 
             val res = sdilConnector.balanceHistory(aSubscription.sdilRef, false)
 
-            whenReady(res.value) { result =>
-              result mustBe Right(List.empty)
-            }
-          }
-
-          "and return UnexpectedResponseFromSDIL when call fails" in {
-            given
-              .sdilBackend
-              .balanceHistoryfailure(aSubscription.sdilRef, false)
-
-            val res = sdilConnector.balanceHistory(aSubscription.sdilRef, false)
-
-            whenReady(res.value) { result =>
-              result mustBe Left(UnexpectedResponseFromSDIL)
+            whenReady(res) { result =>
+              result mustBe List.empty
             }
           }
         }
@@ -501,12 +427,12 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
       "and the balanceHistory is in the cache" - {
         "should return the balanceHistory from the cache" in {
           val res = for {
-            _ <- EitherT.right[VariationsErrors](sdilSessionCache.save[List[FinancialLineItem]](SDIL_REF, SDILSessionKeys.balanceHistory(false), allFinicialItems))
+            _ <- sdilSessionCache.save[List[FinancialLineItem]](SDIL_REF, SDILSessionKeys.balanceHistory(false), allFinicialItems)
             result <- sdilConnector.balanceHistory(aSubscription.sdilRef, false)
           } yield result
 
-          whenReady(res.value) { result =>
-            result mustBe Right(allFinicialItems)
+          whenReady(res) { result =>
+            result mustBe allFinicialItems
           }
         }
       }
