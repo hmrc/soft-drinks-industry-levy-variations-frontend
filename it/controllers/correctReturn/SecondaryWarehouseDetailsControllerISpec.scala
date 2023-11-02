@@ -6,9 +6,10 @@ import models.UserAnswers
 import models.alf.init._
 import models.backend.{Site, UkAddress}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.correctReturn.{PackagingSiteDetailsPage, SecondaryWarehouseDetailsPage}
 import play.api.http.HeaderNames
+import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.WsTestClient
 import testSupport.helpers.ALFTestHelper
@@ -546,7 +547,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-//            page.title mustBe "Error: Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
+            page.title must include("Error: " + Messages("correctReturn.secondaryWarehouseDetails" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
