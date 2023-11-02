@@ -1,17 +1,21 @@
 package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
-import models.{CheckMode, NormalMode}
+import models.{CheckMode, NormalMode, UserAnswers}
 import models.SelectChange.CorrectReturn
+import models.alf.init.{AppLevelLabels, ConfirmPageConfig, EditPageLabels, JourneyConfig, JourneyLabels, JourneyOptions, LanguageLabels, LookupPageLabels, SelectPageConfig, TimeoutConfig}
 import org.jsoup.Jsoup
+import org.scalatest.TryValues
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.correctReturn.PackAtBusinessAddressPage
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
+import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
+import testSupport.helpers.ALFTestHelper
 
-class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
+class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with TryValues {
 
   val normalRoutePath = "/pack-at-business-address"
   val checkRoutePath = "/change-pack-at-business-address"
@@ -38,6 +42,186 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
             radioInputs.get(1).attr("value") mustBe "false"
             radioInputs.get(1).hasAttr("checked") mustBe false
           }
+        }
+      }
+    }
+
+    "user selected no, user should be taken to ALF in normal mode" in {
+      val journeyConfigToBePosted: JourneyConfig = JourneyConfig(
+        version = 2,
+        options = JourneyOptions(
+          continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/pack-at-business-address/$sdilNumber",
+          homeNavHref = None,
+          signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+          accessibilityFooterUrl = None,
+          phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fchange-activity%2Fsecondary-warehouse-details"),
+          deskProServiceName = None,
+          showPhaseBanner = Some(false),
+          alphaPhase = Some(false),
+          includeHMRCBranding = Some(true),
+          ukMode = Some(true),
+          selectPageConfig = Some(SelectPageConfig(
+            proposalListLimit = Some(10),
+            showSearchAgainLink = Some(true)
+          )),
+          showBackButtons = Some(true),
+          disableTranslations = Some(true),
+          allowedCountryCodes = None,
+          confirmPageConfig = Some(ConfirmPageConfig(
+            showSearchAgainLink = Some(true),
+            showSubHeadingAndInfo = Some(true),
+            showChangeLink = Some(true),
+            showConfirmChangeText = Some(true)
+          )),
+          timeoutConfig = Some(TimeoutConfig(
+            timeoutAmount = 900,
+            timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+            timeoutKeepAliveUrl = Some(controllers.routes.KeepAliveController.keepAlive.url)
+          )),
+          serviceHref = Some(controllers.routes.IndexController.onPageLoad.url),
+          pageHeadingStyle = Some("govuk-heading-l")
+        ),
+        labels = Some(
+          JourneyLabels(
+            en = Some(LanguageLabels(
+              appLevelLabels = Some(AppLevelLabels(
+                navTitle = Some("Soft Drinks Industry Levy"),
+                phaseBannerHtml = None
+              )),
+              selectPageLabels = None,
+              lookupPageLabels = Some(
+                LookupPageLabels(
+                  title = Some("Find UK warehouse address"),
+                  heading = Some("Find UK warehouse address"),
+                  postcodeLabel = Some("Postcode"))),
+              editPageLabels = Some(
+                EditPageLabels(
+                  title = Some("Enter the UK warehouse address"),
+                  heading = Some("Enter the UK warehouse address"),
+                  line1Label = Some("Address line 1"),
+                  line2Label = Some("Address line 2"),
+                  line3Label = Some("Address line 3 (optional)"),
+                  townLabel = Some("Address line 4 (optional)"),
+                  postcodeLabel = Some("Postcode"),
+                  organisationLabel = Some("Trading name (optional)"))
+              ),
+              confirmPageLabels = None,
+              countryPickerLabels = None
+            ))
+          )),
+        requestedVersion = None
+      )
+      val expectedResultInDB: Some[JsObject] = Some(
+        Json.obj("correctReturn" -> Json.obj( "packAtBusinessAddress" -> false)
+        ))
+
+      val alfOnRampURL: String = "http://onramp.com"
+
+      given
+        .commonPrecondition
+        .alf.getSuccessResponseFromALFInit(alfOnRampURL)
+      setAnswers(emptyUserAnswersForCorrectReturn)
+
+      WsTestClient.withClient { client =>
+        val result = createClientRequestPOST(
+          client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> "false")
+        )
+
+        whenReady(result) { res =>
+          res.status mustBe 303
+          res.header(HeaderNames.LOCATION) mustBe Some(alfOnRampURL)
+          getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResultInDB
+          ALFTestHelper.requestedBodyMatchesExpected(wireMockServer, journeyConfigToBePosted) mustBe false
+        }
+      }
+    }
+
+    "user selected no, user should be taken to ALF in check mode" in {
+      val journeyConfigToBePosted: JourneyConfig = JourneyConfig(
+        version = 2,
+        options = JourneyOptions(
+          continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/pack-at-business-address/$sdilNumber",
+          homeNavHref = None,
+          signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+          accessibilityFooterUrl = None,
+          phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fchange-activity%2Fsecondary-warehouse-details"),
+          deskProServiceName = None,
+          showPhaseBanner = Some(false),
+          alphaPhase = Some(false),
+          includeHMRCBranding = Some(true),
+          ukMode = Some(true),
+          selectPageConfig = Some(SelectPageConfig(
+            proposalListLimit = Some(10),
+            showSearchAgainLink = Some(true)
+          )),
+          showBackButtons = Some(true),
+          disableTranslations = Some(true),
+          allowedCountryCodes = None,
+          confirmPageConfig = Some(ConfirmPageConfig(
+            showSearchAgainLink = Some(true),
+            showSubHeadingAndInfo = Some(true),
+            showChangeLink = Some(true),
+            showConfirmChangeText = Some(true)
+          )),
+          timeoutConfig = Some(TimeoutConfig(
+            timeoutAmount = 900,
+            timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+            timeoutKeepAliveUrl = Some(controllers.routes.KeepAliveController.keepAlive.url)
+          )),
+          serviceHref = Some(controllers.routes.IndexController.onPageLoad.url),
+          pageHeadingStyle = Some("govuk-heading-l")
+        ),
+        labels = Some(
+          JourneyLabels(
+            en = Some(LanguageLabels(
+              appLevelLabels = Some(AppLevelLabels(
+                navTitle = Some("Soft Drinks Industry Levy"),
+                phaseBannerHtml = None
+              )),
+              selectPageLabels = None,
+              lookupPageLabels = Some(
+                LookupPageLabels(
+                  title = Some("Find UK warehouse address"),
+                  heading = Some("Find UK warehouse address"),
+                  postcodeLabel = Some("Postcode"))),
+              editPageLabels = Some(
+                EditPageLabels(
+                  title = Some("Enter the UK warehouse address"),
+                  heading = Some("Enter the UK warehouse address"),
+                  line1Label = Some("Address line 1"),
+                  line2Label = Some("Address line 2"),
+                  line3Label = Some("Address line 3 (optional)"),
+                  townLabel = Some("Address line 4 (optional)"),
+                  postcodeLabel = Some("Postcode"),
+                  organisationLabel = Some("Trading name (optional)"))
+              ),
+              confirmPageLabels = None,
+              countryPickerLabels = None
+            ))
+          )),
+        requestedVersion = None
+      )
+      val expectedResultInDB: Some[JsObject] = Some(
+        Json.obj("correctReturn" -> Json.obj( "packAtBusinessAddress" -> false)
+        ))
+
+      val alfOnRampURL: String = "http://onramp.com"
+
+      given
+        .commonPrecondition
+        .alf.getSuccessResponseFromALFInit(alfOnRampURL)
+      setAnswers(emptyUserAnswersForCorrectReturn)
+
+      WsTestClient.withClient { client =>
+        val result = createClientRequestPOST(
+          client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> "false")
+        )
+
+        whenReady(result) { res =>
+          res.status mustBe 303
+          res.header(HeaderNames.LOCATION) mustBe Some(alfOnRampURL)
+          getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResultInDB
+          ALFTestHelper.requestedBodyMatchesExpected(wireMockServer, journeyConfigToBePosted) mustBe false
         }
       }
     }
