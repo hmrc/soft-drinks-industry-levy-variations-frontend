@@ -43,7 +43,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
   val returnPeriodStart = currentReturnPeriod.start.format(returnPeriodFormat)
   val returnPeriodEnd = currentReturnPeriod.end.format(returnPeriodFormat)
 
-  "Check Changes Controller" - {
+  "Update Done Controller" - {
 
     "must return OK and the correct view for a GET" in {
       val litres = LitresInBands(2000, 4000)
@@ -91,11 +91,18 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         val view = application.injector.instanceOf[CorrectReturnUpdateDoneView]
         val orgName = " Super Lemonade Plc"
-        val section = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(userAnswers, aSubscription, changedPages)
+        val section = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(userAnswers, aSubscription, changedPages, isCheckAnswers = false)
+
+        val returnPeriodFormat = DateTimeFormatter.ofPattern("MMMM yyyy")
+//        TODO: Remove .get
+        val currentReturnPeriod = userAnswers.correctReturnPeriod.get
+        val returnPeriodStart = currentReturnPeriod.start.format(returnPeriodFormat)
+        val returnPeriodEnd = currentReturnPeriod.end.format(returnPeriodFormat)
 
         status(result) mustEqual OK
+//        TODO: Correct config.sdilHomeUrl
         contentAsString(result) mustEqual view(orgName, section,
-          formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd, "/foo")(request, messages(application)).toString
+          formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd, "http://localhost:8707/soft-drinks-industry-levy-account-frontend/home")(request, messages(application)).toString
       }
     }
   }
