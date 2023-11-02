@@ -42,9 +42,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-//            page.title mustBe "Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
             val summaryList = page.getElementsByClass("govuk-caption-m")
-//            summaryList.text mustBe "You do not have any registered warehouses."
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -73,7 +71,6 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-//              page.title mustBe "Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
               val summaryList = page.getElementsByClass("govuk-caption-m")
 
               summaryList.text mustBe warehouseList.values
@@ -110,9 +107,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-//              page.title mustBe "Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
               val summaryList = page.getElementsByClass("govuk-caption-m")
-//              summaryList.text mustBe "You do not have any registered warehouses."
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -144,9 +139,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-//            page.title mustBe "Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
             val summaryList = page.getElementsByClass("govuk-caption-m")
-//            summaryList.text mustBe "You do not have any registered warehouses."
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -175,7 +168,6 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-//              page.title mustBe "Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
               val summaryList = page.getElementsByClass("govuk-caption-m")
 
               summaryList.text mustBe warehouseList.values
@@ -212,9 +204,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-//              page.title mustBe "Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
               val summaryList = page.getElementsByClass("govuk-caption-m")
-//              summaryList.text mustBe "You do not have any registered warehouses."
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -381,7 +371,6 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-//            page.title mustBe "Error: Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
