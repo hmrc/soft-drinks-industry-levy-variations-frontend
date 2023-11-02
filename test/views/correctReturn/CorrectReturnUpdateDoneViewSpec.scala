@@ -71,25 +71,25 @@ class CorrectReturnUpdateDoneViewSpec extends ViewSpecHelper {
     val document: Document = doc(html)
 
     "should have the expected heading" in {
-      document.getElementsByTag("h1").text() mustEqual "Check your answers before sending your correction"
+      document.getElementsByTag("h1").text() mustEqual "Correction sent"
     }
 
     "should have the expected post header caption" in {
-      document.getElementsByClass(Selectors.body).get(0).text() mustEqual "This update is for Super Lemonade Plc"
+      document.getElementsByClass(Selectors.body).get(0).text() mustEqual "Print this page"
     }
 
-    "contain the correct button" in {
-      document.getElementsByClass(Selectors.button).text() mustBe "Confirm details and send correction"
+    "should have the expected h2 caption" in {
+      document.getElementsByTag("h2").first().text() mustEqual "What happens next"
     }
 
     "contain the correct summary lists" in {
-      document.getElementsByClass(Selectors.summaryListHeading).get(0).text() mustBe "foo"
+      document.getElementsByClass(Selectors.summaryListHeading).get(1).text() mustBe "foo"
       document.getElementsByClass(Selectors.summaryList)
         .first()
         .getElementsByClass(Selectors.summaryRow)
         .first()
         .getElementsByClass(Selectors.summaryValue).first().text() mustBe "bar"
-      document.getElementsByClass(Selectors.summaryListHeading).get(1).text() mustBe "wizz"
+      document.getElementsByClass(Selectors.summaryListHeading).get(2).text() mustBe "wizz"
       document.getElementsByClass(Selectors.summaryList)
         .last()
         .getElementsByClass(Selectors.summaryRow)
@@ -99,7 +99,7 @@ class CorrectReturnUpdateDoneViewSpec extends ViewSpecHelper {
 
     "contain a section before the submit action that contains the correct text" in {
       document.getElementsByClass(Selectors.body).get(1).text() mustBe
-        "By sending this correction you are confirming that, to the best of your knowledge, the details you are providing are correct."
+        "We may get in touch with your contact person to discuss your changes. Once we have approved your correction, your account balance will be updated."
     }
 
     testBackLink(document)
