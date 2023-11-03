@@ -82,7 +82,9 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
         ChangedPage(HowManyCreditsForLostDamagedPage, answerChanged = true),
         ChangedPage(ExemptionsForSmallProducersPage, answerChanged = true))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val currentReturnPeriod = ReturnPeriod(2023, 1)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers.copy(correctReturnPeriod = Option(currentReturnPeriod)))).build()
 
       running(application) {
         val request = FakeRequest(GET, CorrectReturnUpdateDoneController.onPageLoad.url)
@@ -94,16 +96,10 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
         val section = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(userAnswers, aSubscription, changedPages, amounts, isCheckAnswers = false)
 
         val returnPeriodFormat = DateTimeFormatter.ofPattern("MMMM yyyy")
-//        TODO: Remove .get
-        val currentReturnPeriod = userAnswers.correctReturnPeriod.get
         val returnPeriodStart = currentReturnPeriod.start.format(returnPeriodFormat)
         val returnPeriodEnd = currentReturnPeriod.end.format(returnPeriodFormat)
 
         status(result) mustEqual OK
-//        TODO: Correct config.sdilHomeUrl
-        val actual = contentAsString(result)
-        val expected = view(orgName, section,
-          formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd, "http://localhost:8707/soft-drinks-industry-levy-account-frontend/home")(request, messages(application)).toString
         contentAsString(result) mustEqual view(orgName, section,
           formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd, "http://localhost:8707/soft-drinks-industry-levy-account-frontend/home")(request, messages(application)).toString
       }
