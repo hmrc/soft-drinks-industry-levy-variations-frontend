@@ -44,6 +44,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
           .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
         given
           .commonPrecondition
+          .sdilBackend.balance(userAnswers.id, false)
 
         setAnswers(userAnswers)
 
@@ -54,7 +55,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
             res.status mustBe OK
             val page = Jsoup.parse(res.body)
             page.title mustBe "Correction sent - Soft Drinks Industry Levy - GOV.UK"
-            page.getElementsByClass("govuk-summary-list").size() mustBe 9
+            page.getElementsByClass("govuk-summary-list").size() mustBe 10
 
             page.getElementsByTag("h2").get(0).text() mustBe "What happens next"
 
@@ -109,6 +110,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
 
           given
             .commonPrecondition
+            .sdilBackend.balance(userAnswers.id, false)
 
           setAnswers(userAnswers)
 
@@ -119,7 +121,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
               res.status mustBe OK
               val page = Jsoup.parse(res.body)
               page.title mustBe "Correction sent - Soft Drinks Industry Levy - GOV.UK"
-              page.getElementsByClass("govuk-summary-list").size() mustBe 8
+              page.getElementsByClass("govuk-summary-list").size() mustBe 9
 
               page.getElementsByTag("h2").get(0).text() mustBe "What happens next"
 
@@ -169,6 +171,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
               .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
             given
               .commonPrecondition
+              .sdilBackend.balance(userAnswers.id, false)
 
             setAnswers(userAnswers)
 
@@ -179,7 +182,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
                 res.status mustBe OK
                 val page = Jsoup.parse(res.body)
                 page.title mustBe "Correction sent - Soft Drinks Industry Levy - GOV.UK"
-                page.getElementsByClass("govuk-summary-list").size() mustBe 2
+                page.getElementsByClass("govuk-summary-list").size() mustBe 3
 
                 page.getElementsByTag("h2").get(0).text() mustBe "What happens next"
 
@@ -199,6 +202,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
               .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
             given
               .commonPrecondition
+              .sdilBackend.balance(userAnswers.id, false)
 
             setAnswers(userAnswers)
 
@@ -209,7 +213,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
                 res.status mustBe OK
                 val page = Jsoup.parse(res.body)
                 page.title mustBe "Correction sent - Soft Drinks Industry Levy - GOV.UK"
-                page.getElementsByClass("govuk-summary-list").size() mustBe 2
+                page.getElementsByClass("govuk-summary-list").size() mustBe 3
 
                 page.getElementsByTag("h2").get(0).text() mustBe "What happens next"
 
@@ -229,6 +233,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
               .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
             given
               .commonPreconditionChangeSubscription(diffSubscriptionWithWarehouses)
+              .sdilBackend.balance(userAnswers.id, false)
 
             setAnswers(userAnswers)
 
@@ -240,7 +245,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
 
                 val page = Jsoup.parse(res.body)
                 page.title mustBe "Correction sent - Soft Drinks Industry Levy - GOV.UK"
-                page.getElementsByClass("govuk-summary-list").size() mustBe 2
+                page.getElementsByClass("govuk-summary-list").size() mustBe 3
 
                 page.getElementsByTag("h2").get(0).text() mustBe "What happens next"
 
@@ -260,6 +265,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
               .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
             given
               .commonPreconditionChangeSubscription(diffSubscriptionWithWarehouses)
+              .sdilBackend.balance(userAnswers.id, false)
 
             setAnswers(userAnswers)
 
@@ -270,7 +276,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
                 res.status mustBe OK
                 val page = Jsoup.parse(res.body)
                 page.title mustBe "Correction sent - Soft Drinks Industry Levy - GOV.UK"
-                page.getElementsByClass("govuk-summary-list").size() mustBe 2
+                page.getElementsByClass("govuk-summary-list").size() mustBe 3
 
                 page.getElementsByTag("h2").get(0).text() mustBe "What happens next"
 
@@ -290,6 +296,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
               .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
             given
               .commonPrecondition
+              .sdilBackend.balance(userAnswers.id, false)
 
             setAnswers(userAnswers)
 
@@ -300,7 +307,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
                 res.status mustBe OK
                 val page = Jsoup.parse(res.body)
                 page.title mustBe "Correction sent - Soft Drinks Industry Levy - GOV.UK"
-                page.getElementsByClass("govuk-summary-list").size() mustBe 2
+                page.getElementsByClass("govuk-summary-list").size() mustBe 3
 
                 page.getElementsByTag("h2").get(0).text() mustBe "What happens next"
 
@@ -320,6 +327,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
               .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
             given
               .commonPrecondition
+              .sdilBackend.balance(userAnswers.id, false)
 
             setAnswers(userAnswers)
 
@@ -330,7 +338,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
                 res.status mustBe OK
                 val page = Jsoup.parse(res.body)
                 page.title mustBe "Correction sent - Soft Drinks Industry Levy - GOV.UK"
-                page.getElementsByClass("govuk-summary-list").size() mustBe 2
+                page.getElementsByClass("govuk-summary-list").size() mustBe 3
 
                 page.getElementsByTag("h2").get(0).text() mustBe "What happens next"
 
@@ -350,6 +358,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
               .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
             given
               .commonPrecondition
+              .sdilBackend.balance(userAnswers.id, false)
 
             setAnswers(userAnswers)
 
@@ -360,7 +369,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
                 res.status mustBe OK
                 val page = Jsoup.parse(res.body)
                 page.title mustBe "Correction sent - Soft Drinks Industry Levy - GOV.UK"
-                page.getElementsByClass("govuk-summary-list").size() mustBe 2
+                page.getElementsByClass("govuk-summary-list").size() mustBe 3
 
                 page.getElementsByTag("h2").get(0).text() mustBe "What happens next"
 
@@ -381,6 +390,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
               .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
             given
               .commonPrecondition
+              .sdilBackend.balance(userAnswers.id, false)
 
             setAnswers(userAnswers)
 
@@ -392,7 +402,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
 
                 val page = Jsoup.parse(res.body)
                 page.title mustBe "Correction sent - Soft Drinks Industry Levy - GOV.UK"
-                page.getElementsByClass("govuk-summary-list").size() mustBe 3
+                page.getElementsByClass("govuk-summary-list").size() mustBe 4
 
                 page.getElementsByTag("h2").get(0).text() mustBe "What happens next"
 
