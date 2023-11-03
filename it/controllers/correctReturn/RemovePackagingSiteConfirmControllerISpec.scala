@@ -11,7 +11,7 @@ import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
 
-class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
+class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
 
   def normalRoutePath(index: String) = s"/packaging-site-details/remove/$index"
   def checkRoutePath(index: String) = s"/change-packaging-site-details/remove/$index"
