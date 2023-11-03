@@ -20,15 +20,21 @@ import base.SpecBase
 import controllers.correctReturn.routes._
 import models.correctReturn.{AddASmallProducer, ChangedPage, RepaymentMethod}
 import models.{LitresInBands, ReturnPeriod, SmallProducer}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.mock
 import pages.correctReturn._
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.ReturnService
 import viewmodels.govuk.SummaryListFluency
 import views.html.correctReturn.CorrectReturnUpdateDoneView
 import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 
 import java.time.{LocalDateTime, ZoneId}
 import java.time.format.DateTimeFormatter
+import scala.concurrent.Future
 
 class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFluency {
 
@@ -42,6 +48,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
   val currentReturnPeriod = ReturnPeriod(getSentDateTime.toLocalDate)
   val returnPeriodStart = currentReturnPeriod.start.format(returnPeriodFormat)
   val returnPeriodEnd = currentReturnPeriod.end.format(returnPeriodFormat)
+
+  val mockReturnService: ReturnService = mock[ReturnService]
 
   "Update Done Controller" - {
 
@@ -84,10 +92,13 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
       val currentReturnPeriod = ReturnPeriod(2023, 1)
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers.copy(correctReturnPeriod = Option(currentReturnPeriod)))).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers.copy(correctReturnPeriod = Option(currentReturnPeriod))))
+        .overrides(bind[ReturnService].toInstance(mockReturnService))
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, CorrectReturnUpdateDoneController.onPageLoad.url)
+        when (mockReturnService.getBalanceBroughtForward(any())(any(),any())) thenReturn Future.successful(-502.75)
 
         val result = route(application, request).value
 
