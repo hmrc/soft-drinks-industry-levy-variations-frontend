@@ -67,7 +67,7 @@ class CorrectReturnUpdateDoneViewSpec extends ViewSpecHelper {
 
     val orgName: String = " " + aSubscription.orgName
     val html: HtmlFormat.Appendable = view(orgName, summaryList,
-      formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd, "/foo")(request, messages(application))
+      formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd)(request, messages(application), frontendAppConfig)
     val document: Document = doc(html)
 
     "should have the expected heading" in {

@@ -15,6 +15,7 @@
  *@
 
 @import views.html.helpers.printLinkWithJs
+@import config.FrontendAppConfig
 
 @this(
     layout: templates.Layout,
@@ -31,9 +32,8 @@
     formattedDate: String,
     formattedTime: String,
     periodStart: String,
-    periodEnd: String,
-    sdilHomeUrl: String
-)(implicit request: Request[_], messages: Messages)
+    periodEnd: String
+)(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
 @layout(pageTitle = titleNoForm(messages("correctReturn.updateDone.title"))) {
 
@@ -59,7 +59,7 @@
     <p class="govuk-body" id="whatNextTextP1">@messages("correctReturn.updateDone.whatNextText")</p>
 
     <p class="govuk-body-m">
-        <a class="govuk-link" href="@sdilHomeUrl">@messages("correctReturn.updateDone.accountHomeLink")</a>
+        <a class="govuk-link" href="@config.sdilHomeUrl">@messages("correctReturn.updateDone.accountHomeLink")</a>
     </p>
 
     @for((heading, summaryList) <- seqSummaryList) {

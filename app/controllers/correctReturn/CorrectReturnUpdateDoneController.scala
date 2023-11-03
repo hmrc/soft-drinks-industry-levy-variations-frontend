@@ -76,7 +76,7 @@ class CorrectReturnUpdateDoneController @Inject()(
             val returnPeriodStart = returnPeriod.start.format(returnPeriodFormat)
             val returnPeriodEnd = returnPeriod.end.format(returnPeriodFormat)
 
-            Ok(view(orgName, sections, formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd, config.sdilHomeUrl))
+            Ok(view(orgName, sections, formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd))
           }).getOrElse(Redirect(controllers.routes.SelectChangeController.onPageLoad.url))
         }).recoverWith {
           case _ => genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][Balance] - unexpected response for ${request.sdilEnrolment}")

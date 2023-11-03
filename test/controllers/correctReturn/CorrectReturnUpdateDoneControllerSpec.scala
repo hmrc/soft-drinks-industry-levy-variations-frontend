@@ -101,7 +101,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(orgName, section,
-          formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd, "http://localhost:8707/soft-drinks-industry-levy-account-frontend/home")(request, messages(application)).toString
+          formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd)(request, messages(application), frontendAppConfig).toString
       }
     }
   }
