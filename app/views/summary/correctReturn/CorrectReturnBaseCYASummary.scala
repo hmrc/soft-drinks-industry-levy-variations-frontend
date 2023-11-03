@@ -18,19 +18,25 @@ package views.summary.correctReturn
 
 import config.FrontendAppConfig
 import models.correctReturn.ChangedPage
-import models.{RetrievedSubscription, UserAnswers}
+import models.{Amounts, RetrievedSubscription, UserAnswers}
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.summary.correctReturn.ExemptionsForSmallProducersSummary
+import views.helpers.AmountToPaySummary
 
 object CorrectReturnBaseCYASummary {
 
-  def summaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription)
+  def summaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription, amounts :Amounts)
                             (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
     (ownBrandsSummarySection(userAnswers) ++ contractPackerSummarySection(userAnswers) ++
       contractPackedForRegisteredSmallProducersSection(userAnswers) ++ broughtIntoUKSection(userAnswers) ++
       broughtIntoUkFromSmallProducersSection(userAnswers) ++ claimCreditsForExportsSection(userAnswers) ++
-      claimCreditsForLostDamagedSection(userAnswers) ++ siteDetailsSection(userAnswers, subscription)).toSeq
+      claimCreditsForLostDamagedSection(userAnswers) ++ siteDetailsSection(userAnswers, subscription) ++
+      changedBalance(amounts)).toSeq
+  }
+
+  def changedBalance(amounts: Amounts)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Option[(String, SummaryList)] = {
+    Option("correctReturn.balance" -> AmountToPaySummary.amountToPaySummary(amounts))
   }
 
   def changedSummaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription, changedPages: List[ChangedPage])

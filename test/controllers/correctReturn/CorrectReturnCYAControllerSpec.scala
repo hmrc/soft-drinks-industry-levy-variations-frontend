@@ -19,22 +19,31 @@ package controllers.correctReturn
 import base.SpecBase
 import controllers.correctReturn.routes._
 import models.SelectChange.CorrectReturn
-import models.correctReturn.AddASmallProducer
+import models.correctReturn.{AddASmallProducer, ChangedPage}
 import models.{LitresInBands, SmallProducer}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.mock
 import pages.correctReturn._
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import services.ReturnService
 import viewmodels.govuk.SummaryListFluency
 import views.html.correctReturn.CorrectReturnCYAView
-import views.summary.correctReturn.CorrectReturnBaseCYASummary
+import views.summary.correctReturn.{CorrectReturnBaseCYASummary, CorrectReturnCheckChangesSummary}
+
+import scala.concurrent.Future
 
 class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
+
+  val mockReturnService: ReturnService = mock[ReturnService]
 
   "Check Your Answers Controller" - {
 
     "must return OK and the correct view for a GET" in {
-      val litres = LitresInBands(2000, 4000)
-      val userAnswers = emptyUserAnswersForCorrectReturn
+      val litres = LitresInBands(0, 0)
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
           smallProducerList = List(SmallProducer("", "XZSDIL000000234", (2000, 4000))))
         .set(OperatePackagingSiteOwnBrandsPage, true).success.value
@@ -49,22 +58,24 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
         .set(ClaimCreditsForLostDamagedPage, true).success.value
         .set(HowManyCreditsForLostDamagedPage, litres).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+        bind[ReturnService].toInstance(mockReturnService)).build()
 
       running(application) {
         val request = FakeRequest(GET, CorrectReturnCYAController.onPageLoad.url)
+        when (mockReturnService.getBalanceBroughtForward(any())(any(),any())) thenReturn Future.successful(0)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[CorrectReturnCYAView]
         val orgName = " Super Lemonade Plc"
+        val section = CorrectReturnBaseCYASummary.summaryListAndHeadings(userAnswers, aSubscription, cyaAmounts)
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(orgName, CorrectReturnBaseCYASummary.summaryListAndHeadings(userAnswers, aSubscription),
-          routes.CorrectReturnCYAController.onSubmit)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(orgName, section, routes.CorrectReturnCYAController.onSubmit)(request, messages(application)).toString
       }
     }
-
     testInvalidJourneyType(CorrectReturn, CorrectReturnCYAController.onPageLoad.url, false)
     testNoUserAnswersError(CorrectReturnCYAController.onPageLoad.url, false)
   }
