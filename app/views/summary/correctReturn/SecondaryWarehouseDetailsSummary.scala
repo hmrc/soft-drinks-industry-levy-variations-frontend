@@ -18,7 +18,7 @@ package viewmodels.summary.correctReturn
 
 import controllers.correctReturn.routes
 import models.backend.Site
-import models.{CheckMode, UserAnswers}
+import models.{CheckMode, Mode, UserAnswers}
 import pages.correctReturn.SecondaryWarehouseDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
@@ -46,14 +46,14 @@ object SecondaryWarehouseDetailsSummary  {
         )
     }
 
-  def row2(warehouseList: Map[String, Site])(implicit messages: Messages): List[SummaryListRow] = {
+  def row2(warehouseList: Map[String, Site], mode: Mode)(implicit messages: Messages): List[SummaryListRow] = {
     warehouseList.map {
       warehouse =>
         SummaryListRow(
           key     = Key(HtmlContent(AddressFormattingHelper.addressFormatting(warehouse._2.address, warehouse._2.tradingName))),
           classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds",
           actions = Some(Actions("",Seq(
-            ActionItemViewModel("site.remove", controllers.routes.IndexController.onPageLoad.url)
+            ActionItemViewModel("site.remove", controllers.correctReturn.routes.RemoveWarehouseDetailsController.onPageLoad(mode, warehouse._1).url)
               .withVisuallyHiddenText(messages("correctReturn.secondaryWarehouseDetails.remove.hidden", warehouse._2.tradingName.getOrElse(""), warehouse._2.address.lines.head))
           )))
         )

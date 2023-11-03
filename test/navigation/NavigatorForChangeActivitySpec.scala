@@ -18,7 +18,6 @@ package navigation
 
 import base.SpecBase
 import controllers.changeActivity.routes
-import generators.ChangeActivityCYAGenerators.APAnswers.{Large, Small}
 import models._
 import models.changeActivity.AmountProduced
 import pages._
