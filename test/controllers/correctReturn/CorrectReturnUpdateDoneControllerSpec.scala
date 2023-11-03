@@ -91,7 +91,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         val view = application.injector.instanceOf[CorrectReturnUpdateDoneView]
         val orgName = " Super Lemonade Plc"
-        val section = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(userAnswers, aSubscription, changedPages, isCheckAnswers = false)
+        val section = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(userAnswers, aSubscription, changedPages, amounts, isCheckAnswers = false)
 
         val returnPeriodFormat = DateTimeFormatter.ofPattern("MMMM yyyy")
 //        TODO: Remove .get
@@ -101,6 +101,9 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         status(result) mustEqual OK
 //        TODO: Correct config.sdilHomeUrl
+        val actual = contentAsString(result)
+        val expected = view(orgName, section,
+          formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd, "http://localhost:8707/soft-drinks-industry-levy-account-frontend/home")(request, messages(application)).toString
         contentAsString(result) mustEqual view(orgName, section,
           formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd, "http://localhost:8707/soft-drinks-industry-levy-account-frontend/home")(request, messages(application)).toString
       }
