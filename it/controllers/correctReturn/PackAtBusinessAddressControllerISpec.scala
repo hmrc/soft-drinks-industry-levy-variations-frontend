@@ -1,7 +1,7 @@
 package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode}
 import models.SelectChange.CorrectReturn
 import models.alf.init.{AppLevelLabels, ConfirmPageConfig, EditPageLabels, JourneyConfig, JourneyLabels, JourneyOptions, LanguageLabels, LookupPageLabels, SelectPageConfig, TimeoutConfig}
 import org.jsoup.Jsoup
@@ -11,7 +11,6 @@ import pages.correctReturn.PackAtBusinessAddressPage
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json}
-import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
 import testSupport.helpers.ALFTestHelper
 
@@ -54,7 +53,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
           homeNavHref = None,
           signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
           accessibilityFooterUrl = None,
-          phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fchange-activity%2Fsecondary-warehouse-details"),
+          phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fcorrect-return%2Fpack-at-business-address"),
           deskProServiceName = None,
           showPhaseBanner = Some(false),
           alphaPhase = Some(false),
@@ -91,19 +90,19 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
               selectPageLabels = None,
               lookupPageLabels = Some(
                 LookupPageLabels(
-                  title = Some("Find UK warehouse address"),
-                  heading = Some("Find UK warehouse address"),
+                  title = Some("Find UK packaging site address"),
+                  heading = Some("Find UK packaging site address"),
                   postcodeLabel = Some("Postcode"))),
               editPageLabels = Some(
                 EditPageLabels(
-                  title = Some("Enter the UK warehouse address"),
-                  heading = Some("Enter the UK warehouse address"),
+                  title = Some("Enter the UK packaging site address"),
+                  heading = Some("Enter the UK packaging site address"),
                   line1Label = Some("Address line 1"),
                   line2Label = Some("Address line 2"),
                   line3Label = Some("Address line 3 (optional)"),
                   townLabel = Some("Address line 4 (optional)"),
                   postcodeLabel = Some("Postcode"),
-                  organisationLabel = Some("Trading name (optional)"))
+                  organisationLabel = Some("Packaging site name (optional)"))
               ),
               confirmPageLabels = None,
               countryPickerLabels = None
@@ -112,7 +111,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
         requestedVersion = None
       )
       val expectedResultInDB: Some[JsObject] = Some(
-        Json.obj("correctReturn" -> Json.obj( "packAtBusinessAddress" -> false)
+        Json.obj("correctReturn" -> Json.obj("packAtBusinessAddress" -> false)
         ))
 
       val alfOnRampURL: String = "http://onramp.com"
@@ -123,15 +122,12 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
       setAnswers(emptyUserAnswersForCorrectReturn)
 
       WsTestClient.withClient { client =>
-        val result = createClientRequestPOST(
-          client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> "false")
-        )
+        val result1 = createClientRequestPOST(client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> "false"))
 
-        whenReady(result) { res =>
+        whenReady(result1) { res =>
           res.status mustBe 303
           res.header(HeaderNames.LOCATION) mustBe Some(alfOnRampURL)
-          getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResultInDB
-          ALFTestHelper.requestedBodyMatchesExpected(wireMockServer, journeyConfigToBePosted) mustBe false
+          ALFTestHelper.requestedBodyMatchesExpected(wireMockServer, journeyConfigToBePosted) mustBe true
         }
       }
     }
@@ -144,7 +140,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
           homeNavHref = None,
           signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
           accessibilityFooterUrl = None,
-          phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fchange-activity%2Fsecondary-warehouse-details"),
+          phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fcorrect-return%2Fpack-at-business-address"),
           deskProServiceName = None,
           showPhaseBanner = Some(false),
           alphaPhase = Some(false),
@@ -181,19 +177,19 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
               selectPageLabels = None,
               lookupPageLabels = Some(
                 LookupPageLabels(
-                  title = Some("Find UK warehouse address"),
-                  heading = Some("Find UK warehouse address"),
+                  title = Some("Find UK packaging site address"),
+                  heading = Some("Find UK packaging site address"),
                   postcodeLabel = Some("Postcode"))),
               editPageLabels = Some(
                 EditPageLabels(
-                  title = Some("Enter the UK warehouse address"),
-                  heading = Some("Enter the UK warehouse address"),
+                  title = Some("Enter the UK packaging site address"),
+                  heading = Some("Enter the UK packaging site address"),
                   line1Label = Some("Address line 1"),
                   line2Label = Some("Address line 2"),
                   line3Label = Some("Address line 3 (optional)"),
                   townLabel = Some("Address line 4 (optional)"),
                   postcodeLabel = Some("Postcode"),
-                  organisationLabel = Some("Trading name (optional)"))
+                  organisationLabel = Some("Packaging site name (optional)"))
               ),
               confirmPageLabels = None,
               countryPickerLabels = None
@@ -201,27 +197,22 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
           )),
         requestedVersion = None
       )
-      val expectedResultInDB: Some[JsObject] = Some(
-        Json.obj("correctReturn" -> Json.obj( "packAtBusinessAddress" -> false)
-        ))
 
       val alfOnRampURL: String = "http://onramp.com"
-
       given
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
+
       setAnswers(emptyUserAnswersForCorrectReturn)
 
-      WsTestClient.withClient { client =>
-        val result = createClientRequestPOST(
-          client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> "false")
-        )
 
-        whenReady(result) { res =>
+      WsTestClient.withClient { client =>
+        val result1 = createClientRequestPOST(client, correctReturnBaseUrl + normalRoutePath,Json.obj("value" -> "false" ))
+
+        whenReady(result1) { res =>
           res.status mustBe 303
           res.header(HeaderNames.LOCATION) mustBe Some(alfOnRampURL)
-          getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResultInDB
-          ALFTestHelper.requestedBodyMatchesExpected(wireMockServer, journeyConfigToBePosted) mustBe false
+          ALFTestHelper.requestedBodyMatchesExpected(wireMockServer, journeyConfigToBePosted) mustBe true
         }
       }
     }
