@@ -88,6 +88,14 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     }
   }
 
+  private def navigationForRemovePackagingSiteConfirm(userAnswers: UserAnswers, mode: Mode) = {
+    if (userAnswers.get(page = RemovePackagingSiteConfirmPage).contains(true) && userAnswers.packagingSiteList.size <= 1) {
+      routes.PackAtBusinessAddressController.onPageLoad(mode)
+    } else {
+      routes.PackagingSiteDetailsController.onPageLoad(mode)
+    }
+  }
+
   private def navigationForAddASmallProducer(mode: Mode): Call = {
     routes.SmallProducerDetailsController.onPageLoad(mode)
   }
@@ -144,6 +152,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case SecondaryWarehouseDetailsPage => _ => defaultCall
     case AskSecondaryWarehouseInReturnPage => _ => defaultCall
     case PackagingSiteDetailsPage => _ => defaultCall
+    case RemovePackagingSiteConfirmPage => userAnswers => navigationForRemovePackagingSiteConfirm(userAnswers, NormalMode)
     case ReturnChangeRegistrationPage => _ => defaultCall
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, NormalMode)
     case HowManyBroughtIntoUKPage => _ => routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode)
@@ -183,6 +192,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamagedInCheckMode(userAnswers)
     case HowManyCreditsForLostDamagedPage => _ => routes.CorrectReturnCYAController.onPageLoad
+    case RemovePackagingSiteConfirmPage => userAnswers => navigationForRemovePackagingSiteConfirm(userAnswers, CheckMode)
     case AddASmallProducerPage => _ => navigationForAddASmallProducer(CheckMode)
     case SmallProducerDetailsPage => userAnswers => navigationForSmallProducerDetails(userAnswers, CheckMode)
     case RemoveSmallProducerConfirmPage => userAnswers => navigationForRemoveSmallProducerConfirm(userAnswers, CheckMode)

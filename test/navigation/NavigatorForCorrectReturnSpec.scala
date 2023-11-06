@@ -437,4 +437,38 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
     }
   }
 
+  "Remove Packaging Site confirm " - {
+    def navigateFromRemovePackagingSiteConfirm(value: Boolean, mode: Mode, lastPackagingSite: Boolean) = {
+      val packagingSites = if (lastPackagingSite) Map("000001" -> packingSite) else {
+        Map("000001" -> packingSite) ++ Map("000002" -> packingSite)
+      }
+      navigator.nextPage(RemovePackagingSiteConfirmPage, mode,
+        emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packagingSites)
+          .set(RemovePackagingSiteConfirmPage, value).success.value
+      )
+    }
+
+    List(NormalMode, CheckMode).foreach(mode => {
+      s"select Yes to navigate to Packaging Site Details in $mode when not last packaging site" in {
+        val result = navigateFromRemovePackagingSiteConfirm(value = true, mode, lastPackagingSite = false)
+        result mustBe routes.PackagingSiteDetailsController.onPageLoad(mode)
+      }
+
+      s"select Yes to navigate to Pack At Business Address in $mode when last packaging site" in {
+        val result = navigateFromRemovePackagingSiteConfirm(value = true, mode, lastPackagingSite = true)
+        result mustBe routes.PackAtBusinessAddressController.onPageLoad(mode)
+      }
+
+      s"select No to navigate to Packaging Site Details in $mode when not last packaging site" in {
+        val result = navigateFromRemovePackagingSiteConfirm(value = false, mode, lastPackagingSite = true)
+        result mustBe routes.PackagingSiteDetailsController.onPageLoad(mode)
+      }
+
+      s"select No to navigate to Packaging Site Details in $mode when last packaging site" in {
+        val result = navigateFromRemovePackagingSiteConfirm(value = false, mode, lastPackagingSite = false)
+        result mustBe routes.PackagingSiteDetailsController.onPageLoad(mode)
+      }
+    })
+  }
+
 }
