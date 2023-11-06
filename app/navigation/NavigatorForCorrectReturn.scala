@@ -89,7 +89,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   }
 
   private def navigationForRemovePackagingSiteConfirm(userAnswers: UserAnswers, mode: Mode) = {
-    if (userAnswers.get(page = RemovePackagingSiteConfirmPage).contains(true) && userAnswers.packagingSiteList.size <= 1) {
+    if (userAnswers.get(page = RemovePackagingSiteConfirmPage).contains(true) && userAnswers.packagingSiteList.isEmpty) {
       routes.PackAtBusinessAddressController.onPageLoad(mode)
     } else {
       routes.PackagingSiteDetailsController.onPageLoad(mode)

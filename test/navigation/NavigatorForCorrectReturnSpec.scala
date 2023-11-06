@@ -21,7 +21,7 @@ import models._
 import pages._
 import pages.correctReturn._
 import controllers.correctReturn.routes
-import models.backend.RetrievedSubscription
+import models.backend.{RetrievedSubscription, Site}
 import play.api.libs.json.Json
 
 class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
@@ -439,11 +439,9 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
 
   "Remove Packaging Site confirm " - {
     def navigateFromRemovePackagingSiteConfirm(value: Boolean, mode: Mode, lastPackagingSite: Boolean) = {
-      val packagingSites = if (lastPackagingSite) Map("000001" -> packingSite) else {
-        Map("000001" -> packingSite) ++ Map("000002" -> packingSite)
-      }
       navigator.nextPage(RemovePackagingSiteConfirmPage, mode,
-        emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packagingSites)
+        emptyUserAnswersForCorrectReturn
+          .copy(packagingSiteList = if (lastPackagingSite) Map.empty else Map("000001" -> packingSite))
           .set(RemovePackagingSiteConfirmPage, value).success.value
       )
     }
