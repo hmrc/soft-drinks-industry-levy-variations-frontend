@@ -134,6 +134,18 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     }
   }
 
+  def navigationForPackagingSiteDetailsInNormalMode(userAnswers: UserAnswers, subscription: RetrievedSubscription) = {
+    val alreadyAnImporter = subscription.activity.importer
+    val yesOnImporter = userAnswers.get(BroughtIntoUKPage).contains(true)
+    if (alreadyAnImporter) {
+      routes.CorrectReturnCheckChangesCYAController.onPageLoad
+    } else if (!alreadyAnImporter && yesOnImporter) {
+      routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode)
+    } else {
+      routes.CorrectReturnCheckChangesCYAController.onPageLoad
+    }
+  }
+
   private def navigationToReturnChangeRegistrationIfRequired(userAnswers: UserAnswers, subscription: RetrievedSubscription, mode: Mode) = {
     val alreadyAPacker = subscription.activity.contractPacker
     val alreadyAnImporter = subscription.activity.importer
@@ -151,7 +163,6 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   override val normalRoutes: Page => UserAnswers => Call = {
     case SecondaryWarehouseDetailsPage => _ => defaultCall
     case AskSecondaryWarehouseInReturnPage => _ => defaultCall
-    case PackagingSiteDetailsPage => _ => defaultCall
     case RemovePackagingSiteConfirmPage => userAnswers => navigationForRemovePackagingSiteConfirm(userAnswers, NormalMode)
     case ReturnChangeRegistrationPage => _ => defaultCall
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, NormalMode)
@@ -177,6 +188,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   override val normalRoutesWithSubscription: Page => (UserAnswers, RetrievedSubscription) => Call = {
     case ClaimCreditsForLostDamagedPage => (userAnswers, subscription) => navigationForCreditsForLostDamagedInNormalMode(userAnswers, subscription)
     case HowManyCreditsForLostDamagedPage => (userAnswers, subscription) => navigationToReturnChangeRegistrationIfRequired(userAnswers, subscription, NormalMode)
+    case PackagingSiteDetailsPage => (userAnswers, subscription) => navigationForPackagingSiteDetailsInNormalMode(userAnswers, subscription)
     case _ => (_, _) => defaultCall
   }
 
@@ -192,6 +204,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamagedInCheckMode(userAnswers)
     case HowManyCreditsForLostDamagedPage => _ => routes.CorrectReturnCYAController.onPageLoad
+    case PackagingSiteDetailsPage => _ => routes.CorrectReturnCheckChangesCYAController.onPageLoad
     case RemovePackagingSiteConfirmPage => userAnswers => navigationForRemovePackagingSiteConfirm(userAnswers, CheckMode)
     case AddASmallProducerPage => _ => navigationForAddASmallProducer(CheckMode)
     case SmallProducerDetailsPage => userAnswers => navigationForSmallProducerDetails(userAnswers, CheckMode)

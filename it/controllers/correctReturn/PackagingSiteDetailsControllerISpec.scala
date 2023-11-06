@@ -152,14 +152,12 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
                 client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> yesSelected.toString)
               )
 
-              if(!yesSelected){
-                whenReady(result) { res =>
-                  res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
-                  dataStoredForPage.nonEmpty mustBe true
-                  dataStoredForPage.get mustBe yesSelected
-                }
+              whenReady(result) { res =>
+                res.status mustBe 303
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
+                dataStoredForPage.nonEmpty mustBe true
+                dataStoredForPage.get mustBe yesSelected
               }
             }
           }
@@ -174,14 +172,13 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
               val result = createClientRequestPOST(
                 client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> yesSelected.toString)
               )
-              if(!yesSelected) {
-                whenReady(result) { res =>
-                  res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
-                  dataStoredForPage.nonEmpty mustBe true
-                  dataStoredForPage.get mustBe yesSelected
-                }
+
+              whenReady(result) { res =>
+                res.status mustBe 303
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
+                dataStoredForPage.nonEmpty mustBe true
+                dataStoredForPage.get mustBe yesSelected
               }
             }
           }
