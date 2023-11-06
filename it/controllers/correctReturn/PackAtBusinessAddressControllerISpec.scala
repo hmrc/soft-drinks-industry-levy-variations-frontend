@@ -370,32 +370,6 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
         }
       }
     }
-
-    "when the user does not select yes or no" - {
-      "should return 400 with required error" in {
-        given
-          .commonPrecondition
-
-        setAnswers(emptyUserAnswersForCorrectReturn)
-        WsTestClient.withClient { client =>
-          val result = createClientRequestPOST(
-            client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> "")
-          )
-
-          whenReady(result) { res =>
-            res.status mustBe 400
-            val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("correctReturn.packAtBusinessAddress" + ".title"))
-            val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
-              .first()
-            errorSummary
-              .select("a")
-              .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("correctReturn.packAtBusinessAddress" + ".error.required")
-          }
-        }
-      }
-    }
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
@@ -466,34 +440,34 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
         }
       }
     }
-
-    "when the user does not select yes or no" - {
-      "should return 400 with required error" in {
-        given
-          .commonPrecondition
-
-        setAnswers(emptyUserAnswersForCorrectReturn)
-        WsTestClient.withClient { client =>
-          val result = createClientRequestPOST(
-            client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> "")
-          )
-
-          whenReady(result) { res =>
-            res.status mustBe 400
-            val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("correctReturn.packAtBusinessAddress" + ".title"))
-            val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
-              .first()
-            errorSummary
-              .select("a")
-              .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("correctReturn.packAtBusinessAddress" + ".error.required")
-          }
-        }
-      }
-    }
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
+  }
+
+  "when the user does not select yes or no" - {
+    "should return 400 with required error" in {
+      given
+        .commonPrecondition
+
+      setAnswers(emptyUserAnswersForCorrectReturn)
+      WsTestClient.withClient { client =>
+        val result = createClientRequestPOST(
+          client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> "")
+        )
+
+        whenReady(result) { res =>
+          res.status mustBe 400
+          val page = Jsoup.parse(res.body)
+          page.title must include("Error: " + Messages("correctReturn.packAtBusinessAddress" + ".title"))
+          val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
+            .first()
+          errorSummary
+            .select("a")
+            .attr("href") mustBe "#value"
+          errorSummary.text() mustBe Messages("correctReturn.packAtBusinessAddress" + ".error.required")
+        }
+      }
+    }
   }
 }
