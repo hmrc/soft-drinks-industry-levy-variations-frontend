@@ -79,7 +79,6 @@ class PackagingSiteDetailsController @Inject()(
 
         value =>
           for {
-//            updatedAnswers <- Future.fromTry(request.userAnswers.set(PackagingSiteDetailsPage, value))
             onwardUrl: Result <-
               if (value) {
                 val alsOnRampUrl = updateDatabaseWithoutRedirect(request.userAnswers.set(PackagingSiteDetailsPage, value), PackagingSiteDetailsPage).flatMap(_ =>
@@ -89,22 +88,6 @@ class PackagingSiteDetailsController @Inject()(
                 val updatedAnswers = request.userAnswers.set(PackagingSiteDetailsPage, value)
                 val subscription = if (mode == NormalMode) Some(request.subscription) else None
                 updateDatabaseAndRedirect(updatedAnswers, PackagingSiteDetailsPage, mode, subscription)
-//                updateDatabaseWithoutRedirect(request.userAnswers.set(PackagingSiteDetailsPage, value), PackagingSiteDetailsPage).flatMap(_ =>
-//                  (Some(SdilReturn.apply(updatedAnswers)), Some(request.subscription)) match {
-//                    case (Some(sdilReturn), Some(subscription)) =>
-//                      if (UserTypeCheck.isNewImporter (sdilReturn, subscription) && mode == NormalMode) {
-//                        Future.successful(controllers.correctReturn.routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url)
-//                      } else {
-//                        Future.successful(controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
-//                      }
-//                    case (_, Some(subscription)) =>
-//                      genericLogger.logger.warn(s"SDIL return not provided for ${subscription.sdilRef}")
-//                      Future.successful(routes.JourneyRecoveryController.onPageLoad().url)
-//                    case _ =>
-//                      genericLogger.logger.warn("SDIL return or subscription not provided for current unknown user")
-//                      Future.successful(routes.JourneyRecoveryController.onPageLoad().url)
-//                  }
-//                )
               }
           } yield {
             onwardUrl
