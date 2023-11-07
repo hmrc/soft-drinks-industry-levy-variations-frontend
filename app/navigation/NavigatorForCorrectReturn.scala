@@ -152,7 +152,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case ClaimCreditsForExportsPage => userAnswers => navigationForClaimCreditsForExports(userAnswers, NormalMode)
     case HowManyClaimCreditsForExportsPage => _ => routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
     case ExemptionsForSmallProducersPage => userAnswers => navigationForExemptionsForSmallProducers(userAnswers, NormalMode)
-    case RemoveWarehouseDetailsPage => userAnswers => defaultCall
+    case RemoveWarehouseDetailsPage => _ => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
     case CorrectionReasonPage => _ => routes.RepaymentMethodController.onPageLoad(NormalMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => routes.PackagedAsContractPackerController.onPageLoad(NormalMode)
@@ -186,6 +186,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case AddASmallProducerPage => _ => navigationForAddASmallProducer(CheckMode)
     case SmallProducerDetailsPage => userAnswers => navigationForSmallProducerDetails(userAnswers, CheckMode)
     case RemoveSmallProducerConfirmPage => userAnswers => navigationForRemoveSmallProducerConfirm(userAnswers, CheckMode)
+    case RemoveWarehouseDetailsPage => _ => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
     case RepaymentMethodPage => userAnswers => routes.CorrectReturnCheckChangesCYAController.onPageLoad
     case _ => _ => routes.CorrectReturnCYAController.onPageLoad
   }
