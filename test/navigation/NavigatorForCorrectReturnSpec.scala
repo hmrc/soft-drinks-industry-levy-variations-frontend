@@ -437,6 +437,36 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
     }
   }
 
+  "Packaging Site Details " - {
+    def navigateFromPackagingSiteDetailsPage(mode: Mode, subscription: Option[RetrievedSubscription] = None) =
+      navigator.nextPage(PackagingSiteDetailsPage, mode,
+        emptyUserAnswersForCorrectReturn.set(PackagingSiteDetailsPage, false).success.value, subscription)
+
+    "navigate to Check Your Answers Check Changes page in NormalMode (when not new importer)" in {
+      val result = navigateFromPackagingSiteDetailsPage(NormalMode, Some(aSubscription))
+      result mustBe routes.CorrectReturnCheckChangesCYAController.onPageLoad
+    }
+
+    "navigate to Check Your Answers Check Changes page in NormalMode (when currently importer)" in {
+      val userAnswers = newImporterUserAnswers
+        .set(PackagingSiteDetailsPage, false).success.value
+      val result = navigator.nextPage(PackagingSiteDetailsPage, NormalMode, userAnswers, currentImporterSubscription)
+      result mustBe routes.CorrectReturnCheckChangesCYAController.onPageLoad
+    }
+
+    "navigate to Ask Secondary Warehouse In Return page in NormalMode (when new importer)" in {
+      val userAnswers = newImporterUserAnswers
+        .set(PackagingSiteDetailsPage, false).success.value
+      val result = navigator.nextPage(PackagingSiteDetailsPage, NormalMode, userAnswers, Some(aSubscription))
+      result mustBe routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode)
+    }
+
+    "navigate to Check Your Answers Check Changes page in CheckMode" in {
+      val result = navigateFromPackagingSiteDetailsPage(CheckMode)
+      result mustBe routes.CorrectReturnCheckChangesCYAController.onPageLoad
+    }
+  }
+
   "Remove Packaging Site confirm " - {
     def navigateFromRemovePackagingSiteConfirm(value: Boolean, mode: Mode, lastPackagingSite: Boolean) = {
       navigator.nextPage(RemovePackagingSiteConfirmPage, mode,
