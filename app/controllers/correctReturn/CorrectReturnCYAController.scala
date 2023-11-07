@@ -58,9 +58,7 @@ class CorrectReturnCYAController @Inject()(override
                 originalReturnTotal = originalSdilReturn.total,
                 newReturnTotal = SdilReturn(request.userAnswers).total,
                 balanceBroughtForward = balanceBroughtForward * -1,
-                adjustedAmount = if(balanceBroughtForward == 0){SdilReturn(request.userAnswers).total + balanceBroughtForward} else {
-                  (SdilReturn(request.userAnswers).total) + (balanceBroughtForward * -1)
-                }
+                adjustedAmount = SdilReturn(request.userAnswers).total + (balanceBroughtForward * -1)
               )
             )
           }

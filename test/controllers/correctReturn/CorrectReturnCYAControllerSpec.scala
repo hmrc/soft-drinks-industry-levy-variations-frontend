@@ -42,7 +42,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
   "Check Your Answers Controller" - {
 
     "must return OK and the correct view for a GET" in {
-      val litres = LitresInBands(0, 0)
+      val litres = LitresInBands(100, 200)
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
           smallProducerList = List(SmallProducer("", "XZSDIL000000234", (2000, 4000))))
@@ -64,7 +64,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
       running(application) {
         val request = FakeRequest(GET, CorrectReturnCYAController.onPageLoad.url)
-        when (mockReturnService.getBalanceBroughtForward(any())(any(),any())) thenReturn Future.successful(0)
+        when (mockReturnService.getBalanceBroughtForward(any())(any(),any())) thenReturn Future.successful(-500)
 
         val result = route(application, request).value
 
