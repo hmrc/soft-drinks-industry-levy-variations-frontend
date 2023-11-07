@@ -2,18 +2,16 @@ package controllers.correctReturn
 
 import config.FrontendAppConfig
 import controllers.ControllerITTestHelper
+import models.NormalMode
 import models.SelectChange.CorrectReturn
-import models.{LitresInBands, UserAnswers}
-import models.alf.init.{AppLevelLabels, ConfirmPageConfig, EditPageLabels, JourneyConfig, JourneyLabels, JourneyOptions, LanguageLabels, LookupPageLabels, SelectPageConfig, TimeoutConfig}
+import models.alf.init._
 import org.jsoup.Jsoup
 import org.scalatest.TryValues
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import pages.correctReturn.{HowManyBroughtIntoUKPage, PackagingSiteDetailsPage}
+import pages.correctReturn.{BroughtIntoUKPage, PackagingSiteDetailsPage}
 import play.api.http.HeaderNames
 import play.api.libs.json.{JsObject, Json}
-import play.api.libs.ws.DefaultWSCookie
 import play.api.test.WsTestClient
-import testSupport.SDILBackendTestData.aSubscription
 import testSupport.helpers.ALFTestHelper
 
 class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with TryValues {
@@ -229,7 +227,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
     }
 
     "when the user selects no" - {
-      "should update the session with the new value and redirect to the index controller" - {
+      "should update the session with the new value and redirect to the expected controller" - {
         "when the session contains no data for page" in {
           given
             .commonPrecondition
@@ -242,7 +240,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(emptyUserAnswersForCorrectReturn.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe false
@@ -250,7 +248,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
           }
         }
 
-        "when the session already contains data for page" in {
+        "when the session already contains data for page and is not new importer" in {
           given
             .commonPrecondition
           val userAnswers = emptyUserAnswersForCorrectReturn.set(PackagingSiteDetailsPage, false).success.value
@@ -262,7 +260,29 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
+              val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
+              dataStoredForPage.nonEmpty mustBe true
+              dataStoredForPage.get mustBe false
+            }
+          }
+        }
+
+        "when the session already contains data for page and is new importer" in {
+          given
+            .commonPreconditionChangeSubscription(diffSubscription.copy(activity = diffSubscription.activity.copy(importer = false)))
+          val userAnswers = emptyUserAnswersForCorrectReturn
+            .set(BroughtIntoUKPage, true).success.value
+            .set(PackagingSiteDetailsPage, false).success.value
+          setAnswers(userAnswers)
+          WsTestClient.withClient { client =>
+            val result = createClientRequestPOST(
+              client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> false.toString)
+            )
+
+            whenReady(result) { res =>
+              res.status mustBe 303
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe false
@@ -394,7 +414,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
     }
 
     "when the user selects no" - {
-      "should update the session with the new value and redirect to the index controller" - {
+      "should update the session with the new value and redirect to the expected controller" - {
         "when the session contains no data for page" in {
           given
             .commonPrecondition
@@ -407,7 +427,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(emptyUserAnswersForCorrectReturn.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe false
@@ -415,7 +435,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
           }
         }
 
-        "when the session already contains data for page" in {
+        "when the session already contains data for page and is not new importer" in {
           given
             .commonPrecondition
 
@@ -428,7 +448,30 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
+              val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
+              dataStoredForPage.nonEmpty mustBe true
+              dataStoredForPage.get mustBe false
+            }
+          }
+        }
+        
+        "when the session already contains data for page and is new importer" in {
+          given
+            .commonPreconditionChangeSubscription(diffSubscription.copy(activity = diffSubscription.activity.copy(importer = false)))
+
+          val userAnswers = emptyUserAnswersForCorrectReturn
+            .set(BroughtIntoUKPage, true).success.value
+            .set(PackagingSiteDetailsPage, false).success.value
+          setAnswers(userAnswers)
+          WsTestClient.withClient { client =>
+            val result = createClientRequestPOST(
+              client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> false.toString)
+            )
+
+            whenReady(result) { res =>
+              res.status mustBe 303
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe false

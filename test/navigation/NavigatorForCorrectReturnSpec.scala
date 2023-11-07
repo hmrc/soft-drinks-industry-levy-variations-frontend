@@ -442,16 +442,16 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
       navigator.nextPage(PackagingSiteDetailsPage, mode,
         emptyUserAnswersForCorrectReturn.set(PackagingSiteDetailsPage, false).success.value, subscription)
 
-    "navigate to Check Your Answers Check Changes page in NormalMode (when not new importer)" in {
+    "navigate to Check Your Answers page in NormalMode (when not new importer)" in {
       val result = navigateFromPackagingSiteDetailsPage(NormalMode, Some(aSubscription))
-      result mustBe routes.CorrectReturnCheckChangesCYAController.onPageLoad
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
     }
 
-    "navigate to Check Your Answers Check Changes page in NormalMode (when currently importer)" in {
+    "navigate to Check Your Answers page in NormalMode (when currently importer)" in {
       val userAnswers = newImporterUserAnswers
         .set(PackagingSiteDetailsPage, false).success.value
       val result = navigator.nextPage(PackagingSiteDetailsPage, NormalMode, userAnswers, currentImporterSubscription)
-      result mustBe routes.CorrectReturnCheckChangesCYAController.onPageLoad
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
     }
 
     "navigate to Ask Secondary Warehouse In Return page in NormalMode (when new importer)" in {
@@ -461,9 +461,9 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
       result mustBe routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode)
     }
 
-    "navigate to Check Your Answers Check Changes page in CheckMode" in {
+    "navigate to Check Your Answers page in CheckMode" in {
       val result = navigateFromPackagingSiteDetailsPage(CheckMode)
-      result mustBe routes.CorrectReturnCheckChangesCYAController.onPageLoad
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
     }
   }
 

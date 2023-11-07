@@ -138,11 +138,11 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     val alreadyAnImporter = subscription.activity.importer
     val yesOnImporter = userAnswers.get(BroughtIntoUKPage).contains(true)
     if (alreadyAnImporter) {
-      routes.CorrectReturnCheckChangesCYAController.onPageLoad
+      routes.CorrectReturnCYAController.onPageLoad
     } else if (!alreadyAnImporter && yesOnImporter) {
       routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode)
     } else {
-      routes.CorrectReturnCheckChangesCYAController.onPageLoad
+      routes.CorrectReturnCYAController.onPageLoad
     }
   }
 
@@ -204,7 +204,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamagedInCheckMode(userAnswers)
     case HowManyCreditsForLostDamagedPage => _ => routes.CorrectReturnCYAController.onPageLoad
-    case PackagingSiteDetailsPage => _ => routes.CorrectReturnCheckChangesCYAController.onPageLoad
+    case PackagingSiteDetailsPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case RemovePackagingSiteConfirmPage => userAnswers => navigationForRemovePackagingSiteConfirm(userAnswers, CheckMode)
     case AddASmallProducerPage => _ => navigationForAddASmallProducer(CheckMode)
     case SmallProducerDetailsPage => userAnswers => navigationForSmallProducerDetails(userAnswers, CheckMode)
