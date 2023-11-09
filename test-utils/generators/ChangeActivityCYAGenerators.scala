@@ -24,8 +24,6 @@ import org.scalatest.TryValues
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import pages.changeActivity._
 
-import java.time.LocalDate
-
 object ChangeActivityCYAGenerators {
 
   val ownBrandsLitresLowBand = 1000

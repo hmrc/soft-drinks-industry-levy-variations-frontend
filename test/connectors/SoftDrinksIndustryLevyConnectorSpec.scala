@@ -23,7 +23,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.http.Status.OK
+import play.api.http.Status.{NO_CONTENT, OK}
 import play.api.libs.json.{JsValue, Json}
 import repositories.{CacheMap, SDILSessionCache}
 import uk.gov.hmrc.http.{HttpClient, HttpResponse}
@@ -156,7 +156,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
         )
 
         when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK, "")))
+          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
         val res = softDrinksIndustryLevyConnector.submitVariation(variationsSubmission, aSubscription.sdilRef)
 
@@ -176,7 +176,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
         )
 
         when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK, "")))
+          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
         val res = softDrinksIndustryLevyConnector.submitVariation(variationsSubmission, aSubscription.sdilRef)
 
@@ -195,7 +195,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
         )
 
         when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(OK, "")))
+          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
         val res = softDrinksIndustryLevyConnector.submitVariation(variationsSubmission, aSubscription.sdilRef)
 

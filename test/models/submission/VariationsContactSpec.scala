@@ -138,6 +138,34 @@ class VariationsContactSpec extends AnyFreeSpec with Matchers with ScalaCheckPro
       }
     }
 
+    "nonEmpty" - {
+      "must return true" - {
+        "when the variations contact contains just an address" in {
+          val variationsContact = VariationsContact(address = Some(updatedContactAddress))
+          variationsContact.nonEmpty mustBe true
+        }
+        "when the variations contact contains just an phonenumber" in {
+          val variationsContact = VariationsContact(telephoneNumber = Some("0889089903"))
+          variationsContact.nonEmpty mustBe true
+        }
+        "when the variations contact contains just an emailAddress" in {
+          val variationsContact = VariationsContact(emailAddress = Some("test@email.com"))
+          variationsContact.nonEmpty mustBe true
+        }
+        "when the variations contact contains all fields" in {
+          val variationsContact = VariationsContact(Some(updatedContactAddress), Some("0889089903"), Some("test@email.com"))
+          variationsContact.nonEmpty mustBe true
+        }
+
+      }
+      "must return false" - {
+        "when varitions contacts has all fields false" in {
+          val variationsContact = VariationsContact()
+          variationsContact.nonEmpty mustBe false
+        }
+      }
+    }
+
     "writes"-{
       "when submitted json is formed correctly" in {
         Json.toJson(VariationsContact(

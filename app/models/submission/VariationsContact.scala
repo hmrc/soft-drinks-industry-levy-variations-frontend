@@ -19,7 +19,7 @@ package models.submission
 import models.backend.{RetrievedSubscription, Site, UkAddress}
 import models.updateRegisteredDetails.ContactDetails
 import models.UserAnswers
-import play.api.libs.json.{JsString, JsValue, Json, Writes}
+import play.api.libs.json.{JsObject, JsString, JsValue, Json, Writes}
 
 import scala.util.Try
 
@@ -69,14 +69,24 @@ object VariationsContact {
   }
 
   implicit val writes: Writes[VariationsContact] = new Writes[VariationsContact] {
-    override def writes(o: VariationsContact): JsValue = Json.obj(
-      ("addressLine1", JsString(o.address.fold("")(_.lines.headOption.getOrElse("")))),
-      ("addressLine2", JsString(Try(o.address.fold("")(_.lines(1))).getOrElse(""))),
-      ("addressLine3", JsString(Try(o.address.fold("")(_.lines(2))).getOrElse(""))),
-      ("addressLine4", JsString(Try(o.address.fold("")(_.lines(3))).getOrElse(""))),
-      ("postCode", JsString(o.address.fold("")(_.postCode))),
-      "telephoneNumber" -> o.telephoneNumber,
-      "emailAddress"    -> o.emailAddress
-    )
+    override def writes(o: VariationsContact): JsValue = {
+      val optAddressJson: Option[JsObject] = o.address.map { address =>
+        Json.obj(
+          ("addressLine1", JsString(address.lines.headOption.getOrElse(""))),
+          ("addressLine2", JsString(Try(address.lines(1)).getOrElse(""))),
+          ("addressLine3", JsString(Try(address.lines(2)).getOrElse(""))),
+          ("addressLine4", JsString(Try(address.lines(3)).getOrElse(""))),
+          ("postCode", JsString(address.postCode))
+        )
+      }
+      val phoneAndEmailJson: JsObject = Json.obj(
+        "telephoneNumber" -> o.telephoneNumber,
+        "emailAddress" -> o.emailAddress
+      )
+      optAddressJson match {
+        case Some(jsObject) => jsObject ++ phoneAndEmailJson
+        case None => phoneAndEmailJson
+      }
+    }
   }
 }

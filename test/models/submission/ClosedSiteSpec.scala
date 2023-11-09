@@ -16,17 +16,23 @@
 
 package models.submission
 
+import base.SpecBase
+import models.VariationsSubmissionDataHelper
 import models.backend.Site
-import play.api.libs.json.{Json, Writes}
 
-object ClosedSite {
+class ClosedSiteSpec extends SpecBase with VariationsSubmissionDataHelper {
 
-  def fromSite(site: Site): ClosedSite = ClosedSite(
-    tradingName = "",
-    siteReference = site.ref.getOrElse("1"),
-    reasonOfClosure = "This site is no longer open."
-  )
-  implicit val writes: Writes[ClosedSite] = Json.writes[ClosedSite]
+  val site = Site(updatedContactAddress, Some("NAME"), Some("100"), None)
+
+  "fromSite" - {
+    "should return a closed site with the site ref" in {
+      val res = ClosedSite.fromSite(site)
+      res mustBe ClosedSite("", "100", "This site is no longer open.")
+    }
+    "should return a closed site ref 1 when no ref in site" in {
+      val res = ClosedSite.fromSite(site.copy(ref = None))
+      res mustBe ClosedSite("", "1", "This site is no longer open.")
+    }
+  }
+
 }
-
-case class ClosedSite(tradingName: String, siteReference: String, reasonOfClosure: String)

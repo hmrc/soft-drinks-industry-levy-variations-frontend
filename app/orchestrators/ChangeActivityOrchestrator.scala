@@ -29,9 +29,10 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class ChangeActivityOrchestrator @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector){
-  private def changeActivityVariationToBeSubmitted(subscription: RetrievedSubscription,
-                                                   userAnswers: UserAnswers,
-                                                   todaysDate: LocalDate = LocalDate.now()): VariationsSubmission = {
+
+  def todaysDate: LocalDate = LocalDate.now()
+  def changeActivityVariationToBeSubmitted(subscription: RetrievedSubscription,
+                                                   userAnswers: UserAnswers): VariationsSubmission = {
     val changeActivityData = userAnswers.getChangeActivityData
     val contactDetails = ContactDetails.fromContact(subscription.contact)
     val variationSites = VariationsSites.fromUserAnswers(userAnswers, subscription, contactDetails)

@@ -31,13 +31,19 @@ case class VariationsPersonalDetails(
 object VariationsPersonalDetails extends VariationSubmissionHelper {
 
   def apply(updatedContactDetails: ContactDetails,
-            subscription: RetrievedSubscription): VariationsPersonalDetails = {
-    VariationsPersonalDetails(
+            subscription: RetrievedSubscription): Option[VariationsPersonalDetails] = {
+    val updatedPDs = VariationsPersonalDetails(
       name = updatedContactDetails.fullName ifDifferentTo subscription.contact.name.getOrElse(""),
       position = updatedContactDetails.position ifDifferentTo subscription.contact.positionInCompany.getOrElse(""),
       telephoneNumber = updatedContactDetails.phoneNumber ifDifferentTo subscription.contact.phoneNumber,
       emailAddress = updatedContactDetails.email ifDifferentTo subscription.contact.email
     )
+
+    if(updatedPDs.nonEmpty) {
+      Some(updatedPDs)
+    } else {
+      None
+    }
   }
 
   implicit val format: Format[VariationsPersonalDetails] = Json.format[VariationsPersonalDetails]

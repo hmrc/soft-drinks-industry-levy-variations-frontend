@@ -35,7 +35,7 @@ class SdilActivitySpec extends SpecBase with VariationsSubmissionDataHelper {
     largeProducer = true,
     contractPacker = false,
     importer = false,
-    voluntaryRegistration = true
+    voluntaryRegistration = false
   )
 
   val retrievedActivityLiableSmallProducer = RetrievedActivity(
@@ -55,8 +55,7 @@ class SdilActivitySpec extends SpecBase with VariationsSubmissionDataHelper {
     voluntaryRegistration = true
   )
   def subscription(originalActivity: RetrievedActivity) = RetrievedSubscription(
-    "foo", "bar", "wizz", UkAddress(List.empty, ""),
-    RetrievedActivity(smallProducer = false, largeProducer = false, contractPacker = false, importer = false, voluntaryRegistration = false),
+    "foo", "bar", "wizz", UkAddress(List.empty, ""), originalActivity,
     LocalDate.now(), productionSites = List.empty, warehouseSites = List.empty, contact = Contact(None,None,"",""), deregDate = None)
 
   def changeActivityData(amountProduced: AmountProduced, liable: Boolean, voluntary: Boolean): ChangeActivityData = {
@@ -89,7 +88,7 @@ class SdilActivitySpec extends SpecBase with VariationsSubmissionDataHelper {
         "change there activity values only" in {
           val caData = changeActivityData(AmountProduced.Large, true, false)
           val expectedActivity = Activity(Some(litreage), Some(litreage), Some(litreage), None, true)
-          val expectedModel = SdilActivity(Some(expectedActivity), Some(false), None, None, None, None, None)
+          val expectedModel = SdilActivity(Some(expectedActivity), None, None, None, None, None, None)
 
           val res = SdilActivity.fromChangeActivityData(caData, retrievedSubscription, localDate)
 
@@ -98,7 +97,7 @@ class SdilActivitySpec extends SpecBase with VariationsSubmissionDataHelper {
         "changes to be a small producer who is voluntary" in {
           val caData = changeActivityData(AmountProduced.Small, false, true)
           val expectedActivity = Activity(Some(litreage), Some(litreage), Some(litreage), Some(Litreage(1, 1)), false)
-          val expectedModel = SdilActivity(Some(expectedActivity), None, Some(true), Some(true), Some(true), None, None)
+          val expectedModel = SdilActivity(Some(expectedActivity), Some(true), Some(true), Some(true), Some(true), None, None)
 
           val res = SdilActivity.fromChangeActivityData(caData, retrievedSubscription, localDate)
 
@@ -109,7 +108,7 @@ class SdilActivitySpec extends SpecBase with VariationsSubmissionDataHelper {
         "changes to be a None producer" in {
           val caData = changeActivityData(AmountProduced.None, false, false)
           val expectedActivity = Activity(None, Some(litreage), Some(litreage), None, false)
-          val expectedModel = SdilActivity(Some(expectedActivity), None, None, None, None, None, None)
+          val expectedModel = SdilActivity(Some(expectedActivity), Some(true), None, None, None, None, None)
 
           val res = SdilActivity.fromChangeActivityData(caData, retrievedSubscription, localDate)
 
@@ -122,7 +121,7 @@ class SdilActivitySpec extends SpecBase with VariationsSubmissionDataHelper {
         "change there activity values only" in {
           val caData = changeActivityData(AmountProduced.Large, true, false)
           val expectedActivity = Activity(Some(litreage), Some(litreage), Some(litreage), None, true)
-          val expectedModel = SdilActivity(Some(expectedActivity), Some(false), None, None, None, None, None)
+          val expectedModel = SdilActivity(Some(expectedActivity), Some(false), Some(false), Some(false), Some(false), None,  Some(localDate))
 
           val res = SdilActivity.fromChangeActivityData(caData, retrievedSubscription, localDate)
 
@@ -132,7 +131,7 @@ class SdilActivitySpec extends SpecBase with VariationsSubmissionDataHelper {
         "changes to be a small producer who is voluntary" in {
           val caData = changeActivityData(AmountProduced.Small, false, true)
           val expectedActivity = Activity(Some(litreage), Some(litreage), Some(litreage), Some(Litreage(1, 1)), false)
-          val expectedModel = SdilActivity(Some(expectedActivity), None, Some(true), Some(true), Some(true), None, None)
+          val expectedModel = SdilActivity(Some(expectedActivity), None, None, None, None, None, None)
 
           val res = SdilActivity.fromChangeActivityData(caData, retrievedSubscription, localDate)
 
@@ -142,7 +141,7 @@ class SdilActivitySpec extends SpecBase with VariationsSubmissionDataHelper {
         "changes to be a None producer" in {
           val caData = changeActivityData(AmountProduced.None, false, false)
           val expectedActivity = Activity(None, Some(litreage), Some(litreage), None, false)
-          val expectedModel = SdilActivity(Some(expectedActivity), None, None, None, None, None, None)
+          val expectedModel = SdilActivity(Some(expectedActivity), None, Some(false), Some(false), Some(false), None, None)
 
           val res = SdilActivity.fromChangeActivityData(caData, retrievedSubscription, localDate)
 
@@ -156,7 +155,7 @@ class SdilActivitySpec extends SpecBase with VariationsSubmissionDataHelper {
         "change there activity values only" in {
           val caData = changeActivityData(AmountProduced.None, true, false)
           val expectedActivity = Activity(None, Some(litreage), Some(litreage), None, false)
-          val expectedModel = SdilActivity(Some(expectedActivity), None, None, None, None, None, None)
+          val expectedModel = SdilActivity(Some(expectedActivity), None, Some(false), Some(false), Some(false), None,  Some(localDate))
 
           val res = SdilActivity.fromChangeActivityData(caData, retrievedSubscription, localDate)
 
@@ -166,7 +165,7 @@ class SdilActivitySpec extends SpecBase with VariationsSubmissionDataHelper {
         "changes to be a small producer who is voluntary" in {
           val caData = changeActivityData(AmountProduced.Small, false, true)
           val expectedActivity = Activity(Some(litreage), Some(litreage), Some(litreage), Some(Litreage(1, 1)), false)
-          val expectedModel = SdilActivity(Some(expectedActivity), None, Some(true), Some(true), Some(true), None, None)
+          val expectedModel = SdilActivity(Some(expectedActivity), None, None, None, None, None, None)
 
           val res = SdilActivity.fromChangeActivityData(caData, retrievedSubscription, localDate)
 
@@ -176,7 +175,7 @@ class SdilActivitySpec extends SpecBase with VariationsSubmissionDataHelper {
         "changes to be a small producer who is liable" in {
           val caData = changeActivityData(AmountProduced.Small, true, false)
           val expectedActivity = Activity(Some(litreage), Some(litreage), Some(litreage), None, false)
-          val expectedModel = SdilActivity(Some(expectedActivity), None, None, None, None, None, None)
+          val expectedModel = SdilActivity(Some(expectedActivity), None, Some(false), Some(false), Some(false), None,  Some(localDate))
 
           val res = SdilActivity.fromChangeActivityData(caData, retrievedSubscription, localDate)
 
@@ -186,7 +185,7 @@ class SdilActivitySpec extends SpecBase with VariationsSubmissionDataHelper {
         "changes to be a Large producer" in {
           val caData = changeActivityData(AmountProduced.Large, true, false)
           val expectedActivity = Activity(Some(litreage), Some(litreage), Some(litreage), None, true)
-          val expectedModel = SdilActivity(Some(expectedActivity), Some(false), None, None, None, None, None)
+          val expectedModel = SdilActivity(Some(expectedActivity), Some(false), Some(false), Some(false), Some(false), None, Some(localDate))
 
           val res = SdilActivity.fromChangeActivityData(caData, retrievedSubscription, localDate)
 
@@ -194,173 +193,6 @@ class SdilActivitySpec extends SpecBase with VariationsSubmissionDataHelper {
         }
       }
     }
-//  "should return the case class if they are NOT liable but voluntary" in {
-//
-//    val userAnswers = {
-//      emptyUserAnswersForChangeActivity
-//        .set(AmountProducedPage, AmountProduced.None).success.value
-//        .set(ImportsPage, false).success.value
-//        .set(ContractPackingPage, false).success.value
-//        .set(ThirdPartyPackagersPage, false).success.value
-//    }
-//    val res = SdilActivity.fromChangeActivityData(userAnswers, subscription, localDate)
-//    res.isDefined mustBe true
-//  }
-//    "should return the case class if they are liable but NOT voluntary" in {
-//      val userAnswers = {
-//        emptyUserAnswersForChangeActivity
-//          .set(AmountProducedPage, AmountProduced.Large).success.value
-//          .set(ImportsPage, false).success.value
-//          .set(ContractPackingPage, false).success.value
-//          .set(ThirdPartyPackagersPage, true).success.value
-//      }
-//
-//      val res = SdilActivity.convert(userAnswers, subscription, localDate)
-//      res.isDefined mustBe true
-//    }
-//    "should not return case class if NOT liable and NOT voluntary" in {
-//      val userAnswers = {
-//        emptyUserAnswersForChangeActivity
-//          .set(AmountProducedPage, AmountProduced.None).success.value
-//          .set(ImportsPage, false).success.value
-//          .set(ContractPackingPage, false).success.value
-//          .set(ThirdPartyPackagersPage, true).success.value
-//      }
-//
-//      val res = SdilActivity.convert(userAnswers, subscription, localDate)
-//      res.isDefined mustBe false
-//    }
-//    "should return case class if all answers different to subscription and is voluntary" in {
-//      val userAnswers = {
-//        emptyUserAnswersForChangeActivity
-//          .set(AmountProducedPage, AmountProduced.None).success.value
-//          .set(ImportsPage, false).success.value
-//          .set(ContractPackingPage, false).success.value
-//          .set(ThirdPartyPackagersPage, false).success.value
-//      }
-//      val subscriptionUpdated = subscription.copy(
-//        activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = false)
-//      )
-//
-//      val res = SdilActivity.convert(userAnswers, subscriptionUpdated, localDate)
-//      res.get mustBe SdilActivity(
-//        activity = Some(
-//          Activity(
-//            ProducedOwnBrand = None,
-//            Imported = None,
-//            CopackerAll = None,
-//            Copackee = None,
-//            isLarge = false)),
-//        produceLessThanOneMillionLitres = Some(false),
-//        smallProducerExemption = Some(true),
-//        usesContractPacker = Some(true),
-//        voluntarilyRegistered = Some(true),
-//        reasonForAmendment = None,
-//        taxObligationStartDate = None)
-//    }
-//    "should return case class if all answers different to subscription and is not voluntary" in {
-//
-//      val userAnswers = {
-//        emptyUserAnswersForChangeActivity
-//          .set(AmountProducedPage, AmountProduced.Large).success.value
-//          .set(ImportsPage, false).success.value
-//          .set(ContractPackingPage, false).success.value
-//          .set(ThirdPartyPackagersPage, true).success.value
-//      }
-//      val subscriptionUpdated = subscription.copy(
-//        activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true)
-//      )
-//
-//      val res = SdilActivity.convert(userAnswers, subscriptionUpdated, localDate)
-//      res.get mustBe SdilActivity(
-//        activity = Some(
-//          Activity(
-//            ProducedOwnBrand = None,
-//            Imported = None,
-//            CopackerAll = None,
-//            Copackee = Some(Litreage(1,1)),
-//            isLarge = true)),
-//        produceLessThanOneMillionLitres = None,
-//        smallProducerExemption = Some(false),
-//        usesContractPacker = Some(false),
-//        voluntarilyRegistered = Some(false),
-//        reasonForAmendment = None,
-//        taxObligationStartDate = Some(localDate))
-//    }
-//    "return case class if all answered with litres with amount produced large" in {
-//      val userAnswers = {
-//        emptyUserAnswersForChangeActivity
-//          .set(AmountProducedPage, AmountProduced.Large).success.value
-//          .set(ImportsPage, true).success.value
-//          .set(HowManyImportsPage, LitresInBands(5,5)).success.value
-//          .set(ContractPackingPage, true).success.value
-//          .set(HowManyContractPackingPage, LitresInBands(10,10)).success.value
-//          .set(ThirdPartyPackagersPage, true).success.value
-//          .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-//          .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(11,11)).success.value
-//      }
-//      val subscriptionUpdated = subscription.copy(
-//        activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true)
-//      )
-//
-//      val res = SdilActivity.convert(userAnswers, subscriptionUpdated, localDate)
-//      res.get mustBe SdilActivity(
-//        activity = Some(
-//          Activity(
-//            ProducedOwnBrand = Some(Litreage(11,11)),
-//            Imported = Some(Litreage(5,5)),
-//            CopackerAll = Some(Litreage(10,10)),
-//            Copackee = Some(Litreage(1,1)),
-//            isLarge = true)),
-//        produceLessThanOneMillionLitres = None,
-//        smallProducerExemption = Some(false),
-//        usesContractPacker = Some(false),
-//        voluntarilyRegistered = Some(false),
-//        reasonForAmendment = None,
-//        taxObligationStartDate = Some(localDate))
-//    }
-//    "return case class if all answered with litres with amount produced Small" in {
-//      val userAnswers = {
-//        emptyUserAnswersForChangeActivity
-//          .set(AmountProducedPage, AmountProduced.Small).success.value
-//          .set(ImportsPage, true).success.value
-//          .set(HowManyImportsPage, LitresInBands(5,5)).success.value
-//          .set(ContractPackingPage, true).success.value
-//          .set(HowManyContractPackingPage, LitresInBands(10,10)).success.value
-//          .set(ThirdPartyPackagersPage, true).success.value
-//      }
-//      val subscriptionUpdated = subscription.copy(
-//        activity = RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true)
-//      )
-//
-//      val res = SdilActivity.convert(userAnswers, subscriptionUpdated, localDate)
-//      res.get mustBe SdilActivity(
-//        activity = Some(
-//          Activity(
-//            ProducedOwnBrand = None,
-//            Imported = Some(Litreage(5,5)),
-//            CopackerAll = Some(Litreage(10,10)),
-//            Copackee = Some(Litreage(1,1)),
-//            isLarge = false)),
-//        produceLessThanOneMillionLitres = Some(false),
-//        smallProducerExemption = Some(false),
-//        usesContractPacker = Some(false),
-//        voluntarilyRegistered = Some(false),
-//        reasonForAmendment = None,
-//        taxObligationStartDate = Some(localDate))
-//    }
-//    "return exception if amount produced is not answered" in {
-//      val userAnswers = {
-//        emptyUserAnswersForChangeActivity
-//          .set(ImportsPage, true).success.value
-//          .set(HowManyImportsPage, LitresInBands(5,5)).success.value
-//          .set(ContractPackingPage, true).success.value
-//          .set(HowManyContractPackingPage, LitresInBands(10,10)).success.value
-//          .set(ThirdPartyPackagersPage, true).success.value
-//      }
-//
-//      intercept[Exception](SdilActivity.convert(userAnswers, subscription, localDate))
-//    }
   }
 
   "writes" - {

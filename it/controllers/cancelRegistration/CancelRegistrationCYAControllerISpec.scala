@@ -75,10 +75,15 @@ class CancelRegistrationCYAControllerISpec extends ControllerITTestHelper {
 
   "POST " + routes.CancelRegistrationCYAController.onSubmit.url - {
     "should redirect to Cancellation Request done controller" in {
+      val validCancellationDate = LocalDate.now()
+
       given
         .commonPrecondition
+        .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
-      setAnswers(emptyUserAnswersForSelectChange(CancelRegistration))
+      setAnswers(emptyUserAnswersForSelectChange(CancelRegistration)
+        .set(ReasonPage, "No longer sell drinks").success.value
+        .set(CancelRegistrationDatePage, validCancellationDate).success.value)
 
       WsTestClient.withClient { client =>
         val result = createClientRequestPOST(client, baseUrl + route, Json.obj())

@@ -49,7 +49,7 @@ class AddASmallProducerController @Inject()(
                                              view: AddASmallProducerView,
                                              val genericLogger: GenericLogger,
                                              val errorHandler: ErrorHandler
-                                           )(implicit ec: ExecutionContext) extends ControllerHelper {
+                                           )(implicit val ec: ExecutionContext) extends ControllerHelper {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>

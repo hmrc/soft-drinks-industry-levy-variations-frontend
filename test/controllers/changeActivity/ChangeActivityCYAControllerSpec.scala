@@ -17,28 +17,23 @@
 package controllers.changeActivity
 
 import base.SpecBase
-import models.LitresInBands
 import controllers.changeActivity.routes._
 import generators.ChangeActivityCYAGenerators._
-import models.DataHelper
+import models.{DataHelper, LitresInBands}
 import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced.Large
-import models.submission.{Litreage, VariationsSubmission}
 import orchestrators.ChangeActivityOrchestrator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
 import pages.changeActivity._
-import play.api.mvc.Call
 import play.api.inject.bind
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
 import views.html.changeActivity.ChangeActivityCYAView
 import views.summary.changeActivity.ChangeActivitySummary
-
-import java.time.LocalDate
-import scala.concurrent.Future
 
 class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency with DataHelper {
 

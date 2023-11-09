@@ -23,13 +23,13 @@ import play.api.libs.json.{Json, Writes}
 import java.time.LocalDate
 
 case class SdilActivity(
-  activity: Option[Activity],
-  produceLessThanOneMillionLitres: Option[Boolean],
-  smallProducerExemption: Option[Boolean],
-  usesContractPacker: Option[Boolean],
-  voluntarilyRegistered: Option[Boolean],
-  reasonForAmendment: Option[String],
-  taxObligationStartDate: Option[LocalDate])
+  activity: Option[Activity] = None,
+  produceLessThanOneMillionLitres: Option[Boolean] = None,
+  smallProducerExemption: Option[Boolean] = None,
+  usesContractPacker: Option[Boolean] = None,
+  voluntarilyRegistered: Option[Boolean] = None,
+  reasonForAmendment: Option[String] = None,
+  taxObligationStartDate: Option[LocalDate] = None)
 
 object SdilActivity extends VariationSubmissionHelper {
 

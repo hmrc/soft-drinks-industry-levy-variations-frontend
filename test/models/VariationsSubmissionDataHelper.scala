@@ -24,15 +24,17 @@ import java.time.LocalDate
 
 trait VariationsSubmissionDataHelper {
 
-  val ORG_NAME = "Organisation name"
+  val ORG_NAME = "Super Lemonade Plc"
   val UPDATED_NAME = "updated name"
   val UPDATED_POSITION = "updated position"
   val UPDATED_PHONE_NUMBER = "updated phone number"
   val UPDATED_EMAIL = "updated email"
-  val ORIGINAL_ADDRESS = UkAddress(lines = List("original address"), "AB1 2CD")
+  val ORIGINAL_ADDRESS = UkAddress(lines = List("63 Clifton Roundabout", "Worcester"), "WR53 7CX", None)
   val UPDATED_ADDRESS = UkAddress(lines = List("test address"), "AB2 3FG")
   val NEW_VARITION_SITE = VariationsSite("New Site", "10", updatedVariationsContact, SiteTypes.WAREHOUSE)
   val CLOSED_SITE = ClosedSite("Closed Site", "8", "Expired")
+  val DEREG_REASON = "No longer needed"
+  val DEREG_DATE = LocalDate.now()
 
   val updatedPersonalDetails: VariationsPersonalDetails = VariationsPersonalDetails(
     name = Some(UPDATED_NAME),
@@ -67,7 +69,8 @@ trait VariationsSubmissionDataHelper {
 
   def testVariationSubmission(variationContact: Option[VariationsContact] = None,
                               variationsPersonalDetails: Option[VariationsPersonalDetails] = None,
-                              sdilActivity: Option[SdilActivity] = None,
+                              sdilActivity: Option[SdilActivity] = Some(SdilActivity()),
+
                               newSites: List[VariationsSite] = List.empty,
                               closeSites: List[ClosedSite] = List.empty,
                               isDeregistered: Boolean = false): VariationsSubmission = VariationsSubmission(
@@ -78,8 +81,8 @@ trait VariationsSubmissionDataHelper {
     correspondenceContact = variationContact,
     primaryPersonContact = variationsPersonalDetails,
     sdilActivity = sdilActivity,
-    deregistrationText = if (isDeregistered) {Some("No longer needed")} else {None},
-    deregistrationDate = if (isDeregistered) {Some(LocalDate.now)} else {None},
+    deregistrationText = if (isDeregistered) {Some(DEREG_REASON)} else {None},
+    deregistrationDate = if (isDeregistered) {Some(DEREG_DATE)} else {None},
     newSites = newSites,
     closeSites = closeSites
   )

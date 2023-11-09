@@ -43,7 +43,7 @@ class HowManyCreditsForLostDamagedController @Inject()(
                                          view: HowManyCreditsForLostDamagedView,
                                          val genericLogger: GenericLogger,
                                          val errorHandler: ErrorHandler
-                                 )(implicit ec: ExecutionContext) extends ControllerHelper {
+                                 )(implicit val ec: ExecutionContext) extends ControllerHelper {
 
   val form: Form[LitresInBands] = formProvider()
 

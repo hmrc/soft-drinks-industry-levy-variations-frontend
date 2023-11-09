@@ -42,7 +42,7 @@ class HowManyClaimCreditsForExportsController @Inject()(
                                          view: HowManyClaimCreditsForExportsView,
                                          val genericLogger: GenericLogger,
                                          val errorHandler: ErrorHandler
-                                 )(implicit ec: ExecutionContext) extends ControllerHelper {
+                                 )(implicit val ec: ExecutionContext) extends ControllerHelper {
 
   val form = formProvider()
 

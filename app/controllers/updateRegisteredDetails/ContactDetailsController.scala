@@ -42,7 +42,7 @@ class ContactDetailsController @Inject()(
                                        val navigator: NavigatorForUpdateRegisteredDetails,
                                        val sessionService: SessionService,
                                        val genericLogger: GenericLogger
-                                     ) (implicit ec: ExecutionContext) extends ControllerHelper {
+                                     ) (implicit val ec: ExecutionContext) extends ControllerHelper {
 
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails).async {
     implicit request =>
@@ -59,9 +59,9 @@ class ContactDetailsController @Inject()(
               subscriptionContact.email
             )
           val updatedAnswers = request.userAnswers.set(UpdateContactDetailsPage, updateContactDetails)
-          updateDatabaseWithoutRedirect(updatedAnswers, UpdateContactDetailsPage).flatMap {
-            case true => Future.successful(Ok(view(ContactDetailsSummary.rows(updateContactDetails))))
-            case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+          updateDatabaseWithoutRedirect(updatedAnswers, UpdateContactDetailsPage).map {
+            case true => Ok(view(ContactDetailsSummary.rows(updateContactDetails)))
+            case false => InternalServerError(errorHandler.internalServerErrorTemplate)
           }
       }
   }

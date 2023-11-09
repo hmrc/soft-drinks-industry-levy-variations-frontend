@@ -20,10 +20,10 @@ import models.changeActivity.ChangeActivityData
 import play.api.libs.json.{Format, Json}
 
 case class Activity(
-                     ProducedOwnBrand: Option[Litreage],
-                     Imported: Option[Litreage],
-                     CopackerAll: Option[Litreage],
-                     Copackee: Option[Litreage],
+                     ProducedOwnBrand: Option[Litreage] = None,
+                     Imported: Option[Litreage] = None,
+                     CopackerAll: Option[Litreage] = None,
+                     Copackee: Option[Litreage] = None,
                      isLarge: Boolean)
 
 object Activity {

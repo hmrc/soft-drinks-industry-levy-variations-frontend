@@ -62,19 +62,16 @@ object VariationsSites extends VariationSubmissionHelper {
   private def getNewAndClosedWarehouses(userAnswers: UserAnswers, subscription: RetrievedSubscription): (List[Site], List[Site]) = {
     val warehouses = userAnswers.warehouseList.values.toList
     val originalWarehouseSites = subscription.warehouseSites
-    getNewAndClosedSites(warehouses, originalWarehouseSites)
+    getNewAndClosedSites(originalWarehouseSites, warehouses)
   }
 
   private def getNewAndClosedSites(originalSites: List[Site], updatedSites: List[Site]): (List[Site], List[Site]) = {
     if (originalSites.nonEmpty && updatedSites.nonEmpty) {
-      val (newSites, existingSites) = updatedSites.partition {
-        _.isNew(originalSites)
+      val newSites = updatedSites.collect {
+        case site if site.isNew(originalSites) => site
       }
-      val closedSites = if (existingSites.knownSize > 0) {
-        originalSites.collect { case site if site.isClosed(updatedSites) => site }
-      } else {
-        List.empty[Site]
-      }
+      val closedSites = originalSites.collect { case site if site.isClosed(updatedSites) => site }
+
       (newSites, closedSites)
     } else {
       (updatedSites, originalSites)

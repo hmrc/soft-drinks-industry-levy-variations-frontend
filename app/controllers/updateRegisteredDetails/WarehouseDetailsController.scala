@@ -49,7 +49,7 @@ class WarehouseDetailsController @Inject()(
                                             view: WarehouseDetailsView,
                                             val genericLogger: GenericLogger,
                                             val errorHandler: ErrorHandler
-                                          )(implicit ec: ExecutionContext) extends ControllerHelper with SummaryListFluency {
+                                          )(implicit val ec: ExecutionContext) extends ControllerHelper with SummaryListFluency {
 
   val form: Form[Boolean] = formProvider()
 

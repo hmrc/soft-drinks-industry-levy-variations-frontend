@@ -35,7 +35,8 @@ class CancelRegistrationOrchestrator @Inject()(sdilConnector: SoftDrinksIndustry
       displayOrgName = subscription.orgName,
       ppobAddress = subscription.address,
       deregistrationText = userAnswers.get(ReasonPage),
-      deregistrationDate = userAnswers.get(CancelRegistrationDatePage)
+      deregistrationDate = userAnswers.get(CancelRegistrationDatePage),
+      sdilActivity = subscription.defaultSdilAcivity
     )
   }
 

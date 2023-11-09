@@ -17,6 +17,7 @@
 package models.backend
 
 import models.Contact
+import models.submission.SdilActivity
 import play.api.libs.json.Json
 
 import java.time.LocalDate
@@ -31,7 +32,16 @@ case class RetrievedSubscription(
                                   productionSites: List[Site],
                                   warehouseSites: List[Site],
                                   contact: Contact,
-                                  deregDate: Option[LocalDate] = None)
+                                  deregDate: Option[LocalDate] = None) {
+
+  val defaultSdilAcivity: Option[SdilActivity] = if(
+    activity.largeProducer || activity.importer || activity.contractPacker || activity.voluntaryRegistration
+  ) {
+    Some(SdilActivity())
+  } else {
+    None
+  }
+}
 
 object RetrievedSubscription {
   implicit val format = Json.format[RetrievedSubscription]

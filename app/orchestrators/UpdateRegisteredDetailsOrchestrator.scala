@@ -34,7 +34,7 @@ class UpdateRegisteredDetailsOrchestrator @Inject()(sdilConnector: SoftDrinksInd
                                                    userAnswers: UserAnswers): VariationsSubmission = {
 
     val optUpdatedContact = userAnswers.get(UpdateContactDetailsPage)
-    val optNewPDs = optUpdatedContact.map(updatedContact => VariationsPersonalDetails.apply(updatedContact, subscription))
+    val optNewPDs = optUpdatedContact.fold[Option[VariationsPersonalDetails]](None)(updatedContact => VariationsPersonalDetails.apply(updatedContact, subscription))
     val optNewBusinessContact = VariationsContact.generateForBusinessContact(userAnswers, subscription, optNewPDs)
 
     val siteContact = optUpdatedContact.getOrElse(ContactDetails.fromContact(subscription.contact))
@@ -45,6 +45,7 @@ class UpdateRegisteredDetailsOrchestrator @Inject()(sdilConnector: SoftDrinksInd
       businessContact = optNewBusinessContact,
       correspondenceContact = optNewBusinessContact,
       primaryPersonContact = optNewPDs,
+      sdilActivity = subscription.defaultSdilAcivity,
       newSites = variationSites.newSites,
       closeSites = variationSites.closedSites
     )
@@ -53,6 +54,7 @@ class UpdateRegisteredDetailsOrchestrator @Inject()(sdilConnector: SoftDrinksInd
   def submitVariation(subscription: RetrievedSubscription, userAnswers: UserAnswers)
                      (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = {
     val variationSubmission = getVariationToBeSubmitted(subscription, userAnswers)
+
     for {
       variation <- sdilConnector.submitVariation(variationSubmission, subscription.sdilRef)
     } yield variation

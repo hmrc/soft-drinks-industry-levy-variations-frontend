@@ -21,13 +21,13 @@ import play.api.libs.json.{Format, Json}
 
 case class ChangeActivityData(
                                amountProduced: AmountProduced,
-                               thirdPartyPackagers: Option[Boolean],
-                               operatePackagingSiteOwnBrands: Option[Boolean],
-                               howManyOperatePackagingSiteOwnBrands: Option[LitresInBands],
-                               contractPacking: Option[Boolean],
-                               howManyContractPacking: Option[LitresInBands],
-                               imports: Option[Boolean],
-                               howManyImports: Option[LitresInBands]
+                               thirdPartyPackagers: Option[Boolean] = None,
+                               operatePackagingSiteOwnBrands: Option[Boolean] = None,
+                               howManyOperatePackagingSiteOwnBrands: Option[LitresInBands] = None,
+                               contractPacking: Option[Boolean] = None,
+                               howManyContractPacking: Option[LitresInBands] = None,
+                               imports: Option[Boolean] = None,
+                               howManyImports: Option[LitresInBands] = None
                              ) {
   def isLarge: Boolean = amountProduced == AmountProduced.Large
   def isSmall: Boolean = amountProduced == AmountProduced.Small

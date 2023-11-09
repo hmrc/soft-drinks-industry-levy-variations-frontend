@@ -32,9 +32,9 @@ trait VariationSubmissionHelper {
       if (first == other) None else Some(first)
   }
 
-  implicit class PoorA[A <: {def nonEmpty: Boolean}](a: A) {
-    def ifNonEmpty: Option[A] = if (a.nonEmpty) Some(a) else None
-  }
+//  implicit class PoorA[A <: {def nonEmpty: Boolean}](a: A) {
+//    def ifNonEmpty: Option[A] = if (a.nonEmpty) Some(a) else None
+//  }
 
   def getHighestRefNumber(sites: List[Site]): Int = sites.flatMap(site =>
     site.ref

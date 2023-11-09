@@ -21,6 +21,7 @@ import models._
 import pages._
 import pages.correctReturn._
 import controllers.correctReturn.routes
+import models.backend.RetrievedSubscription
 import play.api.libs.json.Json
 
 class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {

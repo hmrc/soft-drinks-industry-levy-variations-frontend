@@ -34,7 +34,7 @@ case class Site(address: UkAddress,
   }
 
   def isClosed(updatedSites: List[Site]): Boolean = {
-    !updatedSites.exists(site => isSame(site))
+    closureDate.fold(false)(_.isBefore(LocalDate.now())) || !updatedSites.exists(site => isSame(site))
   }
 }
 

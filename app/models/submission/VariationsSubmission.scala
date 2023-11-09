@@ -38,17 +38,4 @@ case class VariationsSubmission(
                                  deregistrationDate: Option[LocalDate] = None,
                                  newSites: List[VariationsSite] = Nil,
                                  amendSites: List[VariationsSite] = Nil,
-                                 closeSites: List[ClosedSite] = Nil) {
-  def nonEmpty: Boolean =
-    (Seq(
-      tradingName,
-      businessContact,
-      correspondenceContact,
-      primaryPersonContact,
-      sdilActivity,
-      deregistrationDate,
-      deregistrationText
-    ).flatten ++ newSites ++ amendSites ++ closeSites).nonEmpty
-
-  def isEmpty: Boolean = !nonEmpty
-}
+                                 closeSites: List[ClosedSite] = Nil)

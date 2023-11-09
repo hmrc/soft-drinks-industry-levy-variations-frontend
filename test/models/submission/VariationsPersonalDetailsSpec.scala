@@ -26,44 +26,46 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 class VariationsPersonalDetailsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with SpecBase{
   "VariationsPersonalDetails" -{
     val contactDetailsFromSubscription = ContactDetails.fromContact(aSubscription.contact)
-    "apply should return the expected model" -{
+    "apply should return the None" - {
       "when i have made no changes" in {
         val res = VariationsPersonalDetails.apply(contactDetailsFromSubscription, aSubscription)
-        res mustEqual VariationsPersonalDetails()
-        }
+        res mustEqual None
+      }
+    }
 
+    "apply should return the expected model" - {
       "when i have changed only the name" in {
         val contactDetails = contactDetailsFromSubscription.copy(fullName = "Tom Jeffery")
 
         val res = VariationsPersonalDetails.apply(contactDetails, aSubscription)
-        res mustEqual VariationsPersonalDetails(Some("Tom Jeffery"), None, None, None)
+        res mustEqual Some(VariationsPersonalDetails(Some("Tom Jeffery"), None, None, None))
       }
 
       "when i have changed the position" in {
         val contactDetails = contactDetailsFromSubscription.copy(position = "Chief Data Analyst")
 
         val res = VariationsPersonalDetails.apply(contactDetails, aSubscription)
-        res mustEqual VariationsPersonalDetails(None, Some("Chief Data Analyst"), None, None)
+        res mustEqual Some(VariationsPersonalDetails(None, Some("Chief Data Analyst"), None, None))
       }
 
       "when i have changed the telephone number" in {
         val contactDetails = contactDetailsFromSubscription.copy(phoneNumber = "02246 259761")
 
         val res = VariationsPersonalDetails.apply(contactDetails, aSubscription)
-        res mustEqual VariationsPersonalDetails(None, None, Some("02246 259761"), None)
+        res mustEqual Some(VariationsPersonalDetails(None, None, Some("02246 259761"), None))
       }
 
       "when i have changed the email" in {
         val contactDetails = contactDetailsFromSubscription.copy(email = "new.email@gmail.com")
         val res = VariationsPersonalDetails.apply(contactDetails, aSubscription)
-        res mustEqual VariationsPersonalDetails(None, None, None, Some("new.email@gmail.com"))
+        res mustEqual Some(VariationsPersonalDetails(None, None, None, Some("new.email@gmail.com")))
       }
 
       "when I have changed all fields" in {
         val contactDetails = ContactDetails("Tom Jeffery", "Chief Data Analyst", "02246 259761", "new.email@gmail.com")
 
         val res = VariationsPersonalDetails.apply(contactDetails, aSubscription)
-        res mustEqual VariationsPersonalDetails(Some("Tom Jeffery"), Some("Chief Data Analyst"), Some("02246 259761"), Some("new.email@gmail.com")
+        res mustEqual Some(VariationsPersonalDetails(Some("Tom Jeffery"), Some("Chief Data Analyst"), Some("02246 259761"), Some("new.email@gmail.com"))
         )
       }
     }

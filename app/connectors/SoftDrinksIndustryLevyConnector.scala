@@ -22,7 +22,7 @@ import errors.UnexpectedResponseFromSDIL
 import models.backend._
 import models.submission.VariationsSubmission
 import models.{ReturnPeriod, SdilReturn}
-import play.api.http.Status.OK
+import play.api.http.Status.NO_CONTENT
 import play.api.libs.json.Json
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import service.VariationResult
@@ -181,7 +181,7 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     http.POST[VariationsSubmission, HttpResponse](s"$sdilUrl/submit-variations/sdil/$sdilNumber", variation)
       .map { resp =>
         resp.status match {
-          case OK => Right((): Unit)
+          case NO_CONTENT => Right((): Unit)
           case status =>
             genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][submitVariation] - unexpected response $status for $sdilNumber")
             Left(UnexpectedResponseFromSDIL)
