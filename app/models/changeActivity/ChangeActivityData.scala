@@ -54,9 +54,6 @@ case class ChangeActivityData(
   }
 
   def nonEmpty = Seq(ownBrandsProduced, imported, copackerAll).flatten.nonEmpty || isCopackee
-//
-//  def isLiablePacker: Boolean =
-//    isLarge || copackForOthers
 
   def isLiable: Boolean =
     isLarge || hasImported || copackForOthers
