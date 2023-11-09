@@ -16,9 +16,10 @@
 
 package navigation
 
-import play.api.mvc.Call
+import models.backend.RetrievedSubscription
+import models.{Mode, UserAnswers}
 import pages.Page
-import models.{Mode, RetrievedSubscription, UserAnswers}
+import play.api.mvc.Call
 
 class FakeNavigatorForUpdateRegisteredDetails(desiredRoute: Call) extends NavigatorForUpdateRegisteredDetails {
 

@@ -17,11 +17,10 @@
 package navigation
 
 import base.SpecBase
-import pages._
-import models._
 import controllers.updateRegisteredDetails.routes
+import models._
 import models.updateRegisteredDetails.ChangeRegisteredDetails
-import models.updateRegisteredDetails.ChangeRegisteredDetails.Sites
+import pages._
 import pages.updateRegisteredDetails.ChangeRegisteredDetailsPage
 
 class NavigatorForUpdateRegisteredDetailsSpec extends SpecBase {
@@ -40,7 +39,6 @@ class NavigatorForUpdateRegisteredDetailsSpec extends SpecBase {
 
       "must go from ChangeRegisteredDetailsPage to WarehouseDetailsPage " - {
         "when user selects Sites on ChangeRegisteredDetailsPage and packaging site list is empty" in {
-          val values: Seq[ChangeRegisteredDetails] = Seq(Sites)
           val changeSiteDetails: Seq[ChangeRegisteredDetails] = ChangeRegisteredDetails.values
           val userAnswersWithSitesSelectedToChange: UserAnswers = emptyUserAnswersForUpdateRegisteredDetails
             .set(ChangeRegisteredDetailsPage, changeSiteDetails).success.value

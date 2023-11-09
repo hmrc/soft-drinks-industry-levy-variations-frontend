@@ -18,20 +18,28 @@ package controllers.updateRegisteredDetails
 
 import com.google.inject.Inject
 import controllers.actions.ControllerActions
+import handlers.ErrorHandler
 import models.SelectChange.UpdateRegisteredDetails
+import orchestrators.UpdateRegisteredDetailsOrchestrator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilities.GenericLogger
 import views.html.updateRegisteredDetails.UpdateRegisteredDetailsCYAView
-import views.summary.updateRegisteredDetails.{BusinessAddressSummary, UpdateContactDetailsSummary, UKSitesSummary}
+import views.summary.updateRegisteredDetails.{BusinessAddressSummary, UKSitesSummary, UpdateContactDetailsSummary}
+
+import scala.concurrent.ExecutionContext
 
 class UpdateRegisteredDetailsCYAController @Inject()(
-                                            override val messagesApi: MessagesApi,
-                                            controllerActions: ControllerActions,
-                                            val controllerComponents: MessagesControllerComponents,
-                                            view: UpdateRegisteredDetailsCYAView
-                                          ) extends FrontendBaseController with I18nSupport {
+                                                      override val messagesApi: MessagesApi,
+                                                      controllerActions: ControllerActions,
+                                                      updateRegisteredDetailsOrchestrator: UpdateRegisteredDetailsOrchestrator,
+                                                      val controllerComponents: MessagesControllerComponents,
+                                                      genericLogger: GenericLogger,
+                                                      view: UpdateRegisteredDetailsCYAView,
+                                                      errorHandler: ErrorHandler
+                                          )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
     implicit request =>
@@ -42,7 +50,13 @@ class UpdateRegisteredDetailsCYAController @Inject()(
 
       Ok(view(summaryList, routes.UpdateRegisteredDetailsCYAController.onSubmit))
   }
-  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
-      Redirect(routes.UpdateDoneController.onPageLoad.url)
+  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails).async {implicit request =>
+    val subscription = request.subscription
+    val userAnswers = request.userAnswers
+    updateRegisteredDetailsOrchestrator.submitVariation(subscription, userAnswers).value.map{
+      case Right(_) => Redirect(routes.UpdateDoneController.onPageLoad.url)
+      case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to update registered details")
+        InternalServerError(errorHandler.internalServerErrorTemplate)
+    }
   }
 }

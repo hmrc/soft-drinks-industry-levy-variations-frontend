@@ -17,6 +17,7 @@
 package models
 
 import models.backend.{Site, UkAddress}
+import models.changeActivity.ChangeActivityData
 import models.correctReturn.CorrectReturnUserAnswersData
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json._
@@ -44,6 +45,11 @@ case class UserAnswers(
 
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
     Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)
+
+  def getChangeActivityData(implicit rds: Reads[ChangeActivityData]): Option[ChangeActivityData] = {
+    val jsPath = JsPath \ "changeActivity"
+    Reads.optionNoError(Reads.at(jsPath)).reads(data).getOrElse(None)
+  }
 
   def getCorrectReturnData(implicit rds: Reads[CorrectReturnUserAnswersData]): Option[CorrectReturnUserAnswersData] = {
     val jsPath = JsPath \ "correctReturn"
@@ -95,7 +101,7 @@ case class UserAnswers(
   }
 
   def setOriginalSDILReturn(originalSDILReturn: SdilReturn)
-                                 (implicit writes: Writes[CorrectReturnUserAnswersData]): Try[UserAnswers] = {
+                                 (implicit writes: Writes[SdilReturn]): Try[UserAnswers] = {
 
     val jsPath = JsPath \ "originalSDILReturn"
 

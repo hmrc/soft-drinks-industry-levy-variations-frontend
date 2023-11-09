@@ -1,7 +1,8 @@
 package testSupport.preConditions
 
 import com.github.tomakehurst.wiremock.client.WireMock._
-import models.{FinancialLineItem, RetrievedSubscription, ReturnPeriod, SdilReturn}
+import models.backend.{FinancialLineItem, RetrievedSubscription}
+import models.{ReturnPeriod, SdilReturn}
 import play.api.libs.json.Json
 import testSupport.SDILBackendTestData._
 
@@ -177,6 +178,24 @@ case class SdilBackendStub()
     stubFor(
       get(
         urlPathMatching(s"/balance/$sdilRef/history/all/$withAssessment"))
+        .willReturn(
+          serverError()))
+    builder
+  }
+
+  def submitVariationSuccess(sdilRef: String) = {
+    stubFor(
+      post(
+        urlPathMatching(s"/submit-variations/sdil/$sdilRef"))
+        .willReturn(
+          noContent()))
+    builder
+  }
+
+  def submitVariationError(sdilRef: String) = {
+    stubFor(
+      post(
+        urlPathMatching(s"/submit-variations/sdil/$sdilRef"))
         .willReturn(
           serverError()))
     builder

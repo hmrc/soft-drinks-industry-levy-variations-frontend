@@ -17,10 +17,10 @@
 package navigation
 
 import controllers.correctReturn.routes
-import models.{CheckMode, Mode, NormalMode, RetrievedSubscription, UserAnswers}
+import models.backend.RetrievedSubscription
+import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages._
 import pages.correctReturn._
-import play.api.Logger
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}

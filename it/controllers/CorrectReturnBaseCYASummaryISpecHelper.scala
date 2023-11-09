@@ -17,8 +17,9 @@ package controllers
  */
 
 import controllers.correctReturn.routes
+import models.backend.RetrievedSubscription
 import models.correctReturn.AddASmallProducer
-import models.{CheckMode, LitresInBands, RetrievedSubscription, SdilReturn, UserAnswers}
+import models.{CheckMode, LitresInBands, SdilReturn, UserAnswers}
 import org.jsoup.nodes.Element
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper

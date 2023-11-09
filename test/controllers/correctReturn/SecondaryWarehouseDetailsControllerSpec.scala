@@ -22,7 +22,6 @@ import forms.correctReturn.SecondaryWarehouseDetailsFormProvider
 import models.NormalMode
 import models.SelectChange.CorrectReturn
 import models.backend.{Site, UkAddress}
-import models.updateRegisteredDetails.ChangeRegisteredDetails
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
@@ -31,7 +30,6 @@ import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.correctReturn.SecondaryWarehouseDetailsPage
-import pages.updateRegisteredDetails.ChangeRegisteredDetailsPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest

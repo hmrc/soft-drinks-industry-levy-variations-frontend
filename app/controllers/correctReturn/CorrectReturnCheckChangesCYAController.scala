@@ -19,10 +19,10 @@ package controllers.correctReturn
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.ControllerActions
-import models.{Amounts, RetrievedSubscription, SdilReturn, UserAnswers}
 import models.SelectChange.CorrectReturn
 import models.correctReturn.ChangedPage
-import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import models.{Amounts, SdilReturn}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReturnService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList

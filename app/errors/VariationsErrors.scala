@@ -38,5 +38,3 @@ object NoSdilReturnForPeriod extends VariationsErrors
 object NoVariableReturns extends VariationsErrors
 
 case class SelectReturnFormError(formWithError: Form[String], returnPeriods: List[ReturnPeriod]) extends VariationsErrors
-
-

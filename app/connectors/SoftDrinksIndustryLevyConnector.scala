@@ -19,8 +19,10 @@ package connectors
 import cats.data.EitherT
 import config.FrontendAppConfig
 import errors.UnexpectedResponseFromSDIL
-import models.{FinancialLineItem, OptPreviousSubmittedReturn, OptRetrievedSubscription, OptSmallProducer, RetrievedSubscription, ReturnPeriod, SdilReturn, VariationsSubmission}
-import play.api.Logger
+import models.backend._
+import models.submission.VariationsSubmission
+import models.{ReturnPeriod, SdilReturn}
+import play.api.http.Status.NO_CONTENT
 import play.api.libs.json.Json
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import service.VariationResult
@@ -166,10 +168,20 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     }
   }
 
-  def submitVariation(variation: VariationsSubmission, sdilNumber: String)(implicit hc: HeaderCarrier): Future[Option[Int]] = {
-    Logger(s"[SoftDrinksIndustryLevyConnector][submitVariation] - variation data we are submitting: ${Json.toJson(variation)}")
-    http.POST[VariationsSubmission, HttpResponse](s"$sdilUrl/submit-variations/sdil/$sdilNumber", variation) map {
-      response => Some(response.status)
+  def submitVariation(variation: VariationsSubmission, sdilNumber: String)(implicit hc: HeaderCarrier): VariationResult[Unit] = EitherT {
+    genericLogger.logger.info(s"[SoftDrinksIndustryLevyConnector][submitVariation] - variation data we are submitting: ${Json.toJson(variation)}")
+    http.POST[VariationsSubmission, HttpResponse](s"$sdilUrl/submit-variations/sdil/$sdilNumber", variation)
+      .map { resp =>
+        resp.status match {
+          case NO_CONTENT => Right((): Unit)
+          case status =>
+            genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][submitVariation] - unexpected response $status for $sdilNumber")
+            Left(UnexpectedResponseFromSDIL)
+        }
+      }.recover {
+      case _ =>
+        genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][submitVariation] - unexpected response for $sdilNumber")
+        Left(UnexpectedResponseFromSDIL)
     }
   }
 

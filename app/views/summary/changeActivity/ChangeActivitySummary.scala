@@ -19,7 +19,7 @@ package views.summary.changeActivity
 import config.FrontendAppConfig
 import models.UserAnswers
 import models.changeActivity.AmountProduced.Small
-import pages.changeActivity.{AmountProducedPage, PackagingSiteDetailsPage, SecondaryWarehouseDetailsPage}
+import pages.changeActivity.AmountProducedPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import viewmodels.summary.changeActivity.PackagingSiteDetailsSummary

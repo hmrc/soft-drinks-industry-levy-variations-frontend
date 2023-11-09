@@ -17,7 +17,7 @@
 package controllers.addressLookupFrontend
 
 import controllers.actions.ControllerActions
-import models.{Mode, NormalMode, SelectChange}
+import models.{Mode, SelectChange}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{AddressLookupService, ContactDetails, PackingDetails, WarehouseDetails}

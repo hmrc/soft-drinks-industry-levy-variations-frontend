@@ -1,6 +1,7 @@
 package testSupport.preConditions
 
-import models.{RetrievedSubscription, ReturnPeriod}
+import models.ReturnPeriod
+import models.backend.RetrievedSubscription
 import testSupport.SDILBackendTestData.subscriptionDeregistered
 
 trait PreconditionHelpers {

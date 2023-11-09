@@ -45,7 +45,7 @@ class ChangeRegisteredDetailsController @Inject()(
                                         view: ChangeRegisteredDetailsView,
                                         val genericLogger: GenericLogger,
                                         val errorHandler: ErrorHandler
-                                      )(implicit ec: ExecutionContext) extends ControllerHelper {
+                                      )(implicit val ec: ExecutionContext) extends ControllerHelper {
 
   def form(isVoluntary: Boolean): Form[Seq[ChangeRegisteredDetails]] = formProvider.apply(isVoluntary)
 

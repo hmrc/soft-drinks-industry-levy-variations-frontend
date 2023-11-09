@@ -17,8 +17,9 @@
 package views.summary.correctReturn
 
 import config.FrontendAppConfig
+import models.backend.RetrievedSubscription
 import models.correctReturn.ChangedPage
-import models.{Amounts, RetrievedSubscription, UserAnswers}
+import models.{Amounts, UserAnswers}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import views.helpers.AmountToPaySummary

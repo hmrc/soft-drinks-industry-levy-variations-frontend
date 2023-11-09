@@ -43,7 +43,7 @@ class ThirdPartyPackagersController @Inject()(
                                                view: ThirdPartyPackagersView,
                                                val errorHandler: ErrorHandler,
                                                val genericLogger: GenericLogger
-                                             )(implicit ec: ExecutionContext) extends ControllerHelper  with I18nSupport {
+                                             )(implicit val ec: ExecutionContext) extends ControllerHelper  with I18nSupport {
 
   val form = formProvider()
 

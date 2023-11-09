@@ -19,7 +19,7 @@ package controllers.correctReturn
 import base.SpecBase
 import controllers.correctReturn.routes._
 import models.SelectChange.CorrectReturn
-import models.correctReturn.{AddASmallProducer, ChangedPage}
+import models.correctReturn.AddASmallProducer
 import models.{LitresInBands, SmallProducer}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -31,7 +31,7 @@ import play.api.test.Helpers._
 import services.ReturnService
 import viewmodels.govuk.SummaryListFluency
 import views.html.correctReturn.CorrectReturnCYAView
-import views.summary.correctReturn.{CorrectReturnBaseCYASummary, CorrectReturnCheckChangesSummary}
+import views.summary.correctReturn.CorrectReturnBaseCYASummary
 
 import scala.concurrent.Future
 

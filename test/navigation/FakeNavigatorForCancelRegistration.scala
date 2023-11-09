@@ -16,7 +16,8 @@
 
 package navigation
 
-import models.{Mode, RetrievedSubscription, UserAnswers}
+import models.backend.RetrievedSubscription
+import models.{Mode, UserAnswers}
 import pages.Page
 import play.api.mvc.Call
 

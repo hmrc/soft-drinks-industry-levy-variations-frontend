@@ -22,7 +22,7 @@ import forms.changeActivity.RemoveWarehouseDetailsFormProvider
 import handlers.ErrorHandler
 import models.SelectChange.ChangeActivity
 import models.backend.Site
-import models.{Mode, NormalMode, UserAnswers}
+import models.{Mode, UserAnswers}
 import navigation._
 import pages.changeActivity.RemoveWarehouseDetailsPage
 import play.api.data.Form
@@ -47,7 +47,7 @@ class RemoveWarehouseDetailsController @Inject()(
                                        view: RemoveWarehouseDetailsView,
                                        val genericLogger: GenericLogger,
                                        val errorHandler: ErrorHandler
-                                     )(implicit ec: ExecutionContext) extends ControllerHelper {
+                                     )(implicit val ec: ExecutionContext) extends ControllerHelper {
 
   val form: Form[Boolean] = formProvider()
 

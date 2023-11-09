@@ -16,12 +16,11 @@
 
 package controllers.correctReturn
 
-import controllers.{ControllerHelper, routes}
 import controllers.actions._
+import controllers.{ControllerHelper, routes}
 import forms.correctReturn.PackagingSiteDetailsFormProvider
 import handlers.ErrorHandler
 import models.{Mode, NormalMode, SdilReturn}
-import models.backend.Site
 import navigation._
 import pages.correctReturn.PackagingSiteDetailsPage
 import play.api.data.Form
@@ -29,7 +28,6 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{AddressLookupService, PackingDetails, SessionService}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import uk.gov.hmrc.http.HeaderCarrier
 import utilities.{GenericLogger, UserTypeCheck}
 import viewmodels.govuk.SummaryListFluency
 import views.html.correctReturn.PackagingSiteDetailsView
@@ -49,7 +47,7 @@ class PackagingSiteDetailsController @Inject()(
                                        view: PackagingSiteDetailsView,
                                        val genericLogger: GenericLogger,
                                        val errorHandler: ErrorHandler
-                                     )(implicit ec: ExecutionContext) extends ControllerHelper with SummaryListFluency  {
+                                     )(implicit val ec: ExecutionContext) extends ControllerHelper with SummaryListFluency{
 
   val form: Form[Boolean] = formProvider()
 
@@ -110,4 +108,3 @@ class PackagingSiteDetailsController @Inject()(
       )
   }
 }
-

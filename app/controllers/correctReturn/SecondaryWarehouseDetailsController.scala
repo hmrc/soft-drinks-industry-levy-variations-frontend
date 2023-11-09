@@ -47,7 +47,7 @@ class SecondaryWarehouseDetailsController @Inject()(
                                                      addressLookupService: AddressLookupService,
                                                      val genericLogger: GenericLogger,
                                                      val errorHandler: ErrorHandler
-                                                   )(implicit ec: ExecutionContext) extends ControllerHelper {
+                                                   )(implicit val ec: ExecutionContext) extends ControllerHelper {
 
   private val form = formProvider()
 

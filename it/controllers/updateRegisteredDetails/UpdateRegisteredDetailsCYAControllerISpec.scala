@@ -150,8 +150,11 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
       "should redirect to next page" in {
         given
           .commonPrecondition
+          .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
-        setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
+        setAnswers(emptyUserAnswersForUpdateRegisteredDetails
+          .copy(packagingSiteList = Map.empty, warehouseList = Map.empty)
+          .set(UpdateContactDetailsPage, contactDetails).success.value)
 
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(client, baseUrl + route, Json.obj())

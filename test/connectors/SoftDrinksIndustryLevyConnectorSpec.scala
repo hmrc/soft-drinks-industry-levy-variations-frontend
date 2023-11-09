@@ -17,28 +17,28 @@
 package connectors
 
 import base.SpecBase
-import models.{DataHelper, FinancialLineItem, Litreage, OptRetrievedSubscription, RetrievedSubscription, ReturnPeriod, VariationsSubmission}
+import models.backend.{FinancialLineItem, OptRetrievedSubscription, RetrievedSubscription}
+import models.{DataHelper, ReturnPeriod, VariationsSubmissionDataHelper}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatestplus.mockito.MockitoSugar
-import play.api.http.Status.OK
+import play.api.http.Status.NO_CONTENT
 import play.api.libs.json.{JsValue, Json}
 import repositories.{CacheMap, SDILSessionCache}
 import uk.gov.hmrc.http.{HttpClient, HttpResponse}
 import utilities.GenericLogger
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
-class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar with ScalaFutures with DataHelper {
+class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar with ScalaFutures with DataHelper with VariationsSubmissionDataHelper {
 
   val (host, localPort) = ("host", "123")
 
   val mockHttp = mock[HttpClient]
   val mockSDILSessionCache = mock[SDILSessionCache]
-  val mockGenericLogger = mock[GenericLogger]
-  val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http =mockHttp, frontendAppConfig, mockSDILSessionCache, mockGenericLogger)
+  val logger = application.injector.instanceOf[GenericLogger]
+  val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http =mockHttp, frontendAppConfig, mockSDILSessionCache, logger)
 
   val utr: String = "1234567891"
 
@@ -147,45 +147,66 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
       }
     }
 
-    "post variation successfully when valid data is given" in {
-      val retrievedActivityData = testRetrievedActivity()
+    "POST variation successfully when valid data is given" - {
+      "for a user who has updated registered details" in {
+        val variationsSubmission = testVariationSubmission(variationContact = Some(updatedVariationsContact),
+          variationsPersonalDetails = Some(updatedPersonalDetails),
+          newSites = List(NEW_VARITION_SITE),
+          closeSites = List(CLOSED_SITE)
+        )
 
-      val retrievedSubData = testRetrievedSubscription(
-        address = testAddress(),
-        activity = retrievedActivityData,
-        liabilityDate = LocalDate.now(),
-        productionSites = List.empty,
-        warehouseSites = List.empty,
-        contact = testContact(phoneNumber = "testnumber", email = "test@email.test")
-      )
+        when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
-      val data: VariationsSubmission = testConvert(testRegistrationVariationData(
-        original = retrievedSubData,
-        updatedBusinessAddress = testAddress(),
-        producer = testProducer(isProducer = false),
-        updatedContactDetails = testContactDetails(),
-        deregDate = Some(LocalDate.now()),
-        packageOwn = Some(true),
-        packageOwnVol= Some(Litreage(100, 100)),
-        copackForOthers = true,
-        copackForOthersVol = Some(Litreage(200, 200)),
-        imports = true,
-        importsVol = Some(Litreage(300, 300)),
-      ))
+        val res = softDrinksIndustryLevyConnector.submitVariation(variationsSubmission, aSubscription.sdilRef)
 
-      when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
-        .thenReturn(Future.successful(HttpResponse(OK, "")))
+        whenReady(
+          res.value
+        ) {
+          response =>
+            response mustEqual Right((): Unit)
+        }
+      }
 
-      val res = softDrinksIndustryLevyConnector.submitVariation(data, aSubscription.sdilRef)
+      "for a user who has updated activity" in {
+        val variationsSubmission = testVariationSubmission(
+          sdilActivity = Some(UPDATED_SDIL_ACTIVITY),
+          newSites = List(NEW_VARITION_SITE),
+          closeSites = List(CLOSED_SITE)
+        )
 
-      whenReady(
-        res
-      ) {
-        response =>
-          response mustEqual Some(OK)
+        when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
+
+        val res = softDrinksIndustryLevyConnector.submitVariation(variationsSubmission, aSubscription.sdilRef)
+
+        whenReady(
+          res.value
+        ) {
+          response =>
+            response mustEqual Right((): Unit)
+        }
+      }
+
+
+      "for a user who has deregistered" in {
+        val variationsSubmission = testVariationSubmission(
+          isDeregistered = true
+        )
+
+        when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
+
+        val res = softDrinksIndustryLevyConnector.submitVariation(variationsSubmission, aSubscription.sdilRef)
+
+        whenReady(
+          res.value
+        ) {
+          response =>
+            response mustEqual Right((): Unit)
+        }
       }
     }
-
   }
 
 }

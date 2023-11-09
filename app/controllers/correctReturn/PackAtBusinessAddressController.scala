@@ -46,7 +46,7 @@ class PackAtBusinessAddressController @Inject()(
                                        addressLookupService: AddressLookupService,
                                        val genericLogger: GenericLogger,
                                        val errorHandler: ErrorHandler
-                                     )(implicit ec: ExecutionContext) extends ControllerHelper with AddressHelper {
+                                     )(implicit val ec: ExecutionContext) extends ControllerHelper with AddressHelper {
 
   val form = formProvider()
 

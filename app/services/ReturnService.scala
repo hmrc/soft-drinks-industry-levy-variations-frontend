@@ -16,13 +16,10 @@
 
 package services
 
-import cats.implicits._
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
-import errors.UnexpectedResponseFromSDIL
-import models.{Amounts, FinancialLineItem, ReturnPeriod, SdilReturn, UserAnswers}
+import models.backend.FinancialLineItem
 import play.api.Logger
-import play.api.http.Status.{NO_CONTENT, OK}
 import uk.gov.hmrc.http.HeaderCarrier
 import utilities.GenericLogger
 

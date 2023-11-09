@@ -17,8 +17,9 @@
 package views.summary.correctReturn
 
 import config.FrontendAppConfig
+import models.backend.RetrievedSubscription
 import models.correctReturn.ChangedPage
-import models.{Amounts, RetrievedSubscription, UserAnswers}
+import models.{Amounts, UserAnswers}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.summary.correctReturn.ExemptionsForSmallProducersSummary
@@ -39,7 +40,8 @@ object CorrectReturnBaseCYASummary {
     Option("correctReturn.balance" -> AmountToPaySummary.amountToPaySummary(amounts))
   }
 
-  def changedSummaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription, changedPages: List[ChangedPage], isCheckAnswers: Boolean = true)
+  def changedSummaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription,
+                                    changedPages: List[ChangedPage], isCheckAnswers: Boolean = true)
                             (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
     (ownBrandsSummarySection(userAnswers, changedPages.head.answerChanged, isCheckAnswers) ++
       contractPackerSummarySection(userAnswers, changedPages.apply(2).answerChanged, isCheckAnswers) ++
@@ -177,7 +179,9 @@ object CorrectReturnBaseCYASummary {
     showClaimCreditsForLostDamagedList
   }
 
-  private def siteDetailsSection(userAnswers: UserAnswers, subscription: RetrievedSubscription, isCheckAnswers: Boolean = true)(implicit messages: Messages): Option[(String, SummaryList)] =
+  private def siteDetailsSection(userAnswers: UserAnswers,
+                                 subscription: RetrievedSubscription,
+                                 isCheckAnswers: Boolean = true)(implicit messages: Messages): Option[(String, SummaryList)] =
     UKSitesSummary.getHeadingAndSummary(userAnswers, isCheckAnswers, subscription)
 
 }

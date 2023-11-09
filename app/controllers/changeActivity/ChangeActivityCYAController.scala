@@ -19,25 +19,29 @@ package controllers.changeActivity
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{ControllerActions, RequiredUserAnswersForChangeActivity}
+import handlers.ErrorHandler
 import models.SelectChange.ChangeActivity
+import orchestrators.ChangeActivityOrchestrator
 import pages.changeActivity.ChangeActivityCYAPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.ChangeActivityService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilities.GenericLogger
 import views.html.changeActivity.ChangeActivityCYAView
 import views.summary.changeActivity.ChangeActivitySummary
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class ChangeActivityCYAController @Inject()(
-                                            override val messagesApi: MessagesApi,
-                                            controllerActions: ControllerActions,
-                                            requiredUserAnswers: RequiredUserAnswersForChangeActivity,
-                                            implicit val config: FrontendAppConfig,
-                                            val controllerComponents: MessagesControllerComponents,
-                                            changeActivityService: ChangeActivityService,
-                                            view: ChangeActivityCYAView
+                                             override val messagesApi: MessagesApi,
+                                             controllerActions: ControllerActions,
+                                             requiredUserAnswers: RequiredUserAnswersForChangeActivity,
+                                             implicit val config: FrontendAppConfig,
+                                             val controllerComponents: MessagesControllerComponents,
+                                             changeActivityOrchestrator: ChangeActivityOrchestrator,
+                                             genericLogger: GenericLogger,
+                                             view: ChangeActivityCYAView,
+                                             errorHandler: ErrorHandler
                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
@@ -49,9 +53,14 @@ class ChangeActivityCYAController @Inject()(
       }
   }
 
-  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
-    implicit request =>
-      changeActivityService.submitVariation(request.subscription, request.userAnswers)
-      Redirect(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad)
+  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async { implicit request =>
+    val subscription = request.subscription
+    val userAnswers = request.userAnswers
+    changeActivityOrchestrator.submitVariation(subscription, userAnswers).value.map {
+      case Right(_) => Redirect(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad)
+      case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to activity")
+        InternalServerError(errorHandler.internalServerErrorTemplate)
+    }
   }
 }
+

@@ -18,10 +18,10 @@ package controllers.actions
 
 import base.SpecBase
 import controllers.correctReturn.routes
-import models.backend.UkAddress
+import models.backend.{RetrievedActivity, RetrievedSubscription, UkAddress}
 import models.correctReturn.{AddASmallProducer, RepaymentMethod}
 import models.requests.CorrectReturnDataRequest
-import models.{CheckMode, Contact, LitresInBands, RetrievedActivity, RetrievedSubscription, ReturnPeriod}
+import models.{CheckMode, Contact, LitresInBands, ReturnPeriod}
 import pages.correctReturn._
 import play.api.libs.json.{Json, Reads}
 import play.api.mvc.Results.Ok

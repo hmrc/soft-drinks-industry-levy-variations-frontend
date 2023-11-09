@@ -17,7 +17,8 @@
 package views.summary.correctReturn
 
 import controllers.correctReturn.routes
-import models.{CheckMode, RetrievedSubscription, SdilReturn, UserAnswers}
+import models.backend.RetrievedSubscription
+import models.{CheckMode, SdilReturn, UserAnswers}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{SummaryList, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}

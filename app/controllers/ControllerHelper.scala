@@ -17,8 +17,9 @@
 package controllers
 
 import handlers.ErrorHandler
+import models.backend.RetrievedSubscription
 import models.requests.DataRequest
-import models.{Mode, RetrievedSubscription, UserAnswers}
+import models.{Mode, UserAnswers}
 import navigation.Navigator
 import pages.Page
 import play.api.i18n.I18nSupport
@@ -36,6 +37,7 @@ trait ControllerHelper extends FrontendBaseController with I18nSupport {
   val navigator: Navigator
   val errorHandler: ErrorHandler
   val genericLogger: GenericLogger
+  implicit val ec: ExecutionContext
 
   private val internalServerErrorBaseMessage = "Failed to set value in session repository"
 
@@ -56,7 +58,7 @@ trait ControllerHelper extends FrontendBaseController with I18nSupport {
   }
 
   def updateDatabaseAndRedirect(updatedAnswers: UserAnswers, page: Page, mode: Mode)
-                               (implicit ec: ExecutionContext, request: Request[AnyContent]): Future[Result] = {
+                               (implicit request: Request[AnyContent]): Future[Result] = {
     sessionService.set(updatedAnswers).map {
       case Right(_) => Redirect(navigator.nextPage(page, mode, updatedAnswers))
       case Left(_) =>
@@ -65,8 +67,7 @@ trait ControllerHelper extends FrontendBaseController with I18nSupport {
     }
   }
 
-  def updateDatabaseWithoutRedirect(updatedAnswers: Try[UserAnswers], page: Page)
-                                   (implicit ec: ExecutionContext): Future[Boolean] = {
+  def updateDatabaseWithoutRedirect(updatedAnswers: Try[UserAnswers], page: Page): Future[Boolean] = {
     updatedAnswers match {
       case Failure(_) =>
         genericLogger.logger.error(s"Failed to resolve user answers while on ${page.toString}")

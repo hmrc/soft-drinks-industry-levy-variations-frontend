@@ -23,8 +23,8 @@ import controllers.actions._
 import controllers.routes
 import errors.VariationsErrors
 import helpers.LoggerHelper
-import models.backend.{Site, UkAddress}
-import models.{RetrievedActivity, _}
+import models.backend.{RetrievedActivity, RetrievedSubscription, Site, UkAddress}
+import models._
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers

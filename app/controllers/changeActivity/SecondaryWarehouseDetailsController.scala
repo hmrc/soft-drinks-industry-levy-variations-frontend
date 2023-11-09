@@ -20,7 +20,7 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.SecondaryWarehouseDetailsFormProvider
 import handlers.ErrorHandler
-import models.{Mode, NormalMode}
+import models.Mode
 import models.SelectChange.ChangeActivity
 import navigation._
 import pages.changeActivity.SecondaryWarehouseDetailsPage
@@ -49,7 +49,7 @@ class SecondaryWarehouseDetailsController @Inject()(
                                        view: SecondaryWarehouseDetailsView,
                                        val genericLogger: GenericLogger,
                                        val errorHandler: ErrorHandler
-                                     )(implicit ec: ExecutionContext) extends ControllerHelper with SummaryListFluency {
+                                     )(implicit val ec: ExecutionContext) extends ControllerHelper with SummaryListFluency {
 
   val form: Form[Boolean] = formProvider()
 

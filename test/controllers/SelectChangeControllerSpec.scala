@@ -19,8 +19,8 @@ package controllers
 import base.SpecBase
 import errors.UnexpectedResponseFromSDIL
 import forms.SelectChangeFormProvider
-import models.backend.UkAddress
-import models.{Contact, NormalMode, RetrievedActivity, RetrievedSubscription, SelectChange, UserAnswers}
+import models.backend.{RetrievedActivity, RetrievedSubscription, UkAddress}
+import models.{Contact, NormalMode, SelectChange, UserAnswers}
 import orchestrators.SelectChangeOrchestrator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

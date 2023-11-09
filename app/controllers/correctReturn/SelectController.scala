@@ -51,7 +51,7 @@ class SelectController @Inject()(
                                   val genericLogger: GenericLogger,
                                   val errorHandler: ErrorHandler,
                                   config: FrontendAppConfig
-                                     )(implicit ec: ExecutionContext) extends ControllerHelper {
+                                     )(implicit val ec: ExecutionContext) extends ControllerHelper {
 
   val form: Form[String] = formProvider()
 

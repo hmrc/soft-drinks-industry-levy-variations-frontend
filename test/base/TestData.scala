@@ -17,7 +17,7 @@
 package base
 
 import models._
-import models.backend.{Site, UkAddress}
+import models.backend.{RetrievedActivity, RetrievedSubscription, ReturnCharge, Site, UkAddress}
 import models.correctReturn.CorrectReturnUserAnswersData
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import pages.correctReturn._
@@ -74,7 +74,7 @@ trait TestData {
 
   val deregSubscription = aSubscription.copy(deregDate = Some(LocalDate.now.minusMonths(1)))
 
-  val subscriptionSmallProducer = RetrievedSubscription(
+  val subscriptionSmallProducer = backend.RetrievedSubscription(
     utr = "0000001611",
     sdilRef = "XKSDIL000000022",
     orgName = "Super Lemonade Plc",

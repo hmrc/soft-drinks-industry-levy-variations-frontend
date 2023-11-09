@@ -2,7 +2,8 @@ package connectors
 
 import cats.data.EitherT
 import errors.{UnexpectedResponseFromSDIL, VariationsErrors}
-import models.{FinancialLineItem, OptPreviousSubmittedReturn, OptRetrievedSubscription, OptSmallProducer, ReturnPeriod}
+import models.ReturnPeriod
+import models.backend.{FinancialLineItem, OptPreviousSubmittedReturn, OptRetrievedSubscription, OptSmallProducer}
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import repositories.SDILSessionKeys
 import testSupport.{ITCoreTestData, Specifications, TestConfiguration}

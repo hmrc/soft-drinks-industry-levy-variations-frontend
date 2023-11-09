@@ -4,9 +4,9 @@ import controllers.ControllerITTestHelper
 import controllers.changeActivity.routes.SecondaryWarehouseDetailsController
 import generators.ChangeActivityCYAGenerators._
 import models.backend.Site
-import models.changeActivity.AmountProduced
+import models.changeActivity.{AmountProduced, ChangeActivityData}
 import models.changeActivity.AmountProduced.{Large, Small, None => NoneProduced}
-import models.CheckMode
+import models.{CheckMode, LitresInBands}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
@@ -247,12 +247,26 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
   }
 
   "POST " + routes.ChangeActivityCYAController.onSubmit.url - {
-    "when the userAnswers contains no data" - {
+    "when the userAnswers contains data required" - {
       "should redirect to next page" in {
+        val changeActivityData = ChangeActivityData(
+          AmountProduced.Large,
+          None,
+          Some(true),
+          Some(LitresInBands(100, 200)),
+          Some(true),
+          Some(LitresInBands(100, 200)),
+          Some(true),
+          Some(LitresInBands(100, 200))
+        )
         given
           .commonPrecondition
+          .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        setAnswers(emptyUserAnswersForChangeActivity
+          .copy(
+            data = Json.obj("changeActivity" -> Json.toJson(changeActivityData))
+          ))
 
         withClient { client =>
           val result = createClientRequestPOST(client, baseUrl + route, Json.obj())

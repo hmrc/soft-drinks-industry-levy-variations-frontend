@@ -17,7 +17,8 @@
 package navigation
 
 import controllers.routes
-import models.{CheckMode, EditMode, Mode, NormalMode, RetrievedSubscription, UserAnswers}
+import models.backend.RetrievedSubscription
+import models.{CheckMode, EditMode, Mode, NormalMode, UserAnswers}
 import pages.Page
 import play.api.mvc.Call
 

@@ -149,9 +149,8 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
         routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
       case (_, Some(_), CheckMode) =>
         routes.ChangeActivityCYAController.onPageLoad
-      case (_, _ , NormalMode) =>
-        routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
-      case (_, _, CheckMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
+      case (_, _ , mode) =>
+        routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
     }
 
   private def navigateForLargeAmountProducedFollowingImports(userAnswers: UserAnswers, mode: Mode): Call =

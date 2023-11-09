@@ -17,13 +17,14 @@
 package models
 
 import base.SpecBase
+import models.submission.Litreage
 import org.scalatestplus.mockito.MockitoSugar
 
-class LiterageModelSpec extends SpecBase with MockitoSugar with DataHelper {
+class LiterageModelSpec extends SpecBase with MockitoSugar {
 
     "Litreage" - {
       "total with equal the atLowRate plus the atHighRate" in {
-        val data: Litreage = testLiterage(atLowRate = 100, atHighRate = 100)
+        val data: Litreage = Litreage(100, 100)
         data.total mustBe 200
       }
     }

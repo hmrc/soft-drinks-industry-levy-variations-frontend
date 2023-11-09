@@ -19,9 +19,9 @@ package orchestrators
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import errors.{ReturnsStillPending, SessionDatabaseInsertError, UnexpectedResponseFromSDIL}
-import models.backend.{Site, UkAddress}
+import models.backend.{RetrievedActivity, RetrievedSubscription, Site, UkAddress}
 import models.updateRegisteredDetails.ContactDetails
-import models.{Contact, RetrievedActivity, RetrievedSubscription, SelectChange, UserAnswers}
+import models.{Contact, SelectChange, UserAnswers}
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
