@@ -1,7 +1,7 @@
 package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import models.SelectChange.CorrectReturn
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
@@ -91,13 +91,13 @@ class ExemptionsForSmallProducersControllerISpec extends ControllerITTestHelper 
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  val expectedLocation = if (route == normalRoutePath && key == "yes") {
-                    routes.AddASmallProducerController.onPageLoad(NormalMode).url
-                  }else if(route == normalRoutePath && key != "yes"){
-                    routes.BroughtIntoUKController.onPageLoad(NormalMode).url
-                  }
-                  else {
+
+                  val expectedLocation = if (key == "yes") {
+                    if (route == checkRoutePath) routes.SmallProducerDetailsController.onPageLoad(CheckMode).url else routes.AddASmallProducerController.onPageLoad(NormalMode).url
+                  } else if (route == checkRoutePath) {
                     routes.CorrectReturnCYAController.onPageLoad.url
+                  } else {
+                    routes.BroughtIntoUKController.onPageLoad(NormalMode).url
                   }
                   res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                   val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ExemptionsForSmallProducersPage))
@@ -121,13 +121,12 @@ class ExemptionsForSmallProducersControllerISpec extends ControllerITTestHelper 
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  val expectedLocation = if (route == normalRoutePath && key == "yes") {
-                    routes.AddASmallProducerController.onPageLoad(NormalMode).url
-                  }else if(route == normalRoutePath && key != "yes"){
-                    routes.BroughtIntoUKController.onPageLoad(NormalMode).url
-                  }
-                  else {
+                  val expectedLocation = if (key == "yes") {
+                    if (route == checkRoutePath) routes.SmallProducerDetailsController.onPageLoad(CheckMode).url else routes.AddASmallProducerController.onPageLoad(NormalMode).url
+                  } else if (route == checkRoutePath) {
                     routes.CorrectReturnCYAController.onPageLoad.url
+                  } else {
+                    routes.BroughtIntoUKController.onPageLoad(NormalMode).url
                   }
                   res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                   val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ExemptionsForSmallProducersPage))

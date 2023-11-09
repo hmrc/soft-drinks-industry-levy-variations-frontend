@@ -249,7 +249,12 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
       result mustBe routes.BroughtIntoUKController.onPageLoad(NormalMode)
     }
 
-    "Should navigate to Check Your Answers page when no is selected in CheckMode" in {
+    "select No to navigate to Small Producer Details page in CheckMode" in {
+      val result = navigateFromExemptionsForSmallProducers(value = true, CheckMode)
+      result mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+    }
+
+    "select No to navigate to Check Your Answers page in CheckMode" in {
       val result = navigateFromExemptionsForSmallProducers(value = false, CheckMode)
       result mustBe routes.CorrectReturnCYAController.onPageLoad
     }
