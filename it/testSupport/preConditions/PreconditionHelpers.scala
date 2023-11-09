@@ -61,8 +61,8 @@ trait PreconditionHelpers {
 
   def authorisedButNoSdilSubscriptionPrecondition = {
     builder
-      .user.isAuthorisedAndEnrolled
-      .sdilBackend.retrieveSubscriptionNone("utr", "0000001611")
+      .user.isAuthorisedAndEnrolledNone
+      .sdilBackend.retrieveSubscriptionNone("utr", "0000001622")
       .sdilBackend.retrieveSubscriptionNone("sdil", "XKSDIL000000022")  }
 
   def smallProducerStatus(sdilRef: String, period: ReturnPeriod, smallProducerStatus: Boolean): PreconditionBuilder = {
