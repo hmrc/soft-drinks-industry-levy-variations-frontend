@@ -18,17 +18,10 @@ package orchestrators
 
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
-import models.backend.{RetrievedActivity, Site}
-import models.changeActivity.{AmountProduced, ChangeActivityData}
-import models.submission.{Activity, Litreage, SdilActivity}
-import models.updateRegisteredDetails.ContactDetails
-import models.{LitresInBands, VariationsSubmissionDataHelper}
+import models.VariationsSubmissionDataHelper
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
-import play.api.libs.json.Json
-
-import java.time.LocalDate
 
 class CancelRegistrationOrchestratorSpec extends SpecBase with MockitoSugar with VariationsSubmissionDataHelper{
 

@@ -14,6 +14,10 @@ import testSupport.SDILBackendTestData.aSubscription
 
 class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHelper {
 
+  override def configParams: Map[String, Any] = Map(
+    "balanceAll.enabled" -> false
+  )
+
   val route = "/correct-return/check-your-answers"
 
   "GET " + routes.CorrectReturnCYAController.onPageLoad.url - {
@@ -45,6 +49,8 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
 
         setAnswers(userAnswers)
 
+        given.sdilBackend.balance(userAnswers.id, false)
+
         WsTestClient.withClient { client =>
           val result = createClientRequestGet(client, baseUrl + route)
 
@@ -52,7 +58,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
             res.status mustBe OK
             val page = Jsoup.parse(res.body)
             page.title mustBe "Check your answers before sending your update - Soft Drinks Industry Levy - GOV.UK"
-            page.getElementsByClass("govuk-summary-list").size() mustBe 8
+            page.getElementsByClass("govuk-summary-list").size() mustBe 9
 
             val operatePackagingSites = page.getElementsByClass("govuk-summary-list").get(0)
 
@@ -108,6 +114,8 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
 
           setAnswers(userAnswers)
 
+          given.sdilBackend.balance(userAnswers.id, false)
+
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
 
@@ -115,7 +123,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
               res.status mustBe OK
               val page = Jsoup.parse(res.body)
               page.title mustBe "Check your answers before sending your update - Soft Drinks Industry Levy - GOV.UK"
-              page.getElementsByClass("govuk-summary-list").size() mustBe 7
+              page.getElementsByClass("govuk-summary-list").size() mustBe 8
 
               val operatePackagingSites = page.getElementsByClass("govuk-summary-list").get(0)
               page.getElementsByTag("h2").get(0).text() mustBe "Own brands packaged at your own site"
@@ -150,6 +158,16 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
 
               page.getElementsByTag("h2").get(6).text() mustBe "Lost or destroyed"
               validateLostOrDamagedWithNoLitresSummaryList(lostOrDamaged, true)
+
+              page.getElementsByTag("h2").get(7).text() mustBe "Balance"
+              page.getElementsByClass("govuk-summary-list__key").get(7).text() mustBe "Original return total"
+              page.getElementsByClass("govuk-summary-list__value  original-return-total sdil-right-align--desktop").get(0).text() mustBe "£229.80"
+              page.getElementsByClass("govuk-summary-list__key").get(8).text() mustBe "New return total"
+              page.getElementsByClass("govuk-summary-list__value  new-return-total sdil-right-align--desktop").get(0).text() mustBe "£0.00"
+              page.getElementsByClass("govuk-summary-list__key").get(9).text() mustBe "Account balance"
+              page.getElementsByClass("govuk-summary-list__value  balance-brought-forward sdil-right-align--desktop").get(0).text() mustBe "−£1,000.00"
+              page.getElementsByClass("govuk-summary-list__key").get(10).text() mustBe "Net adjusted amount"
+              page.getElementsByClass("govuk-summary-list__value  total sdil-right-align--desktop govuk-!-font-weight-bold").get(0).text() mustBe "−£1,000.00"
 
               page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCYAController.onSubmit.url
               page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Save and continue"

@@ -256,6 +256,20 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
 
   }
 
+  "Remove Secondary Warehouse Details Page" - {
+    List(NormalMode, CheckMode).foreach(mode => {
+      s"must go from $RemoveWarehouseDetailsPage to $SecondaryWarehouseDetailsPage in $mode when user selects yes" in {
+        navigator.nextPage(RemoveWarehouseDetailsPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
+          contactAddress).set(RemoveWarehouseDetailsPage, true).success.value) mustBe controllers.correctReturn.routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
+      }
+
+      s"must go from $RemoveWarehouseDetailsPage to $SecondaryWarehouseDetailsPage in $mode when user selects no" in {
+        navigator.nextPage(RemoveWarehouseDetailsPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
+          contactAddress).set(RemoveWarehouseDetailsPage, false).success.value) mustBe controllers.correctReturn.routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
+      }
+    })
+  }
+
   "Add A Small Producer " - {
 
     "Should navigate to small producer details controller when data is entered" in {

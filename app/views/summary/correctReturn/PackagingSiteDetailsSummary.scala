@@ -17,7 +17,7 @@
 package views.summary.correctReturn
 
 import models.backend.Site
-import models.{CheckMode, UserAnswers}
+import models.{CheckMode, Mode, UserAnswers}
 import pages.correctReturn.PackagingSiteDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, HtmlContent, Key}
@@ -44,13 +44,13 @@ object PackagingSiteDetailsSummary  {
         )
     }
 
-  def summaryList(packagingSiteList: Map[String, Site])(implicit messages: Messages): SummaryList = {
+  def summaryList(packagingSiteList: Map[String, Site], mode: Mode)(implicit messages: Messages): SummaryList = {
     SummaryListViewModel(
-      rows = row2(packagingSiteList)
+      rows = row2(packagingSiteList, mode)
     )
   }
 
-  def row2(packagingSiteList: Map[String, Site])(implicit messages: Messages): List[SummaryListRow] = {
+  def row2(packagingSiteList: Map[String, Site], mode: Mode)(implicit messages: Messages): List[SummaryListRow] = {
     packagingSiteList.map {
       packagingSite =>
         SummaryListRow(
@@ -60,10 +60,10 @@ object PackagingSiteDetailsSummary  {
           ),
           actions = if (packagingSiteList.size > 1) {
             Some(Actions("", Seq(
-              ActionItemViewModel("site.remove", controllers.routes.IndexController.onPageLoad.url)
-                .withVisuallyHiddenText(messages("correctReturn.packagingSiteDetails.remove.hidden", packagingSite._2.tradingName.getOrElse(""), packagingSite._2.address.lines.head))
-            )))
-          } else {
+              ActionItemViewModel("site.remove", controllers.correctReturn.routes.RemovePackagingSiteConfirmController.onPageLoad(mode, packagingSite._1).url)
+                .withVisuallyHiddenText(messages("correctReturn.packagingSiteDetails.remove.hidden",
+                  packagingSite._2.tradingName.getOrElse(""), packagingSite._2.address.lines.head))
+            )))} else {
             None
           }
         )

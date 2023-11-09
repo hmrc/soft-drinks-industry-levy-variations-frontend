@@ -19,7 +19,6 @@ package models.submission
 import base.SpecBase
 import models.UserAnswers
 import models.backend.{RetrievedSubscription, Site}
-import models.enums.SiteTypes
 import models.updateRegisteredDetails.ContactDetails
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec

@@ -18,11 +18,10 @@ package orchestrators
 
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
-import models.backend.{RetrievedActivity, RetrievedSubscription, Site, UkAddress}
+import models.backend.RetrievedActivity
 import models.changeActivity.{AmountProduced, ChangeActivityData}
-import models.submission.{Activity, Litreage, SdilActivity, VariationsSubmission}
-import models.updateRegisteredDetails.ContactDetails
-import models.{Contact, LitresInBands, VariationsSubmissionDataHelper}
+import models.submission.{Activity, Litreage, SdilActivity}
+import models.{LitresInBands, VariationsSubmissionDataHelper}
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json

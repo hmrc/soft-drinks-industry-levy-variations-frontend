@@ -33,7 +33,6 @@ class ReasonSummarySpec extends SpecBase {
       cancelReasonSummaryRow.key.content.asHtml.toString mustBe "Reason for cancelling"
       cancelReasonSummaryRow.value.content.asHtml.toString mustBe "incorrectly registered"
       cancelReasonSummaryRow.actions.toList.head.items.head.content.asHtml.toString() must include("Change")
-
     }
   }
 }

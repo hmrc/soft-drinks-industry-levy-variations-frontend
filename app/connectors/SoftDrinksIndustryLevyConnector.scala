@@ -85,38 +85,30 @@ class SoftDrinksIndustryLevyConnector @Inject()(
   def balance(
                sdilRef: String,
                withAssessment: Boolean
-             )(implicit hc: HeaderCarrier): VariationResult[BigDecimal] = EitherT {
+             )(implicit hc: HeaderCarrier): Future[BigDecimal] = {
     sdilSessionCache.fetchEntry[BigDecimal](sdilRef, SDILSessionKeys.balance(withAssessment)).flatMap {
-      case Some(b) => Future.successful(Right(b))
+      case Some(b) => Future.successful(b)
       case None =>
         http.GET[BigDecimal](s"$sdilUrl/balance/$sdilRef/$withAssessment")
           .flatMap { b =>
             sdilSessionCache.save[BigDecimal](sdilRef, SDILSessionKeys.balance(withAssessment), b)
-              .map(_ => Right(b))
-
-          }.recover {
-          case _ => genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][balance] - unexpected response for $sdilRef")
-            Left(UnexpectedResponseFromSDIL)
-        }
+              .map(_ => b)
+          }
     }
   }
 
   def balanceHistory(
                       sdilRef: String,
                       withAssessment: Boolean
-                    )(implicit hc: HeaderCarrier): VariationResult[List[FinancialLineItem]] = EitherT {
+                    )(implicit hc: HeaderCarrier): Future[List[FinancialLineItem]] = {
+    import FinancialLineItem.formatter
     sdilSessionCache.fetchEntry[List[FinancialLineItem]](sdilRef, SDILSessionKeys.balanceHistory(withAssessment)).flatMap {
-      case Some(b) => Future.successful(Right(b))
+      case Some(fli) => Future.successful(fli)
       case None =>
         http.GET[List[FinancialLineItem]](s"$sdilUrl/balance/$sdilRef/history/all/$withAssessment")
-          .flatMap { bh =>
-            sdilSessionCache.save[List[FinancialLineItem]](sdilRef, SDILSessionKeys.balanceHistory(withAssessment), bh)
-              .map(_ => Right(bh))
-
-          }.recover {
-          case _ => genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][balanceHistory] - unexpected response for $sdilRef")
-            Left(UnexpectedResponseFromSDIL)
-        }
+          .flatMap{ fli => sdilSessionCache.save[List[FinancialLineItem]](sdilRef, SDILSessionKeys.balanceHistory(withAssessment), fli)
+            .map(_ => fli)
+          }
     }
   }
 

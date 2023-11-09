@@ -18,15 +18,16 @@ package controllers.correctReturn
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions.{ControllerActions, RequiredUserAnswersForCorrectReturn}
-import models.SdilReturn
+import controllers.actions.ControllerActions
 import models.SelectChange.CorrectReturn
 import models.correctReturn.ChangedPage
-import orchestrators.CorrectReturnOrchestrator
-import pages.correctReturn.CorrectReturnCheckChangesPage
+import models.{Amounts, SdilReturn}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.ReturnService
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utilities.GenericLogger
 import views.html.correctReturn.CorrectReturnCheckChangesCYAView
 import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 
@@ -35,24 +36,37 @@ import scala.concurrent.{ExecutionContext, Future}
 class CorrectReturnCheckChangesCYAController @Inject()(
                                             override val messagesApi: MessagesApi,
                                             controllerActions: ControllerActions,
-                                            val requiredUserAnswers: RequiredUserAnswersForCorrectReturn,
                                             val controllerComponents: MessagesControllerComponents,
-                                            val correctReturnOrchestrator: CorrectReturnOrchestrator,
-                                            view: CorrectReturnCheckChangesCYAView
+                                            view: CorrectReturnCheckChangesCYAView,
+                                            returnService: ReturnService,
+                                            genericLogger: GenericLogger
                                           )(implicit config: FrontendAppConfig, ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-      requiredUserAnswers.requireData(CorrectReturnCheckChangesPage) {
-        request.userAnswers.getCorrectReturnOriginalSDILReturnData.map(originalSdilReturn => {
+      request.userAnswers.getCorrectReturnOriginalSDILReturnData.map(originalSdilReturn => {
+        returnService.getBalanceBroughtForward(request.sdilEnrolment).map(balanceBroughtForward => {
           val orgName: String = " " + request.subscription.orgName
           val currentSDILReturn = SdilReturn.apply(request.userAnswers)
           val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSDILReturn)
-          val sections = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(request.userAnswers, request.subscription, changedPages)
-
-          Future.successful(Ok(view(orgName, sections, routes.CorrectReturnCheckChangesCYAController.onSubmit)))
-        }).getOrElse(Future(Redirect(controllers.routes.SelectChangeController.onPageLoad.url)))
-      }
+          val amounts: Amounts = Amounts(
+            originalReturnTotal = originalSdilReturn.total,
+            newReturnTotal = SdilReturn(request.userAnswers).total,
+            balanceBroughtForward = balanceBroughtForward * -1,
+            adjustedAmount = SdilReturn(request.userAnswers).total + (balanceBroughtForward * -1)
+          )
+          val sections: Seq[(String, SummaryList)] = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(
+            request.userAnswers,
+            request.subscription,
+            changedPages,
+            amounts
+          )
+          Ok(view(orgName, sections, routes.CorrectReturnCheckChangesCYAController.onSubmit))
+        }).recoverWith {
+          case _ => genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][Balance] - unexpected response for ${request.sdilEnrolment}")
+            Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url))
+        }
+      }).getOrElse(Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url)))
   }
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {

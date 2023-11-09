@@ -26,8 +26,8 @@ import navigation._
 import pages.correctReturn.PackAtBusinessAddressPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.SessionService
-import utilities.GenericLogger
+import services.{AddressLookupService, PackingDetails, SessionService}
+import utilities.{AddressHelper, GenericLogger}
 import viewmodels.AddressFormattingHelper
 import views.html.correctReturn.PackAtBusinessAddressView
 
@@ -43,9 +43,10 @@ class PackAtBusinessAddressController @Inject()(
                                        formProvider: PackAtBusinessAddressFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: PackAtBusinessAddressView,
+                                       addressLookupService: AddressLookupService,
                                        val genericLogger: GenericLogger,
                                        val errorHandler: ErrorHandler
-                                     )(implicit val ec: ExecutionContext) extends ControllerHelper {
+                                     )(implicit val ec: ExecutionContext) extends ControllerHelper with AddressHelper {
 
   val form = formProvider()
 
@@ -69,23 +70,29 @@ class PackAtBusinessAddressController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, formattedAddress))),
 
-        value => {
-          val userAnswersSetPage: Try[UserAnswers] = request.userAnswers.set(PackAtBusinessAddressPage, value)
-          val updatedAnswers: Try[UserAnswers] = userAnswersSetPage
-            .map(updatedAnswers => updatedAnswers.copy(packagingSiteList = updatedPackagingSiteList(updatedAnswers.packagingSiteList, businessAddress, businessName, value)))
-          updateDatabaseAndRedirect(updatedAnswers, PackAtBusinessAddressPage, mode)
-        }
+        value =>
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(PackAtBusinessAddressPage, value))
+            onwardUrl <-
+              if (value) {
+                updateDatabaseWithoutRedirect(Try(updatedAnswers.copy(
+                  packagingSiteList = updatedAnswers.packagingSiteList ++ Map(
+                    "1" ->
+                      Site(
+                        address = request.subscription.address,
+                        ref = None,
+                        tradingName = Some(request.subscription.orgName),
+                        closureDate = None
+                      )
+                  ))), PackAtBusinessAddressPage).flatMap(_ =>
+                  Future.successful(routes.PackagingSiteDetailsController.onPageLoad(mode).url))
+              } else {
+                updateDatabaseWithoutRedirect(Try(updatedAnswers), PackAtBusinessAddressPage).flatMap(_ =>
+                  addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode))
+              }
+          } yield {
+            Redirect(onwardUrl)
+          }
       )
-  }
-
-  private def updatedPackagingSiteList(packagingSiteList: Map[String, Site],
-                                       businessAddress: UkAddress,
-                                       businessName: String,
-                                       value: Boolean): Map[String, Site] = {
-    if (value) {
-      packagingSiteList ++ Map("1" -> Site(address = businessAddress, ref = None, tradingName = Some(businessName), closureDate = None))
-    } else {
-      packagingSiteList - "1"
-    }
   }
 }

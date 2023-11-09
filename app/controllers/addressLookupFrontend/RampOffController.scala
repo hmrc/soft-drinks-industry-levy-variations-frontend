@@ -42,6 +42,7 @@ class RampOffController @Inject()(controllerActions: ControllerActions,
         val redirectUrl = updatedUserAnswers.journeyType match {
           case SelectChange.UpdateRegisteredDetails => controllers.updateRegisteredDetails.routes.WarehouseDetailsController.onPageLoad(mode)
           case SelectChange.ChangeActivity => controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
+          case SelectChange.CorrectReturn => controllers.correctReturn.routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
           case _ => controllers.routes.IndexController.onPageLoad
         }
         Redirect(redirectUrl)
@@ -58,6 +59,7 @@ class RampOffController @Inject()(controllerActions: ControllerActions,
         val redirectUrl = updatedUserAnswers.journeyType match {
           case SelectChange.ChangeActivity => controllers.changeActivity.routes.PackagingSiteDetailsController.onPageLoad(mode)
           case SelectChange.UpdateRegisteredDetails => controllers.updateRegisteredDetails.routes.PackagingSiteDetailsController.onPageLoad(mode)
+          case SelectChange.CorrectReturn => controllers.correctReturn.routes.PackagingSiteDetailsController.onPageLoad(mode)
           case _ => controllers.routes.IndexController.onPageLoad
         }
         Redirect(redirectUrl)

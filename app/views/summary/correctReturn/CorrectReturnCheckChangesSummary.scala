@@ -17,30 +17,34 @@
 package views.summary.correctReturn
 
 import config.FrontendAppConfig
-import models.correctReturn.ChangedPage
-import models.UserAnswers
 import models.backend.RetrievedSubscription
+import models.correctReturn.ChangedPage
+import models.{Amounts, UserAnswers}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import views.helpers.AmountToPaySummary
 
 object CorrectReturnCheckChangesSummary {
 
-  def changeSpecificSummaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription, changedPages: List[ChangedPage])
+  def changeSpecificSummaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription,
+                                           changedPages: List[ChangedPage], amounts: Amounts, isCheckAnswers: Boolean = true)
                                           (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
-    val mainSection = CorrectReturnBaseCYASummary.changedSummaryListAndHeadings(userAnswers, subscription, changedPages)
-    val correctionDetailsSection = correctionSection(userAnswers)
-    mainSection ++ correctionDetailsSection
+    val mainSection = CorrectReturnBaseCYASummary.changedSummaryListAndHeadings(userAnswers, subscription, changedPages, isCheckAnswers)
+    val correctionDetailsSection = correctionSection(userAnswers, isCheckAnswers)
+    val balanceSection = Map("correctReturn.balance"-> AmountToPaySummary.amountToPaySummary(amounts))
+    mainSection ++ correctionDetailsSection ++ balanceSection
   }
 
-  private def correctionSection(userAnswers: UserAnswers)
-                                     (implicit messages: Messages): Option[(String, SummaryList)] = {
-    val correctionReasonSummary: Option[SummaryListRow] = CorrectionReasonSummary.row(userAnswers)
-    val repaymentMethodSummary: Option[SummaryListRow] = RepaymentMethodSummary.row(userAnswers)
+  private def correctionSection(userAnswers: UserAnswers, isCheckAnswers: Boolean = true)
+                               (implicit messages: Messages): Option[(String, SummaryList)] = {
+    val correctionReasonSummary: Option[SummaryListRow] = CorrectionReasonSummary.row(userAnswers, isCheckAnswers)
+    val repaymentMethodSummary: Option[SummaryListRow] = RepaymentMethodSummary.row(userAnswers, isCheckAnswers)
 
     val correctionSectionSummaryList: Option[SummaryList] = for {
       correctionReason <- correctionReasonSummary
       repaymentMethod <- repaymentMethodSummary
     } yield SummaryList(Seq(correctionReason, repaymentMethod))
-    correctionSectionSummaryList.map("correctReturn.correctionSection.checkYourAnswersLabel" -> _)}
+    correctionSectionSummaryList.map("correctReturn.correctionSection.checkYourAnswersLabel" -> _)
+  }
 
 }

@@ -23,10 +23,11 @@ import handlers.ErrorHandler
 import models.Mode
 import navigation._
 import pages.correctReturn.SecondaryWarehouseDetailsPage
-import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.SessionService
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
+import services.{AddressLookupService, SessionService, WarehouseDetails}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import uk.gov.hmrc.http.HeaderCarrier
 import utilities.GenericLogger
 import viewmodels.govuk.summarylist._
 import viewmodels.summary.correctReturn.SecondaryWarehouseDetailsSummary
@@ -43,11 +44,12 @@ class SecondaryWarehouseDetailsController @Inject()(
                                                      formProvider: SecondaryWarehouseDetailsFormProvider,
                                                      val controllerComponents: MessagesControllerComponents,
                                                      view: SecondaryWarehouseDetailsView,
+                                                     addressLookupService: AddressLookupService,
                                                      val genericLogger: GenericLogger,
                                                      val errorHandler: ErrorHandler
                                                    )(implicit val ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
+  private val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
@@ -58,7 +60,7 @@ class SecondaryWarehouseDetailsController @Inject()(
       }
 
       val siteList: SummaryList = SummaryListViewModel(
-        rows = SecondaryWarehouseDetailsSummary.row2(request.userAnswers.warehouseList)
+        rows = SecondaryWarehouseDetailsSummary.row2(request.userAnswers.warehouseList, mode)
       )
 
       Ok(view(preparedForm, mode, siteList))
@@ -68,17 +70,28 @@ class SecondaryWarehouseDetailsController @Inject()(
     implicit request =>
 
       val siteList: SummaryList = SummaryListViewModel(
-        rows = SecondaryWarehouseDetailsSummary.row2(request.userAnswers.warehouseList)
+        rows = SecondaryWarehouseDetailsSummary.row2(request.userAnswers.warehouseList, mode)
       )
 
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
 
-        value => {
-          val updatedAnswers = request.userAnswers.set(SecondaryWarehouseDetailsPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, SecondaryWarehouseDetailsPage, mode)
-        }
+        value =>
+          updateDatabaseWithoutRedirect(request.userAnswers.set(SecondaryWarehouseDetailsPage, value), SecondaryWarehouseDetailsPage).flatMap {
+            case true => getOnwardUrl(value, mode).map(Redirect(_))
+            case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+          }
       )
   }
+
+  private def getOnwardUrl(value: Boolean, mode: Mode)(implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages,
+                                                       requestHeader: RequestHeader): Future[String] = {
+    if (value) {
+      addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = mode)(hc, ec, messages, requestHeader)
+    } else {
+        Future.successful(controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+    }
+  }
+
 }

@@ -56,7 +56,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
         "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), Some("Super Cola Ltd")))
 
     val warehouseSummaryList: List[SummaryListRow] =
-      SecondaryWarehouseDetailsSummary.row2(WarehouseMap)(messages(application))
+      SecondaryWarehouseDetailsSummary.row2(WarehouseMap, NormalMode)(messages(application))
 
     val summaryList: SummaryList = SummaryListViewModel(
       rows = warehouseSummaryList
@@ -115,7 +115,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
           "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), Some("Super Cola Ltd")))
 
       val warehouseSummaryList: List[SummaryListRow] =
-        SecondaryWarehouseDetailsSummary.row2(WarehouseMap)(messages(application))
+        SecondaryWarehouseDetailsSummary.row2(WarehouseMap, NormalMode)(messages(application))
 
       val summaryList: SummaryList = SummaryListViewModel(
         rows = warehouseSummaryList
@@ -161,7 +161,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
           "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), Some("Super Cola Ltd")))
 
       val warehouseSummaryList: List[SummaryListRow] =
-        SecondaryWarehouseDetailsSummary.row2(WarehouseMap)(messages(application))
+        SecondaryWarehouseDetailsSummary.row2(WarehouseMap, NormalMode)(messages(application))
 
       val summaryList: SummaryList = SummaryListViewModel(
         rows = warehouseSummaryList
@@ -212,7 +212,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
             "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), Some("Super Cola Ltd")))
 
         val warehouseSummaryList: List[SummaryListRow] =
-          SecondaryWarehouseDetailsSummary.row2(WarhouseMap)(messages(application))
+          SecondaryWarehouseDetailsSummary.row2(WarhouseMap, NormalMode)(messages(application))
 
         val summaryList: SummaryList = SummaryListViewModel(
           rows = warehouseSummaryList
@@ -241,7 +241,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
             "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), Some("Super Cola Ltd")))
 
         val warehouseSummaryList: List[SummaryListRow] =
-          SecondaryWarehouseDetailsSummary.row2(WarhouseMap)(messages(application))
+          SecondaryWarehouseDetailsSummary.row2(WarhouseMap, NormalMode)(messages(application))
 
         val summaryList: SummaryList = SummaryListViewModel(
           rows = warehouseSummaryList
@@ -270,7 +270,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
           "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), Some("Super Cola Ltd")))
 
       val warehouseSummaryList: List[SummaryListRow] =
-        SecondaryWarehouseDetailsSummary.row2(WarehouseMap)(messages(application))
+        SecondaryWarehouseDetailsSummary.row2(WarehouseMap, NormalMode)(messages(application))
 
       val summaryList: SummaryList = SummaryListViewModel(
         rows = warehouseSummaryList

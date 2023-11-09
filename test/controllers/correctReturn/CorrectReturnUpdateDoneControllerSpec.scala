@@ -19,26 +19,39 @@ package controllers.correctReturn
 import base.SpecBase
 import controllers.correctReturn.routes._
 import models.correctReturn.{AddASmallProducer, ChangedPage, RepaymentMethod}
-import models.{LitresInBands, SmallProducer}
+import models.{LitresInBands, ReturnPeriod, SmallProducer}
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
 import pages.correctReturn._
-import org.mockito.Mockito.when
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.ReturnService
 import viewmodels.govuk.SummaryListFluency
-import views.html.correctReturn.CorrectReturnCheckChangesCYAView
+import views.html.correctReturn.CorrectReturnUpdateDoneView
 import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 
+import java.time.{LocalDateTime, ZoneId}
+import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
-class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryListFluency {
+class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFluency {
+
+  val getSentDateTime: LocalDateTime = LocalDateTime.now(ZoneId.of("UTC"))
+  val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+  val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("H:MMa")
+  val formattedDate: String = getSentDateTime.format(dateFormatter)
+  val formattedTime: String = getSentDateTime.format(timeFormatter)
+
+  val returnPeriodFormat = DateTimeFormatter.ofPattern("MMMM yyyy")
+  val currentReturnPeriod = ReturnPeriod(getSentDateTime.toLocalDate)
+  val returnPeriodStart = currentReturnPeriod.start.format(returnPeriodFormat)
+  val returnPeriodEnd = currentReturnPeriod.end.format(returnPeriodFormat)
 
   val mockReturnService: ReturnService = mock[ReturnService]
 
-  "Check Changes Controller" - {
+  "Update Done Controller" - {
 
     "must return OK and the correct view for a GET" in {
       val litres = LitresInBands(2000, 4000)
@@ -77,23 +90,29 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         ChangedPage(HowManyCreditsForLostDamagedPage, answerChanged = true),
         ChangedPage(ExemptionsForSmallProducersPage, answerChanged = true))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-        bind[ReturnService].toInstance(mockReturnService))
+      val currentReturnPeriod = ReturnPeriod(2023, 1)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers.copy(correctReturnPeriod = Option(currentReturnPeriod))))
+        .overrides(bind[ReturnService].toInstance(mockReturnService))
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, CorrectReturnUpdateDoneController.onPageLoad.url)
         when (mockReturnService.getBalanceBroughtForward(any())(any(),any())) thenReturn Future.successful(-502.75)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[CorrectReturnCheckChangesCYAView]
+        val view = application.injector.instanceOf[CorrectReturnUpdateDoneView]
         val orgName = " Super Lemonade Plc"
-        val section = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(userAnswers, aSubscription, changedPages, amounts)
+        val section = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(userAnswers, aSubscription, changedPages, amounts, isCheckAnswers = false)
+
+        val returnPeriodFormat = DateTimeFormatter.ofPattern("MMMM yyyy")
+        val returnPeriodStart = currentReturnPeriod.start.format(returnPeriodFormat)
+        val returnPeriodEnd = currentReturnPeriod.end.format(returnPeriodFormat)
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(orgName, section,
-          routes.CorrectReturnCheckChangesCYAController.onSubmit)(request, messages(application)).toString
+          formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd)(request, messages(application), frontendAppConfig).toString
       }
     }
   }

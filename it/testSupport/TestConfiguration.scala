@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock.{configureFor, reset, resetAllScenarios}
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import controllers.actions._
+import models.UserAnswers
 import org.mongodb.scala.bson.BsonDocument
 import org.scalatest.concurrent.{IntegrationPatience, PatienceConfiguration}
 import org.scalatest.time.{Millis, Seconds, Span}
@@ -13,6 +14,7 @@ import play.api.i18n.{Lang, MessagesApi, MessagesImpl}
 import play.api.inject._
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.{CookieHeaderEncoding, MessagesControllerComponents, Session, SessionCookieBaker}
+import play.api.test.Helpers.{await, defaultAwaitTimeout}
 import play.api.{Application, Environment, Mode, Play}
 import repositories.{SDILSessionCache, SDILSessionCacheRepository, SessionRepository}
 import testSupport.databases.SessionDatabaseOperations
@@ -107,6 +109,12 @@ trait TestConfiguration
         bind[IdentifierAction].to[AuthenticatedIdentifierAction],
         bind[Clock].toInstance(Clock.systemDefaultZone().withZone(ZoneOffset.UTC))
       )
+  }
+
+
+  def setUpData(userAnswers: UserAnswers): Unit  ={
+    val res = sessionRespository.set(userAnswers)
+    await(res)
   }
 
   val wireMockServer = new WireMockServer(wireMockConfig().port(wiremockPort))
