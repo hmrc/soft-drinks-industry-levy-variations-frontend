@@ -1,7 +1,7 @@
 package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import models.SelectChange.CorrectReturn
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
@@ -76,68 +76,79 @@ class ExemptionsForSmallProducersControllerISpec extends ControllerITTestHelper 
 
     s"POST " + route - {
       userAnswersForExceptionsForSmallProducersPage.foreach { case (key, userAnswers) =>
-        "when the user selects " + key - {
-          "should update the session with the new value and redirect to the index controller" - {
-            "when the session contains no data for page" in {
-              given
-                .commonPrecondition
+        List(true, false).foreach(smallProducersAdded => {
+          s"when the user selects $key and small producers are ${if (smallProducersAdded) "" else "not "}already added" - {
+            "should update the session with the new value and redirect to the expected controller" - {
+              s"when the session contains no data for page" in {
+                given
+                  .commonPrecondition
 
-              setAnswers(emptyUserAnswersForCorrectReturn)
-              WsTestClient.withClient { client =>
-                val yesSelected = key == "yes"
-                val result = createClientRequestPOST(
-                  client, correctReturnBaseUrl + route, Json.obj("value" -> yesSelected.toString)
-                )
+                val smallProducers = if (smallProducersAdded) smallProducersAddedList else List.empty
+                setAnswers(emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducers))
+                WsTestClient.withClient { client =>
+                  val yesSelected = key == "yes"
+                  val result = createClientRequestPOST(
+                    client, correctReturnBaseUrl + route, Json.obj("value" -> yesSelected.toString)
+                  )
 
-                whenReady(result) { res =>
-                  res.status mustBe 303
-                  val expectedLocation = if (route == normalRoutePath && key == "yes") {
-                    routes.AddASmallProducerController.onPageLoad(NormalMode).url
-                  }else if(route == normalRoutePath && key != "yes"){
-                    routes.BroughtIntoUKController.onPageLoad(NormalMode).url
+                  whenReady(result) { res =>
+                    res.status mustBe 303
+
+                    val expectedLocation = if (key == "yes") {
+                      (route == checkRoutePath, smallProducersAdded) match {
+                        case (true, true) => routes.SmallProducerDetailsController.onPageLoad(CheckMode).url
+                        case (true, false) => routes.AddASmallProducerController.onPageLoad(CheckMode).url
+                        case (false, _) => routes.AddASmallProducerController.onPageLoad(NormalMode).url
+                      }
+                    } else if (route == checkRoutePath) {
+                      routes.CorrectReturnCYAController.onPageLoad.url
+                    } else {
+                      routes.BroughtIntoUKController.onPageLoad(NormalMode).url
+                    }
+                    res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
+                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ExemptionsForSmallProducersPage))
+                    dataStoredForPage.nonEmpty mustBe true
+                    dataStoredForPage.get mustBe yesSelected
                   }
-                  else {
-                    routes.CorrectReturnCYAController.onPageLoad.url
-                  }
-                  res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ExemptionsForSmallProducersPage))
-                  dataStoredForPage.nonEmpty mustBe true
-                  dataStoredForPage.get mustBe yesSelected
                 }
               }
-            }
 
-            "when the session already contains data for page" in {
-              given
-                .commonPrecondition
+              "when the session already contains data for page" in {
+                given
+                  .commonPrecondition
 
-              setAnswers(userAnswers)
-              WsTestClient.withClient { client =>
-                val yesSelected = key == "yes"
+                val smallProducers = if (smallProducersAdded) smallProducersAddedList else List.empty
+                setAnswers(emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducers))
+                WsTestClient.withClient { client =>
+                  val yesSelected = key == "yes"
 
-                val result = createClientRequestPOST(
-                  client, correctReturnBaseUrl + route, Json.obj("value" -> yesSelected.toString)
-                )
+                  val result = createClientRequestPOST(
+                    client, correctReturnBaseUrl + route, Json.obj("value" -> yesSelected.toString)
+                  )
 
-                whenReady(result) { res =>
-                  res.status mustBe 303
-                  val expectedLocation = if (route == normalRoutePath && key == "yes") {
-                    routes.AddASmallProducerController.onPageLoad(NormalMode).url
-                  }else if(route == normalRoutePath && key != "yes"){
-                    routes.BroughtIntoUKController.onPageLoad(NormalMode).url
+                  whenReady(result) { res =>
+                    res.status mustBe 303
+                    val expectedLocation = if (key == "yes") {
+                      (route == checkRoutePath, smallProducersAdded) match {
+                        case (true, true) => routes.SmallProducerDetailsController.onPageLoad(CheckMode).url
+                        case (true, false) => routes.AddASmallProducerController.onPageLoad(CheckMode).url
+                        case (false, _) => routes.AddASmallProducerController.onPageLoad(NormalMode).url
+                      }
+                    } else if (route == checkRoutePath) {
+                      routes.CorrectReturnCYAController.onPageLoad.url
+                    } else {
+                      routes.BroughtIntoUKController.onPageLoad(NormalMode).url
+                    }
+                    res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
+                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ExemptionsForSmallProducersPage))
+                    dataStoredForPage.nonEmpty mustBe true
+                    dataStoredForPage.get mustBe yesSelected
                   }
-                  else {
-                    routes.CorrectReturnCYAController.onPageLoad.url
-                  }
-                  res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ExemptionsForSmallProducersPage))
-                  dataStoredForPage.nonEmpty mustBe true
-                  dataStoredForPage.get mustBe yesSelected
                 }
               }
             }
           }
-        }
+        })
       }
 
       "when the user does not select an option" - {
