@@ -437,4 +437,66 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
     }
   }
 
+  "Packaging Site Details " - {
+    def navigateFromPackagingSiteDetailsPage(mode: Mode, subscription: Option[RetrievedSubscription] = None) =
+      navigator.nextPage(PackagingSiteDetailsPage, mode,
+        emptyUserAnswersForCorrectReturn.set(PackagingSiteDetailsPage, false).success.value, subscription)
+
+    "navigate to Check Your Answers page in NormalMode (when not new importer)" in {
+      val result = navigateFromPackagingSiteDetailsPage(NormalMode, Some(aSubscription))
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+
+    "navigate to Check Your Answers page in NormalMode (when currently importer)" in {
+      val userAnswers = newImporterUserAnswers
+        .set(PackagingSiteDetailsPage, false).success.value
+      val result = navigator.nextPage(PackagingSiteDetailsPage, NormalMode, userAnswers, currentImporterSubscription)
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+
+    "navigate to Ask Secondary Warehouse In Return page in NormalMode (when new importer)" in {
+      val userAnswers = newImporterUserAnswers
+        .set(PackagingSiteDetailsPage, false).success.value
+      val result = navigator.nextPage(PackagingSiteDetailsPage, NormalMode, userAnswers, Some(aSubscription))
+      result mustBe routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode)
+    }
+
+    "navigate to Check Your Answers page in CheckMode" in {
+      val result = navigateFromPackagingSiteDetailsPage(CheckMode)
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+  }
+
+  "Remove Packaging Site confirm " - {
+    def navigateFromRemovePackagingSiteConfirm(value: Boolean, mode: Mode, lastPackagingSite: Boolean) = {
+      navigator.nextPage(RemovePackagingSiteConfirmPage, mode,
+        emptyUserAnswersForCorrectReturn
+          .copy(packagingSiteList = if (lastPackagingSite) Map.empty else Map("000001" -> packingSite))
+          .set(RemovePackagingSiteConfirmPage, value).success.value
+      )
+    }
+
+    List(NormalMode, CheckMode).foreach(mode => {
+      s"select Yes to navigate to Packaging Site Details in $mode when not last packaging site" in {
+        val result = navigateFromRemovePackagingSiteConfirm(value = true, mode, lastPackagingSite = false)
+        result mustBe routes.PackagingSiteDetailsController.onPageLoad(mode)
+      }
+
+      s"select Yes to navigate to Pack At Business Address in $mode when last packaging site" in {
+        val result = navigateFromRemovePackagingSiteConfirm(value = true, mode, lastPackagingSite = true)
+        result mustBe routes.PackAtBusinessAddressController.onPageLoad(mode)
+      }
+
+      s"select No to navigate to Packaging Site Details in $mode when not last packaging site" in {
+        val result = navigateFromRemovePackagingSiteConfirm(value = false, mode, lastPackagingSite = true)
+        result mustBe routes.PackagingSiteDetailsController.onPageLoad(mode)
+      }
+
+      s"select No to navigate to Packaging Site Details in $mode when last packaging site" in {
+        val result = navigateFromRemovePackagingSiteConfirm(value = false, mode, lastPackagingSite = false)
+        result mustBe routes.PackagingSiteDetailsController.onPageLoad(mode)
+      }
+    })
+  }
+
 }

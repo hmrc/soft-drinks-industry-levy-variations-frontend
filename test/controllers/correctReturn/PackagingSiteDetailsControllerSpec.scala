@@ -102,72 +102,39 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
       }
     })
 
-    "must redirect to ask secondary warehouse when user does match new importer when the data is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-      val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-
-      val PackagingSite1 = Site(
-        UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
-        None,
-        Some("Wild Lemonade Group"),
-        None)
-      lazy val packagingSiteListWith1 = Map(("78941132", PackagingSite1))
-      lazy val newImporterAnswer : UserAnswers = emptyUserAnswersForCorrectReturn.set(HowManyBroughtIntoUKPage, LitresInBands(5,6)).success.value.copy(packagingSiteList = packagingSiteListWith1)
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-      when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn createSuccessVariationResult(Some(aSubscription))
-
-      val application =
-        applicationBuilder(userAnswers = Some(newImporterAnswer))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, packagingSiteDetailsRoute)
-            .withFormUrlEncodedBody(("value", "false"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url
-      }
-    }
-
-    "must redirect to the Check your answers page when false is answered and doesn't match a new importer" in {
-
-      val mockSessionService = mock[SessionService]
-
-      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
-          .overrides(
-            bind[Navigator].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
-            bind[SessionService].toInstance(mockSessionService)
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, packagingSiteDetailsCheckRoute)
-            .withFormUrlEncodedBody(("value", "false"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url
-      }
-    }
-
     testInvalidJourneyType(CorrectReturn, packagingSiteDetailsRoute)
     testNoUserAnswersError(packagingSiteDetailsRoute)
 
     List(NormalMode, CheckMode).foreach(mode => {
+      s"must redirect to the next page when valid false is submitted in $mode" in {
+
+        val mockSessionService = mock[SessionService]
+        val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+
+        when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+        when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn createSuccessVariationResult(Some(aSubscription))
+
+        val application =
+          applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn), subscription = Some(aSubscription))
+            .overrides(
+              bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
+              bind[SessionService].toInstance(mockSessionService),
+              bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+            )
+            .build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, packagingSiteDetailsRouteForMode(mode))
+              .withFormUrlEncodedBody(("value", "false"))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual onwardRoute.url
+        }
+      }
+
       s"must return a Bad Request and errors when invalid data is submitted in $mode" in {
 
         val summary = SummaryListViewModel(
@@ -210,7 +177,6 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[AddressLookupService].toInstance(mockAddressLookupService)
           )

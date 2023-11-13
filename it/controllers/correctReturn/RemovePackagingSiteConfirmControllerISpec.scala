@@ -1,6 +1,7 @@
 package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
+import models.{CheckMode, NormalMode}
 import models.SelectChange.CorrectReturn
 import models.backend.Site
 import org.jsoup.Jsoup
@@ -11,7 +12,7 @@ import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
 
-class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
+class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
 
   def normalRoutePath(index: String) = s"/packaging-site-details/remove/$index"
   def checkRoutePath(index: String) = s"/change-packaging-site-details/remove/$index"
@@ -122,57 +123,65 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
   s"POST " + normalRoutePath(indexOfPackingSiteToBeRemoved) - {
 
-    userAnswersForCorrectReturnRemovePackagingSiteConfirmPage(indexOfPackingSiteToBeRemoved).foreach { case (key, userAnswers) =>
-      "when the user selects " + key - {
-        "should update the session with the new value and redirect to the index controller" - {
-          "when the session contains no data for page" in {
-            given
-              .commonPrecondition
+    List(true, false).foreach(lastPackagingSite => {
+      userAnswersForCorrectReturnRemovePackagingSiteConfirmPage(indexOfPackingSiteToBeRemoved, lastPackagingSite).foreach { case (key, userAnswers) =>
+        s"when the user selects $key and is ${if (lastPackagingSite) "" else "not"} last packaging site"  - {
+          "should update the session with the new value and redirect to the expected controller" - {
+            "when the session contains no data for page" in {
+              given
+                .commonPrecondition
 
-            setAnswers(emptyUserAnswersForCorrectReturn)
-            WsTestClient.withClient { client =>
-              val yesSelected = key == "yes"
-              val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved), Json.obj("value" -> yesSelected.toString)
-              )
+              setAnswers(emptyUserAnswersForCorrectReturn)
+              WsTestClient.withClient { client =>
+                val yesSelected = key == "yes"
+                val result = createClientRequestPOST(
+                  client, correctReturnBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved), Json.obj("value" -> yesSelected.toString)
+                )
 
-              whenReady(result) { res =>
-                res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+                whenReady(result) { res =>
+                  res.status mustBe 303
+                  res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+                }
               }
             }
-          }
 
-          "when the session already contains data for page" in {
-            given
-              .commonPrecondition
+            "when the session already contains data for page" in {
+              given
+                .commonPrecondition
 
-            setAnswers(userAnswers)
-            getAnswers(userAnswers.id).get.packagingSiteList.size mustBe 1
-            WsTestClient.withClient { client =>
-              val yesSelected = key == "yes"
-              val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved), Json.obj("value" -> yesSelected.toString)
-              )
+              setAnswers(userAnswers)
+              val numberOfPackagingSites = if (lastPackagingSite) 1 else 2
+              getAnswers(userAnswers.id).get.packagingSiteList.size mustBe numberOfPackagingSites
+              WsTestClient.withClient { client =>
+                val yesSelected = key == "yes"
+                val result = createClientRequestPOST(
+                  client, correctReturnBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved), Json.obj("value" -> yesSelected.toString)
+                )
 
-              whenReady(result) { res =>
-                res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
-                val userAnswersAfterTest = getAnswers(userAnswers.id)
-                val dataStoredForPage = userAnswersAfterTest.fold[Option[Boolean]](None)(_.get(RemovePackagingSiteConfirmPage))
-                if(yesSelected) {
-                  userAnswersAfterTest.get.packagingSiteList.size mustBe 0
-                } else {
-                  userAnswersAfterTest.get.packagingSiteList.size mustBe 1
+                whenReady(result) { res =>
+                  res.status mustBe 303
+                  val expectedLocation = if (yesSelected && lastPackagingSite) {
+                    routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url
+                  } else {
+                    routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
+                  }
+                  res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
+                  val userAnswersAfterTest = getAnswers(userAnswers.id)
+                  val dataStoredForPage = userAnswersAfterTest.fold[Option[Boolean]](None)(_.get(RemovePackagingSiteConfirmPage))
+                  if (yesSelected) {
+                    userAnswersAfterTest.get.packagingSiteList.size mustBe numberOfPackagingSites - 1
+                  } else {
+                    userAnswersAfterTest.get.packagingSiteList.size mustBe numberOfPackagingSites
+                  }
+                  dataStoredForPage.nonEmpty mustBe true
+                  dataStoredForPage.get mustBe yesSelected
                 }
-                dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe yesSelected
               }
             }
           }
         }
       }
-    }
+    })
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
@@ -211,57 +220,65 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
   s"POST " + checkRoutePath(indexOfPackingSiteToBeRemoved) - {
 
-    userAnswersForCorrectReturnRemovePackagingSiteConfirmPage(indexOfPackingSiteToBeRemoved).foreach { case (key, userAnswers) =>
-      "when the user selects " + key - {
-        "should update the session with the new value and redirect to the index controller" - {
-          "when the session contains no data for page" in {
-            given
-              .commonPrecondition
+    List(true, false).foreach(lastPackagingSite => {
+      userAnswersForCorrectReturnRemovePackagingSiteConfirmPage(indexOfPackingSiteToBeRemoved, lastPackagingSite).foreach { case (key, userAnswers) =>
+        s"when the user selects $key and is ${if (lastPackagingSite) "" else "not"} last packaging site"  - {
+          "should update the session with the new value and redirect to the expected controller" - {
+            "when the session contains no data for page" in {
+              given
+                .commonPrecondition
 
-            setAnswers(emptyUserAnswersForCorrectReturn)
-            WsTestClient.withClient { client =>
-              val yesSelected = key == "yes"
-              val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved), Json.obj("value" -> yesSelected.toString)
-              )
+              setAnswers(emptyUserAnswersForCorrectReturn)
+              WsTestClient.withClient { client =>
+                val yesSelected = key == "yes"
+                val result = createClientRequestPOST(
+                  client, correctReturnBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved), Json.obj("value" -> yesSelected.toString)
+                )
 
-              whenReady(result) { res =>
-                res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+                whenReady(result) { res =>
+                  res.status mustBe 303
+                  res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+                }
               }
             }
-          }
 
-          "when the session already contains data for page" in {
-            given
-              .commonPrecondition
+            "when the session already contains data for page" in {
+              given
+                .commonPrecondition
 
-            setAnswers(userAnswers)
-            getAnswers(userAnswers.id).get.packagingSiteList.size mustBe 1
-            WsTestClient.withClient { client =>
-              val yesSelected = key == "yes"
-              val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved), Json.obj("value" -> yesSelected.toString)
-              )
+              setAnswers(userAnswers)
+              val numberOfPackagingSites = if (lastPackagingSite) 1 else 2
+              getAnswers(userAnswers.id).get.packagingSiteList.size mustBe numberOfPackagingSites
+              WsTestClient.withClient { client =>
+                val yesSelected = key == "yes"
+                val result = createClientRequestPOST(
+                  client, correctReturnBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved), Json.obj("value" -> yesSelected.toString)
+                )
 
-              whenReady(result) { res =>
-                res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
-                val userAnswersAfterTest = getAnswers(userAnswers.id)
-                val dataStoredForPage = userAnswersAfterTest.fold[Option[Boolean]](None)(_.get(RemovePackagingSiteConfirmPage))
-                dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe yesSelected
-                if(yesSelected) {
-                  userAnswersAfterTest.get.packagingSiteList.size mustBe 0
-                } else {
-                  userAnswersAfterTest.get.packagingSiteList.size mustBe 1
+                whenReady(result) { res =>
+                  res.status mustBe 303
+                  val expectedLocation = if (yesSelected && lastPackagingSite) {
+                    routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url
+                  } else {
+                    routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
+                  }
+                  res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
+                  val userAnswersAfterTest = getAnswers(userAnswers.id)
+                  val dataStoredForPage = userAnswersAfterTest.fold[Option[Boolean]](None)(_.get(RemovePackagingSiteConfirmPage))
+                  dataStoredForPage.nonEmpty mustBe true
+                  dataStoredForPage.get mustBe yesSelected
+                  if (yesSelected) {
+                    userAnswersAfterTest.get.packagingSiteList.size mustBe numberOfPackagingSites - 1
+                  } else {
+                    userAnswersAfterTest.get.packagingSiteList.size mustBe numberOfPackagingSites
+                  }
                 }
               }
             }
           }
         }
       }
-    }
+    })
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {

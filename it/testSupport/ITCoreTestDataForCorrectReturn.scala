@@ -8,13 +8,16 @@ import play.api.libs.json.Json
 
 trait ITCoreTestDataForCorrectReturn extends ITSharedCoreTestData  {
 
-  def userAnswersForCorrectReturnRemovePackagingSiteConfirmPage(index: String): Map[String, UserAnswers] = {
+  def userAnswersForCorrectReturnRemovePackagingSiteConfirmPage(index: String, lastPackagingSite: Boolean = true): Map[String, UserAnswers] = {
+    val packagingSites: Map[String, Site] = if (lastPackagingSite) Map(index -> Site(ukAddress, None, None, None)) else {
+      Map(index -> Site(ukAddress, None, None, None)) ++ Map("notIndex" -> Site(ukAddress, None, None, None))
+    }
     val yesSelected = emptyUserAnswersForCorrectReturn
-      .copy(packagingSiteList = Map(index -> Site(ukAddress, None, None, None)))
+      .copy(packagingSiteList = packagingSites)
       .set(RemovePackagingSiteConfirmPage, true).success.value
 
     val noSelected = emptyUserAnswersForCorrectReturn
-      .copy(packagingSiteList = Map(index -> Site(ukAddress, None, None, None)))
+      .copy(packagingSiteList = packagingSites)
       .set(RemovePackagingSiteConfirmPage, false).success.value
     Map("yes" -> yesSelected, "no" -> noSelected)
   }
