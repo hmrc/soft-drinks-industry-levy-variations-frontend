@@ -236,10 +236,14 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
 
   "Exemptions for small producers" - {
 
-    def navigateFromExemptionsForSmallProducers(value: Boolean, mode: Mode) =
-      navigator.nextPage(ExemptionsForSmallProducersPage, mode, emptyUserAnswersForCorrectReturn.set(ExemptionsForSmallProducersPage, value).success.value)
+    def navigateFromExemptionsForSmallProducers(value: Boolean, mode: Mode, populateSmallProducerList: Boolean = false) = {
+      val userAnswers = emptyUserAnswersForCorrectReturn
+        .copy(smallProducerList = if (populateSmallProducerList) smallProducerList else List.empty)
+        .set(ExemptionsForSmallProducersPage, value).success.value
+      navigator.nextPage(ExemptionsForSmallProducersPage, mode, userAnswers)
+    }
 
-    "select Yes to navigate to Add small producer pager in NormalMode" in {
+    "select Yes to navigate to Add small producer page in NormalMode" in {
       val result = navigateFromExemptionsForSmallProducers(value = true, NormalMode)
       result mustBe routes.AddASmallProducerController.onPageLoad(NormalMode)
     }
@@ -249,9 +253,14 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
       result mustBe routes.BroughtIntoUKController.onPageLoad(NormalMode)
     }
 
-    "select No to navigate to Small Producer Details page in CheckMode" in {
-      val result = navigateFromExemptionsForSmallProducers(value = true, CheckMode)
+    "select Yes to navigate to Small Producer Details page when small producer list populated in CheckMode" in {
+      val result = navigateFromExemptionsForSmallProducers(value = true, CheckMode, populateSmallProducerList = true)
       result mustBe routes.SmallProducerDetailsController.onPageLoad(CheckMode)
+    }
+
+    "select Yes to navigate to Add small producer page when small producer list not populated in CheckMode" in {
+      val result = navigateFromExemptionsForSmallProducers(value = true, CheckMode)
+      result mustBe routes.AddASmallProducerController.onPageLoad(CheckMode)
     }
 
     "select No to navigate to Check Your Answers page in CheckMode" in {
