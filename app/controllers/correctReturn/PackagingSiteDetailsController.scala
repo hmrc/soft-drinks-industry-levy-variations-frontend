@@ -17,10 +17,10 @@
 package controllers.correctReturn
 
 import controllers.actions._
-import controllers.{ControllerHelper, routes}
+import controllers.ControllerHelper
 import forms.correctReturn.PackagingSiteDetailsFormProvider
 import handlers.ErrorHandler
-import models.{Mode, NormalMode, SdilReturn}
+import models.{Mode, NormalMode}
 import navigation._
 import pages.correctReturn.PackagingSiteDetailsPage
 import play.api.data.Form
@@ -28,7 +28,7 @@ import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.{AddressLookupService, PackingDetails, SessionService}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import utilities.{GenericLogger, UserTypeCheck}
+import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import views.html.correctReturn.PackagingSiteDetailsView
 import views.summary.correctReturn.PackagingSiteDetailsSummary

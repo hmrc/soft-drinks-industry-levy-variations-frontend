@@ -110,9 +110,6 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
           )),
         requestedVersion = None
       )
-      val expectedResultInDB: Some[JsObject] = Some(
-        Json.obj("correctReturn" -> Json.obj("packAtBusinessAddress" -> false)
-        ))
 
       val alfOnRampURL: String = "http://onramp.com"
 
