@@ -17,11 +17,11 @@
 package navigation
 
 import base.SpecBase
+import controllers.correctReturn.routes
 import models._
+import models.backend.RetrievedSubscription
 import pages._
 import pages.correctReturn._
-import controllers.correctReturn.routes
-import models.backend.RetrievedSubscription
 import play.api.libs.json.Json
 
 class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
@@ -132,7 +132,8 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
 
   "Brought into UK from small producers" - {
     def navigateFromBroughtIntoUkFromSmallProducersPage(value: Boolean, mode: Mode) =
-      navigator.nextPage(BroughtIntoUkFromSmallProducersPage, mode, emptyUserAnswersForCorrectReturn.set(BroughtIntoUkFromSmallProducersPage, value).success.value)
+      navigator.nextPage(BroughtIntoUkFromSmallProducersPage, mode, emptyUserAnswersForCorrectReturn
+        .set(BroughtIntoUkFromSmallProducersPage, value).success.value)
 
     List(NormalMode, CheckMode).foreach(mode => {
       s"select Yes to navigate to How many brought into UK in $mode" in {
@@ -154,7 +155,8 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
 
   "How many brought into UK from small producers" - {
     def navigateFromHowManyBroughtIntoUkFromSmallProducersPage(mode: Mode) =
-      navigator.nextPage(HowManyBroughtIntoUkFromSmallProducersPage, mode, emptyUserAnswersForCorrectReturn.set(HowManyBroughtIntoUkFromSmallProducersPage, LitresInBands(1, 1)).success.value)
+      navigator.nextPage(HowManyBroughtIntoUkFromSmallProducersPage, mode, emptyUserAnswersForCorrectReturn
+        .set(HowManyBroughtIntoUkFromSmallProducersPage, LitresInBands(1, 1)).success.value)
 
     "navigate to brought into uk from small producers page in NormalMode" in {
       val result = navigateFromHowManyBroughtIntoUkFromSmallProducersPage(NormalMode)
@@ -191,7 +193,8 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
 
   "How many packaged as contract packer" - {
     def navigateFromHowManyPackagedAsContractPackerPage(mode: Mode) =
-      navigator.nextPage(HowManyPackagedAsContractPackerPage, mode, emptyUserAnswersForCorrectReturn.set(HowManyPackagedAsContractPackerPage, LitresInBands(1, 1)).success.value)
+      navigator.nextPage(HowManyPackagedAsContractPackerPage, mode, emptyUserAnswersForCorrectReturn
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(1, 1)).success.value)
 
     "navigate to navigate to exemptions for small producers page in NormalMode" in {
       val result = navigateFromHowManyPackagedAsContractPackerPage(NormalMode)
@@ -273,13 +276,13 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
   "Remove Secondary Warehouse Details Page" - {
     List(NormalMode, CheckMode).foreach(mode => {
       s"must go from $RemoveWarehouseDetailsPage to $SecondaryWarehouseDetailsPage in $mode when user selects yes" in {
-        navigator.nextPage(RemoveWarehouseDetailsPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
-          contactAddress).set(RemoveWarehouseDetailsPage, true).success.value) mustBe controllers.correctReturn.routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
+        navigator.nextPage(RemoveWarehouseDetailsPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress = contactAddress)
+          .set(RemoveWarehouseDetailsPage, true).success.value) mustBe controllers.correctReturn.routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
       }
 
       s"must go from $RemoveWarehouseDetailsPage to $SecondaryWarehouseDetailsPage in $mode when user selects no" in {
-        navigator.nextPage(RemoveWarehouseDetailsPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
-          contactAddress).set(RemoveWarehouseDetailsPage, false).success.value) mustBe controllers.correctReturn.routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
+        navigator.nextPage(RemoveWarehouseDetailsPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress = contactAddress)
+          .set(RemoveWarehouseDetailsPage, false).success.value) mustBe controllers.correctReturn.routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
       }
     })
   }
@@ -307,8 +310,8 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
 
 
     s"must go from $RemoveSmallProducerConfirmPage to $ExemptionsForSmallProducersPage in $mode when zero small producers left" in {
-      navigator.nextPage(RemoveSmallProducerConfirmPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress =
-        contactAddress).set(RemoveSmallProducerConfirmPage, true).success.value) mustBe controllers.correctReturn.routes.ExemptionsForSmallProducersController.onPageLoad(mode)
+      navigator.nextPage(RemoveSmallProducerConfirmPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress = contactAddress)
+        .set(RemoveSmallProducerConfirmPage, true).success.value) mustBe controllers.correctReturn.routes.ExemptionsForSmallProducersController.onPageLoad(mode)
     }
 
     s"must go from $RemoveSmallProducerConfirmPage to $SmallProducerDetailsPage in $mode when one or more small producers left" in {

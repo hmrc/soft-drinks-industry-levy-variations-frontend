@@ -436,7 +436,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
         }
       }
 
-      s"when the user has made there changes" - {
+      s"when the user has made their changes" - {
         "should render the check changes page with balance" in {
           val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(BroughtIntoUKPage, HowManyBroughtIntoUKPage)
             .copy(warehouseList = warehousesFromSubscription)
@@ -503,19 +503,17 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
   }
 
   "POST " + routes.CorrectReturnCheckChangesCYAController.onSubmit.url - {
-    "when the userAnswers contains no data" - {
-      "should redirect to index page" in {
-        given
-          .commonPrecondition
+    "should redirect to select return to correct page" in {
+      given
+        .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+      setAnswers(userAnswerWithLitresForAllPagesNilSdilReturn)
 
-        WsTestClient.withClient { client =>
-          val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
+      WsTestClient.withClient { client =>
+        val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
-          whenReady(result) { res =>
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
-          }
+        whenReady(result) { res =>
+          res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnUpdateDoneController.onPageLoad.url)
         }
       }
     }

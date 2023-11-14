@@ -70,7 +70,7 @@ class CorrectReturnCheckChangesCYAController @Inject()(
   }
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
-    Redirect(controllers.routes.IndexController.onPageLoad.url)
+    Redirect(routes.CorrectReturnUpdateDoneController.onPageLoad.url)
   }
 
 }
