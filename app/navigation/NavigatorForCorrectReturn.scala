@@ -163,6 +163,14 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     }
   }
 
+  private def navigationForCorrectionReason(mode: Mode): Call = {
+    if (mode == NormalMode) {
+      routes.RepaymentMethodController.onPageLoad(mode)
+    } else {
+      routes.CorrectReturnCheckChangesCYAController.onPageLoad
+    }
+  }
+
   override val normalRoutes: Page => UserAnswers => Call = {
     case SecondaryWarehouseDetailsPage => _ => defaultCall
     case AskSecondaryWarehouseInReturnPage => _ => defaultCall
@@ -178,7 +186,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case AddASmallProducerPage => _ => navigationForAddASmallProducer(NormalMode)
     case SmallProducerDetailsPage => userAnswers => navigationForSmallProducerDetails(userAnswers, NormalMode)
     case RemoveWarehouseDetailsPage => _ => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
-    case CorrectionReasonPage => _ => routes.RepaymentMethodController.onPageLoad(NormalMode)
+    case CorrectionReasonPage => _ => navigationForCorrectionReason(NormalMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => routes.PackagedAsContractPackerController.onPageLoad(NormalMode)
     case RepaymentMethodPage => userAnswers => routes.CorrectReturnCheckChangesCYAController.onPageLoad
@@ -213,6 +221,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case RemovePackagingSiteConfirmPage => userAnswers => navigationForRemovePackagingSiteConfirm(userAnswers, CheckMode)
     case RemoveSmallProducerConfirmPage => userAnswers => navigationForRemoveSmallProducerConfirm(userAnswers, CheckMode)
     case RemoveWarehouseDetailsPage => _ => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
+    case CorrectionReasonPage => _ => navigationForCorrectionReason(CheckMode)
     case RepaymentMethodPage => userAnswers => routes.CorrectReturnCheckChangesCYAController.onPageLoad
     case _ => _ => routes.CorrectReturnCYAController.onPageLoad
   }
