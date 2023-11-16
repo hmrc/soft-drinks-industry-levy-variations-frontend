@@ -273,16 +273,34 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
 
   }
 
+  "Ask Secondary Warehouses In Return Page" - {
+    List(NormalMode, CheckMode).foreach(mode => {
+      s"must go from $AskSecondaryWarehouseInReturnPage to $CorrectReturnBaseCYAPage in $mode when user selects no" in {
+        navigator.nextPage(AskSecondaryWarehouseInReturnPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress = contactAddress)
+          .set(AskSecondaryWarehouseInReturnPage, false).success.value) mustBe routes.CorrectReturnCYAController.onPageLoad
+      }
+    })
+  }
+
+  "Secondary Warehouse Details Page" - {
+    List(NormalMode, CheckMode).foreach(mode => {
+      s"must go from $SecondaryWarehouseDetailsPage to $CorrectReturnBaseCYAPage in $mode when user selects no" in {
+        navigator.nextPage(SecondaryWarehouseDetailsPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress = contactAddress)
+          .set(SecondaryWarehouseDetailsPage, false).success.value) mustBe routes.CorrectReturnCYAController.onPageLoad
+      }
+    })
+  }
+
   "Remove Secondary Warehouse Details Page" - {
     List(NormalMode, CheckMode).foreach(mode => {
       s"must go from $RemoveWarehouseDetailsPage to $SecondaryWarehouseDetailsPage in $mode when user selects yes" in {
         navigator.nextPage(RemoveWarehouseDetailsPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress = contactAddress)
-          .set(RemoveWarehouseDetailsPage, true).success.value) mustBe controllers.correctReturn.routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
+          .set(RemoveWarehouseDetailsPage, true).success.value) mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
       }
 
       s"must go from $RemoveWarehouseDetailsPage to $SecondaryWarehouseDetailsPage in $mode when user selects no" in {
         navigator.nextPage(RemoveWarehouseDetailsPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress = contactAddress)
-          .set(RemoveWarehouseDetailsPage, false).success.value) mustBe controllers.correctReturn.routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
+          .set(RemoveWarehouseDetailsPage, false).success.value) mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
       }
     })
   }

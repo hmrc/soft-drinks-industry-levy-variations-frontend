@@ -77,11 +77,20 @@ class SecondaryWarehouseDetailsController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
 
-        value =>
-          updateDatabaseWithoutRedirect(request.userAnswers.set(SecondaryWarehouseDetailsPage, value), SecondaryWarehouseDetailsPage).flatMap {
-            case true => getOnwardUrl(value, mode).map(Redirect(_))
-            case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
-          }
+//        value =>
+//          updateDatabaseWithoutRedirect(request.userAnswers.set(SecondaryWarehouseDetailsPage, value), SecondaryWarehouseDetailsPage).flatMap {
+//            case true => getOnwardUrl(value, mode).map(Redirect(_))
+//            case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+//          }
+
+          value =>
+            if (value) {
+              val alsOnRampUrl = updateDatabaseWithoutRedirect(request.userAnswers.set(SecondaryWarehouseDetailsPage, value), SecondaryWarehouseDetailsPage).flatMap(_ =>
+                addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = mode))
+              alsOnRampUrl.map(Redirect(_))
+            } else {
+              updateDatabaseAndRedirect(request.userAnswers.set(SecondaryWarehouseDetailsPage, value), SecondaryWarehouseDetailsPage, mode)
+            }
       )
   }
 
