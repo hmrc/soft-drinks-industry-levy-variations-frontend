@@ -77,30 +77,15 @@ class SecondaryWarehouseDetailsController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
 
-//        value =>
-//          updateDatabaseWithoutRedirect(request.userAnswers.set(SecondaryWarehouseDetailsPage, value), SecondaryWarehouseDetailsPage).flatMap {
-//            case true => getOnwardUrl(value, mode).map(Redirect(_))
-//            case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
-//          }
-
-          value =>
-            if (value) {
-              val alsOnRampUrl = updateDatabaseWithoutRedirect(request.userAnswers.set(SecondaryWarehouseDetailsPage, value), SecondaryWarehouseDetailsPage).flatMap(_ =>
-                addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = mode))
-              alsOnRampUrl.map(Redirect(_))
-            } else {
-              updateDatabaseAndRedirect(request.userAnswers.set(SecondaryWarehouseDetailsPage, value), SecondaryWarehouseDetailsPage, mode)
-            }
+        value =>
+          if (value) {
+            val alsOnRampUrl = updateDatabaseWithoutRedirect(request.userAnswers.set(SecondaryWarehouseDetailsPage, value), SecondaryWarehouseDetailsPage).flatMap(_ =>
+              addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = mode))
+            alsOnRampUrl.map(Redirect(_))
+          } else {
+            updateDatabaseAndRedirect(request.userAnswers.set(SecondaryWarehouseDetailsPage, value), SecondaryWarehouseDetailsPage, mode)
+          }
       )
-  }
-
-  private def getOnwardUrl(value: Boolean, mode: Mode)(implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages,
-                                                       requestHeader: RequestHeader): Future[String] = {
-    if (value) {
-      addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = mode)(hc, ec, messages, requestHeader)
-    } else {
-        Future.successful(controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
-    }
   }
 
 }
