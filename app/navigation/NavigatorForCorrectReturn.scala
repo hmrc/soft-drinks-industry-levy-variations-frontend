@@ -137,12 +137,22 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     }
   }
 
-  def navigationForPackagingSiteDetailsInNormalMode(userAnswers: UserAnswers, subscription: RetrievedSubscription) = {
+  private def isANewPacker(userAnswers: UserAnswers, subscription: RetrievedSubscription): Boolean = {
+    val alreadyAPacker = subscription.activity.contractPacker
+    val yesOnCoPacker = userAnswers.get(PackagedAsContractPackerPage).contains(true)
+    !alreadyAPacker && yesOnCoPacker
+  }
+
+  private def isANewImporter(userAnswers: UserAnswers, subscription: RetrievedSubscription): Boolean = {
     val alreadyAnImporter = subscription.activity.importer
     val yesOnImporter = userAnswers.get(BroughtIntoUKPage).contains(true)
-    if (alreadyAnImporter) {
+    !alreadyAnImporter && yesOnImporter
+  }
+
+  private def navigationForPackagingSiteDetailsInNormalMode(userAnswers: UserAnswers, subscription: RetrievedSubscription) = {
+    if (subscription.activity.importer) {
       routes.CorrectReturnCYAController.onPageLoad
-    } else if (!alreadyAnImporter && yesOnImporter) {
+    } else if (isANewImporter(userAnswers, subscription)) {
       routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode)
     } else {
       routes.CorrectReturnCYAController.onPageLoad
@@ -152,12 +162,22 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   private def navigationToReturnChangeRegistrationIfRequired(userAnswers: UserAnswers, subscription: RetrievedSubscription, mode: Mode) = {
     val alreadyAPacker = subscription.activity.contractPacker
     val alreadyAnImporter = subscription.activity.importer
-    val yesOnCoPacker = userAnswers.get(PackagedAsContractPackerPage).contains(true)
-    val yesOnImporter = userAnswers.get(BroughtIntoUKPage).contains(true)
     if (alreadyAPacker && alreadyAnImporter) {
       routes.CorrectReturnCYAController.onPageLoad
-    } else if ((!alreadyAPacker && yesOnCoPacker) || (!alreadyAnImporter && yesOnImporter)) {
+    } else if (isANewPacker(userAnswers, subscription) || isANewImporter(userAnswers, subscription)) {
       routes.ReturnChangeRegistrationController.onPageLoad(mode)
+    } else {
+      routes.CorrectReturnCYAController.onPageLoad
+    }
+  }
+
+  private def navigationFromReturnChangeRegistration(userAnswers: UserAnswers, subscription: RetrievedSubscription, mode: Mode): Call = {
+    val doesNotHavePackagingSites = userAnswers.packagingSiteList.isEmpty
+    val doesNotHaveWarehouses = userAnswers.warehouseList.isEmpty
+    if (isANewPacker(userAnswers, subscription) && doesNotHavePackagingSites) {
+      routes.PackAtBusinessAddressController.onPageLoad(mode)
+    } else if (isANewImporter(userAnswers, subscription) && doesNotHaveWarehouses) {
+      routes.AskSecondaryWarehouseInReturnController.onPageLoad(mode)
     } else {
       routes.CorrectReturnCYAController.onPageLoad
     }
@@ -175,7 +195,6 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case SecondaryWarehouseDetailsPage => _ => defaultCall
     case AskSecondaryWarehouseInReturnPage => _ => defaultCall
     case RemovePackagingSiteConfirmPage => userAnswers => navigationForRemovePackagingSiteConfirm(userAnswers, NormalMode)
-    case ReturnChangeRegistrationPage => _ => defaultCall
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, NormalMode)
     case HowManyBroughtIntoUKPage => _ => routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode)
     case BroughtIntoUkFromSmallProducersPage => userAnswers => navigationForBroughtIntoUkFromSmallProducers(userAnswers, NormalMode)
@@ -198,8 +217,10 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
 
   override val normalRoutesWithSubscription: Page => (UserAnswers, RetrievedSubscription) => Call = {
     case ClaimCreditsForLostDamagedPage => (userAnswers, subscription) => navigationForCreditsForLostDamagedInNormalMode(userAnswers, subscription)
-    case HowManyCreditsForLostDamagedPage => (userAnswers, subscription) => navigationToReturnChangeRegistrationIfRequired(userAnswers, subscription, NormalMode)
+    case HowManyCreditsForLostDamagedPage => (userAnswers, subscription) =>
+      navigationToReturnChangeRegistrationIfRequired(userAnswers, subscription, NormalMode)
     case PackagingSiteDetailsPage => (userAnswers, subscription) => navigationForPackagingSiteDetailsInNormalMode(userAnswers, subscription)
+    case ReturnChangeRegistrationPage => (userAnswers, subscription) => navigationFromReturnChangeRegistration(userAnswers, subscription, NormalMode)
     case _ => (_, _) => defaultCall
   }
 
@@ -228,7 +249,8 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
 
   override val checkRouteMapWithSubscription: Page => (UserAnswers, RetrievedSubscription) => Call = {
     case HowManyBroughtIntoUKPage => (userAnswers, subscription) => navigationToReturnChangeRegistrationIfRequired(userAnswers, subscription, CheckMode)
-    case HowManyPackagedAsContractPackerPage => (userAnswers, subscription) => navigationToReturnChangeRegistrationIfRequired(userAnswers, subscription, CheckMode)
+    case HowManyPackagedAsContractPackerPage => (userAnswers, subscription) =>
+      navigationToReturnChangeRegistrationIfRequired(userAnswers, subscription, CheckMode)
     case _ => (_, _) => defaultCall
   }
 

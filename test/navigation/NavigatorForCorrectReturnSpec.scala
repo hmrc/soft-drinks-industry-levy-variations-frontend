@@ -454,6 +454,45 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
     }
   }
 
+  "Return change registration page " - {
+    def navigateFromReturnChangeRegistrationPageWhenNewImporter(mode: Mode, subscription: Option[RetrievedSubscription] = Some(aSubscription)) =
+      navigator.nextPage(ReturnChangeRegistrationPage, mode, completedUserAnswersForCorrectReturnNewPackerOrImporter
+        .set(PackagedAsContractPackerPage, false).success.value, subscription)
+
+    def navigateFromReturnChangeRegistrationPageWhenNewCoPacker(mode: Mode, subscription: Option[RetrievedSubscription] = Some(aSubscription)) =
+      navigator.nextPage(ReturnChangeRegistrationPage, mode, completedUserAnswersForCorrectReturnNewPackerOrImporter, subscription)
+
+    "should navigate to Ask Secondary Warehouse in return when the user is a new importer with no warehouses in NormalMode" in {
+      val result = navigateFromReturnChangeRegistrationPageWhenNewImporter(NormalMode, Some(aSubscription))
+      result mustBe routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode)
+    }
+
+    "should navigate to Pack At Business Address when the user is a new packer with no packaging sites in NormalMode" in {
+      val result = navigateFromReturnChangeRegistrationPageWhenNewCoPacker(NormalMode, Some(aSubscription))
+      result mustBe routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
+    }
+
+    def navigateFromReturnChangeRegistrationPageWhenNewImporterButUserHasSites(mode: Mode, subscription: Option[RetrievedSubscription] = Some(aSubscription)) =
+      navigator.nextPage(ReturnChangeRegistrationPage, mode, completedUserAnswersForCorrectReturnNewPackerOrImporter
+        .copy(warehouseList = twoWarehouses)
+        .set(PackagedAsContractPackerPage, false).success.value, subscription)
+
+    def navigateFromReturnChangeRegistrationPageWhenNewCoPackerButUserHasSites(mode: Mode, subscription: Option[RetrievedSubscription] = Some(aSubscription)) =
+      navigator.nextPage(ReturnChangeRegistrationPage, mode, completedUserAnswersForCorrectReturnNewPackerOrImporter
+        .copy(packagingSiteList = packingSiteMap)
+        .set(BroughtIntoUKPage, false).success.value, subscription)
+
+    "should navigate to Check your answers when the user is a new importer with existing warehouses in NormalMode" in {
+      val result = navigateFromReturnChangeRegistrationPageWhenNewImporterButUserHasSites(NormalMode, Some(aSubscription))
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+
+    "should navigate to Check your answers when the user is a new packer with existing packaging sites in NormalMode" in {
+      val result = navigateFromReturnChangeRegistrationPageWhenNewCoPackerButUserHasSites(NormalMode, Some(aSubscription))
+      result mustBe routes.CorrectReturnCYAController.onPageLoad
+    }
+  }
+
   "Packaging Site Details " - {
     def navigateFromPackagingSiteDetailsPage(mode: Mode, subscription: Option[RetrievedSubscription] = None) =
       navigator.nextPage(PackagingSiteDetailsPage, mode,

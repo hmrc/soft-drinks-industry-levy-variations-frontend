@@ -17,25 +17,24 @@
 package controllers.correctReturn
 
 import base.SpecBase
-import models.NormalMode
 import models.SelectChange.CorrectReturn
-import play.api.mvc.Call
+import models.{LitresInBands, NormalMode}
+import pages.correctReturn.{BroughtIntoUKPage, HowManyBroughtIntoUKPage, PackagedAsContractPackerPage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.correctReturn.ReturnChangeRegistrationView
 class ReturnChangeRegistrationControllerSpec extends SpecBase {
 
-  def onwardRoute: Call = Call("GET", "/foo")
-
-  lazy val returnChangeRegistrationRoute = routes.ReturnChangeRegistrationController.onPageLoad(NormalMode).url
-
-  lazy val submittedAnswers = emptyUserAnswersForCorrectReturn.copy(submitted = true)
+  lazy val returnChangeRegistrationRoute: String = routes.ReturnChangeRegistrationController.onPageLoad(NormalMode).url
 
   "ReturnChangeRegistration Controller" - {
 
-    "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
+    "must return OK and the correct view for a GET when user is a new importer " in {
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .set(PackagedAsContractPackerPage, false).success.value
+        .set(BroughtIntoUKPage, true).success.value
+        .set(HowManyBroughtIntoUKPage, LitresInBands(1L, 1L)).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, returnChangeRegistrationRoute)
@@ -45,22 +44,24 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[ReturnChangeRegistrationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(NormalMode, "/soft-drinks-industry-levy-variations-frontend")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(NormalMode,
+          "/soft-drinks-industry-levy-variations-frontend/correct-return/brought-into-uk")(request, messages(application)).toString
       }
     }
 
-    "must redirect to returns sent page if return is already submitted when hitting the submit" in {
-      val application = applicationBuilder(userAnswers = Some(submittedAnswers)).build()
+    "must return OK and the correct view for a GET when user is a new packager " in {
+      val application = applicationBuilder(userAnswers = Some(completedUserAnswersForCorrectReturnNewPackerOrImporter)).build()
 
       running(application) {
-        val request =
-          FakeRequest(POST, routes.ReturnChangeRegistrationController.onPageLoad(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "true"))
+        val request = FakeRequest(GET, returnChangeRegistrationRoute)
 
         val result = route(application, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
+        val view = application.injector.instanceOf[ReturnChangeRegistrationView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(NormalMode,
+          "/soft-drinks-industry-levy-variations-frontend/correct-return/packaged-as-contract-packer")(request, messages(application)).toString
       }
     }
 
