@@ -38,12 +38,11 @@ class ReturnChangeRegistrationController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
-      val userIsOnlyANewImporter = UserTypeCheck.isNewImporter(SdilReturn.apply(request.userAnswers), request.subscription) &&
-        !UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), request.subscription)
-      if (userIsOnlyANewImporter) {
-        Ok(view(mode, controllers.correctReturn.routes.BroughtIntoUKController.onPageLoad(mode).url))
-      } else {
+        val userIsANewPacker = UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), request.subscription)
+      if (userIsANewPacker) {
         Ok(view(mode, controllers.correctReturn.routes.PackagedAsContractPackerController.onPageLoad(mode).url))
+      } else {
+        Ok(view(mode, controllers.correctReturn.routes.BroughtIntoUKController.onPageLoad(mode).url))
       }
   }
 
