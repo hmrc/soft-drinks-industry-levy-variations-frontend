@@ -26,6 +26,7 @@ import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -39,19 +40,19 @@ import scala.concurrent.Future
 
 class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new RemoveWarehouseDetailsFormProvider()
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   val indexOfWarehouseToBeRemoved: String = "foobar"
-  lazy val removeWarehouseDetailsRoute = routes.RemoveWarehouseDetailsController.onPageLoad(NormalMode, indexOfWarehouseToBeRemoved).url
+  lazy val removeWarehouseDetailsRoute: String = routes.RemoveWarehouseDetailsController.onPageLoad(NormalMode, indexOfWarehouseToBeRemoved).url
   val addressOfWarehouse: UkAddress = UkAddress(List("foo"),"bar", None)
   val warehouseTradingName: String = "a name for a warehouse here"
   val userAnswersWithWarehouse: UserAnswers = emptyUserAnswersForCorrectReturn
     .copy(warehouseList = Map(indexOfWarehouseToBeRemoved -> Site(addressOfWarehouse, Some(warehouseTradingName))))
 
-  "RemoveWarehouseDetails Controller" - {
+  "Correct Return RemoveWarehouseDetails Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
@@ -66,14 +67,18 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(form, NormalMode, AddressFormattingHelper.addressFormatting(addressOfWarehouse, Some(warehouseTradingName)), indexOfWarehouseToBeRemoved)(request, messages(application)).toString
+          view(form, NormalMode, AddressFormattingHelper.addressFormatting(addressOfWarehouse, Some(warehouseTradingName)),
+            indexOfWarehouseToBeRemoved)(request, messages(application)).toString
       }
     }
 
-    "must redirect to Index controller when warehouse index does not exist on warehouse list on GET" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
-
+    "must redirect to warehouse details when warehouse index does not exist on warehouse list on GET" in {
+      val userAnswers = Some(userAnswersWithWarehouse.copy(warehouseList = twoWarehouses))
+      val application = applicationBuilder(userAnswers).overrides(
+        bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute))
+      )
+        .build()
+      println(Console.YELLOW + userAnswers + Console.WHITE)
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request = FakeRequest(GET, removeWarehouseDetailsRoute)
@@ -84,10 +89,10 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
           events.collectFirst {
             case event =>
               event.getLevel.levelStr mustBe "WARN"
-              event.getMessage mustEqual s"Warehouse index $indexOfWarehouseToBeRemoved doesn't exist ${emptyUserAnswersForCorrectReturn.id} warehouse list length:0"
+              event.getMessage mustEqual s"Warehouse index $indexOfWarehouseToBeRemoved doesn't exist ${userAnswers.value.id} warehouse list length:2"
           }.getOrElse(fail("No logging captured"))
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.correctReturn.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url
         }
       }
     }
@@ -139,7 +144,7 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to Index controller when warehouse index does not exist on warehouse list on POST" in {
+    "must redirect to warehouse details when warehouse index does not exist on warehouse list on POST" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
 
@@ -158,7 +163,7 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
               event.getMessage mustEqual s"Warehouse index $indexOfWarehouseToBeRemoved doesn't exist ${emptyUserAnswersForCorrectReturn.id} warehouse list length:0"
           }.getOrElse(fail("No logging captured"))
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.IndexController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.correctReturn.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url
         }
       }
     }

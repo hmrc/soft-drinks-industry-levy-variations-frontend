@@ -56,7 +56,7 @@ class RemoveWarehouseDetailsController @Inject()(
         case Some(warehouse) =>
           val formattedAddress = AddressFormattingHelper.addressFormatting(warehouse.address, warehouse.tradingName)
           Ok(view(form, mode, formattedAddress, index))
-        case _ => indexNotFoundRedirect(index, request, routes.IndexController.onPageLoad)
+        case _ => indexNotFoundRedirect(index, request, controllers.correctReturn.routes.SecondaryWarehouseDetailsController.onPageLoad(mode))
       }
   }
 
@@ -65,7 +65,7 @@ class RemoveWarehouseDetailsController @Inject()(
       val warehouseToRemove: Option[Site] = request.userAnswers.warehouseList.get(index)
       warehouseToRemove match {
         case None =>
-          Future.successful(indexNotFoundRedirect(index, request, routes.IndexController.onPageLoad))
+          Future.successful(indexNotFoundRedirect(index, request, controllers.correctReturn.routes.SecondaryWarehouseDetailsController.onPageLoad(mode)))
         case Some(warehouse) =>
           val formattedAddress: Html = AddressFormattingHelper.addressFormatting(warehouse.address, warehouse.tradingName)
           form.bindFromRequest().fold(
