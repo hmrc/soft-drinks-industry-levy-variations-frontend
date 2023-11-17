@@ -192,8 +192,6 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   }
 
   override val normalRoutes: Page => UserAnswers => Call = {
-    case SecondaryWarehouseDetailsPage => _ => defaultCall
-    case AskSecondaryWarehouseInReturnPage => _ => defaultCall
     case RemovePackagingSiteConfirmPage => userAnswers => navigationForRemovePackagingSiteConfirm(userAnswers, NormalMode)
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, NormalMode)
     case HowManyBroughtIntoUKPage => _ => routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode)
@@ -204,6 +202,8 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case ExemptionsForSmallProducersPage => userAnswers => navigationForExemptionsForSmallProducers(userAnswers, NormalMode)
     case AddASmallProducerPage => _ => navigationForAddASmallProducer(NormalMode)
     case SmallProducerDetailsPage => userAnswers => navigationForSmallProducerDetails(userAnswers, NormalMode)
+    case AskSecondaryWarehouseInReturnPage => _ => routes.CorrectReturnCYAController.onPageLoad
+    case SecondaryWarehouseDetailsPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case RemoveWarehouseDetailsPage => _ => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
     case CorrectionReasonPage => _ => navigationForCorrectionReason(NormalMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
@@ -241,9 +241,11 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case PackagingSiteDetailsPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case RemovePackagingSiteConfirmPage => userAnswers => navigationForRemovePackagingSiteConfirm(userAnswers, CheckMode)
     case RemoveSmallProducerConfirmPage => userAnswers => navigationForRemoveSmallProducerConfirm(userAnswers, CheckMode)
+    case AskSecondaryWarehouseInReturnPage => _ => routes.CorrectReturnCYAController.onPageLoad
+    case SecondaryWarehouseDetailsPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case RemoveWarehouseDetailsPage => _ => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
     case CorrectionReasonPage => _ => navigationForCorrectionReason(CheckMode)
-    case RepaymentMethodPage => userAnswers => routes.CorrectReturnCheckChangesCYAController.onPageLoad
+    case RepaymentMethodPage => _ => routes.CorrectReturnCheckChangesCYAController.onPageLoad
     case _ => _ => routes.CorrectReturnCYAController.onPageLoad
   }
 

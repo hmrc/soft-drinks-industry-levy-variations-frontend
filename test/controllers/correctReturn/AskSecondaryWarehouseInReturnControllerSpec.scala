@@ -98,7 +98,7 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
       running(application) {
         val request =
           FakeRequest(POST, askSecondaryWarehouseInReturnRoute)
-            .withFormUrlEncodedBody(("value", "true"))
+            .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 
@@ -138,7 +138,7 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
         val request =
           FakeRequest(POST, askSecondaryWarehouseInReturnRoute
         )
-        .withFormUrlEncodedBody(("value", "true"))
+        .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 
@@ -164,7 +164,7 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request =
             FakeRequest(POST, askSecondaryWarehouseInReturnRoute)
-          .withFormUrlEncodedBody(("value", "true"))
+          .withFormUrlEncodedBody(("value", "false"))
 
           await(route(application, request).value)
           events.collectFirst {

@@ -23,9 +23,10 @@ import handlers.ErrorHandler
 import models.Mode
 import navigation._
 import pages.correctReturn.AskSecondaryWarehouseInReturnPage
-import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.SessionService
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
+import services.{AddressLookupService, SessionService, WarehouseDetails}
+import uk.gov.hmrc.http.HeaderCarrier
 import utilities.GenericLogger
 import views.html.correctReturn.AskSecondaryWarehouseInReturnView
 
@@ -40,6 +41,7 @@ class AskSecondaryWarehouseInReturnController @Inject()(
                                        formProvider: AskSecondaryWarehouseInReturnFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: AskSecondaryWarehouseInReturnView,
+                                       addressLookupService: AddressLookupService,
                                        val genericLogger: GenericLogger,
                                        val errorHandler: ErrorHandler
                                      )(implicit val ec: ExecutionContext) extends ControllerHelper {
@@ -64,10 +66,14 @@ class AskSecondaryWarehouseInReturnController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
-        value => {
-          val updatedAnswers = request.userAnswers.set(AskSecondaryWarehouseInReturnPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, AskSecondaryWarehouseInReturnPage, mode)
-        }
+        value =>
+          if (value) {
+            val alsOnRampUrl = updateDatabaseWithoutRedirect(request.userAnswers.set(AskSecondaryWarehouseInReturnPage, value), AskSecondaryWarehouseInReturnPage).flatMap(_ =>
+              addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = mode))
+            alsOnRampUrl.map(Redirect(_))
+          } else {
+            updateDatabaseAndRedirect(request.userAnswers.set(AskSecondaryWarehouseInReturnPage, value), AskSecondaryWarehouseInReturnPage, mode)
+          }
       )
   }
 }

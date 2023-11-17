@@ -185,7 +185,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
       running(application) {
         val request =
           FakeRequest(POST, secondaryWarehouseDetailsRoute)
-        .withFormUrlEncodedBody(("value", "true"))
+        .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
 
@@ -211,7 +211,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request =
             FakeRequest(POST, secondaryWarehouseDetailsRoute)
-          .withFormUrlEncodedBody(("value", "true"))
+          .withFormUrlEncodedBody(("value", "false"))
 
           await(route(application, request).value)
           events.collectFirst {
