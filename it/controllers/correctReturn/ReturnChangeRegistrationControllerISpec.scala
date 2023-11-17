@@ -1,20 +1,20 @@
 package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
+import models.SelectChange.CorrectReturn
+import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import pages.correctReturn.PackagedAsContractPackerPage
 import play.api.i18n.Messages
 import play.api.test.WsTestClient
-import models.SelectChange.CorrectReturn
-import models.UserAnswers
-import pages.correctReturn.ReturnChangeRegistrationPage
-import play.api.libs.json.Json
 import play.mvc.Http.HeaderNames
 
 class ReturnChangeRegistrationControllerISpec extends ControllerITTestHelper {
 
-  val returnDiff = "testing456"
-  val userAnswers: UserAnswers = emptyUserAnswersForCorrectReturn.set(ReturnChangeRegistrationPage, returnDiff).success.value
+  val userAnswersNewPacker: UserAnswers = completedUserAnswersForCorrectReturnNewPackerOrImporter
+  val userAnswersNewImporterOnly: UserAnswers = completedUserAnswersForCorrectReturnNewPackerOrImporter.set(PackagedAsContractPackerPage, false).success.value
+
   val normalRoutePath = "/return-change-registration"
 
   "GET " + normalRoutePath - {
@@ -39,31 +39,39 @@ class ReturnChangeRegistrationControllerISpec extends ControllerITTestHelper {
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath)
   }
 
-  s"POST " + normalRoutePath - {
-    "when the user answers the question" - {
-      "should update the session with the new values and redirect to the index controller" - {
-        "when the session contains no data for page" in {
-          given
-            .commonPrecondition
+  s"POST " - {
+    "when user is a new packer should redirect to the Pack At Business Address Controller" in {
+      given
+        .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
-          WsTestClient.withClient { client =>
-            val result = createClientRequestPOST(
-              client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> returnDiff)
-            )
+      setAnswers(completedUserAnswersForCorrectReturnNewPackerOrImporter)
+      WsTestClient.withClient { client =>
+        val result = createClientRequestPOSTNoData(client, correctReturnBaseUrl + normalRoutePath, "")
 
-            whenReady(result) { res =>
-              res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
-            }
-          }
+        whenReady(result) { res =>
+          res.status mustBe 303
+          res.header(HeaderNames.LOCATION) mustBe Some(controllers.correctReturn.routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url)
         }
       }
     }
 
-    testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> returnDiff)))
-    testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> returnDiff)))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath,
-      Some(Json.obj("value" -> returnDiff)))
+    "when user is only a new importer should redirect to the Ask Secondary Warehouse Controller" in {
+      given
+        .commonPrecondition
+
+      setAnswers(completedUserAnswersForCorrectReturnNewPackerOrImporter.set(PackagedAsContractPackerPage, false).success.value)
+      WsTestClient.withClient { client =>
+        val result = createClientRequestPOSTNoData(client, correctReturnBaseUrl + normalRoutePath, "")
+
+        whenReady(result) { res =>
+          res.status mustBe 303
+          res.header(HeaderNames.LOCATION) mustBe Some(controllers.correctReturn.routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url)
+        }
+      }
+    }
+
+    testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath)
+    testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath)
   }
 }

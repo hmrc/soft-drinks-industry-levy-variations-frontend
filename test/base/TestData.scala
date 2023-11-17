@@ -183,8 +183,8 @@ trait TestData {
     sdilRef = "XKSDIL000000023", activity = RetrievedActivity(
     smallProducer = false, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = false))
 
-  def completedUserAnswersForCorrectReturnNewPackerOrImporter: UserAnswers = UserAnswers(changedUserSdilNumber, SelectChange.CorrectReturn,
-    Json.obj(), packagingSiteList = Map.empty, warehouseList = Map.empty, contactAddress = updatedContactAddress,
+  def completedUserAnswersForCorrectReturnNewPackerOrImporter: UserAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(id = changedUserSdilNumber,
+    packagingSiteList = Map.empty, warehouseList = Map.empty, contactAddress = updatedContactAddress,
     correctReturnPeriod = Some(ReturnPeriod(2023, 0)))
     .set(OperatePackagingSiteOwnBrandsPage, true).success.value
     .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(32432, 34839)).success.value
