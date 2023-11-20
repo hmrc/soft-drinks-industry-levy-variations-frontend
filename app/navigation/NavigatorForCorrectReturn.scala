@@ -261,6 +261,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case HowManyBroughtIntoUKPage => (userAnswers, subscription) => navigationToReturnChangeRegistrationIfRequired(userAnswers, subscription, CheckMode)
     case HowManyPackagedAsContractPackerPage => (userAnswers, subscription) =>
       navigationToReturnChangeRegistrationIfRequired(userAnswers, subscription, CheckMode)
+    case ReturnChangeRegistrationPage => (userAnswers, subscription) => navigationFromReturnChangeRegistration(userAnswers, subscription, CheckMode)
     case _ => (_, _) => defaultCall
   }
 
