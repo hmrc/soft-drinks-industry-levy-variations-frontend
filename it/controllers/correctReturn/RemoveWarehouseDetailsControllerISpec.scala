@@ -23,14 +23,14 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setAnswers(emptyUserAnswersForSelectChange(CorrectReturn))
 
         WsTestClient.withClient { client =>
           val result = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath("indexDoesntExist"))
 
           whenReady(result) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+            res.header(HeaderNames.LOCATION) mustBe Some(routes.SelectController.onPageLoad.url)
           }
         }
       }
@@ -74,14 +74,14 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setAnswers(emptyUserAnswersForSelectChange(CorrectReturn))
 
         WsTestClient.withClient { client =>
           val result = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath("indexDoesntExist"))
 
           whenReady(result) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+            res.header(HeaderNames.LOCATION) mustBe Some(routes.SelectController.onPageLoad.url)
           }
         }
       }
@@ -121,14 +121,15 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
   s"POST " + normalRoutePath(indexOfWarehouseToBeRemoved) - {
 
-    userAnswersForCorrectReturnRemoveWarehouseDetailsPage(indexOfWarehouseToBeRemoved).foreach { case (key, userAnswers) =>
+    userAnswersForCorrectReturnRemoveWarehouseDetailsPage(indexOfWarehouseToBeRemoved).foreach { case (key, _) =>
       "when the user selects " + key - {
-        "should update the session with the new value and redirect to the index controller" - {
+        "should redirect to the Secondary warehouse details controller" - {
           "when the session contains no data for page" in {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForCorrectReturn)
+            setAnswers(completedUserAnswersForCorrectReturnNewPackerOrImporter.copy(warehouseList =
+              Map("warehouseDOS" -> Site(ukAddress))))
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -137,15 +138,16 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
               }
             }
           }
 
-          "when the session already contains data for page" in {
+          "when the session already contains data for page and there is only one warehouse" in {
             given
               .commonPrecondition
-
+            val userAnswers = completedUserAnswersForCorrectReturnNewPackerOrImporter.copy(warehouseList =
+              Map("warehouseUNO" -> Site(ukAddress)))
             setAnswers(userAnswers)
             getAnswers(userAnswers.id).get.warehouseList.size mustBe 1
             WsTestClient.withClient { client =>
@@ -156,16 +158,14 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
-                val userAnswersAfterTest = getAnswers(userAnswers.id)
-                val dataStoredForPage = userAnswersAfterTest.fold[Option[Boolean]](None)(_.get(RemoveWarehouseDetailsPage))
+                val userAnswersAfterTest = getAnswers(sdilNumber)
                 if(yesSelected) {
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.AskSecondaryWarehouseInReturnController.onPageLoad(NormalMode).url)
                   userAnswersAfterTest.get.warehouseList.size mustBe 0
                 } else {
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
                   userAnswersAfterTest.get.warehouseList.size mustBe 1
                 }
-                dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe yesSelected
               }
             }
           }
@@ -211,33 +211,15 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
   s"POST " + checkRoutePath(indexOfWarehouseToBeRemoved) - {
 
-    userAnswersForCorrectReturnRemoveWarehouseDetailsPage(indexOfWarehouseToBeRemoved).foreach { case (key, userAnswers) =>
+    userAnswersForCorrectReturnRemoveWarehouseDetailsPage(indexOfWarehouseToBeRemoved).foreach { case (key, _) =>
       "when the user selects " + key - {
-        "should update the session with the new value and redirect to the checkAnswers controller" - {
+        "should redirect to the Secondary Warehouse controller " - {
           "when the session contains no data for page" in {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForCorrectReturn)
-            WsTestClient.withClient { client =>
-              val yesSelected = key == "yes"
-              val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + checkRoutePath(indexOfWarehouseToBeRemoved), Json.obj("value" -> yesSelected.toString)
-              )
-
-              whenReady(result) { res =>
-                res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.IndexController.onPageLoad.url)
-              }
-            }
-          }
-
-          "when the session already contains data for page" in {
-            given
-              .commonPrecondition
-
-            setAnswers(userAnswers)
-            getAnswers(userAnswers.id).get.warehouseList.size mustBe 1
+            setAnswers(emptyUserAnswersForCorrectReturn.copy(warehouseList =
+              Map("warehouseDOS" -> Site(ukAddress), "warehouseUNO" -> Site(ukAddress))))
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -247,14 +229,32 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
-                val userAnswersAfterTest = getAnswers(userAnswers.id)
-                val dataStoredForPage = userAnswersAfterTest.fold[Option[Boolean]](None)(_.get(RemoveWarehouseDetailsPage))
-                dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe yesSelected
+              }
+            }
+          }
+        }
+        "should redirect to the Secondary Warehouse Details controller when there are multiple warehouses" - {
+          "when the session already contains data for page" in {
+            given
+              .commonPrecondition
+
+            setAnswers(completedUserAnswersForCorrectReturnNewPackerOrImporter.copy(warehouseList =
+              Map("warehouseUNO" -> Site(ukAddress), "warehouseTwo" -> Site(ukAddress))))
+            getAnswers(completedUserAnswersForCorrectReturnNewPackerOrImporter.id).get.warehouseList.size mustBe 2
+            WsTestClient.withClient { client =>
+              val yesSelected = key == "yes"
+              val result = createClientRequestPOST(
+                client, correctReturnBaseUrl + checkRoutePath(indexOfWarehouseToBeRemoved), Json.obj("value" -> yesSelected.toString)
+              )
+
+              whenReady(result) { res =>
+                res.status mustBe 303
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
+                val userAnswersAfterTest = getAnswers(completedUserAnswersForCorrectReturnNewPackerOrImporter.id)
                 if(yesSelected) {
-                  userAnswersAfterTest.get.warehouseList.size mustBe 0
-                } else {
                   userAnswersAfterTest.get.warehouseList.size mustBe 1
+                } else {
+                  userAnswersAfterTest.get.warehouseList.size mustBe 2
                 }
               }
             }

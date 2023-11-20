@@ -28,14 +28,14 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
 
   val navigator = new NavigatorForCorrectReturn
 
-  val newImporterUserAnswers = emptyUserAnswersForCorrectReturn
+  val newImporterUserAnswers: UserAnswers = emptyUserAnswersForCorrectReturn
     .set(BroughtIntoUKPage, true).success.value
 
-  val newCoPackerUserAnswers = emptyUserAnswersForCorrectReturn
+  val newCoPackerUserAnswers: UserAnswers = emptyUserAnswersForCorrectReturn
     .set(PackagedAsContractPackerPage, true).success.value
 
-  val currentImporterSubscription = Option(aSubscription.copy(activity = testRetrievedActivity(importer = true)))
-  val currentCoPackerSubscription = Option(aSubscription.copy(activity = testRetrievedActivity(contractPacker = true)))
+  val currentImporterSubscription: Option[RetrievedSubscription] = Option(aSubscription.copy(activity = testRetrievedActivity(importer = true)))
+  val currentCoPackerSubscription: Option[RetrievedSubscription] = Option(aSubscription.copy(activity = testRetrievedActivity(contractPacker = true)))
 
   "Navigator" - {
 
@@ -287,20 +287,6 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
       s"must go from $SecondaryWarehouseDetailsPage to $CorrectReturnBaseCYAPage in $mode when user selects no" in {
         navigator.nextPage(SecondaryWarehouseDetailsPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress = contactAddress)
           .set(SecondaryWarehouseDetailsPage, false).success.value) mustBe routes.CorrectReturnCYAController.onPageLoad
-      }
-    })
-  }
-
-  "Remove Secondary Warehouse Details Page" - {
-    List(NormalMode, CheckMode).foreach(mode => {
-      s"must go from $RemoveWarehouseDetailsPage to $SecondaryWarehouseDetailsPage in $mode when user selects yes" in {
-        navigator.nextPage(RemoveWarehouseDetailsPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress = contactAddress)
-          .set(RemoveWarehouseDetailsPage, true).success.value) mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
-      }
-
-      s"must go from $RemoveWarehouseDetailsPage to $SecondaryWarehouseDetailsPage in $mode when user selects no" in {
-        navigator.nextPage(RemoveWarehouseDetailsPage, mode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress = contactAddress)
-          .set(RemoveWarehouseDetailsPage, false).success.value) mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
       }
     })
   }
@@ -562,13 +548,45 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
       }
 
       s"select No to navigate to Packaging Site Details in $mode when not last packaging site" in {
-        val result = navigateFromRemovePackagingSiteConfirm(value = false, mode, lastPackagingSite = true)
+        val result = navigateFromRemovePackagingSiteConfirm(value = false, mode, lastPackagingSite = false)
         result mustBe routes.PackagingSiteDetailsController.onPageLoad(mode)
       }
 
       s"select No to navigate to Packaging Site Details in $mode when last packaging site" in {
         val result = navigateFromRemovePackagingSiteConfirm(value = false, mode, lastPackagingSite = false)
         result mustBe routes.PackagingSiteDetailsController.onPageLoad(mode)
+      }
+    })
+  }
+
+  "Remove Warehouse confirm " - {
+    def navigateFromRemoveWarehouseConfirm(value: Boolean, mode: Mode, lastWarehouse: Boolean) = {
+      navigator.nextPage(RemoveWarehouseDetailsPage, mode,
+        emptyUserAnswersForCorrectReturn
+          .copy(warehouseList = if (lastWarehouse) Map.empty else twoWarehouses)
+          .set(RemoveWarehouseDetailsPage, value).success.value
+      )
+    }
+
+    List(NormalMode, CheckMode).foreach(mode => {
+      s"select Yes to navigate to Secondary Warehouse Details in $mode when not last warehouse" in {
+        val result = navigateFromRemoveWarehouseConfirm(value = true, mode, lastWarehouse= false)
+        result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
+      }
+
+      s"select Yes to navigate to Ask Secondary Warehouse in $mode when last warehouse" in {
+        val result = navigateFromRemoveWarehouseConfirm(value = true, mode, lastWarehouse = true)
+        result mustBe routes.AskSecondaryWarehouseInReturnController.onPageLoad(mode)
+      }
+
+      s"select No to navigate to Secondary Warehouse Details in $mode when not last warehouse" in {
+        val result = navigateFromRemoveWarehouseConfirm(value = false, mode, lastWarehouse = false)
+        result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
+      }
+
+      s"select No to navigate to Secondary Warehouse Details in $mode when last warehouse" in {
+        val result = navigateFromRemoveWarehouseConfirm(value = false, mode, lastWarehouse = false)
+        result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
       }
     })
   }

@@ -92,7 +92,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   }
 
   private def navigationForRemovePackagingSiteConfirm(userAnswers: UserAnswers, mode: Mode) = {
-    if (userAnswers.get(page = RemovePackagingSiteConfirmPage).contains(true) && userAnswers.packagingSiteList.isEmpty) {
+    if (userAnswers.packagingSiteList.isEmpty) {
       routes.PackAtBusinessAddressController.onPageLoad(mode)
     } else {
       routes.PackagingSiteDetailsController.onPageLoad(mode)
@@ -183,6 +183,14 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     }
   }
 
+  private def navigationForRemoveWarehouse(userAnswers: UserAnswers, mode: Mode): Call = {
+    if (userAnswers.warehouseList.isEmpty) {
+      routes.AskSecondaryWarehouseInReturnController.onPageLoad(mode)
+    } else {
+      routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
+    }
+  }
+
   private def navigationForCorrectionReason(mode: Mode): Call = {
     if (mode == NormalMode) {
       routes.RepaymentMethodController.onPageLoad(mode)
@@ -204,7 +212,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case SmallProducerDetailsPage => userAnswers => navigationForSmallProducerDetails(userAnswers, NormalMode)
     case AskSecondaryWarehouseInReturnPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case SecondaryWarehouseDetailsPage => _ => routes.CorrectReturnCYAController.onPageLoad
-    case RemoveWarehouseDetailsPage => _ => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+    case RemoveWarehouseDetailsPage => userAnswers => navigationForRemoveWarehouse(userAnswers, NormalMode)
     case CorrectionReasonPage => _ => navigationForCorrectionReason(NormalMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => routes.PackagedAsContractPackerController.onPageLoad(NormalMode)
@@ -243,7 +251,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case RemoveSmallProducerConfirmPage => userAnswers => navigationForRemoveSmallProducerConfirm(userAnswers, CheckMode)
     case AskSecondaryWarehouseInReturnPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case SecondaryWarehouseDetailsPage => _ => routes.CorrectReturnCYAController.onPageLoad
-    case RemoveWarehouseDetailsPage => _ => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
+    case RemoveWarehouseDetailsPage => userAnswers => navigationForRemoveWarehouse(userAnswers, CheckMode)
     case CorrectionReasonPage => _ => navigationForCorrectionReason(CheckMode)
     case RepaymentMethodPage => _ => routes.CorrectReturnCheckChangesCYAController.onPageLoad
     case _ => _ => routes.CorrectReturnCYAController.onPageLoad
