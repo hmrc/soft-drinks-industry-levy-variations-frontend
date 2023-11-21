@@ -56,7 +56,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper with SummaryListFluenc
     val html = view(form, NormalMode, SummaryList())(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
-      document.title() mustBe "Do you want to add another UK packaging site? - Soft Drinks Industry Levy - GOV.UK"
+      document.title() mustBe "You added 0 UK packaging sites - Soft Drinks Industry Levy - GOV.UK"
     }
 
     "should include a legend with the expected sub-heading" in {
@@ -220,7 +220,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper with SummaryListFluenc
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
-        documentWithErrors.title mustBe "Error: Do you want to add another UK packaging site? - Soft Drinks Industry Levy - GOV.UK"
+        documentWithErrors.title mustBe "Error: You added 0 UK packaging sites - Soft Drinks Industry Levy - GOV.UK"
       }
 
       "contains a message that links to field with error" in {

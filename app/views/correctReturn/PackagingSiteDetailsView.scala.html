@@ -14,9 +14,6 @@
  * limitations under the License.
  *@
 
-@import models.backend.Site
-@import views.summary.correctReturn.PackagingSiteDetailsSummary
-
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
@@ -28,7 +25,7 @@
 
 @(form: Form[_], mode: Mode, packingSite: SummaryList)(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("correctReturn.packagingSiteDetails.title"))) {
+@layout(pageTitle = title(form, messages("correctReturn.packagingSiteDetails.title", packingSite.rows.size, if(packingSite.rows.size == 1) "" else "s"))) {
 
     @formHelper(action = controllers.correctReturn.routes.PackagingSiteDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
@@ -36,20 +33,16 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @if(packingSite.rows.size == 1) {
-            <h1 class="govuk-heading-l">@messages("correctReturn.packagingSiteDetails.heading1")</h1>
-            } else {
-                <h1 class="govuk-heading-l">@messages("correctReturn.packagingSiteDetails.heading", packingSite.rows.size)</h1>
-            }
+        <h1 class="govuk-heading-l">@messages("correctReturn.packagingSiteDetails.title", packingSite.rows.size, if(packingSite.rows.size == 1) "" else "s")</h1>
 
-            <p class="govuk-body">@messages("changeActivity.packagingSiteDetails.info")</p>
+        <p class="govuk-body">@messages("changeActivity.packagingSiteDetails.info")</p>
 
         @govukSummaryList(packingSite)
 
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("correctReturn.packagingSiteDetails.title")).withCssClass("govuk-fieldset__legend--m"),
+                legend = LegendViewModel(messages("correctReturn.packagingSiteDetails.heading")).withCssClass("govuk-fieldset__legend--m"),
                 hint = None
             )
         )
