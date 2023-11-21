@@ -34,7 +34,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title mustBe "Do you want to add another UK packaging site? - Soft Drinks Industry Levy - GOV.UK"
+            page.title mustBe "You added 1 UK packaging site - Soft Drinks Industry Levy - GOV.UK"
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -60,7 +60,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title mustBe "Do you want to add another UK packaging site? - Soft Drinks Industry Levy - GOV.UK"
+              page.title mustBe "You added 1 UK packaging site - Soft Drinks Industry Levy - GOV.UK"
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -91,7 +91,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title mustBe "Do you want to add another UK packaging site? - Soft Drinks Industry Levy - GOV.UK"
+            page.title mustBe "You added 1 UK packaging site - Soft Drinks Industry Levy - GOV.UK"
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -117,7 +117,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title mustBe "Do you want to add another UK packaging site? - Soft Drinks Industry Levy - GOV.UK"
+              page.title mustBe "You added 1 UK packaging site - Soft Drinks Industry Levy - GOV.UK"
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -306,7 +306,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title mustBe "Error: Do you want to add another UK packaging site? - Soft Drinks Industry Levy - GOV.UK"
+            page.title mustBe "Error: You added 1 UK packaging site - Soft Drinks Industry Levy - GOV.UK"
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
@@ -495,7 +495,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title mustBe "Error: Do you want to add another UK packaging site? - Soft Drinks Industry Levy - GOV.UK"
+            page.title mustBe "Error: You added 1 UK packaging site - Soft Drinks Industry Levy - GOV.UK"
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
