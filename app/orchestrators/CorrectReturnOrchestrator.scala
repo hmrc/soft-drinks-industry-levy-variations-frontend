@@ -20,18 +20,68 @@ import cats.data.EitherT
 import com.google.inject.{Inject, Singleton}
 import connectors.SoftDrinksIndustryLevyConnector
 import errors.{FailedToAddDataToUserAnswers, NoSdilReturnForPeriod, NoVariableReturns}
-import models.backend.RetrievedSubscription
+import models.backend.{RetrievedSubscription, Site, UkAddress}
 import models.correctReturn.CorrectReturnUserAnswersData
+import models.enums.SiteTypes.{PRODUCTION_SITE, WAREHOUSE}
+import models.requests.DataRequest
+import models.submission.VariationsSites.getHighestRefNumber
+import models.submission.{ClosedSite, ReturnVariationData, VariationsPersonalDetails, VariationsSite, VariationsSites, VariationsSubmission}
+import models.updateRegisteredDetails.ContactDetails
 import models.{ReturnPeriod, SdilReturn, UserAnswers}
+import pages.correctReturn.{CorrectionReasonPage, RepaymentMethodPage}
+import play.api.mvc.AnyContent
 import service.VariationResult
 import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConnector,
                                           sessionService: SessionService){
+
+  def submitVariation()
+                     (implicit request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
+    val returnVariationData = for {
+      originalReturn <- request.userAnswers.getCorrectReturnOriginalSDILReturnData
+      returnPeriod <- request.userAnswers.correctReturnPeriod
+      revisedReturn <- request.userAnswers.getCorrectReturnData
+    } yield getReturnsVariationToBeSubmitted(
+      subscription = request.subscription,
+      userAnswers = request.userAnswers,
+      originalReturn = originalReturn,
+      returnPeriod = returnPeriod,
+      revisedReturn = SdilReturn(
+        ownBrand = revisedReturn.howManyOperatePackagingSiteOwnBrands.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
+        packLarge = revisedReturn.howManyPackagedAsContractPacker.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
+        packSmall = request.userAnswers.smallProducerList,
+        importLarge = revisedReturn.howManyCreditsForLostDamaged.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
+        importSmall = revisedReturn.howManyBroughtIntoUkFromSmallProducers.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
+        export = revisedReturn.howManyClaimCreditsForExports.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
+        wastage = revisedReturn.howManyCreditsForLostDamaged.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
+        submittedOn = Some(Instant.now())
+      )
+    )
+    println(s"What is being Submitted -> $returnVariationData")
+    Future.successful(connector.submitReturnsVariation(request.subscription.sdilRef, returnVariationData.get))
+  }
+
+  private def getReturnsVariationToBeSubmitted(subscription: RetrievedSubscription,
+                                               userAnswers: UserAnswers,
+                                               originalReturn: SdilReturn,
+                                               returnPeriod: ReturnPeriod,
+                                               revisedReturn: SdilReturn): ReturnVariationData = {
+    ReturnVariationData(
+      original = originalReturn,
+      revised = revisedReturn,
+      period = returnPeriod,
+      orgName = subscription.orgName,
+      address = subscription.address,
+      reason = userAnswers.get(CorrectionReasonPage).get,
+      repaymentMethod = Some(userAnswers.get(RepaymentMethodPage).toString)
+    )
+  }
 
   def getReturnPeriods(retrievedSubscription: RetrievedSubscription)
                               (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[List[ReturnPeriod]] = EitherT {

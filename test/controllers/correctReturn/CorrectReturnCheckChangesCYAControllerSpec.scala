@@ -17,14 +17,19 @@
 package controllers.correctReturn
 
 import base.SpecBase
+import connectors.SoftDrinksIndustryLevyConnector
 import controllers.correctReturn.routes._
 import models.correctReturn.{AddASmallProducer, ChangedPage, RepaymentMethod}
 import models.{LitresInBands, SmallProducer}
+import navigation.{FakeNavigatorForCorrectReturn, NavigatorForCorrectReturn}
+import orchestrators.CorrectReturnOrchestrator
 import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
 import pages.correctReturn._
-import org.mockito.Mockito.when
+import play.api.inject
 import play.api.inject.bind
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.ReturnService
@@ -37,6 +42,9 @@ import scala.concurrent.Future
 class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryListFluency {
 
   val mockReturnService: ReturnService = mock[ReturnService]
+  val mockCorrectReturnOrchestrator: CorrectReturnOrchestrator = mock[CorrectReturnOrchestrator]
+  val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
+  def onwardRoute: Call = Call("GET", "/foo")
 
   "Check Changes Controller" - {
 
@@ -96,5 +104,25 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
           routes.CorrectReturnCheckChangesCYAController.onSubmit)(request, messages(application)).toString
       }
     }
+
+    "must submit successfully " in {
+
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+          .overrides(
+            inject.bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute))
+          )
+          .build()
+
+      running(application) {
+        when (mockCorrectReturnOrchestrator.submitVariation()(any(),any(),any())) thenReturn Future.successful(Right())
+        val request = FakeRequest(POST, CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual onwardRoute.url
+      }
+
+    }
+
   }
 }

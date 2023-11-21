@@ -22,6 +22,7 @@ import controllers.actions.ControllerActions
 import models.SelectChange.CorrectReturn
 import models.correctReturn.ChangedPage
 import models.{Amounts, SdilReturn}
+import orchestrators.CorrectReturnOrchestrator
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReturnService
@@ -39,6 +40,7 @@ class CorrectReturnCheckChangesCYAController @Inject()(
                                             val controllerComponents: MessagesControllerComponents,
                                             view: CorrectReturnCheckChangesCYAView,
                                             returnService: ReturnService,
+                                            correctReturnOrchestrator: CorrectReturnOrchestrator,
                                             genericLogger: GenericLogger
                                           )(implicit config: FrontendAppConfig, ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
@@ -69,8 +71,10 @@ class CorrectReturnCheckChangesCYAController @Inject()(
       }).getOrElse(Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url)))
   }
 
-  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
-    Redirect(routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
+    implicit request =>
+    correctReturnOrchestrator.submitVariation().map { _ =>
+      Redirect(routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+    }
   }
-
 }

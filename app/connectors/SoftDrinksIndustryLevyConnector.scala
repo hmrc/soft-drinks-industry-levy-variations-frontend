@@ -20,7 +20,7 @@ import cats.data.EitherT
 import config.FrontendAppConfig
 import errors.UnexpectedResponseFromSDIL
 import models.backend._
-import models.submission.VariationsSubmission
+import models.submission.{ReturnVariationData, VariationsSubmission}
 import models.{ReturnPeriod, SdilReturn}
 import play.api.http.Status.NO_CONTENT
 import play.api.libs.json.Json
@@ -179,6 +179,22 @@ class SoftDrinksIndustryLevyConnector @Inject()(
             Left(UnexpectedResponseFromSDIL)
         }
       }.recover {
+      case _ =>
+        genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][submitVariation] - unexpected response for $sdilNumber")
+        Left(UnexpectedResponseFromSDIL)
+    }
+  }
+
+  def submitReturnsVariation(sdilNumber: String, variation: ReturnVariationData)(implicit hc: HeaderCarrier): VariationResult[Unit] = EitherT {
+    genericLogger.logger.info(s"[SoftDrinksIndustryLevyConnector][submitVariation] - variation data we are submitting: ${Json.toJson(variation)}")
+    http.POST[ReturnVariationData, HttpResponse](s"$sdilUrl/returns/vary/$sdilNumber", variation).map { resp =>
+      resp.status match {
+        case NO_CONTENT => Right((): Unit)
+        case status =>
+          genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][submitVariation] - unexpected response $status for $sdilNumber")
+          Left(UnexpectedResponseFromSDIL)
+      }
+    }.recover {
       case _ =>
         genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][submitVariation] - unexpected response for $sdilNumber")
         Left(UnexpectedResponseFromSDIL)

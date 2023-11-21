@@ -16,6 +16,7 @@
 
 package models.submission
 
+import models.{ReturnPeriod, SdilReturn, SmallProducer}
 import models.backend.UkAddress
 import play.api.libs.json.{Json, Writes}
 
@@ -39,3 +40,20 @@ case class VariationsSubmission(
                                  newSites: List[VariationsSite] = Nil,
                                  amendSites: List[VariationsSite] = Nil,
                                  closeSites: List[ClosedSite] = Nil)
+
+object ReturnVariationData {
+  implicit val writes: Writes[ReturnVariationData] = Json.writes[ReturnVariationData]
+}
+
+case class ReturnVariationData(
+                                original: SdilReturn,
+                                revised: SdilReturn,
+                                period: ReturnPeriod,
+                                orgName: String,
+                                address: UkAddress,
+                                reason: String,
+                                repaymentMethod: Option[String] = None
+                              ) {
+  def removedSmallProducers: List[SmallProducer] = original.packSmall.filterNot(revised.packSmall.toSet)
+  def addedSmallProducers: List[SmallProducer] = revised.packSmall.filterNot(original.packSmall.toSet)
+}

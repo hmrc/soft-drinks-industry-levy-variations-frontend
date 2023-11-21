@@ -20,11 +20,15 @@ import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import errors._
 import models.correctReturn.CorrectReturnUserAnswersData
+import models.requests.DataRequest
+import models.submission.ReturnVariationData
 import models.{ReturnPeriod, SdilReturn, SelectChange, SmallProducer, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar
+import pages.correctReturn.{CorrectionReasonPage, RepaymentMethodPage}
 import play.api.libs.json.{JsString, Json, Writes}
+import play.api.mvc.AnyContent
 import services.SessionService
 
 import java.time.ZoneOffset
@@ -195,6 +199,32 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
       }
     }
   }
+
+  "submitVariation" - {
+    "Create returnVariationData structure and submit successfully using the connector" in {
+
+      val returnPeriod = returnPeriodList.head
+      val returnVariationData = ReturnVariationData(
+        original = emptySdilReturn,
+        revised = emptySdilReturn,
+        period = returnPeriod,
+        orgName = aSubscription.orgName,
+        address = aSubscription.address,
+        reason = "N/A",
+        repaymentMethod = Some("bankAccount")
+      )
+
+      when(mockSdilConnector.submitReturnsVariation(aSubscription.utr, returnVariationData)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+
+      val res = orchestrator.submitVariation()(any(),hc, ec)
+
+      whenReady(res) { result =>
+        result mustBe Left(NoSdilReturnForPeriod)
+      }
+
+    }
+  }
+
 
   "separateReturnPeriodsByYear" - {
     "when the is no return period" - {
