@@ -66,7 +66,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
     val document = doc(html)
 
     "should contain the expected title" in {
-      document.title() mustBe s"You added {0} UK warehouse{1} - Soft Drinks Industry Levy - GOV.UK"
+      document.title() mustBe s"You added 2 UK warehouses - Soft Drinks Industry Levy - GOV.UK"
     }
 
     "should include a legend with the expected heading" in {
@@ -280,7 +280,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
-        documentWithErrors.title mustBe "Error: You added {0} UK warehouse{1} - Soft Drinks Industry Levy - GOV.UK"
+        documentWithErrors.title mustBe "Error: You added 2 UK warehouses - Soft Drinks Industry Levy - GOV.UK"
       }
 
       "contains a message that links to field with error" in {

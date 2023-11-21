@@ -491,6 +491,7 @@ correctReturn.removePackagingSiteConfirm.error.required = Select yes if you want
 
 correctReturn.secondaryWarehouseDetails.legendHeading = Do you want to add another UK warehouse?
 correctReturn.secondaryWarehouseDetails.title = You added {0} UK warehouse{1}
+
 correctReturn.secondaryWarehouseDetails.checkYourAnswersLabel = Do you want to add another UK warehouse?
 correctReturn.secondaryWarehouseDetails.error.required = Select yes if you want to add another UK warehouse
 correctReturn.secondaryWarehouseDetails.change.hidden = secondary warehouse details
@@ -504,9 +505,8 @@ correctReturn.packAtBusinessAddress.change.hidden = change pack at business addr
 correctReturn.packAtBusinessAddress.detailsLink = Why we need these details
 correctReturn.packAtBusinessAddress.detailsContent = Because you changed your business activity, we need to know the addresses of any UK packaging sites you operate.
 
-correctReturn.packagingSiteDetails.title = Do you want to add another UK packaging site?
-correctReturn.packagingSiteDetails.heading = You added {0} UK packaging sites
-correctReturn.packagingSiteDetails.heading1 = You added 1 UK packaging site
+correctReturn.packagingSiteDetails.heading = Do you want to add another UK packaging site?
+correctReturn.packagingSiteDetails.title = You added {0} UK packaging site{1}
 correctReturn.packagingSiteDetails.checkYourAnswersLabel = UK packaging sites
 correctReturn.packagingSiteDetails.error.required = Select yes if you want to add another UK packaging site
 correctReturn.packagingSiteDetails.change.hidden = {0} site address {1}
