@@ -85,7 +85,7 @@ class SdilActivitySpec extends SpecBase with VariationsSubmissionDataHelper {
     "should return the expected case class" - {
       "when a user who is large producer who is liable" - {
         val retrievedSubscription = subscription(retrievedActivityLiableLargeProducer)
-        "change there activity values only" in {
+        "change their activity values only" in {
           val caData = changeActivityData(AmountProduced.Large, true, false)
           val expectedActivity = Activity(Some(litreage), Some(litreage), Some(litreage), None, true)
           val expectedModel = SdilActivity(Some(expectedActivity), None, None, None, None, None, None)
@@ -118,7 +118,7 @@ class SdilActivitySpec extends SpecBase with VariationsSubmissionDataHelper {
 
       "when a user who is small producer who is liable" - {
         val retrievedSubscription = subscription(retrievedActivityLiableSmallProducer)
-        "change there activity values only" in {
+        "change their activity values only" in {
           val caData = changeActivityData(AmountProduced.Large, true, false)
           val expectedActivity = Activity(Some(litreage), Some(litreage), Some(litreage), None, true)
           val expectedModel = SdilActivity(Some(expectedActivity), Some(false), Some(false), Some(false), Some(false), None,  Some(localDate))

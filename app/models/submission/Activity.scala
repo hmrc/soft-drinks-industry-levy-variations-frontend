@@ -29,13 +29,11 @@ case class Activity(
 object Activity {
   implicit val format: Format[Activity] = Json.format[Activity]
   def fromChangeActivityData(changeActivityData: ChangeActivityData): Activity = {
-    val copackee = if(changeActivityData.isCopackee) {Some(Litreage(1, 1)) } else {None}
-
     Activity(
       changeActivityData.ownBrandsProduced.map(Litreage.fromLitresInBands),
       changeActivityData.imported.map(Litreage.fromLitresInBands),
       changeActivityData.copackerAll.map(Litreage.fromLitresInBands),
-      copackee,
+      Copackee = if (changeActivityData.isCopackee) Some(Litreage(1, 1)) else None,
       changeActivityData.isLarge
     )
   }

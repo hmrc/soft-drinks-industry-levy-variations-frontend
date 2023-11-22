@@ -36,7 +36,7 @@ case class ChangeActivityData(
 
   def isCopackee: Boolean = isSmall && thirdPartyPackagers.contains(true)
 
-  def ownBrandsProduced: Option[LitresInBands] = if(isLarge || isSmall) {
+  def ownBrandsProduced: Option[LitresInBands] = if (isLarge || isSmall) {
     getOptLitres(operatePackagingSiteOwnBrands, howManyOperatePackagingSiteOwnBrands)
   } else {
     None
@@ -44,14 +44,8 @@ case class ChangeActivityData(
   def imported: Option[LitresInBands] = getOptLitres(imports, howManyImports)
   def copackerAll: Option[LitresInBands] = getOptLitres(contractPacking, howManyContractPacking)
 
-  private def getOptLitres(ynAnswer: Option[Boolean], litersAnswer: Option[LitresInBands]): Option[LitresInBands] = {
-    ynAnswer.fold[Option[LitresInBands]](None)(hasLitres =>
-      if (hasLitres) {
-        litersAnswer
-      } else {
-        None
-      })
-  }
+  private def getOptLitres(ynAnswer: Option[Boolean], litresAnswer: Option[LitresInBands]): Option[LitresInBands] =
+    ynAnswer.flatMap(hasLitres => if (hasLitres) litresAnswer else None)
 
   def nonEmpty = Seq(ownBrandsProduced, imported, copackerAll).flatten.nonEmpty || isCopackee
 
