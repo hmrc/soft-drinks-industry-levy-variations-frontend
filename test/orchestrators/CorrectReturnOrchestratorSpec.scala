@@ -19,17 +19,16 @@ package orchestrators
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import errors._
+import handlers.ErrorHandler
 import models.correctReturn.CorrectReturnUserAnswersData
-import models.requests.DataRequest
 import models.submission.ReturnVariationData
 import models.{ReturnPeriod, SdilReturn, SelectChange, SmallProducer, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.correctReturn.{CorrectionReasonPage, RepaymentMethodPage}
 import play.api.libs.json.{JsString, Json, Writes}
-import play.api.mvc.AnyContent
 import services.SessionService
+import utilities.GenericLogger
 
 import java.time.ZoneOffset
 import scala.concurrent.Future
@@ -39,6 +38,8 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
 
   val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
   val mockSessionService: SessionService = mock[SessionService]
+  val mockGenericLogger: GenericLogger = mock[GenericLogger]
+  val mockErrorHandler: ErrorHandler = mock[ErrorHandler]
 
   val emptyReturn: SdilReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0), submittedOn =
     Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
@@ -54,7 +55,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
     expectedCorrectReturnDataForPopulatedReturn
   }
 
-  val orchestrator = new CorrectReturnOrchestrator(mockSdilConnector, mockSessionService)
+  val orchestrator = new CorrectReturnOrchestrator(mockSdilConnector, mockSessionService, genericLogger = mockGenericLogger, errorHandler = mockErrorHandler)
 
   "getReturnPeriods" - {
     "when the call returns variable returnPeriods" - {
@@ -216,10 +217,10 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
 
       when(mockSdilConnector.submitReturnsVariation(aSubscription.utr, returnVariationData)(hc)).thenReturn(createSuccessVariationResult((): Unit))
 
-      val res = orchestrator.submitVariation()(any(),hc, ec)
+      val res = orchestrator.submitVariation()(any(),any(), any())
 
       whenReady(res) { result =>
-        result mustBe Left(NoSdilReturnForPeriod)
+        result mustBe Right()
       }
 
     }

@@ -20,6 +20,7 @@ import cats.data.EitherT
 import com.google.inject.{Inject, Singleton}
 import connectors.SoftDrinksIndustryLevyConnector
 import errors.{FailedToAddDataToUserAnswers, NoSdilReturnForPeriod, NoVariableReturns}
+import handlers.ErrorHandler
 import models.backend.{RetrievedSubscription, Site, UkAddress}
 import models.correctReturn.CorrectReturnUserAnswersData
 import models.enums.SiteTypes.{PRODUCTION_SITE, WAREHOUSE}
@@ -30,16 +31,20 @@ import models.updateRegisteredDetails.ContactDetails
 import models.{ReturnPeriod, SdilReturn, UserAnswers}
 import pages.correctReturn.{CorrectionReasonPage, RepaymentMethodPage}
 import play.api.mvc.AnyContent
+import play.api.mvc.Results.InternalServerError
 import service.VariationResult
 import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
+import utilities.GenericLogger
 
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConnector,
-                                          sessionService: SessionService){
+                                          sessionService: SessionService,
+                                          genericLogger: GenericLogger,
+                                          val errorHandler: ErrorHandler){
 
   def submitVariation()
                      (implicit request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
@@ -63,8 +68,11 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
         submittedOn = Some(Instant.now())
       )
     )
-    println(s"What is being Submitted -> $returnVariationData")
-    Future.successful(connector.submitReturnsVariation(request.subscription.sdilRef, returnVariationData.get))
+    returnVariationData match {
+      case Some(returnVariation) =>  Future.successful(connector.submitReturnsVariation(request.subscription.sdilRef,  returnVariation))
+      case None => genericLogger.logger.info(s"failed to collect userAnswers")
+        Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+    }
   }
 
   private def getReturnsVariationToBeSubmitted(subscription: RetrievedSubscription,
