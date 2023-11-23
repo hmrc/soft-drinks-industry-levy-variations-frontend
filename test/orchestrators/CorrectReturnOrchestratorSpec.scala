@@ -64,7 +64,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
     expectedCorrectReturnDataForPopulatedReturn
   }
 
-  val orchestrator = new CorrectReturnOrchestrator(mockSdilConnector, mockSessionService, genericLogger = mockGenericLogger, errorHandler = mockErrorHandler)
+  val orchestrator = new CorrectReturnOrchestrator(mockSdilConnector, mockSessionService)
 
   "getReturnPeriods" - {
     "when the call returns variable returnPeriods" - {
@@ -261,7 +261,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
             ReturnPeriod(2022, 3)
           )
 
-            orchestrator.submitVariation()(request, hc, ec)
+            orchestrator.submitVariation(userAnswers, aSubscription)(hc, ec)
 
             events.collectFirst{
               case event =>
@@ -321,9 +321,9 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
           userAnswers,
           ReturnPeriod(2022, 3)
         )
-        val res = orchestrator.submitVariation()(request, hc, ec)
+        val res = orchestrator.submitVariation(userAnswers, aSubscription)(hc, ec)
 
-        whenReady(res) { result =>
+        whenReady(res.value) { result =>
           result mustBe (): Unit
         }
       }

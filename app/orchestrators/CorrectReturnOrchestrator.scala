@@ -19,68 +19,61 @@ package orchestrators
 import cats.data.EitherT
 import com.google.inject.{Inject, Singleton}
 import connectors.SoftDrinksIndustryLevyConnector
-import errors.{FailedToAddDataToUserAnswers, NoSdilReturnForPeriod, NoVariableReturns}
-import handlers.ErrorHandler
-import models.backend.{RetrievedSubscription, Site, UkAddress}
+import errors.{FailedToAddDataToUserAnswers, NoSdilReturnForPeriod, NoVariableReturns, UnexpectedResponseFromSDIL, VariationsErrors}
+import models.backend.RetrievedSubscription
 import models.correctReturn.CorrectReturnUserAnswersData
-import models.enums.SiteTypes.{PRODUCTION_SITE, WAREHOUSE}
-import models.requests.DataRequest
-import models.submission.VariationsSites.getHighestRefNumber
-import models.submission.{ClosedSite, ReturnVariationData, VariationsPersonalDetails, VariationsSite, VariationsSites, VariationsSubmission}
-import models.updateRegisteredDetails.ContactDetails
+import models.submission.ReturnVariationData
 import models.{ReturnPeriod, SdilReturn, UserAnswers}
 import pages.correctReturn.{CorrectionReasonPage, RepaymentMethodPage}
-import play.api.mvc.AnyContent
-import play.api.mvc.Results.InternalServerError
+import play.api.mvc.Results.Redirect
 import service.VariationResult
 import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
-import utilities.GenericLogger
 
 import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConnector,
-                                          sessionService: SessionService,
-                                          genericLogger: GenericLogger,
-                                          val errorHandler: ErrorHandler){
+                                          sessionService: SessionService){
 
-  def submitVariation()
-                     (implicit request: DataRequest[AnyContent], hc: HeaderCarrier, ec: ExecutionContext): Future[Unit] = {
-    val returnVariationData = for {
-      originalReturn <- request.userAnswers.getCorrectReturnOriginalSDILReturnData
-      returnPeriod <- request.userAnswers.correctReturnPeriod
-      revisedReturn <- request.userAnswers.getCorrectReturnData
-    } yield getReturnsVariationToBeSubmitted(
-      subscription = request.subscription,
-      userAnswers = request.userAnswers,
-      originalReturn = originalReturn,
-      returnPeriod = returnPeriod,
-      revisedReturn = SdilReturn(
-        ownBrand = revisedReturn.howManyOperatePackagingSiteOwnBrands.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-        packLarge = revisedReturn.howManyPackagedAsContractPacker.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-        packSmall = request.userAnswers.smallProducerList,
-        importLarge = revisedReturn.howManyCreditsForLostDamaged.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-        importSmall = revisedReturn.howManyBroughtIntoUkFromSmallProducers.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-        export = revisedReturn.howManyClaimCreditsForExports.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-        wastage = revisedReturn.howManyCreditsForLostDamaged.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-        submittedOn = Some(Instant.now())
-      )
+  def submitVariation(userAnswers: UserAnswers, subscription: RetrievedSubscription)
+                     (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = {
+
+       val returnVariation =  for {
+        originalReturn <- userAnswers.getCorrectReturnOriginalSDILReturnData
+        returnPeriod <- userAnswers.correctReturnPeriod
+        revisedReturn <- userAnswers.getCorrectReturnData
+      } yield {
+        getReturnsVariationToBeSubmitted(
+          subscription = subscription,
+          userAnswers = userAnswers,
+          originalReturn = originalReturn,
+          returnPeriod = returnPeriod,
+          revisedReturn = SdilReturn(
+            ownBrand = revisedReturn.howManyOperatePackagingSiteOwnBrands.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
+            packLarge = revisedReturn.howManyPackagedAsContractPacker.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
+            packSmall = userAnswers.smallProducerList,
+            importLarge = revisedReturn.howManyCreditsForLostDamaged.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
+            importSmall = revisedReturn.howManyBroughtIntoUkFromSmallProducers.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
+            export = revisedReturn.howManyClaimCreditsForExports.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
+            wastage = revisedReturn.howManyCreditsForLostDamaged.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
+            submittedOn = Some(Instant.now())
+          )
+        )
+      }
+    returnVariation.map( returnVariation =>
+    returnVariation.getOrElse(
+      connector.submitReturnsVariation(subscription.sdilRef, returnVariation))
     )
-    returnVariationData match {
-      case Some(returnVariation) =>  Future.successful(connector.submitReturnsVariation(request.subscription.sdilRef,  returnVariation))
-      case None => genericLogger.logger.info(s"failed to collect userAnswers")
-        Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
-    }
   }
 
   private def getReturnsVariationToBeSubmitted(subscription: RetrievedSubscription,
                                                userAnswers: UserAnswers,
                                                originalReturn: SdilReturn,
                                                returnPeriod: ReturnPeriod,
-                                               revisedReturn: SdilReturn): ReturnVariationData = {
-    ReturnVariationData(
+                                               revisedReturn: SdilReturn): Option[ReturnVariationData]  = {
+    Some(ReturnVariationData(
       original = originalReturn,
       revised = revisedReturn,
       period = returnPeriod,
@@ -88,7 +81,7 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
       address = subscription.address,
       reason = userAnswers.get(CorrectionReasonPage).get,
       repaymentMethod = Some(userAnswers.get(RepaymentMethodPage).toString)
-    )
+    ))
   }
 
   def getReturnPeriods(retrievedSubscription: RetrievedSubscription)

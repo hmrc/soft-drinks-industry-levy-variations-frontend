@@ -19,6 +19,7 @@ package controllers.correctReturn
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.ControllerActions
+import handlers.ErrorHandler
 import models.SelectChange.CorrectReturn
 import models.correctReturn.ChangedPage
 import models.{Amounts, SdilReturn}
@@ -41,7 +42,8 @@ class CorrectReturnCheckChangesCYAController @Inject()(
                                             view: CorrectReturnCheckChangesCYAView,
                                             returnService: ReturnService,
                                             correctReturnOrchestrator: CorrectReturnOrchestrator,
-                                            genericLogger: GenericLogger
+                                            genericLogger: GenericLogger,
+                                            val errorHandler: ErrorHandler
                                           )(implicit config: FrontendAppConfig, ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
@@ -73,8 +75,10 @@ class CorrectReturnCheckChangesCYAController @Inject()(
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
     implicit request =>
-    correctReturnOrchestrator.submitVariation().map { _ =>
-      Redirect(routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+    correctReturnOrchestrator.submitVariation(request.userAnswers, request.subscription).value.map {
+      case Right(_) =>  Redirect(routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+      case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to submit return variation")
+        InternalServerError(errorHandler.internalServerErrorTemplate)
     }
   }
 }

@@ -113,8 +113,8 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
           )
           .build()
       running(application) {
-        when (mockCorrectReturnOrchestrator.submitVariation()(any(),any(),any())) thenReturn Future.successful(Right())
-        val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        //when (mockCorrectReturnOrchestrator.submitVariation(userAnswersForCorrectReturnWithEmptySdilReturn, aSubscription)(any(),any())) thenReturn Future.successful(Right())
+        val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url).withFormUrlEncodedBody()
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url
@@ -129,8 +129,8 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
           )
           .build()
       running(application) {
-        when (mockCorrectReturnOrchestrator.submitVariation()(any(),any(),any())) thenReturn Future.successful(Right())
-        val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+       // when (mockCorrectReturnOrchestrator.submitVariation(userAnswersForCorrectReturnWithEmptySdilReturn, aSubscription)(any(),any())) thenReturn Future.successful(Right())
+        val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url).withFormUrlEncodedBody()
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.SelectChangeController.onPageLoad.url
