@@ -39,41 +39,38 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
 
   def submitVariation(userAnswers: UserAnswers, subscription: RetrievedSubscription)
                      (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = {
-
-       val returnVariation =  for {
-        originalReturn <- userAnswers.getCorrectReturnOriginalSDILReturnData
-        returnPeriod <- userAnswers.correctReturnPeriod
-        revisedReturn <- userAnswers.getCorrectReturnData
-      } yield {
-        getReturnsVariationToBeSubmitted(
-          subscription = subscription,
-          userAnswers = userAnswers,
-          originalReturn = originalReturn,
-          returnPeriod = returnPeriod,
-          revisedReturn = SdilReturn(
-            ownBrand = revisedReturn.howManyOperatePackagingSiteOwnBrands.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-            packLarge = revisedReturn.howManyPackagedAsContractPacker.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-            packSmall = userAnswers.smallProducerList,
-            importLarge = revisedReturn.howManyCreditsForLostDamaged.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-            importSmall = revisedReturn.howManyBroughtIntoUkFromSmallProducers.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-            export = revisedReturn.howManyClaimCreditsForExports.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-            wastage = revisedReturn.howManyCreditsForLostDamaged.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-            submittedOn = Some(Instant.now())
-          )
+    val optReturnVariation = for {
+      originalReturn <- userAnswers.getCorrectReturnOriginalSDILReturnData
+      returnPeriod <- userAnswers.correctReturnPeriod
+      revisedReturn <- userAnswers.getCorrectReturnData
+    } yield {
+      getReturnsVariationToBeSubmitted(
+        subscription = subscription,
+        userAnswers = userAnswers,
+        originalReturn = originalReturn,
+        returnPeriod = returnPeriod,
+        revisedReturn = SdilReturn(
+          ownBrand = revisedReturn.howManyOperatePackagingSiteOwnBrands.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
+          packLarge = revisedReturn.howManyPackagedAsContractPacker.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
+          packSmall = userAnswers.smallProducerList,
+          importLarge = revisedReturn.howManyCreditsForLostDamaged.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
+          importSmall = revisedReturn.howManyBroughtIntoUkFromSmallProducers.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
+          export = revisedReturn.howManyClaimCreditsForExports.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
+          wastage = revisedReturn.howManyCreditsForLostDamaged.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
+          submittedOn = Some(Instant.now())
         )
-      }
-    returnVariation.map( returnVariation =>
-    returnVariation.getOrElse(
-      connector.submitReturnsVariation(subscription.sdilRef, returnVariation))
-    )
+      )
+    }
+    optReturnVariation.map(connector.submitReturnsVariation(subscription.sdilRef, _))
+      .getOrElse(UnexpectedResponseFromSDIL)
   }
 
   private def getReturnsVariationToBeSubmitted(subscription: RetrievedSubscription,
                                                userAnswers: UserAnswers,
                                                originalReturn: SdilReturn,
                                                returnPeriod: ReturnPeriod,
-                                               revisedReturn: SdilReturn): Option[ReturnVariationData]  = {
-    Some(ReturnVariationData(
+                                               revisedReturn: SdilReturn): ReturnVariationData  = {
+    ReturnVariationData(
       original = originalReturn,
       revised = revisedReturn,
       period = returnPeriod,
@@ -81,7 +78,7 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
       address = subscription.address,
       reason = userAnswers.get(CorrectionReasonPage).get,
       repaymentMethod = Some(userAnswers.get(RepaymentMethodPage).toString)
-    ))
+    )
   }
 
   def getReturnPeriods(retrievedSubscription: RetrievedSubscription)
