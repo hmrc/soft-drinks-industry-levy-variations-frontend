@@ -323,7 +323,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
         )
         val res = orchestrator.submitVariation()(request, hc, ec)
 
-        when(res.value) { result =>
+        whenReady(res) { result =>
           result mustBe (): Unit
         }
       }
