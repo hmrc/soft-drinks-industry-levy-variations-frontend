@@ -29,7 +29,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title mustBe "Do you want to add another small producer? - Soft Drinks Industry Levy - GOV.UK"
+            page.title mustBe "You added 0 small producers - Soft Drinks Industry Levy - GOV.UK"
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -54,7 +54,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title mustBe "Do you want to add another small producer? - Soft Drinks Industry Levy - GOV.UK"
+            page.title mustBe "You added 1 small producer - Soft Drinks Industry Levy - GOV.UK"
             val summaryList = page.getElementsByClass("govuk-summary-list")
             summaryList.size() mustBe 1
           }
@@ -76,7 +76,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title mustBe "Do you want to add another small producer? - Soft Drinks Industry Levy - GOV.UK"
+            page.title mustBe "You added 2 small producers - Soft Drinks Industry Levy - GOV.UK"
             val summaryRows = page.getElementsByClass("govuk-summary-list__row")
             summaryRows.size() mustBe 2
           }
@@ -98,7 +98,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title mustBe "Do you want to add another small producer? - Soft Drinks Industry Levy - GOV.UK"
+              page.title mustBe "You added 0 small producers - Soft Drinks Industry Levy - GOV.UK"
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -129,7 +129,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title mustBe "Do you want to add another small producer? - Soft Drinks Industry Levy - GOV.UK"
+            page.title mustBe "You added 0 small producers - Soft Drinks Industry Levy - GOV.UK"
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -155,7 +155,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title mustBe "Do you want to add another small producer? - Soft Drinks Industry Levy - GOV.UK"
+              page.title mustBe "You added 0 small producers - Soft Drinks Industry Levy - GOV.UK"
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -250,7 +250,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title mustBe "Error: Do you want to add another small producer? - Soft Drinks Industry Levy - GOV.UK"
+            page.title mustBe "Error: You added 0 small producers - Soft Drinks Industry Levy - GOV.UK"
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
@@ -343,7 +343,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title mustBe "Error: Do you want to add another small producer? - Soft Drinks Industry Levy - GOV.UK"
+            page.title mustBe "Error: You added 0 small producers - Soft Drinks Industry Levy - GOV.UK"
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary

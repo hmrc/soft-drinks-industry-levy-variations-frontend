@@ -28,24 +28,22 @@
 
 @(form: Form[_], mode: Mode, smallProducerList: List[SmallProducer])(implicit request: Request[_], messages: Messages)
 
-@layout(pageTitle = title(form, messages("correctReturn.smallProducerDetails.title"))) {
+@layout(pageTitle = title(form, messages("correctReturn.smallProducerDetails.title", smallProducerList.length, if(smallProducerList.length == 1) "" else "s"))) {
 
     @formHelper(action = routes.SmallProducerDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        @if(smallProducerList.size == 1) {
-            <h1 class="govuk-heading-l">@messages("correctReturn.smallProducerDetails.headingSingle")</h1>
-        } else {
-            <h1 class="govuk-heading-l">@messages("correctReturn.smallProducerDetails.heading", smallProducerList.length)</h1>
-        }
+
+        <h1 class="govuk-heading-l">@messages("correctReturn.smallProducerDetails.title", smallProducerList.length, if(smallProducerList.length == 1) "" else "s")</h1>
+
         @govukSummaryList(SmallProducerDetailsSummary.producerList(mode, smallProducerList))
 
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("correctReturn.smallProducerDetails.title")).withCssClass("govuk-fieldset__legend--m"),
+                legend = LegendViewModel(messages("correctReturn.smallProducerDetails.header")).withCssClass("govuk-fieldset__legend--m"),
                 hint = None
             )
         )
