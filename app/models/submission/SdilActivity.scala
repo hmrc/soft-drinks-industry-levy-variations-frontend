@@ -36,18 +36,19 @@ object SdilActivity extends VariationSubmissionHelper {
   implicit val writes: Writes[SdilActivity] = Json.writes[SdilActivity]
 
   def fromChangeActivityData(changeActivityData: ChangeActivityData, subscription: RetrievedSubscription, todaysDate: LocalDate): SdilActivity = {
-    val changeActivityVoluntaryChangedValue = changeActivityData.isVoluntary ifDifferentTo subscription.activity.voluntaryRegistration
+    val voluntaryChangedValue = changeActivityData.isVoluntary ifDifferentTo subscription.activity.voluntaryRegistration
     val taxObligationStartDate = if (subscription.activity.voluntaryRegistration && changeActivityData.isLiable) {
       Some(todaysDate)
     } else {
       None
     }
+    val activity = Activity.fromChangeActivityData(changeActivityData)
     SdilActivity(
-      Some(Activity.fromChangeActivityData(changeActivityData)),
+      if (activity.nonEmpty || activity.isLarge != subscription.activity.largeProducer) Some(activity) else None,
       !changeActivityData.isLarge ifDifferentTo !subscription.activity.largeProducer,
-      smallProducerExemption = changeActivityVoluntaryChangedValue,
-      usesContractPacker = changeActivityVoluntaryChangedValue,
-      voluntarilyRegistered = changeActivityVoluntaryChangedValue,
+      smallProducerExemption = voluntaryChangedValue,
+      usesContractPacker = voluntaryChangedValue,
+      voluntarilyRegistered = voluntaryChangedValue,
       None,
       taxObligationStartDate
     )

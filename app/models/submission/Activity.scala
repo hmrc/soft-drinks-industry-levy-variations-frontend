@@ -24,7 +24,9 @@ case class Activity(
                      Imported: Option[Litreage] = None,
                      CopackerAll: Option[Litreage] = None,
                      Copackee: Option[Litreage] = None,
-                     isLarge: Boolean)
+                     isLarge: Boolean) {
+  def nonEmpty: Boolean = Seq(ProducedOwnBrand, Imported, CopackerAll, Copackee).flatten.nonEmpty
+}
 
 object Activity {
   implicit val format: Format[Activity] = Json.format[Activity]
