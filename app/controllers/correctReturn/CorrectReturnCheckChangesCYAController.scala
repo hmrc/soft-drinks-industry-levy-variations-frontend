@@ -25,6 +25,7 @@ import models.correctReturn.ChangedPage
 import models.{Amounts, SdilReturn}
 import orchestrators.CorrectReturnOrchestrator
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.Results.InternalServerError
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReturnService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -75,10 +76,14 @@ class CorrectReturnCheckChangesCYAController @Inject()(
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
     implicit request =>
-    correctReturnOrchestrator.submitVariation(request.userAnswers, request.subscription).value.map {
-      case Right(_) =>  Redirect(routes.CorrectReturnUpdateDoneController.onPageLoad.url)
-      case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to submit return variation")
-        InternalServerError(errorHandler.internalServerErrorTemplate)
+    correctReturnOrchestrator.submitVariation(request.userAnswers, request.subscription).map(result =>
+      result.value.map {
+        case Right(_) =>  Redirect(routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to submit return variation")
+          InternalServerError(errorHandler.internalServerErrorTemplate)
+      }).getOrElse{
+      genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to submit return variation due to retrieving information")
+      Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
     }
   }
 }

@@ -19,6 +19,7 @@ package controllers.correctReturn
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers._
+import errors.UnexpectedResponseFromSDIL
 import models.correctReturn.{AddASmallProducer, ChangedPage, RepaymentMethod}
 import models.{LitresInBands, SmallProducer}
 import navigation.{FakeNavigatorForCorrectReturn, NavigatorForCorrectReturn}
@@ -106,18 +107,38 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must submit successfully " in {
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
           .overrides(
-            inject.bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute))
+            bind[CorrectReturnOrchestrator].toInstance(mockCorrectReturnOrchestrator)
           )
           .build()
+
       running(application) {
-        //when (mockCorrectReturnOrchestrator.submitVariation(userAnswersForCorrectReturnWithEmptySdilReturn, aSubscription)(any(),any())) thenReturn Future.successful(Right())
         val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url).withFormUrlEncodedBody()
+        when (mockCorrectReturnOrchestrator.submitVariation(any(), any())(any(),any())) thenReturn Some(createSuccessVariationResult((): Unit))
+
         val result = route(application, request).value
+
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url
+      }
+    }
+
+    "must return internal server error if submission is not a success" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+        .overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockCorrectReturnOrchestrator)
+        )
+        .build()
+
+      running(application) {
+        when (mockCorrectReturnOrchestrator.submitVariation(any(), any())(any(),any())) thenReturn Some(createFailureVariationResult(UnexpectedResponseFromSDIL))
+
+        val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url).withFormUrlEncodedBody()
+
+        val result = route(application, request).value
+
+        status(result) mustEqual INTERNAL_SERVER_ERROR
       }
     }
 

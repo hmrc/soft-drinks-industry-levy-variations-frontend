@@ -38,7 +38,7 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
                                           sessionService: SessionService){
 
   def submitVariation(userAnswers: UserAnswers, subscription: RetrievedSubscription)
-                     (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = {
+                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Option[VariationResult[Unit]] = {
     val optReturnVariation = for {
       originalReturn <- userAnswers.getCorrectReturnOriginalSDILReturnData
       returnPeriod <- userAnswers.correctReturnPeriod
@@ -62,7 +62,6 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
       )
     }
     optReturnVariation.map(connector.submitReturnsVariation(subscription.sdilRef, _))
-      .getOrElse(UnexpectedResponseFromSDIL)
   }
 
   private def getReturnsVariationToBeSubmitted(subscription: RetrievedSubscription,
