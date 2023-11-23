@@ -191,12 +191,12 @@ class SoftDrinksIndustryLevyConnector @Inject()(
       resp.status match {
         case NO_CONTENT => Right((): Unit)
         case status =>
-          genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][submitVariation] - unexpected response $status for $sdilNumber")
+          genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][submitReturnsVariation] - unexpected response $status for $sdilNumber")
           Left(UnexpectedResponseFromSDIL)
       }
     }.recover {
       case _ =>
-        genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][submitVariation] - unexpected response for $sdilNumber")
+        genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][submitReturnsVariation] - unexpected response for $sdilNumber")
         Left(UnexpectedResponseFromSDIL)
     }
   }
