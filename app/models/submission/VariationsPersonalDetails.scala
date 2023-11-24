@@ -39,7 +39,7 @@ object VariationsPersonalDetails extends VariationSubmissionHelper {
       emailAddress = updatedContactDetails.email ifDifferentTo subscription.contact.email
     )
 
-    if(updatedPDs.nonEmpty) {
+    if (updatedPDs.nonEmpty) {
       Some(updatedPDs)
     } else {
       None

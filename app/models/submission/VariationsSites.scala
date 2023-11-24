@@ -33,7 +33,7 @@ object VariationsSites extends VariationSubmissionHelper {
     val allOriginalSites = subscription.productionSites ++ subscription.warehouseSites
     val highestExistingRefNumber = getHighestRefNumber(allOriginalSites)
 
-    val newPSites = newPackagingSites.zipWithIndex.map{
+    val newPSites = newPackagingSites.zipWithIndex.map {
       case (site, id) =>
         val newRef = highestExistingRefNumber + id + 1
         VariationsSite.generateFromSite(site, contactDetails, newRef, PRODUCTION_SITE)
@@ -49,8 +49,9 @@ object VariationsSites extends VariationSubmissionHelper {
     val closedSites = (closedPackagingSites ++ closedWarehouses).map(site => ClosedSite.fromSite(site))
 
     VariationsSites(
-      if(newSites.nonEmpty) {newSites} else {Nil},
-      if(closedSites.nonEmpty) {closedSites} else {Nil})
+      if (newSites.nonEmpty) newSites else Nil,
+      if (closedSites.nonEmpty) closedSites else Nil
+    )
   }
 
   private def getNewAndClosedPackagingSites(userAnswers: UserAnswers, subscription: RetrievedSubscription): (List[Site], List[Site]) = {
