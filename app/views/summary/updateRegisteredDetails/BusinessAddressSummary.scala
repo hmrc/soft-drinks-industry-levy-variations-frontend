@@ -46,6 +46,7 @@ object BusinessAddressSummary  {
             actions = Some(Actions("", Seq(
               ActionItemViewModel("site.change", controllers.updateRegisteredDetails.routes.BusinessAddressController.changeAddress().url)
                 .withVisuallyHiddenText(messages("updateRegisteredDetails.businessAddress.change.hidden"))
+                .withAttribute("id", "change-businessAddress")
             )))
           )
         } else {
