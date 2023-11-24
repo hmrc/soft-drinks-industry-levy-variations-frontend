@@ -79,10 +79,10 @@ class CorrectReturnCheckChangesCYAController @Inject()(
     correctReturnOrchestrator.submitVariation(request.userAnswers, request.subscription).map(result =>
       result.value.map {
         case Right(_) =>  Redirect(routes.CorrectReturnUpdateDoneController.onPageLoad.url)
-        case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to submit return variation")
+        case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - received a fail response from submission")
           InternalServerError(errorHandler.internalServerErrorTemplate)
       }).getOrElse{
-      genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to submit return variation due to retrieving information")
+      genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to submit return variation due failing to retrieve user answers")
       Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
     }
   }
