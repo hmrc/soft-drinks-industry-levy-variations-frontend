@@ -25,18 +25,16 @@ import models.correctReturn.{AddASmallProducer, CorrectReturnUserAnswersData, Re
 import models.requests.{CorrectReturnDataRequest, DataRequest}
 import models.submission.ReturnVariationData
 import models.{Contact, LitresInBands, ReturnPeriod, SdilReturn, SelectChange, SmallProducer, UserAnswers}
-import navigation.{FakeNavigatorForCorrectReturn, NavigatorForCorrectReturn}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.correctReturn.{AddASmallProducerPage, BroughtIntoUKPage, BroughtIntoUkFromSmallProducersPage, ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, CorrectionReasonPage, ExemptionsForSmallProducersPage, HowManyBroughtIntoUKPage, HowManyBroughtIntoUkFromSmallProducersPage, HowManyClaimCreditsForExportsPage, HowManyCreditsForLostDamagedPage, HowManyOperatePackagingSiteOwnBrandsPage, HowManyPackagedAsContractPackerPage, OperatePackagingSiteOwnBrandsPage, PackagedAsContractPackerPage, RepaymentMethodPage}
-import play.api.inject
+import pages.correctReturn._
 import play.api.inject.bind
 import play.api.libs.json.{JsString, Json, Writes}
-import play.api.mvc.{AnyContent, Request}
+import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{await, running}
-import services.{ReturnService, SessionService}
+import play.api.test.Helpers.running
+import services.SessionService
 import utilities.GenericLogger
 
 import java.time.{LocalDate, ZoneOffset}
@@ -259,7 +257,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
             ReturnPeriod(2022, 3)
           )
 
-            orchestrator.submitVariation(userAnswers, aSubscription)(hc, ec)
+            orchestrator.submitReturnVariation(userAnswers, aSubscription)(hc, ec)
 
             events.collectFirst{
               case event =>
@@ -319,7 +317,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
           userAnswers,
           ReturnPeriod(2022, 3)
         )
-        val res = orchestrator.submitVariation(userAnswers, aSubscription)(hc, ec)
+        val res = orchestrator.submitReturnVariation(userAnswers, aSubscription)(hc, ec)
 
 
       }

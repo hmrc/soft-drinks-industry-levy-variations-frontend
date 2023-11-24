@@ -76,10 +76,11 @@ class CorrectReturnCheckChangesCYAController @Inject()(
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
     implicit request =>
-    correctReturnOrchestrator.submitVariation(request.userAnswers, request.subscription).map(result =>
+    correctReturnOrchestrator.submitReturnVariation(request.userAnswers, request.subscription).map(result =>
       result.value.map {
-        case Right(_) =>  Redirect(routes.CorrectReturnUpdateDoneController.onPageLoad.url)
-        case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - received a fail response from submission")
+        case Right(_) =>  correctReturnOrchestrator.SubmitActivityVariation(request.userAnswers, request.subscription)
+          Redirect(routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - received a failed response from return submission")
           InternalServerError(errorHandler.internalServerErrorTemplate)
       }).getOrElse{
       genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to submit return variation due failing to retrieve user answers")
