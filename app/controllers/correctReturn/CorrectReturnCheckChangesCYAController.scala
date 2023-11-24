@@ -19,10 +19,13 @@ package controllers.correctReturn
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.ControllerActions
+import handlers.ErrorHandler
 import models.SelectChange.CorrectReturn
 import models.correctReturn.ChangedPage
 import models.{Amounts, SdilReturn}
+import orchestrators.CorrectReturnOrchestrator
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.mvc.Results.InternalServerError
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReturnService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -39,7 +42,9 @@ class CorrectReturnCheckChangesCYAController @Inject()(
                                             val controllerComponents: MessagesControllerComponents,
                                             view: CorrectReturnCheckChangesCYAView,
                                             returnService: ReturnService,
-                                            genericLogger: GenericLogger
+                                            correctReturnOrchestrator: CorrectReturnOrchestrator,
+                                            genericLogger: GenericLogger,
+                                            val errorHandler: ErrorHandler
                                           )(implicit config: FrontendAppConfig, ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
@@ -69,8 +74,16 @@ class CorrectReturnCheckChangesCYAController @Inject()(
       }).getOrElse(Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url)))
   }
 
-  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
-    Redirect(routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
+    implicit request =>
+    correctReturnOrchestrator.submitVariation(request.userAnswers, request.subscription).map(result =>
+      result.value.map {
+        case Right(_) =>  Redirect(routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - received a fail response from submission")
+          InternalServerError(errorHandler.internalServerErrorTemplate)
+      }).getOrElse{
+      genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to submit return variation due failing to retrieve user answers")
+      Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+    }
   }
-
 }

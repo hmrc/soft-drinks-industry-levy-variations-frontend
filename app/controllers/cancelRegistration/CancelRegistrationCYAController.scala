@@ -65,7 +65,8 @@ class CancelRegistrationCYAController @Inject()(
         val subscription = request.subscription
         val userAnswers = request.userAnswers
         cancelRegistrationOrchestrator.submitVariation(subscription, userAnswers).value.map {
-          case Right(_) => Redirect(routes.CancellationRequestDoneController.onPageLoad.url)
+          case Right(_) =>
+            Redirect(routes.CancellationRequestDoneController.onPageLoad.url)
           case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to cancel registration")
             InternalServerError(errorHandler.internalServerErrorTemplate)
         }
