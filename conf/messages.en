@@ -607,7 +607,7 @@ updateRegisteredDetails.updateContactDetails.phoneNumber.change.hidden = your co
 updateRegisteredDetails.updateContactDetails.email.change.hidden = your contact person’s email address
 
 updateRegisteredDetails.businessAddress.title = Your business address for the Soft Drinks Industry Levy
-updateRegisteredDetails.businessAddress.key = Your business address
+updateRegisteredDetails.businessAddress.key = Business address
 updateRegisteredDetails.businessAddress.change.hidden = business address
 
 updateRegisteredDetails.warehouseDetails.title = Change your UK warehouse details
