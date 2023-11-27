@@ -53,8 +53,11 @@ object UpdateContactDetailsSummary {
         Actions(
           items = if (isCheckAnswers) {
             Seq(ActionItem(routes.UpdateContactDetailsController.onPageLoad(CheckMode).url, "site.change")
-              .withVisuallyHiddenText(messages("updateRegisteredDetails.updateContactDetails.change.hidden")))
-          } else Seq.empty
+              .withVisuallyHiddenText(messages("updateRegisteredDetails.updateContactDetails.change.hidden"))
+              .withAttribute("id", "change-contactDetailsAdd"))
+          } else {
+            Seq.empty
+          }
         )
       )
     )

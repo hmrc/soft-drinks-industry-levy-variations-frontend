@@ -46,34 +46,40 @@ class UpdateContactDetailsSummarySpec extends SpecBase {
           value = Value(Text(contactDetails.fullName)),
             actions = Some(Actions(
             items = Seq(ActionItem(routes.UpdateContactDetailsController.onPageLoad(CheckMode).url, "site.change")
-              .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden")))
+              .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden"))
+              .withAttribute("id", "change-contactDetailsAdd"))
           ))
         ),
+
         SummaryListRow(
           key = s"updateRegisteredDetails.updateContactDetails.position",
           value = Value(Text(contactDetails.position)),
           actions = Some(Actions(
             items = Seq(ActionItem(routes.UpdateContactDetailsController.onPageLoad(CheckMode).url, "site.change")
-              .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden")))
-          ))
+              .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden"))
+              .withAttribute("id", "change-contactDetailsAdd")))
+          )
         ),
         SummaryListRow(
           key = s"updateRegisteredDetails.updateContactDetails.phoneNumber",
           value = Value(Text(contactDetails.phoneNumber)),
           actions = Some(Actions(
             items = Seq(ActionItem(routes.UpdateContactDetailsController.onPageLoad(CheckMode).url, "site.change")
-              .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden")))
-          ))
+              .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden"))
+              .withAttribute("id", "change-contactDetailsAdd")))
+          )
         ),
         SummaryListRow(
           key = s"updateRegisteredDetails.updateContactDetails.email",
           value = Value(Text(contactDetails.email)),
           actions = Some(Actions(
             items = Seq(ActionItem(routes.UpdateContactDetailsController.onPageLoad(CheckMode).url, "site.change")
-              .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden")))
+              .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden"))
+              .withAttribute("id", "change-contactDetailsAdd"))
+            )
           ))
         )
-      ))
+      )
     }
 
     s"should return correct rows when $UpdateContactDetailsPage is present and isCheckAnswers is false" in {
