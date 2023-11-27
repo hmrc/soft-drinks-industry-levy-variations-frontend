@@ -23,7 +23,8 @@
     govukSummaryList: GovukSummaryList,
     govukPanel : GovukPanel,
     formHelper: FormWithCSRF,
-    printLinkWithJs: printLinkWithJs
+    printLinkWithJs: printLinkWithJs,
+    govukDetails : GovukDetails
 )
 
 @(
@@ -34,6 +35,13 @@
     periodStart: String,
     periodEnd: String
 )(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+
+@answersSummmary = {
+    @for((heading, summaryList) <- seqSummaryList) {
+        <h2 class="govuk-heading-m">@messages(heading)</h2>
+        @govukSummaryList(summaryList)
+    }
+}
 
 @layout(pageTitle = titleNoForm(messages("correctReturn.updateDone.title"))) {
 
@@ -62,8 +70,9 @@
         <a class="govuk-link" href="@config.sdilHomeUrl">@messages("correctReturn.updateDone.accountHomeLink")</a>
     </p>
 
-    @for((heading, summaryList) <- seqSummaryList) {
-        <h2 class="govuk-heading-m">@messages(heading)</h2>
-        @govukSummaryList(summaryList)
-    }
+    @govukDetails(Details(
+        summary = Text(Messages("correctReturn.updateDone.detailsSummary")),
+        content = HtmlContent(answersSummmary)
+    ))
+
 }

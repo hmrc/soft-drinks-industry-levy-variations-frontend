@@ -539,6 +539,7 @@ correctReturn.updateDone.updateInfo.p1 = The corrected {0} to {1} return for {2}
 correctReturn.updateDone.updateInfo.p2 = Do not make any payments until we have confirmed how much you need to page, as you will be charged interest on your adjusted amount.
 correctReturn.updateDone.whatNextText = We may get in touch with your contact person to discuss your changes. Once we have approved your correction, your account balance will be updated.
 correctReturn.updateDone.accountHomeLink = Go back to your Soft Drinks Industry Levy details
+correctReturn.updateDone.detailsSummary = View the details of your update
 
 updateRegisteredDetails.contactDetails.title = Change person''s details
 updateRegisteredDetails.contactDetails.heading = Change person''s details
