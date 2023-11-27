@@ -19,15 +19,13 @@ package orchestrators
 import cats.data.EitherT
 import com.google.inject.{Inject, Singleton}
 import connectors.SoftDrinksIndustryLevyConnector
-import errors.{FailedToAddDataToUserAnswers, NoSdilReturnForPeriod, NoVariableReturns, UnexpectedResponseFromSDIL, VariationsErrors}
-import models.backend.{RetrievedSubscription, Site, UkAddress}
+import errors.{FailedToAddDataToUserAnswers, NoSdilReturnForPeriod, NoVariableReturns}
+import models.backend.{RetrievedSubscription, Site}
 import models.correctReturn.CorrectReturnUserAnswersData
 import models.enums.SiteTypes.{PRODUCTION_SITE, WAREHOUSE}
-import models.submission.{ClosedSite, ReturnVariationData, SdilActivity, VariationsContact, VariationsPersonalDetails, VariationsSite, VariationsSubmission}
+import models.submission.{ReturnVariationData, VariationsContact, VariationsSite, VariationsSubmission}
 import models.{ReturnPeriod, SdilReturn, UserAnswers}
-import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
 import pages.correctReturn.{CorrectionReasonPage, RepaymentMethodPage}
-import play.api.mvc.Results.Redirect
 import service.VariationResult
 import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -40,7 +38,7 @@ import scala.util.Try
 class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConnector,
                                           sessionService: SessionService){
 
-  def SubmitActivityVariation(userAnswers: UserAnswers,
+  def submitActivityVariation(userAnswers: UserAnswers,
                               subscription: RetrievedSubscription)
                              (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = {
     connector.submitVariation(constructActivityVariation(userAnswers, subscription),subscription.sdilRef)

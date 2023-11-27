@@ -19,7 +19,6 @@ package orchestrators
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import errors._
-import handlers.ErrorHandler
 import models.backend.{RetrievedActivity, RetrievedSubscription, UkAddress}
 import models.correctReturn.{AddASmallProducer, CorrectReturnUserAnswersData, RepaymentMethod}
 import models.requests.{CorrectReturnDataRequest, DataRequest}
