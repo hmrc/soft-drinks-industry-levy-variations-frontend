@@ -28,12 +28,18 @@
 @(seqSummaryList: Seq[(String, SummaryList)], formattedDate: String, formattedTime: String, companyName: String)(
         implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
+@answersSummary = {
+    @for((heading, summaryList) <- seqSummaryList) {
+        @govukSummaryList(summaryList)
+    }
+}
+
 @layout(pageTitle = titleNoForm(messages("updateRegisteredDetails.updateDone.title")), showBackLink = false) {
 
     @govukPanel(Panel(
-    title = Text(messages("updateRegisteredDetails.updateDone.title")),
-    content = HtmlContent(messages("updateRegisteredDetails.updateDone.panel.message")),
-    classes = "panel-indent"
+        title = Text(messages("updateRegisteredDetails.updateDone.title")),
+        content = HtmlContent(messages("updateRegisteredDetails.updateDone.panel.message")),
+        classes = "panel-indent"
     ))
 
     @printLinkWithJs(messages("site.print"))
@@ -41,7 +47,8 @@
     @if(companyName.length > 25) {
         <p class="govuk-body-m">@messages("updateRegisteredDetails.updateDone.updateInfoTwoPart1", companyName)
             <br>
-            @messages("updateRegisteredDetails.updateDone.updateInfoTwoPart2", formattedDate, formattedTime)</p>
+            @messages("updateRegisteredDetails.updateDone.updateInfoTwoPart2", formattedDate, formattedTime)
+        </p>
     } else {
         <p class="govuk-body-m">@messages("updateRegisteredDetails.updateDone.updateInfo", companyName, formattedDate, formattedTime)</p>
     }
@@ -52,12 +59,12 @@
 
     <p class="govuk-body" id="whatNextText">@messages("updateRegisteredDetails.updateDone.whatNextText")</p>
 
-     <p class="govuk-body-m">
+    <p class="govuk-body-m">
         <a class="govuk-link" href="@config.sdilHomeUrl">@messages("updateRegisteredDetails.updateDone.accountHomeLink")</a>
-     </p>
+    </p>
 
     @govukDetails(Details(
-    summary = Text(Messages("updateRegisteredDetails.updateDone.detailsSummary")),
-    content = Text("reference file here that is shared with checkAnswers for this flow")
+        summary = Text(Messages("updateRegisteredDetails.updateDone.detailsSummary")),
+        content = HtmlContent(answersSummary)
     ))
 }
