@@ -20,26 +20,102 @@ import cats.data.EitherT
 import com.google.inject.{Inject, Singleton}
 import connectors.SoftDrinksIndustryLevyConnector
 import errors.{FailedToAddDataToUserAnswers, NoSdilReturnForPeriod, NoVariableReturns, UnexpectedResponseFromSDIL, VariationsErrors}
-import models.backend.RetrievedSubscription
+import models.backend.{RetrievedSubscription, Site, UkAddress}
 import models.correctReturn.CorrectReturnUserAnswersData
-import models.submission.ReturnVariationData
+import models.enums.SiteTypes.{PRODUCTION_SITE, WAREHOUSE}
+import models.submission.{ClosedSite, ReturnVariationData, SdilActivity, VariationsContact, VariationsPersonalDetails, VariationsSite, VariationsSubmission}
 import models.{ReturnPeriod, SdilReturn, UserAnswers}
+import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
 import pages.correctReturn.{CorrectionReasonPage, RepaymentMethodPage}
 import play.api.mvc.Results.Redirect
 import service.VariationResult
 import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.Instant
+import java.time.{Instant, LocalDate}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 @Singleton
 class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConnector,
                                           sessionService: SessionService){
 
-  def submitVariation(userAnswers: UserAnswers, subscription: RetrievedSubscription)
-                     (implicit hc: HeaderCarrier, ec: ExecutionContext): Option[VariationResult[Unit]] = {
-    val optReturnVariation = for {
+  def SubmitActivityVariation(userAnswers: UserAnswers,
+                              subscription: RetrievedSubscription)
+                             (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = {
+    connector.submitVariation(constructActivityVariation(userAnswers, subscription),subscription.sdilRef)
+  }
+
+  def newSites(userAnswers: UserAnswers, subscription: RetrievedSubscription): List[VariationsSite] = {
+    val newProductionSites =
+      userAnswers.packagingSiteList.values.toSeq.diff(subscription.productionSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))))
+    val newWarehouses =
+      userAnswers.warehouseList.values.toSeq.diff(subscription.warehouseSites.filter(_.closureDate.forall(_.isAfter(LocalDate.now))))
+
+    variationsSites(subscription,newProductionSites, newWarehouses)
+  }
+
+  def variationsSites(subscription: RetrievedSubscription, productionSites: Seq[Site], warehouses: Seq[Site]): List[VariationsSite] = {
+    val contact = VariationsContact(
+      None,
+      Some(subscription.contact.phoneNumber),
+      Some(subscription.contact.email)
+    )
+
+    val highestNum = { subscription.productionSites ++ subscription.warehouseSites }.foldLeft(0) { (id, site) =>
+      Math.max(
+        id,
+        site.ref
+          .flatMap { x =>
+            Try(x.toInt).toOption
+          }
+          .getOrElse(0))
+    }
+
+    val ps = productionSites.zipWithIndex map {
+      case (site, id) =>
+        VariationsSite(
+          tradingName = site.tradingName.getOrElse(""),
+          siteReference = site.ref.getOrElse({ highestNum + id + 1 }.toString),
+          variationsContact = contact.copy(address = Some(site.address)),
+          typeOfSite = PRODUCTION_SITE
+        )
+    }
+
+    val w = warehouses.zipWithIndex map {
+      case (warehouse, id) =>
+        VariationsSite(
+          tradingName = warehouse.tradingName.getOrElse(""),
+          siteReference = warehouse.ref.getOrElse({ highestNum + id + 1 + productionSites.size }.toString),
+          variationsContact = contact.copy(address = Some(warehouse.address)),
+          typeOfSite = WAREHOUSE
+        )
+    }
+
+    (ps ++ w).toList
+  }
+
+  private def constructActivityVariation(userAnswers: UserAnswers, subscription: RetrievedSubscription): VariationsSubmission ={
+
+      VariationsSubmission(
+        displayOrgName = subscription.orgName,
+        ppobAddress = subscription.address,
+        newSites = newSites(userAnswers, subscription),
+        amendSites = Nil,
+        closeSites = Nil
+      )
+
+  }
+
+
+  def submitReturnVariation(userAnswers: UserAnswers, subscription: RetrievedSubscription)
+                           (implicit hc: HeaderCarrier, ec: ExecutionContext): Option[VariationResult[Unit]] = {
+    constructReturnVariationData(userAnswers, subscription).map(connector.submitReturnsVariation(subscription.sdilRef, _))
+  }
+
+  def constructReturnVariationData(userAnswers: UserAnswers, subscription: RetrievedSubscription)
+                     : Option[ReturnVariationData] = {
+    for {
       originalReturn <- userAnswers.getCorrectReturnOriginalSDILReturnData
       returnPeriod <- userAnswers.correctReturnPeriod
       revisedReturn <- userAnswers.getCorrectReturnData
@@ -61,7 +137,6 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
         )
       )
     }
-    optReturnVariation.map(connector.submitReturnsVariation(subscription.sdilRef, _))
   }
 
   private def getReturnsVariationToBeSubmitted(subscription: RetrievedSubscription,
