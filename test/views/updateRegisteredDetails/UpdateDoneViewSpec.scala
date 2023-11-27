@@ -19,10 +19,11 @@ package views.updateRegisteredDetails
 import config.FrontendAppConfig
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import uk.gov.hmrc.govukfrontend.views.Aliases.Value
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import views.ViewSpecHelper
 import views.html.updateRegisteredDetails.UpdateDoneView
-import views.summary.updateRegisteredDetails.UpdateContactDetailsSummary
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, ZoneId}
@@ -37,7 +38,12 @@ class UpdateDoneViewSpec extends ViewSpecHelper {
   val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("H:MMa")
   val formattedDate: String = getSentDateTime.format(dateFormatter)
   val formattedTime: String = getSentDateTime.format(timeFormatter)
-  val summaryList: Seq[(String, SummaryList)] = Seq(UpdateContactDetailsSummary.rows(emptyUserAnswersForUpdateRegisteredDetails)).flatten
+  val summaryList: Seq[(String, SummaryList)] = {
+    Seq(
+      "foo" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("wizz"))))),
+      "bar" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bang")))))
+    )
+  }
   val orgName: String = aSubscription.orgName
   val config: FrontendAppConfig = frontendAppConfig
 
@@ -93,7 +99,7 @@ class UpdateDoneViewSpec extends ViewSpecHelper {
       }
 
       "that has the expected content" in {
-        details.getElementsByClass(Selectors.detailsContent).text() mustEqual "reference file here that is shared with checkAnswers for this flow"
+        details.getElementsByClass(Selectors.detailsContent).text() mustEqual List("wizz","bang").mkString(" ")
       }
     }
 

@@ -27,34 +27,35 @@ import viewmodels.implicits._
 
 object UpdateContactDetailsSummary {
 
-  def rows(answers: UserAnswers)(implicit messages: Messages): Option[(String, SummaryList)] = {
-
+  def rows(answers: UserAnswers, isCheckAnswers: Boolean = true)(implicit messages: Messages): Option[(String, SummaryList)] = {
       answers.get(UpdateContactDetailsPage).fold(Option.empty[(String, SummaryList)]) {
         answer =>
           Some(
             messages("updateRegisteredDetails.checkYourAnswers.updateContactDetails.title") ->
               SummaryList(
               rows = Seq(
-            createSummaryListItem("fullName", answer.fullName),
-            createSummaryListItem("position", answer.position),
-            createSummaryListItem("phoneNumber", answer.phoneNumber),
-            createSummaryListItem("email", answer.email)
+            createSummaryListItem("fullName", answer.fullName, isCheckAnswers),
+            createSummaryListItem("position", answer.position, isCheckAnswers),
+            createSummaryListItem("phoneNumber", answer.phoneNumber, isCheckAnswers),
+            createSummaryListItem("email", answer.email, isCheckAnswers)
           )
             )
           )
       }
   }
 
-  private def createSummaryListItem(fieldName: String, fieldValue: String)
+  private def createSummaryListItem(fieldName: String, fieldValue: String, isCheckAnswers: Boolean)
                                    (implicit messages: Messages): SummaryListRow = {
     SummaryListRow(
       key = s"updateRegisteredDetails.updateContactDetails.$fieldName",
       value = Value(Text(fieldValue)),
       actions = Some(
         Actions(
-        items = Seq(ActionItem(routes.UpdateContactDetailsController.onPageLoad(CheckMode).url, "site.change")
-          .withVisuallyHiddenText(messages("updateRegisteredDetails.updateContactDetails.change.hidden")))
-      )
+          items = if (isCheckAnswers) {
+            Seq(ActionItem(routes.UpdateContactDetailsController.onPageLoad(CheckMode).url, "site.change")
+              .withVisuallyHiddenText(messages("updateRegisteredDetails.updateContactDetails.change.hidden")))
+          } else Seq.empty
+        )
       )
     )
   }

@@ -18,11 +18,14 @@ package controllers.updateRegisteredDetails
 
 import base.SpecBase
 import config.FrontendAppConfig
+import models.UserAnswers
+import models.updateRegisteredDetails.ContactDetails
+import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import views.html.updateRegisteredDetails.UpdateDoneView
-import views.summary.updateRegisteredDetails.UpdateContactDetailsSummary
+import views.summary.updateRegisteredDetails.{BusinessAddressSummary, UKSitesSummary, UpdateContactDetailsSummary}
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, ZoneId}
@@ -35,7 +38,13 @@ class UpdateDoneControllerSpec extends SpecBase {
   val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("H:MMa")
   val formattedDate: String = getSentDateTime.format(dateFormatter)
   val formattedTime: String = getSentDateTime.format(timeFormatter)
-  val summaryList: Seq[(String, SummaryList)] = Seq(UpdateContactDetailsSummary.rows(emptyUserAnswersForUpdateRegisteredDetails)).flatten
+  val userAnswers: UserAnswers = emptyUserAnswersForUpdateRegisteredDetails.
+    set(UpdateContactDetailsPage, ContactDetails("Full Name", "job position", "012345678901", "email@test.com")).success.value
+  val summaryList: Seq[(String, SummaryList)] = Seq(
+    UKSitesSummary.getHeadingAndSummary(userAnswers, isCheckAnswers = false),
+    UpdateContactDetailsSummary.rows(userAnswers, isCheckAnswers = false),
+    BusinessAddressSummary.rows(userAnswers, isCheckAnswers = false)
+  ).flatten
   val orgName: String = aSubscription.orgName
   val config: FrontendAppConfig = frontendAppConfig
 
@@ -43,7 +52,7 @@ class UpdateDoneControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, updateDoneRoute)

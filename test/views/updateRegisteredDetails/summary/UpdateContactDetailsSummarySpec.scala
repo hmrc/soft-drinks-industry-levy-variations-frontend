@@ -34,7 +34,7 @@ class UpdateContactDetailsSummarySpec extends SpecBase {
       UpdateContactDetailsSummary.rows(UserAnswers("", SelectChange.UpdateRegisteredDetails, contactAddress = contactAddress)) mustBe None
     }
 
-    s"should return correct rows when $UpdateContactDetailsPage is present" in {
+    s"should return correct rows when $UpdateContactDetailsPage is present and isCheckAnswers is true" in {
       val contactDetails = ContactDetails("foo","bar", "wizz", "bang")
       val res = UpdateContactDetailsSummary.rows(
         UserAnswers("", SelectChange.UpdateRegisteredDetails, contactAddress = contactAddress).set(UpdateContactDetailsPage, contactDetails).success.value).get
@@ -42,29 +42,29 @@ class UpdateContactDetailsSummarySpec extends SpecBase {
 
       res._2 mustBe SummaryList(
         Seq(SummaryListRow(
-        key = s"updateRegisteredDetails.updateContactDetails.fullName",
-        value = Value(Text(contactDetails.fullName)),
-          actions = Some(Actions(
-          items = Seq(ActionItem(routes.UpdateContactDetailsController.onPageLoad(CheckMode).url, "site.change")
-            .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden")))
-        )
-      )),
+          key = s"updateRegisteredDetails.updateContactDetails.fullName",
+          value = Value(Text(contactDetails.fullName)),
+            actions = Some(Actions(
+            items = Seq(ActionItem(routes.UpdateContactDetailsController.onPageLoad(CheckMode).url, "site.change")
+              .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden")))
+          ))
+        ),
         SummaryListRow(
           key = s"updateRegisteredDetails.updateContactDetails.position",
           value = Value(Text(contactDetails.position)),
           actions = Some(Actions(
             items = Seq(ActionItem(routes.UpdateContactDetailsController.onPageLoad(CheckMode).url, "site.change")
               .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden")))
-          )
-        )),
+          ))
+        ),
         SummaryListRow(
           key = s"updateRegisteredDetails.updateContactDetails.phoneNumber",
           value = Value(Text(contactDetails.phoneNumber)),
           actions = Some(Actions(
             items = Seq(ActionItem(routes.UpdateContactDetailsController.onPageLoad(CheckMode).url, "site.change")
               .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden")))
-          )
-        )),
+          ))
+        ),
         SummaryListRow(
           key = s"updateRegisteredDetails.updateContactDetails.email",
           value = Value(Text(contactDetails.email)),
@@ -74,6 +74,39 @@ class UpdateContactDetailsSummarySpec extends SpecBase {
           ))
         )
       ))
+    }
+
+    s"should return correct rows when $UpdateContactDetailsPage is present and isCheckAnswers is false" in {
+      val contactDetails = ContactDetails("foo", "bar", "wizz", "bang")
+      val res = UpdateContactDetailsSummary.rows(
+        UserAnswers("", SelectChange.UpdateRegisteredDetails, contactAddress = contactAddress).set(UpdateContactDetailsPage, contactDetails).success.value,
+        isCheckAnswers = false
+      ).get
+      res._1 mustBe "Soft Drinks Industry Levy contact"
+
+      res._2 mustBe SummaryList(
+        Seq(
+          SummaryListRow(
+            key = s"updateRegisteredDetails.updateContactDetails.fullName",
+            value = Value(Text(contactDetails.fullName)),
+            actions = Some(Actions("", Seq.empty))
+          ),
+          SummaryListRow(
+            key = s"updateRegisteredDetails.updateContactDetails.position",
+            value = Value(Text(contactDetails.position)),
+            actions = Some(Actions("", Seq.empty))
+          ),
+          SummaryListRow(
+            key = s"updateRegisteredDetails.updateContactDetails.phoneNumber",
+            value = Value(Text(contactDetails.phoneNumber)),
+            actions = Some(Actions("", Seq.empty))
+          ),
+          SummaryListRow(
+            key = s"updateRegisteredDetails.updateContactDetails.email",
+            value = Value(Text(contactDetails.email)),
+            actions = Some(Actions("", Seq.empty))
+          )
+        ))
     }
   }
 
