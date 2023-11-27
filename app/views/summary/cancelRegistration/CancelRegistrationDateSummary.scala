@@ -28,7 +28,7 @@ import viewmodels.implicits._
 
 object CancelRegistrationDateSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
+  def row(answers: UserAnswers, isCheckAnswers: Boolean = true)(implicit messages: Messages): SummaryListRow =
     answers.get(CancelRegistrationDatePage).map {
       answer =>
 
@@ -37,10 +37,12 @@ object CancelRegistrationDateSummary  {
         SummaryListRowViewModel(
           key     = "cancelRegistration.cancelRegistrationDate.checkYourAnswersLabel",
           value   = ValueViewModel(answer.format(dateFormatter)),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.CancelRegistrationDateController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("cancelRegistration.cancelRegistrationDate.change.hidden"))
-          )
+          actions = if (isCheckAnswers) {
+            Seq(
+              ActionItemViewModel("site.change", routes.CancelRegistrationDateController.onPageLoad(CheckMode).url)
+                .withVisuallyHiddenText(messages("cancelRegistration.cancelRegistrationDate.change.hidden"))
+            )
+          } else Seq.empty
         )
     }.getOrElse(throw new IllegalArgumentException(s"No end date inputted"))
 }

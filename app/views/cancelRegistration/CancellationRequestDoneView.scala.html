@@ -22,6 +22,7 @@
         govukPanel : GovukPanel,
         govukDetails: GovukDetails,
         govukInsetText: GovukInsetText,
+        govukSummaryList: GovukSummaryList,
         printLinkWithJs: printLinkWithJs
 )
 
@@ -32,8 +33,15 @@
     nextPeriodEnd: String,
     deadlineStart: String,
     deadlineEnd: String,
-    companyName: String
+    companyName: String,
+    seqSummaryList: Seq[(String, SummaryList)]
 )(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+
+@answersSummmary = {
+    @for((heading, summaryList) <- seqSummaryList) {
+        @govukSummaryList(summaryList)
+    }
+}
 
 @layout(pageTitle = titleNoForm(messages("cancelRegistration.cancellationRequestDone.title")), showBackLink = false) {
 
@@ -76,6 +84,6 @@
 
     @govukDetails(Details(
         summary = Text(Messages("cancelRegistration.cancellationRequestDone.detailsSummary")),
-        content = Text("TODO: IMPLEMENT DETAILS OF YOUR REQUEST")
+        content = HtmlContent(answersSummmary)
     ))
 }
