@@ -72,9 +72,11 @@ private[mappings] class LocalDateFormatter(
       args
     )
 
-    val bindedDay: Either[Seq[FormError], Int] = intDay.bind(s"$key.day", data)
-    val bindedMonth: Either[Seq[FormError], Int] = intMonth.bind(s"$key.month", data)
-    val bindedYear: Either[Seq[FormError], Int] = intYear.bind(s"$key.year", data)
+    val dataWithRemovedWhitespace = data.map(kv => (kv._1, kv._2.filterNot(char => char.isWhitespace)))
+
+    val bindedDay: Either[Seq[FormError], Int] = intDay.bind(s"$key.day", dataWithRemovedWhitespace)
+    val bindedMonth: Either[Seq[FormError], Int] = intMonth.bind(s"$key.month", dataWithRemovedWhitespace)
+    val bindedYear: Either[Seq[FormError], Int] = intYear.bind(s"$key.year", dataWithRemovedWhitespace)
 
     (bindedDay, bindedMonth, bindedYear) match {
       case (Left(dayError), Left(monthError), Left(yearError))=> Left(Seq(FormError(key, s"$key.error.invalid", args)))
