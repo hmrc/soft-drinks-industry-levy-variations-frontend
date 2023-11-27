@@ -42,51 +42,32 @@ class UpdateContactDetailsSummarySpec extends SpecBase {
 
       res._2 mustBe SummaryList(
         Seq(SummaryListRow(
-<<<<<<< HEAD
           key = s"updateRegisteredDetails.updateContactDetails.fullName",
           value = Value(Text(contactDetails.fullName)),
             actions = Some(Actions(
             items = Seq(ActionItem(routes.UpdateContactDetailsController.onPageLoad(CheckMode).url, "site.change")
-              .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden")))
+              .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden"))
+              .withAttribute("id", "change-contactDetailsAdd"))
           ))
         ),
-=======
-        key = s"updateRegisteredDetails.updateContactDetails.fullName",
-        value = Value(Text(contactDetails.fullName)),
-          actions = Some(Actions(
-          items = Seq(ActionItem(routes.UpdateContactDetailsController.onPageLoad(CheckMode).url, "site.change")
-            .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden"))
-            .withAttribute("id", "change-contactDetailsAdd"))
-        )
-      )),
->>>>>>> 0f8398ab (DLS-9358 add id attribute to view spec tests)
+
         SummaryListRow(
           key = s"updateRegisteredDetails.updateContactDetails.position",
           value = Value(Text(contactDetails.position)),
           actions = Some(Actions(
             items = Seq(ActionItem(routes.UpdateContactDetailsController.onPageLoad(CheckMode).url, "site.change")
-<<<<<<< HEAD
-              .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden")))
-          ))
-=======
               .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden"))
               .withAttribute("id", "change-contactDetailsAdd")))
           )
->>>>>>> 0f8398ab (DLS-9358 add id attribute to view spec tests)
         ),
         SummaryListRow(
           key = s"updateRegisteredDetails.updateContactDetails.phoneNumber",
           value = Value(Text(contactDetails.phoneNumber)),
           actions = Some(Actions(
             items = Seq(ActionItem(routes.UpdateContactDetailsController.onPageLoad(CheckMode).url, "site.change")
-<<<<<<< HEAD
-              .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden")))
-          ))
-=======
               .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden"))
               .withAttribute("id", "change-contactDetailsAdd")))
           )
->>>>>>> 0f8398ab (DLS-9358 add id attribute to view spec tests)
         ),
         SummaryListRow(
           key = s"updateRegisteredDetails.updateContactDetails.email",
