@@ -25,7 +25,7 @@ class BusinessAddressSummarySpec extends SpecBase {
 
   "row" - {
 
-    "should return a summary list row with the correct information and action links" in {
+    "should return a summary list row with the correct information with action links when isCheckAnswers is true" in {
       val businessAddressSummaryRow = BusinessAddressSummary.row(List(businessAddress))
       val rowActionListItems = businessAddressSummaryRow.head.actions.toList.head.items
 
@@ -33,6 +33,15 @@ class BusinessAddressSummarySpec extends SpecBase {
 
       rowActionListItems.size mustBe 1
       rowActionListItems.head.content.asHtml.toString mustBe "Change"
+    }
+
+    "should return a summary list row with the correct information without action links when isCheckAnswers is false" in {
+      val businessAddressSummaryRow = BusinessAddressSummary.row(List(businessAddress), isCheckAnswers = false)
+      val rowActionListItems = businessAddressSummaryRow.head.actions.toList
+
+      businessAddressSummaryRow.head.value.content.asHtml.toString mustBe "33 Rhes Priordy, East London<br>E73 2RP"
+
+      rowActionListItems.size mustBe 0
     }
   }
 
