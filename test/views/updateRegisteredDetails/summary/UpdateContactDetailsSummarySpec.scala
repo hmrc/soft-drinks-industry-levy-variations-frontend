@@ -88,19 +88,23 @@ class UpdateContactDetailsSummarySpec extends SpecBase {
         Seq(
           SummaryListRow(
             key = s"updateRegisteredDetails.updateContactDetails.fullName",
-            value = Value(Text(contactDetails.fullName))
+            value = Value(Text(contactDetails.fullName)),
+            actions = Some(Actions("", Seq.empty))
           ),
           SummaryListRow(
             key = s"updateRegisteredDetails.updateContactDetails.position",
-            value = Value(Text(contactDetails.position))
+            value = Value(Text(contactDetails.position)),
+            actions = Some(Actions("", Seq.empty))
           ),
           SummaryListRow(
             key = s"updateRegisteredDetails.updateContactDetails.phoneNumber",
-            value = Value(Text(contactDetails.phoneNumber))
+            value = Value(Text(contactDetails.phoneNumber)),
+            actions = Some(Actions("", Seq.empty))
           ),
           SummaryListRow(
             key = s"updateRegisteredDetails.updateContactDetails.email",
-            value = Value(Text(contactDetails.email))
+            value = Value(Text(contactDetails.email)),
+            actions = Some(Actions("", Seq.empty))
           )
         ))
     }
