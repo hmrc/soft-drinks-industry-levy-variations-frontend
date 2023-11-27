@@ -38,12 +38,7 @@ object VariationsPersonalDetails extends VariationSubmissionHelper {
       telephoneNumber = updatedContactDetails.phoneNumber ifDifferentTo subscription.contact.phoneNumber,
       emailAddress = updatedContactDetails.email ifDifferentTo subscription.contact.email
     )
-
-    if (updatedPDs.nonEmpty) {
-      Some(updatedPDs)
-    } else {
-      None
-    }
+    if (updatedPDs.nonEmpty) Some(updatedPDs) else None
   }
 
   implicit val format: Format[VariationsPersonalDetails] = Json.format[VariationsPersonalDetails]

@@ -32,12 +32,10 @@ case class VariationsContact(
 
 object VariationsContact {
 
-  private[models]  def findDifInAddress(userAnswersAddress: UkAddress, subscriptionAddress: UkAddress): Option[UkAddress] = {
-    if(subscriptionAddress.lines == userAnswersAddress.lines && subscriptionAddress.postCode == userAnswersAddress.postCode){
-      None
-    } else {
-      Some(userAnswersAddress)
-    }
+  private[models] def findDiffInAddress(userAnswersAddress: UkAddress, subscriptionAddress: UkAddress): Option[UkAddress] = {
+    val diffInAddress = subscriptionAddress.lines != userAnswersAddress.lines ||
+      subscriptionAddress.postCode != userAnswersAddress.postCode
+    if (diffInAddress) Some(userAnswersAddress) else None
   }
 
   def generateForSiteContact(contactDetails: ContactDetails, site: Site): VariationsContact = {
@@ -51,18 +49,11 @@ object VariationsContact {
   def generateForBusinessContact(userAnswers: UserAnswers,
                                  subscription: RetrievedSubscription,
                                  updatedContactDetails: Option[VariationsPersonalDetails]): Option[VariationsContact] = {
-
-    val variationsContact: Option[UkAddress] = findDifInAddress(userAnswers.contactAddress, subscription.address)
+    val variationsContact: Option[UkAddress] = findDiffInAddress(userAnswers.contactAddress, subscription.address)
     lazy val telephoneNumber = updatedContactDetails.fold[Option[String]](None)(_.telephoneNumber)
-    lazy val emailAddress = updatedContactDetails.fold[Option[String]](None)(_.emailAddress)
-    if(variationsContact.nonEmpty || Seq(telephoneNumber, emailAddress).flatten.nonEmpty) {
-      Some(
-        VariationsContact(
-        variationsContact,
-        telephoneNumber,
-        emailAddress
-        )
-      )
+    lazy val emailAddress = updatedContactDetails.flatMap(_.emailAddress)
+    if (variationsContact.nonEmpty || Seq(telephoneNumber, emailAddress).flatten.nonEmpty) {
+      Some(VariationsContact(variationsContact, telephoneNumber, emailAddress))
     } else {
       None
     }

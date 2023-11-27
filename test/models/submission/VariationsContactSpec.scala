@@ -27,13 +27,13 @@ import play.api.libs.json.Json
 
 class VariationsContactSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with SpecBase{
   "VariationsContact" - {
-    "findDifInAddress" - {
+    "findDiffInAddress" - {
       "when i have submitted no changes to an address" in {
 
         lazy val contactAddress = UkAddress(List("19 Rhes Priordy", "East London"), "E73 2RP")
         lazy val subscriptionAddress = UkAddress(List("19 Rhes Priordy", "East London"), "E73 2RP")
 
-        VariationsContact.findDifInAddress(contactAddress, subscriptionAddress) mustEqual None
+        VariationsContact.findDiffInAddress(contactAddress, subscriptionAddress) mustEqual None
 
       }
 
@@ -41,21 +41,21 @@ class VariationsContactSpec extends AnyFreeSpec with Matchers with ScalaCheckPro
         lazy val contactAddress = UkAddress(List("12 Bishop Street", "East London"), "E73 2RP")
         lazy val subscriptionAddress = UkAddress(List("19 Rhes Priordy", "East London"), "E73 2RP")
 
-        VariationsContact.findDifInAddress(contactAddress, subscriptionAddress) mustEqual Some(contactAddress)
+        VariationsContact.findDiffInAddress(contactAddress, subscriptionAddress) mustEqual Some(contactAddress)
       }
 
       "when I have edited the contact postcode" in {
         lazy val contactAddress = UkAddress(List("19 Rhes Priordy", "East London"), "F23 9RJ")
         lazy val subscriptionAddress = UkAddress(List("19 Rhes Priordy", "East London"), "E73 2RP")
 
-        VariationsContact.findDifInAddress(contactAddress, subscriptionAddress) mustEqual Some(contactAddress)
+        VariationsContact.findDiffInAddress(contactAddress, subscriptionAddress) mustEqual Some(contactAddress)
       }
 
       "when alf id doesn't match" in {
         lazy val contactAddress = UkAddress(List("19 Rhes Priordy", "East London"), "E73 2RP", alfId = Some("alf"))
         lazy val subscriptionAddress = UkAddress(List("19 Rhes Priordy", "East London"), "E73 2RP")
 
-        VariationsContact.findDifInAddress(contactAddress, subscriptionAddress) mustEqual None
+        VariationsContact.findDiffInAddress(contactAddress, subscriptionAddress) mustEqual None
       }
     }
 
