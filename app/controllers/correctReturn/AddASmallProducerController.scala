@@ -19,10 +19,11 @@ package controllers.correctReturn
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.ControllerHelper
 import controllers.actions._
+import errors.UnexpectedResponseFromSDIL
 import forms.correctReturn.AddASmallProducerFormProvider
 import handlers.ErrorHandler
 import models.correctReturn.AddASmallProducer
-import models.errors.{AlreadyExists, NotASmallProducer, SDILReferenceErrors}
+import models.errors.{AlreadyExists, NotASmallProducer, SDILReferenceErrors, UnexpectedResponseFromCheckSmallProducer}
 import models.{LitresInBands, Mode, ReturnPeriod, SmallProducer, UserAnswers}
 import navigation._
 import pages.correctReturn.AddASmallProducerPage
@@ -124,20 +125,23 @@ class AddASmallProducerController @Inject()(
           formWithErrors => {
             Future.successful(BadRequest(view(formWithErrors, mode, Some(sdilReference))))
           },
-          formData => {
+          value => {
             val smallProducerList = request.userAnswers.smallProducerList
-            isValidSDILRef(sdilReference, formData.referenceNumber, smallProducerList, request.returnPeriod).flatMap({
+            val preparedForm = form.fill(value)
+            isValidSDILRef(sdilReference, value.referenceNumber, smallProducerList, request.returnPeriod).flatMap({
               case Left(AlreadyExists) =>
                 Future.successful(
-                  BadRequest(view(form.withError(FormError("referenceNumber", "correctReturn.addASmallProducer.error.referenceNumber.exists")), mode, Some(sdilReference)))
+                  BadRequest(view(preparedForm.withError(
+                    FormError("referenceNumber", "correctReturn.addASmallProducer.error.referenceNumber.exists")), mode, Some(sdilReference)))
                 )
               case Left(NotASmallProducer) =>
                 Future.successful(
-                  BadRequest(view(form.withError(FormError("referenceNumber", "correctReturn.addASmallProducer.error.referenceNumber.notASmallProducer")),
-                    mode, Some(sdilReference)))
+                  BadRequest(view(preparedForm.withError(
+                    FormError("referenceNumber", "correctReturn.addASmallProducer.error.referenceNumber.notASmallProducer")), mode, Some(sdilReference)))
                 )
+              case Left(_) => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
               case Right(_) =>
-                updateSmallProducerList(formData, request.userAnswers, sdilReference).map(updatedAnswersFinal =>
+                updateSmallProducerList(value, request.userAnswers, sdilReference).map(updatedAnswersFinal =>
                   Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal)))
             })
           }
@@ -153,11 +157,9 @@ class AddASmallProducerController @Inject()(
       Future.successful(Left(AlreadyExists))
     } else {
       sdilConnector.checkSmallProducerStatus(addASmallProducerSDILRef, returnPeriod).value.flatMap {
-        case Right(Some(false)) =>
-          Future.successful(
-            Left(NotASmallProducer)
-          )
-        case _ => Future.successful(Right(()))
+        case Right(Some(true)) => Future.successful(Right(()))
+        case Right(Some(false)) => Future.successful(Left(NotASmallProducer))
+        case Left(_) => Future.successful(Left(UnexpectedResponseFromCheckSmallProducer))
       }
     }
   }
