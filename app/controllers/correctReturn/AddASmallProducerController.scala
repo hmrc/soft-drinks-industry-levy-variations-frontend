@@ -129,11 +129,11 @@ class AddASmallProducerController @Inject()(
             isValidSDILRef(sdilReference, formData.referenceNumber, smallProducerList, request.returnPeriod).flatMap({
               case Left(AlreadyExists) =>
                 Future.successful(
-                  BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.exists")), mode, Some(sdilReference)))
+                  BadRequest(view(form.withError(FormError("referenceNumber", "correctReturn.addASmallProducer.error.referenceNumber.exists")), mode, Some(sdilReference)))
                 )
               case Left(NotASmallProducer) =>
                 Future.successful(
-                  BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")),
+                  BadRequest(view(form.withError(FormError("referenceNumber", "correctReturn.addASmallProducer.error.referenceNumber.notASmallProducer")),
                     mode, Some(sdilReference)))
                 )
               case Right(_) =>
