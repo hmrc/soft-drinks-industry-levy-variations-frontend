@@ -93,7 +93,7 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
     (ps ++ w).toList
   }
 
-  private def constructActivityVariation(userAnswers: UserAnswers, subscription: RetrievedSubscription): VariationsSubmission ={
+   def constructActivityVariation(userAnswers: UserAnswers, subscription: RetrievedSubscription): VariationsSubmission ={
 
       VariationsSubmission(
         displayOrgName = subscription.orgName,
@@ -111,7 +111,7 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
     constructReturnVariationData(userAnswers, subscription).map(connector.submitReturnsVariation(subscription.sdilRef, _))
   }
 
-  def constructReturnVariationData(userAnswers: UserAnswers, subscription: RetrievedSubscription)
+   def constructReturnVariationData(userAnswers: UserAnswers, subscription: RetrievedSubscription)
                      : Option[ReturnVariationData] = {
     for {
       originalReturn <- userAnswers.getCorrectReturnOriginalSDILReturnData
@@ -131,7 +131,7 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
           importSmall = revisedReturn.howManyBroughtIntoUkFromSmallProducers.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
           export = revisedReturn.howManyClaimCreditsForExports.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
           wastage = revisedReturn.howManyCreditsForLostDamaged.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-          submittedOn = Some(Instant.now())
+          submittedOn = None
         )
       )
     }
