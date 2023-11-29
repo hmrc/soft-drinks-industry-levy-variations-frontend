@@ -56,7 +56,7 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
     val html = view(form, NormalMode, smallProducerList)(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
-      document.title() mustBe "Do you want to add another small producer? - Soft Drinks Industry Levy - GOV.UK"
+      document.title() mustBe "You added 1 small producer - Soft Drinks Industry Levy - GOV.UK"
     }
 
     "should include the expected heading" in {
@@ -220,7 +220,7 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
-        documentWithErrors.title mustBe "Error: Do you want to add another small producer? - Soft Drinks Industry Levy - GOV.UK"
+        documentWithErrors.title mustBe "Error: You added 1 small producer - Soft Drinks Industry Levy - GOV.UK"
       }
 
       "contains a message that links to field with error" in {

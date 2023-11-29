@@ -24,18 +24,18 @@ case class Activity(
                      Imported: Option[Litreage] = None,
                      CopackerAll: Option[Litreage] = None,
                      Copackee: Option[Litreage] = None,
-                     isLarge: Boolean)
+                     isLarge: Boolean) {
+  def nonEmpty: Boolean = Seq(ProducedOwnBrand, Imported, CopackerAll, Copackee).flatten.nonEmpty
+}
 
 object Activity {
   implicit val format: Format[Activity] = Json.format[Activity]
   def fromChangeActivityData(changeActivityData: ChangeActivityData): Activity = {
-    val copackee = if(changeActivityData.isCopackee) {Some(Litreage(1, 1)) } else {None}
-
     Activity(
       changeActivityData.ownBrandsProduced.map(Litreage.fromLitresInBands),
       changeActivityData.imported.map(Litreage.fromLitresInBands),
       changeActivityData.copackerAll.map(Litreage.fromLitresInBands),
-      copackee,
+      Copackee = if (changeActivityData.isCopackee) Some(Litreage(1, 1)) else None,
       changeActivityData.isLarge
     )
   }

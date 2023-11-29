@@ -48,8 +48,6 @@ class ChangeActivityOrchestrator @Inject()(sdilConnector: SoftDrinksIndustryLevy
   def submitVariation(subscription: RetrievedSubscription, userAnswers: UserAnswers)
                      (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = {
     val changeActivityVariation = changeActivityVariationToBeSubmitted(subscription, userAnswers)
-    for {
-      variation <- sdilConnector.submitVariation(changeActivityVariation, subscription.sdilRef)
-    } yield variation
+    sdilConnector.submitVariation(changeActivityVariation, subscription.sdilRef)
   }
 }

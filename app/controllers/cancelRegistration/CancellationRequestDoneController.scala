@@ -22,7 +22,10 @@ import models.ReturnPeriod
 import models.SelectChange.CancelRegistration
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import viewmodels.govuk.SummaryListFluency
+import viewmodels.summary.cancelRegistration.{CancelRegistrationDateSummary, ReasonSummary}
 import views.html.cancelRegistration.CancellationRequestDoneView
 
 import java.time.format.DateTimeFormatter
@@ -35,7 +38,7 @@ class CancellationRequestDoneController @Inject()(
                                                    controllerActions: ControllerActions,
                                                    val controllerComponents: MessagesControllerComponents,
                                                    view: CancellationRequestDoneView
-                                                 )(implicit config: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+                                                 )(implicit config: FrontendAppConfig) extends FrontendBaseController with I18nSupport with SummaryListFluency {
 
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(CancelRegistration) {
 
@@ -57,6 +60,17 @@ class CancellationRequestDoneController @Inject()(
       val deadlineEndFormat = DateTimeFormatter.ofPattern("d MMMM yyyy")
       val deadlineEnd = nextReturnPeriod.deadline.format(deadlineEndFormat)
 
-      Ok(view(formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd, deadlineStart, deadlineEnd, request.subscription.orgName))
+      val cancelRegistrationSummary: (String, SummaryList) = ("", SummaryListViewModel(
+        rows = Seq(
+          ReasonSummary.row(request.userAnswers, isCheckAnswers = false),
+          CancelRegistrationDateSummary.row(request.userAnswers, isCheckAnswers = false)
+        ))
+      )
+
+      Ok(view(
+        formattedDate, formattedTime,
+        returnPeriodStart, returnPeriodEnd,
+        deadlineStart, deadlineEnd,
+        request.subscription.orgName, Seq(cancelRegistrationSummary)))
   }
 }

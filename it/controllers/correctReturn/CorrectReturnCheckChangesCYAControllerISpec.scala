@@ -4,14 +4,19 @@ import controllers.CorrectReturnBaseCYASummaryISpecHelper
 import models.LitresInBands
 import models.SelectChange.CorrectReturn
 import models.correctReturn.RepaymentMethod
+import models.correctReturn.RepaymentMethod.BankAccount
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
 import pages.correctReturn._
 import play.api.http.Status.OK
 import play.api.libs.json.Json
+import play.api.libs.ws.DefaultWSCookie
+import play.api.test.Helpers.await
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 import testSupport.SDILBackendTestData.aSubscription
+import testSupport.helpers.checkReturnsVariationSubmission
 
 class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHelper {
 
@@ -506,14 +511,19 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
     "should redirect to select return to correct page" in {
       given
         .commonPrecondition
+        .sdilBackend.submitReturnsVariation("XKSDIL000000022")
 
-      setAnswers(userAnswerWithLitresForAllPagesNilSdilReturn)
+      setAnswers(userAnswerWithLitresForAllPagesNilSdilReturn
+        .set(CorrectionReasonPage, "No longer sell drinks").success.value
+        .set(RepaymentMethodPage, BankAccount).success.value)
 
       WsTestClient.withClient { client =>
         val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
         whenReady(result) { res =>
+          res.status mustBe 303
           res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+          checkReturnsVariationSubmission.checkReturnVariationSubmissionSent(wireMockServer, populatedReturn)
         }
       }
     }

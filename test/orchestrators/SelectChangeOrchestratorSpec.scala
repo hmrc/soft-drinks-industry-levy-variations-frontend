@@ -207,7 +207,7 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
         }
         if (selectChange == SelectChange.CancelRegistration) {
           "should return ReturnsStillPending error" - {
-            "when the user has returns pending" in {
+            "when the user has returns pending and is not voluntary registration" in {
               when(mockSdilConnector.returnsPending("0000000022")(hc))
                 .thenReturn(createSuccessVariationResult(returnPeriodList))
               val expectedGeneratedUA = expectedUserAnswers(selectChange, addContactDetails = selectChange == SelectChange.UpdateRegisteredDetails)
@@ -217,6 +217,38 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
 
               whenReady(res.value) { result =>
                 result mustBe Left(ReturnsStillPending)
+              }
+            }
+          }
+
+          "should generate and save the expected user answers and return unit" - {
+            "when the user has returns pending and is voluntary registration" in {
+              when(mockSdilConnector.returnsPending("0000000022")(hc))
+                .thenReturn(createSuccessVariationResult(returnPeriodList))
+              val expectedGeneratedUA = expectedUserAnswers(selectChange, addContactDetails = selectChange == SelectChange.UpdateRegisteredDetails)
+              when(mockSessionService.set(expectedGeneratedUA)).thenReturn(Future.successful(Right(true)))
+
+              val voluntaryRegistrationSubscription = retrievedSubscription()
+                .copy(activity = retrievedSubscription().activity.copy(voluntaryRegistration = true))
+              val res = orchestrator.createUserAnswersAndSaveToDatabase(selectChange, voluntaryRegistrationSubscription)
+
+              whenReady(res.value) { result =>
+                result mustBe Right()
+              }
+            }
+          }
+
+          "should generate and save the expected user answers and return unit" - {
+            "when the user has no returns pending" in {
+              when(mockSdilConnector.returnsPending("0000000022")(hc))
+                .thenReturn(createSuccessVariationResult(List.empty))
+              val expectedGeneratedUA = expectedUserAnswers(selectChange, addContactDetails = selectChange == SelectChange.UpdateRegisteredDetails)
+              when(mockSessionService.set(expectedGeneratedUA)).thenReturn(Future.successful(Right(true)))
+
+              val res = orchestrator.createUserAnswersAndSaveToDatabase(selectChange, retrievedSubscription())
+
+              whenReady(res.value) { result =>
+                result mustBe Right()
               }
             }
           }

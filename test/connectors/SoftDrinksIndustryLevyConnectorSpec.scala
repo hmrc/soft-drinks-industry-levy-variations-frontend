@@ -18,6 +18,7 @@ package connectors
 
 import base.SpecBase
 import models.backend.{FinancialLineItem, OptRetrievedSubscription, RetrievedSubscription}
+import models.submission.ReturnVariationData
 import models.{DataHelper, ReturnPeriod, VariationsSubmissionDataHelper}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -144,6 +145,78 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
       ) {
         response =>
           response mustEqual financialItemList
+      }
+    }
+
+    "POST Returns Variation successfully when valid data is given" - {
+      "for no change" in{
+
+        when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
+
+        val res = softDrinksIndustryLevyConnector.submitReturnsVariation(
+          sdilNumber = aSubscription.sdilRef,
+          variation = ReturnVariationData(
+            original = emptySdilReturn,
+            revised = emptySdilReturn,
+            period = returnPeriodsFor2022.head,
+            orgName = aSubscription.orgName,
+            address = aSubscription.address,
+            reason = "N/A",
+            repaymentMethod = Some("bankAccount")))
+
+        whenReady(
+          res.value
+        ) {
+          response =>
+            response mustEqual Right((): Unit)
+        }
+      }
+
+      "for a single change" in{
+        when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
+
+        val res = softDrinksIndustryLevyConnector.submitReturnsVariation(
+          sdilNumber = aSubscription.sdilRef,
+          variation = ReturnVariationData(
+            original = emptySdilReturn,
+            revised = emptySdilReturn.copy(ownBrand = (100L, 100L)),
+            period = returnPeriodsFor2022.head,
+            orgName = aSubscription.orgName,
+            address = aSubscription.address,
+            reason = "N/A",
+            repaymentMethod = Some("bankAccount")))
+
+        whenReady(
+          res.value
+        ) {
+          response =>
+            response mustEqual Right((): Unit)
+        }
+      }
+
+      "for multiple changes" in {
+        when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
+
+        val res = softDrinksIndustryLevyConnector.submitReturnsVariation(
+          sdilNumber = aSubscription.sdilRef,
+          variation = ReturnVariationData(
+            original = emptySdilReturn,
+            revised = emptySdilReturn.copy(ownBrand = (100L, 100L), packLarge = (100L, 100L)),
+            period = returnPeriodsFor2022.head,
+            orgName = aSubscription.orgName,
+            address = aSubscription.address,
+            reason = "N/A",
+            repaymentMethod = Some("bankAccount")))
+
+        whenReady(
+          res.value
+        ) {
+          response =>
+            response mustEqual Right((): Unit)
+        }
       }
     }
 

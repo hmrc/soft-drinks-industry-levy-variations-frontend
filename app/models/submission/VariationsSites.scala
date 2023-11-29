@@ -21,9 +21,7 @@ import models.enums.SiteTypes.{PRODUCTION_SITE, WAREHOUSE}
 import models.updateRegisteredDetails.ContactDetails
 import models.UserAnswers
 
-case class VariationsSites(newSites: List[VariationsSite] = List.empty,
-                           closedSites: List[ClosedSite] = List.empty) {
-}
+case class VariationsSites(newSites: List[VariationsSite] = List.empty, closedSites: List[ClosedSite] = List.empty)
 
 object VariationsSites extends VariationSubmissionHelper {
 
@@ -33,7 +31,7 @@ object VariationsSites extends VariationSubmissionHelper {
     val allOriginalSites = subscription.productionSites ++ subscription.warehouseSites
     val highestExistingRefNumber = getHighestRefNumber(allOriginalSites)
 
-    val newPSites = newPackagingSites.zipWithIndex.map{
+    val newPSites = newPackagingSites.zipWithIndex.map {
       case (site, id) =>
         val newRef = highestExistingRefNumber + id + 1
         VariationsSite.generateFromSite(site, contactDetails, newRef, PRODUCTION_SITE)
@@ -46,11 +44,12 @@ object VariationsSites extends VariationSubmissionHelper {
     }
 
     val newSites = newPSites ++ newWSites
-    val closedSites = (closedPackagingSites ++ closedWarehouses).map(site => ClosedSite.fromSite(site))
+    val closedSites = (closedPackagingSites ++ closedWarehouses).map(ClosedSite.fromSite)
 
     VariationsSites(
-      if(newSites.nonEmpty) {newSites} else {Nil},
-      if(closedSites.nonEmpty) {closedSites} else {Nil})
+      if (newSites.nonEmpty) newSites else Nil,
+      if (closedSites.nonEmpty) closedSites else Nil
+    )
   }
 
   private def getNewAndClosedPackagingSites(userAnswers: UserAnswers, subscription: RetrievedSubscription): (List[Site], List[Site]) = {
@@ -67,11 +66,8 @@ object VariationsSites extends VariationSubmissionHelper {
 
   private def getNewAndClosedSites(originalSites: List[Site], updatedSites: List[Site]): (List[Site], List[Site]) = {
     if (originalSites.nonEmpty && updatedSites.nonEmpty) {
-      val newSites = updatedSites.collect {
-        case site if site.isNew(originalSites) => site
-      }
-      val closedSites = originalSites.collect { case site if site.isClosed(updatedSites) => site }
-
+      val newSites = updatedSites.filter(_.isNew(originalSites))
+      val closedSites = originalSites.filter(_.isClosed(updatedSites))
       (newSites, closedSites)
     } else {
       (updatedSites, originalSites)

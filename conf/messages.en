@@ -355,9 +355,9 @@ correctReturn.howManyPackagedAsContractPacker.title = How many litres of liable 
 correctReturn.howManyPackagedAsContractPacker.heading = How many litres of liable drinks have you packaged as a third party or contract packer at UK sites you operate?
 correctReturn.howManyPackagedAsContractPacker.subtext = Do not include liable drinks you have packaged for registered small producers.
 
-correctReturn.smallProducerDetails.title = Do you want to add another small producer?
-correctReturn.smallProducerDetails.heading = You added {0} small producers
-correctReturn.smallProducerDetails.headingSingle = You added 1 small producer
+correctReturn.smallProducerDetails.header = Do you want to add another small producer?
+correctReturn.smallProducerDetails.title = You added {0} small producer{1}
+
 correctReturn.smallProducerDetails.checkYourAnswersLabel = Small producer details
 correctReturn.smallProducerDetails.error.required = Select yes if you want to add another small producer
 correctReturn.smallProducerDetails.change.hidden = Do you want to add another small producer?
@@ -539,6 +539,7 @@ correctReturn.updateDone.updateInfo.p1 = The corrected {0} to {1} return for {2}
 correctReturn.updateDone.updateInfo.p2 = Do not make any payments until we have confirmed how much you need to page, as you will be charged interest on your adjusted amount.
 correctReturn.updateDone.whatNextText = We may get in touch with your contact person to discuss your changes. Once we have approved your correction, your account balance will be updated.
 correctReturn.updateDone.accountHomeLink = Go back to your Soft Drinks Industry Levy details
+correctReturn.updateDone.detailsSummary = View the details of your update
 
 updateRegisteredDetails.contactDetails.title = Change person''s details
 updateRegisteredDetails.contactDetails.heading = Change person''s details
@@ -607,6 +608,7 @@ updateRegisteredDetails.updateContactDetails.phoneNumber.change.hidden = your co
 updateRegisteredDetails.updateContactDetails.email.change.hidden = your contact person’s email address
 
 updateRegisteredDetails.businessAddress.title = Your business address for the Soft Drinks Industry Levy
+updateRegisteredDetails.businessAddress.key = Business address
 updateRegisteredDetails.businessAddress.change.hidden = business address
 
 updateRegisteredDetails.warehouseDetails.title = Change your UK warehouse details

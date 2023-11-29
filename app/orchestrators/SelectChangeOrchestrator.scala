@@ -61,17 +61,17 @@ class SelectChangeOrchestrator @Inject()(sessionService: SessionService,
 
   private def hasNoReturnsPendingIfRequired(value: SelectChange, subscription: RetrievedSubscription)
                                              (implicit ec: ExecutionContext,
-                                              hc: HeaderCarrier): VariationResult[Unit] = EitherT{
-    if(value == SelectChange.CancelRegistration) {
+                                              hc: HeaderCarrier): VariationResult[Unit] = EitherT {
+    val requiredToHaveNoPendingReturns = value == SelectChange.CancelRegistration && !subscription.activity.voluntaryRegistration
+    if (requiredToHaveNoPendingReturns) {
       softDrinksIndustryLevyConnector.returnsPending(subscription.utr).value.map{
+        case Right(pendingReturns) if pendingReturns.nonEmpty => Left(ReturnsStillPending)
         case Right(pendingReturns) if pendingReturns.isEmpty => Right((): Unit)
-        case Right(_) => Left(ReturnsStillPending)
         case Left(err) => Left(err)
       }
     } else {
       Future.successful(Right((): Unit))
     }
-
   }
 
   private def generateDefaultUserAnswers(value: SelectChange, subscription: RetrievedSubscription): Future[UserAnswers] = {

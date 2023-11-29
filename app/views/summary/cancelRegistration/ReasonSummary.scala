@@ -26,17 +26,19 @@ import viewmodels.implicits._
 
 object ReasonSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): SummaryListRow =
+  def row(answers: UserAnswers, isCheckAnswers: Boolean = true)(implicit messages: Messages): SummaryListRow =
     answers.get(ReasonPage).map {
       answer =>
 
         SummaryListRowViewModel(
           key     = "cancelRegistration.reason.checkYourAnswersLabel",
           value   = ValueViewModel(answer),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.ReasonController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("cancelRegistration.reason.change.hidden"))
-          )
+          actions = if (isCheckAnswers) {
+            Seq(
+              ActionItemViewModel("site.change", routes.ReasonController.onPageLoad(CheckMode).url)
+                .withVisuallyHiddenText(messages("cancelRegistration.reason.change.hidden"))
+            )
+          } else Seq.empty
         )
     }.getOrElse(throw new IllegalArgumentException(s"No reason given"))
 }

@@ -20,6 +20,9 @@ import config.FrontendAppConfig
 import models.ReturnPeriod
 import play.api.mvc.Request
 import play.api.test.FakeRequest
+import uk.gov.hmrc.govukfrontend.views.Aliases.Value
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import views.ViewSpecHelper
 import views.html.cancelRegistration.CancellationRequestDoneView
 
@@ -64,7 +67,13 @@ class CancellationRequestDoneViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view(formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd, deadlineStart, deadlineEnd, orgName)(request, messages(application), config)
+    val summaryList: Seq[(String, SummaryList)] = {
+      Seq(
+        "foo" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("no longer sell drinks"))))),
+        "bar" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bang")))))
+      )
+    }
+    val html = view(formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd, deadlineStart, deadlineEnd, orgName, summaryList)(request, messages(application), config)
     val document = doc(html)
     "should contain the expected title" in {
       document.title() mustBe "Cancellation request sent - Soft Drinks Industry Levy - GOV.UK"
@@ -109,7 +118,7 @@ class CancellationRequestDoneViewSpec extends ViewSpecHelper {
       }
 
       "that has the expected content" in {
-        details.getElementsByClass(Selectors.detailsContent).text() mustEqual "TODO: IMPLEMENT DETAILS OF YOUR REQUEST"
+        details.getElementsByClass(Selectors.detailsContent).text() mustEqual "no longer sell drinks bang"
       }
     }
 

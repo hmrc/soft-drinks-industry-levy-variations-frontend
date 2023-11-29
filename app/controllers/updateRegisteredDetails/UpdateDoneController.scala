@@ -25,7 +25,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.updateRegisteredDetails.UpdateDoneView
 import models.SelectChange.UpdateRegisteredDetails
-import views.summary.updateRegisteredDetails.UpdateContactDetailsSummary
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import views.summary.updateRegisteredDetails.{BusinessAddressSummary, UKSitesSummary, UpdateContactDetailsSummary}
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, ZoneId}
@@ -40,7 +41,11 @@ class UpdateDoneController @Inject()(
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
 
     implicit request =>
-      val summaryList = Seq(UpdateContactDetailsSummary.rows(request.userAnswers)).flatten
+      val ukSiteDetailsSummary: Option[(String, SummaryList)] = UKSitesSummary.getHeadingAndSummary(request.userAnswers, isCheckAnswers = false)
+      val updateContactDetailsSummary: Option[(String, SummaryList)] = UpdateContactDetailsSummary.rows(request.userAnswers, isCheckAnswers = false)
+      val businessAddressSummary: Option[(String, SummaryList)] = BusinessAddressSummary.rows(request.userAnswers, isCheckAnswers = false)
+      val summaryList = Seq(ukSiteDetailsSummary, updateContactDetailsSummary, businessAddressSummary).flatten
+
       val getSentDateTime = LocalDateTime.now(ZoneId.of("UTC")) //LocalDateTime.ofInstant(request.userAnswers.submittedOn.get, ZoneId.of("UTC"))
       val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
       val timeFormatter = DateTimeFormatter.ofPattern("H:MMa")
