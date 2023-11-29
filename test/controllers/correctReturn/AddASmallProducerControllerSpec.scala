@@ -22,6 +22,7 @@ import errors.{SessionDatabaseInsertError, UnexpectedResponseFromSDIL}
 import forms.correctReturn.AddASmallProducerFormProvider
 import models.SelectChange.CorrectReturn
 import models.correctReturn.AddASmallProducer
+import models.correctReturn.AddASmallProducer.toSmallProducer
 import models.{CheckMode, EditMode, LitresInBands, NormalMode, SmallProducer}
 import navigation._
 import org.jsoup.Jsoup
@@ -47,7 +48,6 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
   val formProvider = new AddASmallProducerFormProvider()
   val form = formProvider(emptyUserAnswersForCorrectReturn)
 
-//  TODO: Add CheckMode and EditMode here
   lazy val addASmallProducerRoute = routes.AddASmallProducerController.onPageLoad(NormalMode).url
   lazy val checkAddASmallProducerRoute = routes.AddASmallProducerController.onPageLoad(CheckMode).url
   lazy val editAddASmallProducerRoute = routes.AddASmallProducerController.onEditPageLoad(EditMode, sdilReference).url
@@ -55,16 +55,15 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
   "AddASmallProducer Controller" - {
 
     List(NormalMode, CheckMode, EditMode).foreach(mode => {
-      val (path, redirectUrl) = if (mode == NormalMode) {
-        (addASmallProducerRoute, routes.SmallProducerDetailsController.onPageLoad(NormalMode).url)
-      } else {
-        val pathForMode = if (mode == CheckMode) checkAddASmallProducerRoute else editAddASmallProducerRoute
-        (pathForMode, routes.SmallProducerDetailsController.onPageLoad(CheckMode).url)
+      val path = mode match {
+        case NormalMode => addASmallProducerRoute
+        case CheckMode => checkAddASmallProducerRoute
+        case EditMode => editAddASmallProducerRoute
       }
 
       s"must return OK and the correct view for a GET in $mode" in {
-        //TODO: FIX FOR EDITMODE
-        val userAnswers = emptyUserAnswersForCorrectReturn
+        val smallProducer: AddASmallProducer = AddASmallProducer(Some("PRODUCER"), sdilReference, LitresInBands(10, 20))
+        val userAnswers = userAnswersForCorrectReturn(false).copy(smallProducerList = List(toSmallProducer(smallProducer)))
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
         running(application) {
@@ -75,7 +74,9 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
           val view = application.injector.instanceOf[AddASmallProducerView]
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form, mode)(request, messages(application)).toString
+          val sdilRef = if (mode == EditMode) Some(sdilReference) else None
+          val preparedForm = if (mode == EditMode) form.fill(smallProducer) else form
+          contentAsString(result) mustEqual view(preparedForm, mode, sdilRef)(request, messages(application)).toString
         }
       }
 
@@ -89,26 +90,6 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.SelectController.onPageLoad.url
-        }
-      }
-
-      s"must populate the view correctly on a GET when the question has previously been answered in $mode" in {
-        //TODO: FIX FOR EDITMODE
-        val smallProducer: AddASmallProducer = AddASmallProducer(Some("PRODUCER"), sdilNumber, LitresInBands(10, 20))
-        val userAnswers = userAnswersForCorrectReturn(false)
-          .set(AddASmallProducerPage, smallProducer).success.value
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-        running(application) {
-          val request = FakeRequest(GET, path)
-
-          val view = application.injector.instanceOf[AddASmallProducerView]
-
-          val result = route(application, request).value
-
-          status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form.fill(smallProducer), mode)(request, messages(application)).toString
         }
       }
 
