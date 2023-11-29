@@ -44,14 +44,9 @@
 
     @printLinkWithJs(messages("site.print"))
 
-    @if(companyName.length > 25) {
-        <p class="govuk-body-m">@messages("updateRegisteredDetails.updateDone.updateInfoTwoPart1", companyName)
-            <br>
-            @messages("updateRegisteredDetails.updateDone.updateInfoTwoPart2", formattedDate, formattedTime)
-        </p>
-    } else {
-        <p class="govuk-body-m">@messages("updateRegisteredDetails.updateDone.updateInfo", companyName, formattedDate, formattedTime)</p>
-    }
+    <p class="govuk-body-m">
+        @Html(messages("updateRegisteredDetails.updateDone.updateInfo", companyName, formattedDate, formattedTime))
+    </p>
 
     <h2 class="govuk-heading-m" id="whatNextHeader">
         @messages("site.whatNext")
