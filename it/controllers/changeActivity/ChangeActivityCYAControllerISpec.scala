@@ -3,9 +3,12 @@ package controllers.changeActivity
 import controllers.ControllerITTestHelper
 import controllers.changeActivity.routes.SecondaryWarehouseDetailsController
 import generators.ChangeActivityCYAGenerators._
-import models.backend.Site
+import models.backend.{RetrievedActivity, Site}
 import models.changeActivity.{AmountProduced, ChangeActivityData}
 import models.changeActivity.AmountProduced.{Large, Small, None => NoneProduced}
+import models.enums.SiteTypes
+import models.submission.{Activity, ClosedSite, Litreage, SdilActivity, VariationsSite}
+import models.updateRegisteredDetails.ContactDetails
 import models.{CheckMode, LitresInBands}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -15,8 +18,10 @@ import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
+import testSupport.SDILBackendTestData
+import testSupport.helpers.SubmissionVariationHelper
 
-class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTestClient {
+class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTestClient{
 
   val route = "/change-activity/check-your-answers"
 
@@ -247,37 +252,413 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
   }
 
   "POST " + routes.ChangeActivityCYAController.onSubmit.url - {
-    "when the userAnswers contains data required" - {
-      "should redirect to next page" in {
-        val changeActivityData = ChangeActivityData(
-          AmountProduced.Large,
-          None,
-          Some(true),
-          Some(LitresInBands(100, 200)),
-          Some(true),
-          Some(LitresInBands(100, 200)),
-          Some(true),
-          Some(LitresInBands(100, 200))
-        )
-        given
-          .commonPrecondition
-          .sdilBackend.submitVariationSuccess("XKSDIL000000022")
+    "should send the expected subscription and redirect to the next page" - {
+      "when the user is currently a large producer with closed sites" - {
+        "and changes their activity levels only" in new ChangeActivityPOSTHelper {
+          override val isVoluntary: Boolean = false
+          override val newAmountProduced: AmountProduced = AmountProduced.Large
+          override val expectedSdilActivity = SdilActivity(
+            Some(expectedNewActivity)
+          )
+          override val hasClosedSites: Boolean = true
 
-        setAnswers(emptyUserAnswersForChangeActivity
-          .copy(
-            data = Json.obj("changeActivity" -> Json.toJson(changeActivityData))
-          ))
+          given
+            .commonPreconditionChangeSubscription(getSubscription(AmountProduced.Large, false))
+            .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
-        withClient { client =>
-          val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
+          setAnswers(userAnswers)
 
-          whenReady(result) { res =>
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+          withClient { client =>
+            val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
+
+            whenReady(result) { res =>
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
+            }
+          }
+        }
+
+        "and changes their activity to be small and liable and add sites" in new ChangeActivityPOSTHelper {
+          override val isVoluntary: Boolean = false
+          override val newAmountProduced: AmountProduced = AmountProduced.Small
+          override val expectedSdilActivity = SdilActivity(
+            Some(expectedNewActivity),
+            Some(true)
+          )
+          override val hasClosedSites: Boolean = true
+          override val hasNewSites: Boolean = true
+
+          given
+            .commonPreconditionChangeSubscription(getSubscription(AmountProduced.Large, false))
+            .sdilBackend.submitVariationSuccess("XKSDIL000000022")
+
+          setAnswers(userAnswers)
+
+          withClient { client =>
+            val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
+
+            whenReady(result) { res =>
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
+            }
+          }
+        }
+
+        "and changes their activity to be small and voluntary and removes sites" in new ChangeActivityPOSTHelper {
+          override val isVoluntary: Boolean = true
+          override val newAmountProduced: AmountProduced = AmountProduced.Small
+          override val expectedSdilActivity = SdilActivity(
+            Some(expectedNewActivity),
+            Some(true),
+            Some(true),
+            Some(true),
+            Some(true)
+          )
+          override val hasClosedSites: Boolean = true
+          override val hasRemovedSites: Boolean = true
+
+          given
+            .commonPreconditionChangeSubscription(getSubscription(AmountProduced.Large, false))
+            .sdilBackend.submitVariationSuccess("XKSDIL000000022")
+
+          setAnswers(userAnswers)
+
+          withClient { client =>
+            val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
+
+            whenReady(result) { res =>
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
+            }
+          }
+        }
+
+        "and changes their activity to be None and updates sites" in new ChangeActivityPOSTHelper {
+          override val isVoluntary: Boolean = false
+          override val newAmountProduced: AmountProduced = AmountProduced.None
+          override val expectedSdilActivity = SdilActivity(
+            Some(expectedNewActivity),
+            Some(true)
+          )
+          override val hasClosedSites: Boolean = true
+          override val hasNewSites: Boolean = true
+          override val hasRemovedSites: Boolean = true
+
+          given
+            .commonPreconditionChangeSubscription(getSubscription(AmountProduced.Large, false))
+            .sdilBackend.submitVariationSuccess("XKSDIL000000022")
+
+          setAnswers(userAnswers)
+
+          withClient { client =>
+            val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
+
+            whenReady(result) { res =>
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
+            }
+          }
+        }
+      }
+
+      "when the user is currently a small voluntary producer with closed sites" - {
+        "and changes their activity levels only" in new ChangeActivityPOSTHelper {
+          override val isVoluntary: Boolean = true
+          override val newAmountProduced: AmountProduced = AmountProduced.Small
+          override val expectedSdilActivity = SdilActivity(
+            Some(expectedNewActivity)
+          )
+          override val hasClosedSites: Boolean = true
+
+          given
+            .commonPreconditionChangeSubscription(getSubscription(AmountProduced.Small, true))
+            .sdilBackend.submitVariationSuccess("XKSDIL000000022")
+
+          setAnswers(userAnswers)
+
+          withClient { client =>
+            val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
+
+            whenReady(result) { res =>
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
+            }
+          }
+        }
+
+        "and changes their activity to be small and liable and adds sites" in new ChangeActivityPOSTHelper {
+          override val isVoluntary: Boolean = false
+          override val newAmountProduced: AmountProduced = AmountProduced.Small
+          override val expectedSdilActivity = SdilActivity(
+            Some(expectedNewActivity),
+            None,
+            Some(false),
+            Some(false),
+            Some(false),
+            None,
+            Some(localDate)
+          )
+          override val hasClosedSites: Boolean = true
+          override val hasNewSites: Boolean = true
+
+          given
+            .commonPreconditionChangeSubscription(getSubscription(AmountProduced.Small, true))
+            .sdilBackend.submitVariationSuccess("XKSDIL000000022")
+
+          setAnswers(userAnswers)
+
+          withClient { client =>
+            val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
+
+            whenReady(result) { res =>
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
+            }
+          }
+        }
+
+        "and changes their activity to be large and removes sites" in new ChangeActivityPOSTHelper {
+          override val isVoluntary: Boolean = false
+          override val newAmountProduced: AmountProduced = AmountProduced.Large
+          override val expectedSdilActivity = SdilActivity(
+            Some(expectedNewActivity),
+            Some(false),
+            Some(false),
+            Some(false),
+            Some(false),
+            None,
+            Some(localDate)
+          )
+          override val hasClosedSites: Boolean = true
+          override val hasRemovedSites: Boolean = true
+
+          given
+            .commonPreconditionChangeSubscription(getSubscription(AmountProduced.Small, true))
+            .sdilBackend.submitVariationSuccess("XKSDIL000000022")
+
+          setAnswers(userAnswers)
+
+          withClient { client =>
+            val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
+
+            whenReady(result) { res =>
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
+            }
+          }
+        }
+
+        "and changes their activity to be None and adds and removes sites" in new ChangeActivityPOSTHelper {
+          override val isVoluntary: Boolean = false
+          override val newAmountProduced: AmountProduced = AmountProduced.None
+          override val expectedSdilActivity = SdilActivity(
+            Some(expectedNewActivity),
+            None,
+            Some(false),
+            Some(false),
+            Some(false),
+            None,
+            Some(localDate)
+          )
+          override val hasClosedSites: Boolean = true
+          override val hasNewSites: Boolean = true
+          override val hasRemovedSites: Boolean = true
+
+          given
+            .commonPreconditionChangeSubscription(getSubscription(AmountProduced.Small, true))
+            .sdilBackend.submitVariationSuccess("XKSDIL000000022")
+
+          setAnswers(userAnswers)
+
+          withClient { client =>
+            val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
+
+            whenReady(result) { res =>
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
+            }
+          }
+        }
+      }
+
+      "when the user is currently a None producer with no closed sites" - {
+        "and changes their activity levels only" in new ChangeActivityPOSTHelper {
+          override val isVoluntary: Boolean = false
+          override val newAmountProduced: AmountProduced = AmountProduced.None
+          override val expectedSdilActivity = SdilActivity(
+            Some(expectedNewActivity)
+          )
+          given
+            .commonPreconditionChangeSubscription(getSubscription(AmountProduced.None, false))
+            .sdilBackend.submitVariationSuccess("XKSDIL000000022")
+
+          setAnswers(userAnswers)
+
+          withClient { client =>
+            val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
+
+            whenReady(result) { res =>
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
+            }
+          }
+        }
+
+        "and changes their activity to be small and liable" in new ChangeActivityPOSTHelper {
+          override val isVoluntary: Boolean = false
+          override val newAmountProduced: AmountProduced = AmountProduced.Small
+          override val expectedSdilActivity = SdilActivity(
+            Some(expectedNewActivity)
+          )
+
+          given
+            .commonPreconditionChangeSubscription(getSubscription(AmountProduced.None, false))
+            .sdilBackend.submitVariationSuccess("XKSDIL000000022")
+
+          setAnswers(userAnswers)
+
+          withClient { client =>
+            val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
+
+            whenReady(result) { res =>
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
+            }
+          }
+        }
+
+        "and changes their activity to be small and voluntary" in new ChangeActivityPOSTHelper {
+          override val isVoluntary: Boolean = true
+          override val newAmountProduced: AmountProduced = AmountProduced.Small
+          override val expectedSdilActivity = SdilActivity(
+            Some(expectedNewActivity),
+            None,
+            Some(true),
+            Some(true),
+            Some(true),
+            None
+          )
+
+          given
+            .commonPreconditionChangeSubscription(getSubscription(AmountProduced.None, false))
+            .sdilBackend.submitVariationSuccess("XKSDIL000000022")
+
+          setAnswers(userAnswers)
+
+          withClient { client =>
+            val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
+
+            whenReady(result) { res =>
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
+            }
+          }
+        }
+
+        "and changes their activity to be Large" in new ChangeActivityPOSTHelper {
+          override val isVoluntary: Boolean = false
+          override val newAmountProduced: AmountProduced = AmountProduced.Large
+          override val expectedSdilActivity = SdilActivity(
+            Some(expectedNewActivity),
+            Some(false)
+          )
+
+          given
+            .commonPreconditionChangeSubscription(getSubscription(AmountProduced.None, false))
+            .sdilBackend.submitVariationSuccess("XKSDIL000000022")
+
+          setAnswers(userAnswers)
+
+          withClient { client =>
+            val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
+
+            whenReady(result) { res =>
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
+            }
           }
         }
       }
     }
     testUnauthorisedUser(baseUrl + route, Some(Json.obj()))
     testAuthenticatedUserButNoUserAnswers(baseUrl + route, Some(Json.obj()))
+  }
+
+  abstract class ChangeActivityPOSTHelper extends SubmissionVariationHelper {
+
+    val litresInBands = LitresInBands(1000L, 2000L)
+    val litreage = Litreage(1000L, 2000L)
+    val newAmountProduced: AmountProduced
+    val isVoluntary: Boolean
+    val expectedSdilActivity: SdilActivity
+    val hasClosedSites: Boolean = false
+    val hasNewSites: Boolean = false
+    val hasRemovedSites = false
+
+    def changeActivityData: ChangeActivityData = {
+      if (isVoluntary) {
+        ChangeActivityData(newAmountProduced, Some(true))
+      } else {
+        val ownBrandsLitreage = if (newAmountProduced == AmountProduced.None) {
+          None
+        } else {
+          Some(litresInBands)
+        }
+        ChangeActivityData(
+          newAmountProduced,
+          None,
+          ownBrandsLitreage.map(_ => true),
+          ownBrandsLitreage,
+          Some(true),
+          Some(litresInBands),
+          Some(true),
+          Some(litresInBands)
+        )
+      }
+    }
+
+    def expectedNewActivity = {
+      if (isVoluntary) {
+        Activity(
+          Copackee = Some(Litreage(1, 1)),
+          isLarge = false
+        )
+      } else {
+        val ownBrandsLitreage = if (newAmountProduced == AmountProduced.None) {
+          None
+        } else {
+          Some(litreage)
+        }
+        Activity(
+          ownBrandsLitreage,
+          Some(litreage),
+          Some(litreage),
+          None, newAmountProduced == AmountProduced.Large
+        )
+      }
+    }
+
+    def userAnswers = {
+      val userAnswersWithData = emptyUserAnswersForChangeActivity.copy(
+        data = Json.obj(
+          "changeActivity" -> Json.toJson(changeActivityData)
+        )
+      )
+      addSitesToUserAnswers(userAnswersWithData, hasNewSites, hasRemovedSites)
+    }
+
+    def getSubscription(amountProduced: AmountProduced, isVoluntary: Boolean) = {
+      val originalActivity = RetrievedActivity(
+        smallProducer = amountProduced == AmountProduced.Small,
+        largeProducer = amountProduced == AmountProduced.Large,
+        contractPacker = false,
+        importer = false,
+        voluntaryRegistration = isVoluntary
+      )
+      generateSubscription(hasClosedSites, Some(originalActivity))
+    }
+
+    def expectedNewSites: List[VariationsSite] = getExpectedNewSites(hasNewSites, hasClosedSites)
+    def expectedClosedSites: List[ClosedSite] = getExpectedClosedSites(hasRemovedSites, hasClosedSites)
   }
 }

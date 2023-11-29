@@ -70,7 +70,6 @@ trait VariationsSubmissionDataHelper {
   def testVariationSubmission(variationContact: Option[VariationsContact] = None,
                               variationsPersonalDetails: Option[VariationsPersonalDetails] = None,
                               sdilActivity: Option[SdilActivity] = Some(SdilActivity()),
-
                               newSites: List[VariationsSite] = List.empty,
                               closeSites: List[ClosedSite] = List.empty,
                               isDeregistered: Boolean = false): VariationsSubmission = VariationsSubmission(
