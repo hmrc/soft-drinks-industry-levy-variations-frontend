@@ -198,7 +198,7 @@ changeActivity.imports.change.hidden = whether you bring liable drinks into the 
 howManyImports.title = How many litres of liable drinks have you brought into the UK from anywhere outside of the UK?
 howManyImports.subtext = Do not include liable drinks from small producers or your own brands if you are a registered small producer.
 changeActivity.imports.lowband.litres.hidden = number of litres in low band brought into the UK
-changeActivity.imports.highband.litres.hidden = number of litres in high band brought into the UK\
+changeActivity.imports.highband.litres.hidden = number of litres in high band brought into the UK
 
 changeActivity.thirdPartyPackagers.title = Do you use any third parties in the UK to package liable drinks on your behalf?
 changeActivity.thirdPartyPackagers.heading = Do you use any third parties in the UK to package liable drinks on your behalf?
