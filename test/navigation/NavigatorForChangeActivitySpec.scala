@@ -22,7 +22,6 @@ import models._
 import models.changeActivity.AmountProduced
 import pages._
 import pages.changeActivity._
-import play.api.libs.json.Json
 
 class NavigatorForChangeActivitySpec extends SpecBase {
 
@@ -46,64 +45,28 @@ class NavigatorForChangeActivitySpec extends SpecBase {
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress = contactAddress)) mustBe routes.ChangeActivityCYAController.onPageLoad
       }
-
-      "must navigate from the how many imports page correctly" - {
-        def navigateFromHowManyImportsPage(userAnswers: UserAnswers,mode: Mode = CheckMode) =
-          navigator.nextPage(HowManyImportsPage, mode, userAnswers)
-
-        "to the checkAnswers page when the imports page has already been populated and the user is a large producer" in {
-          val result = navigateFromHowManyImportsPage(
-            emptyUserAnswersForChangeActivity
-              .set(AmountProducedPage, AmountProduced.Large).success.value
-              .set(HowManyImportsPage , LitresInBands(10L, 10L)).success.value
-              .set(SecondaryWarehouseDetailsPage, true).success.value
-          )
-          result mustBe routes.ChangeActivityCYAController.onPageLoad
-        }
-
-        "to the checkAnswers page when the imports page has already been populated and the user is a small producer" in {
-          val result = navigateFromHowManyImportsPage(
-            emptyUserAnswersForChangeActivity
-              .set(AmountProducedPage, AmountProduced.Small).success.value
-              .set(HowManyImportsPage , LitresInBands(10L, 10L)).success.value
-              .set(SecondaryWarehouseDetailsPage, true).success.value
-          )
-          result mustBe routes.ChangeActivityCYAController.onPageLoad
-        }
-
-        "the secondary imports details page when the user has not answered the secondary imports page amd is a small producer" in {
-          val result = navigateFromHowManyImportsPage(
-            emptyUserAnswersForChangeActivity
-              .set(AmountProducedPage, AmountProduced.Small).success.value
-              .set(HowManyImportsPage , LitresInBands(10L, 10L)).success.value
-          )
-          result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
-        }
-
-        "to the checkAnswers page when the imports page has already been populated and the user is not a producer" in {
-          val result = navigateFromHowManyImportsPage(
-            emptyUserAnswersForChangeActivity
-              .set(AmountProducedPage, AmountProduced.None).success.value
-              .set(HowManyImportsPage , LitresInBands(10L, 10L)).success.value
-              .set(SecondaryWarehouseDetailsPage, true).success.value
-          )
-          result mustBe routes.ChangeActivityCYAController.onPageLoad
-        }
-
-        "the secondary imports details page when the user has not answered the secondary imports page amd is not a producer" in {
-          val result = navigateFromHowManyImportsPage(
-            emptyUserAnswersForChangeActivity
-              .set(AmountProducedPage, AmountProduced.None).success.value
-              .set(HowManyImportsPage , LitresInBands(10L, 10L)).success.value
-          )
-          result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
-        }
-      }
     }
 
     "Amount produced" - {
       "In normal mode" - {
+        def navigateFromAmountProducedInNormalMode(amountProduced: AmountProduced) =
+          navigator.nextPage(AmountProducedPage, NormalMode,
+            emptyUserAnswersForChangeActivity.set(AmountProducedPage, amountProduced).success.value)
 
+        "select Large to navigate to Operate Packaging Site Own Brands" in {
+          val result = navigateFromAmountProducedInNormalMode(AmountProduced.Large)
+          result mustBe routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode)
+        }
+
+        "select Small to navigate to Third Party Packagers" in {
+          val result = navigateFromAmountProducedInNormalMode(AmountProduced.Small)
+          result mustBe routes.ThirdPartyPackagersController.onPageLoad(NormalMode)
+        }
+
+        "select None to navigate to Contract Packing" in {
+          val result = navigateFromAmountProducedInNormalMode(AmountProduced.None)
+          result mustBe routes.ContractPackingController.onPageLoad(NormalMode)
+        }
       }
     }
 
@@ -124,7 +87,26 @@ class NavigatorForChangeActivitySpec extends SpecBase {
     }
 
     "Operate packaging sites own brands" - {
+      def navigateFromOperatePackagingSiteOwnBrandsPage(value: Boolean, mode: Mode) =
+        navigator.nextPage(OperatePackagingSiteOwnBrandsPage, mode,
+          emptyUserAnswersForChangeActivity.set(OperatePackagingSiteOwnBrandsPage, value).success.value)
 
+      List(NormalMode, CheckMode).foreach(mode => {
+        s"select Yes to navigate to How Many operate packaging sites own brands in $mode" in {
+          val result = navigateFromOperatePackagingSiteOwnBrandsPage(value = true, mode)
+          result mustBe routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(mode)
+        }
+      })
+
+      "select No to navigate to contract packing page in NormalMode" in {
+        val result = navigateFromOperatePackagingSiteOwnBrandsPage(value = false, NormalMode)
+        result mustBe routes.ContractPackingController.onPageLoad(NormalMode)
+      }
+
+      "Should navigate to Check Your Answers page when no is selected in CheckMode" in {
+        val result = navigateFromOperatePackagingSiteOwnBrandsPage(value = false, CheckMode)
+        result mustBe routes.ChangeActivityCYAController.onPageLoad
+      }
     }
 
     "How many operate packaging sites own brands" - {
@@ -144,7 +126,26 @@ class NavigatorForChangeActivitySpec extends SpecBase {
     }
 
     "Contract packing" - {
+      def navigateFromContractPackingPage(value: Boolean, mode: Mode) =
+        navigator.nextPage(ContractPackingPage, mode,
+          emptyUserAnswersForChangeActivity.set(ContractPackingPage, value).success.value)
 
+      List(NormalMode, CheckMode).foreach(mode => {
+        s"select Yes to navigate to How Many contract packing in $mode" in {
+          val result = navigateFromContractPackingPage(value = true, mode)
+          result mustBe routes.HowManyContractPackingController.onPageLoad(mode)
+        }
+      })
+
+      "select No to navigate to imports page in NormalMode" in {
+        val result = navigateFromContractPackingPage(value = false, NormalMode)
+        result mustBe routes.ImportsController.onPageLoad(NormalMode)
+      }
+
+      "Should navigate to Check Your Answers page when no is selected in CheckMode" in {
+        val result = navigateFromContractPackingPage(value = false, CheckMode)
+        result mustBe routes.ChangeActivityCYAController.onPageLoad
+      }
     }
 
     "How many contract packing" - {
@@ -163,12 +164,95 @@ class NavigatorForChangeActivitySpec extends SpecBase {
       }
     }
 
-    "Imports" - {
+    "Imports True" - {
+      def navigateFromImportsPageTrue(mode: Mode) =
+        navigator.nextPage(ImportsPage, mode,
+          emptyUserAnswersForChangeActivity.set(ImportsPage, true).success.value)
 
+      List(NormalMode, CheckMode).foreach(mode => {
+        s"select Yes to navigate to How Many imports in $mode" in {
+          val result = navigateFromImportsPageTrue(mode)
+          result mustBe routes.HowManyImportsController.onPageLoad(mode)
+        }
+      })
     }
 
-    "How many imports" - {
+    "Imports false" - {
+      "In CheckMode" - {
+        "Should navigate to Check Your Answers page when no is selected" in {
+          val result = navigator.nextPage(ImportsPage, CheckMode,
+            emptyUserAnswersForChangeActivity.set(ImportsPage, false).success.value)
+          result mustBe routes.ChangeActivityCYAController.onPageLoad
+        }
+      }
+    }
 
+    val userAnswersWithImportsTrueAndHowMany = emptyUserAnswersForChangeActivity
+      .set(ImportsPage, true).success.value
+      .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
+
+    val userAnswersWithImportsFalse = emptyUserAnswersForChangeActivity
+      .set(ImportsPage, false).success.value
+
+    List(
+      ("How Many Imports", userAnswersWithImportsTrueAndHowMany),
+      ("Imports False", userAnswersWithImportsFalse)
+    ).foreach(followingImports => {
+      s"${followingImports._1}" - {
+        val initialUserAnswers = followingImports._2
+        "in NormalMode" - {
+//          TODO: IMPLEMENT HERE
+        }
+      }
+    })
+
+    "How many imports" - {
+      "in CheckMode" - {
+        def navigateFromHowManyImportsPageInCheckMode(userAnswers: UserAnswers) = navigator.nextPage(HowManyImportsPage, CheckMode, userAnswers)
+
+        "to the checkAnswers page when the imports page has already been populated and the user is a large producer" in {
+          val userAnswers = emptyUserAnswersForChangeActivity
+            .set(AmountProducedPage, AmountProduced.Large).success.value
+            .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
+            .set(SecondaryWarehouseDetailsPage, true).success.value
+          val result = navigateFromHowManyImportsPageInCheckMode(userAnswers)
+          result mustBe routes.ChangeActivityCYAController.onPageLoad
+        }
+
+        "to the checkAnswers page when the imports page has already been populated and the user is a small producer" in {
+          val userAnswers = emptyUserAnswersForChangeActivity
+            .set(AmountProducedPage, AmountProduced.Small).success.value
+            .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
+            .set(SecondaryWarehouseDetailsPage, true).success.value
+          val result = navigateFromHowManyImportsPageInCheckMode(userAnswers)
+          result mustBe routes.ChangeActivityCYAController.onPageLoad
+        }
+
+        "the secondary imports details page when the user has not answered the secondary imports page amd is a small producer" in {
+          val userAnswers = emptyUserAnswersForChangeActivity
+            .set(AmountProducedPage, AmountProduced.Small).success.value
+            .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
+          val result = navigateFromHowManyImportsPageInCheckMode(userAnswers)
+          result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
+        }
+
+        "to the checkAnswers page when the imports page has already been populated and the user is not a producer" in {
+          val userAnswers = emptyUserAnswersForChangeActivity
+            .set(AmountProducedPage, AmountProduced.None).success.value
+            .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
+            .set(SecondaryWarehouseDetailsPage, true).success.value
+          val result = navigateFromHowManyImportsPageInCheckMode(userAnswers)
+          result mustBe routes.ChangeActivityCYAController.onPageLoad
+        }
+
+        "the secondary imports details page when the user has not answered the secondary imports page amd is not a producer" in {
+          val userAnswers = emptyUserAnswersForChangeActivity
+            .set(AmountProducedPage, AmountProduced.None).success.value
+            .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
+          val result = navigateFromHowManyImportsPageInCheckMode(userAnswers)
+          result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
+        }
+      }
     }
 
     "Remove packaging site confirm" - {
