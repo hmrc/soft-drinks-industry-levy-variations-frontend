@@ -27,8 +27,6 @@ class NavigatorForChangeActivitySpec extends SpecBase {
 
   val navigator = new NavigatorForChangeActivity
 
-//  TODO: IMPLEMENT FOR ALL
-
   "Navigator" - {
 
     "in Normal mode" - {
@@ -194,14 +192,70 @@ class NavigatorForChangeActivitySpec extends SpecBase {
     val userAnswersWithImportsFalse = emptyUserAnswersForChangeActivity
       .set(ImportsPage, false).success.value
 
+    case class FollowingImports(prefix: String, initialUserAnswers: UserAnswers, page: Page)
+
     List(
-      ("How Many Imports", userAnswersWithImportsTrueAndHowMany),
-      ("Imports False", userAnswersWithImportsFalse)
+      FollowingImports("How Many Imports", userAnswersWithImportsTrueAndHowMany, HowManyImportsPage),
+      FollowingImports("Imports False", userAnswersWithImportsFalse, ImportsPage)
     ).foreach(followingImports => {
-      s"${followingImports._1}" - {
-        val initialUserAnswers = followingImports._2
+      s"${followingImports.prefix}" - {
         "in NormalMode" - {
-//          TODO: IMPLEMENT HERE
+          def navigateFollowingImportsPage(userAnswers: UserAnswers) =
+            navigator.nextPage(followingImports.page, NormalMode, userAnswers)
+
+          "when Amount Produced Large" - {
+            val initialUserAnswersWithAmountProducedLarge = followingImports.initialUserAnswers
+              .set(AmountProducedPage, AmountProduced.Large).success.value
+
+            "navigate to Operate Packaging Site Own Brands if Operate Packaging Site Own Brands unanswered and Contract Packing unanswered" in {
+              val result = navigateFollowingImportsPage(initialUserAnswersWithAmountProducedLarge)
+              result mustBe routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode)
+            }
+
+            "navigate to Operate Packaging Site Own Brands if Operate Packaging Site Own Brands unanswered and Contract Packing answered" in {
+              val userAnswers = initialUserAnswersWithAmountProducedLarge.set(ContractPackingPage, true).success.value
+              val result = navigateFollowingImportsPage(userAnswers)
+              result mustBe routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode)
+            }
+
+            "navigate to Operate Packaging Site Own Brands if Operate Packaging Site Own Brands answered and Contract Packing unanswered" in {
+              val userAnswers = initialUserAnswersWithAmountProducedLarge.set(OperatePackagingSiteOwnBrandsPage, true).success.value
+              val result = navigateFollowingImportsPage(userAnswers)
+              result mustBe routes.ContractPackingController.onPageLoad(NormalMode)
+            }
+
+            "And Operate Packaging Site Own Brands answered and Contract Packing unanswered" - {
+              //          TODO: IMPLEMENT HERE
+            }
+          }
+
+          "when Amount Produced Small" - {
+            val initialUserAnswersWithAmountProducedSmall = followingImports.initialUserAnswers
+              .set(AmountProducedPage, AmountProduced.Small).success.value
+
+            "navigate to Contract Packing if unanswered" in {
+              val result = navigateFollowingImportsPage(initialUserAnswersWithAmountProducedSmall)
+              result mustBe routes.ContractPackingController.onPageLoad(NormalMode)
+            }
+
+            "And Contract Packing answered" - {
+              //          TODO: IMPLEMENT HERE
+            }
+          }
+
+          "when Amount Produced None" - {
+            val initialUserAnswersWithAmountProducedNone = followingImports.initialUserAnswers
+              .set(AmountProducedPage, AmountProduced.None).success.value
+
+            "navigate to Contract Packing if unanswered" in {
+              val result = navigateFollowingImportsPage(initialUserAnswersWithAmountProducedNone)
+              result mustBe routes.ContractPackingController.onPageLoad(NormalMode)
+            }
+
+            "And Contract Packing answered" - {
+              //          TODO: IMPLEMENT HERE
+            }
+          }
         }
       }
     })
