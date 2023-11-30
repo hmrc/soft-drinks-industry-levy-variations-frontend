@@ -106,5 +106,53 @@ class NavigatorForChangeActivitySpec extends SpecBase {
         }
       }
     }
+
+    "Amount produced" - {
+      "In normal mode" - {
+
+      }
+    }
+
+    "Third party packagers" - {
+
+    }
+
+    "Operate packaging sites own brands" - {
+
+    }
+
+    "How many operate packaging sites own brands" - {
+
+    }
+
+    "Contract packing" - {
+
+    }
+
+    "How many contract packing" - {
+
+    }
+
+    "Imports" - {
+
+    }
+
+    "How many imports" - {
+
+    }
+
+    "Remove packaging site confirm" - {
+
+    }
+
+    "Remove warehouse confirm" - {
+
+    }
+
+    "Suggest deregistration" - {
+      "In normal mode" - {
+
+      }
+    }
   }
 }
