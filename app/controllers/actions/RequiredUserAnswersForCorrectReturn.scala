@@ -83,6 +83,15 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
     }
   }
 
+  private[controllers] def mainRoute(implicit dataRequest: DataRequest[_]): List[CorrectReturnRequiredPage[_, _, _]] = {
+    restOfJourney(
+      smallProducerCheck(dataRequest.subscription),
+      addASmallProducerReturnChange(dataRequest),
+      packingListReturnChange(dataRequest),
+      warehouseListReturnChange(dataRequest)
+    )
+  }
+
   private[controllers] def smallProducerCheck(subscription: RetrievedSubscription): List[CorrectReturnRequiredPage[_, _, _]] = {
     if (subscription.activity.smallProducer) {
       List.empty
@@ -93,18 +102,18 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
     }
   }
 
-  private[controllers] def mainRoute(implicit dataRequest: DataRequest[_]): List[CorrectReturnRequiredPage[_, _, _]] = {
-    smallProducerCheck(dataRequest.subscription) ++ restOfJourney ++ packingListReturnChange(dataRequest) ++ warehouseListReturnChange(dataRequest)
-  }
-
-  private[controllers] def restOfJourney: List[CorrectReturnRequiredPage[_, _, _]] = {
-    List(CorrectReturnRequiredPage(PackagedAsContractPackerPage, None)(implicitly[Reads[Boolean]]),
+  private[controllers] def restOfJourney(
+                                          smallProducerCheck: List[CorrectReturnRequiredPage[_, _, _]] = List.empty,
+                                          addASmallProducerReturnChange: List[CorrectReturnRequiredPage[_, _, _]] = List.empty,
+                                          packingListReturnChange: List[CorrectReturnRequiredPage[_, _, _]] = List.empty,
+                                          warehouseListReturnChange: List[CorrectReturnRequiredPage[_, _, _]] = List.empty
+                                        ): List[CorrectReturnRequiredPage[_, _, _]] = {
+    val firstPartOfRestOfJourney = List(CorrectReturnRequiredPage(PackagedAsContractPackerPage, None)(implicitly[Reads[Boolean]]),
       CorrectReturnRequiredPage(HowManyPackagedAsContractPackerPage,
         Some(CorrectReturnPreviousPage(PackagedAsContractPackerPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
-      CorrectReturnRequiredPage(ExemptionsForSmallProducersPage, None)(implicitly[Reads[Boolean]]),
-      CorrectReturnRequiredPage(AddASmallProducerPage,
-        Some(CorrectReturnPreviousPage(ExemptionsForSmallProducersPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[AddASmallProducer]]),
-      CorrectReturnRequiredPage(BroughtIntoUKPage, None)(implicitly[Reads[Boolean]]),
+      CorrectReturnRequiredPage(ExemptionsForSmallProducersPage, None)(implicitly[Reads[Boolean]])
+    )
+    val secondPartOfRestOfJourney = List(CorrectReturnRequiredPage(BroughtIntoUKPage, None)(implicitly[Reads[Boolean]]),
       CorrectReturnRequiredPage(HowManyBroughtIntoUKPage,
         Some(CorrectReturnPreviousPage(BroughtIntoUKPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
       CorrectReturnRequiredPage(BroughtIntoUkFromSmallProducersPage, None)(implicitly[Reads[Boolean]]),
@@ -117,6 +126,12 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
       CorrectReturnRequiredPage(HowManyCreditsForLostDamagedPage,
         Some(CorrectReturnPreviousPage(ClaimCreditsForLostDamagedPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]])
     )
+    smallProducerCheck ++
+      firstPartOfRestOfJourney ++
+      addASmallProducerReturnChange ++
+      secondPartOfRestOfJourney ++
+      packingListReturnChange ++
+      warehouseListReturnChange
   }
 
   private[controllers] def correctChangesJourney: List[CorrectReturnRequiredPage[_, _, _]] = {
@@ -126,7 +141,16 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
     )
   }
 
-  private[controllers] val packingListReturnChange: DataRequest[_] => List[CorrectReturnRequiredPage[_, _, _]] = { (request: DataRequest[_]) =>
+  private[controllers] def addASmallProducerReturnChange: DataRequest[_] => List[CorrectReturnRequiredPage[_, _, _]] = { (request: DataRequest[_]) =>
+    if (request.userAnswers.smallProducerList.isEmpty) {
+      List(CorrectReturnRequiredPage(AddASmallProducerPage,
+        Some(CorrectReturnPreviousPage(ExemptionsForSmallProducersPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[AddASmallProducer]]))
+    } else {
+      List.empty
+    }
+  }
+
+  private[controllers] def packingListReturnChange: DataRequest[_] => List[CorrectReturnRequiredPage[_, _, _]] = { (request: DataRequest[_]) =>
     if (UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), request.subscription) && request.subscription.productionSites.isEmpty) {
       List(CorrectReturnRequiredPage(PackAtBusinessAddressPage, None)(implicitly[Reads[Boolean]]),
         CorrectReturnRequiredPage(PackagingSiteDetailsPage, None)(implicitly[Reads[Boolean]]))
@@ -135,7 +159,7 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
     }
   }
 
-  private[controllers] val warehouseListReturnChange: DataRequest[_] => List[CorrectReturnRequiredPage[_, _, _]] = { (request: DataRequest[_]) =>
+  private[controllers] def warehouseListReturnChange: DataRequest[_] => List[CorrectReturnRequiredPage[_, _, _]] = { (request: DataRequest[_]) =>
     if (UserTypeCheck.isNewImporter(SdilReturn.apply(request.userAnswers), request.subscription)) {
       List(CorrectReturnRequiredPage(AskSecondaryWarehouseInReturnPage, None)(implicitly[Reads[Boolean]]))
     } else {

@@ -20,3 +20,5 @@ sealed trait SDILReferenceErrors
 
 case object AlreadyExists extends SDILReferenceErrors
 case object NotASmallProducer extends SDILReferenceErrors
+
+case object UnexpectedResponseFromCheckSmallProducer extends SDILReferenceErrors
