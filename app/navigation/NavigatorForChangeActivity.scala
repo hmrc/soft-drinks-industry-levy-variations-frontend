@@ -114,25 +114,27 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
   private def navigateFollowingImportsForAmountProducedLarge(userAnswers: UserAnswers, mode: Mode): Call = {
     val operateOwnBrandsOrCoPacker = List(userAnswers.get(OperatePackagingSiteOwnBrandsPage), userAnswers.get(ContractPackingPage))
       .flatten.contains(true)
-    (operateOwnBrandsOrCoPacker, userAnswers.packagingSiteList.isEmpty, mode) match {
-      case (true, true, NormalMode) =>
+    (operateOwnBrandsOrCoPacker, mode) match {
+      case (true, NormalMode) if userAnswers.packagingSiteList.isEmpty =>
         routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
-      case (true, _, NormalMode) =>
+      case (true, NormalMode) =>
         routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
-      case (_, _, NormalMode) =>
+      case (_, NormalMode) =>
         routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
-      case (_, _, CheckMode) =>
+      case (_, CheckMode) =>
         routes.ChangeActivityCYAController.onPageLoad
     }
   }
 
   private def navigateFollowingImportsForAmountProducedSmall(userAnswers: UserAnswers, mode: Mode): Call = {
-//    TODO: Figure out missing cases
-    (userAnswers.get(SecondaryWarehouseDetailsPage), mode)
+    (userAnswers.get(ContractPackingPage), userAnswers.get(SecondaryWarehouseDetailsPage), mode)
     match {
-      case (Some(_), CheckMode) => routes.ChangeActivityCYAController.onPageLoad
-      case (None, CheckMode)  => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
-      case (_, _) => defaultCall
+      case (Some(true), _, NormalMode) if userAnswers.packagingSiteList.isEmpty => routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
+      case (Some(true), _, NormalMode) => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
+      case (Some(false), _, NormalMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+      case (None, _, NormalMode) => routes.ContractPackingController.onPageLoad(NormalMode)
+      case (_, Some(_), CheckMode) => routes.ChangeActivityCYAController.onPageLoad
+      case (_, None, CheckMode)  => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
     }
   }
 
@@ -145,6 +147,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
         routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
       case (Some(false), _, NormalMode) =>
         routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+      case (None, _, NormalMode) => routes.ContractPackingController.onPageLoad(NormalMode)
       case (None, Some(_), CheckMode) =>
         routes.ChangeActivityCYAController.onPageLoad
       case (_, _, mode) =>

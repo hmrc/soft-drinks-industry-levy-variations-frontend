@@ -33,7 +33,6 @@ class NavigatorForChangeActivitySpec extends SpecBase {
     "in Normal mode" - {
 
       "must go from a page that doesn't exist in the route map to Index" in {
-
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id", SelectChange.ChangeActivity, contactAddress = contactAddress)) mustBe defaultCall
       }
@@ -46,6 +45,11 @@ class NavigatorForChangeActivitySpec extends SpecBase {
     }
 
     "in Check mode" - {
+
+      "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
+        case object UnknownPage extends Page
+        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress = contactAddress)) mustBe routes.ChangeActivityCYAController.onPageLoad
+      }
 
       "must navigate from the how many imports page correctly" - {
         def navigateFromHowManyImportsPage(userAnswers: UserAnswers,mode: Mode = CheckMode) =
@@ -98,11 +102,6 @@ class NavigatorForChangeActivitySpec extends SpecBase {
           )
           result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
         }
-      }
-
-      "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
-        case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress = contactAddress)) mustBe routes.ChangeActivityCYAController.onPageLoad
       }
     }
   }
