@@ -148,7 +148,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
       case (Some(false), _, NormalMode) =>
         routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
       case (None, _, NormalMode) => routes.ContractPackingController.onPageLoad(NormalMode)
-      case (None, Some(_), CheckMode) =>
+      case (_, Some(_), CheckMode) =>
         routes.ChangeActivityCYAController.onPageLoad
       case (_, _, mode) =>
         routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
