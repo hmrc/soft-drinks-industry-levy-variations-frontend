@@ -50,7 +50,7 @@ class CancellationRequestDoneController @Inject()(
       val formattedTime = getSentDateTime.format(timeFormatter)
 
       val returnPeriodFormat = DateTimeFormatter.ofPattern("MMMM yyyy")
-      val nextReturnPeriod = ReturnPeriod(getSentDateTime.toLocalDate).next
+      val nextReturnPeriod = ReturnPeriod(getSentDateTime.toLocalDate)
       val returnPeriodStart = nextReturnPeriod.start.format(returnPeriodFormat)
       val returnPeriodEnd = nextReturnPeriod.end.format(returnPeriodFormat)
 
