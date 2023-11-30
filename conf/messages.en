@@ -92,6 +92,52 @@ selectChange.checkYourAnswersLabel = What do you need to do
 selectChange.error.required = Select what you need to do
 selectChange.change.hidden = SelectChange
 
+cancelRegistration.reason.title = Why do you need to cancel your registration?
+cancelRegistration.reason.characterCount = You have {0} characters remaining
+cancelRegistration.reason.checkYourAnswersLabel = Reason for cancelling
+cancelRegistration.reason.hint = Enter a maximum of 255 characters
+cancelRegistration.reason.error.required = Enter why you need to cancel your registration
+cancelRegistration.reason.error.length = The reason you are cancelling your registration must be 255 characters or less
+cancelRegistration.reason.change.hidden = Change your reason for cancelling
+
+cancelRegistration.cancelRegistrationDate.title = What date are you cancelling your registration from?
+cancelRegistration.cancelRegistrationDate.heading = What date are you cancelling your registration from?
+cancelRegistration.cancelRegistrationDate.hint = For example, 12 11 2007
+cancelRegistration.cancelRegistrationDate.checkYourAnswersLabel = Date of cancellation
+
+cancelRegistrationDate.error.invalid = The date you are cancelling your registration must be a real date, like <span style="white-space: nowrap">31 7 2020</span>
+cancelRegistrationDate.error.required.all = Enter the date you are cancelling your registration
+cancelRegistrationDate.error.required.two = The date you are cancelling your registration from must include {0} and {1}
+cancelRegistrationDate.error.required = The date you are cancelling your registration from must include {0}
+cancelRegistrationDate.error.registration-date.min=The date you are cancelling your registration must be today or in the future
+cancelRegistrationDate.error.registration-date.max=The date you are cancelling your registration from cannot be more than 14 days in the future
+cancelRegistrationDate.error.day.nan = Day must only include numbers
+cancelRegistrationDate.error.month.nan = Month must only include numbers
+cancelRegistrationDate.error.year.nan = Year must only include numbers
+cancelRegistrationDate.error.dayMonth.invalid = The day and month must be part of a real date, like <span style="white-space: nowrap">31 7 2020</span>
+cancelRegistrationDate.error.monthYear.invalid = The month and year must be part of a real date, like <span style="white-space: nowrap">31 7 2020</span>
+cancelRegistrationDate.error.dayYear.invalid = The day and year must be part of a real date, like <span style="white-space: nowrap">31 7 2020</span>
+cancelRegistration.cancelRegistrationDate.change.hidden = cancel registration date
+
+cancelRegistration.fileReturnBeforeDereg.title = You cannot cancel your registration while you have returns to send
+cancelRegistration.fileReturnBeforeDereg.heading = You cannot cancel your registration while you have returns to send
+cancelRegistration.fileReturnBeforeDereg.one-return = Before you can cancel your registration, you must send a return for {0} to {1} and make any payments due.
+cancelRegistration.fileReturnBeforeDereg.many-returns = Before you can cancel your registration, you must send {0} returns and make any payments due.
+cancelRegistration.fileReturnBeforeDereg.continue = Go to your account
+
+cancelRegistration.checkYourAnswers.title = Cancel your Soft Drinks Industry Levy registration
+cancelRegistration.checkYourAnswers.subheading = Cancellation for
+
+cancelRegistration.cancellationRequestDone.title = Cancellation request sent
+cancelRegistration.cancellationRequestDone.panel.message = We have received the update to your Soft Drinks Industry Levy details
+cancelRegistration.cancellationRequestDone.updateInfo = Your request to cancel <span style="white-space: nowrap">{0}</span> registration was sent on <span style="white-space: nowrap">{1}</span> at <span style="white-space: nowrap">{2}.</span>
+cancelRegistration.cancellationRequestDone.whatNextText.p1 = You need to send a final return for the period <span style="white-space: nowrap">{0}</span> to <span style="white-space: nowrap">{1}</span> and make any outstanding payments.
+cancelRegistration.cancellationRequestDone.whatNextText.p2 = You will be able to send the final return from <span style="white-space: nowrap">{0}</span> until <span style="white-space: nowrap">{1}.</span>
+cancelRegistration.cancellationRequestDone.whatNextText.p3 = Once you have sent this return and made any outstanding payments then we will process your request to cancel your registration.
+cancelRegistration.cancellationRequestDone.whatNextText.p4 = You do not need to do anything else. We will update your details with the information you have provided. We will send you confirmation that the changes have been made.
+cancelRegistration.cancellationRequestDone.accountHomeLink = Go back to your Soft Drinks Industry Levy details
+cancelRegistration.cancellationRequestDone.detailsSummary = View the details of your update
+
 changeActivity.checkYourAnswers.title = Check your answers before sending your update
 changeActivity.checkYourAnswers.heading = Check your answers before sending your update
 changeActivity.checkYourAnswers.submit = Confirm updates and send
@@ -100,14 +146,6 @@ changeActivity.checkYourAnswers.thirdPartyPackagersSection = Third party package
 changeActivity.checkYourAnswers.operatePackingSiteOwnBrandsSection = Packaged in the UK
 changeActivity.checkYourAnswers.contractPackingSection = Package for customers
 changeActivity.checkYourAnswers.importsSection = Brought into the UK
-
-cancelRegistration.reason.title = Why do you need to cancel your registration?
-cancelRegistration.reason.characterCount = You have {0} characters remaining
-cancelRegistration.reason.checkYourAnswersLabel = Reason for cancelling
-cancelRegistration.reason.hint = Enter a maximum of 255 characters
-cancelRegistration.reason.error.required = Enter why you need to cancel your registration
-cancelRegistration.reason.error.length = The reason you are cancelling your registration must be 255 characters or less
-cancelRegistration.reason.change.hidden = Change your reason for cancelling
 
 changeActivity.amountProduced.title = How many litres of your own brands of liable drinks have been packaged globally in the past 12 months?
 changeActivity.amountProduced.large = 1 million litres or more
@@ -152,44 +190,6 @@ changeActivity.operatePackagingSiteOwnBrands.lowband.litres.hidden = number of l
 changeActivity.operatePackagingSiteOwnBrands.highband.litres.hidden = number of litres in high band packaged at your own site
 changeActivity.volume.subtext = If you do not have the exact volumes you can enter an estimate.
 
-cancelRegistration.cancelRegistrationDate.title = What date are you cancelling your registration from?
-cancelRegistration.cancelRegistrationDate.heading = What date are you cancelling your registration from?
-cancelRegistration.cancelRegistrationDate.hint = For example, 12 11 2007
-cancelRegistration.cancelRegistrationDate.checkYourAnswersLabel = Date of cancellation
-
-
-cancelRegistrationDate.error.invalid = The date you are cancelling your registration must be a real date, like <span style="white-space: nowrap">31 7 2020</span>
-cancelRegistrationDate.error.required.all = Enter the date you are cancelling your registration
-cancelRegistrationDate.error.required.two = The date you are cancelling your registration from must include {0} and {1}
-cancelRegistrationDate.error.required = The date you are cancelling your registration from must include {0}
-cancelRegistrationDate.error.registration-date.min=The date you are cancelling your registration must be today or in the future
-cancelRegistrationDate.error.registration-date.max=The date you are cancelling your registration from cannot be more than 14 days in the future
-cancelRegistrationDate.error.day.nan = Day must only include numbers
-cancelRegistrationDate.error.month.nan = Month must only include numbers
-cancelRegistrationDate.error.year.nan = Year must only include numbers
-cancelRegistrationDate.error.dayMonth.invalid = The day and month must be part of a real date, like <span style="white-space: nowrap">31 7 2020</span>
-cancelRegistrationDate.error.monthYear.invalid = The month and year must be part of a real date, like <span style="white-space: nowrap">31 7 2020</span>
-cancelRegistrationDate.error.dayYear.invalid = The day and year must be part of a real date, like <span style="white-space: nowrap">31 7 2020</span>
-cancelRegistration.cancelRegistrationDate.change.hidden = cancel registration date
-
-cancelRegistration.fileReturnBeforeDereg.title = You cannot cancel your registration while you have returns to send
-cancelRegistration.fileReturnBeforeDereg.heading = You cannot cancel your registration while you have returns to send
-cancelRegistration.fileReturnBeforeDereg.one-return = Before you can cancel your registration, you must send a return for {0} to {1} and make any payments due.
-cancelRegistration.fileReturnBeforeDereg.many-returns = Before you can cancel your registration, you must send {0} returns and make any payments due.
-cancelRegistration.fileReturnBeforeDereg.continue = Go to your account
-
-cancelRegistration.checkYourAnswers.title = Cancel your Soft Drinks Industry Levy registration
-cancelRegistration.checkYourAnswers.subheading = Cancellation for
-
-cancelRegistration.cancellationRequestDone.title = Cancellation request sent
-cancelRegistration.cancellationRequestDone.panel.message = We have received the update to your Soft Drinks Industry Levy details
-cancelRegistration.cancellationRequestDone.updateInfo = Your request to cancel {0} registration was sent on {1} at {2}. Changes can take up to 15 working days to process.
-cancelRegistration.cancellationRequestDone.whatNextText.p1 = You need to send a final return for the period {0} to {1} and make any outstanding payments.
-cancelRegistration.cancellationRequestDone.whatNextText.p2 = You will be able to send the final return from {0} until {1}.
-cancelRegistration.cancellationRequestDone.whatNextText.p3 = Once you have sent this return and made any outstanding payments then we will process your request to cancel your registration.
-cancelRegistration.cancellationRequestDone.whatNextText.p4 = You do not need to do anything else. We will update your details with the information you have provided. We will send you confirmation that the changes have been made.
-cancelRegistration.cancellationRequestDone.accountHomeLink = Go back to your Soft Drinks Industry Levy details
-cancelRegistration.cancellationRequestDone.detailsSummary = View the details of your update
 
 changeActivity.imports.title = Do you bring liable drinks into the UK from anywhere outside of the UK?
 changeActivity.imports.checkYourAnswersLabel = Do you bring liable drinks into the UK?
@@ -200,6 +200,11 @@ howManyImports.subtext = Do not include liable drinks from small producers or yo
 changeActivity.imports.lowband.litres.hidden = number of litres in low band brought into the UK
 changeActivity.imports.highband.litres.hidden = number of litres in high band brought into the UK
 
+changeActivity.thirdPartyPackagers.title = Do you use any third parties in the UK to package liable drinks on your behalf?
+changeActivity.thirdPartyPackagers.heading = Do you use any third parties in the UK to package liable drinks on your behalf?
+changeActivity.thirdPartyPackagers.checkYourAnswersLabel = Use third party packagers?
+changeActivity.thirdPartyPackagers.error.required = Select yes if you use any third parties in the UK to package liable drinks on your behalf
+changeActivity.thirdPartyPackagers.change.hidden = whether you use third party packagers
 
 changeActivity.contractPacking.title = Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer?
 changeActivity.contractPacking.checkYourAnswersLabel = Package for customers at your own sites?
@@ -208,6 +213,14 @@ changeActivity.contractPacking.change.hidden = whether you use contract packing 
 howManyContractPacking.title = How many litres will you package as a third party or contract packer in the next 12 months?
 changeActivity.contractPacking.lowband.litres.hidden = number of litres in low band contract packed at your own site
 changeActivity.contractPacking.highband.litres.hidden = number of litres in high band contract packed at your own site
+
+changeActivity.packAtBusinessAddress.title = Is this address a UK packaging site you operate to produce liable drinks?
+changeActivity.packAtBusinessAddress.heading = Is this address a UK packaging site you operate to produce liable drinks?
+changeActivity.packAtBusinessAddress.checkYourAnswersLabel = Is this address a UK packaging site you operate to produce liable drinks?
+changeActivity.packAtBusinessAddress.error.required = Select yes if your registered business address is a UK packaging site that you operate to produce liable drinks
+changeActivity.packAtBusinessAddress.change.hidden = change pack at business address
+changeActivity.packAtBusinessAddress.detailsLink = Why we need these details
+changeActivity.packAtBusinessAddress.detailsContent = Because you changed your business activity, we need to know the addresses of any UK packaging sites you operate.
 
 changeActivity.packagingSiteDetails.title = UK packaging site details
 changeActivity.packagingSiteDetails.heading = UK packaging site details
@@ -235,13 +248,14 @@ changeActivity.secondaryWarehouseDetails.remove.hidden = warehouse {0} at {1}
 changeActivity.removeWarehouseDetails.title = Are you sure you want to remove this warehouse?
 changeActivity.removeWarehouseDetails.error.required = Select yes if you want to remove this warehouse
 
-changeActivity.packAtBusinessAddress.title = Is this address a UK packaging site you operate to produce liable drinks?
-changeActivity.packAtBusinessAddress.heading = Is this address a UK packaging site you operate to produce liable drinks?
-changeActivity.packAtBusinessAddress.checkYourAnswersLabel = Is this address a UK packaging site you operate to produce liable drinks?
-changeActivity.packAtBusinessAddress.error.required = Select yes if your registered business address is a UK packaging site that you operate to produce liable drinks
-changeActivity.packAtBusinessAddress.change.hidden = change pack at business address
-changeActivity.packAtBusinessAddress.detailsLink = Why we need these details
-changeActivity.packAtBusinessAddress.detailsContent = Because you changed your business activity, we need to know the addresses of any UK packaging sites you operate.
+changeActivitySent.title = Update sent
+changeActivitySent.panel.returnMessage = We have received the update to your Soft Drinks Industry Levy details
+changeActivitySent.returnsDoneMessage = Your update for <span style="white-space: nowrap">{0}</span> was sent at <span style="white-space: nowrap">{1}</span> on the <span style="white-space: nowrap">{2}.</span> Changes can take up to 15 working days to process.
+changeActivitySent.headerOne = What happens next
+changeActivitySent.whatNextBody = You don't need to do anything else. We will update your details with the information you've provided.
+changeActivitySent.returnHome = Go back to your Soft Drinks Industry Levy details
+changeActivitySent.details = View the details of your update
+
 
 addressLookupFrontend.warehouseDetails.lookupPageLabels.title = Find UK warehouse address
 addressLookupFrontend.warehouseDetails.lookupPageLabels.postcodeLabel = Postcode
@@ -280,12 +294,6 @@ addressLookupFrontend.updateRegisteredBusinessAddress.editPageLabels.line2Label 
 addressLookupFrontend.updateRegisteredBusinessAddress.editPageLabels.line3Label = Address line 3 (optional)
 addressLookupFrontend.updateRegisteredBusinessAddress.editPageLabels.townLabel = Address line 4 (optional)
 addressLookupFrontend.updateRegisteredBusinessAddress.editPageLabels.postcodeLabel = Postcode
-
-changeActivity.thirdPartyPackagers.title = Do you use any third parties in the UK to package liable drinks on your behalf?
-changeActivity.thirdPartyPackagers.heading = Do you use any third parties in the UK to package liable drinks on your behalf?
-changeActivity.thirdPartyPackagers.checkYourAnswersLabel = Use third party packagers?
-changeActivity.thirdPartyPackagers.error.required = Select yes if you use any third parties in the UK to package liable drinks on your behalf
-changeActivity.thirdPartyPackagers.change.hidden = whether you use third party packagers
 
 correctReturn.select.title = Which return do you need to correct?
 correctReturn.select.heading = Which return do you need to correct?
@@ -535,7 +543,7 @@ correctReturn.checkChanges.confirmAndSend = Confirm details and send correction
 
 correctReturn.updateDone.title = Correction sent
 correctReturn.updateDone.panel.message = We will review the details you updated and get back to you
-correctReturn.updateDone.updateInfo.p1 = The corrected {0} to {1} return for {2} was sent on {3} at {4}.
+correctReturn.updateDone.updateInfo.p1 = The corrected <span style="white-space: nowrap">{0}</span> to <span style="white-space: nowrap">{1}</span> return for <span style="white-space: nowrap">{2}</span> was sent on <span style="white-space: nowrap">{3}</span> at <span style="white-space: nowrap">{4}.</span>
 correctReturn.updateDone.updateInfo.p2 = Do not make any payments until we have confirmed how much you need to page, as you will be charged interest on your adjusted amount.
 correctReturn.updateDone.whatNextText = We may get in touch with your contact person to discuss your changes. Once we have approved your correction, your account balance will be updated.
 correctReturn.updateDone.accountHomeLink = Go back to your Soft Drinks Industry Levy details
@@ -550,7 +558,7 @@ updateRegisteredDetails.contactDetails.phoneNumber.change.hidden = contact perso
 updateRegisteredDetails.contactDetails.email.change.hidden = contact person''s email address
 
 updateRegisteredDetails.changeRegisteredDetails.title = What do you need to update?
-updateRegisteredDetails.changeRegisteredDetails.hint = Changes can take up to 15 working days to process. Select all that apply. 
+updateRegisteredDetails.changeRegisteredDetails.hint = Changes can take up to 15 working days to process. Select all that apply.
 updateRegisteredDetails.changeRegisteredDetails.sites = Add or remove packaging sites or warehouse addresses
 updateRegisteredDetails.changeRegisteredDetails.contactDetails = Update your contact person for the Soft Drinks Industry Levy
 updateRegisteredDetails.changeRegisteredDetails.businessAddress = Update your registered business address for the Soft Drinks Industry Levy
@@ -621,9 +629,7 @@ updateRegisteredDetails.warehouseDetails.remove.hidden = warehouse {0} at {1}
 
 updateRegisteredDetails.updateDone.title = Update sent
 updateRegisteredDetails.updateDone.panel.message = We have received the update to your Soft Drinks Industry Levy details
-updateRegisteredDetails.updateDone.updateInfo = Your update for {0} was sent on {1} at {2}. Changes can take up to 15 days to process.
-updateRegisteredDetails.updateDone.updateInfoTwoPart1 = Your update for {0}
-updateRegisteredDetails.updateDone.updateInfoTwoPart2 = was sent on {0} at {1}. Changes can take up to 15 days to process.
+updateRegisteredDetails.updateDone.updateInfo = Your update for <span style="white-space: nowrap">{0}</span> was sent on <span style="white-space: nowrap">{1}</span> at <span style="white-space: nowrap">{2}.</span> Changes can take up to 15 days to process.
 updateRegisteredDetails.updateDone.whatNextText = You do not need to do anything else. We will update your details with the information you have provided.
 updateRegisteredDetails.updateDone.accountHomeLink = Go back to your Soft Drinks Industry Levy details
 updateRegisteredDetails.updateDone.detailsSummary = View the details of your update
@@ -638,13 +644,6 @@ checkYourAnswers.warehouse.checkYourAnswersLabel.one = You have {0} warehouse
 checkYourAnswers.sites.warehouse.change.hidden.one = the UK warehouse you use to store liable drinks
 checkYourAnswers.sites.warehouse.change.hidden.multiple = the UK warehouses you use to store liable drinks
 
-changeActivitySent.title = Update sent
-changeActivitySent.panel.returnMessage = We have received the update to your Soft Drinks Industry Levy details
-changeActivitySent.returnsDoneMessage = Your update for {0} was sent at {1} on the {2}. Changes can take up to 15 working days to process.
-changeActivitySent.headerOne = What happens next
-changeActivitySent.whatNextBody = You don't need to do anything else. We will update your details with the information you've provided.
-changeActivitySent.returnHome = Go back to your Soft Drinks Industry Levy details
-changeActivitySent.details = View the details of your update
 
 correctReturn.balance = Balance
 correctReturn.originalReturnTotal = Original return total

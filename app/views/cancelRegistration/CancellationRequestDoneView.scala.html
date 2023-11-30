@@ -53,25 +53,19 @@
 
     @printLinkWithJs(messages("site.print"))
 
-    @if(companyName.length > 25) {
-        <p class="govuk-body-m">
-            @messages("cancelRegistration.cancellationRequestDone.updateInfoTwoPart1", companyName)
-            <br/>
-            @messages("cancelRegistration.cancellationRequestDone.updateInfoTwoPart2", formattedDate, formattedTime)
-        </p>
-    } else {
-        <p class="govuk-body-m">@messages("cancelRegistration.cancellationRequestDone.updateInfo", companyName, formattedDate, formattedTime)</p>
-    }
+    <p class="govuk-body-m">
+       @Html(messages("cancelRegistration.cancellationRequestDone.updateInfo", companyName, formattedDate, formattedTime))
+    </p>
 
     <h2 class="govuk-heading-m" id="whatNextHeader">
         @messages("site.whatNext")
     </h2>
 
-    <p class="govuk-body" id="whatNextTextP1">@messages("cancelRegistration.cancellationRequestDone.whatNextText.p1", nextPeriodStart, nextPeriodEnd)</p>
+    <p class="govuk-body" id="whatNextTextP1">@Html(messages("cancelRegistration.cancellationRequestDone.whatNextText.p1", nextPeriodStart, nextPeriodEnd))</p>
 
     @govukInsetText(InsetText(
         id = Some("whatNextTextP2"),
-        content = messages("cancelRegistration.cancellationRequestDone.whatNextText.p2", deadlineStart, deadlineEnd)
+        content = HtmlContent(messages("cancelRegistration.cancellationRequestDone.whatNextText.p2", deadlineStart, deadlineEnd))
     ))
 
     <p class="govuk-body" id="whatNextTextP3">@messages("cancelRegistration.cancellationRequestDone.whatNextText.p3")</p>
