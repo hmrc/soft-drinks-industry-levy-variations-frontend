@@ -535,9 +535,7 @@ class ImportsControllerISpec extends ControllerITTestHelper with LitresISpecHelp
               }
             }
           }
-        }
 
-        "redirect to default page" - {
           s"when the session contains data stating activity type is Small" in {
             given
               .commonPrecondition
@@ -553,7 +551,7 @@ class ImportsControllerISpec extends ControllerITTestHelper with LitresISpecHelp
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.ContractPackingController.onPageLoad(NormalMode).url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ImportsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe false

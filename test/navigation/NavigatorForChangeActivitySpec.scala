@@ -28,6 +28,8 @@ class NavigatorForChangeActivitySpec extends SpecBase {
 
   val navigator = new NavigatorForChangeActivity
 
+//  TODO: IMPLEMENT FOR ALL
+
   "Navigator" - {
 
     "in Normal mode" - {

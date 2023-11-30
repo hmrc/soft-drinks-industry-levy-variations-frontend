@@ -112,9 +112,12 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
   }
 
   private def navigateFollowingImportsForAmountProducedLarge(userAnswers: UserAnswers, mode: Mode): Call = {
-    val operateOwnBrandsOrCoPacker = List(userAnswers.get(OperatePackagingSiteOwnBrandsPage), userAnswers.get(ContractPackingPage))
-      .flatten.contains(true)
-    (operateOwnBrandsOrCoPacker, mode) match {
+//    TODO: REWRITE CLEANER
+    val operateOwnBrands = userAnswers.get(OperatePackagingSiteOwnBrandsPage)
+    if (operateOwnBrands.isEmpty) return routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode)
+    val coPacker = userAnswers.get(ContractPackingPage)
+    if (coPacker.isEmpty) return routes.ContractPackingController.onPageLoad(NormalMode)
+    (List(operateOwnBrands, coPacker).flatten.contains(true), mode) match {
       case (true, NormalMode) if userAnswers.packagingSiteList.isEmpty =>
         routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
       case (true, NormalMode) =>
