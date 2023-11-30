@@ -113,6 +113,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
 
   private def navigateFollowingImportsForAmountProducedLarge(userAnswers: UserAnswers, mode: Mode): Call = {
 //    TODO: REWRITE CLEANER
+    if (mode == CheckMode) return routes.ChangeActivityCYAController.onPageLoad
     val operateOwnBrands = userAnswers.get(OperatePackagingSiteOwnBrandsPage)
     if (operateOwnBrands.isEmpty) return routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode)
     val coPacker = userAnswers.get(ContractPackingPage)

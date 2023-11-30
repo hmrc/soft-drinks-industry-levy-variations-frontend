@@ -1009,7 +1009,6 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
           }
 
-          // TODO: FIX
           "when the session contains data stating activity type Large, but no other pages" in {
             given
               .commonPrecondition
@@ -1033,7 +1032,6 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
           }
 
-          // TODO: FIX
           "when the session contains data stating activity type is Large and copacker" in {
             given
               .commonPrecondition
@@ -1058,7 +1056,6 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
           }
 
-          // TODO: FIX
           "when the session contains data stating activity type is Large and own brands" in {
             given
               .commonPrecondition
