@@ -111,7 +111,7 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
     constructReturnVariationData(userAnswers, subscription).map(connector.submitReturnsVariation(subscription.sdilRef, _))
   }
 
-   def constructReturnVariationData(userAnswers: UserAnswers, subscription: RetrievedSubscription)
+  def constructReturnVariationData(userAnswers: UserAnswers, subscription: RetrievedSubscription)
                      : Option[ReturnVariationData] = {
     for {
       originalReturn <- userAnswers.getCorrectReturnOriginalSDILReturnData

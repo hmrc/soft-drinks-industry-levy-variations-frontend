@@ -46,7 +46,6 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar with Vari
 
   val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
   val mockSessionService: SessionService = mock[SessionService]
-  val mockOrchastrator:CorrectReturnOrchestrator = new CorrectReturnOrchestrator(mockSdilConnector, mockSessionService)
 
   val emptyReturn: SdilReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0), submittedOn =
     Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
@@ -411,5 +410,4 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar with Vari
       }
     }
   }
-
 }

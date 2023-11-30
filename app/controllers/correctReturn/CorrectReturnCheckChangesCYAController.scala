@@ -83,7 +83,7 @@ class CorrectReturnCheckChangesCYAController @Inject()(
     submitReturnVariation(userAnswers, subscription)
   }
 
-  def submitReturnVariation(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit request: DataRequest[AnyContent]):Future[Result] = {
+  private def submitReturnVariation(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit request: DataRequest[AnyContent]):Future[Result] = {
     correctReturnOrchestrator.submitReturnVariation(request.userAnswers, request.subscription).map(result =>
       result.value.flatMap {
         case Right(_) =>  submitActivityVariation(userAnswers,subscription)
@@ -95,7 +95,7 @@ class CorrectReturnCheckChangesCYAController @Inject()(
     }
   }
 
-  def submitActivityVariation(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit request: DataRequest[AnyContent]):Future[Result] = {
+  private def submitActivityVariation(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit request: DataRequest[AnyContent]):Future[Result] = {
       correctReturnOrchestrator.submitActivityVariation(userAnswers, subscription).value.map{
         case Left (_) => genericLogger.logger.error(s"${getClass.getName} - ${userAnswers.id} - failed to submit Submit ActivityVariation")
           InternalServerError(errorHandler.internalServerErrorTemplate(request))
