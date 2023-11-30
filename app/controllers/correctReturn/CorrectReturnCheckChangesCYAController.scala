@@ -21,12 +21,13 @@ import config.FrontendAppConfig
 import controllers.actions.ControllerActions
 import handlers.ErrorHandler
 import models.SelectChange.CorrectReturn
+import models.backend.RetrievedSubscription
 import models.correctReturn.ChangedPage
-import models.{Amounts, SdilReturn}
+import models.requests.DataRequest
+import models.{Amounts, SdilReturn, UserAnswers}
 import orchestrators.CorrectReturnOrchestrator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Results.InternalServerError
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.ReturnService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -74,17 +75,31 @@ class CorrectReturnCheckChangesCYAController @Inject()(
       }).getOrElse(Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url)))
   }
 
-  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
-    implicit request =>
+
+
+  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async { implicit request =>
+    val userAnswers: UserAnswers = request.userAnswers
+    val subscription: RetrievedSubscription = request.subscription
+    submitReturnVariation(userAnswers, subscription)
+  }
+
+  private def submitReturnVariation(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit request: DataRequest[AnyContent]):Future[Result] = {
     correctReturnOrchestrator.submitReturnVariation(request.userAnswers, request.subscription).map(result =>
-      result.value.map {
-        case Right(_) =>  correctReturnOrchestrator.SubmitActivityVariation(request.userAnswers, request.subscription)
-          Redirect(routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+      result.value.flatMap {
+        case Right(_) =>  submitActivityVariation(userAnswers,subscription)
         case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - received a failed response from return submission")
-          InternalServerError(errorHandler.internalServerErrorTemplate)
+          Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
       }).getOrElse{
       genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to submit return variation due failing to retrieve user answers")
-      Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+          Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
     }
+  }
+
+  private def submitActivityVariation(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit request: DataRequest[AnyContent]):Future[Result] = {
+      correctReturnOrchestrator.submitActivityVariation(userAnswers, subscription).value.map{
+        case Left (_) => genericLogger.logger.error(s"${getClass.getName} - ${userAnswers.id} - failed to submit Submit ActivityVariation")
+          InternalServerError(errorHandler.internalServerErrorTemplate(request))
+        case Right(_) => Redirect(routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+      }
   }
 }

@@ -511,6 +511,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
     "should redirect to select return to correct page" in {
       given
         .commonPrecondition
+        .sdilBackend.submitVariationSuccess("XKSDIL000000022")
         .sdilBackend.submitReturnsVariation("XKSDIL000000022")
 
       setAnswers(userAnswerWithLitresForAllPagesNilSdilReturn

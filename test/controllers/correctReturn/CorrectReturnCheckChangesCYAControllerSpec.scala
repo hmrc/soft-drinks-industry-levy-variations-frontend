@@ -115,6 +115,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
 
       running(application) {
         val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url).withFormUrlEncodedBody()
+        when(mockCorrectReturnOrchestrator.submitActivityVariation(any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
         when (mockCorrectReturnOrchestrator.submitReturnVariation(any(), any())(any(),any())) thenReturn Some(createSuccessVariationResult((): Unit))
 
         val result = route(application, request).value
@@ -124,7 +125,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       }
     }
 
-    "must return internal server error if submission is not a success" in {
+    "must return internal server error if submission for submitReturnVariation is not a success" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
         .overrides(
           bind[CorrectReturnOrchestrator].toInstance(mockCorrectReturnOrchestrator)
@@ -132,7 +133,27 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         .build()
 
       running(application) {
+        when(mockCorrectReturnOrchestrator.submitActivityVariation(any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
         when (mockCorrectReturnOrchestrator.submitReturnVariation(any(), any())(any(),any())) thenReturn Some(createFailureVariationResult(UnexpectedResponseFromSDIL))
+
+        val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url).withFormUrlEncodedBody()
+
+        val result = route(application, request).value
+
+        status(result) mustEqual INTERNAL_SERVER_ERROR
+      }
+    }
+
+    "must return internal server error if submission for submitActivityVariation is not a success" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+        .overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockCorrectReturnOrchestrator)
+        )
+        .build()
+
+      running(application) {
+        when(mockCorrectReturnOrchestrator.submitActivityVariation(any(), any())(any(), any())) thenReturn createFailureVariationResult(UnexpectedResponseFromSDIL)
+        when (mockCorrectReturnOrchestrator.submitReturnVariation(any(), any())(any(),any())) thenReturn Some(createSuccessVariationResult((): Unit))
 
         val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url).withFormUrlEncodedBody()
 
