@@ -22,12 +22,17 @@ import models.backend.RetrievedSubscription
 import models.submission.VariationsSubmission
 import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
 import service.VariationResult
+import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
+import utilities.GenericLogger
 
+import java.time.Instant
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-class CancelRegistrationOrchestrator @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector) {
+class CancelRegistrationOrchestrator @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
+                                               sessionService: SessionService,
+                                               genericLogger: GenericLogger) {
 
   private def getVariationToBeSubmitted(subscription: RetrievedSubscription,
                                         userAnswers: UserAnswers): VariationsSubmission = {
@@ -38,6 +43,14 @@ class CancelRegistrationOrchestrator @Inject()(sdilConnector: SoftDrinksIndustry
       deregistrationDate = userAnswers.get(CancelRegistrationDatePage),
       sdilActivity = subscription.defaultSdilAcivity
     )
+  }
+
+  def submitUserAnswwers(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext):Future[Boolean] = {
+    sessionService.set(userAnswers.copy(submittedOn = Some(Instant.now))).map {
+      case Right(_) => true
+      case Left(_) => genericLogger.logger.error(s"Failed to set value in session repository while attempting set on submittedOn")
+        false
+    }
   }
 
   def submitVariation(subscription: RetrievedSubscription, userAnswers: UserAnswers)

@@ -22,12 +22,16 @@ import models.VariationsSubmissionDataHelper
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
+import services.SessionService
+import utilities.GenericLogger
 
 class CancelRegistrationOrchestratorSpec extends SpecBase with MockitoSugar with VariationsSubmissionDataHelper{
 
   val mockConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
+  val mockSessionService = mock[SessionService]
+  val genericLogger = new GenericLogger
 
-  val cancelRegistrationOrchestrator = new CancelRegistrationOrchestrator(mockConnector)
+  val cancelRegistrationOrchestrator = new CancelRegistrationOrchestrator(mockConnector, mockSessionService, genericLogger)
 
   "submitVariation" - {
     "should send the submission variation including the dereg reason and date" - {

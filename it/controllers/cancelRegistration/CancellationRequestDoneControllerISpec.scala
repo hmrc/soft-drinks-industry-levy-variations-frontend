@@ -7,7 +7,7 @@ import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
 import play.api.test.WsTestClient
 
-import java.time.LocalDate
+import java.time.{Instant, LocalDate}
 
 class CancellationRequestDoneControllerISpec extends ControllerITTestHelper {
 
@@ -19,11 +19,11 @@ class CancellationRequestDoneControllerISpec extends ControllerITTestHelper {
     "should return OK and render the CancellationRequestDone page" in {
       given
         .commonPrecondition
-
+      val testTime = Instant.now()
       val userAnswers = emptyUserAnswersForCancelRegistration
         .set(ReasonPage, "No longer sell drinks").success.value
         .set(CancelRegistrationDatePage, LocalDate.now()).success.value
-      setAnswers(userAnswers)
+      setAnswers(userAnswers.copy(submittedOn = Some(testTime)))
 
       WsTestClient.withClient { client =>
         val result1 = createClientRequestGet(client, cancelRegistrationBaseUrl + normalRoutePath)
