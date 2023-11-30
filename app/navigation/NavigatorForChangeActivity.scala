@@ -18,7 +18,6 @@ package navigation
 
 import controllers.changeActivity.routes
 import models.changeActivity.AmountProduced
-import models.changeActivity.AmountProduced._
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages.Page
 import pages.changeActivity._
@@ -40,7 +39,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
   }
 
     private def navigationForHowManyContractPacking(userAnswers: UserAnswers, mode: Mode): Call = {
-    if(mode == CheckMode){
+    if (mode == CheckMode) {
       routes.ChangeActivityCYAController.onPageLoad
     } else {
       routes.ImportsController.onPageLoad(mode)
@@ -50,8 +49,8 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
   private def navigationForImports(userAnswers: UserAnswers, mode: Mode): Call = {
     if (userAnswers.get(page = ImportsPage).contains(true)) {
       routes.HowManyImportsController.onPageLoad(mode)
-    } else if(mode == CheckMode){
-        routes.ChangeActivityCYAController.onPageLoad
+    } else if (mode == CheckMode) {
+      routes.ChangeActivityCYAController.onPageLoad
     } else {
       navigationFollowingImports(userAnswers, mode)
     }
@@ -60,29 +59,29 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
   private def navigationForOperatePackagingSiteOwnBrands(userAnswers: UserAnswers, mode: Mode): Call = {
     if (userAnswers.get(page = OperatePackagingSiteOwnBrandsPage).contains(true)) {
       routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(mode)
-    } else if(mode == CheckMode){
-        routes.ChangeActivityCYAController.onPageLoad
+    } else if (mode == CheckMode) {
+      routes.ChangeActivityCYAController.onPageLoad
     } else {
-        routes.ContractPackingController.onPageLoad(mode)
+      routes.ContractPackingController.onPageLoad(mode)
     }
   }
 
   private def navigationForOperateThirdPartyPackagers(mode: Mode): Call = {
-   if(mode == CheckMode){
+    if (mode == CheckMode) {
       routes.ChangeActivityCYAController.onPageLoad
     } else {
-     routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode)
+      routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode)
     }
   }
 
   private def navigationForAmountProduced(userAnswers: UserAnswers, mode: Mode): Call = {
     val pageAnswers = userAnswers.get(page = AmountProducedPage)
     pageAnswers match {
-      case pageAnswers if pageAnswers.contains(Large) =>
+      case pageAnswers if pageAnswers.contains(AmountProduced.Large) =>
         routes.OperatePackagingSiteOwnBrandsController.onPageLoad(mode)
-      case pageAnswers if pageAnswers.contains(Small) =>
+      case pageAnswers if pageAnswers.contains(AmountProduced.Small) =>
         routes.ThirdPartyPackagersController.onPageLoad(mode)
-      case pageAnswers =>
+      case _ =>
         routes.ContractPackingController.onPageLoad(mode)
     }
   }
@@ -105,6 +104,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
   }
 
   override val checkRouteMap: Page => UserAnswers => Call = {
+//        TODO: ADD SOME MISSING ONES FROM HERE
     case ThirdPartyPackagersPage => _ => navigationForOperateThirdPartyPackagers(CheckMode)
     case RemovePackagingSiteDetailsPage => _ => routes.PackagingSiteDetailsController.onPageLoad(CheckMode)
     case ContractPackingPage => userAnswers => navigationForContractPacking(userAnswers, CheckMode)
@@ -122,38 +122,15 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
 
   private def navigationFollowingImports(userAnswers: UserAnswers, mode: Mode): Call = {
     (userAnswers.get(AmountProducedPage), mode) match {
-      case (Some(AmountProduced.Large), mode) => navigateForLargeAmountProducedFollowingImports(userAnswers, mode)
-      case (Some(AmountProduced.None ), mode) => navigateForAmountProducedNoneFollowingImports(userAnswers, mode)
-      case (Some(AmountProduced.Small), mode) => navigateForAmountProducedSmallProducerImports(userAnswers, mode)
+      case (Some(AmountProduced.Large), mode) => navigateFollowingImportsForAmountProducedLarge(userAnswers, mode)
+      case (Some(AmountProduced.Small), mode) => navigateFollowingImportsForAmountProducedSmall(userAnswers, mode)
+      case (Some(AmountProduced.None), mode) => navigateFollowingImportsForAmountProducedNone(userAnswers, mode)
       case _ => routes.AmountProducedController.onPageLoad(NormalMode)
     }
   }
 
-  private def navigateForAmountProducedSmallProducerImports(userAnswers: UserAnswers, mode: Mode): Call = {
-    (userAnswers.get(SecondaryWarehouseDetailsPage), mode)
-    match {
-      case (Some(_), CheckMode) => routes.ChangeActivityCYAController.onPageLoad
-      case (_ ,  CheckMode)  => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
-      case (_, _) => defaultCall
-    }
-  }
-
-  private def navigateForAmountProducedNoneFollowingImports(userAnswers: UserAnswers, mode: Mode): Call =
-    (userAnswers.get(ContractPackingPage), userAnswers.get(SecondaryWarehouseDetailsPage), mode)
-    match {
-      case (Some(true), _, NormalMode) if userAnswers.packagingSiteList.isEmpty =>
-        routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
-      case (Some(true), _, NormalMode) =>
-        routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
-      case (Some(false), _, NormalMode) =>
-        routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
-      case (_, Some(_), CheckMode) =>
-        routes.ChangeActivityCYAController.onPageLoad
-      case (_, _ , mode) =>
-        routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
-    }
-
-  private def navigateForLargeAmountProducedFollowingImports(userAnswers: UserAnswers, mode: Mode): Call =
+  private def navigateFollowingImportsForAmountProducedLarge(userAnswers: UserAnswers, mode: Mode): Call =
+//    TODO: REFACTOR/ Figure out if missing cases
     (userAnswers.get(OperatePackagingSiteOwnBrandsPage), userAnswers.get(ContractPackingPage), mode) match {
       case (Some(opsob), Some(cp), NormalMode) if (opsob || cp) && userAnswers.packagingSiteList.isEmpty =>
         routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
@@ -167,5 +144,30 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
         routes.ChangeActivityCYAController.onPageLoad
       case _ =>
         routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode)
+    }
+
+  private def navigateFollowingImportsForAmountProducedSmall(userAnswers: UserAnswers, mode: Mode): Call = {
+//    TODO: Figure out missing cases
+    (userAnswers.get(SecondaryWarehouseDetailsPage), mode)
+    match {
+      case (Some(_), CheckMode) => routes.ChangeActivityCYAController.onPageLoad
+      case (None, CheckMode)  => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
+      case (_, _) => defaultCall
+    }
+  }
+
+  private def navigateFollowingImportsForAmountProducedNone(userAnswers: UserAnswers, mode: Mode): Call =
+    (userAnswers.get(ContractPackingPage), userAnswers.get(SecondaryWarehouseDetailsPage), mode)
+    match {
+      case (Some(true), _, NormalMode) if userAnswers.packagingSiteList.isEmpty =>
+        routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
+      case (Some(true), _, NormalMode) =>
+        routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
+      case (Some(false), _, NormalMode) =>
+        routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+      case (None, Some(_), CheckMode) =>
+        routes.ChangeActivityCYAController.onPageLoad
+      case (_, _, mode) =>
+        routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
     }
 }
