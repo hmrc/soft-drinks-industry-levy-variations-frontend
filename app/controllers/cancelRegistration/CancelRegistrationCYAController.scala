@@ -26,6 +26,7 @@ import orchestrators.CancelRegistrationOrchestrator
 import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import services.SessionService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilities.GenericLogger
@@ -33,6 +34,7 @@ import viewmodels.govuk.SummaryListFluency
 import viewmodels.summary.cancelRegistration.{CancelRegistrationDateSummary, ReasonSummary}
 import views.html.cancelRegistration.CancelRegistrationCYAView
 
+import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
 
 class CancelRegistrationCYAController @Inject()(
@@ -41,6 +43,7 @@ class CancelRegistrationCYAController @Inject()(
                                                  cancelRegistrationOrchestrator: CancelRegistrationOrchestrator,
                                                  val controllerComponents: MessagesControllerComponents,
                                                  view: CancelRegistrationCYAView,
+                                                 sessionService : SessionService,
                                                  errorHandler: ErrorHandler,
                                                  genericLogger: GenericLogger
                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with SummaryListFluency {
@@ -63,7 +66,12 @@ class CancelRegistrationCYAController @Inject()(
     withRequiredUserAnswers match {
       case Right(_) =>
         val subscription = request.subscription
-        val userAnswers = request.userAnswers
+        val userAnswers = request.userAnswers.copy(submittedOn = Some(Instant.now))
+        sessionService.set(userAnswers).map {
+          case Right(_) => true
+          case Left(_) => genericLogger.logger.error(s"Failed to set value in session repository while attempting set on submittedOn")
+            false
+        }
         cancelRegistrationOrchestrator.submitVariation(subscription, userAnswers).value.map {
           case Right(_) =>
             Redirect(routes.CancellationRequestDoneController.onPageLoad.url)

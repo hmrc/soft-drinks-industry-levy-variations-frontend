@@ -43,11 +43,9 @@ class CancellationRequestDoneController @Inject()(
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(CancelRegistration) {
 
     implicit request =>
-      val getSentDateTime = LocalDateTime.now(ZoneId.of("UTC")) //LocalDateTime.ofInstant(request.userAnswers.submittedOn.get, ZoneId.of("UTC"))
-      val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-      val timeFormatter = DateTimeFormatter.ofPattern("H:MMa")
-      val formattedDate = getSentDateTime.format(dateFormatter)
-      val formattedTime = getSentDateTime.format(timeFormatter)
+      val getSentDateTime = LocalDateTime.ofInstant(request.userAnswers.submittedOn.get, ZoneId.of("Europe/London"))
+      val formattedDate = getSentDateTime.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+      val formattedTime = getSentDateTime.format(DateTimeFormatter.ofPattern("h:mma"))
 
       val returnPeriodFormat = DateTimeFormatter.ofPattern("MMMM yyyy")
       val nextReturnPeriod = ReturnPeriod(getSentDateTime.toLocalDate)
