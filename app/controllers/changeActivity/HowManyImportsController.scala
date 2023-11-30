@@ -66,6 +66,7 @@ class HowManyImportsController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode))),
 
         value => {
+//          TODO: UPDATE TO USE updateDatabaseAndRedirect
           val updatedAnswers = request.userAnswers.set(HowManyImportsPage, value)
           val contractPacker = request.userAnswers.get(ContractPackingPage).getOrElse(false)
           val hasPackagingSites = request.subscription.productionSites.nonEmpty
