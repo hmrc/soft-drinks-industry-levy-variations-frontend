@@ -21,7 +21,7 @@ import controllers.changeActivity.routes
 import models._
 import models.changeActivity.AmountProduced
 import pages._
-import pages.changeActivity.{AmountProducedPage, HowManyImportsPage, RemoveWarehouseDetailsPage, SecondaryWarehouseDetailsPage}
+import pages.changeActivity._
 import play.api.libs.json.Json
 
 class NavigatorForChangeActivitySpec extends SpecBase {
@@ -37,12 +37,6 @@ class NavigatorForChangeActivitySpec extends SpecBase {
       "must go from a page that doesn't exist in the route map to Index" in {
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id", SelectChange.ChangeActivity, contactAddress = contactAddress)) mustBe defaultCall
-      }
-
-      s"must navigate back to $SecondaryWarehouseDetailsPage when either choice is selected" in {
-        val result = navigator.nextPage(RemoveWarehouseDetailsPage, NormalMode,
-          UserAnswers("id", SelectChange.ChangeActivity, Json.obj(RemoveWarehouseDetailsPage.toString -> "true"), contactAddress = contactAddress))
-        result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
       }
     }
 
@@ -114,7 +108,19 @@ class NavigatorForChangeActivitySpec extends SpecBase {
     }
 
     "Third party packagers" - {
+      def navigateFromThirdPartyPackagers(mode: Mode) =
+        navigator.nextPage(ThirdPartyPackagersPage, mode,
+          emptyUserAnswersForChangeActivity.set(ThirdPartyPackagersPage, true).success.value)
 
+      "navigate to claim credits for lost/damaged in NormalMode" in {
+        val result = navigateFromThirdPartyPackagers(NormalMode)
+        result mustBe routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode)
+      }
+
+      "navigate to Check Your Answers page in CheckMode" in {
+        val result = navigateFromThirdPartyPackagers(CheckMode)
+        result mustBe routes.ChangeActivityCYAController.onPageLoad
+      }
     }
 
     "Operate packaging sites own brands" - {
@@ -122,7 +128,19 @@ class NavigatorForChangeActivitySpec extends SpecBase {
     }
 
     "How many operate packaging sites own brands" - {
+      def navigateFromHowManyOperatePackagingSiteOwnBrands(mode: Mode) =
+        navigator.nextPage(HowManyOperatePackagingSiteOwnBrandsPage, mode,
+          emptyUserAnswersForChangeActivity.set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1, 1)).success.value)
 
+      "navigate to claim credits for lost/damaged in NormalMode" in {
+        val result = navigateFromHowManyOperatePackagingSiteOwnBrands(NormalMode)
+        result mustBe routes.ContractPackingController.onPageLoad(NormalMode)
+      }
+
+      "navigate to Check Your Answers page in CheckMode" in {
+        val result = navigateFromHowManyOperatePackagingSiteOwnBrands(CheckMode)
+        result mustBe routes.ChangeActivityCYAController.onPageLoad
+      }
     }
 
     "Contract packing" - {
@@ -130,7 +148,19 @@ class NavigatorForChangeActivitySpec extends SpecBase {
     }
 
     "How many contract packing" - {
+      def navigateFromHowManyContractPacking(mode: Mode) =
+        navigator.nextPage(HowManyContractPackingPage, mode,
+          emptyUserAnswersForChangeActivity.set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value)
 
+      "navigate to claim credits for lost/damaged in NormalMode" in {
+        val result = navigateFromHowManyContractPacking(NormalMode)
+        result mustBe routes.ImportsController.onPageLoad(NormalMode)
+      }
+
+      "navigate to Check Your Answers page in CheckMode" in {
+        val result = navigateFromHowManyContractPacking(CheckMode)
+        result mustBe routes.ChangeActivityCYAController.onPageLoad
+      }
     }
 
     "Imports" - {
@@ -142,16 +172,55 @@ class NavigatorForChangeActivitySpec extends SpecBase {
     }
 
     "Remove packaging site confirm" - {
+      def navigateFromRemovePackagingSiteConfirm(value: Boolean, mode: Mode) = {
+        navigator.nextPage(RemovePackagingSiteDetailsPage, mode,
+          emptyUserAnswersForChangeActivity
+            .copy(packagingSiteList = packingSiteMap)
+            .set(PackagingSiteDetailsPage, value).success.value
+        )
+      }
 
+      List(NormalMode, CheckMode).foreach(mode => {
+        s"select Yes to navigate to Packaging Site Details in $mode" in {
+          val result = navigateFromRemovePackagingSiteConfirm(value = true, mode)
+          result mustBe routes.PackagingSiteDetailsController.onPageLoad(mode)
+        }
+
+        s"select No to navigate to Packaging Site Details in $mode" in {
+          val result = navigateFromRemovePackagingSiteConfirm(value = false, mode)
+          result mustBe routes.PackagingSiteDetailsController.onPageLoad(mode)
+        }
+      })
     }
 
     "Remove warehouse confirm" - {
+      def navigateFromRemoveWarehouseConfirm(value: Boolean, mode: Mode) = {
+        navigator.nextPage(RemoveWarehouseDetailsPage, mode,
+          emptyUserAnswersForChangeActivity
+            .copy(warehouseList = twoWarehouses)
+            .set(RemoveWarehouseDetailsPage, value).success.value
+        )
+      }
 
+      List(NormalMode, CheckMode).foreach(mode => {
+        s"select Yes to navigate to Secondary Warehouse Details in $mode" in {
+          val result = navigateFromRemoveWarehouseConfirm(value = true, mode)
+          result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
+        }
+
+        s"select No to navigate to Secondary Warehouse Details in $mode" in {
+          val result = navigateFromRemoveWarehouseConfirm(value = false, mode)
+          result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
+        }
+      })
     }
 
     "Suggest deregistration" - {
       "In normal mode" - {
-
+        "should navigate to cancel registration reason" in {
+          val result = navigator.nextPage(SuggestDeregistrationPage, NormalMode, emptyUserAnswersForChangeActivity)
+          result mustBe controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode)
+        }
       }
     }
   }
