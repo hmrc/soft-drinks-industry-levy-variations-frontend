@@ -225,33 +225,66 @@ class NavigatorForChangeActivitySpec extends SpecBase {
             }
 
             "And Operate Packaging Site Own Brands answered and Contract Packing unanswered" - {
-              //          TODO: IMPLEMENT HERE
               "navigate to Pack At Business Address if operate own brand packaging sites and contract packing and packaging sites empty" in {
-
+                val userAnswers = initialUserAnswersWithAmountProducedLarge
+                  .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+                  .set(ContractPackingPage, true).success.value
+                  .copy(packagingSiteList = Map.empty)
+                val result = navigateFollowingImportsPage(userAnswers)
+                result mustBe routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
               }
 
               "navigate to Pack At Business Address if operate own brand packaging sites and not contract packing and packaging sites empty" in {
-
+                val userAnswers = initialUserAnswersWithAmountProducedLarge
+                  .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+                  .set(ContractPackingPage, false).success.value
+                  .copy(packagingSiteList = Map.empty)
+                val result = navigateFollowingImportsPage(userAnswers)
+                result mustBe routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
               }
 
               "navigate to Pack At Business Address if not operate own brand packaging sites and not contract packing and packaging sites empty" in {
-
+                val userAnswers = initialUserAnswersWithAmountProducedLarge
+                  .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+                  .set(ContractPackingPage, true).success.value
+                  .copy(packagingSiteList = Map.empty)
+                val result = navigateFollowingImportsPage(userAnswers)
+                result mustBe routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
               }
 
               "navigate to Packaging Site Details if operate own brand packaging sites and contract packing and packaging sites not empty" in {
-
+                val userAnswers = initialUserAnswersWithAmountProducedLarge
+                  .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+                  .set(ContractPackingPage, true).success.value
+                  .copy(packagingSiteList = packingSiteMap)
+                val result = navigateFollowingImportsPage(userAnswers)
+                result mustBe routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
               }
 
               "navigate to Packaging Site Details if operate own brand packaging sites and not contract packing and packaging sites not empty" in {
-
+                val userAnswers = initialUserAnswersWithAmountProducedLarge
+                  .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+                  .set(ContractPackingPage, false).success.value
+                  .copy(packagingSiteList = packingSiteMap)
+                val result = navigateFollowingImportsPage(userAnswers)
+                result mustBe routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
               }
 
               "navigate to Packaging Site Details if not operate own brand packaging sites and contract packing and packaging sites not empty" in {
-
+                val userAnswers = initialUserAnswersWithAmountProducedLarge
+                  .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+                  .set(ContractPackingPage, true).success.value
+                  .copy(packagingSiteList = packingSiteMap)
+                val result = navigateFollowingImportsPage(userAnswers)
+                result mustBe routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
               }
 
               "navigate to Secondary Warehouse Details if not operate own brand packaging sites and not contract packing" in {
-
+                val userAnswers = initialUserAnswersWithAmountProducedLarge
+                  .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+                  .set(ContractPackingPage, false).success.value
+                val result = navigateFollowingImportsPage(userAnswers)
+                result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
               }
             }
           }
@@ -266,17 +299,27 @@ class NavigatorForChangeActivitySpec extends SpecBase {
             }
 
             "And Contract Packing answered" - {
-              //          TODO: IMPLEMENT HERE
               "navigate to Pack At Business Address if contract packing and packaging sites empty" in {
-
+                val userAnswers = initialUserAnswersWithAmountProducedSmall
+                  .set(ContractPackingPage, true).success.value
+                  .copy(packagingSiteList = Map.empty)
+                val result = navigateFollowingImportsPage(userAnswers)
+                result mustBe routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
               }
 
               "navigate to Packaging Site Details if contract packing and packaging sites not empty" in {
-
+                val userAnswers = initialUserAnswersWithAmountProducedSmall
+                  .set(ContractPackingPage, true).success.value
+                  .copy(packagingSiteList = packingSiteMap)
+                val result = navigateFollowingImportsPage(userAnswers)
+                result mustBe routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
               }
 
               "navigate to Secondary Warehouse Details if not contract packing" in {
-
+                val userAnswers = initialUserAnswersWithAmountProducedSmall
+                  .set(ContractPackingPage, false).success.value
+                val result = navigateFollowingImportsPage(userAnswers)
+                result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
               }
             }
           }
@@ -291,17 +334,27 @@ class NavigatorForChangeActivitySpec extends SpecBase {
             }
 
             "And Contract Packing answered" - {
-              //          TODO: IMPLEMENT HERE
               "navigate to Pack At Business Address if contract packing and packaging sites empty" in {
-
+                val userAnswers = initialUserAnswersWithAmountProducedNone
+                  .set(ContractPackingPage, true).success.value
+                  .copy(packagingSiteList = Map.empty)
+                val result = navigateFollowingImportsPage(userAnswers)
+                result mustBe routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
               }
 
               "navigate to Packaging Site Details if contract packing and packaging sites not empty" in {
-
+                val userAnswers = initialUserAnswersWithAmountProducedNone
+                  .set(ContractPackingPage, true).success.value
+                  .copy(packagingSiteList = packingSiteMap)
+                val result = navigateFollowingImportsPage(userAnswers)
+                result mustBe routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
               }
 
               "navigate to Secondary Warehouse Details if not contract packing" in {
-
+                val userAnswers = initialUserAnswersWithAmountProducedNone
+                  .set(ContractPackingPage, false).success.value
+                val result = navigateFollowingImportsPage(userAnswers)
+                result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
               }
             }
           }

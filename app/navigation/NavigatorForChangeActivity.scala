@@ -145,16 +145,11 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
   private def navigateFollowingImportsForAmountProducedNone(userAnswers: UserAnswers, mode: Mode): Call =
     (userAnswers.get(ContractPackingPage), userAnswers.get(SecondaryWarehouseDetailsPage), mode)
     match {
-      case (Some(true), _, NormalMode) if userAnswers.packagingSiteList.isEmpty =>
-        routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
-      case (Some(true), _, NormalMode) =>
-        routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
-      case (Some(false), _, NormalMode) =>
-        routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+      case (Some(true), _, NormalMode) if userAnswers.packagingSiteList.isEmpty => routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
+      case (Some(true), _, NormalMode) => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
+      case (Some(false), _, NormalMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
       case (None, _, NormalMode) => routes.ContractPackingController.onPageLoad(NormalMode)
-      case (_, Some(_), CheckMode) =>
-        routes.ChangeActivityCYAController.onPageLoad
-      case (_, _, mode) =>
-        routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
+      case (_, Some(_), CheckMode) => routes.ChangeActivityCYAController.onPageLoad
+      case (_, _, mode) => routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
     }
 }
