@@ -26,15 +26,19 @@ import models.updateRegisteredDetails.ContactDetails
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
+import services.SessionService
+import utilities.GenericLogger
 
 import java.time.LocalDate
 
 class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar with VariationsSubmissionDataHelper{
 
+  val mockSessionService: SessionService = mock[SessionService]
+  val genericLogger = new GenericLogger
   val mockConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
   val localDate: LocalDate = LocalDate.of(2023, 5, 6)
 
-  val updateRegDetailsOrchestrator = new UpdateRegisteredDetailsOrchestrator(mockConnector)
+  val updateRegDetailsOrchestrator = new UpdateRegisteredDetailsOrchestrator(mockConnector, mockSessionService, genericLogger)
 
   val retrievedActivityLiableLargeProducer = RetrievedActivity(
     smallProducer = false,

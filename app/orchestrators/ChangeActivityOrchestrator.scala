@@ -22,13 +22,17 @@ import models.backend.RetrievedSubscription
 import models.submission.{SdilActivity, VariationsSites, VariationsSubmission}
 import models.updateRegisteredDetails.ContactDetails
 import service.VariationResult
+import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
+import utilities.GenericLogger
 
-import java.time.LocalDate
+import java.time.{Instant, LocalDate}
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-class ChangeActivityOrchestrator @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector){
+class ChangeActivityOrchestrator @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
+                                           sessionService: SessionService,
+                                           genericLogger: GenericLogger){
 
   def todaysDate: LocalDate = LocalDate.now()
   def changeActivityVariationToBeSubmitted(subscription: RetrievedSubscription,
@@ -43,6 +47,14 @@ class ChangeActivityOrchestrator @Inject()(sdilConnector: SoftDrinksIndustryLevy
       newSites = variationSites.newSites,
       closeSites = variationSites.closedSites
     )
+  }
+
+  def submitUserAnswwers(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext):Future[Boolean] = {
+    sessionService.set(userAnswers.copy(submittedOn = Some(Instant.now))).map {
+      case Right(_) => true
+      case Left(_) => genericLogger.logger.error(s"Failed to set value in session repository while attempting set on submittedOn")
+        false
+    }
   }
 
   def submitVariation(subscription: RetrievedSubscription, userAnswers: UserAnswers)

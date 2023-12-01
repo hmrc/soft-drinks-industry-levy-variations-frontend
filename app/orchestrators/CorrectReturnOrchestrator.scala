@@ -29,6 +29,7 @@ import pages.correctReturn.{CorrectionReasonPage, RepaymentMethodPage}
 import service.VariationResult
 import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
+import utilities.GenericLogger
 
 import java.time.{Instant, LocalDate}
 import scala.concurrent.{ExecutionContext, Future}
@@ -36,7 +37,8 @@ import scala.util.Try
 
 @Singleton
 class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConnector,
-                                          sessionService: SessionService){
+                                          sessionService: SessionService,
+                                          genericLogger: GenericLogger){
 
   def submitActivityVariation(userAnswers: UserAnswers,
                               subscription: RetrievedSubscription)
@@ -185,6 +187,14 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
         val returnPeriodsForYear = returnPeriodsForYears.get(year)
           .fold(List(returnPeriod))(_ ++ List(returnPeriod))
         returnPeriodsForYears ++ Map(year -> returnPeriodsForYear)
+    }
+  }
+
+  def submitUserAnswwers(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext):Future[Boolean] = {
+    sessionService.set(userAnswers.copy(submittedOn = Some(Instant.now))).map {
+      case Right(_) => true
+      case Left(_) => genericLogger.logger.error(s"Failed to set value in session repository while attempting set on submittedOn")
+        false
     }
   }
 

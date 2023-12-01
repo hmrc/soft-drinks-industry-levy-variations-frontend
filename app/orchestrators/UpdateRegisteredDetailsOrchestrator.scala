@@ -23,15 +23,20 @@ import models.submission.{VariationsContact, VariationsPersonalDetails, Variatio
 import models.updateRegisteredDetails.ContactDetails
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import service.VariationResult
+import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
+import utilities.GenericLogger
 
+import java.time.Instant
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-class UpdateRegisteredDetailsOrchestrator @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector) {
+class UpdateRegisteredDetailsOrchestrator @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
+                                                    sessionService: SessionService,
+                                                    genericLogger: GenericLogger) {
 
   private def getVariationToBeSubmitted(subscription: RetrievedSubscription,
-                                                   userAnswers: UserAnswers): VariationsSubmission = {
+                                        userAnswers: UserAnswers): VariationsSubmission = {
 
     val optUpdatedContact = userAnswers.get(UpdateContactDetailsPage)
     val optNewPDs = optUpdatedContact.flatMap(VariationsPersonalDetails.apply(_, subscription))
@@ -49,6 +54,14 @@ class UpdateRegisteredDetailsOrchestrator @Inject()(sdilConnector: SoftDrinksInd
       newSites = variationSites.newSites,
       closeSites = variationSites.closedSites
     )
+  }
+
+  def submitUserAnswwers(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext):Future[Boolean] = {
+    sessionService.set(userAnswers.copy(submittedOn = Some(Instant.now))).map {
+      case Right(_) => true
+      case Left(_) => genericLogger.logger.error(s"Failed to set value in session repository while attempting set on submittedOn")
+        false
+    }
   }
 
   def submitVariation(subscription: RetrievedSubscription, userAnswers: UserAnswers)

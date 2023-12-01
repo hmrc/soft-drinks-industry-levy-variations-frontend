@@ -21,10 +21,13 @@ import config.FrontendAppConfig
 import controllers.actions.{ControllerActions, RequiredUserAnswersForChangeActivity}
 import handlers.ErrorHandler
 import models.SelectChange.ChangeActivity
+import models.UserAnswers
+import models.backend.RetrievedSubscription
+import models.requests.DataRequest
 import orchestrators.ChangeActivityOrchestrator
 import pages.changeActivity.ChangeActivityCYAPage
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilities.GenericLogger
 import views.html.changeActivity.ChangeActivityCYAView
@@ -55,10 +58,23 @@ class ChangeActivityCYAController @Inject()(
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async { implicit request =>
     val userAnswers = request.userAnswers
-    changeActivityOrchestrator.submitVariation(request.subscription, userAnswers).value.map {
+    val subscription = request.subscription
+    submitUserAnswers(userAnswers, subscription)
+  }
+
+  private def submitUserAnswers(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit request: DataRequest[AnyContent]):Future[Result]  = {
+    changeActivityOrchestrator.submitUserAnswwers(userAnswers).flatMap{
+      case true => submitVariation(userAnswers, subscription)
+      case false => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - received a failed response from return submission")
+      Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+    }
+  }
+
+  private def submitVariation(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit request: DataRequest[AnyContent]):Future[Result] = {
+    changeActivityOrchestrator.submitVariation(subscription, userAnswers).value.map {
       case Right(_) => Redirect(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad)
       case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${userAnswers.id} - failed to submit change activity variation")
-        InternalServerError(errorHandler.internalServerErrorTemplate)
+      InternalServerError(errorHandler.internalServerErrorTemplate)
     }
   }
 }

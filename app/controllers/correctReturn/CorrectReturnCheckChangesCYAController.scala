@@ -80,7 +80,15 @@ class CorrectReturnCheckChangesCYAController @Inject()(
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async { implicit request =>
     val userAnswers: UserAnswers = request.userAnswers
     val subscription: RetrievedSubscription = request.subscription
-    submitReturnVariation(userAnswers, subscription)
+    submitUserAnswers(userAnswers, subscription)
+  }
+
+  private def submitUserAnswers(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit request: DataRequest[AnyContent]):Future[Result]  = {
+    correctReturnOrchestrator.submitUserAnswwers(userAnswers).flatMap{
+      case true => submitReturnVariation(userAnswers, subscription)
+      case false => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - received a failed response from return submission")
+        Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+    }
   }
 
   private def submitReturnVariation(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit request: DataRequest[AnyContent]):Future[Result] = {
