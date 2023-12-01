@@ -226,6 +226,33 @@ class NavigatorForChangeActivitySpec extends SpecBase {
 
             "And Operate Packaging Site Own Brands answered and Contract Packing unanswered" - {
               //          TODO: IMPLEMENT HERE
+              "navigate to Pack At Business Address if operate own brand packaging sites and contract packing and packaging sites empty" in {
+
+              }
+
+              "navigate to Pack At Business Address if operate own brand packaging sites and not contract packing and packaging sites empty" in {
+
+              }
+
+              "navigate to Pack At Business Address if not operate own brand packaging sites and not contract packing and packaging sites empty" in {
+
+              }
+
+              "navigate to Packaging Site Details if operate own brand packaging sites and contract packing and packaging sites not empty" in {
+
+              }
+
+              "navigate to Packaging Site Details if operate own brand packaging sites and not contract packing and packaging sites not empty" in {
+
+              }
+
+              "navigate to Packaging Site Details if not operate own brand packaging sites and contract packing and packaging sites not empty" in {
+
+              }
+
+              "navigate to Secondary Warehouse Details if not operate own brand packaging sites and not contract packing" in {
+
+              }
             }
           }
 
@@ -240,6 +267,17 @@ class NavigatorForChangeActivitySpec extends SpecBase {
 
             "And Contract Packing answered" - {
               //          TODO: IMPLEMENT HERE
+              "navigate to Pack At Business Address if contract packing and packaging sites empty" in {
+
+              }
+
+              "navigate to Packaging Site Details if contract packing and packaging sites not empty" in {
+
+              }
+
+              "navigate to Secondary Warehouse Details if not contract packing" in {
+
+              }
             }
           }
 
@@ -254,6 +292,17 @@ class NavigatorForChangeActivitySpec extends SpecBase {
 
             "And Contract Packing answered" - {
               //          TODO: IMPLEMENT HERE
+              "navigate to Pack At Business Address if contract packing and packaging sites empty" in {
+
+              }
+
+              "navigate to Packaging Site Details if contract packing and packaging sites not empty" in {
+
+              }
+
+              "navigate to Secondary Warehouse Details if not contract packing" in {
+
+              }
             }
           }
         }
