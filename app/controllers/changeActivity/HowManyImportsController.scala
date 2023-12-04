@@ -67,17 +67,7 @@ class HowManyImportsController @Inject()(
 
         value => {
           val updatedAnswers = request.userAnswers.set(HowManyImportsPage, value)
-          val contractPacker = request.userAnswers.get(ContractPackingPage).getOrElse(false)
-          val hasPackagingSites = request.subscription.productionSites.nonEmpty
-
-          (contractPacker, hasPackagingSites, mode) match {
-            case(true, false, NormalMode) =>
-              updateDatabaseWithoutRedirect(updatedAnswers, HowManyImportsPage).flatMap {
-                case true => Future.successful(Redirect(routes.PackAtBusinessAddressController.onPageLoad(mode)))
-                case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
-              }
-            case _ => updateDatabaseAndRedirect(updatedAnswers, HowManyImportsPage, mode)
-          }
+          updateDatabaseAndRedirect(updatedAnswers, HowManyImportsPage, mode)
         }
       )
   }

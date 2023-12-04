@@ -73,22 +73,22 @@ class ImportsController @Inject()(
 
         value => {
           val updatedAnswers = userAnswers.setAndRemoveLitresIfReq(ImportsPage, HowManyImportsPage, value)
-          if(value || ifStillLiableForLevy(userAnswers)) {
+          if (value || ifStillLiableForLevy(userAnswers)) {
             updateDatabaseAndRedirect(updatedAnswers, ImportsPage, mode)
           } else {
-            handleUserWhoIsNoLongerLiableForLevy(updatedAnswers, request.subscription.utr, request.subscription.sdilRef)
+            handleUserWhoIsNoLongerLiableForLevy(updatedAnswers, request.subscription.utr)
           }
         }
       )
   }
 
-  def ifStillLiableForLevy(userAnswers: UserAnswers): Boolean = {
+  private def ifStillLiableForLevy(userAnswers: UserAnswers): Boolean = {
     val hasAmountProducedNone = userAnswers.get(AmountProducedPage).contains(AmountProduced.None)
     val isContractPacker = userAnswers.get(ContractPackingPage).getOrElse(false)
     !hasAmountProducedNone || isContractPacker
   }
 
-  def handleUserWhoIsNoLongerLiableForLevy(updatedAnswers: Try[UserAnswers], utr: String, sdilRef: String)
+  private def handleUserWhoIsNoLongerLiableForLevy(updatedAnswers: Try[UserAnswers], utr: String)
                                           (implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[AnyContent]) = {
     updateDatabaseWithoutRedirect(updatedAnswers, ImportsPage).flatMap {
       case true =>
