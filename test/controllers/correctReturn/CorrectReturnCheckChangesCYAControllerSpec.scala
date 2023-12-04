@@ -115,7 +115,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
 
       running(application) {
         val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url).withFormUrlEncodedBody()
-        when(mockCorrectReturnOrchestrator.submitUserAnswwers(any())(any(), any())) thenReturn Future.successful(true)
+        when(mockCorrectReturnOrchestrator.submitUserAnswers(any())(any(), any())) thenReturn Future.successful(true)
         when(mockCorrectReturnOrchestrator.submitActivityVariation(any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
         when (mockCorrectReturnOrchestrator.submitReturnVariation(any(), any())(any(),any())) thenReturn Some(createSuccessVariationResult((): Unit))
 

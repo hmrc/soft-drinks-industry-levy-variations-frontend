@@ -190,7 +190,7 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
     }
   }
 
-  def submitUserAnswwers(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext):Future[Boolean] = {
+  def submitUserAnswers(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext):Future[Boolean] = {
     sessionService.set(userAnswers.copy(submittedOn = Some(Instant.now))).map {
       case Right(_) => true
       case Left(_) => genericLogger.logger.error(s"Failed to set value in session repository while attempting set on submittedOn")

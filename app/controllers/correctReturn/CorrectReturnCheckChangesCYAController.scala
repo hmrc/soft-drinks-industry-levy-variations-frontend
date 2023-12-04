@@ -84,7 +84,7 @@ class CorrectReturnCheckChangesCYAController @Inject()(
   }
 
   private def submitUserAnswers(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit request: DataRequest[AnyContent]):Future[Result]  = {
-    correctReturnOrchestrator.submitUserAnswwers(userAnswers).flatMap{
+    correctReturnOrchestrator.submitUserAnswers(userAnswers).flatMap{
       case true => submitReturnVariation(userAnswers, subscription)
       case false => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - received a failed response from return submission")
         Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
