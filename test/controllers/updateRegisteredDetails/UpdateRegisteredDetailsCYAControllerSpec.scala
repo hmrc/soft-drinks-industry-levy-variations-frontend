@@ -79,7 +79,7 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
 
       running(application) {
         val request = FakeRequest(POST, UpdateRegisteredDetailsCYAController.onPageLoad.url).withFormUrlEncodedBody()
-        when(mockOrchestrator.submitUserAnswwers(any())(any(), any())) thenReturn Future.successful(true)
+        when(mockOrchestrator.submitUserAnswers(any())(any(), any())) thenReturn Future.successful(true)
         when(mockOrchestrator.submitVariation(any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
 
         val result = route(application, request).value

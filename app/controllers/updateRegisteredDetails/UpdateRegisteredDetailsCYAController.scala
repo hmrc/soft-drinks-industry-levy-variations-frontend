@@ -60,7 +60,7 @@ class UpdateRegisteredDetailsCYAController @Inject()(
   }
 
   private def submitUserAnswers(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit request: DataRequest[AnyContent]):Future[Result]  = {
-    updateRegisteredDetailsOrchestrator.submitUserAnswwers(userAnswers).flatMap{
+    updateRegisteredDetailsOrchestrator.submitUserAnswers(userAnswers).flatMap{
       case true => submitVariation(userAnswers, subscription)
       case false => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - received a failed response from return submission")
         Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))

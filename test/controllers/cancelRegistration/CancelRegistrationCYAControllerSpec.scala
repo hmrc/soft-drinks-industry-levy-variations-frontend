@@ -169,7 +169,7 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
       running(application) {
         val request = FakeRequest(POST, CancelRegistrationCYAController.onPageLoad.url).withFormUrlEncodedBody()
         when(mockOrchestrator.submitVariation(any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
-        when(mockOrchestrator.submitUserAnswwers(any())(any(), any())) thenReturn Future.successful(true)
+        when(mockOrchestrator.submitUserAnswers(any())(any(), any())) thenReturn Future.successful(true)
 
         val result = route(application, request).value
 
