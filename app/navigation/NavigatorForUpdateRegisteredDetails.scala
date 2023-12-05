@@ -17,6 +17,7 @@
 package navigation
 
 import controllers.updateRegisteredDetails.routes
+import models.changeActivity.AmountProduced
 import models.updateRegisteredDetails.ChangeRegisteredDetails
 import models.{CheckMode, NormalMode, UserAnswers}
 import pages.Page
@@ -38,10 +39,10 @@ class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
     case _ => _ => defaultCall
   }
 
-  override val checkRouteMap: Page => UserAnswers => Call = {
-    case RemoveWarehouseDetailsPage => _ => routes.WarehouseDetailsController.onPageLoad(CheckMode)
-    case PackingSiteDetailsRemovePage => _ => routes.PackagingSiteDetailsController.onPageLoad(CheckMode)
-    case _ => _ => routes.UpdateRegisteredDetailsCYAController.onPageLoad
+  override val checkRouteMap: Page => UserAnswers => Option[AmountProduced] => Call = {
+    case RemoveWarehouseDetailsPage => _ => _ => routes.WarehouseDetailsController.onPageLoad(CheckMode)
+    case PackingSiteDetailsRemovePage => _ => _ => routes.PackagingSiteDetailsController.onPageLoad(CheckMode)
+    case _ => _ => _ => routes.UpdateRegisteredDetailsCYAController.onPageLoad
   }
 
   override val editRouteMap: Page => UserAnswers => Call = {

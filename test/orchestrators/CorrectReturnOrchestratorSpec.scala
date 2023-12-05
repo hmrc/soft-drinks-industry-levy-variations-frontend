@@ -18,27 +18,22 @@ package orchestrators
 
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
-import errors.{UnexpectedResponseFromSDIL, _}
-import models.backend.{RetrievedActivity, RetrievedSubscription, UkAddress}
+import errors._
+import models.correctReturn.CorrectReturnUserAnswersData
 import models.correctReturn.RepaymentMethod.BankAccount
-import models.correctReturn.{AddASmallProducer, CorrectReturnUserAnswersData, RepaymentMethod}
-import models.requests.{CorrectReturnDataRequest, DataRequest}
 import models.submission.ReturnVariationData
-import models.{Contact, LitresInBands, ReturnPeriod, SdilReturn, SelectChange, SmallProducer, UserAnswers, VariationsSubmissionDataHelper}
+import models.{ReturnPeriod, SdilReturn, SelectChange, SmallProducer, UserAnswers, VariationsSubmissionDataHelper}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.{mock, when}
+import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.correctReturn._
 import play.api.inject.bind
 import play.api.libs.json.{JsString, Json, Writes}
-import play.api.mvc.AnyContent
-import play.api.test.FakeRequest
 import play.api.test.Helpers.running
 import service.VariationResult
-import services.{ReturnService, SessionService}
-import utilities.GenericLogger
+import services.SessionService
 
-import java.time.{Instant, LocalDate, ZoneOffset}
+import java.time.ZoneOffset
 import scala.concurrent.Future
 import scala.util.{Failure, Try}
 
@@ -213,7 +208,6 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar with Vari
   "submitVariation" - {
     "Create returnVariationData structure and submit unsuccessfully using the connector" in {
       val currentReturnPeriod = ReturnPeriod(2023, 1)
-      val litres = LitresInBands(2000, 4000)
       val userAnswers: UserAnswers = completedUserAnswersForCorrectReturnNewPackerOrImporter
         .copy(
           data = Json.obj(
@@ -284,7 +278,6 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar with Vari
 
     "Create returnVariationData structure and submit successfully using the connector" in {
       val currentReturnPeriod = ReturnPeriod(2023, 1)
-      val litres = LitresInBands(2000, 4000)
       val userAnswers: UserAnswers = completedUserAnswersForCorrectReturnNewPackerOrImporter
         .copy(
           data = Json.obj(

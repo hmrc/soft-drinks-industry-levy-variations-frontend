@@ -48,7 +48,7 @@ class ReturnChangeRegistrationController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
-      Redirect(navigator.nextPage(ReturnChangeRegistrationPage, mode, request.userAnswers, Some(request.subscription)))
+      Redirect(navigator.nextPage(ReturnChangeRegistrationPage, mode, request.userAnswers, None, Some(request.subscription)))
   }
 
 }

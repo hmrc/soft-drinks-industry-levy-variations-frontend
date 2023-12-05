@@ -234,9 +234,10 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
   }
 
   s"POST " + checkRoutePath - {
+
     AmountProduced.values.foreach { case radio =>
       "when the user selects " + radio.toString - {
-        "should update the session with the new value and redirect to the checkAnswers controller" - {
+        "should update the session with the new value and redirect to the corresponding next page" - {
           "when the session contains no data for page" in {
             given
               .commonPrecondition
@@ -249,7 +250,12 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                radio match {
+                  case AmountProduced.Large => res.header(HeaderNames.LOCATION) mustBe Some(routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url)
+                  case AmountProduced.Small => res.header(HeaderNames.LOCATION) mustBe Some(routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url)
+                  case AmountProduced.None => res.header(HeaderNames.LOCATION) mustBe Some(routes.ContractPackingController.onPageLoad(NormalMode).url)
+                }
+
                 val dataStoredForPage = getAnswers(sdilNumber).fold[Option[AmountProduced]](None)(_.get(AmountProducedPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
@@ -273,6 +279,32 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[AmountProduced]](None)(_.get(AmountProducedPage))
+                dataStoredForPage.nonEmpty mustBe true
+                dataStoredForPage.get mustBe radio
+              }
+            }
+          }
+        }
+        "should update the session with the new value and redirect check your answers controller" - {
+          "when the session matches what the user has submitted" in {
+            given
+              .commonPrecondition
+
+            setAnswers(emptyUserAnswersForChangeActivity.set(AmountProducedPage, radio).success.value)
+            WsTestClient.withClient { client =>
+              val result = createClientRequestPOST(
+                client, changeActivityBaseUrl + checkRoutePath, Json.obj("value" -> Json.toJson(radio))
+              )
+
+              whenReady(result) { res =>
+                res.status mustBe 303
+                radio match {
+                  case AmountProduced.Large => res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                  case AmountProduced.Small => res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                  case AmountProduced.None => res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                }
+
+                val dataStoredForPage = getAnswers(sdilNumber).fold[Option[AmountProduced]](None)(_.get(AmountProducedPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
               }

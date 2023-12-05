@@ -17,12 +17,13 @@
 package navigation
 
 import models.backend.RetrievedSubscription
+import models.changeActivity.AmountProduced
 import models.{Mode, UserAnswers}
 import pages.Page
 import play.api.mvc.Call
 
 class FakeNavigatorForCorrectReturn(desiredRoute: Call) extends NavigatorForCorrectReturn {
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers, subscription: Option[RetrievedSubscription] = None): Call =
+  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers, amountProduced: Option[AmountProduced] = None, subscription: Option[RetrievedSubscription] = None): Call =
     desiredRoute
 }

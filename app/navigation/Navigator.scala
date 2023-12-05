@@ -18,6 +18,7 @@ package navigation
 
 import controllers.routes
 import models.backend.RetrievedSubscription
+import models.changeActivity.AmountProduced
 import models.{CheckMode, EditMode, Mode, NormalMode, UserAnswers}
 import pages.Page
 import play.api.mvc.Call
@@ -30,19 +31,19 @@ trait Navigator {
 
   val normalRoutesWithSubscription: Page => (UserAnswers, RetrievedSubscription) => Call = _ => (_, _) => defaultCall
 
-  val checkRouteMap: Page => UserAnswers => Call
+  val checkRouteMap: Page => UserAnswers => Option[AmountProduced] => Call
 
   val checkRouteMapWithSubscription: Page => (UserAnswers, RetrievedSubscription) => Call = _ => (_, _) => defaultCall
 
   val editRouteMap: Page => UserAnswers => Call
 
-  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers, subscription: Option[RetrievedSubscription] = None): Call = (mode, subscription) match {
+  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers, amountProduced:Option[AmountProduced] = None,subscription: Option[RetrievedSubscription] = None): Call = (mode, subscription) match {
     case (NormalMode, None) =>
       normalRoutes(page)(userAnswers)
     case (NormalMode, Some(subscription)) =>
       normalRoutesWithSubscription(page)(userAnswers, subscription)
     case (CheckMode, None) =>
-      checkRouteMap(page)(userAnswers)
+      checkRouteMap(page)(userAnswers)(amountProduced)
     case (CheckMode, Some(subscription)) =>
       checkRouteMapWithSubscription(page)(userAnswers, subscription)
     case (EditMode, _) =>
