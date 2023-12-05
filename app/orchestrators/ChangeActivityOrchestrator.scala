@@ -26,7 +26,6 @@ import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class ChangeActivityOrchestrator @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector){
 
@@ -46,7 +45,7 @@ class ChangeActivityOrchestrator @Inject()(sdilConnector: SoftDrinksIndustryLevy
   }
 
   def submitVariation(subscription: RetrievedSubscription, userAnswers: UserAnswers)
-                     (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = {
+                     (implicit hc: HeaderCarrier): VariationResult[Unit] = {
     val changeActivityVariation = changeActivityVariationToBeSubmitted(subscription, userAnswers)
     sdilConnector.submitVariation(changeActivityVariation, subscription.sdilRef)
   }

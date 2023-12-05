@@ -18,7 +18,8 @@ package controllers
 
 import controllers.correctReturn.routes
 import models.backend.RetrievedSubscription
-import models.correctReturn.AddASmallProducer
+import models.correctReturn.{AddASmallProducer, CorrectReturnUserAnswersData}
+import models.submission.Litreage
 import models.{CheckMode, LitresInBands, SdilReturn, UserAnswers}
 import org.jsoup.nodes.Element
 import org.scalatest.Assertion
@@ -47,10 +48,10 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
   val importsLitres: LitresInBands = LitresInBands(5000, 6000)
   val importsSmallProducerLitres: LitresInBands = LitresInBands(5000, 6000)
   val smallProducerLitres: LitresInBands = LitresInBands(2000, 4000)
-  val emptyReturn: SdilReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0), submittedOn =
+  val emptyReturn: SdilReturn = SdilReturn(Litreage(0, 0), Litreage(0, 0), List.empty, Litreage(0, 0), Litreage(0, 0), Litreage(0, 0), Litreage(0, 0), submittedOn =
     Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
-  val populatedReturn: SdilReturn = SdilReturn((100, 200), (200, 100),
-    smallProducerList, (300, 400), (400, 300), (50, 60), (60, 50),
+  val populatedReturn: SdilReturn = SdilReturn(Litreage(100, 200), Litreage(200, 100),
+    smallProducerList, Litreage(300, 400), Litreage(400, 300), Litreage(50, 60), Litreage(60, 50),
     submittedOn = Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
 
   def userAnswerWithLitresForAllPagesNilSdilReturn: UserAnswers = emptyUserAnswersForCorrectReturn
@@ -73,13 +74,17 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     .set(AskSecondaryWarehouseInReturnPage, true).success.value
     .set(SecondaryWarehouseDetailsPage, false).success.value
 
-  def userAnswerWithOnePageChangedAndNilSdilReturn(page: QuestionPage[Boolean], howManyPage: QuestionPage[LitresInBands]): UserAnswers = emptyUserAnswersForCorrectReturn
-    .copy(data = Json.obj("originalSDILReturn" -> Json.toJson(emptyReturn)))
-    .set(page, true).success.value
-    .set(howManyPage, operatePackagingSiteLitres).success.value
+  val nilCorrectReturnUAData = CorrectReturnUserAnswersData(
+    false, None, false, None, false, false, None, false, None, false, None, false, None
+  )
+
+  def userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnUserAnswersData: CorrectReturnUserAnswersData): UserAnswers = emptyUserAnswersForCorrectReturn
+    .copy(data = Json.obj("originalSDILReturn" -> Json.toJson(emptyReturn),
+    "correctReturn" -> Json.toJson(correctReturnUserAnswersData)))
 
   def userAnswerWithExemptionSmallProducerPageUpdatedAndNilSdilReturn: UserAnswers = emptyUserAnswersForCorrectReturn
-    .copy(data = Json.obj("originalSDILReturn" -> Json.toJson(emptyReturn)))
+    .copy(data = Json.obj("originalSDILReturn" -> Json.toJson(emptyReturn),
+    "correctReturn" -> Json.toJson(nilCorrectReturnUAData)))
     .copy(smallProducerList = smallProducersAddedList)
     .set(ExemptionsForSmallProducersPage, true).success.value
     .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", smallProducerLitres)).success.value
@@ -535,11 +540,11 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
   }
 
   def validateIfNewPacker(userAnswers: UserAnswers, subscription: RetrievedSubscription): Boolean = {
-    UserTypeCheck.isNewPacker(SdilReturn.apply(userAnswers), subscription) && subscription.productionSites.isEmpty
+    UserTypeCheck.isNewPacker(userAnswers, subscription) && subscription.productionSites.isEmpty
   }
 
   def validateIfNewImporter(userAnswers: UserAnswers, subscription: RetrievedSubscription): Boolean = {
-    UserTypeCheck.isNewImporter(SdilReturn.apply(userAnswers), subscription) && subscription.warehouseSites.isEmpty
+    UserTypeCheck.isNewImporter(userAnswers, subscription) && subscription.warehouseSites.isEmpty
   }
 
 

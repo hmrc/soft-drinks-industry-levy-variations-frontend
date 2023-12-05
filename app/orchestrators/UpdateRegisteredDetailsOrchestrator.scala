@@ -26,7 +26,6 @@ import service.VariationResult
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class UpdateRegisteredDetailsOrchestrator @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector) {
 
@@ -52,7 +51,7 @@ class UpdateRegisteredDetailsOrchestrator @Inject()(sdilConnector: SoftDrinksInd
   }
 
   def submitVariation(subscription: RetrievedSubscription, userAnswers: UserAnswers)
-                     (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = {
+                     (implicit hc: HeaderCarrier): VariationResult[Unit] = {
     val variationSubmission = getVariationToBeSubmitted(subscription, userAnswers)
     sdilConnector.submitVariation(variationSubmission, subscription.sdilRef)
   }

@@ -17,19 +17,20 @@
 package models
 
 import models.backend.{RetrievedActivity, RetrievedSubscription, Site, UkAddress}
+import models.submission.Litreage
 import models.updateRegisteredDetails.ContactDetails
 
 import java.time.LocalDate
 
 trait DataHelper {
 
-  def testSdilReturn(ownBrand: (Long, Long) = (15, 12),
-                     packLarge: (Long, Long) = (15, 12),
+  def testSdilReturn(ownBrand: Litreage = Litreage(15, 12),
+                     packLarge: Litreage = Litreage(15, 12),
                      packSmall: List[SmallProducer],
-                     importLarge: (Long, Long) = (15, 12),
-                     importSmall: (Long, Long) = (15, 12),
-                     export: (Long, Long) = (15, 12),
-                     wastage: (Long, Long) = (15, 12)): SdilReturn = {
+                     importLarge: Litreage = Litreage(15, 12),
+                     importSmall: Litreage = Litreage(15, 12),
+                     export: Litreage = Litreage(15, 12),
+                     wastage: Litreage = Litreage(15, 12)): SdilReturn = {
     SdilReturn(
       ownBrand = ownBrand,
       packLarge = packLarge,
@@ -37,7 +38,8 @@ trait DataHelper {
       importLarge = importLarge,
       importSmall = importSmall,
       export = export,
-      wastage = wastage
+      wastage = wastage,
+      submittedOn = None
     )
   }
 
@@ -49,7 +51,7 @@ trait DataHelper {
 
   def testSmallProducer(alias: String,
                         sdilRef: String,
-                        litreage: (Long, Long)): SmallProducer = SmallProducer(
+                        litreage: Litreage): SmallProducer = SmallProducer(
     alias = alias,
     sdilRef = sdilRef,
     litreage = litreage

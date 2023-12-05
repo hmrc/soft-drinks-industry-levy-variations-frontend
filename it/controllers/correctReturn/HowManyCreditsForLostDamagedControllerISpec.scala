@@ -5,7 +5,7 @@ import models.SelectChange.CorrectReturn
 import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import pages.correctReturn.{ClaimCreditsForExportsPage, ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage}
+import pages.correctReturn.{ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage}
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
@@ -245,8 +245,6 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
           )
 
           whenReady(result) { res =>
-            val page = Jsoup.parse(res.body)
-
             res.status mustBe 303
             res.header(HeaderNames.LOCATION) mustBe Some(routes.ReturnChangeRegistrationController.onPageLoad(NormalMode).url)
           }

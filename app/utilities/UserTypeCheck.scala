@@ -16,17 +16,24 @@
 
 package utilities
 
-import models.SdilReturn
+import models.UserAnswers
 import models.backend.RetrievedSubscription
 
 
 object UserTypeCheck {
-  def isNewImporter(sdilReturn: SdilReturn,subscription: RetrievedSubscription): Boolean = {
+  def isNewImporter(userAnswers: UserAnswers, subscription: RetrievedSubscription): Boolean = {
     val userIsNotAlreadyAnImporter = !subscription.activity.importer
-    (sdilReturn.totalImported._1 > 0L && sdilReturn.totalImported._2 > 0L) && userIsNotAlreadyAnImporter
+    val totalImported = userAnswers.getCorrectReturnData.map(_.totalImported)
+    totalImported.fold(false)(imported =>
+      (imported.lower > 0L && imported.upper > 0L) && userIsNotAlreadyAnImporter
+    )
+
 }
-  def isNewPacker(sdilReturn: SdilReturn, subscription: RetrievedSubscription): Boolean = {
+  def isNewPacker(userAnswers: UserAnswers, subscription: RetrievedSubscription): Boolean = {
     val userIsNotAlreadyAPacker = !subscription.activity.contractPacker
-    (sdilReturn.totalPacked._1 > 0L && sdilReturn.totalPacked._2 > 0L) && userIsNotAlreadyAPacker
+    val totalPacked = userAnswers.getCorrectReturnData.map(_.totalPacked(userAnswers.smallProducerList))
+    totalPacked.fold(false)(packed =>
+      (packed.lower > 0L && packed.upper > 0L) && userIsNotAlreadyAPacker
+    )
   }
 }

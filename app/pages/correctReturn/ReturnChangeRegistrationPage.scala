@@ -21,7 +21,9 @@ import play.api.libs.json.JsPath
 
 object ReturnChangeRegistrationPage extends QuestionPage[String] {
 
-  override def path: JsPath = JsPath \ toString
+  override def path: JsPath = JsPath \ journeyType \ toString
+
+  def journeyType: String = "correctReturn"
 
   override def toString: String = "returnChangeRegistration"
 }

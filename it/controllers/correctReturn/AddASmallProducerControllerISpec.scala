@@ -2,6 +2,7 @@ package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.CorrectReturn
+import models.submission.Litreage
 import models.{CheckMode, NormalMode, ReturnPeriod, SmallProducer}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
@@ -25,7 +26,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
   private val returnPeriod: ReturnPeriod = ReturnPeriod(2018, 1)
   private def userAnswersWithSmallProducersSet = emptyUserAnswersForCorrectReturn
-    .copy(smallProducerList = List(SmallProducer(aliasSuperCola, sdilRefSuperCola, (100, 200))))
+    .copy(smallProducerList = List(SmallProducer(aliasSuperCola, sdilRefSuperCola, Litreage(100, 200))))
 
   def testReturnPeriodNotSetForCorrectReturn(url: String): Unit = {
     "the return period has not been selected" - {
@@ -189,7 +190,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
     "Post the new form data and navigate to small producer details page" in {
 
       val expectedResult: Some[List[SmallProducer]] = Some(List(SmallProducer(alias = aliasSuperCola,
-        sdilRef = sdilRefSuperCola, litreage = (litres, litres))))
+        sdilRef = sdilRefSuperCola, litreage = Litreage(litres, litres))))
 
       given
         .commonPreconditionChangeSubscription(diffSubscription)
@@ -315,7 +316,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
     "Post the new form data and navigate to small producer details page" in {
 
       val expectedResult: Some[List[SmallProducer]] = Some(List(SmallProducer(alias = aliasSuperCola,
-        sdilRef = sdilRefSuperCola, litreage = (litres, litres))))
+        sdilRef = sdilRefSuperCola, litreage = Litreage(litres, litres))))
 
       given
         .commonPreconditionChangeSubscription(diffSubscription)

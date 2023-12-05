@@ -23,9 +23,8 @@ import controllers.actions._
 import controllers.routes
 import errors.VariationsErrors
 import helpers.LoggerHelper
-import models.backend.{RetrievedActivity, RetrievedSubscription, Site, UkAddress}
 import models._
-import models.requests.DataRequest
+import models.backend.{RetrievedActivity, RetrievedSubscription, Site, UkAddress}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -35,7 +34,7 @@ import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{Json, Writes}
-import play.api.mvc.{AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc.{Call, MessagesControllerComponents}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.api.{Application, Play}

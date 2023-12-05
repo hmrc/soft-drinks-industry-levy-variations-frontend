@@ -17,30 +17,31 @@
 package models
 
 import base.SpecBase
+import models.submission.Litreage
 import org.scalatestplus.mockito.MockitoSugar
 
 class SmallProducerModelSpec extends SpecBase with MockitoSugar with DataHelper {
 
   "SmallProducer" - {
     "getNameAndRef returns the alias plus </br> and the sdil ref" in {
-      val data = testSmallProducer(alias = "test alias", sdilRef = "testRef", litreage = (15,15))
+      val data = testSmallProducer(alias = "test alias", sdilRef = "testRef", litreage = Litreage(15,15))
       data.getNameAndRef mustBe "test alias</br>testRef"
     }
 
     "getNameAndRef returns the sdil ref only if alias is empty" in {
-      val data = testSmallProducer(alias = "", sdilRef = "testRef", litreage = (15, 15))
+      val data = testSmallProducer(alias = "", sdilRef = "testRef", litreage = Litreage(15, 15))
       data.getNameAndRef mustBe "testRef"
     }
     "totalOfAllSmallProducers returns the total of one smallProducers literages" in {
-      val data = List(testSmallProducer("test", "test", (15,14)))
-      SmallProducer.totalOfAllSmallProducers(data) mustBe (15, 14)
+      val data = List(testSmallProducer("test", "test", Litreage(15,14)))
+      SmallProducer.totalOfAllSmallProducers(data) mustBe Litreage(15, 14)
     }
 
     "totalOfAllSmallProducers returns the total of all smallProducers literages" in {
-      val data = List(testSmallProducer("test", "test", (15, 14)),
-          testSmallProducer("test", "test", (15, 14))
+      val data = List(testSmallProducer("test", "test", Litreage(15, 14)),
+          testSmallProducer("test", "test", Litreage(15, 14))
       )
-      SmallProducer.totalOfAllSmallProducers(data) mustBe (30, 28)
+      SmallProducer.totalOfAllSmallProducers(data) mustBe Litreage(30, 28)
     }
   }
 

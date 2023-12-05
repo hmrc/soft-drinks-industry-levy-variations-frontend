@@ -18,9 +18,9 @@ package controllers.correctReturn
 
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
-import controllers._
 import errors.UnexpectedResponseFromSDIL
 import models.correctReturn.{AddASmallProducer, ChangedPage, RepaymentMethod}
+import models.submission.Litreage
 import models.{LitresInBands, SmallProducer}
 import navigation.{FakeNavigatorForCorrectReturn, NavigatorForCorrectReturn}
 import orchestrators.CorrectReturnOrchestrator
@@ -53,7 +53,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       val litres = LitresInBands(2000, 4000)
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
-          smallProducerList = List(SmallProducer("", "XZSDIL000000234", (2000, 4000))))
+          smallProducerList = List(SmallProducer("", "XZSDIL000000234", Litreage(2000, 4000))))
         .set(OperatePackagingSiteOwnBrandsPage, true).success.value
         .set(HowManyOperatePackagingSiteOwnBrandsPage, litres).success.value
         .set(PackagedAsContractPackerPage, true).success.value
@@ -115,7 +115,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
 
       running(application) {
         val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url).withFormUrlEncodedBody()
-        when (mockCorrectReturnOrchestrator.submitReturnVariation(any(), any())(any(),any())) thenReturn Some(createSuccessVariationResult((): Unit))
+        when (mockCorrectReturnOrchestrator.submitReturn(any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
 
         val result = route(application, request).value
 
@@ -132,7 +132,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         .build()
 
       running(application) {
-        when (mockCorrectReturnOrchestrator.submitReturnVariation(any(), any())(any(),any())) thenReturn Some(createFailureVariationResult(UnexpectedResponseFromSDIL))
+        when (mockCorrectReturnOrchestrator.submitReturn(any(), any())(any(), any())) thenReturn createFailureVariationResult(UnexpectedResponseFromSDIL)
 
         val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url).withFormUrlEncodedBody()
 

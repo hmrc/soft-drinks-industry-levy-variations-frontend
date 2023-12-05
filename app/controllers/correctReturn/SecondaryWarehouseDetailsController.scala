@@ -23,11 +23,10 @@ import handlers.ErrorHandler
 import models.Mode
 import navigation._
 import pages.correctReturn.SecondaryWarehouseDetailsPage
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
+import play.api.i18n.MessagesApi
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{AddressLookupService, SessionService, WarehouseDetails}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import uk.gov.hmrc.http.HeaderCarrier
 import utilities.GenericLogger
 import viewmodels.govuk.summarylist._
 import viewmodels.summary.correctReturn.SecondaryWarehouseDetailsSummary

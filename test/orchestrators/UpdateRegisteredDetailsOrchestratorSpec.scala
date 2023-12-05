@@ -76,7 +76,7 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
           val expectedSubscription = testVariationSubmission(newSites = expectedNewSites, closeSites = expectedClosedSites)
 
           when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
-          val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
+          val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -90,7 +90,7 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
           val expectedSubscription = testVariationSubmission(newSites = expectedNewSites, closeSites = expectedClosedSites)
 
           when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
-          val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
+          val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -106,7 +106,7 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
           val expectedSubscription = testVariationSubmission(newSites = expectedNewSites, closeSites = expectedClosedSites)
           when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
 
-          val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
+          val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -121,7 +121,7 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
 
           when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
 
-          val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
+          val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -137,7 +137,7 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
           val expectedSubscription = testVariationSubmission(newSites = expectedNewSites, closeSites = expectedClosedSites)
           when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
 
-          val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
+          val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -151,7 +151,7 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
           val expectedSubscription = testVariationSubmission(newSites = expectedNewSites, closeSites = expectedClosedSites)
 
           when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
-          val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
+          val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -168,7 +168,7 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
 
           when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
 
-          val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
+          val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -183,7 +183,7 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
 
           when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
 
-          val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
+          val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -198,7 +198,7 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
 
           when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
 
-          val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
+          val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -212,7 +212,7 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
           val expectedSubscription = testVariationSubmission(variationContact = Some(expectVariationContact), variationsPersonalDetails = Some(expectVariationPDs))
           when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
 
-          val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
+          val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -226,7 +226,7 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
           val expectedSubscription = testVariationSubmission(variationContact = Some(expectVariationContact), variationsPersonalDetails = Some(expectVariationPDs))
           when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
 
-          val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
+          val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -240,7 +240,7 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
         val expectedSubscription = testVariationSubmission(variationContact = Some(expectVariationContact))
         when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
 
-        val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
+        val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc)
         whenReady(res.value) { result =>
           result mustEqual Right((): Unit)
         }
@@ -260,7 +260,7 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
           variationsPersonalDetails = Some(expectVariationPDs), newSites = expectedNewSites, closeSites = expectedClosedSites)
 
         when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
-        val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
+        val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc)
         whenReady(res.value) { result =>
           result mustEqual Right((): Unit)
         }

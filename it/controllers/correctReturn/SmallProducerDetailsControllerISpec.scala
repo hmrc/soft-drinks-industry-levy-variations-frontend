@@ -2,6 +2,7 @@ package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.CorrectReturn
+import models.submission.Litreage
 import models.{CheckMode, NormalMode, SmallProducer}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
@@ -46,7 +47,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", (20, 10)))))
+        setAnswers(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", Litreage(20, 10)))))
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
@@ -67,8 +68,8 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", (20, 10)),
-          SmallProducer("Soft Juice", "XMSDIL000000113", (40, 60)))))
+        setAnswers(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", Litreage(20, 10)),
+          SmallProducer("Soft Juice", "XMSDIL000000113", Litreage(40, 60)))))
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)

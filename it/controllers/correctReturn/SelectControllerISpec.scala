@@ -3,6 +3,7 @@ package controllers.correctReturn
 import controllers.ControllerITTestHelper
 import models.SelectChange.CorrectReturn
 import models.correctReturn.CorrectReturnUserAnswersData
+import models.submission.Litreage
 import models.{LitresInBands, NormalMode, ReturnPeriod, SdilReturn, SelectChange}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, defined, include}
@@ -28,7 +29,8 @@ class SelectControllerISpec extends ControllerITTestHelper {
     case _ => s"October to December $year"
   }
 
-  val populatedReturn = SdilReturn((100, 200), (200, 100), smallProducerList, (300, 400), (400, 300), (50, 60), (60, 50), submittedOn = Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
+  val populatedReturn = SdilReturn(Litreage(100, 200), Litreage(200, 100), smallProducerList, Litreage(300, 400),
+    Litreage(400, 300), Litreage(50, 60), Litreage(60, 50), submittedOn = Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
 
   val expectedCorrectReturnDataForNilReturn = CorrectReturnUserAnswersData(false, None, false, None, false, false, None, false, None, false, None, false, None)
   val expectedCorrectReturnDataForPopulatedReturn = CorrectReturnUserAnswersData(

@@ -18,7 +18,10 @@ package models
 
 import play.api.libs.json.{Json, Reads, Writes}
 import cats.implicits._
-case class SmallProducer(alias: String, sdilRef: String, litreage: (Long, Long)) {
+import models.submission.Litreage
+case class SmallProducer(alias: String,
+                         sdilRef: String,
+                         litreage: Litreage) {
 
   def getNameAndRef: String =
     if (alias.nonEmpty) {
@@ -31,7 +34,8 @@ case class SmallProducer(alias: String, sdilRef: String, litreage: (Long, Long))
 }
 
 object SmallProducer {
-  def totalOfAllSmallProducers(smallProducers: List[SmallProducer]): (Long, Long) = smallProducers.map(x => x.litreage).combineAll
+  def totalOfAllSmallProducers(smallProducers: List[SmallProducer]): Litreage =
+    Litreage.sum(smallProducers.map(x => x.litreage))
   implicit val writes: Writes[SmallProducer] = Json.writes
   implicit val reads: Reads[SmallProducer] = Json.reads
 

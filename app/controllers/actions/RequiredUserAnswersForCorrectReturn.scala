@@ -19,7 +19,7 @@ package controllers.actions
 import models.backend.RetrievedSubscription
 import models.correctReturn.{AddASmallProducer, RepaymentMethod}
 import models.requests.DataRequest
-import models.{CheckMode, LitresInBands, SdilReturn}
+import models.{CheckMode, LitresInBands}
 import pages.correctReturn._
 import pages.{Page, QuestionPage}
 import play.api.libs.json.Reads
@@ -127,7 +127,7 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
   }
 
   private[controllers] val packingListReturnChange: DataRequest[_] => List[CorrectReturnRequiredPage[_, _, _]] = { (request: DataRequest[_]) =>
-    if (UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), request.subscription) && request.subscription.productionSites.isEmpty) {
+    if (UserTypeCheck.isNewPacker(request.userAnswers, request.subscription) && request.subscription.productionSites.isEmpty) {
       List(CorrectReturnRequiredPage(PackAtBusinessAddressPage, None)(implicitly[Reads[Boolean]]),
         CorrectReturnRequiredPage(PackagingSiteDetailsPage, None)(implicitly[Reads[Boolean]]))
     } else {
@@ -136,7 +136,7 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
   }
 
   private[controllers] val warehouseListReturnChange: DataRequest[_] => List[CorrectReturnRequiredPage[_, _, _]] = { (request: DataRequest[_]) =>
-    if (UserTypeCheck.isNewImporter(SdilReturn.apply(request.userAnswers), request.subscription)) {
+    if (UserTypeCheck.isNewImporter(request.userAnswers, request.subscription)) {
       List(CorrectReturnRequiredPage(AskSecondaryWarehouseInReturnPage, None)(implicitly[Reads[Boolean]]))
     } else {
       List.empty

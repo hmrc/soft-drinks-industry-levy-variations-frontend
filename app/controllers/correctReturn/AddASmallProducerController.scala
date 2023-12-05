@@ -23,6 +23,7 @@ import forms.correctReturn.AddASmallProducerFormProvider
 import handlers.ErrorHandler
 import models.correctReturn.AddASmallProducer
 import models.errors.{AlreadyExists, NotASmallProducer, SDILReferenceErrors}
+import models.submission.Litreage
 import models.{LitresInBands, Mode, ReturnPeriod, SmallProducer, UserAnswers}
 import navigation._
 import pages.correctReturn.AddASmallProducerPage
@@ -105,8 +106,8 @@ class AddASmallProducerController @Inject()(
 
         targetSmallProducer match {
           case Some(producer) =>
-            val addASmallProducer = AddASmallProducer(Some(producer.alias), producer.sdilRef, LitresInBands(producer.litreage._1,
-              producer.litreage._2))
+            val addASmallProducer = AddASmallProducer(Some(producer.alias), producer.sdilRef, LitresInBands(producer.litreage.lower,
+              producer.litreage.upper))
             val preparedForm = form.fill(addASmallProducer)
             Future.successful(Ok(view(preparedForm, mode, Some(sdilReference))))
           case _ =>
@@ -163,7 +164,7 @@ class AddASmallProducerController @Inject()(
   }
 
   private def smallProducerInfoFormatted(data: AddASmallProducer): SmallProducer = {
-    SmallProducer(data.producerName.getOrElse(""), data.referenceNumber, (data.litres.lowBand, data.litres.highBand))
+    SmallProducer(data.producerName.getOrElse(""), data.referenceNumber, Litreage.fromLitresInBands(data.litres))
   }
 
   private def updateSmallProducerList(formData: AddASmallProducer, userAnswers: UserAnswers, sdilUnderEdit: String): Future[UserAnswers] = {

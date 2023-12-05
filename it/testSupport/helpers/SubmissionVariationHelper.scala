@@ -3,17 +3,14 @@ package testSupport.helpers
 import com.github.tomakehurst.wiremock.WireMockServer
 import generators.ChangeActivityCYAGenerators.contactAddress
 import models.UserAnswers
-import models.alf.init.JourneyConfig
 import models.backend.{RetrievedActivity, Site, UkAddress}
-import models.changeActivity.AmountProduced
 import models.enums.SiteTypes
-import models.submission.{Activity, ClosedSite, Litreage, SdilActivity, VariationsContact, VariationsPersonalDetails, VariationsSite, VariationsSubmission}
+import models.submission._
 import models.updateRegisteredDetails.ContactDetails
-import play.api.libs.json.{JsObject, JsString, Json}
+import play.api.libs.json.{JsObject, Json}
 import testSupport.SDILBackendTestData
 
 import java.time.LocalDate
-import scala.collection.immutable.Map
 import scala.jdk.CollectionConverters._
 
 trait SubmissionVariationHelper {

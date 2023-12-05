@@ -290,9 +290,7 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
         val warehouseSite1 = Site(address3, Some(tradingName3), None, None)
         val warehouseSite2 = Site(address4, Some(tradingName4), None, Some(LocalDate.now().plusYears(2L)))
         val warehouseSites = List(warehouseSite1, warehouseSite2)
-        val expectedGeneratedUA = expectedUserAnswers(SelectChange.CorrectReturn,
-          Map("0" -> packagingSite1, "1" -> packagingSite2),
-          Map("0" -> warehouseSite1, "1" -> warehouseSite2))
+        val expectedGeneratedUA = expectedUserAnswers(SelectChange.CorrectReturn)
         when(mockSessionService.set(expectedGeneratedUA)).thenReturn(Future.successful(Right(true)))
 
         val res = orchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(retrievedSubscription(packagingSites, warehouseSites, deregDate = Some(LocalDate.now)))
@@ -309,10 +307,7 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
         val warehouseSite1 = Site(address3, Some(tradingName3), None, None)
         val warehouseSite2 = Site(address4, Some(tradingName4), None, Some(LocalDate.now().minusYears(2L)))
         val warehouseSites = List(warehouseSite1, warehouseSite2)
-        val warehouse1 = Site(address3, Some(tradingName3))
-        val expectedGeneratedUA = expectedUserAnswers(SelectChange.CorrectReturn,
-          Map("0" -> packagingSite1),
-          Map("0" -> warehouse1))
+        val expectedGeneratedUA = expectedUserAnswers(SelectChange.CorrectReturn)
         when(mockSessionService.set(expectedGeneratedUA)).thenReturn(Future.successful(Right(true)))
 
         val res = orchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(retrievedSubscription(packagingSites, warehouseSites, deregDate = Some(LocalDate.now)))

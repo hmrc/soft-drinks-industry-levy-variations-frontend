@@ -18,6 +18,7 @@ package views.correctReturn
 
 import controllers.correctReturn.routes
 import forms.correctReturn.SmallProducerDetailsFormProvider
+import models.submission.Litreage
 import models.{CheckMode, NormalMode, SmallProducer}
 import play.api.data.Form
 import play.api.mvc.Request
@@ -46,10 +47,10 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
     val hidden = "govuk-visually-hidden"
   }
 
-  override val smallProducerList: List[SmallProducer] = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", (20, 10)))
+  override val smallProducerList: List[SmallProducer] = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", Litreage(20, 10)))
   lazy val smallProducerListWithTwoProducers: List[SmallProducer] = List(
-    SmallProducer("Super Cola Plc", "XCSDIL000000069", (20, 10)),
-    SmallProducer("", "XMSDIL000000113", (25, 80))
+    SmallProducer("Super Cola Plc", "XCSDIL000000069", Litreage(20, 10)),
+    SmallProducer("", "XMSDIL000000113", Litreage(25, 80))
   )
 
   "View" - {

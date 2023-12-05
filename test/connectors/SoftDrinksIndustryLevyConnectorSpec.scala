@@ -18,7 +18,7 @@ package connectors
 
 import base.SpecBase
 import models.backend.{FinancialLineItem, OptRetrievedSubscription, RetrievedSubscription}
-import models.submission.ReturnVariationData
+import models.submission.{Litreage, ReturnVariationData}
 import models.{DataHelper, ReturnPeriod, VariationsSubmissionDataHelper}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -154,7 +154,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
         when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
-        val res = softDrinksIndustryLevyConnector.submitReturnsVariation(
+        val res = softDrinksIndustryLevyConnector.submitSdilReturnsVary(
           sdilNumber = aSubscription.sdilRef,
           variation = ReturnVariationData(
             original = emptySdilReturn,
@@ -177,11 +177,11 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
         when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
-        val res = softDrinksIndustryLevyConnector.submitReturnsVariation(
+        val res = softDrinksIndustryLevyConnector.submitSdilReturnsVary(
           sdilNumber = aSubscription.sdilRef,
           variation = ReturnVariationData(
             original = emptySdilReturn,
-            revised = emptySdilReturn.copy(ownBrand = (100L, 100L)),
+            revised = emptySdilReturn.copy(ownBrand = Litreage(100L, 100L)),
             period = returnPeriodsFor2022.head,
             orgName = aSubscription.orgName,
             address = aSubscription.address,
@@ -200,11 +200,11 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
         when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
-        val res = softDrinksIndustryLevyConnector.submitReturnsVariation(
+        val res = softDrinksIndustryLevyConnector.submitSdilReturnsVary(
           sdilNumber = aSubscription.sdilRef,
           variation = ReturnVariationData(
             original = emptySdilReturn,
-            revised = emptySdilReturn.copy(ownBrand = (100L, 100L), packLarge = (100L, 100L)),
+            revised = emptySdilReturn.copy(ownBrand = Litreage(100L, 100L), packLarge = Litreage(100L, 100L)),
             period = returnPeriodsFor2022.head,
             orgName = aSubscription.orgName,
             address = aSubscription.address,

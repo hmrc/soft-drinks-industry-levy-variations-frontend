@@ -4,11 +4,9 @@ import controllers.ControllerITTestHelper
 import controllers.changeActivity.routes.SecondaryWarehouseDetailsController
 import generators.ChangeActivityCYAGenerators._
 import models.backend.{RetrievedActivity, Site}
-import models.changeActivity.{AmountProduced, ChangeActivityData}
 import models.changeActivity.AmountProduced.{Large, Small, None => NoneProduced}
-import models.enums.SiteTypes
-import models.submission.{Activity, ClosedSite, Litreage, SdilActivity, VariationsSite}
-import models.updateRegisteredDetails.ContactDetails
+import models.changeActivity.{AmountProduced, ChangeActivityData}
+import models.submission._
 import models.{CheckMode, LitresInBands}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -18,7 +16,6 @@ import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
-import testSupport.SDILBackendTestData
 import testSupport.helpers.SubmissionVariationHelper
 
 class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTestClient{

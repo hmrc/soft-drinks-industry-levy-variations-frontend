@@ -192,10 +192,19 @@ case class SdilBackendStub()
     builder
   }
 
-  def submitReturnsVariation(sdilRef: String)= {
+  def submitSdilReturnsVary(sdilRef: String)= {
     stubFor(
       post(
         urlPathMatching(s"/returns/vary/$sdilRef"))
+        .willReturn(
+          noContent()))
+    builder
+  }
+
+  def submitReturnVariations(sdilRef: String): PreconditionBuilder = {
+    stubFor(
+      post(
+        urlPathMatching(s"/returns/variation/sdil/$sdilRef"))
         .willReturn(
           noContent()))
     builder

@@ -18,6 +18,7 @@ package views.summary.correctReturn
 
 import base.SpecBase
 import models.correctReturn.{AddASmallProducer, RepaymentMethod}
+import models.submission.Litreage
 import models.{LitresInBands, SmallProducer}
 import pages.correctReturn._
 import views.helpers.AmountToPaySummary
@@ -31,7 +32,7 @@ class CorrectReturnCheckChangesSummarySpec extends SpecBase {
 
     val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
       .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
-        smallProducerList = List(SmallProducer("", "XZSDIL000000234", (2000, 4000))))
+        smallProducerList = List(SmallProducer("", "XZSDIL000000234", Litreage(2000, 4000))))
       .set(OperatePackagingSiteOwnBrandsPage, true).success.value
       .set(HowManyOperatePackagingSiteOwnBrandsPage, litres).success.value
       .set(PackagedAsContractPackerPage, true).success.value

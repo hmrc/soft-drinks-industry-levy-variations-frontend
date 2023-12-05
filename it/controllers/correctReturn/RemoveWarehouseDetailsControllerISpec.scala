@@ -1,12 +1,11 @@
 package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
-import models.{CheckMode, NormalMode}
 import models.SelectChange.CorrectReturn
 import models.backend.Site
+import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.correctReturn.RemoveWarehouseDetailsPage
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.Json

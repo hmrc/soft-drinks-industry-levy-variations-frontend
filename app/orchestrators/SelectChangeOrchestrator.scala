@@ -66,7 +66,7 @@ class SelectChangeOrchestrator @Inject()(sessionService: SessionService,
     if (requiredToHaveNoPendingReturns) {
       softDrinksIndustryLevyConnector.returnsPending(subscription.utr).value.map{
         case Right(pendingReturns) if pendingReturns.nonEmpty => Left(ReturnsStillPending)
-        case Right(pendingReturns) if pendingReturns.isEmpty => Right((): Unit)
+        case Right(_) => Right((): Unit)
         case Left(err) => Left(err)
       }
     } else {
@@ -77,6 +77,7 @@ class SelectChangeOrchestrator @Inject()(sessionService: SessionService,
   private def generateDefaultUserAnswers(value: SelectChange, subscription: RetrievedSubscription): Future[UserAnswers] = {
     value match {
       case SelectChange.UpdateRegisteredDetails => setupUserAnswersForUpdateRegisteredDetails(subscription)
+      case SelectChange.CorrectReturn => setupDefaultUserAnswersForCorrectReturn(subscription)
       case _ => Future.successful(setupDefaultUserAnswers(subscription, value))
     }
   }
@@ -89,6 +90,14 @@ class SelectChangeOrchestrator @Inject()(sessionService: SessionService,
       packagingSiteList = getNoneClosedSites(subscription.productionSites),
       warehouseList = getNoneClosedSites(subscription.warehouseSites),
       lastUpdated = timeNow)
+  }
+
+  private def setupDefaultUserAnswersForCorrectReturn(subscription: RetrievedSubscription): Future[UserAnswers] = {
+    Future.successful(UserAnswers(id = subscription.sdilRef,
+      journeyType = SelectChange.CorrectReturn,
+      contactAddress = subscription.address,
+      lastUpdated = timeNow)
+    )
   }
 
   private def setupUserAnswersForUpdateRegisteredDetails(subscription: RetrievedSubscription): Future[UserAnswers] = {

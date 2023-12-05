@@ -25,7 +25,6 @@ import models.correctReturn.ChangedPage
 import models.{Amounts, SdilReturn}
 import orchestrators.CorrectReturnOrchestrator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.Results.InternalServerError
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.ReturnService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -52,13 +51,17 @@ class CorrectReturnCheckChangesCYAController @Inject()(
       request.userAnswers.getCorrectReturnOriginalSDILReturnData.map(originalSdilReturn => {
         returnService.getBalanceBroughtForward(request.sdilEnrolment).map(balanceBroughtForward => {
           val orgName: String = " " + request.subscription.orgName
-          val currentSDILReturn = SdilReturn.apply(request.userAnswers)
+          val currentSDILReturn = SdilReturn.generateFromUserAnswers(request.userAnswers)
+          println("***************************************HHHH")
+          println(request.userAnswers)
+          println(currentSDILReturn)
+          println(originalSdilReturn)
           val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSDILReturn)
           val amounts: Amounts = Amounts(
             originalReturnTotal = originalSdilReturn.total,
-            newReturnTotal = SdilReturn(request.userAnswers).total,
+            newReturnTotal = SdilReturn.generateFromUserAnswers(request.userAnswers).total,
             balanceBroughtForward = balanceBroughtForward * -1,
-            adjustedAmount = SdilReturn(request.userAnswers).total + (balanceBroughtForward * -1)
+            adjustedAmount = SdilReturn.generateFromUserAnswers(request.userAnswers).total + (balanceBroughtForward * -1)
           )
           val sections: Seq[(String, SummaryList)] = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(
             request.userAnswers,
@@ -76,15 +79,10 @@ class CorrectReturnCheckChangesCYAController @Inject()(
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
     implicit request =>
-    correctReturnOrchestrator.submitReturnVariation(request.userAnswers, request.subscription).map(result =>
-      result.value.map {
-        case Right(_) =>  correctReturnOrchestrator.SubmitActivityVariation(request.userAnswers, request.subscription)
-          Redirect(routes.CorrectReturnUpdateDoneController.onPageLoad.url)
-        case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - received a failed response from return submission")
-          InternalServerError(errorHandler.internalServerErrorTemplate)
-      }).getOrElse{
-      genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to submit return variation due failing to retrieve user answers")
-      Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+    correctReturnOrchestrator.submitReturn(request.userAnswers, request.subscription).value.map {
+      case Right(_) => Redirect(routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+      case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - received a failed response from return submission")
+        InternalServerError(errorHandler.internalServerErrorTemplate)
     }
   }
 }

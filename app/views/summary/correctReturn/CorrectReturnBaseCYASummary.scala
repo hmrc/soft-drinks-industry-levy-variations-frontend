@@ -36,7 +36,7 @@ object CorrectReturnBaseCYASummary {
       changedBalance(amounts)).toSeq
   }
 
-  def changedBalance(amounts: Amounts)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Option[(String, SummaryList)] = {
+  def changedBalance(amounts: Amounts)(implicit messages: Messages): Option[(String, SummaryList)] = {
     Option("correctReturn.balance" -> AmountToPaySummary.amountToPaySummary(amounts))
   }
 

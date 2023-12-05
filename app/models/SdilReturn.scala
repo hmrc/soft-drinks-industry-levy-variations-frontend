@@ -16,74 +16,71 @@
 
 package models
 
-import cats.implicits._
-import pages.correctReturn._
-import play.api.libs.functional.syntax.{toFunctionalBuilderOps, unlift}
-import play.api.libs.json.{Format, JsPath, Json, OFormat}
+import config.FrontendAppConfig
+import models.submission.Litreage
+import play.api.libs.json.{Json, OFormat}
 
 import java.time.Instant
 
 case class SdilReturn(
-                       ownBrand: (Long, Long),
-                       packLarge: (Long, Long),
+                       ownBrand: Litreage,
+                       packLarge: Litreage,
                        packSmall: List[SmallProducer],
-                       importLarge: (Long, Long),
-                       importSmall: (Long, Long),
-                       export: (Long, Long),
-                       wastage: (Long, Long),
-                       submittedOn: Option[Instant] = None
+                       importLarge: Litreage,
+                       importSmall: Litreage,
+                       export: Litreage,
+                       wastage: Litreage,
+                       submittedOn: Option[Instant]
                      ) {
+  def total(implicit config: FrontendAppConfig): BigDecimal = {
+    val litresToAdd = Litreage.sum(List(ownBrand, packLarge, importLarge))
+    val litresToSubtract = Litreage.sum(List(export, wastage))
+    val totalLiterage = Litreage(
+      litresToAdd.lower - litresToSubtract.lower,
+      litresToAdd.upper - litresToSubtract.upper
+    )
+    calculatelevy(totalLiterage)
+  }
 
-  def totalPacked: (Long, Long) = packLarge |+| SmallProducer.totalOfAllSmallProducers(packSmall)
-  def totalImported: (Long, Long) = importLarge |+| importSmall
-
-  def sumLitres(l: List[(Long, Long)]): BigDecimal = l.map(x => LitreOps(x).dueLevy).sum
-
-  def total: BigDecimal = sumLitres(List(ownBrand, packLarge, importLarge)) - sumLitres(List(export, wastage))
-
-  type Litres = Long
-  type LitreBands = (Litres, Litres)
-
-  implicit class LitreOps(litreBands: LitreBands) {
-    lazy val lowLevy: BigDecimal = litreBands._1 * BigDecimal("0.18")
-    lazy val highLevy: BigDecimal = litreBands._2 * BigDecimal("0.24")
-    lazy val dueLevy: BigDecimal = lowLevy + highLevy
+  def taxEstimation(implicit config: FrontendAppConfig): BigDecimal = {
+    val t = Litreage.sum(List(packLarge, importLarge, ownBrand))
+    calculatelevy(t.combineN(4))
+  }
+  def calculatelevy(litreage: Litreage)
+                   (implicit config: FrontendAppConfig): BigDecimal = {
+    val costLower = config.lowerBandCostPerLitre
+    val costHigher = config.higherBandCostPerLitre
+    (litreage.lower * costLower) + (litreage.upper * costHigher)
   }
 }
 
 object SdilReturn {
-
-  def apply(userAnswers: UserAnswers): SdilReturn = {
-    val lowOwnBrand = userAnswers.get(HowManyOperatePackagingSiteOwnBrandsPage).map(_.lowBand).getOrElse(0L)
-    val highOwnBrand = userAnswers.get(HowManyOperatePackagingSiteOwnBrandsPage).map(_.highBand).getOrElse(0L)
-    val lowPackLarge = userAnswers.get(HowManyPackagedAsContractPackerPage).map(_.lowBand).getOrElse(0L)
-    val highPackLarge = userAnswers.get(HowManyPackagedAsContractPackerPage).map(_.highBand).getOrElse(0L)
-    val packSmall = userAnswers.smallProducerList
-    val lowImportLarge = userAnswers.get(HowManyBroughtIntoUKPage).map(_.lowBand).getOrElse(0L)
-    val highImportLarge = userAnswers.get(HowManyBroughtIntoUKPage).map(_.highBand).getOrElse(0L)
-    val lowImportSmall = userAnswers.get(HowManyBroughtIntoUkFromSmallProducersPage).map(_.lowBand).getOrElse(0L)
-    val highImportSmall = userAnswers.get(HowManyBroughtIntoUkFromSmallProducersPage).map(_.highBand).getOrElse(0L)
-    val lowExports = userAnswers.get(HowManyClaimCreditsForExportsPage).map(_.lowBand).getOrElse(0L)
-    val highExports = userAnswers.get(HowManyClaimCreditsForExportsPage).map(_.highBand).getOrElse(0L)
-    val lowWastage = userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.lowBand).getOrElse(0L)
-    val highWastage = userAnswers.get(HowManyCreditsForLostDamagedPage).map(_.highBand).getOrElse(0L)
-    SdilReturn(
-      ownBrand = (lowOwnBrand, highOwnBrand),
-      packLarge = (lowPackLarge, highPackLarge),
-      packSmall = packSmall,
-      importLarge = (lowImportLarge, highImportLarge),
-      importSmall = (lowImportSmall, highImportSmall),
-      export = (lowExports, highExports),
-      wastage = (lowWastage, highWastage)
-    )
+  def generateFromUserAnswers(userAnswers: UserAnswers, submitted: Option[Instant] = None): SdilReturn = {
+    userAnswers.getCorrectReturnData
+      .fold[SdilReturn](emptySdilReturn(userAnswers)) { correctReturnData =>
+        SdilReturn(
+          ownBrand = correctReturnData.ownBrandsLitreage,
+          packLarge = correctReturnData.contractPackerLitreage,
+          packSmall = userAnswers.smallProducerList,
+          importLarge = correctReturnData.broughtIntoUkLitreage,
+          importSmall = correctReturnData.broughtIntoUkFromSmallProducerLitreage,
+          export = correctReturnData.exportsLitreage,
+          wastage = correctReturnData.lostDamagedLitreage,
+          submittedOn = submitted
+        )
+      }
   }
 
-  implicit val longTupleFormatter: Format[(Long, Long)] = (
-    (JsPath \ "lower").format[Long] and
-      (JsPath \ "higher").format[Long]
-    )((a: Long, b: Long) => (a, b), unlift({ x: (Long, Long) =>
-    Tuple2.unapply(x)
-  }))
+  def emptySdilReturn(userAnswers: UserAnswers) = SdilReturn(
+    ownBrand = Litreage(0L, 0L),
+    packLarge = Litreage(0L, 0L),
+    packSmall = userAnswers.smallProducerList,
+    importLarge = Litreage(0L, 0L),
+    importSmall = Litreage(0L, 0L),
+    export = Litreage(0L, 0L),
+    wastage = Litreage(0L, 0L),
+    submittedOn = None
+  )
 
   implicit val smallProducerJson: OFormat[SmallProducer] = Json.format[SmallProducer]
 

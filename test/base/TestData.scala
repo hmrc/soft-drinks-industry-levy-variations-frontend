@@ -17,8 +17,9 @@
 package base
 
 import models._
-import models.backend.{RetrievedActivity, RetrievedSubscription, ReturnCharge, Site, UkAddress}
+import models.backend._
 import models.correctReturn.CorrectReturnUserAnswersData
+import models.submission.Litreage
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import pages.correctReturn._
 import play.api.libs.json.Json
@@ -93,7 +94,7 @@ trait TestData {
   val sdilReferenceParty = "XMSDIL000000113"
   val bandMax: Long = 100000000000000L
   val litres: Long = bandMax - 1
-  val smallProducerList: List[SmallProducer] = List(SmallProducer(producerNameParty, sdilReferenceParty, (litres, litres)))
+  val smallProducerList: List[SmallProducer] = List(SmallProducer(producerNameParty, sdilReferenceParty, Litreage(litres, litres)))
 
   val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
   val returnPeriod = List(ReturnPeriod(2018, 1))
@@ -168,7 +169,8 @@ trait TestData {
       .setForCorrectReturn(correctReturnData, smallProducers, returnPeriod.head).success.value
   }
 
-  val emptySdilReturn: SdilReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0), submittedOn =
+  val emptySdilReturn: SdilReturn = SdilReturn(Litreage(0, 0), Litreage(0, 0), List.empty,
+    Litreage(0, 0), Litreage(0, 0), Litreage(0, 0), Litreage(0, 0), submittedOn =
     Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
 
   val userAnswersForCorrectReturnWithEmptySdilReturn:
@@ -195,4 +197,5 @@ trait TestData {
     .set(HowManyBroughtIntoUKPage, LitresInBands(21312, 12312)).success.value
     .set(BroughtIntoUkFromSmallProducersPage, false).success.value
     .set(ClaimCreditsForExportsPage, false).success.value
+    .set(ClaimCreditsForLostDamagedPage, false).success.value
 }

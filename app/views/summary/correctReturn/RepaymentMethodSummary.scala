@@ -44,7 +44,7 @@ object RepaymentMethodSummary  {
             Seq(
               ActionItemViewModel("site.change", routes.RepaymentMethodController.onPageLoad(CheckMode).url)
                 .withVisuallyHiddenText(messages("correctReturn.repaymentMethod.change.hidden"))
-                .withAttribute("id", "change-repaymentMethod")
+                .withAttribute(("id", "change-repaymentMethod"))
             )
           }
         )

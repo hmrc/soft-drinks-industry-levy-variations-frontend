@@ -22,6 +22,7 @@ import errors.{SessionDatabaseInsertError, UnexpectedResponseFromSDIL}
 import forms.correctReturn.AddASmallProducerFormProvider
 import models.SelectChange.CorrectReturn
 import models.correctReturn.AddASmallProducer
+import models.submission.Litreage
 import models.{LitresInBands, NormalMode, SmallProducer}
 import navigation._
 import org.jsoup.Jsoup
@@ -156,7 +157,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when data matching an already added small producer is submitted" in {
       val smallProducerSDILRef = "XCSDIL000456789"
-      val smallProducerList: List[SmallProducer] = List(SmallProducer("MY SMALL PRODUCER", smallProducerSDILRef, (1L, 2L)))
+      val smallProducerList: List[SmallProducer] = List(SmallProducer("MY SMALL PRODUCER", smallProducerSDILRef, Litreage(1L, 2L)))
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducerList))).build()
 
       running(application) {
@@ -217,7 +218,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
     "must return a Bad Request and errors when data with small producer status false is submitted" in {
       val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
       when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn createSuccessVariationResult(Some(false))
-      val smallProducerList: List[SmallProducer] = List(SmallProducer("MY SMALL PRODUCER", "XCSDIL000456789", (1L, 2L)))
+      val smallProducerList: List[SmallProducer] = List(SmallProducer("MY SMALL PRODUCER", "XCSDIL000456789", Litreage(1L, 2L)))
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducerList)
       )).overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
 

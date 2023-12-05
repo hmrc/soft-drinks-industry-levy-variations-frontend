@@ -77,7 +77,6 @@ class CancelRegistrationCYAControllerISpec extends ControllerITTestHelper with S
   "POST " + routes.CancelRegistrationCYAController.onSubmit.url - {
     "should send the expected variation submission" - {
       "and redirect to Cancellation Request done controller" in {
-        val validCancellationDate = LocalDate.now()
 
         given
           .commonPrecondition

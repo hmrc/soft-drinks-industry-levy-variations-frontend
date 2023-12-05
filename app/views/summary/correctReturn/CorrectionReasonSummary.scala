@@ -36,7 +36,7 @@ object CorrectionReasonSummary  {
             Seq(
               ActionItemViewModel("site.change", routes.CorrectionReasonController.onPageLoad(CheckMode).url)
                 .withVisuallyHiddenText(messages("correctReturn.correctionReason.change.hidden"))
-                .withAttribute("id", "change-correctionReason")
+                .withAttribute(("id", "change-correctionReason"))
             )
           }
         )

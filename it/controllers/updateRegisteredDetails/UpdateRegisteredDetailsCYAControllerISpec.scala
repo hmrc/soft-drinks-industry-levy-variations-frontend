@@ -1,14 +1,12 @@
 package controllers.updateRegisteredDetails
 
 import controllers.ControllerITTestHelper
-import models.{CheckMode, LitresInBands}
+import models.CheckMode
 import models.SelectChange.UpdateRegisteredDetails
-import models.backend.{RetrievedActivity, UkAddress}
-import models.changeActivity.{AmountProduced, ChangeActivityData}
-import models.submission.{Activity, ClosedSite, Litreage, SdilActivity, VariationsContact, VariationsPersonalDetails, VariationsSite}
+import models.backend.UkAddress
+import models.submission.{ClosedSite, VariationsContact, VariationsPersonalDetails, VariationsSite}
 import models.updateRegisteredDetails.ContactDetails
 import org.jsoup.Jsoup
-import org.mockito.MockitoSugar.when
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.http.Status.OK
