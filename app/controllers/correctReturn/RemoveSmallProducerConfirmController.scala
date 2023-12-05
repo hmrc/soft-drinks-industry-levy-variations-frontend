@@ -17,7 +17,7 @@
 package controllers.correctReturn
 
 import controllers.actions._
-import controllers.{ControllerHelper, routes}
+import controllers.ControllerHelper
 import forms.correctReturn.RemoveSmallProducerConfirmFormProvider
 import handlers.ErrorHandler
 import models.Mode
@@ -46,42 +46,35 @@ class RemoveSmallProducerConfirmController @Inject()(
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode, sdil: String): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
+  def onPageLoad(mode: Mode, sdilRef: String): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
-
-      val preparedForm = request.userAnswers.get(RemoveSmallProducerConfirmPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      val smallProducerToRemove = request.userAnswers.smallProducerList.find(smallProducer => smallProducer.sdilRef == sdilRef)
+      smallProducerToRemove match {
+        case None =>
+          genericLogger.logger.warn(s"Small Producer sdilRef $sdilRef doesn't exist for ${request.userAnswers.id}")
+          Redirect(routes.SmallProducerDetailsController.onPageLoad(mode))
+        case Some(smallProducer) => Ok(view(form, mode, sdilRef, smallProducer.alias))
       }
-
-      val smallProducerList = request.userAnswers.smallProducerList
-      val smallProducerMissing = !smallProducerList.exists(producer => producer.sdilRef == sdil)
-
-      if(smallProducerMissing && smallProducerList.nonEmpty){
-        Redirect(routes.IndexController.onPageLoad)
-      }else{
-        val smallProducerName = smallProducerList.filter(x => x.sdilRef == sdil).map(producer => producer.alias).head
-        Ok(view(preparedForm, mode, sdil, smallProducerName))
-     }
   }
 
-  def onSubmit(mode: Mode, sdil: String): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
+  def onSubmit(mode: Mode, sdilRef: String): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-      val smallProducerName = request.userAnswers.smallProducerList.filter(x => x.sdilRef == sdil).map(producer => producer.alias).head
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, sdil, smallProducerName))),
-        formData =>{
-          if(formData) {
-            val updatedAnswers = request.userAnswers.set(RemoveSmallProducerConfirmPage, formData)
-            val modifiedProducerList = request.userAnswers.smallProducerList.filterNot(producer => producer.sdilRef == sdil)
-            val updatedAnswersFinal = updatedAnswers.get.copy(smallProducerList = modifiedProducerList)
-            updateDatabaseAndRedirect(updatedAnswersFinal, RemoveSmallProducerConfirmPage, mode)
-          }else {
-            val updatedAnswers = request.userAnswers.set(RemoveSmallProducerConfirmPage, formData)
-            updateDatabaseAndRedirect(updatedAnswers, RemoveSmallProducerConfirmPage, mode)
-          }
-        }
-      )
+      val smallProducerToRemove = request.userAnswers.smallProducerList.find(smallProducer => smallProducer.sdilRef == sdilRef)
+      smallProducerToRemove match {
+        case None =>
+          genericLogger.logger.warn(s"Small Producer sdilRef $sdilRef doesn't exist for ${request.userAnswers.id}")
+          Future.successful(Redirect(routes.SmallProducerDetailsController.onPageLoad(mode)))
+        case Some(smallProducer) =>
+          form.bindFromRequest().fold(
+            formWithErrors =>
+              Future.successful(BadRequest(view(formWithErrors, mode, sdilRef, smallProducer.alias))),
+            value => {
+              val updatedUserAnswers = if (!value) request.userAnswers else {
+                val modifiedProducerList = request.userAnswers.smallProducerList.filterNot(producer => producer.sdilRef == sdilRef)
+                request.userAnswers.copy(smallProducerList = modifiedProducerList)
+              }
+              updateDatabaseAndRedirect(updatedUserAnswers, RemoveSmallProducerConfirmPage, mode)
+            })
+      }
   }
 }
