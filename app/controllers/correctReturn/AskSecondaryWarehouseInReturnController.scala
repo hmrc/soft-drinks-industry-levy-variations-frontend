@@ -23,10 +23,9 @@ import handlers.ErrorHandler
 import models.Mode
 import navigation._
 import pages.correctReturn.AskSecondaryWarehouseInReturnPage
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
+import play.api.i18n.MessagesApi
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{AddressLookupService, SessionService, WarehouseDetails}
-import uk.gov.hmrc.http.HeaderCarrier
 import utilities.GenericLogger
 import views.html.correctReturn.AskSecondaryWarehouseInReturnView
 

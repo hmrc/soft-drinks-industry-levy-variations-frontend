@@ -233,29 +233,29 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case _ => (_, _) => defaultCall
   }
 
-  override val checkRouteMap: Page => UserAnswers => Option[AmountProduced] => Call = {
-    case BroughtIntoUKPage => userAnswers => _ => navigationForBroughtIntoUK(userAnswers, CheckMode)
-    case BroughtIntoUkFromSmallProducersPage => userAnswers => _ => navigationForBroughtIntoUkFromSmallProducers(userAnswers, CheckMode)
-    case HowManyBroughtIntoUkFromSmallProducersPage => _ => _ => routes.CorrectReturnCYAController.onPageLoad
-    case ClaimCreditsForExportsPage => userAnswers => _ => navigationForClaimCreditsForExports(userAnswers, CheckMode)
-    case HowManyClaimCreditsForExportsPage => _ => _ => routes.CorrectReturnCYAController.onPageLoad
-    case ExemptionsForSmallProducersPage => userAnswers => _ => navigationForExemptionsForSmallProducers(userAnswers, CheckMode)
-    case AddASmallProducerPage => _ => _ => navigationForAddASmallProducer(CheckMode)
-    case SmallProducerDetailsPage => userAnswers => _ => navigationForSmallProducerDetails(userAnswers, CheckMode)
-    case PackagedAsContractPackerPage => userAnswers => _ => navigationForPackagedAsContractPacker(userAnswers, CheckMode)
-    case OperatePackagingSiteOwnBrandsPage => userAnswers => _ => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
-    case HowManyOperatePackagingSiteOwnBrandsPage => _ => _ => routes.CorrectReturnCYAController.onPageLoad
-    case ClaimCreditsForLostDamagedPage => userAnswers => _ => navigationForCreditsForLostDamagedInCheckMode(userAnswers)
-    case HowManyCreditsForLostDamagedPage => _ => _ => routes.CorrectReturnCYAController.onPageLoad
-    case PackagingSiteDetailsPage => _ => _ => routes.CorrectReturnCYAController.onPageLoad
-    case RemovePackagingSiteConfirmPage => userAnswers => _ => navigationForRemovePackagingSiteConfirm(userAnswers, CheckMode)
-    case RemoveSmallProducerConfirmPage => userAnswers => _ => navigationForRemoveSmallProducerConfirm(userAnswers, CheckMode)
-    case AskSecondaryWarehouseInReturnPage => _ => _ => routes.CorrectReturnCYAController.onPageLoad
-    case SecondaryWarehouseDetailsPage => _ => _ => routes.CorrectReturnCYAController.onPageLoad
-    case RemoveWarehouseDetailsPage => userAnswers => _ => navigationForRemoveWarehouse(userAnswers, CheckMode)
-    case CorrectionReasonPage => _ => _ => navigationForCorrectionReason(CheckMode)
-    case RepaymentMethodPage => _ => _ => routes.CorrectReturnCheckChangesCYAController.onPageLoad
-    case _ => _ => _ => routes.CorrectReturnCYAController.onPageLoad
+  override val checkRouteMap: Page => UserAnswers => Call = {
+    case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, CheckMode)
+    case BroughtIntoUkFromSmallProducersPage => userAnswers => navigationForBroughtIntoUkFromSmallProducers(userAnswers, CheckMode)
+    case HowManyBroughtIntoUkFromSmallProducersPage => _ => routes.CorrectReturnCYAController.onPageLoad
+    case ClaimCreditsForExportsPage => userAnswers => navigationForClaimCreditsForExports(userAnswers, CheckMode)
+    case HowManyClaimCreditsForExportsPage => _ => routes.CorrectReturnCYAController.onPageLoad
+    case ExemptionsForSmallProducersPage => userAnswers => navigationForExemptionsForSmallProducers(userAnswers, CheckMode)
+    case AddASmallProducerPage => _ => navigationForAddASmallProducer(CheckMode)
+    case SmallProducerDetailsPage => userAnswers => navigationForSmallProducerDetails(userAnswers, CheckMode)
+    case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, CheckMode)
+    case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
+    case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.CorrectReturnCYAController.onPageLoad
+    case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamagedInCheckMode(userAnswers)
+    case HowManyCreditsForLostDamagedPage => _ => routes.CorrectReturnCYAController.onPageLoad
+    case PackagingSiteDetailsPage => _ => routes.CorrectReturnCYAController.onPageLoad
+    case RemovePackagingSiteConfirmPage => userAnswers => navigationForRemovePackagingSiteConfirm(userAnswers, CheckMode)
+    case RemoveSmallProducerConfirmPage => userAnswers => navigationForRemoveSmallProducerConfirm(userAnswers, CheckMode)
+    case AskSecondaryWarehouseInReturnPage => _ => routes.CorrectReturnCYAController.onPageLoad
+    case SecondaryWarehouseDetailsPage => _ => routes.CorrectReturnCYAController.onPageLoad
+    case RemoveWarehouseDetailsPage => userAnswers => navigationForRemoveWarehouse(userAnswers, CheckMode)
+    case CorrectionReasonPage => _ => navigationForCorrectionReason(CheckMode)
+    case RepaymentMethodPage => _ => routes.CorrectReturnCheckChangesCYAController.onPageLoad
+    case _ => _ => routes.CorrectReturnCYAController.onPageLoad
   }
 
   override val checkRouteMapWithSubscription: Page => (UserAnswers, RetrievedSubscription) => Call = {
