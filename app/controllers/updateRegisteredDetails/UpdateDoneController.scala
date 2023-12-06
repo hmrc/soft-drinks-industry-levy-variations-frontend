@@ -18,6 +18,7 @@ package controllers.updateRegisteredDetails
 
 import config.FrontendAppConfig
 import controllers.actions._
+import controllers.routes
 
 import javax.inject.Inject
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -26,6 +27,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.updateRegisteredDetails.UpdateDoneView
 import models.SelectChange.UpdateRegisteredDetails
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import utilities.GenericLogger
 import views.summary.updateRegisteredDetails.{BusinessAddressSummary, UKSitesSummary, UpdateContactDetailsSummary}
 
 import java.time.format.DateTimeFormatter
@@ -35,23 +37,28 @@ class UpdateDoneController @Inject()(
                                        override val messagesApi: MessagesApi,
                                         controllerActions: ControllerActions,
                                        val controllerComponents: MessagesControllerComponents,
-                                       view: UpdateDoneView
+                                       view: UpdateDoneView,
+                                       genericLogger: GenericLogger
                                      )(implicit config: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
 
     implicit request =>
-      val ukSiteDetailsSummary: Option[(String, SummaryList)] = UKSitesSummary.getHeadingAndSummary(request.userAnswers, isCheckAnswers = false)
-      val updateContactDetailsSummary: Option[(String, SummaryList)] = UpdateContactDetailsSummary.rows(request.userAnswers, isCheckAnswers = false)
-      val businessAddressSummary: Option[(String, SummaryList)] = BusinessAddressSummary.rows(request.userAnswers, isCheckAnswers = false)
-      val summaryList = Seq(ukSiteDetailsSummary, updateContactDetailsSummary, businessAddressSummary).flatten
+      request.userAnswers.submittedOn match {
+        case Some(submittedOnDate) =>
+          val ukSiteDetailsSummary: Option[(String, SummaryList)] = UKSitesSummary.getHeadingAndSummary (request.userAnswers, isCheckAnswers = false)
+          val updateContactDetailsSummary: Option[(String, SummaryList)] = UpdateContactDetailsSummary.rows (request.userAnswers, isCheckAnswers = false)
+          val businessAddressSummary: Option[(String, SummaryList)] = BusinessAddressSummary.rows (request.userAnswers, isCheckAnswers = false)
+          val summaryList = Seq (ukSiteDetailsSummary, updateContactDetailsSummary, businessAddressSummary).flatten
 
-      val getSentDateTime = LocalDateTime.now(ZoneId.of("UTC")) //LocalDateTime.ofInstant(request.userAnswers.submittedOn.get, ZoneId.of("UTC"))
-      val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-      val timeFormatter = DateTimeFormatter.ofPattern("H:MMa")
-      val formattedDate = getSentDateTime.format(dateFormatter)
-      val formattedTime = getSentDateTime.format(timeFormatter)
+          val getSentDateTime = LocalDateTime.ofInstant(submittedOnDate, ZoneId.of("Europe/London"))
+          val formattedDate = getSentDateTime.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+          val formattedTime = getSentDateTime.format(DateTimeFormatter.ofPattern("h:mma"))
 
-      Ok(view(summaryList, formattedDate, formattedTime, request.subscription.orgName))
+          Ok (view (summaryList, formattedDate, formattedTime, request.subscription.orgName) )
+
+        case None => genericLogger.logger.error(s"[SoftDrinksIndustryLevyService [submitVariation] - unexpected response while attempting to retreive userAnswers submittedOnDate")
+          Redirect(routes.SelectChangeController.onPageLoad)
+    }
   }
 }

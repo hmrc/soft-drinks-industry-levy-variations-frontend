@@ -34,6 +34,8 @@
 
 
 @(orgName: String,
+  formattedDate: String,
+  formattedTime: String,
   seqSummaryList: Seq[(String, SummaryList)])(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
 @summary ={
@@ -59,8 +61,8 @@
     <p class="govuk-body" id="returnDone">
         @Html(messages("changeActivitySent.returnsDoneMessage",
         orgName,
-        LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase,
-        LocalDate.now.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
+        formattedTime,
+        formattedDate,
         ))
     </p>
 

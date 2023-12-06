@@ -19,6 +19,7 @@ package controllers.correctReturn
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{ControllerActions, RequiredUserAnswersForCorrectReturn}
+import controllers.routes
 import handlers.ErrorHandler
 import models.{Amounts, SdilReturn}
 import models.correctReturn.ChangedPage
@@ -80,7 +81,7 @@ class CorrectReturnUpdateDoneController @Inject()(
                 Ok(view(orgName, sections, formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd))
 
               case None => genericLogger.logger.error(s"[SoftDrinksIndustryLevyService [submitVariation] - unexpected response while attempting to retreive userAnswers submittedOnDate")
-                InternalServerError(errorHandler.internalServerErrorTemplate(request))
+                Redirect(routes.SelectChangeController.onPageLoad)
             }
           }).getOrElse(Redirect(controllers.routes.SelectChangeController.onPageLoad.url))
         }).recoverWith {

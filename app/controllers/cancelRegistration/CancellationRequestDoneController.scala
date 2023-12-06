@@ -18,6 +18,7 @@ package controllers.cancelRegistration
 
 import config.FrontendAppConfig
 import controllers.actions._
+import controllers.routes
 import handlers.ErrorHandler
 import models.ReturnPeriod
 import models.SelectChange.CancelRegistration
@@ -79,7 +80,7 @@ class CancellationRequestDoneController @Inject()(
             request.subscription.orgName, Seq(cancelRegistrationSummary)))
 
         case None => genericLogger.logger.error(s"[SoftDrinksIndustryLevyService [submitVariation] - unexpected response while attempting to retreive userAnswers submittedOnDate")
-          InternalServerError(errorHandler.internalServerErrorTemplate(request))
+          Redirect(routes.SelectChangeController.onPageLoad)
       }
   }
 }

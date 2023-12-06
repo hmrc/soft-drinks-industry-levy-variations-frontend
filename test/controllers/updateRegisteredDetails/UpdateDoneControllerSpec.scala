@@ -28,7 +28,7 @@ import views.html.updateRegisteredDetails.UpdateDoneView
 import views.summary.updateRegisteredDetails.{BusinessAddressSummary, UKSitesSummary, UpdateContactDetailsSummary}
 
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDateTime, ZoneId}
+import java.time.{Instant, LocalDateTime, ZoneId}
 
 class UpdateDoneControllerSpec extends SpecBase {
 
@@ -52,7 +52,8 @@ class UpdateDoneControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val testTime = Instant.now()
+      val application = applicationBuilder(userAnswers = Some(userAnswers.copy(submittedOn = Some(testTime)))).build()
 
       running(application) {
         val request = FakeRequest(GET, updateDoneRoute)
@@ -62,8 +63,23 @@ class UpdateDoneControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UpdateDoneView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(summaryList, formattedDate, formattedTime, orgName)(request, messages(application), config).toString
+        contentAsString(result) mustEqual view(summaryList, formattedDate, LocalDateTime.ofInstant(testTime, ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")), orgName)(request, messages(application), config).toString
       }
     }
+
+    "must redirect if there is no submission date" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, updateDoneRoute)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[UpdateDoneView]
+
+        status(result) mustEqual SEE_OTHER
+      }
+    }
+
   }
 }
