@@ -35,6 +35,7 @@ import views.summary.correctReturn.PackagingSiteDetailsSummary
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 class PackagingSiteDetailsController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -53,18 +54,11 @@ class PackagingSiteDetailsController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
-
-      val preparedForm = request.userAnswers.get(PackagingSiteDetailsPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-
       val siteList: SummaryList = SummaryListViewModel(
         rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList, mode)
       )
 
-      Ok(view(preparedForm, mode, siteList))
-
+      Ok(view(form, mode, siteList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
@@ -81,13 +75,12 @@ class PackagingSiteDetailsController @Inject()(
           for {
             onwardUrl: Result <-
               if (value) {
-                val alsOnRampUrl = updateDatabaseWithoutRedirect(request.userAnswers.set(PackagingSiteDetailsPage, value), PackagingSiteDetailsPage).flatMap(_ =>
+                val alsOnRampUrl = updateDatabaseWithoutRedirect(Try(request.userAnswers), PackagingSiteDetailsPage).flatMap(_ =>
                   addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode))
                 alsOnRampUrl.map(Redirect(_))
               } else {
-                val updatedAnswers = request.userAnswers.set(PackagingSiteDetailsPage, value)
                 val subscription = if (mode == NormalMode) Some(request.subscription) else None
-                updateDatabaseAndRedirect(updatedAnswers, PackagingSiteDetailsPage, mode, subscription = subscription)
+                updateDatabaseAndRedirect(Try(request.userAnswers), PackagingSiteDetailsPage, mode, subscription = subscription)
               }
           } yield {
             onwardUrl
