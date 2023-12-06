@@ -246,6 +246,77 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
         }
       }
     }
+
+    "should return MissingRequiredAnswers" - {
+      "when the user answers doesn't contain the returnPeriod" in {
+        val litres = LitresInBands(2000, 4000)
+        val correctReturnUserAnswersData = CorrectReturnUserAnswersData(
+          true, Some(litres),
+          true, Some(litres),
+          false,
+          true, Some(litres),
+          true, Some(litres),
+          true, Some(litres),
+          true, Some(litres)
+        )
+
+        val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+          .copy(correctReturnPeriod = None, packagingSiteList = Map.empty, warehouseList = Map.empty,
+            data = Json.obj(("correctReturn", Json.toJson(correctReturnUserAnswersData))))
+          .set(CorrectionReasonPage, "foo").success.value
+          .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+          .setOriginalSDILReturn(emptySdilReturn).success.value
+
+        val res = orchestrator.submitReturn(userAnswers, aSubscription)(hc, ec)
+
+        whenReady(res.value) { result =>
+          result mustBe Left(MissingRequiredAnswers)
+        }
+      }
+
+      "when the user answers doesn't contain the originalReturn" in {
+        val litres = LitresInBands(2000, 4000)
+        val returnPeriod = returnPeriodList.head
+        val correctReturnUserAnswersData = CorrectReturnUserAnswersData(
+          true, Some(litres),
+          true, Some(litres),
+          false,
+          true, Some(litres),
+          true, Some(litres),
+          true, Some(litres),
+          true, Some(litres)
+        )
+
+        val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+          .copy(correctReturnPeriod = Some(returnPeriod), packagingSiteList = Map.empty, warehouseList = Map.empty,
+            data = Json.obj(("correctReturn", Json.toJson(correctReturnUserAnswersData))))
+          .set(CorrectionReasonPage, "foo").success.value
+          .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+
+        val res = orchestrator.submitReturn(userAnswers, aSubscription)(hc, ec)
+
+        whenReady(res.value) { result =>
+          result mustBe Left(MissingRequiredAnswers)
+        }
+      }
+
+      "when the user answers doesn't contain the correctReturnData" in {
+        val litres = LitresInBands(2000, 4000)
+        val returnPeriod = returnPeriodList.head
+
+        val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+          .copy(packagingSiteList = Map.empty, warehouseList = Map.empty, correctReturnPeriod = Some(returnPeriod))
+          .set(CorrectionReasonPage, "foo").success.value
+          .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+          .setOriginalSDILReturn(emptySdilReturn).success.value
+
+        val res = orchestrator.submitReturn(userAnswers, aSubscription)(hc, ec)
+
+        whenReady(res.value) { result =>
+          result mustBe Left(MissingRequiredAnswers)
+        }
+      }
+    }
   }
 
 

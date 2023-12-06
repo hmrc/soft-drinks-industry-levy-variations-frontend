@@ -196,8 +196,6 @@ trait SubmissionVariationHelper {
       .filter(_.getUrl.contains("/submit-variations/sdil/XKSDIL000000022")).head
     val jsonBodySent =  Json.parse(requestMade.getBodyAsString).as[JsObject]
     val jsonBodyOfExpectedPost = Json.toJson(bodyExpected).as[JsObject]
-    println("********************************")
-    println(jsonBodySent)
     jsonBodyOfExpectedPost == jsonBodySent
   }
 

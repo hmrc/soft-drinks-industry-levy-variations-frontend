@@ -57,11 +57,11 @@
     </p>
 
     <p class="govuk-body" id="returnDone">
-        @messages("changeActivitySent.returnsDoneMessage",
+        @Html(messages("changeActivitySent.returnsDoneMessage",
         orgName,
         LocalTime.now(ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")).toLowerCase,
         LocalDate.now.format(DateTimeFormatter.ofPattern("dd MMMM yyyy"))
-        )
+        ))
     </p>
 
     <h2 class="govuk-heading-m" id="whatNextHeader">

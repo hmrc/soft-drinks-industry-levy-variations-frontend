@@ -22,8 +22,7 @@ import controllers.actions._
 import forms.correctReturn.AddASmallProducerFormProvider
 import handlers.ErrorHandler
 import models.correctReturn.AddASmallProducer
-import models.errors.{AlreadyExists, NotASmallProducer, SDILReferenceErrors}
-import models.submission.Litreage
+import models.errors.{AlreadyExists, NotASmallProducer, SDILReferenceErrors, UnexpectedResponseFromCheckSmallProducer}
 import models.{LitresInBands, Mode, ReturnPeriod, SmallProducer, UserAnswers}
 import navigation._
 import pages.correctReturn.AddASmallProducerPage
@@ -37,7 +36,6 @@ import views.html.correctReturn.AddASmallProducerView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 class AddASmallProducerController @Inject()(
                                              override val messagesApi: MessagesApi,
@@ -77,18 +75,19 @@ class AddASmallProducerController @Inject()(
           smallProducerOpt match {
             case Some(_) =>
               Future.successful(
-                BadRequest(view(preparedForm.withError(FormError("referenceNumber", "correctReturn.addASmallProducer.error.referenceNumber.exists")), mode))
+                BadRequest(view(preparedForm.withError(FormError("referenceNumber",
+                  "correctReturn.addASmallProducer.error.referenceNumber.exists")), mode))
               )
             case _ =>
               sdilConnector.checkSmallProducerStatus(value.referenceNumber, request.returnPeriod).value.flatMap {
                 case Right(Some(false)) =>
                   Future.successful(
-                    BadRequest(view(preparedForm.withError(FormError("referenceNumber", "correctReturn.addASmallProducer.error.referenceNumber.notASmallProducer")), mode))
+                    BadRequest(view(preparedForm.withError(FormError("referenceNumber",
+                      "correctReturn.addASmallProducer.error.referenceNumber.notASmallProducer")), mode))
                   )
                 case Right(_) =>
-                  val userAnswersSetPage: Try[UserAnswers] = request.userAnswers.set(AddASmallProducerPage, value)
-                  val updatedAnswers: Try[UserAnswers] = userAnswersSetPage
-                    .map(userAnswers => userAnswers.copy(smallProducerList = AddASmallProducer.toSmallProducer(value) :: userAnswers.smallProducerList))
+                  val updatedAnswers: UserAnswers = request.userAnswers
+                    .copy(smallProducerList = AddASmallProducer.toSmallProducer(value) :: request.userAnswers.smallProducerList)
                   updateDatabaseAndRedirect(updatedAnswers, AddASmallProducerPage, mode)
                 case Left(_) => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
               }
@@ -125,21 +124,26 @@ class AddASmallProducerController @Inject()(
           formWithErrors => {
             Future.successful(BadRequest(view(formWithErrors, mode, Some(sdilReference))))
           },
-          formData => {
+          value => {
             val smallProducerList = request.userAnswers.smallProducerList
-            isValidSDILRef(sdilReference, formData.referenceNumber, smallProducerList, request.returnPeriod).flatMap({
+            val preparedForm = form.fill(value)
+            isValidSDILRef(sdilReference, value.referenceNumber, smallProducerList, request.returnPeriod).flatMap({
               case Left(AlreadyExists) =>
                 Future.successful(
-                  BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.exists")), mode, Some(sdilReference)))
+                  BadRequest(view(preparedForm.withError(
+                    FormError("referenceNumber", "correctReturn.addASmallProducer.error.referenceNumber.exists")), mode, Some(sdilReference)))
                 )
               case Left(NotASmallProducer) =>
                 Future.successful(
-                  BadRequest(view(form.withError(FormError("referenceNumber", "addASmallProducer.error.referenceNumber.notASmallProducer")),
-                    mode, Some(sdilReference)))
+                  BadRequest(view(preparedForm.withError(
+                    FormError("referenceNumber", "correctReturn.addASmallProducer.error.referenceNumber.notASmallProducer")), mode, Some(sdilReference)))
                 )
+              case Left(_) => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
               case Right(_) =>
-                updateSmallProducerList(formData, request.userAnswers, sdilReference).map(updatedAnswersFinal =>
-                  Redirect(navigator.nextPage(AddASmallProducerPage, mode, updatedAnswersFinal)))
+                val newListWithOldSPRemoved = request.userAnswers.smallProducerList.filterNot(_.sdilRef == sdilReference)
+                val updatedAnswers: UserAnswers = request.userAnswers
+                  .copy(smallProducerList = AddASmallProducer.toSmallProducer(value) :: newListWithOldSPRemoved)
+                updateDatabaseAndRedirect(updatedAnswers, AddASmallProducerPage, mode)
             })
           }
         )
@@ -154,27 +158,10 @@ class AddASmallProducerController @Inject()(
       Future.successful(Left(AlreadyExists))
     } else {
       sdilConnector.checkSmallProducerStatus(addASmallProducerSDILRef, returnPeriod).value.flatMap {
-        case Right(Some(false)) =>
-          Future.successful(
-            Left(NotASmallProducer)
-          )
-        case _ => Future.successful(Right(()))
+        case Right(Some(true)) => Future.successful(Right(()))
+        case Right(Some(false)) => Future.successful(Left(NotASmallProducer))
+        case Left(_) => Future.successful(Left(UnexpectedResponseFromCheckSmallProducer))
       }
-    }
-  }
-
-  private def smallProducerInfoFormatted(data: AddASmallProducer): SmallProducer = {
-    SmallProducer(data.producerName.getOrElse(""), data.referenceNumber, Litreage.fromLitresInBands(data.litres))
-  }
-
-  private def updateSmallProducerList(formData: AddASmallProducer, userAnswers: UserAnswers, sdilUnderEdit: String): Future[UserAnswers] = {
-    for {
-      updatedAnswers <- Future.fromTry(userAnswers.set(AddASmallProducerPage, formData))
-      newListWithOldSPRemoved = updatedAnswers.smallProducerList.filterNot(_.sdilRef == sdilUnderEdit)
-      updatedAnswersFinal = updatedAnswers.copy(smallProducerList = smallProducerInfoFormatted(formData) :: newListWithOldSPRemoved)
-      _ <- updateDatabaseWithoutRedirect(Try(updatedAnswersFinal), AddASmallProducerPage)
-    } yield {
-      updatedAnswersFinal
     }
   }
 }

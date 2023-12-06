@@ -52,10 +52,6 @@ class CorrectReturnCheckChangesCYAController @Inject()(
         returnService.getBalanceBroughtForward(request.sdilEnrolment).map(balanceBroughtForward => {
           val orgName: String = " " + request.subscription.orgName
           val currentSDILReturn = SdilReturn.generateFromUserAnswers(request.userAnswers)
-          println("***************************************HHHH")
-          println(request.userAnswers)
-          println(currentSDILReturn)
-          println(originalSdilReturn)
           val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSDILReturn)
           val amounts: Amounts = Amounts(
             originalReturnTotal = originalSdilReturn.total,

@@ -32,8 +32,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
-                              genericLogger: GenericLogger)(implicit config: FrontendAppConfig) {
+class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector)(implicit config: FrontendAppConfig) {
   private def extractTotal(l: List[(FinancialLineItem, BigDecimal)]): BigDecimal = l.headOption.fold(BigDecimal(0))(_._2)
 
   private def listItemsWithTotal(items: List[FinancialLineItem]): List[(FinancialLineItem, BigDecimal)] =
@@ -65,7 +64,7 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
       period = returnPeriod,
       orgName = subscription.orgName,
       address = subscription.address,
-      reason = userAnswers.get(CorrectionReasonPage).get,
+      reason = userAnswers.get(CorrectionReasonPage).getOrElse(""),
       repaymentMethod = userAnswers.get(RepaymentMethodPage).map(_.toString)
     )
 

@@ -53,7 +53,9 @@
 
     @printLinkWithJs(messages("site.print"))
 
-    <p class="govuk-body-m">@messages("correctReturn.updateDone.updateInfo.p1", periodStart, periodEnd, orgName, formattedDate, formattedTime)</p>
+    <p class="govuk-body-m">
+        @Html(messages("correctReturn.updateDone.updateInfo.p1", periodStart, periodEnd, orgName, formattedDate, formattedTime))
+    </p>
 
     @govukWarningText(WarningText(
         iconFallbackText = Some("Warning"),

@@ -343,6 +343,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
               val userAnswers = emptyUserAnswersForChangeActivity
                 .set(AmountProducedPage, AmountProduced.None).success.value
+                .set(ContractPackingPage, false).success.value
                 .set(ImportsPage, true).success.value
 
               setAnswers(userAnswers)
@@ -458,10 +459,8 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               }
             }
           }
-        }
 
-        "redirect to default page" - {
-          s"when the session contains data stating activity type is Small" in {
+          "when the session contains data stating activity type is Small" in {
             given
               .commonPrecondition
 
@@ -476,7 +475,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.ContractPackingController.onPageLoad(NormalMode).url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBands
@@ -1010,7 +1009,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
           }
 
-          s"when the session contains data stating activity type Large, but no other pages" in {
+          "when the session contains data stating activity type Large, but no other pages" in {
             given
               .commonPrecondition
 
@@ -1033,7 +1032,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
           }
 
-          s"when the session contains data stating activity type is Large and copacker" in {
+          "when the session contains data stating activity type is Large and copacker" in {
             given
               .commonPrecondition
 
@@ -1056,7 +1055,8 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               }
             }
           }
-          s"when the session contains data stating activity type is Large and own brands" in {
+
+          "when the session contains data stating activity type is Large and own brands" in {
             given
               .commonPrecondition
 
@@ -1080,7 +1080,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
           }
 
-          s"when the session contains data stating activity type is Small" in {
+          "when the session contains data stating activity type is Small" in {
             given
               .commonPrecondition
 

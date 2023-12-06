@@ -121,15 +121,15 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
     }
   }
 
-  def testAction(mode: Mode, document: Document, expectedAction: String): Unit = {
+  def testAction(mode: Mode, document: Document): Unit = {
     "should contains a form with the correct action" in {
       val action = document.select(Selectors.form).attr("action")
-      mode match{
-        case NormalMode => action mustEqual s"/soft-drinks-industry-levy-variations-frontend/correct-return/add-small-producer"
-        case EditMode => action mustEqual s"/soft-drinks-industry-levy-variations-frontend/correct-return/change-add-small-producer-edit?sdilReference="
-        case CheckMode => action mustEqual s"/soft-drinks-industry-levy-variations-frontend/correct-return/change-add-small-producer-edit?sdilReference="
+      val route = if (mode != NormalMode) {
+        routes.AddASmallProducerController.onEditPageSubmit(mode, sdilProducerReference).url
+      } else {
+        routes.AddASmallProducerController.onSubmit(mode).url
       }
-
+      action mustEqual route
     }
   }
 
@@ -257,21 +257,22 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
   }
 
   "AddASmallProducerView" - {
-    List(NormalMode, CheckMode).foreach { mode =>
-      "when in " + mode +" mode" - {
-        val html: HtmlFormat.Appendable = addASmallProducerView(form, mode)
+    List(NormalMode, CheckMode, EditMode).foreach { mode =>
+      "when in " + mode - {
+        val sdilRef = if (mode == NormalMode) None else Some(sdilProducerReference)
+        val html: HtmlFormat.Appendable = addASmallProducerView(form, mode, sdilRef)
         val document = doc(html)
-        val htmlWithValidData: HtmlFormat.Appendable = addASmallProducerView(formWithHighAndLowBands, mode)
+        val htmlWithValidData: HtmlFormat.Appendable = addASmallProducerView(formWithHighAndLowBands, mode, sdilRef)
         val documentWithValidData = doc(htmlWithValidData)
-        val htmlFormErrorsEmpty: HtmlFormat.Appendable = addASmallProducerView(emptyForm, mode)
+        val htmlFormErrorsEmpty: HtmlFormat.Appendable = addASmallProducerView(emptyForm, mode, sdilRef)
         val documentFormErrorsEmpty = doc(htmlFormErrorsEmpty)
-        val htmlFormErrorsNegative: HtmlFormat.Appendable = addASmallProducerView(formWithNegativeNumber, mode)
+        val htmlFormErrorsNegative: HtmlFormat.Appendable = addASmallProducerView(formWithNegativeNumber, mode, sdilRef)
         val documentFormErrorsNegative = doc(htmlFormErrorsNegative)
-        val htmlFormErrorsNoneNumeric: HtmlFormat.Appendable = addASmallProducerView(formWithNoNumeric, mode)
+        val htmlFormErrorsNoneNumeric: HtmlFormat.Appendable = addASmallProducerView(formWithNoNumeric, mode, sdilRef)
         val documentFormErrorsNoneNumeric = doc(htmlFormErrorsNoneNumeric)
-        val htmlFormErrorsNotWhole: HtmlFormat.Appendable = addASmallProducerView(formWithDecimalNumber, mode)
+        val htmlFormErrorsNotWhole: HtmlFormat.Appendable = addASmallProducerView(formWithDecimalNumber, mode, sdilRef)
         val documentFormErrorsNotWhole = doc(htmlFormErrorsNotWhole)
-        val htmlFormErrorsOutOfRange: HtmlFormat.Appendable = addASmallProducerView(formWithOutOfRangeNumber, mode)
+        val htmlFormErrorsOutOfRange: HtmlFormat.Appendable = addASmallProducerView(formWithOutOfRangeNumber, mode, sdilRef)
         val documentFormErrorsOutOfRange = doc(htmlFormErrorsOutOfRange)
 
         "should have the expected title" in {
@@ -314,7 +315,7 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
         testLitresInBandsWithPrepopulatedData(documentWithValidData, numberOfPrecedingInputs = 2)
         
         testButton(document)
-        testAction(mode, document, routes.AddASmallProducerController.onSubmit(mode).url)
+        testAction(mode, document)
 
         "and the form has errors" - {
           val errorTitle = "Error: Enter the registered small producer’s details - Soft Drinks Industry Levy - GOV.UK"
