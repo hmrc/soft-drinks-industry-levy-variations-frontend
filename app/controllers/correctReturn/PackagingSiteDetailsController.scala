@@ -72,19 +72,11 @@ class PackagingSiteDetailsController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
 
         value =>
-          for {
-            onwardUrl: Result <-
-//              TODO: Clean up calls so that they are not updating database needlessly
-              if (value) {
-                val alsOnRampUrl = updateDatabaseWithoutRedirect(Try(request.userAnswers), PackagingSiteDetailsPage).flatMap(_ =>
-                  addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode))
-                alsOnRampUrl.map(Redirect(_))
-              } else {
-                val subscription = if (mode == NormalMode) Some(request.subscription) else None
-                updateDatabaseAndRedirect(Try(request.userAnswers), PackagingSiteDetailsPage, mode, subscription = subscription)
-              }
-          } yield {
-            onwardUrl
+          if (value) {
+            addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode).map(Redirect(_))
+          } else {
+            val subscription = if (mode == NormalMode) Some(request.subscription) else None
+            Future.successful(Redirect(navigator.nextPage(PackagingSiteDetailsPage, mode, request.userAnswers, subscription = subscription)))
           }
       )
   }

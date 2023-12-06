@@ -78,13 +78,10 @@ class SecondaryWarehouseDetailsController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
 
         value =>
-//              TODO: Clean up calls so that they are not updating database needlessly
           if (value) {
-            val alsOnRampUrl = updateDatabaseWithoutRedirect(Try(request.userAnswers), SecondaryWarehouseDetailsPage).flatMap(_ =>
-              addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = mode))
-            alsOnRampUrl.map(Redirect(_))
+            addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = mode).map(Redirect(_))
           } else {
-            updateDatabaseAndRedirect(request.userAnswers, SecondaryWarehouseDetailsPage, mode)
+            Future.successful(Redirect(navigator.nextPage(SecondaryWarehouseDetailsPage, mode, request.userAnswers)))
           }
       )
   }
