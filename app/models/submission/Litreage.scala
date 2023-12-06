@@ -20,21 +20,21 @@ import models.LitresInBands
 import play.api.libs.json.{Json, OFormat}
 
 case class Litreage(lower: Long = 0L,
-                    upper: Long = 0L
+                    higher: Long = 0L
                    ) {
-  val total: BigDecimal = (lower + upper)
+  val total: BigDecimal = (lower + higher)
 
-  def combineN(n: Int): Litreage = Litreage(lower * n, upper * n)
+  def combineN(n: Int): Litreage = Litreage(lower * n, higher * n)
 }
 
 object Litreage {
   def fromLitresInBands(litresInBands: LitresInBands): Litreage = Litreage(
-    lower = litresInBands.lowBand, upper = litresInBands.highBand
+    lower = litresInBands.lowBand, higher = litresInBands.highBand
   )
 
   def sum(litreages: List[Litreage]): Litreage = {
     val totalLower = litreages.foldLeft[Long](0L)((total, litreage) => total + litreage.lower)
-    val totalUpper = litreages.foldLeft[Long](0L)((total, litreage) => total + litreage.upper)
+    val totalUpper = litreages.foldLeft[Long](0L)((total, litreage) => total + litreage.higher)
     Litreage(totalLower, totalUpper)
   }
 

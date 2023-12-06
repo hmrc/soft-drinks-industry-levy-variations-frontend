@@ -25,7 +25,7 @@ object UserTypeCheck {
     val userIsNotAlreadyAnImporter = !subscription.activity.importer
     val totalImported = userAnswers.getCorrectReturnData.map(_.totalImported)
     totalImported.fold(false)(imported =>
-      (imported.lower > 0L && imported.upper > 0L) && userIsNotAlreadyAnImporter
+      (imported.lower > 0L && imported.higher > 0L) && userIsNotAlreadyAnImporter
     )
 
 }
@@ -33,7 +33,7 @@ object UserTypeCheck {
     val userIsNotAlreadyAPacker = !subscription.activity.contractPacker
     val totalPacked = userAnswers.getCorrectReturnData.map(_.totalPacked(userAnswers.smallProducerList))
     totalPacked.fold(false)(packed =>
-      (packed.lower > 0L && packed.upper > 0L) && userIsNotAlreadyAPacker
+      (packed.lower > 0L && packed.higher > 0L) && userIsNotAlreadyAPacker
     )
   }
 }

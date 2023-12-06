@@ -87,7 +87,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
       case (Some(false), Some(false), NormalMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
       case (Some(_), Some(_), NormalMode) if userAnswers.packagingSiteList.isEmpty => routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
       case (Some(_), Some(_), NormalMode) => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
-      case (_, _, CheckMode) => routes.ChangeActivityCYAController.onPageLoad
+      case _ => routes.ChangeActivityCYAController.onPageLoad
     }
   }
 
@@ -97,8 +97,8 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
       case (Some(true), _, NormalMode) => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
       case (Some(false), _, NormalMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
       case (None, _, NormalMode) => routes.ContractPackingController.onPageLoad(NormalMode)
-      case (_, Some(_), CheckMode) => routes.ChangeActivityCYAController.onPageLoad
-      case (_, None, CheckMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
+      case (_, Some(_), _) => routes.ChangeActivityCYAController.onPageLoad
+      case _ => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
     }
   }
 

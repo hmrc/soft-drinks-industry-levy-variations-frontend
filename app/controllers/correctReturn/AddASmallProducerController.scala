@@ -106,7 +106,7 @@ class AddASmallProducerController @Inject()(
         targetSmallProducer match {
           case Some(producer) =>
             val addASmallProducer = AddASmallProducer(Some(producer.alias), producer.sdilRef, LitresInBands(producer.litreage.lower,
-              producer.litreage.upper))
+              producer.litreage.higher))
             val preparedForm = form.fill(addASmallProducer)
             Future.successful(Ok(view(preparedForm, mode, Some(sdilReference))))
           case _ =>
@@ -158,8 +158,8 @@ class AddASmallProducerController @Inject()(
       Future.successful(Left(AlreadyExists))
     } else {
       sdilConnector.checkSmallProducerStatus(addASmallProducerSDILRef, returnPeriod).value.flatMap {
-        case Right(Some(true)) => Future.successful(Right(()))
         case Right(Some(false)) => Future.successful(Left(NotASmallProducer))
+        case Right(_) => Future.successful(Right(()))
         case Left(_) => Future.successful(Left(UnexpectedResponseFromCheckSmallProducer))
       }
     }

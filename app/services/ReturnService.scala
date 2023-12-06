@@ -25,7 +25,7 @@ import models.{ReturnPeriod, SdilReturn, UserAnswers}
 import pages.correctReturn.{CorrectionReasonPage, RepaymentMethodPage}
 import service.VariationResult
 import uk.gov.hmrc.http.HeaderCarrier
-import utilities.{GenericLogger, UserTypeCheck}
+import utilities.UserTypeCheck
 
 import java.time.Instant
 import javax.inject.{Inject, Singleton}

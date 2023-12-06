@@ -37,7 +37,7 @@ case class SdilReturn(
     val litresToSubtract = Litreage.sum(List(export, wastage))
     val totalLiterage = Litreage(
       litresToAdd.lower - litresToSubtract.lower,
-      litresToAdd.upper - litresToSubtract.upper
+      litresToAdd.higher - litresToSubtract.higher
     )
     calculatelevy(totalLiterage)
   }
@@ -50,7 +50,7 @@ case class SdilReturn(
                    (implicit config: FrontendAppConfig): BigDecimal = {
     val costLower = config.lowerBandCostPerLitre
     val costHigher = config.higherBandCostPerLitre
-    (litreage.lower * costLower) + (litreage.upper * costHigher)
+    (litreage.lower * costLower) + (litreage.higher * costHigher)
   }
 }
 

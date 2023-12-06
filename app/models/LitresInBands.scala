@@ -25,7 +25,7 @@ case class LitresInBands(lowBand: Long, highBand: Long) {
 
 object LitresInBands {
   def fromLitreage(litreage: Litreage): LitresInBands = LitresInBands(
-    lowBand = litreage.lower, highBand = litreage.upper
+    lowBand = litreage.lower, highBand = litreage.higher
   )
   implicit val format = Json.format[LitresInBands]
 }

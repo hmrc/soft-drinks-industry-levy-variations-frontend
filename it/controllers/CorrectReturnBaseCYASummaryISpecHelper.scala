@@ -24,7 +24,6 @@ import models.{CheckMode, LitresInBands, SdilReturn, UserAnswers}
 import org.jsoup.nodes.Element
 import org.scalatest.Assertion
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import pages.QuestionPage
 import pages.correctReturn._
 import play.api.libs.json.Json
 import testSupport.SDILBackendTestData.{smallProducerList, submittedDateTime}

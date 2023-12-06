@@ -19,15 +19,15 @@ package services
 import base.SpecBase
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
-import models.{LitresInBands, SdilReturn}
 import models.backend.CentralAssessment
 import models.correctReturn.{CorrectReturnUserAnswersData, RepaymentMethod, ReturnsVariation}
 import models.submission.{Litreage, ReturnVariationData}
+import models.{LitresInBands, SdilReturn}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.correctReturn.{CorrectionReasonPage, RepaymentMethodPage}
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 
 import java.time.LocalDate
 import scala.concurrent.Future

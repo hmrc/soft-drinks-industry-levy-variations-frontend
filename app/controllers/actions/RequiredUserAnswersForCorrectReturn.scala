@@ -19,7 +19,7 @@ package controllers.actions
 import models.backend.RetrievedSubscription
 import models.correctReturn.{AddASmallProducer, RepaymentMethod}
 import models.requests.DataRequest
-import models.{CheckMode, LitresInBands, SdilReturn}
+import models.{CheckMode, LitresInBands}
 import pages.correctReturn._
 import pages.{Page, QuestionPage}
 import play.api.libs.json.Reads
