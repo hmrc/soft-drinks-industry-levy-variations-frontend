@@ -67,7 +67,7 @@ class HowManyCreditsForLostDamagedController @Inject()(
         value => {
           val updatedAnswers = request.userAnswers.set(HowManyCreditsForLostDamagedPage, value)
           val subscription = if (mode == NormalMode) Some(request.subscription) else None
-          updateDatabaseAndRedirect(updatedAnswers, HowManyCreditsForLostDamagedPage, mode, None, subscription)
+          updateDatabaseAndRedirect(updatedAnswers, HowManyCreditsForLostDamagedPage, mode, subscription = subscription)
         }
       )
   }

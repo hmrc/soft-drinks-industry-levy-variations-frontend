@@ -29,10 +29,10 @@ import javax.inject.{Inject, Singleton}
 class NavigatorForChangeActivity @Inject() extends Navigator {
 
   private def navigationForAmountProducedCheckMode(userAnswers: UserAnswers, previousAnswer: AmountProduced)= {
-    (previousAnswer, userAnswers.get(page = AmountProducedPage)) match {
-      case (previousAnswer, newAmountProducedAnswer) if Some(previousAnswer) == newAmountProducedAnswer =>
-        routes.ChangeActivityCYAController.onPageLoad
-      case _ => navigationForAmountProduced(userAnswers)
+    if (userAnswers.get(page = AmountProducedPage).contains(previousAnswer)) {
+      routes.ChangeActivityCYAController.onPageLoad
+    } else {
+      navigationForAmountProduced(userAnswers)
     }
   }
 

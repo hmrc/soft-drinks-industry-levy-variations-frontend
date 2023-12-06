@@ -17,7 +17,6 @@
 package navigation
 
 import controllers.cancelRegistration.routes
-import models.changeActivity.AmountProduced
 import models.{NormalMode, UserAnswers}
 import pages.Page
 import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
@@ -37,7 +36,7 @@ class NavigatorForCancelRegistration @Inject()() extends Navigator {
   override val checkRouteMap: Page => UserAnswers => Call = {
     case CancelRegistrationDatePage => _ => routes.CancelRegistrationCYAController.onPageLoad
     case ReasonPage => _ => routes.CancelRegistrationCYAController.onPageLoad
-    case _ => _ =>  routes.CancelRegistrationCYAController.onPageLoad
+    case _ => _ => routes.CancelRegistrationCYAController.onPageLoad
   }
 
   override val editRouteMap: Page => UserAnswers => Call = {

@@ -67,7 +67,7 @@ class HowManyPackagedAsContractPackerController @Inject()(
         value => {
           val updatedAnswers = request.userAnswers.set(HowManyPackagedAsContractPackerPage, value)
           val subscription = if (mode == CheckMode) Some(request.subscription) else None
-          updateDatabaseAndRedirect(updatedAnswers, HowManyPackagedAsContractPackerPage, mode, None, subscription)
+          updateDatabaseAndRedirect(updatedAnswers, HowManyPackagedAsContractPackerPage, mode, subscription = subscription)
         }
       )
   }

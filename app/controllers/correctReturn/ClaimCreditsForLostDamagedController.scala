@@ -65,7 +65,7 @@ class ClaimCreditsForLostDamagedController @Inject()(
         value => {
           val updatedAnswers = request.userAnswers.setAndRemoveLitresIfReq(ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage, value)
           val subscription = if (mode == NormalMode) Some(request.subscription) else None
-          updateDatabaseAndRedirect(updatedAnswers, ClaimCreditsForLostDamagedPage, mode, None, subscription)
+          updateDatabaseAndRedirect(updatedAnswers, ClaimCreditsForLostDamagedPage, mode, subscription = subscription)
         }
       )
   }

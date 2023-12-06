@@ -242,7 +242,12 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForChangeActivity.set(AmountProducedPage, AmountProduced.Large).success.value)
+            radio match {
+              case AmountProduced.Large => setAnswers(emptyUserAnswersForChangeActivity.set(AmountProducedPage, AmountProduced.Small).success.value)
+              case AmountProduced.Small => setAnswers(emptyUserAnswersForChangeActivity.set(AmountProducedPage, AmountProduced.None).success.value)
+              case AmountProduced.None => setAnswers(emptyUserAnswersForChangeActivity.set(AmountProducedPage, AmountProduced.Large).success.value)
+            }
+
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
                 client, changeActivityBaseUrl + checkRoutePath, Json.obj("value" -> Json.toJson(radio))
@@ -251,7 +256,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
               whenReady(result) { res =>
                 res.status mustBe 303
                 radio match {
-                  case AmountProduced.Large => res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                  case AmountProduced.Large => res.header(HeaderNames.LOCATION) mustBe Some(routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url)
                   case AmountProduced.Small => res.header(HeaderNames.LOCATION) mustBe Some(routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url)
                   case AmountProduced.None => res.header(HeaderNames.LOCATION) mustBe Some(routes.ContractPackingController.onPageLoad(NormalMode).url)
                 }

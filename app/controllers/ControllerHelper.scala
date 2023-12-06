@@ -51,7 +51,7 @@ trait ControllerHelper extends FrontendBaseController with I18nSupport {
         genericLogger.logger.error(s"Failed to resolve user answers while on ${page.toString}")
         Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
       case Success(answers) => sessionService.set(answers).map {
-        case Right(_) => Redirect(navigator.nextPage(page, mode, answers, amountProduced, subscription))
+        case Right(_) => Redirect(navigator.nextPage(page, mode, answers, amountProduced = amountProduced, subscription = subscription))
         case Left(_) => genericLogger.logger.error(sessionRepo500ErrorMessage(page))
           InternalServerError(errorHandler.internalServerErrorTemplate)
       }

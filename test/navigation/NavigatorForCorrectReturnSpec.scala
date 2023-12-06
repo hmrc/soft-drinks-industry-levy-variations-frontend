@@ -97,7 +97,7 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
     "navigate to Check Your Answers page in CheckMode (when not new importer or new copacker)" in {
       val userAnswers = emptyUserAnswersForCorrectReturn
         .set(HowManyBroughtIntoUKPage, LitresInBands(1, 1)).success.value
-      val result = navigator.nextPage(HowManyBroughtIntoUKPage, CheckMode, userAnswers, None, Some(aSubscription))
+      val result = navigator.nextPage(HowManyBroughtIntoUKPage, CheckMode, userAnswers, subscription = Some(aSubscription))
       result mustBe routes.CorrectReturnCYAController.onPageLoad
     }
 
@@ -118,14 +118,14 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
     "navigate to Return Change Registration page in CheckMode (when new importer)" in {
       val userAnswers = newImporterUserAnswers
         .set(HowManyBroughtIntoUKPage, LitresInBands(1, 1)).success.value
-      val result = navigator.nextPage(HowManyBroughtIntoUKPage, CheckMode, userAnswers, None, Some(aSubscription))
+      val result = navigator.nextPage(HowManyBroughtIntoUKPage, CheckMode, userAnswers, subscription = Some(aSubscription))
       result mustBe routes.ReturnChangeRegistrationController.onPageLoad(CheckMode)
     }
 
     "navigate to Return Change Registration page in CheckMode (when new copacker)" in {
       val userAnswers = newCoPackerUserAnswers
         .set(HowManyBroughtIntoUKPage, LitresInBands(1, 1)).success.value
-      val result = navigator.nextPage(HowManyBroughtIntoUKPage, CheckMode, userAnswers, None, Some(aSubscription))
+      val result = navigator.nextPage(HowManyBroughtIntoUKPage, CheckMode, userAnswers, subscription = Some(aSubscription))
       result mustBe routes.ReturnChangeRegistrationController.onPageLoad(CheckMode)
     }
   }
@@ -204,14 +204,14 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
     "navigate to Check Your Answers page in CheckMode (when not new importer or new copacker)" in {
       val userAnswers = emptyUserAnswersForCorrectReturn
         .set(HowManyPackagedAsContractPackerPage, LitresInBands(1, 1)).success.value
-      val result = navigator.nextPage(HowManyPackagedAsContractPackerPage, CheckMode, userAnswers, None, Some(aSubscription))
+      val result = navigator.nextPage(HowManyPackagedAsContractPackerPage, CheckMode, userAnswers, subscription = Some(aSubscription))
       result mustBe routes.CorrectReturnCYAController.onPageLoad
     }
 
     "navigate to Check Your Answers page in CheckMode (when currently importer)" in {
       val userAnswers = newImporterUserAnswers
         .set(HowManyPackagedAsContractPackerPage, LitresInBands(1, 1)).success.value
-      val result = navigator.nextPage(HowManyPackagedAsContractPackerPage, CheckMode, userAnswers, None, currentImporterSubscription)
+      val result = navigator.nextPage(HowManyPackagedAsContractPackerPage, CheckMode, userAnswers, subscription = currentImporterSubscription)
       result mustBe routes.CorrectReturnCYAController.onPageLoad
     }
 
@@ -225,14 +225,14 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
     "navigate to Return Change Registration page in CheckMode (when new importer)" in {
       val userAnswers = newImporterUserAnswers
         .set(HowManyPackagedAsContractPackerPage, LitresInBands(1, 1)).success.value
-      val result = navigator.nextPage(HowManyPackagedAsContractPackerPage, CheckMode, userAnswers, None, Some(aSubscription))
+      val result = navigator.nextPage(HowManyPackagedAsContractPackerPage, CheckMode, userAnswers, subscription = Some(aSubscription))
       result mustBe routes.ReturnChangeRegistrationController.onPageLoad(CheckMode)
     }
 
     "navigate to Return Change Registration page in CheckMode (when new copacker)" in {
       val userAnswers = newCoPackerUserAnswers
         .set(HowManyPackagedAsContractPackerPage, LitresInBands(1, 1)).success.value
-      val result = navigator.nextPage(HowManyPackagedAsContractPackerPage, CheckMode, userAnswers, None, Some(aSubscription))
+      val result = navigator.nextPage(HowManyPackagedAsContractPackerPage, CheckMode, userAnswers, subscription = Some(aSubscription))
       result mustBe routes.ReturnChangeRegistrationController.onPageLoad(CheckMode)
     }
   }

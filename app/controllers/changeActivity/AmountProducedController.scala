@@ -67,7 +67,7 @@ class AmountProducedController @Inject()(
 
         value => {
           val updatedAnswers = request.userAnswers.set(AmountProducedPage, value)
-          updateDatabaseAndRedirect(updatedAnswers = updatedAnswers, page =AmountProducedPage, mode = mode,amountProduced = request.userAnswers.get(AmountProducedPage))
+          updateDatabaseAndRedirect(updatedAnswers = updatedAnswers, page =AmountProducedPage, mode = mode, amountProduced = request.userAnswers.get(AmountProducedPage))
         }
       )
   }

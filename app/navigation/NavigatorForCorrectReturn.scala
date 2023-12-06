@@ -18,7 +18,6 @@ package navigation
 
 import controllers.correctReturn.routes
 import models.backend.RetrievedSubscription
-import models.changeActivity.AmountProduced
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages._
 import pages.correctReturn._
