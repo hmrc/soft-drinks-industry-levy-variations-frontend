@@ -2,8 +2,10 @@ package controllers.updateRegisteredDetails
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.UpdateRegisteredDetails
+import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.WsTestClient
+
 import java.time.{Instant, LocalDate}
 
 class UpdateDoneControllerISpec extends ControllerITTestHelper {
@@ -19,6 +21,23 @@ class UpdateDoneControllerISpec extends ControllerITTestHelper {
 
       val testTime = Instant.now()
       setAnswers(emptyUserAnswersForUpdateRegisteredDetails.copy(submittedOn = Some(testTime)))
+
+      WsTestClient.withClient { client =>
+        val result1 = createClientRequestGet(client, updateRegisteredDetailsBaseUrl + normalRoutePath)
+
+        whenReady(result1) { res =>
+          res.status mustBe 200
+          val page = Jsoup.parse(res.body)
+          page.title mustBe "Update sent - Soft Drinks Industry Levy - GOV.UK"
+        }
+      }
+    }
+    "should redirect when no submitted on time is present" in {
+      given
+        .commonPrecondition
+
+      val testTime = Instant.now()
+      setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
 
       WsTestClient.withClient { client =>
         val result1 = createClientRequestGet(client, updateRegisteredDetailsBaseUrl + normalRoutePath)
