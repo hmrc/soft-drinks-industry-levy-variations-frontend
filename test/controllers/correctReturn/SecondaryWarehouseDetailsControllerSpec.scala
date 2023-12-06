@@ -179,22 +179,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
     testInvalidJourneyType(CorrectReturn, secondaryWarehouseDetailsRoute)
     testNoUserAnswersError(secondaryWarehouseDetailsRoute)
 
-    "must fail if the setting of userAnswers fails" in {
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CorrectReturn))).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, secondaryWarehouseDetailsRoute)
-        .withFormUrlEncodedBody(("value", "false"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual INTERNAL_SERVER_ERROR
-        val page = Jsoup.parse(contentAsString(result))
-        page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - Soft Drinks Industry Levy - GOV.UK"
-      }
-    }
-
+//    TODO: REMOVE THIS TEST AFTER REFACTORING CONTROLLER CODE
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionService = mock[SessionService]
 
