@@ -74,6 +74,7 @@ class PackagingSiteDetailsController @Inject()(
         value =>
           for {
             onwardUrl: Result <-
+//              TODO: Clean up calls so that they are not updating database needlessly
               if (value) {
                 val alsOnRampUrl = updateDatabaseWithoutRedirect(Try(request.userAnswers), PackagingSiteDetailsPage).flatMap(_ =>
                   addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode))

@@ -107,7 +107,9 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
       pagesRequiredForHowManyContractPackingPage.map(RequiredPage(HowManyContractPackingPage, _)(implicitBands)),
       List(RequiredPage(ImportsPage, List.empty)(implicitBoolean)),
       pagesRequiredForHowManyImportsPage.map(RequiredPage(HowManyImportsPage, _)(implicitBands)),
+//      TODO: Need to test on these with whether site list is empty - like in correct return
       pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean)),
+//      TODO: Need to test on these with whether site list is empty - like in correct return
       List(RequiredPage(SecondaryWarehouseDetailsPage, List.empty)(implicitBoolean))
     ).flatten
   }
