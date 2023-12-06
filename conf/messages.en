@@ -226,6 +226,8 @@ changeActivity.packagingSiteDetails.title = UK packaging site details
 changeActivity.packagingSiteDetails.heading = UK packaging site details
 changeActivity.packagingSiteDetails.subHeading = Do you want to add another UK packaging site?
 changeActivity.packagingSiteDetails.info = You must tell us about all of the UK packaging sites you operate to produce liable drinks. You must have at least one registered packaging site.
+changeActivity.packagingSiteDetails.detailsLink = I want to remove this UK packaging site
+changeActivity.packagingSiteDetails.detailsInfo = You must add another site first. Once you have added the other site, you will be able to remove one. You must always have at least one packaging site added.
 changeActivity.packagingSiteDetails.checkYourAnswersLabel = UK packaging site details
 changeActivity.packagingSiteDetails.error.required = Select yes if you need to add another packaging site
 changeActivity.packagingSiteDetails.change.hidden = {0} site address {1}
@@ -515,6 +517,9 @@ correctReturn.packAtBusinessAddress.detailsContent = Because you changed your bu
 
 correctReturn.packagingSiteDetails.heading = Do you want to add another UK packaging site?
 correctReturn.packagingSiteDetails.title = You added {0} UK packaging site{1}
+correctReturn.packagingSiteDetails.info = You must tell us about all of the UK packaging sites you operate to produce liable drinks. You must have at least one registered packaging site.
+correctReturn.packagingSiteDetails.detailsLink = I want to remove this UK packaging site
+correctReturn.packagingSiteDetails.detailsInfo = You must add another site first. Once you have added the other site, you will be able to remove one. You must always have at least one packaging site added.
 correctReturn.packagingSiteDetails.checkYourAnswersLabel = UK packaging sites
 correctReturn.packagingSiteDetails.error.required = Select yes if you want to add another UK packaging site
 correctReturn.packagingSiteDetails.change.hidden = {0} site address {1}
@@ -575,11 +580,13 @@ updateRegisteredDetails.packagingSiteDetails.title = Change your UK packaging si
 updateRegisteredDetails.packagingSiteDetails.heading = Change your UK packaging site details
 updateRegisteredDetails.packagingSiteDetails.subHeading = Do you want to add another packaging site?
 updateRegisteredDetails.packagingSiteDetails.info = You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register the warehouses you use to store them.
+
 updateRegisteredDetails.packagingSiteDetails.checkYourAnswersLabel = UK packaging site details
 updateRegisteredDetails.packagingSiteDetails.error.required = Select yes if you need to add another packaging site
 updateRegisteredDetails.packagingSiteDetails.change.hidden = {0} site address {1}
 updateRegisteredDetails.packagingSiteDetails.remove.hidden = {0} site address {1}
-
+updateRegisteredDetails.packagingSiteDetails.detailsLink = I want to remove this UK packaging site
+updateRegisteredDetails.packagingSiteDetails.detailsInfo = You must add another site first. Once you have added the other site, you will be able to remove one. You must always have at least one packaging site added.
 updateRegisteredDetails.packingSiteDetailsRemove.title = Are you sure you want to remove this packaging site?
 updateRegisteredDetails.packingSiteDetailsRemove.heading = Are you sure you want to remove this packaging site?
 updateRegisteredDetails.packingSiteDetailsRemove.checkYourAnswersLabel = Are you sure you want to remove this packaging site?
