@@ -98,12 +98,13 @@ cancelRegistration.reason.checkYourAnswersLabel = Reason for cancelling
 cancelRegistration.reason.hint = Enter a maximum of 255 characters
 cancelRegistration.reason.error.required = Enter why you need to cancel your registration
 cancelRegistration.reason.error.length = The reason you are cancelling your registration must be 255 characters or less
-cancelRegistration.reason.change.hidden = Change your reason for cancelling
+cancelRegistration.reason.change.hidden = your reason for cancelling
 
 cancelRegistration.cancelRegistrationDate.title = What date are you cancelling your registration from?
 cancelRegistration.cancelRegistrationDate.heading = What date are you cancelling your registration from?
 cancelRegistration.cancelRegistrationDate.hint = For example, 12 11 2007
 cancelRegistration.cancelRegistrationDate.checkYourAnswersLabel = Date of cancellation
+cancelRegistration.cancelRegistrationDate.change.hidden = date of cancellation
 
 cancelRegistrationDate.error.invalid = The date you are cancelling your registration must be a real date, like <span style="white-space: nowrap">31 7 2020</span>
 cancelRegistrationDate.error.required.all = Enter the date you are cancelling your registration
@@ -117,7 +118,6 @@ cancelRegistrationDate.error.year.nan = Year must only include numbers
 cancelRegistrationDate.error.dayMonth.invalid = The day and month must be part of a real date, like <span style="white-space: nowrap">31 7 2020</span>
 cancelRegistrationDate.error.monthYear.invalid = The month and year must be part of a real date, like <span style="white-space: nowrap">31 7 2020</span>
 cancelRegistrationDate.error.dayYear.invalid = The day and year must be part of a real date, like <span style="white-space: nowrap">31 7 2020</span>
-cancelRegistration.cancelRegistrationDate.change.hidden = cancel registration date
 
 cancelRegistration.fileReturnBeforeDereg.title = You cannot cancel your registration while you have returns to send
 cancelRegistration.fileReturnBeforeDereg.heading = You cannot cancel your registration while you have returns to send
