@@ -55,17 +55,11 @@ class PackagingSiteDetailsController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
     implicit request =>
-
-      val preparedForm = request.userAnswers.get(PackagingSiteDetailsPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-
       val siteList: SummaryList = SummaryListViewModel(
         rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList, mode)
       )
 
-      Ok(view(preparedForm, mode, siteList))
+      Ok(view(form, mode, siteList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails).async {
@@ -79,10 +73,7 @@ class PackagingSiteDetailsController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
 
         value =>
-          updateDatabaseWithoutRedirect(request.userAnswers.set(PackagingSiteDetailsPage, value), PackagingSiteDetailsPage).flatMap {
-            case true => getOnwardUrl(value, mode).map(Redirect(_))
-            case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
-          }
+          getOnwardUrl(value, mode).map(Redirect(_))
       )
   }
 
