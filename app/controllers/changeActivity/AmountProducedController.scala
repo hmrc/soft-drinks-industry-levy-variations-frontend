@@ -21,6 +21,7 @@ import controllers.actions._
 import forms.changeActivity.AmountProducedFormProvider
 import handlers.ErrorHandler
 import models.Mode
+import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced
 import navigation._
 import pages.changeActivity.AmountProducedPage
@@ -33,7 +34,6 @@ import views.html.changeActivity.AmountProducedView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import models.SelectChange.ChangeActivity
 
 class AmountProducedController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -67,7 +67,7 @@ class AmountProducedController @Inject()(
 
         value => {
           val updatedAnswers = request.userAnswers.set(AmountProducedPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, AmountProducedPage, mode)
+          updateDatabaseAndRedirect(updatedAnswers = updatedAnswers, page =AmountProducedPage, mode = mode, amountProduced = request.userAnswers.get(AmountProducedPage))
         }
       )
   }

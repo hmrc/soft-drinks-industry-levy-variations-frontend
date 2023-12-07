@@ -20,15 +20,14 @@ import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import forms.correctReturn.PackagingSiteDetailsFormProvider
 import models.SelectChange.CorrectReturn
-import models.backend.{Site, UkAddress}
-import models.{CheckMode, LitresInBands, Mode, NormalMode, UserAnswers}
+import models.{CheckMode, Mode, NormalMode}
 import navigation._
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.correctReturn.{HowManyBroughtIntoUKPage, PackagingSiteDetailsPage}
+import pages.correctReturn.PackagingSiteDetailsPage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call

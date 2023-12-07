@@ -87,7 +87,7 @@ class PackagingSiteDetailsController @Inject()(
               } else {
                 val updatedAnswers = request.userAnswers.set(PackagingSiteDetailsPage, value)
                 val subscription = if (mode == NormalMode) Some(request.subscription) else None
-                updateDatabaseAndRedirect(updatedAnswers, PackagingSiteDetailsPage, mode, subscription)
+                updateDatabaseAndRedirect(updatedAnswers, PackagingSiteDetailsPage, mode, subscription = subscription)
               }
           } yield {
             onwardUrl

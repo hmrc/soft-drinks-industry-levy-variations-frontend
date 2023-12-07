@@ -1,8 +1,8 @@
 package testSupport
 
 import controllers.routes
-import models.{Contact, backend, submission}
 import models.backend.{RetrievedActivity, RetrievedSubscription, Site, UkAddress}
+import models.{Contact, backend}
 import org.scalatest.TryValues
 import play.api.libs.json.Json
 

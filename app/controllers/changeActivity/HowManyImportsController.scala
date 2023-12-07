@@ -21,9 +21,9 @@ import controllers.actions._
 import forms.HowManyLitresFormProvider
 import handlers.ErrorHandler
 import models.SelectChange.ChangeActivity
-import models.{Mode, NormalMode}
+import models.Mode
 import navigation._
-import pages.changeActivity.{ContractPackingPage, HowManyImportsPage}
+import pages.changeActivity.HowManyImportsPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
