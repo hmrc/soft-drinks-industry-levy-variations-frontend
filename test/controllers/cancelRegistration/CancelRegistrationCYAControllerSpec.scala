@@ -33,6 +33,7 @@ import viewmodels.summary.cancelRegistration.{CancelRegistrationDateSummary, Rea
 import views.html.cancelRegistration.CancelRegistrationCYAView
 
 import java.time.LocalDate
+import scala.concurrent.Future
 
 class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluency {
 
@@ -168,6 +169,7 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
       running(application) {
         val request = FakeRequest(POST, CancelRegistrationCYAController.onPageLoad.url).withFormUrlEncodedBody()
         when(mockOrchestrator.submitVariation(any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
+        when(mockOrchestrator.submitUserAnswers(any())(any(), any())) thenReturn Future.successful(true)
 
         val result = route(application, request).value
 

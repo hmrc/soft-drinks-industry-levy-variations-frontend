@@ -20,16 +20,19 @@ import com.google.inject.Inject
 import controllers.actions.ControllerActions
 import handlers.ErrorHandler
 import models.SelectChange.UpdateRegisteredDetails
+import models.UserAnswers
+import models.backend.RetrievedSubscription
+import models.requests.DataRequest
 import orchestrators.UpdateRegisteredDetailsOrchestrator
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilities.GenericLogger
 import views.html.updateRegisteredDetails.UpdateRegisteredDetailsCYAView
 import views.summary.updateRegisteredDetails.{BusinessAddressSummary, UKSitesSummary, UpdateContactDetailsSummary}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class UpdateRegisteredDetailsCYAController @Inject()(
                                                       override val messagesApi: MessagesApi,
@@ -53,10 +56,23 @@ class UpdateRegisteredDetailsCYAController @Inject()(
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails).async {implicit request =>
     val subscription = request.subscription
     val userAnswers = request.userAnswers
+    submitUserAnswers(userAnswers, subscription)
+  }
+
+  private def submitUserAnswers(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit request: DataRequest[AnyContent]):Future[Result]  = {
+    updateRegisteredDetailsOrchestrator.submitUserAnswers(userAnswers).flatMap{
+      case true => submitVariation(userAnswers, subscription)
+      case false => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - received a failed response from return submission")
+        Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+    }
+  }
+
+  private def submitVariation(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit request: DataRequest[AnyContent]):Future[Result] = {
     updateRegisteredDetailsOrchestrator.submitVariation(subscription, userAnswers).value.map{
       case Right(_) => Redirect(routes.UpdateDoneController.onPageLoad.url)
       case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to update registered details")
         InternalServerError(errorHandler.internalServerErrorTemplate)
     }
   }
+
 }

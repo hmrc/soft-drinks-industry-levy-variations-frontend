@@ -19,6 +19,8 @@ package controllers.correctReturn
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{ControllerActions, RequiredUserAnswersForCorrectReturn}
+import controllers.routes
+import handlers.ErrorHandler
 import models.{Amounts, SdilReturn}
 import models.correctReturn.ChangedPage
 import orchestrators.CorrectReturnOrchestrator
@@ -43,7 +45,8 @@ class CorrectReturnUpdateDoneController @Inject()(
                                             val correctReturnOrchestrator: CorrectReturnOrchestrator,
                                             returnService: ReturnService,
                                             genericLogger: GenericLogger,
-                                            view: CorrectReturnUpdateDoneView
+                                            view: CorrectReturnUpdateDoneView,
+                                            errorHandler: ErrorHandler
                                           )(implicit config: FrontendAppConfig, ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
@@ -65,18 +68,21 @@ class CorrectReturnUpdateDoneController @Inject()(
             )
             val sections = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(
               request.userAnswers, request.subscription, changedPages, amounts, isCheckAnswers = false)
+            request.userAnswers.submittedOn match {
+              case Some(submittedOnDate) =>
+                val getSentDateTime = LocalDateTime.ofInstant(submittedOnDate, ZoneId.of("Europe/London"))
+                val formattedDate = getSentDateTime.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+                val formattedTime = getSentDateTime.format(DateTimeFormatter.ofPattern("h:mma"))
 
-            val getSentDateTime = LocalDateTime.now(ZoneId.of("UTC"))
-            val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-            val timeFormatter = DateTimeFormatter.ofPattern("H:MMa")
-            val formattedDate = getSentDateTime.format(dateFormatter)
-            val formattedTime = getSentDateTime.format(timeFormatter)
+                val returnPeriodFormat = DateTimeFormatter.ofPattern("MMMM yyyy")
+                val returnPeriodStart = returnPeriod.start.format(returnPeriodFormat)
+                val returnPeriodEnd = returnPeriod.end.format(returnPeriodFormat)
 
-            val returnPeriodFormat = DateTimeFormatter.ofPattern("MMMM yyyy")
-            val returnPeriodStart = returnPeriod.start.format(returnPeriodFormat)
-            val returnPeriodEnd = returnPeriod.end.format(returnPeriodFormat)
+                Ok(view(orgName, sections, formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd))
 
-            Ok(view(orgName, sections, formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd))
+              case None => genericLogger.logger.error(s"[SoftDrinksIndustryLevyService [submitVariation] - unexpected response while attempting to retreive userAnswers submittedOnDate")
+                Redirect(routes.SelectChangeController.onPageLoad)
+            }
           }).getOrElse(Redirect(controllers.routes.SelectChangeController.onPageLoad.url))
         }).recoverWith {
           case _ => genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][Balance] - unexpected response for ${request.sdilEnrolment}")

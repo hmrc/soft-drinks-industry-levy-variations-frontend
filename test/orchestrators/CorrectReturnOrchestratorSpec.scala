@@ -32,6 +32,7 @@ import play.api.libs.json.{JsString, Json, Writes}
 import play.api.test.Helpers.running
 import service.VariationResult
 import services.SessionService
+import utilities.GenericLogger
 
 import java.time.ZoneOffset
 import scala.concurrent.Future
@@ -41,6 +42,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar with Vari
 
   val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
   val mockSessionService: SessionService = mock[SessionService]
+  val genericLogger = new GenericLogger
 
   val emptyReturn: SdilReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0), submittedOn =
     Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
@@ -56,7 +58,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar with Vari
     expectedCorrectReturnDataForPopulatedReturn
   }
 
-  val orchestrator = new CorrectReturnOrchestrator(mockSdilConnector, mockSessionService)
+  val orchestrator = new CorrectReturnOrchestrator(mockSdilConnector, mockSessionService, genericLogger)
 
   "getReturnPeriods" - {
     "when the call returns variable returnPeriods" - {

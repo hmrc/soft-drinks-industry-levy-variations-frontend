@@ -25,6 +25,8 @@ import models.{LitresInBands, VariationsSubmissionDataHelper}
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
+import services.SessionService
+import utilities.GenericLogger
 
 import java.time.LocalDate
 
@@ -32,8 +34,10 @@ class ChangeActivityOrchestratorSpec extends SpecBase with MockitoSugar with Var
 
   val mockConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
   val localDate: LocalDate = LocalDate.of(2023, 5, 6)
+  val mockSessionService = mock[SessionService]
+  val genericLogger = new GenericLogger
 
-  val changeActivityOrchestrator = new ChangeActivityOrchestrator(mockConnector) {
+  val changeActivityOrchestrator = new ChangeActivityOrchestrator(mockConnector, mockSessionService, genericLogger) {
     override def todaysDate: LocalDate = localDate
   }
 

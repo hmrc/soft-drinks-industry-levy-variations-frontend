@@ -35,6 +35,8 @@ import viewmodels.govuk.SummaryListFluency
 import views.html.changeActivity.ChangeActivityCYAView
 import views.summary.changeActivity.ChangeActivitySummary
 
+import scala.concurrent.Future
+
 class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency with DataHelper {
 
   def onwardRoute = Call("GET", "/foo")
@@ -77,6 +79,7 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency w
 
       val mockOrchestrator: ChangeActivityOrchestrator = mock[ChangeActivityOrchestrator]
 
+      when(mockOrchestrator.submitUserAnswers(any())(any(), any())) thenReturn Future.successful(true)
       when(mockOrchestrator.submitVariation(any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
 
       val application =

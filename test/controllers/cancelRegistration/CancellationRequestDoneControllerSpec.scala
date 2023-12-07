@@ -28,7 +28,7 @@ import viewmodels.summary.cancelRegistration.{CancelRegistrationDateSummary, Rea
 import views.html.cancelRegistration.CancellationRequestDoneView
 
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, LocalDateTime, ZoneId}
+import java.time.{Instant, LocalDate, LocalDateTime, ZoneId}
 
 class CancellationRequestDoneControllerSpec extends SpecBase with SummaryListFluency {
 
@@ -60,8 +60,8 @@ class CancellationRequestDoneControllerSpec extends SpecBase with SummaryListFlu
       val userAnswers = emptyUserAnswersForCancelRegistration
         .set(ReasonPage, "No longer sell drinks").success.value
         .set(CancelRegistrationDatePage, LocalDate.now()).success.value
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val testTime = Instant.now()
+      val application = applicationBuilder(userAnswers = Some(userAnswers.copy(submittedOn = Some(testTime)))).build()
 
       running(application) {
         val request = FakeRequest(GET, cancellationRequestDoneRoute)
@@ -80,7 +80,7 @@ class CancellationRequestDoneControllerSpec extends SpecBase with SummaryListFlu
         val list = Seq(cancelRegistrationSummary)
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd, deadlineStart, deadlineEnd, orgName, list)(request, messages(application), config).toString
+        contentAsString(result) mustEqual view(formattedDate, LocalDateTime.ofInstant(testTime, ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")), returnPeriodStart, returnPeriodEnd, deadlineStart, deadlineEnd, orgName, list)(request, messages(application), config).toString
       }
     }
   }
