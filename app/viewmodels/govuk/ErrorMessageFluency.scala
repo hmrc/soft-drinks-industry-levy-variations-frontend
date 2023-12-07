@@ -14,24 +14,23 @@
  * limitations under the License.
  */
 
-package viewmodels
+package viewmodels.govuk
 
-package object govuk {
+import play.api.data.Field
+import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.errormessage.ErrorMessage
 
-  object all
-    extends ImplicitConversions
-      with BackLinkFluency
-      with ButtonFluency
-      with CheckboxFluency
-      with DateFluency
-      with ErrorMessageFluency
-      with ErrorSummaryFluency
-      with FieldsetFluency
-      with HintFluency
-      with InputFluency
-      with LabelFluency
-      with RadiosFluency
-      with SummaryListFluency
-      with TagFluency
-      with TextAreaFluency
+object errorMessage extends ErrorMessageFluency
+
+trait ErrorMessageFluency {
+
+  object ErrorMessageViewModel {
+    def apply(field: Field)(implicit messages: Messages): ErrorMessage = {
+//      TODO: DO THIS WITHOUT .get
+      field.error.map(err => {
+        ErrorMessage(content = HtmlContent(messages(err.message, err.args: _*)))
+      }).get
+    }
+  }
 }

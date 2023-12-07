@@ -25,18 +25,17 @@
     govukRadios: GovukRadios,
     govukButton: GovukButton,
     govukDetails: GovukDetails,
-    govukFieldset: GovukFieldset
+    govukFieldset: GovukFieldset,
+    govukErrorMessage: GovukErrorMessage
 )
 
 @(form: Form[String], returnPeriodsForYears: Map[Int, List[ReturnPeriod]])(implicit request: Request[_], messages: Messages)
 
 @htmlContent = {
     @if(form.errors.nonEmpty) {
-        !!!(NOTE USE GovukErrorMessage for this)!!!
-        <p id="value-error" class="govuk-error-message">
-            <span class="govuk-visually-hidden">Error:</span>
-            Select which return you need to correct
-        </p>
+        @govukErrorMessage(
+            ErrorMessageViewModel(form("value"))
+        )
     }
 
     @for((year, returnPeriods) <- returnPeriodsForYears) {
