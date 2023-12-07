@@ -301,7 +301,6 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
       }
 
       "when the user answers doesn't contain the correctReturnData" in {
-        val litres = LitresInBands(2000, 4000)
         val returnPeriod = returnPeriodList.head
 
         val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn

@@ -25,60 +25,6 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper {
 
   "SdilReturn" - {
 
-//    "totalPacked returns the total of packLarge amounrt and smallPacktotal with one smallProducers literages" in {
-//      val data = testSdilReturn(
-//        packSmall = List(testSmallProducer("test", "test", (15, 14)))
-//      )
-//      data.totalPacked mustBe(30, 26)
-//    }
-//
-//    "totalPacked returns the total of packLarge amounrt and smallPacktotal with all smallProducers literages" in {
-//      val data = testSdilReturn(
-//        packSmall = List(testSmallProducer("test", "test", (15, 14)),
-//          testSmallProducer("test", "test", (15, 14)))
-//      )
-//      data.totalPacked mustBe(45, 40)
-//    }
-
-//    "totalImported returns the total of importLarge amount and importSmall amount" in {
-//      val data = testSdilReturn(
-//        packSmall = List.empty,
-//        importLarge = (15,15),
-//        importSmall = (15,15)
-//      )
-//      data.totalImported mustBe(30, 30)
-//    }
-
-//    "sumLitres returns the sum of the low and high levys of the list of one tuple" in {
-//      val expectedValue: BigDecimal = 6.30
-//      val data = testSdilReturn(
-//        packSmall = List.empty,
-//      )
-//      val sumList: List[Litreage] = List(Litreage(15, 15))
-//
-//      data.sumLitres(sumList) mustBe expectedValue
-//    }
-//
-//    "sumLitres returns the sum of the low and high levys of the list of two tuple" in {
-//      val expectedValue: BigDecimal = 12.60
-//      val data = testSdilReturn(
-//        packSmall = List.empty,
-//      )
-//      val sumList: List[Litreage] = List(Litreage(15, 15), Litreage(15, 15))
-//
-//      data.sumLitres(sumList) mustBe expectedValue
-//    }
-//
-//    "sumLitres returns the sum of the low and high levys of the list of multiple tuple" in {
-//      val expectedValue: BigDecimal = 18.90
-//      val data = testSdilReturn(
-//        packSmall = List.empty,
-//      )
-//      val sumList: List[Litreage] = List(Litreage(15, 15), Litreage(15, 15), Litreage(15, 15))
-//
-//      data.sumLitres(sumList) mustBe expectedValue
-//    }
-
     "total returns the sumLitres(ownBrand, packLarge, importLarge) minus sumLitres(export, wastage) example 1" in {
       val expectedValue: BigDecimal = 6.30
       val data = testSdilReturn(

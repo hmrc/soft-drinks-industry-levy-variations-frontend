@@ -22,10 +22,37 @@ import org.scalatestplus.mockito.MockitoSugar
 
 class LiterageModelSpec extends SpecBase with MockitoSugar {
 
-    "Litreage" - {
-      "total with equal the atLowRate plus the atHighRate" in {
-        val data: Litreage = Litreage(100, 100)
-        data.total mustBe 200
-      }
+  "Litreage.total" - {
+    "should total with equal the atLowRate plus the atHighRate" in {
+      val data: Litreage = Litreage(100, 100)
+      data.total mustBe 200
     }
+  }
+
+  "Litreage.combineN" - {
+    "should muliply a litreage by n" in {
+      val data: Litreage = Litreage(100, 200)
+      val n = 4
+      data.combineN(n) mustBe Litreage(400, 800)
+    }
+  }
+
+  "Litreage.fromLitresInBands" - {
+    "should convert a litresInBands to literage" in {
+      val litresInBands = LitresInBands(100, 200)
+      Litreage.fromLitresInBands(litresInBands) mustBe Litreage(100,200)
+    }
+  }
+
+  "Litreage.sum" - {
+    "should sum a list of litreage" in {
+      val litreage1 = Litreage(100, 200)
+      val litreage2 = Litreage(200, 400)
+      val litreage3 = Litreage(50, 100)
+
+      val litreageList = List(litreage1, litreage2, litreage3)
+
+      Litreage.sum(litreageList) mustBe Litreage(350, 700)
+    }
+  }
 }

@@ -289,11 +289,16 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
     val closedsite2 = Site(contactAddress, Some("Closed Site 2"), Some("15"), Some(localDate.minusMonths(1)))
 
     def userAnswers = {
-      val (productionSites: Map[String, Site], warehouses: Map[String, Site]) = (hasNewSites, hasRemovedSites) match {
-        case (true, true) => (Map("2" -> site3), Map("2" -> site4))
-        case (true, _) => (Map("1" -> site1, "2" -> site3), Map("1" -> site2, "2" -> site4))
-        case (_, true) => (Map.empty, Map.empty)
-        case _ => (Map("1" -> site1), Map("1" -> site2))
+      val (productionSites: Map[String, Site], warehouses: Map[String, Site]) = {
+        if(hasNewSites && hasRemovedSites) {
+          (Map("2" -> site3), Map("2" -> site4))
+        } else if(hasNewSites) {
+          (Map("1" -> site1, "2" -> site3), Map("1" -> site2, "2" -> site4))
+        } else if(hasRemovedSites) {
+          (Map(), Map())
+        } else {
+          (Map("1" -> site1), Map("1" -> site2))
+        }
       }
       val baseUA = emptyUserAnswersForUpdateRegisteredDetails.copy(
         contactAddress = optUpdatedBusinessAddress.getOrElse(ORIGINAL_ADDRESS),
