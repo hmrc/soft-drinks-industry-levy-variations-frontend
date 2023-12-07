@@ -47,11 +47,8 @@ object ReturnPeriodsRadios {
         )
       )
     }
-    val radioYearDivider = RadioItem(
-      divider = Some(year.toString)
-    )
 
-    Seq(radioYearDivider) ++ returnPeriodsRadioItems
+    returnPeriodsRadioItems
   }
 
 }

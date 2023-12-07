@@ -24,26 +24,50 @@
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton,
-    govukDetails: GovukDetails
+    govukDetails: GovukDetails,
+    govukFieldset: GovukFieldset
 )
 
 @(form: Form[String], returnPeriodsForYears: Map[Int, List[ReturnPeriod]])(implicit request: Request[_], messages: Messages)
+
+@htmlContent = {
+    @if(form.errors.nonEmpty) {
+        !!!(NOTE USE GovukErrorMessage for this)!!!
+        <p id="value-error" class="govuk-error-message">
+            <span class="govuk-visually-hidden">Error:</span>
+            Select which return you need to correct
+        </p>
+    }
+
+    @for((year, returnPeriods) <- returnPeriodsForYears) {
+        @govukRadios(
+            RadiosViewModel(
+                field = form("value"),
+                legend = LegendViewModel(
+                    HtmlContent(s"<h2 class=\"govuk-fieldset__heading\">${year.toString}</h2>")
+                ).withCssClass("govuk-fieldset__legend--m"),
+                items = ReturnPeriodsRadios.getRadioItems(Map(year -> returnPeriods)),
+                noErrorRequired = true
+            )
+        )
+    }
+}
 
 @layout(pageTitle = title(form, messages("correctReturn.select.title"))) {
 
     @formHelper(action = routes.SelectController.onSubmit, Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0_0")))
         }
 
-        @govukRadios(
-            RadiosViewModel(
-                field = form("value"),
-                legend = LegendViewModel(Text(messages("correctReturn.select.heading"))).asPageHeading(),
-                items = ReturnPeriodsRadios.getRadioItems(returnPeriodsForYears)
-            ))
-
+        @if(form.errors.nonEmpty) {<div class="govuk-form-group govuk-form-group--error">}
+            @govukFieldset(
+                FieldsetViewModel(
+                    LegendViewModel(Text(messages("correctReturn.select.heading"))).asPageHeading()
+                ).describedBy("value-error").withHtml(htmlContent)
+            )
+        @if(form.errors.nonEmpty) {</div>}
 
         @govukDetails(
             Details(
