@@ -20,7 +20,8 @@
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton,
-    govukSummaryList: GovukSummaryList
+    govukSummaryList: GovukSummaryList,
+    govukDetails: GovukDetails
 )
 
 @(form: Form[_], mode: Mode, packingSite: SummaryList)(implicit request: Request[_], messages: Messages)
@@ -35,9 +36,16 @@
 
         <h1 class="govuk-heading-l">@messages("correctReturn.packagingSiteDetails.title", packingSite.rows.size, if(packingSite.rows.size == 1) "" else "s")</h1>
 
-        <p class="govuk-body">@messages("changeActivity.packagingSiteDetails.info")</p>
+        <p class="govuk-body">@messages("correctReturn.packagingSiteDetails.info")</p>
 
         @govukSummaryList(packingSite)
+
+        @if(packingSite.rows.size == 1) {
+            @govukDetails(Details(
+                summary = Text(messages("correctReturn.packagingSiteDetails.detailsLink")),
+                content = Text(messages("correctReturn.packagingSiteDetails.detailsInfo"))
+            ))
+        }
 
         @govukRadios(
             RadiosViewModel.yesNo(

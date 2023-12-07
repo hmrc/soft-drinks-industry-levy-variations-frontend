@@ -29,10 +29,10 @@ POST       /change-add-small-producer-edit                      controllers.corr
 GET        /change-add-small-producer                           controllers.correctReturn.AddASmallProducerController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-add-small-producer                           controllers.correctReturn.AddASmallProducerController.onSubmit(mode: Mode = CheckMode)
 
-GET        /remove-small-producer-confirm/:sdil                 controllers.correctReturn.RemoveSmallProducerConfirmController.onPageLoad(mode: Mode = NormalMode, sdil: String)
-POST       /remove-small-producer-confirm/:sdil                 controllers.correctReturn.RemoveSmallProducerConfirmController.onSubmit(mode: Mode = NormalMode, sdil: String)
-GET        /change-remove-small-producer-confirm/:sdil          controllers.correctReturn.RemoveSmallProducerConfirmController.onPageLoad(mode: Mode = CheckMode, sdil: String)
-POST       /change-remove-small-producer-confirm/:sdil          controllers.correctReturn.RemoveSmallProducerConfirmController.onSubmit(mode: Mode = CheckMode, sdil: String)
+GET        /remove-small-producer-confirm/:sdilRef              controllers.correctReturn.RemoveSmallProducerConfirmController.onPageLoad(mode: Mode = NormalMode, sdilRef: String)
+POST       /remove-small-producer-confirm/:sdilRef              controllers.correctReturn.RemoveSmallProducerConfirmController.onSubmit(mode: Mode = NormalMode, sdilRef: String)
+GET        /change-remove-small-producer-confirm/:sdilRef       controllers.correctReturn.RemoveSmallProducerConfirmController.onPageLoad(mode: Mode = CheckMode, sdilRef: String)
+POST       /change-remove-small-producer-confirm/:sdilRef       controllers.correctReturn.RemoveSmallProducerConfirmController.onSubmit(mode: Mode = CheckMode, sdilRef: String)
 
 GET        /claim-credits-for-lost-damaged                      controllers.correctReturn.ClaimCreditsForLostDamagedController.onPageLoad(mode: Mode = NormalMode)
 POST       /claim-credits-for-lost-damaged                      controllers.correctReturn.ClaimCreditsForLostDamagedController.onSubmit(mode: Mode = NormalMode)

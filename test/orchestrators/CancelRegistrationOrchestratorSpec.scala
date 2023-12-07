@@ -19,15 +19,20 @@ package orchestrators
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import models.VariationsSubmissionDataHelper
+import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
+import services.SessionService
+
+import scala.concurrent.Future
 
 class CancelRegistrationOrchestratorSpec extends SpecBase with MockitoSugar with VariationsSubmissionDataHelper{
 
   val mockConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
+  val mockSessionService = mock[SessionService]
 
-  val cancelRegistrationOrchestrator = new CancelRegistrationOrchestrator(mockConnector)
+  val cancelRegistrationOrchestrator = new CancelRegistrationOrchestrator(mockConnector, mockSessionService)
 
   "submitVariation" - {
     "should send the submission variation including the dereg reason and date" - {
@@ -40,8 +45,9 @@ class CancelRegistrationOrchestratorSpec extends SpecBase with MockitoSugar with
         val expectedSubscription = testVariationSubmission(isDeregistered = true)
 
         when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+        when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
-        val res = cancelRegistrationOrchestrator.submitVariation(aSubscription, userAnswers)(hc, ec)
+        val res = cancelRegistrationOrchestrator.submitVariationAndUpdateSession(aSubscription, userAnswers)(hc, ec)
         whenReady(res.value) { result =>
           result mustEqual Right((): Unit)
         }

@@ -98,12 +98,13 @@ cancelRegistration.reason.checkYourAnswersLabel = Reason for cancelling
 cancelRegistration.reason.hint = Enter a maximum of 255 characters
 cancelRegistration.reason.error.required = Enter why you need to cancel your registration
 cancelRegistration.reason.error.length = The reason you are cancelling your registration must be 255 characters or less
-cancelRegistration.reason.change.hidden = Change your reason for cancelling
+cancelRegistration.reason.change.hidden = your reason for cancelling
 
 cancelRegistration.cancelRegistrationDate.title = What date are you cancelling your registration from?
 cancelRegistration.cancelRegistrationDate.heading = What date are you cancelling your registration from?
 cancelRegistration.cancelRegistrationDate.hint = For example, 12 11 2007
 cancelRegistration.cancelRegistrationDate.checkYourAnswersLabel = Date of cancellation
+cancelRegistration.cancelRegistrationDate.change.hidden = date of cancellation
 
 cancelRegistrationDate.error.invalid = The date you are cancelling your registration must be a real date, like <span style="white-space: nowrap">31 7 2020</span>
 cancelRegistrationDate.error.required.all = Enter the date you are cancelling your registration
@@ -117,7 +118,6 @@ cancelRegistrationDate.error.year.nan = Year must only include numbers
 cancelRegistrationDate.error.dayMonth.invalid = The day and month must be part of a real date, like <span style="white-space: nowrap">31 7 2020</span>
 cancelRegistrationDate.error.monthYear.invalid = The month and year must be part of a real date, like <span style="white-space: nowrap">31 7 2020</span>
 cancelRegistrationDate.error.dayYear.invalid = The day and year must be part of a real date, like <span style="white-space: nowrap">31 7 2020</span>
-cancelRegistration.cancelRegistrationDate.change.hidden = cancel registration date
 
 cancelRegistration.fileReturnBeforeDereg.title = You cannot cancel your registration while you have returns to send
 cancelRegistration.fileReturnBeforeDereg.heading = You cannot cancel your registration while you have returns to send
@@ -226,6 +226,8 @@ changeActivity.packagingSiteDetails.title = UK packaging site details
 changeActivity.packagingSiteDetails.heading = UK packaging site details
 changeActivity.packagingSiteDetails.subHeading = Do you want to add another UK packaging site?
 changeActivity.packagingSiteDetails.info = You must tell us about all of the UK packaging sites you operate to produce liable drinks. You must have at least one registered packaging site.
+changeActivity.packagingSiteDetails.detailsLink = I want to remove this UK packaging site
+changeActivity.packagingSiteDetails.detailsInfo = You must add another site first. Once you have added the other site, you will be able to remove one. You must always have at least one packaging site added.
 changeActivity.packagingSiteDetails.checkYourAnswersLabel = UK packaging site details
 changeActivity.packagingSiteDetails.error.required = Select yes if you need to add another packaging site
 changeActivity.packagingSiteDetails.change.hidden = {0} site address {1}
@@ -515,6 +517,9 @@ correctReturn.packAtBusinessAddress.detailsContent = Because you changed your bu
 
 correctReturn.packagingSiteDetails.heading = Do you want to add another UK packaging site?
 correctReturn.packagingSiteDetails.title = You added {0} UK packaging site{1}
+correctReturn.packagingSiteDetails.info = You must tell us about all of the UK packaging sites you operate to produce liable drinks. You must have at least one registered packaging site.
+correctReturn.packagingSiteDetails.detailsLink = I want to remove this UK packaging site
+correctReturn.packagingSiteDetails.detailsInfo = You must add another site first. Once you have added the other site, you will be able to remove one. You must always have at least one packaging site added.
 correctReturn.packagingSiteDetails.checkYourAnswersLabel = UK packaging sites
 correctReturn.packagingSiteDetails.error.required = Select yes if you want to add another UK packaging site
 correctReturn.packagingSiteDetails.change.hidden = {0} site address {1}
@@ -575,6 +580,8 @@ updateRegisteredDetails.packagingSiteDetails.title = Change your UK packaging si
 updateRegisteredDetails.packagingSiteDetails.heading = Change your UK packaging site details
 updateRegisteredDetails.packagingSiteDetails.subHeading = Do you want to add another packaging site?
 updateRegisteredDetails.packagingSiteDetails.info = You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register the warehouses you use to store them.
+updateRegisteredDetails.packagingSiteDetails.detailsLink = I want to remove this UK packaging site
+updateRegisteredDetails.packagingSiteDetails.detailsInfo = You must add another site first. Once you have added the other site, you will be able to remove one. You must always have at least one packaging site added.
 updateRegisteredDetails.packagingSiteDetails.checkYourAnswersLabel = UK packaging site details
 updateRegisteredDetails.packagingSiteDetails.error.required = Select yes if you need to add another packaging site
 updateRegisteredDetails.packagingSiteDetails.change.hidden = {0} site address {1}

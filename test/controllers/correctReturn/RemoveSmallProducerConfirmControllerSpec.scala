@@ -30,7 +30,6 @@ import pages.correctReturn.RemoveSmallProducerConfirmPage
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -49,17 +48,6 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
   lazy val removeSmallProducerConfirmRoute = routes.RemoveSmallProducerConfirmController.onPageLoad(NormalMode, s"$sdilReferenceParty").url
   lazy val removeSmallProducerConfirmCheckRoute = routes.RemoveSmallProducerConfirmController.onPageLoad(CheckMode, s"$sdilReferenceParty").url
-
-  val smallProducerName = "Super Lemonade Plc"
-
-  val userAnswersData: JsObject = Json.obj(
-    RemoveSmallProducerConfirmPage.toString -> Json.obj(
-      "producerName" -> producerName,
-      "referenceNumber" -> sdilReference,
-      "lowBand" -> litres,
-      "highBand" -> litres
-    )
-  )
 
   "RemoveSmallProducerConfirm Controller" - {
 
@@ -87,7 +75,23 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         }
       }
 
-      s"must populate the view correctly on a GET when the question has previously been answered in $mode" in {
+      s"must redirect to Small Producer Details when small producer not found for a GET in $mode" in {
+
+        val userAnswers: UserAnswers = userAnswersForCorrectReturn(false).copy(smallProducerList = List.empty)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllerRoute)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.SmallProducerDetailsController.onPageLoad(mode).url
+        }
+      }
+
+      s"must not populate the view on a GET when the question has previously been answered in $mode" in {
 
         val userAnswers: UserAnswers = userAnswersForCorrectReturn(false)
 
@@ -101,7 +105,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form.fill(true), mode, sdilReferenceParty, producerNameParty)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(form, mode, sdilReferenceParty, producerNameParty)(request, messages(application)).toString
         }
       }
 
@@ -130,6 +134,24 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual onwardRoute.url
+        }
+      }
+
+      s"must redirect to Small Producer Details when small producer not found for a POST in $mode" in {
+
+        val userAnswers: UserAnswers = userAnswersForCorrectReturn(false).copy(smallProducerList = List.empty)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+        running(application) {
+          val request =
+            FakeRequest(POST, controllerRoute)
+              .withFormUrlEncodedBody(("value", "true"))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.SmallProducerDetailsController.onPageLoad(mode).url
         }
       }
 

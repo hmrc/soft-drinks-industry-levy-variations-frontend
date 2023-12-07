@@ -28,15 +28,25 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class NavigatorForChangeActivity @Inject() extends Navigator {
 
-  private def navigationForAmountProduced(userAnswers: UserAnswers, mode: Mode): Call = {
+  private def navigationForAmountProducedCheckMode(userAnswers: UserAnswers, previousAnswer: AmountProduced)= {
+    if (userAnswers.get(page = AmountProducedPage).contains(previousAnswer)) {
+      routes.ChangeActivityCYAController.onPageLoad
+    } else {
+      navigationForAmountProduced(userAnswers)
+    }
+  }
+
+  private def navigationForAmountProduced(userAnswers: UserAnswers): Call = {
+
     val pageAnswers = userAnswers.get(page = AmountProducedPage)
+
     pageAnswers match {
       case pageAnswers if pageAnswers.contains(AmountProduced.Large) =>
-        routes.OperatePackagingSiteOwnBrandsController.onPageLoad(mode)
+        routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode)
       case pageAnswers if pageAnswers.contains(AmountProduced.Small) =>
-        routes.ThirdPartyPackagersController.onPageLoad(mode)
+        routes.ThirdPartyPackagersController.onPageLoad(NormalMode)
       case _ =>
-        routes.ContractPackingController.onPageLoad(mode)
+        routes.ContractPackingController.onPageLoad(NormalMode)
     }
   }
   private def navigationForOperatePackagingSiteOwnBrands(userAnswers: UserAnswers, mode: Mode): Call = {
@@ -113,7 +123,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     }
 
   override val normalRoutes: Page => UserAnswers => Call = {
-    case AmountProducedPage => userAnswers => navigationForAmountProduced(userAnswers, NormalMode)
+    case AmountProducedPage => userAnswers => navigationForAmountProduced(userAnswers)
     case ThirdPartyPackagersPage => _ => routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.ContractPackingController.onPageLoad(NormalMode)
@@ -139,6 +149,16 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     case RemovePackagingSiteDetailsPage => _ => routes.PackagingSiteDetailsController.onPageLoad(CheckMode)
     case RemoveWarehouseDetailsPage => _ => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
     case _ => _ => routes.ChangeActivityCYAController.onPageLoad
+  }
+
+  override val normalRoutesWithAmountProduced: Page => (UserAnswers, AmountProduced) => Call = {
+    case AmountProducedPage => (userAnswers, previousAnswer) =>  navigationForAmountProduced(userAnswers)
+    case _ => (_, _) => defaultCall
+  }
+
+  override val checkRouteMapWithAmountProduced: Page => (UserAnswers, AmountProduced) => Call = {
+    case AmountProducedPage => (userAnswers, previousAnswer) =>  navigationForAmountProducedCheckMode(userAnswers, previousAnswer)
+    case _ => (_, _) => defaultCall
   }
 
   override val editRouteMap: Page => UserAnswers => Call = {

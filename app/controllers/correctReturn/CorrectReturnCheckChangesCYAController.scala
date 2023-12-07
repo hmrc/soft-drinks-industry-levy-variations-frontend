@@ -55,9 +55,9 @@ class CorrectReturnCheckChangesCYAController @Inject()(
           val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSDILReturn)
           val amounts: Amounts = Amounts(
             originalReturnTotal = originalSdilReturn.total,
-            newReturnTotal = SdilReturn.generateFromUserAnswers(request.userAnswers).total,
+            newReturnTotal = currentSDILReturn.total,
             balanceBroughtForward = balanceBroughtForward * -1,
-            adjustedAmount = SdilReturn.generateFromUserAnswers(request.userAnswers).total + (balanceBroughtForward * -1)
+            adjustedAmount = currentSDILReturn.total + (balanceBroughtForward * -1)
           )
           val sections: Seq[(String, SummaryList)] = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(
             request.userAnswers,

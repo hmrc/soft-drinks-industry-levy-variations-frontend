@@ -16,18 +16,22 @@
 
 package orchestrators
 
+import cats.data.EitherT
 import connectors.SoftDrinksIndustryLevyConnector
 import models.UserAnswers
 import models.backend.RetrievedSubscription
 import models.submission.{SdilActivity, VariationsSites, VariationsSubmission}
 import models.updateRegisteredDetails.ContactDetails
 import service.VariationResult
+import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.LocalDate
+import java.time.{Instant, LocalDate}
 import javax.inject.Inject
+import scala.concurrent.ExecutionContext
 
-class ChangeActivityOrchestrator @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector){
+class ChangeActivityOrchestrator @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
+                                           sessionService: SessionService){
 
   def todaysDate: LocalDate = LocalDate.now()
   def changeActivityVariationToBeSubmitted(subscription: RetrievedSubscription,
@@ -45,8 +49,12 @@ class ChangeActivityOrchestrator @Inject()(sdilConnector: SoftDrinksIndustryLevy
   }
 
   def submitVariation(subscription: RetrievedSubscription, userAnswers: UserAnswers)
-                     (implicit hc: HeaderCarrier): VariationResult[Unit] = {
+                     (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = {
     val changeActivityVariation = changeActivityVariationToBeSubmitted(subscription, userAnswers)
-    sdilConnector.submitVariation(changeActivityVariation, subscription.sdilRef)
+
+    for {
+      variationSubmitted <- sdilConnector.submitVariation(changeActivityVariation, subscription.sdilRef)
+        _ <- EitherT(sessionService.set(userAnswers.copy(submittedOn = Some(Instant.now()))))
+    } yield variationSubmitted
   }
 }

@@ -19,13 +19,15 @@ package controllers.cancelRegistration
 import com.google.inject.Inject
 import controllers.actions.ControllerActions
 import handlers.ErrorHandler
-import models.NormalMode
 import models.SelectChange.CancelRegistration
+import models.backend.RetrievedSubscription
 import models.requests.DataRequest
+import models.{NormalMode, UserAnswers}
 import orchestrators.CancelRegistrationOrchestrator
 import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.mvc._
+import services.SessionService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilities.GenericLogger
@@ -41,6 +43,7 @@ class CancelRegistrationCYAController @Inject()(
                                                  cancelRegistrationOrchestrator: CancelRegistrationOrchestrator,
                                                  val controllerComponents: MessagesControllerComponents,
                                                  view: CancelRegistrationCYAView,
+                                                 sessionService : SessionService,
                                                  errorHandler: ErrorHandler,
                                                  genericLogger: GenericLogger
                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with SummaryListFluency {
@@ -64,13 +67,17 @@ class CancelRegistrationCYAController @Inject()(
       case Right(_) =>
         val subscription = request.subscription
         val userAnswers = request.userAnswers
-        cancelRegistrationOrchestrator.submitVariation(subscription, userAnswers).value.map {
-          case Right(_) =>
-            Redirect(routes.CancellationRequestDoneController.onPageLoad.url)
-          case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to cancel registration")
-            InternalServerError(errorHandler.internalServerErrorTemplate)
-        }
+        submitUserAnswers(userAnswers, subscription)
       case Left(call) => Future.successful(Redirect(call))
+    }
+  }
+
+  private def submitUserAnswers(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit request: DataRequest[AnyContent]):Future[Result]  = {
+    cancelRegistrationOrchestrator.submitVariationAndUpdateSession(subscription, userAnswers).value.map {
+      case Right(_) =>
+        Redirect(routes.CancellationRequestDoneController.onPageLoad.url)
+      case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to cancel registration")
+        InternalServerError(errorHandler.internalServerErrorTemplate)
     }
   }
 

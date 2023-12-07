@@ -21,9 +21,10 @@ import forms.correctReturn.PackagingSiteDetailsFormProvider
 import models.backend.{Site, UkAddress}
 import models.{CheckMode, NormalMode}
 import play.api.data.Form
+import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
+import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, SummaryList, SummaryListRow, Value}
 import viewmodels.govuk.SummaryListFluency
 import views.ViewSpecHelper
 import views.html.correctReturn.PackagingSiteDetailsView
@@ -287,6 +288,26 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper with SummaryListFluenc
 
       listItems.text() mustBe ""
       summaryListKey.size mustBe 1
+    }
+
+    "when there is one packaging site only" - {
+      val summaryListWithOneRow = SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("Packaging Site")))))
+      val htmlWithOneSummaryListRow = view(form, NormalMode, summaryListWithOneRow)(request, messages(application))
+      val documentWithOneSummaryListRow = doc(htmlWithOneSummaryListRow)
+      val expectedDetails = Map(
+        Messages("correctReturn.packagingSiteDetails.detailsLink") -> Messages("correctReturn.packagingSiteDetails.detailsInfo")
+      )
+      testDetails(documentWithOneSummaryListRow, expectedDetails)
+    }
+
+    "when there is more than one packaging site" - {
+      val summaryListWithTwoRows = SummaryList(Seq(
+        SummaryListRow(value = Value(content = HtmlContent("Packaging Site"))),
+        SummaryListRow(value = Value(content = HtmlContent("Another Packaging Site")))
+      ))
+      val htmlWithTwoSummaryListRows = view(form, NormalMode, summaryListWithTwoRows)(request, messages(application))
+      val documentWithTwoSummaryListRows = doc(htmlWithTwoSummaryListRows)
+      testDetails(documentWithTwoSummaryListRows, Map.empty)
     }
 
     "when there are 2 packaging sites the summary list should display the correct packaging site information" in {

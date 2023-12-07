@@ -33,7 +33,7 @@ import viewmodels.govuk.SummaryListFluency
 import views.html.correctReturn.CorrectReturnUpdateDoneView
 import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 
-import java.time.{LocalDateTime, ZoneId}
+import java.time.{Instant, LocalDateTime, ZoneId}
 import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
@@ -92,13 +92,14 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
         ChangedPage(ExemptionsForSmallProducersPage, answerChanged = true))
 
       val currentReturnPeriod = ReturnPeriod(2023, 1)
-
-      val application = applicationBuilder(userAnswers = Some(userAnswers.copy(correctReturnPeriod = Option(currentReturnPeriod))))
+      val testTime = Instant.now()
+      val application = applicationBuilder(userAnswers = Some(userAnswers.copy(correctReturnPeriod = Option(currentReturnPeriod), submittedOn = Some(testTime))))
         .overrides(bind[ReturnService].toInstance(mockReturnService))
         .build()
 
       running(application) {
         val request = FakeRequest(GET, CorrectReturnUpdateDoneController.onPageLoad.url)
+
         when (mockReturnService.getBalanceBroughtForward(any())(any(),any())) thenReturn Future.successful(-502.75)
 
         val result = route(application, request).value
@@ -113,7 +114,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(orgName, section,
-          formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd)(request, messages(application), frontendAppConfig).toString
+          formattedDate, LocalDateTime.ofInstant(testTime, ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")), returnPeriodStart, returnPeriodEnd)(request, messages(application), frontendAppConfig).toString
       }
     }
   }

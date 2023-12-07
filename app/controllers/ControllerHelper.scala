@@ -18,6 +18,7 @@ package controllers
 
 import handlers.ErrorHandler
 import models.backend.RetrievedSubscription
+import models.changeActivity.AmountProduced
 import models.requests.DataRequest
 import models.{Mode, UserAnswers}
 import navigation.Navigator
@@ -43,14 +44,14 @@ trait ControllerHelper extends FrontendBaseController with I18nSupport {
 
   private def sessionRepo500ErrorMessage(page: Page): String = s"$internalServerErrorBaseMessage while attempting set on ${page.toString}"
 
-  def updateDatabaseAndRedirect(updatedAnswers: Try[UserAnswers], page: Page, mode: Mode, subscription: Option[RetrievedSubscription] = None)
+  def updateDatabaseAndRedirect(updatedAnswers: Try[UserAnswers], page: Page, mode: Mode, amountProduced: Option[AmountProduced] = None, subscription: Option[RetrievedSubscription] = None)
                                (implicit ec: ExecutionContext, request: Request[AnyContent]): Future[Result] = {
     updatedAnswers match {
       case Failure(_) =>
         genericLogger.logger.error(s"Failed to resolve user answers while on ${page.toString}")
         Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
       case Success(answers) => sessionService.set(answers).map {
-        case Right(_) => Redirect(navigator.nextPage(page, mode, answers, subscription))
+        case Right(_) => Redirect(navigator.nextPage(page, mode, answers, amountProduced = amountProduced, subscription = subscription))
         case Left(_) => genericLogger.logger.error(sessionRepo500ErrorMessage(page))
           InternalServerError(errorHandler.internalServerErrorTemplate)
       }

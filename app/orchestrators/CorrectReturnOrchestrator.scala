@@ -39,13 +39,13 @@ class CorrectReturnOrchestrator @Inject()(returnService: ReturnService,
                   (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = EitherT {
 
     (userAnswers.correctReturnPeriod, userAnswers.getCorrectReturnOriginalSDILReturnData, userAnswers.getCorrectReturnData) match {
-      case ((Some(returnPeriod), Some(originalReturn), Some(correctReturnData))) =>
-        submitReturnAndVariation(subscription, returnPeriod, originalReturn, userAnswers, correctReturnData).value
+      case (Some(returnPeriod), Some(originalReturn), Some(correctReturnData)) =>
+        submitReturnAndVariationAndUpdateSession(subscription, returnPeriod, originalReturn, userAnswers, correctReturnData).value
       case _ => Future.successful(Left(MissingRequiredAnswers))
     }
   }
 
-  def submitReturnAndVariation(subscription: RetrievedSubscription,
+  def submitReturnAndVariationAndUpdateSession(subscription: RetrievedSubscription,
                                returnPeriod: ReturnPeriod,
                                originalReturn: SdilReturn,
                                userAnswers: UserAnswers,
@@ -55,6 +55,7 @@ class CorrectReturnOrchestrator @Inject()(returnService: ReturnService,
     for {
       _ <- returnService.submitSdilReturnsVary(subscription, userAnswers, originalReturn, returnPeriod, revisedReturn)
       variation <- returnService.submitReturnVariation(subscription, revisedReturn, userAnswers, correctReturnData)
+      _ <- EitherT(sessionService.set(userAnswers.copy(submittedOn = Some(instantNow))))
     } yield variation
   }
 
