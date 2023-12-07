@@ -20,7 +20,7 @@ import controllers.actions._
 import controllers.ControllerHelper
 import forms.correctReturn.RemoveSmallProducerConfirmFormProvider
 import handlers.ErrorHandler
-import models.Mode
+import models.{Mode, UserAnswers}
 import navigation._
 import pages.correctReturn.RemoveSmallProducerConfirmPage
 import play.api.i18n.MessagesApi
@@ -48,11 +48,16 @@ class RemoveSmallProducerConfirmController @Inject()(
 
   def onPageLoad(mode: Mode, sdilRef: String): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
+
       val smallProducerToRemove = request.userAnswers.smallProducerList.find(smallProducer => smallProducer.sdilRef == sdilRef)
       smallProducerToRemove match {
         case None =>
           genericLogger.logger.warn(s"Small Producer sdilRef $sdilRef doesn't exist for ${request.userAnswers.id}")
-          Redirect(routes.SmallProducerDetailsController.onPageLoad(mode))
+          if(request.userAnswers.smallProducerList.size >= 1){
+            Redirect(routes.SmallProducerDetailsController.onPageLoad(mode))
+          }else{
+            Redirect(routes.ExemptionsForSmallProducersController.onPageLoad(mode))
+          }
         case Some(smallProducer) => Ok(view(form, mode, sdilRef, smallProducer.alias))
       }
   }
