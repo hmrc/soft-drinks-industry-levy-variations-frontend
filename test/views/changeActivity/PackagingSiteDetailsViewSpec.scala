@@ -23,7 +23,9 @@ import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
+import uk.gov.hmrc.govukfrontend.views.Aliases.{SummaryList, Value}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import views.html.changeActivity.PackagingSiteDetailsView
 import views.ViewSpecHelper
 class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
@@ -227,6 +229,26 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
           .attr("href") mustBe "#value"
         errorSummary.text() mustBe Messages("changeActivity.packagingSiteDetails.error.required")
       }
+    }
+
+    "when there is one packaging site only" - {
+      val summaryListWithOneRow = SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("Packaging Site")))))
+      val htmlWithOneSummaryListRow = view(form, NormalMode, summaryListWithOneRow)(request, messages(application))
+      val documentWithOneSummaryListRow = doc(htmlWithOneSummaryListRow)
+      val expectedDetails = Map(
+        Messages("changeActivity.packagingSiteDetails.detailsLink") -> Messages("changeActivity.packagingSiteDetails.detailsInfo")
+      )
+      testDetails(documentWithOneSummaryListRow, expectedDetails)
+    }
+
+    "when there is more than one packaging site" - {
+      val summaryListWithTwoRows = SummaryList(Seq(
+        SummaryListRow(value = Value(content = HtmlContent("Packaging Site"))),
+        SummaryListRow(value = Value(content = HtmlContent("Another Packaging Site")))
+      ))
+      val htmlWithTwoSummaryListRows = view(form, NormalMode, summaryListWithTwoRows)(request, messages(application))
+      val documentWithTwoSummaryListRows = doc(htmlWithTwoSummaryListRows)
+      testDetails(documentWithTwoSummaryListRows, Map.empty)
     }
 
     testBackLink(document)

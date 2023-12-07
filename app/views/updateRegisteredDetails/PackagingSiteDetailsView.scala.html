@@ -22,7 +22,8 @@
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton,
-    govukSummaryList: GovukSummaryList
+    govukSummaryList: GovukSummaryList,
+    govukDetails: GovukDetails
 )
 
 @(form: Form[_], mode: Mode, packingSite: SummaryList)(implicit request: Request[_], messages: Messages)
@@ -44,6 +45,13 @@
         <span class="govuk-caption-m">
             @govukSummaryList(packingSite)
         </span>
+
+        @if(packingSite.rows.size == 1) {
+            @govukDetails(Details(
+                summary = Text(messages("updateRegisteredDetails.packagingSiteDetails.detailsLink")),
+                content = Text(messages("updateRegisteredDetails.packagingSiteDetails.detailsInfo"))
+            ))
+        }
 
         @govukRadios(
             RadiosViewModel.yesNo(
