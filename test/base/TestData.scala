@@ -30,8 +30,10 @@ trait TestData {
   val userAnswersId: String = "id"
   val sdilNumber: String = "XKSDIL000000022"
 
-  val amounts = Amounts(originalReturnTotal = 0,newReturnTotal = 1320, balanceBroughtForward = 502.75, adjustedAmount = 1822.75)
-  val cyaAmounts = Amounts(originalReturnTotal = 0,newReturnTotal = -66, balanceBroughtForward = 500, adjustedAmount = 434)
+  val amounts: Amounts = Amounts(originalReturnTotal = 1525.32, newReturnTotal = 1320.00, balanceBroughtForward = -502.75,
+    totalForQuarterLessForwardBalance = 1822.75, netAdjustedAmount = 297.43)
+  val cyaAmounts: Amounts = Amounts(originalReturnTotal = 0.00, newReturnTotal = -66.00, balanceBroughtForward = -500.00,
+    totalForQuarterLessForwardBalance = 434.00, netAdjustedAmount = 434.00)
 
   val aSubscription: RetrievedSubscription = RetrievedSubscription(
     utr = "0000000022",

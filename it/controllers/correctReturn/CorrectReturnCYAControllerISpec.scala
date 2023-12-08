@@ -159,15 +159,14 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
               page.getElementsByTag("h2").get(6).text() mustBe "Lost or destroyed"
               validateLostOrDamagedWithNoLitresSummaryList(lostOrDamaged, true)
 
-              page.getElementsByTag("h2").get(7).text() mustBe "Balance"
-              page.getElementsByClass("govuk-summary-list__key").get(7).text() mustBe "Original return total"
-              page.getElementsByClass("govuk-summary-list__value  original-return-total sdil-right-align--desktop").get(0).text() mustBe "£229.80"
-              page.getElementsByClass("govuk-summary-list__key").get(8).text() mustBe "New return total"
-              page.getElementsByClass("govuk-summary-list__value  new-return-total sdil-right-align--desktop").get(0).text() mustBe "£0.00"
-              page.getElementsByClass("govuk-summary-list__key").get(9).text() mustBe "Account balance"
-              page.getElementsByClass("govuk-summary-list__value  balance-brought-forward sdil-right-align--desktop").get(0).text() mustBe "−£1,000.00"
-              page.getElementsByClass("govuk-summary-list__key").get(10).text() mustBe "Net adjusted amount"
-              page.getElementsByClass("govuk-summary-list__value  total sdil-right-align--desktop govuk-!-font-weight-bold").get(0).text() mustBe "−£1,000.00"
+              page.getElementsByTag("h2").get(7).text() mustBe "Summary"
+              page.getElementsByClass("govuk-summary-list__key").get(7).text() mustBe "Total this quarter"
+              page.getElementsByClass("govuk-summary-list__value  total-for-quarter govuk-!-text-align-right").get(0).text() mustBe "£0.00"
+              page.getElementsByClass("govuk-summary-list__key").get(8).text() mustBe "Balance brought forward"
+              page.getElementsByClass("govuk-summary-list__value  balance-brought-forward govuk-!-text-align-right").get(0).text() mustBe "−£1,000.00"
+              page.getElementsByClass("govuk-summary-list__key").get(9).text() mustBe "Total"
+              page.getElementsByClass("govuk-summary-list__value  total govuk-!-text-align-right govuk-!-font-weight-bold").get(0).text() mustBe "−£1,000.00"
+
 
               page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCYAController.onSubmit.url
               page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Save and continue"

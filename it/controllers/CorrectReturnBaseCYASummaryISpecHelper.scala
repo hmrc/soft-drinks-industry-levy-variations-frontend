@@ -202,7 +202,7 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
   }
 
   def validateContractPackingWithNoLitresSummaryList(exemptionsForSmallProducers: Element,
-                                                   isCheckYourAnswers: Boolean) = {
+                                                   isCheckYourAnswers: Boolean): Assertion = {
     val rows = exemptionsForSmallProducers.getElementsByClass("govuk-summary-list__row")
     rows.size() mustBe 1
     val yesNoRow = rows.get(0)

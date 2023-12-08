@@ -18,7 +18,7 @@ package controllers.correctReturn
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions.ControllerActions
+import controllers.actions.{ControllerActions, RequiredUserAnswersForCorrectReturn}
 import handlers.ErrorHandler
 import models.SelectChange.CorrectReturn
 import models.backend.RetrievedSubscription
@@ -26,6 +26,7 @@ import models.correctReturn.ChangedPage
 import models.requests.DataRequest
 import models.{Amounts, SdilReturn, UserAnswers}
 import orchestrators.CorrectReturnOrchestrator
+import pages.correctReturn.CorrectReturnUpdateDonePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import services.ReturnService
@@ -33,7 +34,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilities.GenericLogger
 import views.html.correctReturn.CorrectReturnCheckChangesCYAView
-import views.summary.correctReturn.CorrectReturnCheckChangesSummary
+import views.summary.correctReturn.{CorrectReturnBaseCYASummary, CorrectReturnCheckChangesSummary}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -41,6 +42,7 @@ class CorrectReturnCheckChangesCYAController @Inject()(
                                             override val messagesApi: MessagesApi,
                                             controllerActions: ControllerActions,
                                             val controllerComponents: MessagesControllerComponents,
+                                            val requiredUserAnswers: RequiredUserAnswersForCorrectReturn,
                                             view: CorrectReturnCheckChangesCYAView,
                                             returnService: ReturnService,
                                             correctReturnOrchestrator: CorrectReturnOrchestrator,
@@ -50,32 +52,27 @@ class CorrectReturnCheckChangesCYAController @Inject()(
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-      request.userAnswers.getCorrectReturnOriginalSDILReturnData.map(originalSdilReturn => {
-        returnService.getBalanceBroughtForward(request.sdilEnrolment).map(balanceBroughtForward => {
+      requiredUserAnswers.requireData(CorrectReturnUpdateDonePage) {
+        request.userAnswers.getCorrectReturnOriginalSDILReturnData.map(originalSdilReturn => {
           val orgName: String = " " + request.subscription.orgName
           val currentSDILReturn = SdilReturn.apply(request.userAnswers)
           val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSDILReturn)
-          val amounts: Amounts = Amounts(
-            originalReturnTotal = originalSdilReturn.total,
-            newReturnTotal = SdilReturn(request.userAnswers).total,
-            balanceBroughtForward = balanceBroughtForward * -1,
-            adjustedAmount = SdilReturn(request.userAnswers).total + (balanceBroughtForward * -1)
-          )
-          val sections: Seq[(String, SummaryList)] = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(
-            request.userAnswers,
-            request.subscription,
-            changedPages,
-            amounts
-          )
-          Ok(view(orgName, sections, routes.CorrectReturnCheckChangesCYAController.onSubmit))
-        }).recoverWith {
-          case _ => genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][Balance] - unexpected response for ${request.sdilEnrolment}")
-            Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url))
-        }
-      }).getOrElse(Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url)))
+          val calculateAmounts = correctReturnOrchestrator.calculateAmounts(request.sdilEnrolment, request.userAnswers, request.returnPeriod)
+
+          val result = calculateAmounts.value.map {
+            case Right(amounts) =>
+              val orgName: String = " " + request.subscription.orgName
+              val sections = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(request.userAnswers,
+                request.subscription, changedPages, isCheckAnswers = true, amounts)
+              Ok(view(orgName, sections, routes.CorrectReturnCheckChangesCYAController.onSubmit))
+            case Left(_) =>
+              genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][Balance] - unexpected response for ${request.sdilEnrolment}")
+              Redirect(controllers.routes.SelectChangeController.onPageLoad.url)
+          }
+          result
+        }).getOrElse(Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url)))
+      }
   }
-
-
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async { implicit request =>
     val userAnswers: UserAnswers = request.userAnswers
@@ -103,7 +100,8 @@ class CorrectReturnCheckChangesCYAController @Inject()(
     }
   }
 
-  private def submitActivityVariation(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit request: DataRequest[AnyContent]):Future[Result] = {
+  private def submitActivityVariation(userAnswers: UserAnswers, subscription: RetrievedSubscription)
+                                     (implicit request: DataRequest[AnyContent]):Future[Result] = {
       correctReturnOrchestrator.submitActivityVariation(userAnswers, subscription).value.map{
         case Left (_) => genericLogger.logger.error(s"${getClass.getName} - ${userAnswers.id} - failed to submit Submit ActivityVariation")
           InternalServerError(errorHandler.internalServerErrorTemplate(request))

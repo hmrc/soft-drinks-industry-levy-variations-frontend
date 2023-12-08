@@ -30,7 +30,7 @@ object AmountToPaySummary  {
     val originalReturnTotal: BigDecimal = amounts.originalReturnTotal
     val newReturnTotal: BigDecimal = amounts.newReturnTotal
     val balanceBroughtForward: BigDecimal = amounts.balanceBroughtForward
-    val adjustedAmount: BigDecimal = amounts.adjustedAmount
+    val adjustedAmount: BigDecimal = amounts.totalForQuarterLessForwardBalance
 
     SummaryListViewModel(rows = Seq(
       SummaryListRowViewModel(

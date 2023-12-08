@@ -20,14 +20,14 @@ import cats.data.EitherT
 import com.google.inject.{Inject, Singleton}
 import connectors.SoftDrinksIndustryLevyConnector
 import errors.{FailedToAddDataToUserAnswers, NoSdilReturnForPeriod, NoVariableReturns}
+import models._
 import models.backend.{RetrievedSubscription, Site}
 import models.correctReturn.CorrectReturnUserAnswersData
 import models.enums.SiteTypes.{PRODUCTION_SITE, WAREHOUSE}
-import models.submission.{ReturnVariationData, VariationsContact, VariationsSite, VariationsSubmission}
-import models.{ReturnPeriod, SdilReturn, UserAnswers}
+import models.submission._
 import pages.correctReturn.{CorrectionReasonPage, RepaymentMethodPage}
 import service.VariationResult
-import services.SessionService
+import services.{ReturnService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import utilities.GenericLogger
 
@@ -38,7 +38,9 @@ import scala.util.Try
 @Singleton
 class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConnector,
                                           sessionService: SessionService,
-                                          genericLogger: GenericLogger){
+                                          genericLogger: GenericLogger,
+                                          sessionService: SessionService,
+                                          returnService: ReturnService) {
 
   def submitActivityVariation(userAnswers: UserAnswers,
                               subscription: RetrievedSubscription)
@@ -206,6 +208,13 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
       case Right(_) => Left(NoSdilReturnForPeriod)
       case Left(error) => Left(error)
     }
+  }
+
+  def calculateAmounts(sdilRef: String,
+                       userAnswers: UserAnswers,
+                       returnPeriod: ReturnPeriod)
+                      (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Amounts] = {
+    returnService.calculateAmounts(sdilRef, userAnswers, returnPeriod)
   }
 
   private def generateUserAnswersWithSdilReturn(userAnswers: UserAnswers, sdilReturn: SdilReturn, selectedReturnPeriod: ReturnPeriod)

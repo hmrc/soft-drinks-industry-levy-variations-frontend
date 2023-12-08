@@ -20,7 +20,6 @@ import base.SpecBase
 import models.correctReturn.{AddASmallProducer, RepaymentMethod}
 import models.{LitresInBands, SmallProducer}
 import pages.correctReturn._
-import views.helpers.AmountToPaySummary
 
 class CorrectReturnCheckChangesSummarySpec extends SpecBase {
 
@@ -66,21 +65,21 @@ class CorrectReturnCheckChangesSummarySpec extends SpecBase {
     }
 
     "should return a summary list row with balance information" in {
-      val correctionReasonSummaryRow = AmountToPaySummary.amountToPaySummary(amounts = amounts)
+      val balanceSummaryRow = AmountToPaySummary.amountToPayBalance(amounts = amounts)
 
-      correctionReasonSummaryRow.rows.head.key.content.asHtml.toString mustBe "Original return total"
-      correctionReasonSummaryRow.rows.head.value.content.asHtml.toString mustBe "£0.00"
+      balanceSummaryRow.rows.head.key.content.asHtml.toString mustBe "Original return total"
+      balanceSummaryRow.rows.head.value.content.asHtml.toString mustBe "£1,525.32"
 
-      correctionReasonSummaryRow.rows(1).key.content.asHtml.toString mustBe "New return total"
-      correctionReasonSummaryRow.rows(1).value.content.asHtml.toString mustBe "£1,320.00"
+      balanceSummaryRow.rows(1).key.content.asHtml.toString mustBe "New return total"
+      balanceSummaryRow.rows(1).value.content.asHtml.toString mustBe "£1,320.00"
 
-      correctionReasonSummaryRow.rows(2).key.content.asHtml.toString mustBe "Account balance"
-      correctionReasonSummaryRow.rows(2).value.content.asHtml.toString mustBe "£502.75"
+      balanceSummaryRow.rows(2).key.content.asHtml.toString mustBe "Account balance"
+      balanceSummaryRow.rows(2).value.content.asHtml.toString mustBe "£502.75"
 
-      correctionReasonSummaryRow.rows(3).key.content.asHtml.toString mustBe "Net adjusted amount"
-      correctionReasonSummaryRow.rows(3).value.content.asHtml.toString mustBe "£1,822.75"
+      balanceSummaryRow.rows(3).key.content.asHtml.toString mustBe "Net adjusted amount"
+      balanceSummaryRow.rows(3).value.content.asHtml.toString mustBe "£297.43"
 
-      correctionReasonSummaryRow.rows.size mustBe 4
+      balanceSummaryRow.rows.size mustBe 4
     }
   }
 }

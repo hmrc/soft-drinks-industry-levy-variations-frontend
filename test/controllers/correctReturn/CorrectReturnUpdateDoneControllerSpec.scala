@@ -20,6 +20,7 @@ import base.SpecBase
 import controllers.correctReturn.routes._
 import models.correctReturn.{AddASmallProducer, ChangedPage, RepaymentMethod}
 import models.{LitresInBands, ReturnPeriod, SmallProducer}
+import orchestrators.CorrectReturnOrchestrator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
@@ -27,14 +28,12 @@ import pages.correctReturn._
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.ReturnService
 import viewmodels.govuk.SummaryListFluency
 import views.html.correctReturn.CorrectReturnUpdateDoneView
 import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 
-import java.time.{Instant, LocalDateTime, ZoneId}
 import java.time.format.DateTimeFormatter
-import scala.concurrent.Future
+import java.time.{Instant, LocalDateTime, ZoneId}
 
 class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFluency {
 
@@ -49,7 +48,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
   val returnPeriodStart = currentReturnPeriod.start.format(returnPeriodFormat)
   val returnPeriodEnd = currentReturnPeriod.end.format(returnPeriodFormat)
 
-  val mockReturnService: ReturnService = mock[ReturnService]
+  val mockReturnOrchestrator: CorrectReturnOrchestrator = mock[CorrectReturnOrchestrator]
 
   "Update Done Controller" - {
 
@@ -91,21 +90,22 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
         ChangedPage(ExemptionsForSmallProducersPage, answerChanged = true))
 
       val currentReturnPeriod = ReturnPeriod(2023, 1)
+
       val testTime = Instant.now()
       val application = applicationBuilder(userAnswers = Some(userAnswers.copy(correctReturnPeriod = Option(currentReturnPeriod), submittedOn = Some(testTime))))
-        .overrides(bind[ReturnService].toInstance(mockReturnService))
+        .overrides(bind[CorrectReturnOrchestrator].toInstance(mockReturnOrchestrator))
         .build()
 
       running(application) {
         val request = FakeRequest(GET, CorrectReturnUpdateDoneController.onPageLoad.url)
-
-        when (mockReturnService.getBalanceBroughtForward(any())(any(),any())) thenReturn Future.successful(-502.75)
+        when(mockReturnOrchestrator.calculateAmounts(any(), any(), any())(any(),any())) thenReturn createSuccessVariationResult(amounts)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[CorrectReturnUpdateDoneView]
         val orgName = " Super Lemonade Plc"
-        val section = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(userAnswers, aSubscription, changedPages, amounts, isCheckAnswers = false)
+        val section = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(userAnswers, aSubscription, changedPages,
+          isCheckAnswers = false, amounts)
 
         val returnPeriodFormat = DateTimeFormatter.ofPattern("MMMM yyyy")
         val returnPeriodStart = currentReturnPeriod.start.format(returnPeriodFormat)
