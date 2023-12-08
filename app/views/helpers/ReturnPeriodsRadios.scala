@@ -27,28 +27,20 @@ object ReturnPeriodsRadios {
 
   lazy val monthFormatter = DateTimeFormatter.ofPattern("MMMM")
 
-  def getRadioItems(returnPeriodsForYears: Map[Int, List[ReturnPeriod]])
-                   (implicit messages: Messages): Seq[RadioItem] = {
-    returnPeriodsForYears.zipWithIndex.map { case((year, returnPeriods), yearIndex) =>
-      getRadioItemsForYear(year, returnPeriods, yearIndex)
-    }.fold(Seq.empty)(_ ++ _)
-  }
-
-  def getRadioItemsForYear(year: Int, returnPeriods: List[ReturnPeriod], yearIndex: Int)
+  def getRadioItemsForYear(returnPeriodsForYear: (Int, List[ReturnPeriod]), yearIndex: Int)
                           (implicit messages: Messages): Seq[RadioItem] = {
-    val returnPeriodsRadioItems = returnPeriods.zipWithIndex.map {case (returnPeriod, returnPeriodIndex) =>
+    val returnPeriodsWithIndex = returnPeriodsForYear._2.zipWithIndex.map { case (returnPeriod, returnPeriodIndex) =>
       RadioItem(
         content = Text(messages("correctReturn.select.returnMessage",
           monthFormatter.format(returnPeriod.start),
           monthFormatter.format(returnPeriod.end),
-          year.toString)),
+          returnPeriodsForYear._1.toString)),
         value = Some(returnPeriod.radioValue),
         id = Some(s"value_${yearIndex}_$returnPeriodIndex"
         )
       )
     }
-
-    returnPeriodsRadioItems
+    returnPeriodsWithIndex
   }
 
 }
