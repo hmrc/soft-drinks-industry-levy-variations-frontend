@@ -55,12 +55,6 @@ class WarehouseDetailsController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
     implicit request =>
-
-      val preparedForm = request.userAnswers.get(WarehouseDetailsPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-
       val summaryList: Option[SummaryList] = request.userAnswers.warehouseList match {
         case warehouseList if warehouseList.nonEmpty => Some(SummaryListViewModel(
           rows = WarehouseDetailsSummary.row2(warehouseList, mode))
@@ -68,7 +62,7 @@ class WarehouseDetailsController @Inject()(
         case _ => None
       }
 
-      Ok(view(preparedForm, mode, summaryList))
+      Ok(view(form, mode, summaryList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails).async {
@@ -95,11 +89,7 @@ class WarehouseDetailsController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode, summaryList))),
 
         value =>
-          updateDatabaseWithoutRedirect(request.userAnswers.set(WarehouseDetailsPage, value), WarehouseDetailsPage).flatMap {
-            case true => getOnwardUrl(value, addContactDetails, addBusinessAddress, mode).map(Redirect(_))
-            case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
-          }
-
+          getOnwardUrl(value, addContactDetails, addBusinessAddress, mode).map(Redirect(_))
       )
   }
 

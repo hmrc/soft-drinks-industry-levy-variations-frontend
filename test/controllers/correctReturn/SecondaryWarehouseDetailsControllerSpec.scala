@@ -178,49 +178,5 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
     testInvalidJourneyType(CorrectReturn, secondaryWarehouseDetailsRoute)
     testNoUserAnswersError(secondaryWarehouseDetailsRoute)
-
-    "must fail if the setting of userAnswers fails" in {
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CorrectReturn))).build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, secondaryWarehouseDetailsRoute)
-        .withFormUrlEncodedBody(("value", "false"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual INTERNAL_SERVER_ERROR
-        val page = Jsoup.parse(contentAsString(result))
-        page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - Soft Drinks Industry Levy - GOV.UK"
-      }
-    }
-
-    "should log an error message when internal server error is returned when user answers are not set in session repository" in {
-      val mockSessionService = mock[SessionService]
-
-      when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
-          .overrides(
-            bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn (onwardRoute)),
-            bind[SessionService].toInstance(mockSessionService)
-          ).build()
-
-      running(application) {
-        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
-          val request =
-            FakeRequest(POST, secondaryWarehouseDetailsRoute)
-          .withFormUrlEncodedBody(("value", "false"))
-
-          await(route(application, request).value)
-          events.collectFirst {
-            case event =>
-              event.getLevel.levelStr mustBe "ERROR"
-              event.getMessage mustEqual "Failed to set value in session repository while attempting set on secondaryWarehouseDetails"
-          }.getOrElse(fail("No logging captured"))
-        }
-      }
-    }
   }
 }
