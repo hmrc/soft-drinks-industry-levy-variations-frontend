@@ -30,7 +30,8 @@ class SelectViewSpec extends ViewSpecHelper {
   val view: SelectView = application.injector.instanceOf[SelectView]
   val formProvider = new SelectFormProvider
   val form: Form[String] = formProvider.apply()
-  val returnsList: Map[Int, List[ReturnPeriod]] = Map(2022 -> returnPeriodsFor2022, 2020 -> returnPeriodsFor2020)
+//  val returnsList: Map[Int, List[ReturnPeriod]] = Map(2022 -> returnPeriodsFor2022, 2020 -> returnPeriodsFor2020)
+  val returnsList: List[List[ReturnPeriod]] = List(returnPeriodsFor2022, returnPeriodsFor2020)
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
@@ -64,14 +65,15 @@ class SelectViewSpec extends ViewSpecHelper {
 
     "should include radios" - {
       val radios = document.getElementsByClass(Selectors.radios)
-      val dividers = document.getElementsByClass(Selectors.radioDivider)
+      val dividers = document.getElementsByTag("h2")
       val radioItems = radios.first().getElementsByClass(Selectors.radiosItems)
-      val totalNumberOfReturnPeriods = returnsList.foldLeft(List.empty[ReturnPeriod]) { (a, b) => a ++ b._2 }.size
+//      val totalNumberOfReturnPeriods = returnsList.foldLeft(List.empty[ReturnPeriod]) { (a, b) => a ++ b._2 }.size
+      val totalNumberOfReturnPeriods = returnsList.size
       "that has a size of 1" in {
         radios.size() mustBe 1
       }
 
-      s"that has ${returnsList.size} dividers " - {
+      s"that has ${returnsList.size} dividers " in {
         dividers.size() mustBe returnsList.size
       }
 
@@ -79,7 +81,8 @@ class SelectViewSpec extends ViewSpecHelper {
         radioItems.size() mustBe totalNumberOfReturnPeriods
       }
 
-      returnsList.keys.zipWithIndex.foreach { case (year, index) =>
+      returnsList.zipWithIndex.foreach { case (returnsForYear, index) =>
+        val year = returnsForYear.head.year
         s"that includes a divider for year $year" in {
           dividers.get(index).text() mustBe year.toString
         }

@@ -57,7 +57,8 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
         when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
           createSuccessVariationResult(returnPeriodList)
         }
-        val separatedByYearAndSortedReturnPeriods = Map(2022 -> returnPeriodsFor2022, 2020 -> returnPeriodsFor2020)
+//        val separatedByYearAndSortedReturnPeriods = Map(2022 -> returnPeriodsFor2022, 2020 -> returnPeriodsFor2020)
+        val separatedByYearAndSortedReturnPeriods = List(returnPeriodsFor2022, returnPeriodsFor2020)
 
         when(mockOrchestrator.separateReturnPeriodsByYear(returnPeriodList)).thenReturn(separatedByYearAndSortedReturnPeriods)
 
@@ -85,7 +86,8 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
           createSuccessVariationResult(returnPeriodList)
         }
 
-        val separatedByYearAndSortedReturnPeriods = Map(2022 -> returnPeriodsFor2022, 2020 -> returnPeriodsFor2020)
+//        val separatedByYearAndSortedReturnPeriods = Map(2022 -> returnPeriodsFor2022, 2020 -> returnPeriodsFor2020)
+        val separatedByYearAndSortedReturnPeriods = List(returnPeriodsFor2022, returnPeriodsFor2020)
 
         when(mockOrchestrator.separateReturnPeriodsByYear(returnPeriodList)).thenReturn(separatedByYearAndSortedReturnPeriods)
 
@@ -272,7 +274,8 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
           createSuccessVariationResult(returnPeriodList)
         }
 
-        val separatedByYearAndSortedReturnPeriods = Map(2022 -> returnPeriodsFor2022, 2020 -> returnPeriodsFor2020)
+//        val separatedByYearAndSortedReturnPeriods = Map(2022 -> returnPeriodsFor2022, 2020 -> returnPeriodsFor2020)
+        val separatedByYearAndSortedReturnPeriods = List(returnPeriodsFor2022, returnPeriodsFor2020)
 
         when(mockOrchestrator.separateReturnPeriodsByYear(returnPeriodList)).thenReturn(separatedByYearAndSortedReturnPeriods)
 
@@ -302,7 +305,8 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
           createSuccessVariationResult(returnPeriodList)
         }
 
-        val separatedByYearAndSortedReturnPeriods = Map(2022 -> returnPeriodsFor2022, 2020 -> returnPeriodsFor2020)
+//        val separatedByYearAndSortedReturnPeriods = Map(2022 -> returnPeriodsFor2022, 2020 -> returnPeriodsFor2020)
+        val separatedByYearAndSortedReturnPeriods = List(returnPeriodsFor2022, returnPeriodsFor2020)
 
         when(mockOrchestrator.separateReturnPeriodsByYear(returnPeriodList)).thenReturn(separatedByYearAndSortedReturnPeriods)
 

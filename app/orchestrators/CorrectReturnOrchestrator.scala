@@ -178,7 +178,7 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
 
   }
 
-  def separateReturnPeriodsByYearNew(returnPeriods: List[ReturnPeriod]): List[List[ReturnPeriod]] = {
+  def separateReturnPeriodsByYear(returnPeriods: List[ReturnPeriod]): List[List[ReturnPeriod]] = {
     val orderReturnPeriods = returnPeriods.distinct.sortBy(_.start).reverse
     orderReturnPeriods.groupBy(_.year).values.toList
   }
