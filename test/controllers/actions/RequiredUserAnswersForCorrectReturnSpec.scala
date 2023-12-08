@@ -75,8 +75,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
       Some(CorrectReturnPreviousPage(OperatePackagingSiteOwnBrandsPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]))
 
   val coPackerFalseJourney =
-    List(CorrectReturnRequiredPage(PackAtBusinessAddressPage, None)(implicitly[Reads[Boolean]]),
-    CorrectReturnRequiredPage(PackagingSiteDetailsPage, None)(implicitly[Reads[Boolean]]))
+    List(CorrectReturnRequiredPage(PackAtBusinessAddressPage, None)(implicitly[Reads[Boolean]]))
 
   "checkYourAnswersRequiredData" - {
 

@@ -55,12 +55,6 @@ class SecondaryWarehouseDetailsController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
-
-      val preparedForm = request.userAnswers.get(SecondaryWarehouseDetailsPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
-
       val summaryList: Option[SummaryList] = request.userAnswers.warehouseList match {
         case warehouseList if warehouseList.nonEmpty => Some(SummaryListViewModel(
           rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouseList, mode))
@@ -68,7 +62,7 @@ class SecondaryWarehouseDetailsController @Inject()(
         case _ => None
       }
 
-      Ok(view(preparedForm, summaryList, mode))
+      Ok(view(form, summaryList, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
@@ -83,12 +77,9 @@ class SecondaryWarehouseDetailsController @Inject()(
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, summaryList, mode))),
-            value => {
-              updateDatabaseWithoutRedirect(request.userAnswers.set(SecondaryWarehouseDetailsPage, value), SecondaryWarehouseDetailsPage).flatMap {
-                case true => getOnwardUrl(value, mode).map(Redirect(_))
-                case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
-              }
-        }
+
+        value =>
+          getOnwardUrl(value, mode).map(Redirect(_))
       )
   }
 

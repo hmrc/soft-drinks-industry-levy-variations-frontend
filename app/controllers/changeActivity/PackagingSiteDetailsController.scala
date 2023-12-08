@@ -58,16 +58,11 @@ class PackagingSiteDetailsController @Inject()(
       if (request.userAnswers.packagingSiteList.isEmpty && mode == CheckMode) {
         Redirect(routes.PackAtBusinessAddressController.onPageLoad(mode).url)
       } else {
-        val preparedForm = request.userAnswers.get(PackagingSiteDetailsPage) match {
-          case None => form
-          case Some(value) => form.fill(value)
-        }
-
         val siteList: SummaryList = SummaryListViewModel(
           rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList, mode)
         )
 
-        Ok(view(preparedForm, mode, siteList))
+        Ok(view(form, mode, siteList))
       }
   }
 
@@ -81,11 +76,7 @@ class PackagingSiteDetailsController @Inject()(
           Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
 
         value =>
-          updateDatabaseWithoutRedirect(request.userAnswers.set(PackagingSiteDetailsPage, value), PackagingSiteDetailsPage).flatMap {
-            case true => getOnwardUrl(value, mode).map(Redirect(_))
-            case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
-          }
-
+          getOnwardUrl(value, mode).map(Redirect(_))
       )
   }
 

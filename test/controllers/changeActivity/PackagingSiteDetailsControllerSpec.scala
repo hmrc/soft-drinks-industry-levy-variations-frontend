@@ -17,24 +17,21 @@
 package controllers.changeActivity
 
 import base.SpecBase
-import errors.SessionDatabaseInsertError
 import forms.changeActivity.PackagingSiteDetailsFormProvider
-import models.{CheckMode, NormalMode}
 import models.SelectChange.ChangeActivity
+import models.{CheckMode, NormalMode}
 import navigation._
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.changeActivity.PackagingSiteDetailsPage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{status, _}
 import services.{AddressLookupService, PackingDetails, SessionService}
-import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import viewmodels.summary.changeActivity.PackagingSiteDetailsSummary
 import views.html.changeActivity.PackagingSiteDetailsView
@@ -79,7 +76,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
         rows = PackagingSiteDetailsSummary.row2(Map.empty, NormalMode)
       )
 
-      val userAnswers = emptyUserAnswersForChangeActivity.set(PackagingSiteDetailsPage, true).success.value
+      val userAnswers = emptyUserAnswersForChangeActivity
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -90,7 +87,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, summary)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, summary)(request, messages(application)).toString
       }
     }
 
@@ -156,35 +153,6 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
 
           status(result) mustEqual BAD_REQUEST
           contentAsString(result) mustEqual view(boundForm, mode, summary)(request, messages(application)).toString
-        }
-      }
-
-      s"should log an error message when internal server error is returned when user answers are not set in session repository in $mode" in {
-        val mockSessionService = mock[SessionService]
-
-        when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
-
-        val application =
-          applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
-            .overrides(
-              bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity (onwardRoute)),
-              bind[SessionService].toInstance(mockSessionService)
-            ).build()
-
-        running(application) {
-          withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
-            val request =
-              FakeRequest(POST, path)
-                .withFormUrlEncodedBody(("value", "false"))
-
-            await(route(application, request).value)
-
-            events.collectFirst {
-              case event =>
-                event.getLevel.levelStr mustBe "ERROR"
-                event.getMessage mustEqual "Failed to set value in session repository while attempting set on packagingSiteDetails"
-            }.getOrElse(fail("No logging captured"))
-          }
         }
       }
     }

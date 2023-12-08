@@ -34,6 +34,7 @@ import views.html.correctReturn.SecondaryWarehouseDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 class SecondaryWarehouseDetailsController @Inject()(
                                                      override val messagesApi: MessagesApi,
@@ -78,11 +79,9 @@ class SecondaryWarehouseDetailsController @Inject()(
 
         value =>
           if (value) {
-            val alsOnRampUrl = updateDatabaseWithoutRedirect(request.userAnswers.set(SecondaryWarehouseDetailsPage, value), SecondaryWarehouseDetailsPage).flatMap(_ =>
-              addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = mode))
-            alsOnRampUrl.map(Redirect(_))
+            addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = mode).map(Redirect(_))
           } else {
-            updateDatabaseAndRedirect(request.userAnswers.set(SecondaryWarehouseDetailsPage, value), SecondaryWarehouseDetailsPage, mode)
+            Future.successful(Redirect(navigator.nextPage(SecondaryWarehouseDetailsPage, mode, request.userAnswers)))
           }
       )
   }

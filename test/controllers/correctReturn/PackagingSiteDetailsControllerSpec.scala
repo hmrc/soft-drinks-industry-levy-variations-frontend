@@ -27,7 +27,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.correctReturn.PackagingSiteDetailsPage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -74,7 +73,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
           val view = application.injector.instanceOf[PackagingSiteDetailsView]
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form,mode, summary)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(form, mode, summary)(request, messages(application)).toString
         }
       }
 
@@ -84,7 +83,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
           rows = PackagingSiteDetailsSummary.row2(packingSiteMap, mode)
         )
 
-        val userAnswers = emptyUserAnswersForCorrectReturnWithPackagingSite.set(PackagingSiteDetailsPage, true).success.value
+        val userAnswers = emptyUserAnswersForCorrectReturnWithPackagingSite
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -96,7 +95,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form.fill(true), mode, summary)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(form, mode, summary)(request, messages(application)).toString
         }
       }
     })

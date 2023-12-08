@@ -152,8 +152,7 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
 
   private[controllers] def packingListReturnChange: DataRequest[_] => List[CorrectReturnRequiredPage[_, _, _]] = { (request: DataRequest[_]) =>
     if (UserTypeCheck.isNewPacker(request.userAnswers, request.subscription) && request.subscription.productionSites.isEmpty) {
-      List(CorrectReturnRequiredPage(PackAtBusinessAddressPage, None)(implicitly[Reads[Boolean]]),
-        CorrectReturnRequiredPage(PackagingSiteDetailsPage, None)(implicitly[Reads[Boolean]]))
+      List(CorrectReturnRequiredPage(PackAtBusinessAddressPage, None)(implicitly[Reads[Boolean]]))
     } else {
       List.empty
     }

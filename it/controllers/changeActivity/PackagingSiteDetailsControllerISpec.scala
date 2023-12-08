@@ -69,7 +69,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
     userAnswersForChangeActivityPackagingSiteDetailsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
-        s"should return OK and render the page with " + key + " radio checked" in {
+        s"should return OK and render the page with neither radio checked" in {
           given
             .commonPrecondition
 
@@ -85,9 +85,9 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
-              radioInputs.get(0).hasAttr("checked") mustBe key == "yes"
+              radioInputs.get(0).hasAttr("checked") mustBe false
               radioInputs.get(1).attr("value") mustBe "false"
-              radioInputs.get(1).hasAttr("checked") mustBe key == "no"
+              radioInputs.get(1).hasAttr("checked") mustBe false
             }
           }
         }
@@ -144,7 +144,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
     userAnswersForChangeActivityPackagingSiteDetailsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
-        s"should return OK and render the page with " + key + " radio checked" in {
+        s"should return OK and render the page with neither radio checked" in {
           given
             .commonPrecondition
 
@@ -160,9 +160,9 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
-              radioInputs.get(0).hasAttr("checked") mustBe key == "yes"
+              radioInputs.get(0).hasAttr("checked") mustBe false
               radioInputs.get(1).attr("value") mustBe "false"
-              radioInputs.get(1).hasAttr("checked") mustBe key == "no"
+              radioInputs.get(1).hasAttr("checked") mustBe false
             }
           }
         }
@@ -178,7 +178,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
   s"POST " + normalRoutePath - {
     val userAnswers = emptyUserAnswersForChangeActivity.set(PackagingSiteDetailsPage, false).success.value
       "when the user selects no" - {
-        "should update the session with the new value and redirect to the SecondaryWarehouseDetails controller" - {
+        "should not update the session with the selected value and redirect to the SecondaryWarehouseDetails controller" - {
           "when the session contains no data for page" in {
             given
               .commonPrecondition
@@ -193,28 +193,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
-                dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe false
-              }
-            }
-          }
-
-          "when the session already contains data for page" in {
-            given
-              .commonPrecondition
-
-            setAnswers(userAnswers)
-            WsTestClient.withClient { client =>
-              val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false")
-              )
-
-              whenReady(result) { res =>
-                res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
-                dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe false
+                dataStoredForPage.isEmpty mustBe true
               }
             }
           }
@@ -287,7 +266,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
           requestedVersion = None
         )
         val expectedResultInDB: Some[JsObject] = Some(
-          Json.obj("imports" -> true, "changeActivity" -> Json.obj("packagingSiteDetails" -> true))
+          Json.obj("imports" -> true)
         )
 
         val alfOnRampURL: String = "http://onramp.com"
@@ -344,7 +323,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
   s"POST " + checkRoutePath - {
     val userAnswers = emptyUserAnswersForChangeActivity.set(PackagingSiteDetailsPage, false).success.value
     "when the user selects no" - {
-      "should update the session with the new value and redirect to the CYA controller" - {
+      "should not update the session with the selected value and redirect to the CYA controller" - {
         "when the session contains no data for page" in {
           given
             .commonPrecondition
@@ -359,28 +338,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
               res.status mustBe 303
               res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivityCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
-              dataStoredForPage.nonEmpty mustBe true
-              dataStoredForPage.get mustBe false
-            }
-          }
-        }
-
-        "when the session already contains data for page" in {
-          given
-            .commonPrecondition
-
-          setAnswers(userAnswers)
-          WsTestClient.withClient { client =>
-            val result = createClientRequestPOST(
-              client, changeActivityBaseUrl + checkRoutePath, Json.obj("value" -> "false")
-            )
-
-            whenReady(result) { res =>
-              res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivityCYAController.onPageLoad.url)
-              val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
-              dataStoredForPage.nonEmpty mustBe true
-              dataStoredForPage.get mustBe false
+              dataStoredForPage.isEmpty mustBe true
             }
           }
         }
@@ -453,7 +411,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         requestedVersion = None
       )
       val expectedResultInDB: Some[JsObject] = Some(
-        Json.obj("imports" -> true, "changeActivity" -> Json.obj("packagingSiteDetails" -> true))
+        Json.obj("imports" -> true)
       )
 
       val alfOnRampURL: String = "http://onramp.com"

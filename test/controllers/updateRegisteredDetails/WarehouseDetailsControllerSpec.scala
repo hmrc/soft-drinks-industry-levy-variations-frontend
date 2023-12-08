@@ -18,7 +18,6 @@ package controllers.updateRegisteredDetails
 
 import base.SpecBase
 import base.SpecBase.userAnswerTwoWarehousesUpdateRegisteredDetails
-import errors.SessionDatabaseInsertError
 import forms.updateRegisteredDetails.WarehouseDetailsFormProvider
 import models.SelectChange.UpdateRegisteredDetails
 import models.updateRegisteredDetails.ChangeRegisteredDetails
@@ -31,14 +30,14 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.updateRegisteredDetails.{ChangeRegisteredDetailsPage, WarehouseDetailsPage}
+import pages.updateRegisteredDetails.ChangeRegisteredDetailsPage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import services.{AddressLookupService, SessionService, WarehouseDetails}
+import services.{AddressLookupService, WarehouseDetails}
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import views.html.updateRegisteredDetails.WarehouseDetailsView
@@ -90,7 +89,7 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
 
       s"must populate the view correctly on a GET when the question has previously been answered in $mode" in {
 
-        val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(WarehouseDetailsPage, true).success.value
+        val userAnswers = emptyUserAnswersForUpdateRegisteredDetails
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -102,7 +101,7 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form.fill(true), mode, None)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(form, mode, None)(request, messages(application)).toString
         }
       }
 
@@ -112,7 +111,7 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
           rows = WarehouseDetailsSummary.row2(Map("1" -> warehouse), mode)
         ))
 
-        val userAnswers = warehouseAddedToUserAnswersForUpdateRegisteredDetails.set(WarehouseDetailsPage, true).success.value
+        val userAnswers = warehouseAddedToUserAnswersForUpdateRegisteredDetails
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -124,7 +123,7 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form.fill(true), mode, summaryList)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(form, mode, summaryList)(request, messages(application)).toString
         }
       }
     })
@@ -221,46 +220,6 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
 
           status(result) mustEqual BAD_REQUEST
           contentAsString(result) mustEqual view(boundForm, mode, None)(request, messages(application)).toString
-        }
-      }
-
-      s"must fail if the setting of userAnswers fails in $mode" in {
-
-        val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(UpdateRegisteredDetails))).build()
-
-        running(application) {
-          val request = FakeRequest(POST, warehouseDetailsRouteForMode(mode))
-            .withFormUrlEncodedBody(("value", "true"))
-
-          val result = route(application, request).value
-
-          status(result) mustEqual INTERNAL_SERVER_ERROR
-          val page = Jsoup.parse(contentAsString(result))
-          page.title() mustBe "Sorry, we are experiencing technical difficulties - 500 - Soft Drinks Industry Levy - GOV.UK"
-        }
-      }
-
-      s"should log an error message when internal server error is returned when user answers are not set in session repository in $mode" in {
-        val mockSessionService = mock[SessionService]
-
-        when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
-
-        val application =
-          applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
-            .overrides(
-              bind[NavigatorForUpdateRegisteredDetails].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
-              bind[SessionService].toInstance(mockSessionService)
-            ).build()
-
-        running(application) {
-          withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
-            val request =
-              FakeRequest(POST, warehouseDetailsRouteForMode(mode))
-                .withFormUrlEncodedBody(("value", "true"))
-
-            await(route(application, request).value)
-            events.toString() must include("Failed to set value in session repository while attempting set on warehouseDetails")
-          }
         }
       }
 

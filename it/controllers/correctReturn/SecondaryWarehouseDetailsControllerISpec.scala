@@ -218,7 +218,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
   "POST " + normalRoutePath - {
     "when the user selects no" - {
-      "should update the session with the new value and redirect to the CYA controller" - {
+      "should not update the session with the selected value and redirect to the CYA controller" - {
         "when the session contains no data for page" in {
           given
             .commonPrecondition
@@ -233,28 +233,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
               res.status mustBe 303
               res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Boolean]](None)(_.get(SecondaryWarehouseDetailsPage))
-              dataStoredForPage.nonEmpty mustBe true
-              dataStoredForPage.get mustBe false
-            }
-          }
-        }
-
-        "when the session already contains data for page" in {
-          given
-            .commonPrecondition
-
-          setAnswers(filledUserAnswersForCorrectReturnPackagingSiteDetailsPage)
-          WsTestClient.withClient { client =>
-            val result = createClientRequestPOST(
-              client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> "false")
-            )
-
-            whenReady(result) { res =>
-              res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
-              val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Boolean]](None)(_.get(SecondaryWarehouseDetailsPage))
-              dataStoredForPage.nonEmpty mustBe true
-              dataStoredForPage.get mustBe false
+              dataStoredForPage.isEmpty mustBe true
             }
           }
         }
@@ -327,9 +306,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           )),
         requestedVersion = None
       )
-      val expectedResultInDB: Some[JsObject] = Some(
-        Json.obj("correctReturn" -> Json.obj( "secondaryWarehouseDetails" -> true)
-        ))
+      val expectedResultInDB: Some[JsObject] = Some(Json.obj())
 
       val alfOnRampURL: String = "http://onramp.com"
 
@@ -383,7 +360,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
   "POST " + checkRoutePath - {
     "when the user selects no" - {
-      "should update the session with the new value and redirect to the CYA controller" - {
+      "should not update the session with the selected value and redirect to the CYA controller" - {
         "when the session contains no data for page" in {
           given
             .commonPrecondition
@@ -398,28 +375,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
               res.status mustBe 303
               res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Boolean]](None)(_.get(SecondaryWarehouseDetailsPage))
-              dataStoredForPage.nonEmpty mustBe true
-              dataStoredForPage.get mustBe false
-            }
-          }
-        }
-
-        "when the session already contains data for page" in {
-          given
-            .commonPrecondition
-
-          setAnswers(filledUserAnswersForCorrectReturnPackagingSiteDetailsPage)
-          WsTestClient.withClient { client =>
-            val result = createClientRequestPOST(
-              client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> "false")
-            )
-
-            whenReady(result) { res =>
-              res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
-              val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Boolean]](None)(_.get(SecondaryWarehouseDetailsPage))
-              dataStoredForPage.nonEmpty mustBe true
-              dataStoredForPage.get mustBe false
+              dataStoredForPage.isEmpty mustBe true
             }
           }
         }
@@ -492,9 +448,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           )),
         requestedVersion = None
       )
-      val expectedResultInDB: Some[JsObject] = Some(
-        Json.obj("correctReturn" -> Json.obj("secondaryWarehouseDetails" -> true)
-        ))
+      val expectedResultInDB: Some[JsObject] = Some(Json.obj())
 
       val alfOnRampURL: String = "http://onramp.com"
 
