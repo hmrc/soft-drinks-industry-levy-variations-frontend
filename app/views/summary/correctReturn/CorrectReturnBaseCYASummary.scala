@@ -38,7 +38,6 @@ object CorrectReturnBaseCYASummary {
   def changedSummaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription,
                                     changedPages: List[ChangedPage], isCheckAnswers: Boolean = true)
                                    (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
-    println(changedPages.length)
     (ownBrandsSummarySection(userAnswers, changedPages.head.answerChanged, isCheckAnswers) ++
       contractPackerSummarySection(userAnswers, changedPages.apply(2).answerChanged, isCheckAnswers) ++
       contractPackedForRegisteredSmallProducersSection(userAnswers, changedPages.apply(12).answerChanged, isCheckAnswers) ++
