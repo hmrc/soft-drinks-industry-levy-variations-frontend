@@ -6,7 +6,7 @@ import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.WsTestClient
 
-import java.time.{Instant, LocalDate}
+import java.time.Instant
 
 class UpdateDoneControllerISpec extends ControllerITTestHelper {
 

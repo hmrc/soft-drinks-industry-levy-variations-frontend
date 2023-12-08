@@ -39,7 +39,6 @@ import scala.util.Try
 class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConnector,
                                           sessionService: SessionService,
                                           genericLogger: GenericLogger,
-                                          sessionService: SessionService,
                                           returnService: ReturnService) {
 
   def submitActivityVariation(userAnswers: UserAnswers,

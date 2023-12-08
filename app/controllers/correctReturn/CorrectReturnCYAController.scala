@@ -25,7 +25,6 @@ import orchestrators.CorrectReturnOrchestrator
 import pages.correctReturn.CorrectReturnBaseCYAPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.ReturnService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilities.GenericLogger
 import views.html.correctReturn.CorrectReturnCYAView
@@ -38,7 +37,6 @@ class CorrectReturnCYAController @Inject()(override
                                            controllerActions: ControllerActions,
                                            val controllerComponents: MessagesControllerComponents,
                                            requiredUserAnswers: RequiredUserAnswersForCorrectReturn,
-                                           returnService: ReturnService,
                                            correctReturnOrchestrator: CorrectReturnOrchestrator,
                                            view: CorrectReturnCYAView,
                                            genericLogger: GenericLogger)
@@ -48,9 +46,7 @@ class CorrectReturnCYAController @Inject()(override
   def onPageLoad: Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
       requiredUserAnswers.requireData(CorrectReturnBaseCYAPage) {
-
         val calculateAmounts = correctReturnOrchestrator.calculateAmounts(request.sdilEnrolment, request.userAnswers, request.returnPeriod)
-
         val result = calculateAmounts.value.map {
           case Right(amounts) =>
             val orgName: String = " " + request.subscription.orgName
@@ -61,13 +57,6 @@ class CorrectReturnCYAController @Inject()(override
             Redirect(controllers.routes.SelectChangeController.onPageLoad.url)
         }
         result
-//        val orgName: String = " " + request.subscription.orgName
-//        val sections = CorrectReturnBaseCYASummary.summaryListAndHeadings(request.userAnswers, request.subscription, amounts)
-//
-//        Future.successful(Ok(view(orgName, amounts, sections, controllers.correctReturn.routes.CorrectReturnCYAController.onSubmit))).recoverWith {
-//          case _ => genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][Balance] - unexpected response for ${request.sdilEnrolment}")
-//            Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url))
-//        }
       }
   }
 

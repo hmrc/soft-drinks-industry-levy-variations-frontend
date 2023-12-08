@@ -22,7 +22,7 @@ import errors._
 import models.correctReturn.CorrectReturnUserAnswersData
 import models.correctReturn.RepaymentMethod.BankAccount
 import models.submission.ReturnVariationData
-import models.{LitresInBands, ReturnPeriod, SdilReturn, SelectChange, SmallProducer, UserAnswers, VariationsSubmissionDataHelper}
+import models.{ReturnPeriod, SdilReturn, SelectChange, SmallProducer, UserAnswers, VariationsSubmissionDataHelper}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -32,7 +32,6 @@ import play.api.libs.json.{JsString, Json, Writes}
 import play.api.test.Helpers.running
 import service.VariationResult
 import services.{ReturnService, SessionService}
-import services.SessionService
 import utilities.GenericLogger
 
 import java.time.ZoneOffset
@@ -53,10 +52,6 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar with Vari
     submittedOn = Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
 
   val sdilReturnsExamples: Map[String, SdilReturn] = Map("a nilReturn" -> emptyReturn, "not a nilReturn" -> populatedReturn)
-  val thisYear: Int = LocalDate.now().getYear
-  val year: Int = thisYear - 1
-  val quarter = 1
-  val requestReturnPeriod: ReturnPeriod = ReturnPeriod(year, quarter)
 
   def getExpectedUserAnswersCorrectReturnData(key: String): CorrectReturnUserAnswersData = if (key == "a nilReturn") {
     expectedCorrectReturnDataForNilReturn
@@ -64,7 +59,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar with Vari
     expectedCorrectReturnDataForPopulatedReturn
   }
 
-  val orchestrator = new CorrectReturnOrchestrator(mockSdilConnector, mockSessionService, mockReturnService)
+  val orchestrator = new CorrectReturnOrchestrator(mockSdilConnector, mockSessionService, genericLogger, mockReturnService)
 
   "getReturnPeriods" - {
     "when the call returns variable returnPeriods" - {
@@ -209,9 +204,6 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar with Vari
       }
     }
   }
-
-
-
 
   "submitVariation" - {
     "Create returnVariationData structure and submit unsuccessfully using the connector" in {
@@ -415,9 +407,9 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar with Vari
   "calculateAmounts" - {
     "should call the returns service and return the amounts" in {
 
-      when(mockReturnService.calculateAmounts(sdilReference, userAnswersForCorrectReturnWithEmptySdilReturn, requestReturnPeriod)
+      when(mockReturnService.calculateAmounts(sdilReference, userAnswersForCorrectReturnWithEmptySdilReturn, returnPeriod.head)
       (hc, ec)).thenReturn(createSuccessVariationResult(amounts))
-      val res = orchestrator.calculateAmounts(sdilReference, userAnswersForCorrectReturnWithEmptySdilReturn, requestReturnPeriod)
+      val res = orchestrator.calculateAmounts(sdilReference, userAnswersForCorrectReturnWithEmptySdilReturn, returnPeriod.head)
 
       whenReady(res.value) { result =>
         result mustBe Right(amounts)

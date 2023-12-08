@@ -24,17 +24,15 @@ import models.SelectChange.CorrectReturn
 import models.backend.RetrievedSubscription
 import models.correctReturn.ChangedPage
 import models.requests.DataRequest
-import models.{Amounts, SdilReturn, UserAnswers}
+import models.{SdilReturn, UserAnswers}
 import orchestrators.CorrectReturnOrchestrator
 import pages.correctReturn.CorrectReturnUpdateDonePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
-import services.ReturnService
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilities.GenericLogger
 import views.html.correctReturn.CorrectReturnCheckChangesCYAView
-import views.summary.correctReturn.{CorrectReturnBaseCYASummary, CorrectReturnCheckChangesSummary}
+import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -44,7 +42,6 @@ class CorrectReturnCheckChangesCYAController @Inject()(
                                             val controllerComponents: MessagesControllerComponents,
                                             val requiredUserAnswers: RequiredUserAnswersForCorrectReturn,
                                             view: CorrectReturnCheckChangesCYAView,
-                                            returnService: ReturnService,
                                             correctReturnOrchestrator: CorrectReturnOrchestrator,
                                             genericLogger: GenericLogger,
                                             val errorHandler: ErrorHandler
@@ -83,7 +80,8 @@ class CorrectReturnCheckChangesCYAController @Inject()(
   private def submitUserAnswers(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit request: DataRequest[AnyContent]):Future[Result]  = {
     correctReturnOrchestrator.submitUserAnswers(userAnswers).flatMap{
       case true => submitReturnVariation(userAnswers, subscription)
-      case false => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - received a failed response from return submission")
+      case false => genericLogger.logger
+        .error(s"${getClass.getName} - ${request.userAnswers.id} - received a failed response from return submission")
         Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
     }
   }
@@ -92,10 +90,12 @@ class CorrectReturnCheckChangesCYAController @Inject()(
     correctReturnOrchestrator.submitReturnVariation(request.userAnswers, request.subscription).map(result =>
       result.value.flatMap {
         case Right(_) =>  submitActivityVariation(userAnswers,subscription)
-        case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - received a failed response from return submission")
+        case Left(_) => genericLogger.logger
+          .error(s"${getClass.getName} - ${request.userAnswers.id} - received a failed response from return submission")
           Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
       }).getOrElse{
-      genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to submit return variation due failing to retrieve user answers")
+      genericLogger.logger
+        .error(s"${getClass.getName} - ${request.userAnswers.id} - failed to submit return variation due failing to retrieve user answers")
           Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
     }
   }

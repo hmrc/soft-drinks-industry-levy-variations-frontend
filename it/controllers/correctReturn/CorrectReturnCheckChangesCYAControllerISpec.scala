@@ -479,7 +479,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
       }
 
       s"when the balance has failed" - {
-        "the user should be redirected to select change and the error should be logged" in {
+        "the user should receive a server error" in {
           val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(BroughtIntoUKPage, HowManyBroughtIntoUKPage)
             .copy(warehouseList = warehousesFromSubscription)
             .set(CorrectionReasonPage, "I forgot something").success.value
@@ -489,17 +489,16 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
           setAnswers(userAnswers)
 
-          given.sdilBackend.balance("", false)
+          given.sdilBackend.balancefailure("", false)
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.SelectChangeController.onPageLoad.url)
+              res.status mustBe 500
             }
           }
         }
       }
-
     }
 
     testUnauthorisedUser(baseUrl + route)

@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import controllers.actions.{ControllerActions, RequiredUserAnswersForCorrectReturn}
 import controllers.routes
 import handlers.ErrorHandler
-import models.{Amounts, SdilReturn}
+import models.SdilReturn
 import models.correctReturn.ChangedPage
 import orchestrators.CorrectReturnOrchestrator
 import pages.correctReturn.CorrectReturnUpdateDonePage
@@ -32,8 +32,8 @@ import utilities.GenericLogger
 import views.html.correctReturn.CorrectReturnUpdateDoneView
 import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 
-import java.time.{LocalDateTime, ZoneId}
 import java.time.format.DateTimeFormatter
+import java.time.{LocalDateTime, ZoneId}
 import scala.concurrent.{ExecutionContext, Future}
 
 class CorrectReturnUpdateDoneController @Inject()(
@@ -59,7 +59,7 @@ class CorrectReturnUpdateDoneController @Inject()(
                 val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSDILReturn)
                 val returnPeriod = request.userAnswers.correctReturnPeriod
                 val sections = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(
-                  request.userAnswers, request.subscription, changedPages, amounts, isCheckAnswers = false)
+                  request.userAnswers, request.subscription, changedPages, isCheckAnswers = false, amounts)
                 request.userAnswers.submittedOn match {
                   case Some(submittedOnDate) =>
                     val getSentDateTime = LocalDateTime.ofInstant(submittedOnDate, ZoneId.of("Europe/London"))
@@ -71,7 +71,8 @@ class CorrectReturnUpdateDoneController @Inject()(
                     val returnPeriodEnd = returnPeriod.head.end.format(returnPeriodFormat)
 
                     Ok(view(orgName, sections, formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd))
-                  case None => genericLogger.logger.error(s"[SoftDrinksIndustryLevyService [submitVariation] - unexpected response while attempting to retreive userAnswers submittedOnDate")
+                  case None => genericLogger.logger
+                    .error(s"[SoftDrinksIndustryLevyService [submitVariation] - unexpected response while attempting to retreive userAnswers submittedOnDate")
                     Redirect(routes.SelectChangeController.onPageLoad)
                 }
               case Left(_) =>
