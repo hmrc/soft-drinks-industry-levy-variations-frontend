@@ -20,7 +20,7 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.correctReturn.RemoveSmallProducerConfirmFormProvider
 import models.SelectChange.CorrectReturn
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode, SmallProducer, UserAnswers}
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -76,7 +76,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         }
       }
 
-      s"must redirect to Small Producer Details when small producer not found for a GET in $mode" in {
+      s"must redirect to Exemptions Page when small producer not found for a GET in $mode" in {
 
         val userAnswers: UserAnswers = userAnswersForCorrectReturn(false).copy(smallProducerList = List.empty)
 
@@ -88,9 +88,25 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.SmallProducerDetailsController.onPageLoad(mode).url
+          redirectLocation(result).value mustEqual routes.ExemptionsForSmallProducersController.onPageLoad(mode).url
         }
       }
+
+        s"must redirect to Small Producer Details user answers contains at least one small producer for a GET in $mode" in {
+
+          val userAnswers: UserAnswers = userAnswersForCorrectReturn(false).copy(smallProducerList = List(SmallProducer("", "XZSDIL000000234", (2000, 4000))))
+
+          val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+          running(application) {
+            val request = FakeRequest(GET, controllerRoute)
+
+            val result = route(application, request).value
+
+            status(result) mustEqual SEE_OTHER
+            redirectLocation(result).value mustEqual routes.SmallProducerDetailsController.onPageLoad(mode).url
+          }
+        }
 
       s"must not populate the view on a GET when the question has previously been answered in $mode" in {
 
