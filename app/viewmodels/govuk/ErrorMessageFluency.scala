@@ -26,10 +26,13 @@ object errorMessage extends ErrorMessageFluency
 trait ErrorMessageFluency {
 
   object ErrorMessageViewModel {
-    def apply(field: Field)(implicit messages: Messages): ErrorMessage = {
+    def apply(id: Option[String] = None, field: Field)(implicit messages: Messages): ErrorMessage = {
 //      TODO: DO THIS WITHOUT .get
       field.error.map(err => {
-        ErrorMessage(content = HtmlContent(messages(err.message, err.args: _*)))
+        ErrorMessage(
+          id = id,
+          content = HtmlContent(messages(err.message, err.args: _*))
+        )
       }).get
     }
   }

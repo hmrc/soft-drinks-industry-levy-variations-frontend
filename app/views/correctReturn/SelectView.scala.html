@@ -34,7 +34,10 @@
 @htmlContent = {
     @if(form.errors.nonEmpty) {
         @govukErrorMessage(
-            ErrorMessageViewModel(form("value"))
+            ErrorMessageViewModel(
+                id = Some("value-error"),
+                field = form("value")
+            )
         )
     }
 
@@ -52,6 +55,24 @@
     }
 }
 
+@fieldset = {
+    @if(form.errors.nonEmpty) {
+        <div class="govuk-form-group govuk-form-group--error">
+            @govukFieldset(
+                FieldsetViewModel(
+                    LegendViewModel(Text(messages("correctReturn.select.heading"))).asPageHeading()
+                ).describedBy("value-error").withHtml(htmlContent)
+            )
+        </div>
+    } else {
+        @govukFieldset(
+            FieldsetViewModel(
+                LegendViewModel(Text(messages("correctReturn.select.heading"))).asPageHeading()
+            ).withHtml(htmlContent)
+        )
+    }
+}
+
 @layout(pageTitle = title(form, messages("correctReturn.select.title"))) {
 
     @formHelper(action = routes.SelectController.onSubmit, Symbol("autoComplete") -> "off") {
@@ -60,13 +81,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0_0")))
         }
 
-        @if(form.errors.nonEmpty) {<div class="govuk-form-group govuk-form-group--error">}
-            @govukFieldset(
-                FieldsetViewModel(
-                    LegendViewModel(Text(messages("correctReturn.select.heading"))).asPageHeading()
-                ).describedBy("value-error").withHtml(htmlContent)
-            )
-        @if(form.errors.nonEmpty) {</div>}
+        @fieldset
 
         @govukDetails(
             Details(
