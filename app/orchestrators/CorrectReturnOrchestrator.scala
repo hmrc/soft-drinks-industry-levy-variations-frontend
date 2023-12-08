@@ -178,16 +178,9 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
 
   }
 
-  def separateReturnPeriodsByYear(returnPeriods: List[ReturnPeriod]): Map[Int, List[ReturnPeriod]] = {
+  def separateReturnPeriodsByYearNew(returnPeriods: List[ReturnPeriod]): List[List[ReturnPeriod]] = {
     val orderReturnPeriods = returnPeriods.distinct.sortBy(_.start).reverse
-
-    orderReturnPeriods.foldLeft(Map.empty[Int, List[ReturnPeriod]]) {
-      (returnPeriodsForYears, returnPeriod) =>
-        val year = returnPeriod.year
-        val returnPeriodsForYear = returnPeriodsForYears.get(year)
-          .fold(List(returnPeriod))(_ ++ List(returnPeriod))
-        returnPeriodsForYears ++ Map(year -> returnPeriodsForYear)
-    }
+    orderReturnPeriods.groupBy(_.year).values.toList
   }
 
   def submitUserAnswers(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext):Future[Boolean] = {

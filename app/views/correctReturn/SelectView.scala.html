@@ -29,7 +29,7 @@
     govukErrorMessage: GovukErrorMessage
 )
 
-@(form: Form[String], returnPeriodsForYears: Map[Int, List[ReturnPeriod]])(implicit request: Request[_], messages: Messages)
+@(form: Form[String], returnPeriodsForYears: List[List[ReturnPeriod]])(implicit request: Request[_], messages: Messages)
 
 @htmlContent = {
     @if(form.errors.nonEmpty) {
@@ -46,7 +46,7 @@
             RadiosViewModel(
                 field = form("value"),
                 legend = LegendViewModel(
-                    HtmlContent(s"<h2 class=\"govuk-fieldset__heading\">${returnPeriodsForYear._1.toString}</h2>")
+                    HtmlContent(s"<h2 class=\"govuk-fieldset__heading\">${returnPeriodsForYear.head.year.toString}</h2>")
                 ).withCssClass("govuk-fieldset__legend--m"),
                 items = ReturnPeriodsRadios.getRadioItemsForYear(returnPeriodsForYear, index),
                 noErrorRequired = true
