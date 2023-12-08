@@ -20,8 +20,8 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.HowManyLitresFormProvider
 import handlers.ErrorHandler
-import models.SelectChange.ChangeActivity
 import models.Mode
+import models.SelectChange.ChangeActivity
 import navigation._
 import pages.changeActivity.HowManyImportsPage
 import play.api.i18n.MessagesApi

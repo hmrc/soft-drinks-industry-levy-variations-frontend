@@ -18,6 +18,7 @@ package models
 
 import base.SpecBase
 import models.backend.{Site, UkAddress}
+import models.submission.Litreage
 import play.api.libs.json.{JsObject, Json}
 import repositories.DatedCacheMap
 import services.Encryption
@@ -33,7 +34,7 @@ class ModelEncryptionSpec extends SpecBase {
       val userAnswers = UserAnswers("id",
         SelectChange.UpdateRegisteredDetails,
         Json.obj("foo" -> "bar"),
-        List(SmallProducer("foo", "bar", (1,1))),
+        List(SmallProducer("foo", "bar", Litreage(1,1))),
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")),Some("foo"), Some("foo"),Some(LocalDate.now()))),
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")), Some("foo"))),
         UkAddress(List("123 Main Street", "Anytown"), "AB12 C34", alfId = Some("123456")),
@@ -62,7 +63,7 @@ class ModelEncryptionSpec extends SpecBase {
       val userAnswers = UserAnswers("id",
         SelectChange.UpdateRegisteredDetails,
         Json.obj("foo" -> "bar"),
-        List(SmallProducer("foo", "bar", (1,1))),
+        List(SmallProducer("foo", "bar", Litreage(1,1))),
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")),Some("foo"), Some("foo"),Some(LocalDate.now()))),
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")), Some("foo"))),
         UkAddress(List("123 Main Street", "Anytown"), "AB12 C34", alfId = Some("123456")), Some(ReturnPeriod(2023, 1)),

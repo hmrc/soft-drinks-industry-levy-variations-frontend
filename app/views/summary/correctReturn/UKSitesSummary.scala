@@ -18,7 +18,7 @@ package views.summary.correctReturn
 
 import controllers.correctReturn.routes
 import models.backend.RetrievedSubscription
-import models.{CheckMode, SdilReturn, UserAnswers}
+import models.{CheckMode, UserAnswers}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{SummaryList, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
@@ -104,8 +104,8 @@ object UKSitesSummary {
   def getHeadingAndSummary(userAnswers: UserAnswers, isCheckAnswers: Boolean, subscription: RetrievedSubscription)
                           (implicit messages: Messages): Option[(String, SummaryList)] = {
     val optSummaryList = (
-      UserTypeCheck.isNewPacker(SdilReturn.apply(userAnswers), subscription) && subscription.productionSites.isEmpty,
-      UserTypeCheck.isNewImporter(SdilReturn.apply(userAnswers), subscription) && subscription.warehouseSites.isEmpty
+      UserTypeCheck.isNewPacker(userAnswers, subscription) && subscription.productionSites.isEmpty,
+      UserTypeCheck.isNewImporter(userAnswers, subscription) && subscription.warehouseSites.isEmpty
     ) match {
       case (true, false) => Option(
         SummaryListViewModel(

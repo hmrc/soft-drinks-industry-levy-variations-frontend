@@ -16,6 +16,7 @@
 
 package models
 
+import models.submission.Litreage
 import play.api.libs.json.Json
 
 case class LitresInBands(lowBand: Long, highBand: Long) {
@@ -23,5 +24,8 @@ case class LitresInBands(lowBand: Long, highBand: Long) {
 }
 
 object LitresInBands {
+  def fromLitreage(litreage: Litreage): LitresInBands = LitresInBands(
+    lowBand = litreage.lower, highBand = litreage.higher
+  )
   implicit val format = Json.format[LitresInBands]
 }

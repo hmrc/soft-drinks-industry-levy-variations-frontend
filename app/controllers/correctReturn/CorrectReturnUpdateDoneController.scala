@@ -58,13 +58,13 @@ class CorrectReturnUpdateDoneController @Inject()(
             returnPeriod <- request.userAnswers.correctReturnPeriod
           } yield {
             val orgName: String = " " + request.subscription.orgName
-            val currentSDILReturn = SdilReturn.apply(request.userAnswers)
+            val currentSDILReturn = SdilReturn.generateFromUserAnswers(request.userAnswers)
             val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSDILReturn)
             val amounts: Amounts = Amounts(
               originalReturnTotal = originalSdilReturn.total,
-              newReturnTotal = SdilReturn(request.userAnswers).total,
+              newReturnTotal = currentSDILReturn.total,
               balanceBroughtForward = balanceBroughtForward * -1,
-              adjustedAmount = SdilReturn(request.userAnswers).total + (balanceBroughtForward * -1)
+              adjustedAmount = currentSDILReturn.total + (balanceBroughtForward * -1)
             )
             val sections = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(
               request.userAnswers, request.subscription, changedPages, amounts, isCheckAnswers = false)

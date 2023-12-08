@@ -19,15 +19,14 @@ package controllers.cancelRegistration
 import com.google.inject.Inject
 import controllers.actions.ControllerActions
 import handlers.ErrorHandler
-import models.{NormalMode, UserAnswers}
 import models.SelectChange.CancelRegistration
 import models.backend.RetrievedSubscription
 import models.requests.DataRequest
+import models.{NormalMode, UserAnswers}
 import orchestrators.CancelRegistrationOrchestrator
-import org.mongodb.scala.Subscription
 import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents, Result}
+import play.api.mvc._
 import services.SessionService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -36,7 +35,6 @@ import viewmodels.govuk.SummaryListFluency
 import viewmodels.summary.cancelRegistration.{CancelRegistrationDateSummary, ReasonSummary}
 import views.html.cancelRegistration.CancelRegistrationCYAView
 
-import java.time.Instant
 import scala.concurrent.{ExecutionContext, Future}
 
 class CancelRegistrationCYAController @Inject()(
@@ -75,15 +73,7 @@ class CancelRegistrationCYAController @Inject()(
   }
 
   private def submitUserAnswers(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit request: DataRequest[AnyContent]):Future[Result]  = {
-    cancelRegistrationOrchestrator.submitUserAnswers(userAnswers).flatMap{
-      case true => submitVariation(userAnswers, subscription)
-      case false => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - received a failed response from return submission")
-        Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
-    }
-  }
-
-  private def submitVariation(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit request: DataRequest[AnyContent]):Future[Result] = {
-    cancelRegistrationOrchestrator.submitVariation(subscription, userAnswers).value.map {
+    cancelRegistrationOrchestrator.submitVariationAndUpdateSession(subscription, userAnswers).value.map {
       case Right(_) =>
         Redirect(routes.CancellationRequestDoneController.onPageLoad.url)
       case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to cancel registration")

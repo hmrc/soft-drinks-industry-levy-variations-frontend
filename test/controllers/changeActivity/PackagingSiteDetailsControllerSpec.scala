@@ -17,24 +17,21 @@
 package controllers.changeActivity
 
 import base.SpecBase
-import errors.SessionDatabaseInsertError
 import forms.changeActivity.PackagingSiteDetailsFormProvider
-import models.{CheckMode, NormalMode}
 import models.SelectChange.ChangeActivity
+import models.{CheckMode, NormalMode}
 import navigation._
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.changeActivity.PackagingSiteDetailsPage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{status, _}
 import services.{AddressLookupService, PackingDetails, SessionService}
-import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import viewmodels.summary.changeActivity.PackagingSiteDetailsSummary
 import views.html.changeActivity.PackagingSiteDetailsView

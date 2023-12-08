@@ -26,7 +26,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setAnswers(emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packAtBusinessAddressSite))
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
@@ -83,7 +83,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setAnswers(emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packAtBusinessAddressSite))
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath)
@@ -273,7 +273,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setAnswers(emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packAtBusinessAddressSite))
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> "")
@@ -437,7 +437,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setAnswers(emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packAtBusinessAddressSite))
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> "")

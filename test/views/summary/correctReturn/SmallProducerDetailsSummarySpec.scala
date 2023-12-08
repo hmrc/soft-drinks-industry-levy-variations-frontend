@@ -17,19 +17,20 @@
 package views.summary.correctReturn
 
 import base.SpecBase
+import models.submission.Litreage
 import models.{NormalMode, SmallProducer}
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 
 class SmallProducerDetailsSummarySpec extends SpecBase {
-  override val smallProducerList: List[SmallProducer] = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", (20, 10)))
+  override val smallProducerList: List[SmallProducer] = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", Litreage(20, 10)))
   lazy val smallProducerListWithTwoProducers: List[SmallProducer] = List(
-    SmallProducer("Super Cola Plc", "XCSDIL000000069", (20, 10)),
-    SmallProducer("Soft Juice", "XMSDIL000000113", (25, 80))
+    SmallProducer("Super Cola Plc", "XCSDIL000000069", Litreage(20, 10)),
+    SmallProducer("Soft Juice", "XMSDIL000000113", Litreage(25, 80))
   )
   lazy val smallProducerListWithThreeProducers: List[SmallProducer] = List(
-    SmallProducer("Super Cola Plc", "XCSDIL000000069", (20, 10)),
-    SmallProducer("", "XMSDIL000000159", (15, 800)),
-    SmallProducer("Soft Juice", "XMSDIL000000113", (25, 80))
+    SmallProducer("Super Cola Plc", "XCSDIL000000069", Litreage(20, 10)),
+    SmallProducer("", "XMSDIL000000159", Litreage(15, 800)),
+    SmallProducer("Soft Juice", "XMSDIL000000113", Litreage(25, 80))
   )
 
   "row" - {

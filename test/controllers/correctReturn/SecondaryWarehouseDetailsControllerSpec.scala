@@ -17,13 +17,11 @@
 package controllers.correctReturn
 
 import base.SpecBase
-import errors.SessionDatabaseInsertError
 import forms.correctReturn.SecondaryWarehouseDetailsFormProvider
 import models.NormalMode
 import models.SelectChange.CorrectReturn
 import models.backend.{Site, UkAddress}
 import navigation._
-import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -35,9 +33,8 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import services.{AddressLookupService, SessionService, WarehouseDetails}
+import services.{AddressLookupService, WarehouseDetails}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
-import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import viewmodels.summary.correctReturn.SecondaryWarehouseDetailsSummary
 import views.html.correctReturn.SecondaryWarehouseDetailsView

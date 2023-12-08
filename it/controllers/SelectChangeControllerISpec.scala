@@ -113,7 +113,7 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 303
               res.header(HeaderNames.LOCATION) mustBe Some(correctReturn.routes.SelectController.onPageLoad.url)
-              val expectedUserAnswers = emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packagingSitesFromSubscription, correctReturnPeriod = None)
+              val expectedUserAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None)
               val generatedUserAnswers = getAnswers(sdilNumber)
               generatedUserAnswers mustBe defined
               generatedUserAnswers.get.copy(lastUpdated = expectedUserAnswers.lastUpdated) mustEqual expectedUserAnswers

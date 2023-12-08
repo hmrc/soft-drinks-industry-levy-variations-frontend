@@ -7,12 +7,9 @@ import models.correctReturn.RepaymentMethod
 import models.correctReturn.RepaymentMethod.BankAccount
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
 import pages.correctReturn._
 import play.api.http.Status.OK
 import play.api.libs.json.Json
-import play.api.libs.ws.DefaultWSCookie
-import play.api.test.Helpers.await
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
 import testSupport.SDILBackendTestData.aSubscription
@@ -179,7 +176,9 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
     "when the user has changed answers on select pages should render only the changed section(s)" - {
       s"when the user has changed answers on $OperatePackagingSiteOwnBrandsPage" - {
         "should render the check changes page with only the own brands section" in {
-          val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(OperatePackagingSiteOwnBrandsPage, HowManyOperatePackagingSiteOwnBrandsPage)
+          val correctReturnData = nilCorrectReturnUAData
+            .copy(operatePackagingSiteOwnBrands = true, howManyOperatePackagingSiteOwnBrands = Some(operatePackagingSiteLitres))
+          val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
             .set(CorrectionReasonPage, "I forgot something").success.value
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
           given
@@ -211,7 +210,9 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
       s"when the user has changed answers on $PackagedAsContractPackerPage" - {
         "should render the check changes page with only the packaged as contract packer section" in {
-          val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(PackagedAsContractPackerPage, HowManyPackagedAsContractPackerPage)
+          val correctReturnData = nilCorrectReturnUAData
+            .copy(packagedAsContractPacker = true, howManyPackagedAsContractPacker = Some(operatePackagingSiteLitres))
+          val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
             .set(CorrectionReasonPage, "I forgot something").success.value
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
           given
@@ -243,7 +244,9 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
       s"when the user has changed answers on $BroughtIntoUKPage" - {
         "should render the check changes page with only the Brought into the UK section" in {
-          val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(BroughtIntoUKPage, HowManyBroughtIntoUKPage)
+          val correctReturnData = nilCorrectReturnUAData
+            .copy(broughtIntoUK = true, howManyBroughtIntoUK = Some(operatePackagingSiteLitres))
+          val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
             .set(CorrectionReasonPage, "I forgot something").success.value
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
           given
@@ -276,7 +279,9 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
       s"when the user has changed answers on $BroughtIntoUkFromSmallProducersPage" - {
         "should render the check changes page with only the Brought into the UK from small producers section" in {
-          val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(BroughtIntoUkFromSmallProducersPage, HowManyBroughtIntoUkFromSmallProducersPage)
+          val correctReturnData = nilCorrectReturnUAData
+            .copy(broughtIntoUkFromSmallProducers = true, howManyBroughtIntoUkFromSmallProducers = Some(operatePackagingSiteLitres))
+          val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
             .set(CorrectionReasonPage, "I forgot something").success.value
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
           given
@@ -308,7 +313,9 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
       s"when the user has changed answers on $ClaimCreditsForExportsPage" - {
         "should render the check changes page with only the Exports section" in {
-          val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(ClaimCreditsForExportsPage, HowManyClaimCreditsForExportsPage)
+          val correctReturnData = nilCorrectReturnUAData
+            .copy(claimCreditsForExports = true, howManyClaimCreditsForExports = Some(operatePackagingSiteLitres))
+          val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
             .set(CorrectionReasonPage, "I forgot something").success.value
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
           given
@@ -340,7 +347,9 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
       s"when the user has changed answers on $ClaimCreditsForLostDamagedPage" - {
         "should render the check changes page with only the Lost Destroyed section" in {
-          val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage)
+          val correctReturnData = nilCorrectReturnUAData
+            .copy(claimCreditsForLostDamaged = true, howManyCreditsForLostDamaged = Some(operatePackagingSiteLitres))
+          val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
             .set(CorrectionReasonPage, "I forgot something").success.value
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
           given
@@ -404,7 +413,9 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
       s"when the user has changed answers on $BroughtIntoUKPage, activity of Importer is false, and they have no warehouses " - {
         "should render the check changes page with the Brought into the UK and UK site sections" in {
-          val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(BroughtIntoUKPage, HowManyBroughtIntoUKPage)
+          val correctReturnData = nilCorrectReturnUAData
+            .copy(broughtIntoUK = true, howManyBroughtIntoUK = Some(operatePackagingSiteLitres))
+          val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
             .copy(warehouseList = warehousesFromSubscription)
             .set(CorrectionReasonPage, "I forgot something").success.value
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
@@ -443,7 +454,9 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
       s"when the user has made their changes" - {
         "should render the check changes page with balance" in {
-          val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(BroughtIntoUKPage, HowManyBroughtIntoUKPage)
+          val correctReturnData = nilCorrectReturnUAData
+            .copy(broughtIntoUK = true, howManyBroughtIntoUK = Some(operatePackagingSiteLitres))
+          val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
             .copy(warehouseList = warehousesFromSubscription)
             .set(CorrectionReasonPage, "I forgot something").success.value
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
@@ -481,7 +494,9 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
       s"when the balance has failed" - {
         "the user should be redirected to select change and the error should be logged" in {
-          val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(BroughtIntoUKPage, HowManyBroughtIntoUKPage)
+          val correctReturnData = nilCorrectReturnUAData
+            .copy(broughtIntoUK = true, howManyBroughtIntoUK = Some(operatePackagingSiteLitres))
+          val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
             .copy(warehouseList = warehousesFromSubscription)
             .set(CorrectionReasonPage, "I forgot something").success.value
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
@@ -511,8 +526,8 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
     "should redirect to select return to correct page" in {
       given
         .commonPrecondition
-        .sdilBackend.submitVariationSuccess("XKSDIL000000022")
-        .sdilBackend.submitReturnsVariation("XKSDIL000000022")
+        .sdilBackend.submitSdilReturnsVary("XKSDIL000000022")
+        .sdilBackend.submitReturnVariations("XKSDIL000000022")
 
       setAnswers(userAnswerWithLitresForAllPagesNilSdilReturn
         .set(CorrectionReasonPage, "No longer sell drinks").success.value

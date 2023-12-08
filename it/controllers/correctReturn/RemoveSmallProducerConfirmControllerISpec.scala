@@ -2,6 +2,7 @@ package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.CorrectReturn
+import models.submission.Litreage
 import models.{CheckMode, NormalMode, SmallProducer}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
@@ -31,7 +32,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, (smallLitre, largeLitre)))))
+        setAnswers(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
@@ -57,7 +58,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(userAnswers.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, (smallLitre, largeLitre)))))
+          setAnswers(userAnswers.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
@@ -86,8 +87,8 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
     userAnswersForCorrectReturnRemoveSmallProducerConfirmPage.foreach { case (key, userAnswers) =>
       val userAnswersWithTwoSmallProducers = userAnswers
         .copy(smallProducerList = List(
-          SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, (smallLitre, largeLitre)),
-          SmallProducer(aliasPartyDrinks, anotherSdilRef, (smallLitre, largeLitre))
+          SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)),
+          SmallProducer(aliasPartyDrinks, anotherSdilRef, Litreage(smallLitre, largeLitre))
         ))
       "when the user selects " + key + "and initially has more than one small producer" - {
         "should update the session with the new value and redirect to the small producer details" - {
@@ -134,7 +135,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
           }
         }
       }
-      val userAnswersWithOneSmallProducer = userAnswers.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, (smallLitre, largeLitre))))
+      val userAnswersWithOneSmallProducer = userAnswers.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre))))
       "when the user selects " + key + "and initially has one small producer" - {
         "should update the session with the new value and redirect to the small producer details page for false and exemptions for small producers for true" - {
           "when the session contains no data for page" in {
@@ -197,7 +198,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, (smallLitre, largeLitre)))))
+        setAnswers(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> "")
@@ -228,7 +229,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, (smallLitre, largeLitre)))))
+        setAnswers(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath)
@@ -254,7 +255,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(userAnswers.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, (smallLitre, largeLitre)))))
+          setAnswers(userAnswers.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath)
@@ -283,8 +284,8 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
     userAnswersForCorrectReturnRemoveSmallProducerConfirmPage.foreach { case (key, userAnswers) =>
       val userAnswersWithTwoSmallProducers = userAnswers
         .copy(smallProducerList = List(
-          SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, (smallLitre, largeLitre)),
-          SmallProducer(aliasPartyDrinks, anotherSdilRef, (smallLitre, largeLitre))
+          SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)),
+          SmallProducer(aliasPartyDrinks, anotherSdilRef, Litreage(smallLitre, largeLitre))
         ))
       "when the user selects " + key + "and initially has more than one small producer" - {
         "should update the session with the new value and redirect to the small producer details" - {
@@ -331,7 +332,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
           }
         }
       }
-      val userAnswersWithOneSmallProducer = userAnswers.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, (smallLitre, largeLitre))))
+      val userAnswersWithOneSmallProducer = userAnswers.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre))))
       "when the user selects " + key + "and initially has one small producer" - {
         "should update the session with the new value and redirect to the small producer details page for false and exemptions for small producers for true" - {
           "when the session contains no data for page" in {
@@ -394,7 +395,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, (smallLitre, largeLitre)))))
+        setAnswers(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> "")

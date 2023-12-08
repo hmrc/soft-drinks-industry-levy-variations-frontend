@@ -20,6 +20,7 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.correctReturn.RemoveSmallProducerConfirmFormProvider
 import models.SelectChange.CorrectReturn
+import models.submission.Litreage
 import models.{CheckMode, NormalMode, SmallProducer, UserAnswers}
 import navigation._
 import org.jsoup.Jsoup
@@ -30,7 +31,6 @@ import pages.correctReturn.RemoveSmallProducerConfirmPage
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.inject.bind
-import play.api.libs.json.{JsObject, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -94,7 +94,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
         s"must redirect to Small Producer Details user answers contains at least one small producer for a GET in $mode" in {
 
-          val userAnswers: UserAnswers = userAnswersForCorrectReturn(false).copy(smallProducerList = List(SmallProducer("", "XZSDIL000000234", (2000, 4000))))
+          val userAnswers: UserAnswers = userAnswersForCorrectReturn(false).copy(smallProducerList = List(SmallProducer("", "XZSDIL000000234", Litreage(2000, 4000))))
 
           val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 

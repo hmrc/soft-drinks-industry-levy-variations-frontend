@@ -78,7 +78,6 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
         bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute))
       )
         .build()
-      println(Console.YELLOW + userAnswers + Console.WHITE)
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request = FakeRequest(GET, removeWarehouseDetailsRoute)

@@ -56,9 +56,9 @@ class CorrectReturnCYAController @Inject()(override
               request.subscription,
               amounts = Amounts(
                 originalReturnTotal = originalSdilReturn.total,
-                newReturnTotal = SdilReturn(request.userAnswers).total,
+                newReturnTotal = SdilReturn.generateFromUserAnswers(request.userAnswers).total,
                 balanceBroughtForward = balanceBroughtForward * -1,
-                adjustedAmount = SdilReturn(request.userAnswers).total + (balanceBroughtForward * -1)
+                adjustedAmount = SdilReturn.generateFromUserAnswers(request.userAnswers).total + (balanceBroughtForward * -1)
               )
             )
           }

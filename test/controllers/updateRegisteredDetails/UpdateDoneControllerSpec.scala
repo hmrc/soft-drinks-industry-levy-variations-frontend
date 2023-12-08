@@ -75,8 +75,6 @@ class UpdateDoneControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[UpdateDoneView]
-
         status(result) mustEqual SEE_OTHER
       }
     }

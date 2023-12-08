@@ -19,35 +19,30 @@ package orchestrators
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import errors._
-import models.correctReturn.CorrectReturnUserAnswersData
-import models.correctReturn.RepaymentMethod.BankAccount
-import models.submission.ReturnVariationData
-import models.{ReturnPeriod, SdilReturn, SelectChange, SmallProducer, UserAnswers, VariationsSubmissionDataHelper}
+import models.correctReturn.{CorrectReturnUserAnswersData, RepaymentMethod}
+import models.submission.Litreage
+import models.{LitresInBands, ReturnPeriod, SdilReturn, SelectChange, SmallProducer, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.MockitoSugar.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.correctReturn._
-import play.api.inject.bind
 import play.api.libs.json.{JsString, Json, Writes}
-import play.api.test.Helpers.running
-import service.VariationResult
-import services.SessionService
-import utilities.GenericLogger
+import services.{ReturnService, SessionService}
 
-import java.time.ZoneOffset
+import java.time.{Instant, ZoneOffset}
 import scala.concurrent.Future
 import scala.util.{Failure, Try}
 
-class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar with VariationsSubmissionDataHelper {
+class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
 
   val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
+  val mockReturnsService: ReturnService = mock[ReturnService]
   val mockSessionService: SessionService = mock[SessionService]
-  val genericLogger = new GenericLogger
 
-  val emptyReturn: SdilReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0), submittedOn =
+  val emptyReturn: SdilReturn = SdilReturn(Litreage(0, 0), Litreage(0, 0), List.empty, Litreage(0, 0), Litreage(0, 0), Litreage(0, 0), Litreage(0, 0), submittedOn =
     Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
-  val populatedReturn: SdilReturn = SdilReturn((100, 200), (200, 100),
-    smallProducerList, (300, 400), (400, 300), (50, 60), (60, 50),
+  val populatedReturn: SdilReturn = SdilReturn(Litreage(100, 200), Litreage(200, 100),
+    smallProducerList, Litreage(300, 400), Litreage(400, 300), Litreage(50, 60), Litreage(60, 50),
     submittedOn = Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
 
   val sdilReturnsExamples: Map[String, SdilReturn] = Map("a nilReturn" -> emptyReturn, "not a nilReturn" -> populatedReturn)
@@ -58,7 +53,11 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar with Vari
     expectedCorrectReturnDataForPopulatedReturn
   }
 
-  val orchestrator = new CorrectReturnOrchestrator(mockSdilConnector, mockSessionService, genericLogger)
+  val submittedInstant = submittedDateTime.toInstant(ZoneOffset.UTC)
+
+  val orchestrator = new CorrectReturnOrchestrator(mockReturnsService, mockSdilConnector, mockSessionService) {
+    override def instantNow: Instant = submittedInstant
+  }
 
   "getReturnPeriods" - {
     "when the call returns variable returnPeriods" - {
@@ -204,147 +203,122 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar with Vari
     }
   }
 
+  "submitReturn" - {
 
+    "should return unit" - {
+      "when the calls to submit sdilReturnVary and returns variation are successful" - {
+        "and the user answers contain the correctReturn returnPeriod, all correctReturn data and the original return" in {
 
+          val litres = LitresInBands(2000, 4000)
+          val litreage = Litreage(2000, 4000)
+          val returnPeriod = returnPeriodList.head
+          val correctReturnUserAnswersData = CorrectReturnUserAnswersData(
+            true, Some(litres),
+            true, Some(litres),
+            false,
+            true, Some(litres),
+            true, Some(litres),
+            true, Some(litres),
+            true, Some(litres)
+          )
+          val smallProducerList = List(SmallProducer("", "XZSDIL000000234", Litreage(2000, 4000)))
 
-  "submitVariation" - {
-    "Create returnVariationData structure and submit unsuccessfully using the connector" in {
-      val currentReturnPeriod = ReturnPeriod(2023, 1)
-      val userAnswers: UserAnswers = completedUserAnswersForCorrectReturnNewPackerOrImporter
-        .copy(
-          data = Json.obj(
-            fields =
-              "originalSDILReturn" -> Json.toJson(populatedReturn),
-            "correctReturn" ->
-              Json.obj("operatePackagingSiteOwnBrands" -> false, "packagedAsContractPacker" -> false,
-                "exemptionsForSmallProducers" -> false, "broughtIntoUK" -> false, "broughtIntoUkFromSmallProducers" -> false,
-                "claimCreditsForExports" -> false, "claimCreditsForLostDamaged" -> false
-              )
-          ),
-          packagingSiteList = Map.empty, warehouseList = Map.empty,
-          correctReturnPeriod = Some(currentReturnPeriod),
-          smallProducerList = List(SmallProducer("", "XZSDIL000000234", (2000, 4000))))
-        .set(RepaymentMethodPage, BankAccount).success.value
-        .set(CorrectionReasonPage, "N/A").success.value
+          val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+            .copy(packagingSiteList = Map.empty, warehouseList = Map.empty)
+            .setForCorrectReturn(correctReturnUserAnswersData, smallProducerList, returnPeriod).success.value
+            .set(CorrectionReasonPage, "foo").success.value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+            .setOriginalSDILReturn(emptySdilReturn).success.value
 
+          val expectedRevisedReturn = SdilReturn(
+            litreage, litreage, smallProducerList, litreage, litreage, litreage, litreage, submittedOn = Some(submittedInstant))
 
-      applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[SessionService].toInstance(mockSessionService))
-        .build()
+          when(mockReturnsService.submitSdilReturnsVary(aSubscription,
+            userAnswers, emptySdilReturn, returnPeriod, expectedRevisedReturn)(hc)).thenReturn(createSuccessVariationResult(Right(): Unit))
 
-      running(application) {
-        val constructReturnVariationData = orchestrator.constructReturnVariationData(userAnswers,aSubscription)
-        val constructActivityVariation = orchestrator.constructActivityVariation(userAnswers,aSubscription)
-        val returnPeriod = userAnswers.correctReturnPeriod.get
-        val revisedReturn = userAnswers.getCorrectReturnData.get
-        val returnVariationData = ReturnVariationData(
-          original = userAnswers.getCorrectReturnOriginalSDILReturnData.get,
-          revised = SdilReturn(
-            ownBrand = revisedReturn.howManyOperatePackagingSiteOwnBrands.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-            packLarge = revisedReturn.howManyPackagedAsContractPacker.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-            packSmall = userAnswers.smallProducerList,
-            importLarge = revisedReturn.howManyCreditsForLostDamaged.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-            importSmall = revisedReturn.howManyBroughtIntoUkFromSmallProducers.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-            export = revisedReturn.howManyClaimCreditsForExports.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-            wastage = revisedReturn.howManyCreditsForLostDamaged.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-            submittedOn = None
-          ),
-          period = returnPeriod,
-          orgName = aSubscription.orgName,
-          address = aSubscription.address,
-          reason = userAnswers.get(CorrectionReasonPage).get,
-          repaymentMethod = Some(userAnswers.get(RepaymentMethodPage).toString),
-        )
+          when(mockReturnsService.submitReturnVariation(aSubscription,
+            expectedRevisedReturn, userAnswers, correctReturnUserAnswersData)(hc)).thenReturn(createSuccessVariationResult(Right(): Unit))
 
+          when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
+          val res = orchestrator.submitReturn(userAnswers, aSubscription)(hc, ec)
 
-        when( mockSdilConnector.submitReturnsVariation(aSubscription.sdilRef, constructReturnVariationData.get)(hc))
-          .thenReturn(createFailureVariationResult(UnexpectedResponseFromSDIL))
-
-        val returnVariationResult:Option[VariationResult[Unit]] = orchestrator.submitReturnVariation(userAnswers, aSubscription)(hc, ec)
-
-        whenReady(returnVariationResult.get.value){result =>
-          result mustEqual Left(UnexpectedResponseFromSDIL)
-        }
-
-        when(mockSdilConnector.submitVariation(constructActivityVariation, aSubscription.sdilRef)(hc))
-          .thenReturn(createFailureVariationResult(UnexpectedResponseFromSDIL))
-
-        val submitActivityVariation: VariationResult[Unit] = orchestrator.submitActivityVariation(userAnswers, aSubscription)(hc, ec)
-
-        whenReady(submitActivityVariation.value){ result =>
-          result mustEqual Left(UnexpectedResponseFromSDIL)
-        }
-        }
-      }
-    }
-
-    "Create returnVariationData structure and submit successfully using the connector" in {
-      val currentReturnPeriod = ReturnPeriod(2023, 1)
-      val userAnswers: UserAnswers = completedUserAnswersForCorrectReturnNewPackerOrImporter
-        .copy(
-          data = Json.obj(
-            fields =
-              "originalSDILReturn" -> Json.toJson(populatedReturn),
-            "correctReturn" ->
-              Json.obj("operatePackagingSiteOwnBrands" -> false, "packagedAsContractPacker" -> false,
-                "exemptionsForSmallProducers" -> false, "broughtIntoUK" -> false, "broughtIntoUkFromSmallProducers" -> false,
-                "claimCreditsForExports" -> false, "claimCreditsForLostDamaged" -> false
-              )
-          ),
-          packagingSiteList = Map.empty, warehouseList = Map.empty,
-          correctReturnPeriod = Some(currentReturnPeriod),
-          smallProducerList = List(SmallProducer("", "XZSDIL000000234", (2000, 4000))))
-        .set(RepaymentMethodPage, BankAccount).success.value
-        .set(CorrectionReasonPage, "N/A").success.value
-
-
-      applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(bind[SessionService].toInstance(mockSessionService))
-        .build()
-
-      running(application) {
-        val constructReturnVariationData = orchestrator.constructReturnVariationData(userAnswers,aSubscription)
-        val constructActivityVariation = orchestrator.constructActivityVariation(userAnswers,aSubscription)
-        val returnPeriod = userAnswers.correctReturnPeriod.get
-        val revisedReturn = userAnswers.getCorrectReturnData.get
-        val returnVariationData = ReturnVariationData(
-          original = userAnswers.getCorrectReturnOriginalSDILReturnData.get,
-          revised = SdilReturn(
-            ownBrand = revisedReturn.howManyOperatePackagingSiteOwnBrands.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-            packLarge = revisedReturn.howManyPackagedAsContractPacker.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-            packSmall = userAnswers.smallProducerList,
-            importLarge = revisedReturn.howManyCreditsForLostDamaged.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-            importSmall = revisedReturn.howManyBroughtIntoUkFromSmallProducers.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-            export = revisedReturn.howManyClaimCreditsForExports.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-            wastage = revisedReturn.howManyCreditsForLostDamaged.map(litres => (litres.lowBand, litres.highBand)).getOrElse(0, 0),
-            submittedOn = None
-          ),
-          period = returnPeriod,
-          orgName = aSubscription.orgName,
-          address = aSubscription.address,
-          reason = userAnswers.get(CorrectionReasonPage).get,
-          repaymentMethod = Some(userAnswers.get(RepaymentMethodPage).toString),
-        )
-
-
-        when( mockSdilConnector.submitReturnsVariation(aSubscription.sdilRef, constructReturnVariationData.get)(hc))
-          .thenReturn(createSuccessVariationResult((): Unit))
-
-        val returnVariationResult:Option[VariationResult[Unit]] = orchestrator.submitReturnVariation(userAnswers, aSubscription)(hc, ec)
-
-        whenReady(returnVariationResult.get.value){result =>
-          result mustEqual Right((): Unit)
-        }
-
-        when(mockSdilConnector.submitVariation(constructActivityVariation, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
-
-        val submitActivityVariation: VariationResult[Unit] = orchestrator.submitActivityVariation(userAnswers, aSubscription)(hc, ec)
-
-          whenReady(submitActivityVariation.value){ result =>
-            result mustEqual Right((): Unit)
+          whenReady(res.value) { result =>
+            result mustBe Right((): Unit)
           }
+        }
       }
     }
+
+    "should return MissingRequiredAnswers" - {
+      "when the user answers doesn't contain the returnPeriod" in {
+        val litres = LitresInBands(2000, 4000)
+        val correctReturnUserAnswersData = CorrectReturnUserAnswersData(
+          true, Some(litres),
+          true, Some(litres),
+          false,
+          true, Some(litres),
+          true, Some(litres),
+          true, Some(litres),
+          true, Some(litres)
+        )
+
+        val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+          .copy(correctReturnPeriod = None, packagingSiteList = Map.empty, warehouseList = Map.empty,
+            data = Json.obj(("correctReturn", Json.toJson(correctReturnUserAnswersData))))
+          .set(CorrectionReasonPage, "foo").success.value
+          .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+          .setOriginalSDILReturn(emptySdilReturn).success.value
+
+        val res = orchestrator.submitReturn(userAnswers, aSubscription)(hc, ec)
+
+        whenReady(res.value) { result =>
+          result mustBe Left(MissingRequiredAnswers)
+        }
+      }
+
+      "when the user answers doesn't contain the originalReturn" in {
+        val litres = LitresInBands(2000, 4000)
+        val returnPeriod = returnPeriodList.head
+        val correctReturnUserAnswersData = CorrectReturnUserAnswersData(
+          true, Some(litres),
+          true, Some(litres),
+          false,
+          true, Some(litres),
+          true, Some(litres),
+          true, Some(litres),
+          true, Some(litres)
+        )
+
+        val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+          .copy(correctReturnPeriod = Some(returnPeriod), packagingSiteList = Map.empty, warehouseList = Map.empty,
+            data = Json.obj(("correctReturn", Json.toJson(correctReturnUserAnswersData))))
+          .set(CorrectionReasonPage, "foo").success.value
+          .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+
+        val res = orchestrator.submitReturn(userAnswers, aSubscription)(hc, ec)
+
+        whenReady(res.value) { result =>
+          result mustBe Left(MissingRequiredAnswers)
+        }
+      }
+
+      "when the user answers doesn't contain the correctReturnData" in {
+        val returnPeriod = returnPeriodList.head
+
+        val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+          .copy(packagingSiteList = Map.empty, warehouseList = Map.empty, correctReturnPeriod = Some(returnPeriod))
+          .set(CorrectionReasonPage, "foo").success.value
+          .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+          .setOriginalSDILReturn(emptySdilReturn).success.value
+
+        val res = orchestrator.submitReturn(userAnswers, aSubscription)(hc, ec)
+
+        whenReady(res.value) { result =>
+          result mustBe Left(MissingRequiredAnswers)
+        }
+      }
+    }
+  }
 
 
   "separateReturnPeriodsByYear" - {

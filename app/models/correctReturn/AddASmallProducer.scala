@@ -16,6 +16,7 @@
 
 package models.correctReturn
 
+import models.submission.Litreage
 import models.{LitresInBands, SmallProducer}
 import play.api.libs.json._
 
@@ -25,5 +26,5 @@ object AddASmallProducer {
   implicit val format = Json.format[AddASmallProducer]
 
   def toSmallProducer(addASmallProducer: AddASmallProducer): SmallProducer =
-    SmallProducer(addASmallProducer.producerName.getOrElse(""), addASmallProducer.referenceNumber, (addASmallProducer.litres.lowBand, addASmallProducer.litres.highBand))
+    SmallProducer(addASmallProducer.producerName.getOrElse(""), addASmallProducer.referenceNumber, Litreage.fromLitresInBands(addASmallProducer.litres))
 }

@@ -1,16 +1,16 @@
 package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
-import models.{CheckMode, NormalMode}
 import models.SelectChange.CorrectReturn
-import models.alf.init.{AppLevelLabels, ConfirmPageConfig, EditPageLabels, JourneyConfig, JourneyLabels, JourneyOptions, LanguageLabels, LookupPageLabels, SelectPageConfig, TimeoutConfig}
+import models.alf.init._
+import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.scalatest.TryValues
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.correctReturn.PackAtBusinessAddressPage
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.Json
 import play.api.test.WsTestClient
 import testSupport.helpers.ALFTestHelper
 
@@ -326,7 +326,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe yesSelected
                   updatedAnswers.map(data => data.packagingSiteList) mustBe
-                    Some(packagingSitesFromSubscription ++ packAtBusinessAddressSite)
+                    Some(packAtBusinessAddressSite)
                 }
               }
             }
@@ -338,7 +338,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
                 .commonPrecondition
 
               val userAnswersWithPreviousSelection = if (previousKey == "yes") {
-                userAnswers.copy(packagingSiteList = packagingSitesFromSubscription ++ packAtBusinessAddressSite)
+                userAnswers.copy(packagingSiteList = packAtBusinessAddressSite)
               } else {
                 userAnswers
               }
@@ -357,8 +357,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
                     val dataStoredForPage = updatedAnswers.fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
                     dataStoredForPage.nonEmpty mustBe true
                     dataStoredForPage.get mustBe yesSelected
-                    updatedAnswers.map(data => data.packagingSiteList) mustBe
-                    Some(if (yesSelected) packagingSitesFromSubscription ++ packAtBusinessAddressSite else packagingSitesFromSubscription)
+                    updatedAnswers.map(data => data.packagingSiteList) mustBe Some(packAtBusinessAddressSite)
                   }
                 }
               }
@@ -396,7 +395,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe yesSelected
                   updatedAnswers.map(data => data.packagingSiteList) mustBe
-                    Some(if (yesSelected) packagingSitesFromSubscription ++ packAtBusinessAddressSite else packagingSitesFromSubscription)
+                    Some(if (yesSelected) packAtBusinessAddressSite else Map.empty)
                 }
               }
             }
@@ -407,12 +406,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
               given
                 .commonPrecondition
 
-              val userAnswersWithPreviousSelection = if (previousKey == "yes") {
-                userAnswers.copy(packagingSiteList = packagingSitesFromSubscription ++ packAtBusinessAddressSite)
-              } else {
-                userAnswers
-              }
-              setAnswers(userAnswersWithPreviousSelection)
+              setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val yesSelected = key == "yes"
                 val result = createClientRequestPOST(
@@ -428,7 +422,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
                     dataStoredForPage.nonEmpty mustBe true
                     dataStoredForPage.get mustBe yesSelected
                     updatedAnswers.map(data => data.packagingSiteList) mustBe
-                      Some(if (yesSelected) packagingSitesFromSubscription ++ packAtBusinessAddressSite else packagingSitesFromSubscription)
+                      Some(if (yesSelected) packAtBusinessAddressSite else Map.empty)
                   }
                 }
               }

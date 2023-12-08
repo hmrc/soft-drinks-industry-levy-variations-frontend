@@ -29,13 +29,10 @@ import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.ReturnService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.SummaryListFluency
 import views.html.updateRegisteredDetails.UpdateRegisteredDetailsCYAView
 import views.summary.updateRegisteredDetails.{BusinessAddressSummary, UKSitesSummary, UpdateContactDetailsSummary}
-
-import scala.concurrent.Future
 
 class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryListFluency {
 
@@ -79,7 +76,6 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
 
       running(application) {
         val request = FakeRequest(POST, UpdateRegisteredDetailsCYAController.onPageLoad.url).withFormUrlEncodedBody()
-        when(mockOrchestrator.submitUserAnswers(any())(any(), any())) thenReturn Future.successful(true)
         when(mockOrchestrator.submitVariation(any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
 
         val result = route(application, request).value

@@ -18,7 +18,6 @@ package controllers.updateRegisteredDetails
 
 import base.SpecBase
 import base.SpecBase.userAnswerTwoWarehousesUpdateRegisteredDetails
-import errors.SessionDatabaseInsertError
 import forms.updateRegisteredDetails.WarehouseDetailsFormProvider
 import models.SelectChange.UpdateRegisteredDetails
 import models.updateRegisteredDetails.ChangeRegisteredDetails
@@ -31,14 +30,14 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.updateRegisteredDetails.{ChangeRegisteredDetailsPage, WarehouseDetailsPage}
+import pages.updateRegisteredDetails.ChangeRegisteredDetailsPage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import services.{AddressLookupService, SessionService, WarehouseDetails}
+import services.{AddressLookupService, WarehouseDetails}
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import views.html.updateRegisteredDetails.WarehouseDetailsView

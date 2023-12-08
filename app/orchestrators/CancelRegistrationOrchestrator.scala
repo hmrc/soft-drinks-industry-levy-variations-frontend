@@ -16,6 +16,7 @@
 
 package orchestrators
 
+import cats.data.EitherT
 import connectors.SoftDrinksIndustryLevyConnector
 import models.UserAnswers
 import models.backend.RetrievedSubscription
@@ -24,15 +25,13 @@ import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
 import service.VariationResult
 import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
-import utilities.GenericLogger
 
 import java.time.Instant
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class CancelRegistrationOrchestrator @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
-                                               sessionService: SessionService,
-                                               genericLogger: GenericLogger) {
+                                               sessionService: SessionService) {
 
   private def getVariationToBeSubmitted(subscription: RetrievedSubscription,
                                         userAnswers: UserAnswers): VariationsSubmission = {
@@ -45,19 +44,12 @@ class CancelRegistrationOrchestrator @Inject()(sdilConnector: SoftDrinksIndustry
     )
   }
 
-  def submitUserAnswers(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext):Future[Boolean] = {
-    sessionService.set(userAnswers.copy(submittedOn = Some(Instant.now))).map {
-      case Right(_) => true
-      case Left(_) => genericLogger.logger.error(s"Failed to set value in session repository while attempting set on submittedOn")
-        false
-    }
-  }
-
-  def submitVariation(subscription: RetrievedSubscription, userAnswers: UserAnswers)
-                     (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = {
+  def submitVariationAndUpdateSession(subscription: RetrievedSubscription, userAnswers: UserAnswers)
+                                     (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = {
     val cancelRegistrationVariation = getVariationToBeSubmitted(subscription, userAnswers)
     for {
       variation <- sdilConnector.submitVariation(cancelRegistrationVariation, subscription.sdilRef)
+      _ <- EitherT(sessionService.set(userAnswers.copy(submittedOn = Some(Instant.now))))
     } yield variation
   }
 }

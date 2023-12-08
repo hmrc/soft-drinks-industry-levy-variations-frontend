@@ -20,6 +20,7 @@ import base.SpecBase
 import controllers.correctReturn.routes._
 import models.SelectChange.CorrectReturn
 import models.correctReturn.AddASmallProducer
+import models.submission.Litreage
 import models.{LitresInBands, SmallProducer}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -45,7 +46,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
       val litres = LitresInBands(100, 200)
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
-          smallProducerList = List(SmallProducer("", "XZSDIL000000234", (2000, 4000))))
+          smallProducerList = List(SmallProducer("", "XZSDIL000000234", Litreage(2000, 4000))))
         .set(OperatePackagingSiteOwnBrandsPage, true).success.value
         .set(HowManyOperatePackagingSiteOwnBrandsPage, litres).success.value
         .set(PackagedAsContractPackerPage, false).success.value

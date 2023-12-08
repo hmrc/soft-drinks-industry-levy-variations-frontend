@@ -23,8 +23,9 @@ import play.api.libs.json.JsPath
 
 case object HowManyCreditsForLostDamagedPage extends QuestionPage[LitresInBands] {
 
-  override def path: JsPath = JsPath \ toString
+  override def path: JsPath = JsPath \ journeyType \ toString
 
+  def journeyType: String = "correctReturn"
   override def toString: String = "howManyCreditsForLostDamaged"
 
   override val url: Mode => String = mode => routes.HowManyCreditsForLostDamagedController.onPageLoad(mode).url

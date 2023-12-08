@@ -17,24 +17,19 @@
 package controllers.changeActivity
 
 import base.SpecBase
-import errors.SessionDatabaseInsertError
 import forms.changeActivity.SecondaryWarehouseDetailsFormProvider
 import models.SelectChange.ChangeActivity
-import models.{CheckMode, NormalMode, UserAnswers}
 import models.backend.{Site, UkAddress}
-import navigation._
-import org.jsoup.Jsoup
+import models.{CheckMode, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.changeActivity.SecondaryWarehouseDetailsPage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
-import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import views.html.changeActivity.SecondaryWarehouseDetailsView
 import views.summary.changeActivity.SecondaryWarehouseDetailsSummary

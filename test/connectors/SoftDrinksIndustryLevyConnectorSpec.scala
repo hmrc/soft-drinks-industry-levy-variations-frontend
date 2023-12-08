@@ -18,7 +18,8 @@ package connectors
 
 import base.SpecBase
 import models.backend.{FinancialLineItem, OptRetrievedSubscription, RetrievedSubscription}
-import models.submission.ReturnVariationData
+import models.correctReturn.ReturnsVariation
+import models.submission.{Litreage, ReturnVariationData}
 import models.{DataHelper, ReturnPeriod, VariationsSubmissionDataHelper}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -148,13 +149,13 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
       }
     }
 
-    "POST Returns Variation successfully when valid data is given" - {
+    "POST submitSdilReturnsVary successfully when valid data is given" - {
       "for no change" in{
 
         when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
-        val res = softDrinksIndustryLevyConnector.submitReturnsVariation(
+        val res = softDrinksIndustryLevyConnector.submitSdilReturnsVary(
           sdilNumber = aSubscription.sdilRef,
           variation = ReturnVariationData(
             original = emptySdilReturn,
@@ -177,11 +178,11 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
         when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
-        val res = softDrinksIndustryLevyConnector.submitReturnsVariation(
+        val res = softDrinksIndustryLevyConnector.submitSdilReturnsVary(
           sdilNumber = aSubscription.sdilRef,
           variation = ReturnVariationData(
             original = emptySdilReturn,
-            revised = emptySdilReturn.copy(ownBrand = (100L, 100L)),
+            revised = emptySdilReturn.copy(ownBrand = Litreage(100L, 100L)),
             period = returnPeriodsFor2022.head,
             orgName = aSubscription.orgName,
             address = aSubscription.address,
@@ -200,11 +201,11 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
         when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
           .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
-        val res = softDrinksIndustryLevyConnector.submitReturnsVariation(
+        val res = softDrinksIndustryLevyConnector.submitSdilReturnsVary(
           sdilNumber = aSubscription.sdilRef,
           variation = ReturnVariationData(
             original = emptySdilReturn,
-            revised = emptySdilReturn.copy(ownBrand = (100L, 100L), packLarge = (100L, 100L)),
+            revised = emptySdilReturn.copy(ownBrand = Litreage(100L, 100L), packLarge = Litreage(100L, 100L)),
             period = returnPeriodsFor2022.head,
             orgName = aSubscription.orgName,
             address = aSubscription.address,
@@ -218,6 +219,32 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
             response mustEqual Right((): Unit)
         }
       }
+    }
+
+    "POST submitReturnVariation successfully when valid data is given" in {
+        when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
+
+        val res = softDrinksIndustryLevyConnector.submitReturnVariation(
+          aSubscription.sdilRef,
+          variation = ReturnsVariation(
+            orgName = aSubscription.orgName,
+            ppobAddress = aSubscription.address,
+            importer = (false, Litreage(0,0)),
+            packer = (false, Litreage(0,0)),
+            warehouses = List.empty,
+            packingSites = List.empty,
+            phoneNumber = "0800323984",
+            email = "test@email.com",
+            taxEstimation = 0)
+        )
+
+        whenReady(
+          res.value
+        ) {
+          response =>
+            response mustEqual Right((): Unit)
+        }
     }
 
     "POST variation successfully when valid data is given" - {

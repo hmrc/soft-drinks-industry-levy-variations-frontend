@@ -6,7 +6,7 @@ import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import play.api.test.WsTestClient
 
-import java.time.{Instant, LocalDate}
+import java.time.Instant
 
 class UpdateDoneControllerISpec extends ControllerITTestHelper {
 
@@ -35,8 +35,6 @@ class UpdateDoneControllerISpec extends ControllerITTestHelper {
     "should redirect when no submitted on time is present" in {
       given
         .commonPrecondition
-
-      val testTime = Instant.now()
       setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
 
       WsTestClient.withClient { client =>

@@ -223,8 +223,9 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         RetrievedActivity(smallProducer = true, largeProducer = false, contractPacker =false, importer = false,voluntaryRegistration = false),
         LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
       val res = requiredUserAnswers.mainRoute(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers,subscription = subscription))
+      val expectedResult = basicJourney
 
-      res mustBe basicJourney ++ coPackerFalseJourney ++ importerFalseJourney
+      res mustBe expectedResult
     }
 
     "should return all correct answers if user is newImporter && NOT newCopacker && small producer true" in {
@@ -238,7 +239,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
 
       val res = requiredUserAnswers.mainRoute(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers,subscription = subscription))
 
-      res mustBe basicJourney ++ importerFalseJourney
+      res mustBe basicJourney
     }
 
     "should return all correct answers if user is NOT newImporter && newCopacker && small producer true" in {
@@ -252,7 +253,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
 
       val res = requiredUserAnswers.mainRoute(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers,subscription = subscription))
 
-      res mustBe basicJourney ++ coPackerFalseJourney
+      res mustBe basicJourney
     }
 
     "should return all correct answers if user is NOT newImporter && NOT newcopacker &&  small producer true" in {
@@ -280,7 +281,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
 
       val res = requiredUserAnswers.mainRoute(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers, subscription = subscription))
 
-      res mustBe smallProducerFalseJourney ++ basicJourney ++ coPackerFalseJourney ++ importerFalseJourney
+      res mustBe smallProducerFalseJourney ++ basicJourney
     }
 
     "should return all correct answers if user is NOT newImporter && NOT new co packer && NOT small producer" in {

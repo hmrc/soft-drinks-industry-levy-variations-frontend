@@ -17,19 +17,17 @@
 package controllers.updateRegisteredDetails
 
 import base.SpecBase
-import errors.SessionDatabaseInsertError
 import forms.updateRegisteredDetails.PackagingSiteDetailsFormProvider
 import models.SelectChange.UpdateRegisteredDetails
 import models.updateRegisteredDetails.ChangeRegisteredDetails
 import models.{CheckMode, Mode, NormalMode}
 import navigation._
-import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
-import pages.updateRegisteredDetails.{ChangeRegisteredDetailsPage, PackagingSiteDetailsPage}
+import pages.updateRegisteredDetails.ChangeRegisteredDetailsPage
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -37,7 +35,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.{AddressLookupService, PackingDetails, SessionService}
-import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import views.html.updateRegisteredDetails.PackagingSiteDetailsView
 import views.summary.updateRegisteredDetails.PackagingSiteDetailsSummary

@@ -9,11 +9,12 @@ import play.api.http.HeaderNames
 import play.api.http.Status.OK
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
+import testSupport.helpers.SubmissionVariationHelper
 
 import java.time.LocalDate
 
 
-class CancelRegistrationCYAControllerISpec extends ControllerITTestHelper {
+class CancelRegistrationCYAControllerISpec extends ControllerITTestHelper with SubmissionVariationHelper{
 
   val route = "/cancel-registration/check-your-answers"
 
@@ -74,23 +75,25 @@ class CancelRegistrationCYAControllerISpec extends ControllerITTestHelper {
   }
 
   "POST " + routes.CancelRegistrationCYAController.onSubmit.url - {
-    "should redirect to Cancellation Request done controller" in {
-      val validCancellationDate = LocalDate.now()
+    "should send the expected variation submission" - {
+      "and redirect to Cancellation Request done controller" in {
 
-      given
-        .commonPrecondition
-        .sdilBackend.submitVariationSuccess("XKSDIL000000022")
+        given
+          .commonPrecondition
+          .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
-      setAnswers(emptyUserAnswersForSelectChange(CancelRegistration)
-        .set(ReasonPage, "No longer sell drinks").success.value
-        .set(CancelRegistrationDatePage, validCancellationDate).success.value)
+        setAnswers(emptyUserAnswersForSelectChange(CancelRegistration)
+          .set(ReasonPage, DEREG_REASON).success.value
+          .set(CancelRegistrationDatePage, DEREG_DATE).success.value)
 
-      WsTestClient.withClient { client =>
-        val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
+        WsTestClient.withClient { client =>
+          val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
-        whenReady(result) { res =>
-          res.status mustBe 303
-          res.header(HeaderNames.LOCATION) mustBe Some(routes.CancellationRequestDoneController.onPageLoad.url)
+          whenReady(result) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION) mustBe Some(routes.CancellationRequestDoneController.onPageLoad.url)
+            requestBodyMatchesDeregistration(wireMockServer)
+          }
         }
       }
     }

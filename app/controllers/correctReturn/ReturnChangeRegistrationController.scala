@@ -17,7 +17,7 @@
 package controllers.correctReturn
 
 import controllers.actions._
-import models.{Mode, SdilReturn}
+import models.Mode
 import navigation.NavigatorForCorrectReturn
 import pages.correctReturn.ReturnChangeRegistrationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -38,7 +38,7 @@ class ReturnChangeRegistrationController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
-        val userIsANewPacker = UserTypeCheck.isNewPacker(SdilReturn.apply(request.userAnswers), request.subscription)
+        val userIsANewPacker = UserTypeCheck.isNewPacker(request.userAnswers, request.subscription)
       if (userIsANewPacker) {
         Ok(view(mode, controllers.correctReturn.routes.PackagedAsContractPackerController.onPageLoad(mode).url))
       } else {

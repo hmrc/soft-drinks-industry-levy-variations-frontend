@@ -19,9 +19,9 @@ package controllers.changeActivity
 import base.SpecBase
 import controllers.changeActivity.routes._
 import generators.ChangeActivityCYAGenerators._
-import models.{DataHelper, LitresInBands}
 import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced.Large
+import models.{DataHelper, LitresInBands}
 import orchestrators.ChangeActivityOrchestrator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -34,8 +34,6 @@ import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
 import views.html.changeActivity.ChangeActivityCYAView
 import views.summary.changeActivity.ChangeActivitySummary
-
-import scala.concurrent.Future
 
 class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency with DataHelper {
 
@@ -79,7 +77,6 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency w
 
       val mockOrchestrator: ChangeActivityOrchestrator = mock[ChangeActivityOrchestrator]
 
-      when(mockOrchestrator.submitUserAnswers(any())(any(), any())) thenReturn Future.successful(true)
       when(mockOrchestrator.submitVariation(any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
 
       val application =

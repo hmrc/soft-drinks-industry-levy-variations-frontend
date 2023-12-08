@@ -19,6 +19,7 @@ package controllers.correctReturn
 import base.SpecBase
 import controllers.correctReturn.routes._
 import models.correctReturn.{AddASmallProducer, ChangedPage, RepaymentMethod}
+import models.submission.Litreage
 import models.{LitresInBands, ReturnPeriod, SmallProducer}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -57,7 +58,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       val litres = LitresInBands(2000, 4000)
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
-          smallProducerList = List(SmallProducer("", "XZSDIL000000234", (2000, 4000))))
+          smallProducerList = List(SmallProducer("", "XZSDIL000000234", Litreage(2000, 4000))))
         .set(OperatePackagingSiteOwnBrandsPage, true).success.value
         .set(HowManyOperatePackagingSiteOwnBrandsPage, litres).success.value
         .set(PackagedAsContractPackerPage, true).success.value

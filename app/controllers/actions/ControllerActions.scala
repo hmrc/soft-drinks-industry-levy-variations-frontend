@@ -49,7 +49,7 @@ class ControllerActions @Inject()(identify: IdentifierAction,
       override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, CorrectReturnDataRequest[A]]] = {
         request.userAnswers match {
           case Some(userAnswers) if userAnswers.journeyType == SelectChange.CorrectReturn =>
-            (userAnswers.correctReturnPeriod) match {
+            userAnswers.correctReturnPeriod match {
               case Some(returnPeriod) => Future.successful(
                 Right(CorrectReturnDataRequest(request.request, request.sdilEnrolment,
                 request.subscription, userAnswers, returnPeriod)))

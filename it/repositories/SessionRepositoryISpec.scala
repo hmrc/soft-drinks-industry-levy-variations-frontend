@@ -1,6 +1,7 @@
 package repositories
 
 import models.backend.{Site, UkAddress}
+import models.submission.Litreage
 import models.{SelectChange, SmallProducer, UserAnswers}
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
@@ -72,7 +73,7 @@ class SessionRepositoryISpec
       val userAnswersBefore = UserAnswers("id",
         SelectChange.UpdateRegisteredDetails,
         Json.obj("foo" -> "bar"),
-        List(SmallProducer("foo", "bar", (1,1))),
+        List(SmallProducer("foo", "bar", Litreage(1,1))),
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")),Some("foo"), Some("foo"),Some(LocalDate.now()))),
         Map("foo" -> Site(UkAddress(List("foo"),"foo", Some("foo")), Some("foo"))),
         UkAddress(List("123 Main Street", "Anytown"), "AB12 C34", alfId = Some("123456")),

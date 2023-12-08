@@ -17,8 +17,6 @@
 package models.submission
 
 import models.backend.Site
-
-import scala.language.reflectiveCalls
 import scala.util.Try
 
 trait VariationSubmissionHelper {

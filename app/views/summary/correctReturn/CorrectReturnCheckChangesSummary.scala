@@ -35,7 +35,7 @@ object CorrectReturnCheckChangesSummary {
     mainSection ++ correctionDetailsSection ++ balanceSection
   }
 
-  private def correctionSection(userAnswers: UserAnswers, isCheckAnswers: Boolean = true)
+  private def correctionSection(userAnswers: UserAnswers, isCheckAnswers: Boolean)
                                (implicit messages: Messages): Option[(String, SummaryList)] = {
     val correctionReasonSummary: Option[SummaryListRow] = CorrectionReasonSummary.row(userAnswers, isCheckAnswers)
     val repaymentMethodSummary: Option[SummaryListRow] = RepaymentMethodSummary.row(userAnswers, isCheckAnswers)

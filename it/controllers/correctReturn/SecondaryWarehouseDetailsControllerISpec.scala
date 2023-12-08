@@ -6,10 +6,9 @@ import models.UserAnswers
 import models.alf.init._
 import models.backend.{Site, UkAddress}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import pages.correctReturn.{PackagingSiteDetailsPage, SecondaryWarehouseDetailsPage}
 import play.api.http.HeaderNames
-import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.WsTestClient
 import testSupport.helpers.ALFTestHelper
@@ -42,7 +41,6 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            val summaryList = page.getElementsByClass("govuk-caption-m")
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -107,7 +105,6 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              val summaryList = page.getElementsByClass("govuk-caption-m")
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -139,7 +136,6 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            val summaryList = page.getElementsByClass("govuk-caption-m")
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -204,7 +200,6 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              val summaryList = page.getElementsByClass("govuk-caption-m")
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"

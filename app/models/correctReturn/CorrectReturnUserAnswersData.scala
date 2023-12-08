@@ -16,7 +16,8 @@
 
 package models.correctReturn
 
-import models.{LitresInBands, SdilReturn}
+import models.submission.Litreage
+import models.{LitresInBands, SdilReturn, SmallProducer}
 import play.api.libs.json.Json
 
 case class CorrectReturnUserAnswersData(
@@ -33,7 +34,25 @@ case class CorrectReturnUserAnswersData(
                                          howManyClaimCreditsForExports: Option[LitresInBands],
                                          claimCreditsForLostDamaged: Boolean,
                                          howManyCreditsForLostDamaged: Option[LitresInBands]
-                                       )
+                                       ) {
+  def totalImported: Litreage = Litreage.sum(List(broughtIntoUkLitreage, broughtIntoUkFromSmallProducerLitreage))
+  def totalPacked(smallProducerList: List[SmallProducer]): Litreage = Litreage.sum(
+    List(contractPackerLitreage) ++ smallProducerList.map(_.litreage)
+  )
+  def ownBrandsLitreage: Litreage = getLiterage(operatePackagingSiteOwnBrands, howManyOperatePackagingSiteOwnBrands)
+  def contractPackerLitreage: Litreage = getLiterage(packagedAsContractPacker, howManyPackagedAsContractPacker)
+  def broughtIntoUkLitreage: Litreage = getLiterage(broughtIntoUK, howManyBroughtIntoUK)
+  def broughtIntoUkFromSmallProducerLitreage: Litreage = getLiterage(broughtIntoUkFromSmallProducers, howManyBroughtIntoUkFromSmallProducers)
+  def exportsLitreage: Litreage = getLiterage(claimCreditsForExports, howManyClaimCreditsForExports)
+  def lostDamagedLitreage: Litreage = getLiterage(claimCreditsForLostDamaged, howManyCreditsForLostDamaged)
+  private def getLiterage(hasLitres: Boolean, optLitres: Option[LitresInBands]): Litreage = {
+    optLitres.fold[Litreage](Litreage())(litres => if (hasLitres) {
+      Litreage.fromLitresInBands(litres)
+    } else {
+      Litreage()
+    })
+  }
+}
 
 object CorrectReturnUserAnswersData {
 
@@ -65,12 +84,12 @@ object CorrectReturnUserAnswersData {
     )
   }
 
-  private def getBooleanAndLitresInBands(literage: (Long, Long)): (Boolean, Option[LitresInBands]) = {
-    val totalLitres = literage._1 + literage._2
+  private def getBooleanAndLitresInBands(literage: Litreage): (Boolean, Option[LitresInBands]) = {
+    val totalLitres = literage.total
     if(totalLitres == 0) {
       (false, None)
     } else {
-      (true, Option(LitresInBands(literage._1, literage._2)))
+      (true, Option(LitresInBands.fromLitreage(literage)))
     }
   }
 

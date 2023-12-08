@@ -47,7 +47,7 @@ class UpdateContactDetailsSummarySpec extends SpecBase {
             actions = Some(Actions(
             items = Seq(ActionItem(routes.UpdateContactDetailsController.onPageLoad(CheckMode).url, "site.change")
               .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden"))
-              .withAttribute("id", "change-contactDetailsAdd"))
+              .withAttribute(("id", "change-contactDetailsAdd")))
           ))
         ),
 
@@ -57,7 +57,7 @@ class UpdateContactDetailsSummarySpec extends SpecBase {
           actions = Some(Actions(
             items = Seq(ActionItem(routes.UpdateContactDetailsController.onPageLoad(CheckMode).url, "site.change")
               .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden"))
-              .withAttribute("id", "change-contactDetailsAdd")))
+              .withAttribute(("id", "change-contactDetailsAdd"))))
           )
         ),
         SummaryListRow(
@@ -66,7 +66,7 @@ class UpdateContactDetailsSummarySpec extends SpecBase {
           actions = Some(Actions(
             items = Seq(ActionItem(routes.UpdateContactDetailsController.onPageLoad(CheckMode).url, "site.change")
               .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden"))
-              .withAttribute("id", "change-contactDetailsAdd")))
+              .withAttribute(("id", "change-contactDetailsAdd"))))
           )
         ),
         SummaryListRow(
@@ -75,7 +75,7 @@ class UpdateContactDetailsSummarySpec extends SpecBase {
           actions = Some(Actions(
             items = Seq(ActionItem(routes.UpdateContactDetailsController.onPageLoad(CheckMode).url, "site.change")
               .withVisuallyHiddenText(messages(application)("updateRegisteredDetails.updateContactDetails.change.hidden"))
-              .withAttribute("id", "change-contactDetailsAdd"))
+              .withAttribute(("id", "change-contactDetailsAdd")))
             )
           ))
         )

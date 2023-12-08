@@ -2,6 +2,7 @@ package testSupport
 
 import models.SmallProducer
 import models.backend.{Site, UkAddress}
+import models.submission.Litreage
 
 trait ITSharedCoreTestData {
   val ukAddress: UkAddress = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX")
@@ -20,8 +21,8 @@ trait ITSharedCoreTestData {
   )
 
   val smallProducersAddedList: List[SmallProducer] = List(
-    SmallProducer("Star Products Ltd", "96", (1000L, 2000L)),
-    SmallProducer("Super Star cola Ltd", "97", (1000L, 2000L))
+    SmallProducer("Star Products Ltd", "96", Litreage(1000L, 2000L)),
+    SmallProducer("Super Star cola Ltd", "97", Litreage(1000L, 2000L))
   )
 
 }

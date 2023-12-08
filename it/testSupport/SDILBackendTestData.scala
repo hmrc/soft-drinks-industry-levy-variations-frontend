@@ -2,6 +2,7 @@ package testSupport
 
 import models._
 import models.backend.{CentralAssessment, CentralAsstInterest, OfficerAssessment, OfficerAsstInterest, PaymentOnAccount, RetrievedActivity, RetrievedSubscription, ReturnCharge, ReturnChargeInterest, Site, UkAddress, Unknown}
+import models.submission.Litreage
 
 import java.time.{LocalDate, LocalDateTime, ZoneOffset}
 
@@ -64,9 +65,17 @@ object SDILBackendTestData {
 
   val submittedDateTime = LocalDateTime.of(2023, 1, 1, 11, 0)
 
-  val emptyReturn = SdilReturn((0, 0), (0, 0), List.empty, (0, 0), (0, 0), (0, 0), (0, 0), submittedOn = Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
+  val emptyReturn = SdilReturn(
+    Litreage(0, 0),
+    Litreage(0, 0),
+    List.empty,
+    Litreage(0, 0),
+    Litreage(0, 0),
+    Litreage(0, 0),
+    Litreage(0, 0),
+    submittedOn = Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
 
-  val literage = (200L, 100L)
+  val literage = Litreage(200L, 100L)
   val smallProducer1 = SmallProducer("test 1", "XKSDIL000000024", literage)
   val smallProducer2 = SmallProducer("test 2", "XKSDIL000000025", literage)
   val smallProducerList = List(smallProducer1, smallProducer2)
