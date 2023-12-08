@@ -92,7 +92,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         }
       }
 
-        s"must redirect to Small Producer Details when small producer not found for a GET in $mode" in {
+        s"must redirect to Small Producer Details user answers contains at least one small producer for a GET in $mode" in {
 
           val userAnswers: UserAnswers = userAnswersForCorrectReturn(false).copy(smallProducerList = List(SmallProducer("", "XZSDIL000000234", (2000, 4000))))
 

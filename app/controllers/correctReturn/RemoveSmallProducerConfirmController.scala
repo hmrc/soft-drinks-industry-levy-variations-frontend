@@ -55,7 +55,7 @@ class RemoveSmallProducerConfirmController @Inject()(
           genericLogger.logger.warn(s"Small Producer sdilRef $sdilRef doesn't exist for ${request.userAnswers.id}")
           if(request.userAnswers.smallProducerList.size >= 1){
             Redirect(routes.SmallProducerDetailsController.onPageLoad(mode))
-          }else{
+          } else {
             Redirect(routes.ExemptionsForSmallProducersController.onPageLoad(mode))
           }
         case Some(smallProducer) => Ok(view(form, mode, sdilRef, smallProducer.alias))
