@@ -76,7 +76,7 @@ private def bandLevyRow(litres: Long, bandCostPerLitre: BigDecimal, band: String
       key = key,
       value = ValueViewModel(HtmlContent(value)).withCssClass("govuk-!-text-align-right"),
       actions = Seq()
-    )
+    ).withCssClass("govuk-summary-list__row--no-actions")
   }
 
   private def levy(litres: BigDecimal, bandCostPerLitre: BigDecimal): BigDecimal = {
