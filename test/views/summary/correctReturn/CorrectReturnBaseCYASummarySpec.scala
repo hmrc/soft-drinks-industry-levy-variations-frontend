@@ -65,12 +65,13 @@ class CorrectReturnBaseCYASummarySpec extends SpecBase {
         res.rows(highLitresRowIndex).actions.head.items.head.content.asHtml mustBe Html("Change")
 
         if (includeLevyRows) {
-
+          res.rows(2).classes.trim mustBe "govuk-summary-list__row--no-actions"
           res.rows(2).key.content.asHtml mustBe Html("Low band levy")
           res.rows(2).key.classes mustBe ""
           res.rows(2).value.content.asHtml mustBe Html("£180.00")
           res.rows(2).value.classes.trim mustBe "govuk-!-text-align-right"
 
+          res.rows(4).classes.trim mustBe "govuk-summary-list__row--no-actions"
           res.rows(4).key.content.asHtml mustBe Html("High band levy")
           res.rows(4).key.classes mustBe ""
           res.rows(4).value.content.asHtml mustBe Html("£480.00")
@@ -107,11 +108,13 @@ class CorrectReturnBaseCYASummarySpec extends SpecBase {
 
         if (includeLevyRows) {
 
+          res.rows(2).classes.trim mustBe "govuk-summary-list__row--no-actions"
           res.rows(2).key.content.asHtml mustBe Html("Low band levy")
           res.rows(2).key.classes mustBe ""
           res.rows(2).value.content.asHtml mustBe Html("£180.00")
           res.rows(2).value.classes.trim mustBe "govuk-!-text-align-right"
 
+          res.rows(4).classes.trim mustBe "govuk-summary-list__row--no-actions"
           res.rows(4).key.content.asHtml mustBe Html("High band levy")
           res.rows(4).key.classes mustBe ""
           res.rows(4).value.content.asHtml mustBe Html("£480.00")
