@@ -67,7 +67,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
               page.title() mustBe "Which return do you need to correct? - Soft Drinks Industry Levy - GOV.UK"
-              val radioDivider = page.getElementsByClass("govuk-radios__divider")
+              val radioDivider = page.getElementsByClass("govuk-fieldset__heading").select("h2")
               radioDivider.size() mustBe returnPeriodYears.size
               returnPeriodYears.zipWithIndex.foreach { case (year, index) =>
                 radioDivider.get(index).text() mustBe year.toString
@@ -98,7 +98,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
               page.title() mustBe "Which return do you need to correct? - Soft Drinks Industry Levy - GOV.UK"
-              val radioDivider = page.getElementsByClass("govuk-radios__divider")
+              val radioDivider = page.getElementsByClass("govuk-fieldset__heading").select("h2")
               radioDivider.size() mustBe returnPeriodYears.size
               returnPeriodYears.zipWithIndex.foreach { case (year, index) =>
                 radioDivider.get(index).text() mustBe year.toString
@@ -130,7 +130,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
               page.title() mustBe "Which return do you need to correct? - Soft Drinks Industry Levy - GOV.UK"
-              val radioDivider = page.getElementsByClass("govuk-radios__divider")
+              val radioDivider = page.getElementsByClass("govuk-fieldset__heading").select("h2")
               radioDivider.size() mustBe returnPeriodYears.size
               returnPeriodYears.zipWithIndex.foreach { case (year, index) =>
                 radioDivider.get(index).text() mustBe year.toString
@@ -169,7 +169,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
                 res.status mustBe 200
                 val page = Jsoup.parse(res.body)
                 page.title() mustBe "Which return do you need to correct? - Soft Drinks Industry Levy - GOV.UK"
-                val radioDivider = page.getElementsByClass("govuk-radios__divider")
+                val radioDivider = page.getElementsByClass("govuk-fieldset__heading").select("h2")
                 radioDivider.size() mustBe returnPeriodYears.size
                 returnPeriodYears.zipWithIndex.foreach { case (year, index) =>
                   radioDivider.get(index).text() mustBe year.toString
