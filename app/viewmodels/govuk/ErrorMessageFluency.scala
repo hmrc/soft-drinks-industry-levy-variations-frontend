@@ -27,7 +27,6 @@ trait ErrorMessageFluency {
 
   object ErrorMessageViewModel {
     def apply(id: Option[String] = None, field: Field)(implicit messages: Messages): ErrorMessage = {
-//      TODO: DO THIS WITHOUT .get
       field.error.map(err => {
         ErrorMessage(
           id = id,
