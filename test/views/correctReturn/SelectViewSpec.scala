@@ -30,7 +30,6 @@ class SelectViewSpec extends ViewSpecHelper {
   val view: SelectView = application.injector.instanceOf[SelectView]
   val formProvider = new SelectFormProvider
   val form: Form[String] = formProvider.apply()
-//  val returnsList: Map[Int, List[ReturnPeriod]] = Map(2022 -> returnPeriodsFor2022, 2020 -> returnPeriodsFor2020)
   val returnsList: List[List[ReturnPeriod]] = List(returnPeriodsFor2022, returnPeriodsFor2020)
   implicit val request: Request[_] = FakeRequest()
 
@@ -65,12 +64,12 @@ class SelectViewSpec extends ViewSpecHelper {
 
     "should include radios" - {
       val radios = document.getElementsByClass(Selectors.radios)
-      val dividers = document.getElementsByTag("h2")
-      val radioItems = radios.first().getElementsByClass(Selectors.radiosItems)
-//      val totalNumberOfReturnPeriods = returnsList.foldLeft(List.empty[ReturnPeriod]) { (a, b) => a ++ b._2 }.size
-      val totalNumberOfReturnPeriods = returnsList.size
-      "that has a size of 1" in {
-        radios.size() mustBe 1
+      val dividers = document.getElementsByClass(Selectors.heading).select("h2")
+      val radioItems = document.getElementsByClass(Selectors.radiosItems)
+      val totalNumberOfReturnPeriods = returnsList.flatten.size
+
+      s"that has a size of ${returnsList.size}" in {
+        radios.size() mustBe 2
       }
 
       s"that has ${returnsList.size} dividers " in {
