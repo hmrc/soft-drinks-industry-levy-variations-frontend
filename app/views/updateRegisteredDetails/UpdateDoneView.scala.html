@@ -30,6 +30,7 @@
 
 @answersSummary = {
     @for((heading, summaryList) <- seqSummaryList) {
+        <h2 class="govuk-heading-m">@heading</h2>
         @govukSummaryList(summaryList)
     }
 }
