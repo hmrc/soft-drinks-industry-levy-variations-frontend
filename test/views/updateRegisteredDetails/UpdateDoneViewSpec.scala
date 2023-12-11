@@ -99,7 +99,7 @@ class UpdateDoneViewSpec extends ViewSpecHelper {
       }
 
       "that has the expected content" in {
-        details.getElementsByClass(Selectors.detailsContent).text() mustEqual List("wizz","bang").mkString(" ")
+        details.getElementsByClass(Selectors.detailsContent).text() mustEqual List("foo","wizz","bar","bang").mkString(" ")
       }
     }
 
