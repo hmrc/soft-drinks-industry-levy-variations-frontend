@@ -24,26 +24,64 @@
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton,
-    govukDetails: GovukDetails
+    govukDetails: GovukDetails,
+    govukFieldset: GovukFieldset,
+    govukErrorMessage: GovukErrorMessage
 )
 
-@(form: Form[String], returnPeriodsForYears: Map[Int, List[ReturnPeriod]])(implicit request: Request[_], messages: Messages)
+@(form: Form[String], returnPeriodsForYears: List[List[ReturnPeriod]])(implicit request: Request[_], messages: Messages)
+
+@htmlContent = {
+    @if(form.errors.nonEmpty) {
+        @govukErrorMessage(
+            ErrorMessageViewModel(
+                id = Some("value-error"),
+                field = form("value")
+            )
+        )
+    }
+
+    @for((returnPeriodsForYear, index) <- returnPeriodsForYears.zipWithIndex) {
+        @govukRadios(
+            RadiosViewModel(
+                field = form("value"),
+                legend = LegendViewModel(
+                    HtmlContent(s"<h2 class=\"govuk-fieldset__heading\">${returnPeriodsForYear.head.year.toString}</h2>")
+                ).withCssClass("govuk-fieldset__legend--m"),
+                items = ReturnPeriodsRadios.getRadioItemsForYear(returnPeriodsForYear, index),
+                noErrorRequired = true
+            )
+        )
+    }
+}
+
+@fieldset = {
+    @if(form.errors.nonEmpty) {
+        <div class="govuk-form-group govuk-form-group--error">
+            @govukFieldset(
+                FieldsetViewModel(
+                    LegendViewModel(Text(messages("correctReturn.select.heading"))).asPageHeading()
+                ).describedBy("value-error").withHtml(htmlContent)
+            )
+        </div>
+    } else {
+        @govukFieldset(
+            FieldsetViewModel(
+                LegendViewModel(Text(messages("correctReturn.select.heading"))).asPageHeading()
+            ).withHtml(htmlContent)
+        )
+    }
+}
 
 @layout(pageTitle = title(form, messages("correctReturn.select.title"))) {
 
     @formHelper(action = routes.SelectController.onSubmit, Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0_0")))
         }
 
-        @govukRadios(
-            RadiosViewModel(
-                field = form("value"),
-                legend = LegendViewModel(Text(messages("correctReturn.select.heading"))).asPageHeading(),
-                items = ReturnPeriodsRadios.getRadioItems(returnPeriodsForYears)
-            ))
-
+        @fieldset
 
         @govukDetails(
             Details(

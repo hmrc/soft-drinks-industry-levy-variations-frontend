@@ -24,6 +24,7 @@ package object govuk {
       with ButtonFluency
       with CheckboxFluency
       with DateFluency
+      with ErrorMessageFluency
       with ErrorSummaryFluency
       with FieldsetFluency
       with HintFluency
