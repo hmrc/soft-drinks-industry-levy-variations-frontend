@@ -34,6 +34,7 @@ class UpdateContactDetailsFormProvider @Inject() extends Mappings {
   def apply(): Form[ContactDetails] = Form(
     mapping(
       "fullName" -> text("updateRegisteredDetails.updateContactDetails.error.fullName.required")
+
         .verifying(maxLength(40, "updateRegisteredDetails.updateContactDetails.error.fullName.length"))
         .verifying(regexp(nameRegex, "updateRegisteredDetails.updateContactDetails.error.fullName.invalid")),
       "position" -> text("updateRegisteredDetails.updateContactDetails.error.position.required")

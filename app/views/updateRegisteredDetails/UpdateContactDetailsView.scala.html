@@ -44,6 +44,7 @@
                 label = LabelViewModel(messages("updateRegisteredDetails.updateContactDetails.fullName"))
             )
             .withWidth(TwoThirds)
+            .withAutocomplete("name")
         )
 
         @govukInput(
@@ -52,6 +53,7 @@
                 label = LabelViewModel(messages("updateRegisteredDetails.updateContactDetails.position"))
             )
             .withWidth(TwoThirds)
+            .withAutocomplete("organization-title")
         )
 
 
@@ -61,6 +63,7 @@
             label = LabelViewModel(messages("updateRegisteredDetails.updateContactDetails.phoneNumber"))
             )
             .withWidth(TwoThirds)
+            .withAutocomplete("tel")
         )
 
         @govukInput(
@@ -69,6 +72,7 @@
             label = LabelViewModel(messages("updateRegisteredDetails.updateContactDetails.email"))
             )
             .withWidth(TwoThirds)
+            .asEmail()
         )
 
         @govukButton(
