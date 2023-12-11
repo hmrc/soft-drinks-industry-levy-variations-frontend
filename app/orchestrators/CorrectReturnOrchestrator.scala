@@ -179,8 +179,9 @@ class CorrectReturnOrchestrator @Inject()(connector: SoftDrinksIndustryLevyConne
   }
 
   def separateReturnPeriodsByYear(returnPeriods: List[ReturnPeriod]): List[List[ReturnPeriod]] = {
-//    TODO: NEED TO SORT WITHIN EACH YEAR AS WELL
-    returnPeriods.distinct.groupBy(_.year).values.toList.sortBy(_.head.year).reverse
+    returnPeriods.distinct.groupBy(_.year).values.toList
+      .map(_.sortBy(_.start).reverse)
+      .sortBy(_.head.year).reverse
   }
 
   def submitUserAnswers(userAnswers: UserAnswers)(implicit hc: HeaderCarrier, ec: ExecutionContext):Future[Boolean] = {
