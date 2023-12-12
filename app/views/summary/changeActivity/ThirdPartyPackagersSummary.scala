@@ -33,7 +33,7 @@ object ThirdPartyPackagersSummary {
 
         SummaryListRowViewModel(
           key     = "changeActivity.thirdPartyPackagers.checkYourAnswersLabel",
-          value   = ValueViewModel(value).withCssClass("govuk-!-text-align-right"),
+          value   = ValueViewModel(value).withCssClass("sdil-right-align--desktop"),
           actions = if(isCheckAnswers) {
             Seq(
               ActionItemViewModel("site.change", routes.ThirdPartyPackagersController.onPageLoad(CheckMode).url)

@@ -8,3 +8,9 @@
 .govuk-radios__divider {
   font-weight: bold
 }
+
+@media (min-width: 40.0625em) {
+  .sdil-right-align--desktop{
+    text-align: right!important;
+  }
+}

@@ -38,7 +38,7 @@ trait ReturnDetailsSummaryRowHelper {
         Seq(
           SummaryListRowViewModel(
             key = key,
-            value = ValueViewModel(if (answer) "site.yes" else "site.no").withCssClass("govuk-!-text-align-right"),
+            value = ValueViewModel(if (answer) "site.yes" else "site.no").withCssClass("sdil-right-align--desktop"),
             actions = if (isCheckAnswers) {
               Seq(
                 ActionItemViewModel("site.change", action)
