@@ -112,6 +112,14 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     }
   }
 
+  private def navigationFollowingRemovePackagingSite(userAnswers: UserAnswers, mode: Mode): Call = {
+    if(userAnswers.packagingSiteList.isEmpty){
+      routes.PackAtBusinessAddressController.onPageLoad(mode)
+    }else{
+      routes.PackagingSiteDetailsController.onPageLoad(mode)
+    }
+  }
+
   private def navigateFollowingImportsForAmountProducedNone(userAnswers: UserAnswers, mode: Mode): Call =
     (userAnswers.get(ContractPackingPage), userAnswers.get(SecondaryWarehouseDetailsPage), mode) match {
       case (Some(true), _, NormalMode) if userAnswers.packagingSiteList.isEmpty => routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
@@ -133,7 +141,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     case HowManyImportsPage => userAnswers => navigationFollowingImports(userAnswers, NormalMode)
     case SuggestDeregistrationPage => _ => controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode)
     case PackAtBusinessAddressPage => _ => defaultCall
-    case RemovePackagingSiteDetailsPage => _ => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
+    case RemovePackagingSiteDetailsPage => userAnswers => navigationFollowingRemovePackagingSite(userAnswers, NormalMode)
     case RemoveWarehouseDetailsPage => _ => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
     case _ => _ => defaultCall
   }
@@ -146,7 +154,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     case HowManyContractPackingPage => _ => routes.ChangeActivityCYAController.onPageLoad
     case ImportsPage => userAnswers => navigationForImports(userAnswers, CheckMode)
     case HowManyImportsPage => userAnswers => navigationFollowingImports(userAnswers, CheckMode)
-    case RemovePackagingSiteDetailsPage => _ => routes.PackagingSiteDetailsController.onPageLoad(CheckMode)
+    case RemovePackagingSiteDetailsPage => userAnswers => navigationFollowingRemovePackagingSite(userAnswers, CheckMode)
     case RemoveWarehouseDetailsPage => _ => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
     case _ => _ => routes.ChangeActivityCYAController.onPageLoad
   }
