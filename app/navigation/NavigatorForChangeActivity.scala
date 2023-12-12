@@ -115,7 +115,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
   private def navigationFollowingRemovePackagingSite(userAnswers: UserAnswers, mode: Mode): Call = {
     if(userAnswers.packagingSiteList.isEmpty){
       routes.PackAtBusinessAddressController.onPageLoad(mode)
-    }else{
+    } else {
       routes.PackagingSiteDetailsController.onPageLoad(mode)
     }
   }

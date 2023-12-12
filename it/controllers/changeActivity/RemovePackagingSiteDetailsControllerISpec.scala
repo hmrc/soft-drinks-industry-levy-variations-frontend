@@ -272,7 +272,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved), Json.obj("value" -> yesSelected.toString)
+                client, changeActivityBaseUrl + checkRoutePath(packAtBusinessAddressSites.head._1), Json.obj("value" -> yesSelected.toString)
               )
 
               whenReady(result) { res =>
@@ -282,7 +282,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe yesSelected
                 if(yesSelected) {
-                  userAnswersAfterTest.get.packagingSiteList.size mustBe 2
+                  userAnswersAfterTest.get.packagingSiteList.size mustBe 1
                   res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
                 } else {
                   userAnswersAfterTest.get.packagingSiteList.size mustBe 2
