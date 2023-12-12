@@ -35,6 +35,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
             res.status mustBe OK
             val page = Jsoup.parse(res.body)
             page.title must include(Messages("updateRegisteredDetails.checkYourAnswers.title"))
+            page.getElementsByClass("govuk-body").first().text() mustBe s"This update is for ${diffSubscription.orgName}"
             page.getElementsByTag("h2").get(1).text() mustBe "Business address"
             val ukSiteElems = page.getElementsByClass("govuk-summary-list").first().getElementsByClass("govuk-summary-list__row")
             ukSiteElems.get(0).getElementsByClass("govuk-summary-list__key").first().text() mustBe "You have 0 packaging sites"
@@ -65,6 +66,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
             res.status mustBe OK
             val page = Jsoup.parse(res.body)
             page.title must include(Messages("updateRegisteredDetails.checkYourAnswers.title"))
+            page.getElementsByClass("govuk-body").first().text() mustBe s"This update is for ${diffSubscription.orgName}"
             page.getElementsByTag("h2").first.text() mustBe "UK site details"
             val elems = page.getElementsByClass("govuk-summary-list").first().getElementsByClass("govuk-summary-list__row")
             elems.get(0).getElementsByClass("govuk-summary-list__key").first().text() mustBe "You have 1 packaging site"
@@ -91,6 +93,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
             res.status mustBe OK
             val page = Jsoup.parse(res.body)
             page.title must include(Messages("updateRegisteredDetails.checkYourAnswers.title"))
+            page.getElementsByClass("govuk-body").first().text() mustBe s"This update is for ${diffSubscription.orgName}"
             page.getElementsByTag("h2").first.text() mustBe "UK site details"
             val elems = page.getElementsByClass("govuk-summary-list").first().getElementsByClass("govuk-summary-list__row")
             elems.get(0).getElementsByClass("govuk-summary-list__key").first().text() mustBe "You have 0 packaging sites"
@@ -118,6 +121,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
             val page = Jsoup.parse(res.body)
 
             page.title must include(Messages("updateRegisteredDetails.checkYourAnswers.title"))
+            page.getElementsByClass("govuk-body").first().text() mustBe s"This update is for ${diffSubscription.orgName}"
             page.getElementsByTag("h2").get(1).text() mustBe "Soft Drinks Industry Levy contact"
             val elems = page.getElementsByClass("govuk-summary-list").get(1).getElementsByClass("govuk-summary-list__row")
             elems.get(0).getElementsByClass("govuk-summary-list__value").first().text() mustBe contactDetails.fullName
