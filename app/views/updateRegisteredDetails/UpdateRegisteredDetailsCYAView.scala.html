@@ -22,12 +22,12 @@
     govukButton: GovukButton
 )
 
-@(seqSummaryList: Seq[(String, SummaryList)], submitCall: Call)(implicit request: Request[_], messages: Messages)
+@(orgName: String, seqSummaryList: Seq[(String, SummaryList)], submitCall: Call)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("updateRegisteredDetails.checkYourAnswers.title"))) {
 
    <h1 class="govuk-heading-l">@messages("updateRegisteredDetails.checkYourAnswers.heading")</h1>
-
+    <span class="govuk-body">@messages("updateRegisteredDetails.checkYourAnswers.updateFor")@orgName</span>
 
    @for((heading, summaryList) <- seqSummaryList) {
        <h2 class="govuk-heading-m">@heading</h2>

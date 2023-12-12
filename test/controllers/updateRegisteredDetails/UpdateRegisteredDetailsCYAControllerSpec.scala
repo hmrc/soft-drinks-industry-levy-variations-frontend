@@ -57,9 +57,10 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
           UpdateContactDetailsSummary.rows(userAnswers),
           BusinessAddressSummary.rows(userAnswers)
         ).flatten
+        val orgName = " " + aSubscription.orgName
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(list, routes.UpdateRegisteredDetailsCYAController.onSubmit)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(orgName, list, routes.UpdateRegisteredDetailsCYAController.onSubmit)(request, messages(application)).toString
       }
     }
 

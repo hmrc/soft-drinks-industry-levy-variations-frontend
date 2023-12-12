@@ -47,8 +47,9 @@ class UpdateRegisteredDetailsCYAController @Inject()(
       val updateContactDetailsSummary: Option[(String, SummaryList)] = UpdateContactDetailsSummary.rows(request.userAnswers)
       val businessAddressSummary: Option[(String, SummaryList)] = BusinessAddressSummary.rows(request.userAnswers)
       val summaryList = Seq(ukSiteDetailsSummary, updateContactDetailsSummary, businessAddressSummary).flatten
+      val orgName: String = " " + request.subscription.orgName
 
-      Ok(view(summaryList, routes.UpdateRegisteredDetailsCYAController.onSubmit))
+      Ok(view(orgName, summaryList, routes.UpdateRegisteredDetailsCYAController.onSubmit))
   }
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails).async {implicit request =>
     val subscription = request.subscription
