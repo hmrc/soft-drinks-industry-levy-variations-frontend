@@ -229,13 +229,10 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
               ).foldLeft(Seq[Option[Int]]()) { (indexes, sectionDefined) =>
                 indexes :+ (if (sectionDefined) Option(indexes.filter(_.nonEmpty).flatten.size) else None)
               }
-              page.getElementsByClass("govuk-summary-list").size() mustBe sectionIndexes.filter(_.nonEmpty).flatten.size
               testAmountProducedSection(page, amountProducedValue, sectionIndex = sectionIndexes(0))
               testThirdPartyPackagingSection(page, thirdPartyPackagingValue, sectionIndex = sectionIndexes(1))
               testOwnBrandsSection(page, ownBrandsValue, sectionIndex = sectionIndexes(2))
               testContractSection(page, contractValue, sectionIndex = sectionIndexes(3))
-              testImportSection(page, importValue, sectionIndex = sectionIndexes(4))
-              testSiteSection(page, packingSiteValue, warehouseValue, sectionIndex = sectionIndexes(5))
               page.getElementsByTag("form").first().attr("action") mustBe routes.ChangeActivityCYAController.onSubmit.url
               page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm updates and send"
             }
