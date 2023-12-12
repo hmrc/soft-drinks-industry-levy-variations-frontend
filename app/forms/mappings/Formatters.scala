@@ -128,8 +128,8 @@ trait Formatters {
       val wholeNumberKey = s"litres.error.$band.wholeNumber"
       val nonNumericKey = s"litres.error.$band.nonNumeric"
 
-
-      val decimalRegexp = """^-?(\d*\.\d*)$"""
+      val decimalRegexp = """^-?(\d+\.\d*)$"""
+      val decimalStartingWithDotRegexp = """^-?(\.\d*)$"""
       val numberRegexp = """^\d+$*"""
       private val baseFormatter = stringFormatter(requiredKey, args)
 
@@ -145,10 +145,16 @@ trait Formatters {
                 .left.map(_ => Seq(FormError(key, outOfRangeKey, args)))
             case s if s.startsWith("-") =>
               Left(Seq(FormError(key, negativeNumber, args)))
+            case s if s == "." =>
+              Left(Seq(FormError(key, nonNumericKey, args)))
+            case s if s.matches(decimalStartingWithDotRegexp) =>
+              Left(Seq(FormError(key, wholeNumberKey, args)))
             case s if s.matches(decimalRegexp) =>
               Try(s.split("\\.")(0).toLong)
-                .fold(_ => Left(Seq(FormError(key, outOfRangeKey, args))),
-                  _ => Left(Seq(FormError(key, wholeNumberKey, args))))
+                .fold(
+                  _ => Left(Seq(FormError(key, outOfRangeKey, args))),
+                  _ => Left(Seq(FormError(key, wholeNumberKey, args)))
+                )
             case s =>
               nonFatalCatch
                 .either(s.toLong)
