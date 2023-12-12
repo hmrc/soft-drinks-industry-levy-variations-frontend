@@ -158,13 +158,15 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
+
                 val userAnswersAfterTest = getAnswers(userAnswers.id)
                 val dataStoredForPage = userAnswersAfterTest.fold[Option[Boolean]](None)(_.get(RemovePackagingSiteDetailsPage))
                 if(yesSelected) {
                   userAnswersAfterTest.get.packagingSiteList.size mustBe 0
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url)
                 } else {
                   userAnswersAfterTest.get.packagingSiteList.size mustBe 1
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
                 }
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe yesSelected
@@ -233,7 +235,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
             }
           }
 
-          "when the session already contains data for page" in {
+          "when the session already contains data for page with one packing site" in {
             given
               .commonPrecondition
 
@@ -247,15 +249,44 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
                 val userAnswersAfterTest = getAnswers(userAnswers.id)
                 val dataStoredForPage = userAnswersAfterTest.fold[Option[Boolean]](None)(_.get(RemovePackagingSiteDetailsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe yesSelected
                 if(yesSelected) {
                   userAnswersAfterTest.get.packagingSiteList.size mustBe 0
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url)
                 } else {
                   userAnswersAfterTest.get.packagingSiteList.size mustBe 1
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
+                }
+              }
+            }
+          }
+          "when the session already contains data for page with two packing sites" in {
+            given
+              .commonPrecondition
+
+            setAnswers(userAnswers.copy(packagingSiteList = packAtBusinessAddressSites))
+            getAnswers(userAnswers.id).get.packagingSiteList.size mustBe 2
+            WsTestClient.withClient { client =>
+              val yesSelected = key == "yes"
+              val result = createClientRequestPOST(
+                client, changeActivityBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved), Json.obj("value" -> yesSelected.toString)
+              )
+
+              whenReady(result) { res =>
+                res.status mustBe 303
+                val userAnswersAfterTest = getAnswers(userAnswers.id)
+                val dataStoredForPage = userAnswersAfterTest.fold[Option[Boolean]](None)(_.get(RemovePackagingSiteDetailsPage))
+                dataStoredForPage.nonEmpty mustBe true
+                dataStoredForPage.get mustBe yesSelected
+                if(yesSelected) {
+                  userAnswersAfterTest.get.packagingSiteList.size mustBe 2
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
+                } else {
+                  userAnswersAfterTest.get.packagingSiteList.size mustBe 2
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
                 }
               }
             }
