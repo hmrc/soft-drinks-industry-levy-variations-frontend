@@ -411,7 +411,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
       }
     }
 
-    "Remove packaging site confirm" - {
+    "Remove packaging site confirm with one packing site remaining" - {
       def navigateFromRemovePackagingSiteConfirm(value: Boolean, mode: Mode) = {
         navigator.nextPage(RemovePackagingSiteDetailsPage, mode,
           emptyUserAnswersForChangeActivity
@@ -429,6 +429,28 @@ class NavigatorForChangeActivitySpec extends SpecBase {
         s"select No to navigate to Packaging Site Details in $mode" in {
           val result = navigateFromRemovePackagingSiteConfirm(value = false, mode)
           result mustBe routes.PackagingSiteDetailsController.onPageLoad(mode)
+        }
+      })
+    }
+
+    "Remove packaging site confirm with no packing site remaining" - {
+      def navigateFromRemovePackagingSiteConfirm(value: Boolean, mode: Mode) = {
+        navigator.nextPage(RemovePackagingSiteDetailsPage, mode,
+          emptyUserAnswersForChangeActivity
+            .copy(packagingSiteList = Map.empty)
+            .set(PackagingSiteDetailsPage, value).success.value
+        )
+      }
+
+      List(NormalMode, CheckMode).foreach(mode => {
+        s"select Yes to navigate to Packaging Site Details in $mode" in {
+          val result = navigateFromRemovePackagingSiteConfirm(value = true, mode)
+          result mustBe routes.PackAtBusinessAddressController.onPageLoad(mode)
+        }
+
+        s"select No to navigate to Packaging Site Details in $mode" in {
+          val result = navigateFromRemovePackagingSiteConfirm(value = false, mode)
+          result mustBe routes.PackAtBusinessAddressController.onPageLoad(mode)
         }
       })
     }
