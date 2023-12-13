@@ -72,14 +72,6 @@ class PackAtBusinessAddressController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, formattedAddress))),
 
-//        value => {
-//          for {
-//            updatedAnswers <- Future.fromTry(request.userAnswers.set(PackAtBusinessAddressPage, value))
-//            onwardUrl <- updateDatabaseAndRedirect(
-//              updatedAnswers.copy(packagingSiteList = updatedPackagingSiteList(updatedAnswers.packagingSiteList, businessAddress, businessName, value)
-//            ), PackAtBusinessAddressPage, mode)
-//          } yield onwardUrl
-//        }
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PackAtBusinessAddressPage, value))
@@ -105,15 +97,4 @@ class PackAtBusinessAddressController @Inject()(
           }
       )
   }
-
-//  private def updatedPackagingSiteList(packagingSiteList: Map[String, Site],
-//                                       businessAddress: UkAddress,
-//                                       businessName: String,
-//                                       value: Boolean): Map[String, Site] = {
-//    if (value) {
-//      packagingSiteList ++ Map("1" -> Site(address = businessAddress, ref = None, tradingName = Some(businessName), closureDate = None))
-//    } else {
-//      packagingSiteList - "1"
-//    }
-//  }
 }

@@ -140,7 +140,6 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     case ImportsPage => userAnswers => navigationForImports(userAnswers, NormalMode)
     case HowManyImportsPage => userAnswers => navigationFollowingImports(userAnswers, NormalMode)
     case SuggestDeregistrationPage => _ => controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode)
-//    case PackAtBusinessAddressPage => _ => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
     case RemovePackagingSiteDetailsPage => userAnswers => navigationFollowingRemovePackagingSite(userAnswers, NormalMode)
     case RemoveWarehouseDetailsPage => _ => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
     case _ => _ => defaultCall
@@ -154,7 +153,6 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     case HowManyContractPackingPage => _ => routes.ChangeActivityCYAController.onPageLoad
     case ImportsPage => userAnswers => navigationForImports(userAnswers, CheckMode)
     case HowManyImportsPage => userAnswers => navigationFollowingImports(userAnswers, CheckMode)
-//    case PackAtBusinessAddressPage => _ => routes.PackagingSiteDetailsController.onPageLoad(CheckMode)
     case RemovePackagingSiteDetailsPage => userAnswers => navigationFollowingRemovePackagingSite(userAnswers, CheckMode)
     case RemoveWarehouseDetailsPage => _ => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
     case _ => _ => routes.ChangeActivityCYAController.onPageLoad
