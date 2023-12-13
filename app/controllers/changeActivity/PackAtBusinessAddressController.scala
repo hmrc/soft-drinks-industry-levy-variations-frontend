@@ -26,7 +26,7 @@ import navigation._
 import pages.changeActivity.PackAtBusinessAddressPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.SessionService
+import services.{AddressLookupService, PackingDetails, SessionService}
 import utilities.GenericLogger
 import viewmodels.AddressFormattingHelper
 import views.html.changeActivity.PackAtBusinessAddressView
@@ -34,6 +34,8 @@ import views.html.changeActivity.PackAtBusinessAddressView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import models.SelectChange.ChangeActivity
+
+import scala.util.Try
 
 class PackAtBusinessAddressController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -43,6 +45,7 @@ class PackAtBusinessAddressController @Inject()(
                                        formProvider: PackAtBusinessAddressFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
                                        view: PackAtBusinessAddressView,
+                                       addressLookupService: AddressLookupService,
                                        val genericLogger: GenericLogger,
                                        val errorHandler: ErrorHandler
                                      )(implicit val ec: ExecutionContext) extends ControllerHelper {
@@ -69,25 +72,29 @@ class PackAtBusinessAddressController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, formattedAddress))),
 
-        value => {
+        value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(PackAtBusinessAddressPage, value))
-            onwardUrl <- updateDatabaseAndRedirect(
-              updatedAnswers.copy(packagingSiteList = updatedPackagingSiteList(updatedAnswers.packagingSiteList, businessAddress, businessName, value)
-            ), PackAtBusinessAddressPage, mode)
-          } yield onwardUrl
-        }
+            onwardUrl <-
+              if (value) {
+                updateDatabaseWithoutRedirect(Try(updatedAnswers.copy(
+                  packagingSiteList = updatedAnswers.packagingSiteList ++ Map(
+                    "1" ->
+                      Site(
+                        address = request.subscription.address,
+                        ref = None,
+                        tradingName = Some(request.subscription.orgName),
+                        closureDate = None
+                      )
+                  ))), PackAtBusinessAddressPage).flatMap(_ =>
+                  Future.successful(routes.PackagingSiteDetailsController.onPageLoad(mode).url))
+              } else {
+                updateDatabaseWithoutRedirect(Try(updatedAnswers), PackAtBusinessAddressPage).flatMap(_ =>
+                  addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode))
+              }
+          } yield {
+            Redirect(onwardUrl)
+          }
       )
-  }
-
-  private def updatedPackagingSiteList(packagingSiteList: Map[String, Site],
-                                       businessAddress: UkAddress,
-                                       businessName: String,
-                                       value: Boolean): Map[String, Site] = {
-    if (value) {
-      packagingSiteList ++ Map("1" -> Site(address = businessAddress, ref = None, tradingName = Some(businessName), closureDate = None))
-    } else {
-      packagingSiteList - "1"
-    }
   }
 }
