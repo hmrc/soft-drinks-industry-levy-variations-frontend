@@ -30,7 +30,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, correctReturnBaseUrl + path)
@@ -50,7 +50,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, correctReturnBaseUrl + path)
@@ -64,6 +64,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
           }
         }
       }
+      testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + path)
       testUnauthorisedUser(correctReturnBaseUrl + path)
       testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + path)
       testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + path)
@@ -76,7 +77,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForCorrectReturn)
+            setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
                 client, correctReturnBaseUrl + path, Json.toJson(litresInBandsObj)
@@ -96,7 +97,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
             given
               .commonPrecondition
 
-            setAnswers(userAnswers)
+            setUpForCorrectReturn(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
                 client, correctReturnBaseUrl + path, Json.toJson(litresInBandsDiffObj)
@@ -121,7 +122,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + path, emptyJson
@@ -139,7 +140,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + path, jsonWithNoNumeric
@@ -157,7 +158,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + path, jsonWithNegativeNumber
@@ -175,7 +176,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + path, jsonWithDecimalNumber
@@ -193,7 +194,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + path, jsonWithOutOfRangeNumber
@@ -211,7 +212,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + path, jsonWith0

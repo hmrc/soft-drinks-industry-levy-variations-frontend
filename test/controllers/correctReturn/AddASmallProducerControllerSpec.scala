@@ -24,7 +24,7 @@ import models.SelectChange.CorrectReturn
 import models.correctReturn.AddASmallProducer
 import models.correctReturn.AddASmallProducer.toSmallProducer
 import models.submission.Litreage
-import models.{CheckMode, EditMode, LitresInBands, NormalMode, SmallProducer}
+import models.{CheckMode, EditMode, LitresInBands, NormalMode, SdilReturn, SmallProducer, UserAnswers}
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -32,6 +32,7 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.FormError
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -52,6 +53,19 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
   lazy val checkAddASmallProducerRoute = routes.AddASmallProducerController.onPageLoad(CheckMode).url
   lazy val editAddASmallProducerRoute = routes.AddASmallProducerController.onEditPageLoad(EditMode, sdilReference).url
 
+  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+
+  def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
+    if(userAnswers.fold(false)(_.correctReturnPeriod.nonEmpty)) {
+      when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+      applicationBuilder(userAnswers = userAnswers)
+        .overrides(
+          bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+    } else {
+      applicationBuilder(userAnswers)
+    }
+  }
+
   "AddASmallProducer Controller" - {
 
     List(NormalMode, CheckMode, EditMode).foreach(mode => {
@@ -64,7 +78,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       s"must return OK and the correct view for a GET in $mode" in {
         val smallProducer: AddASmallProducer = AddASmallProducer(Some("PRODUCER"), sdilReference, LitresInBands(10, 20))
         val userAnswers = userAnswersForCorrectReturn(false).copy(smallProducerList = List(toSmallProducer(smallProducer)))
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        val application = correctReturnAction(userAnswers = Some(userAnswers)).build()
 
         running(application) {
           val request = FakeRequest(GET, path)
@@ -81,7 +95,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       }
 
       s"must redirect to Select controller when return period has not been selected in $mode" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None))).build()
+        val application = correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None))).build()
 
         running(application) {
           val request = FakeRequest(GET, path)
@@ -98,15 +112,13 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionService = mock[SessionService]
 
         when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
-        val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
         when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn createSuccessVariationResult(Some(true))
 
         val application =
-          applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+          correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn))
             .overrides(
               bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
-              bind[SessionService].toInstance(mockSessionService),
-              bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+              bind[SessionService].toInstance(mockSessionService)
             )
             .build()
 
@@ -128,7 +140,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
       s"must return a Bad Request and errors when invalid data is submitted in $mode" in {
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
+        val application = correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
 
         running(application) {
           val request =
@@ -150,7 +162,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       s"must return a Bad Request and errors when data matching an already added small producer is submitted in $mode" in {
         val smallProducerSDILRef = "XCSDIL000456789"
         val smallProducerList: List[SmallProducer] = List(SmallProducer("MY SMALL PRODUCER", smallProducerSDILRef, Litreage(1L, 2L)))
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducerList))).build()
+        val application = correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducerList))).build()
 
         running(application) {
           val request = FakeRequest(POST, path)
@@ -185,7 +197,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
         val application =
-          applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None)))
+          correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None)))
             .overrides(
               bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
               bind[SessionService].toInstance(mockSessionService)
@@ -209,11 +221,10 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       }
 
       s"must return a Bad Request and errors when data with small producer status false is submitted in $mode" in {
-        val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
         when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn createSuccessVariationResult(Some(false))
         val smallProducerList: List[SmallProducer] = List(SmallProducer("MY SMALL PRODUCER", "XCSDIL000456789", Litreage(1L, 2L)))
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducerList)
-        )).overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+        val application = correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducerList)
+        )).build()
 
         running(application) {
           val request = FakeRequest(POST, path)
@@ -245,19 +256,17 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
         val mockSessionService = mock[SessionService]
 
-        val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+        when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn createFailureVariationResult(UnexpectedResponseFromSDIL)
 
         val application =
-          applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+          correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn))
             .overrides(
               bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
-              bind[SessionService].toInstance(mockSessionService),
-              bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+              bind[SessionService].toInstance(mockSessionService)
             )
             .build()
 
         running(application) {
-          when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn createFailureVariationResult(UnexpectedResponseFromSDIL)
 
           val request = FakeRequest(POST, path)
             .withFormUrlEncodedBody(
@@ -278,21 +287,19 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       s"should log an error message when internal server error is returned when user answers are not set in session repository in $mode" in {
         val mockSessionService = mock[SessionService]
 
-        val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-
         val application =
-          applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+          correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn))
             .overrides(
               bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
-              bind[SessionService].toInstance(mockSessionService),
-              bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
-            )
+              bind[SessionService].toInstance(mockSessionService))
             .build()
+
+        when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn createSuccessVariationResult(Some(true))
+        when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
         running(application) {
           withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
-            when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())) thenReturn createSuccessVariationResult(Some(true))
-            when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+
             val request =
               FakeRequest(POST, path)
                 .withFormUrlEncodedBody(

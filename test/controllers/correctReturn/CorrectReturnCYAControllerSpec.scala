@@ -17,16 +17,18 @@
 package controllers.correctReturn
 
 import base.SpecBase
+import connectors.SoftDrinksIndustryLevyConnector
 import controllers.correctReturn.routes._
 import models.SelectChange.CorrectReturn
 import models.correctReturn.AddASmallProducer
 import models.submission.Litreage
-import models.{LitresInBands, SmallProducer}
+import models.{LitresInBands, SdilReturn, SmallProducer, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
 import pages.correctReturn._
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.ReturnService
@@ -39,6 +41,14 @@ import scala.concurrent.Future
 class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
   val mockReturnService: ReturnService = mock[ReturnService]
+  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+
+  def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
+    when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    applicationBuilder(userAnswers = userAnswers)
+      .overrides(
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+  }
 
   "Check Your Answers Controller" - {
 
@@ -60,7 +70,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
         .set(HowManyCreditsForLostDamagedPage, litres).success.value
 
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+      val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(
         bind[ReturnService].toInstance(mockReturnService)).build()
 
       running(application) {

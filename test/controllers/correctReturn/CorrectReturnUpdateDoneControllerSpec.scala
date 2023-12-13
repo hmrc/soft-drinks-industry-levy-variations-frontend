@@ -17,15 +17,17 @@
 package controllers.correctReturn
 
 import base.SpecBase
+import connectors.SoftDrinksIndustryLevyConnector
 import controllers.correctReturn.routes._
 import models.correctReturn.{AddASmallProducer, ChangedPage, RepaymentMethod}
 import models.submission.Litreage
-import models.{LitresInBands, ReturnPeriod, SmallProducer}
+import models.{LitresInBands, ReturnPeriod, SdilReturn, SmallProducer, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
 import pages.correctReturn._
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.ReturnService
@@ -51,6 +53,14 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
   val returnPeriodEnd = currentReturnPeriod.end.format(returnPeriodFormat)
 
   val mockReturnService: ReturnService = mock[ReturnService]
+  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+
+  def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
+    when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    applicationBuilder(userAnswers = userAnswers)
+      .overrides(
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+  }
 
   "Update Done Controller" - {
 
@@ -93,7 +103,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
       val currentReturnPeriod = ReturnPeriod(2023, 1)
       val testTime = Instant.now()
-      val application = applicationBuilder(userAnswers = Some(userAnswers.copy(correctReturnPeriod = Option(currentReturnPeriod), submittedOn = Some(testTime))))
+      val application = correctReturnAction(userAnswers = Some(userAnswers.copy(correctReturnPeriod = Option(currentReturnPeriod), submittedOn = Some(testTime))))
         .overrides(bind[ReturnService].toInstance(mockReturnService))
         .build()
 

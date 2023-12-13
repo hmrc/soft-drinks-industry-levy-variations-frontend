@@ -38,55 +38,53 @@ import java.time.format.DateTimeFormatter
 import scala.concurrent.{ExecutionContext, Future}
 
 class CorrectReturnUpdateDoneController @Inject()(
-                                            override val messagesApi: MessagesApi,
-                                            controllerActions: ControllerActions,
-                                            val requiredUserAnswers: RequiredUserAnswersForCorrectReturn,
-                                            val controllerComponents: MessagesControllerComponents,
-                                            val correctReturnOrchestrator: CorrectReturnOrchestrator,
-                                            returnService: ReturnService,
-                                            genericLogger: GenericLogger,
-                                            view: CorrectReturnUpdateDoneView,
-                                            errorHandler: ErrorHandler
-                                          )(implicit config: FrontendAppConfig, ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                   override val messagesApi: MessagesApi,
+                                                   controllerActions: ControllerActions,
+                                                   val requiredUserAnswers: RequiredUserAnswersForCorrectReturn,
+                                                   val controllerComponents: MessagesControllerComponents,
+                                                   val correctReturnOrchestrator: CorrectReturnOrchestrator,
+                                                   returnService: ReturnService,
+                                                   genericLogger: GenericLogger,
+                                                   view: CorrectReturnUpdateDoneView,
+                                                   errorHandler: ErrorHandler
+                                                 )(implicit config: FrontendAppConfig, ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
       requiredUserAnswers.requireData(CorrectReturnUpdateDonePage) {
         returnService.getBalanceBroughtForward(request.sdilEnrolment).map(balanceBroughtForward => {
-          (for {
-            originalSdilReturn <- request.userAnswers.getCorrectReturnOriginalSDILReturnData
-            returnPeriod <- request.userAnswers.correctReturnPeriod
-          } yield {
-            val orgName: String = " " + request.subscription.orgName
-            val currentSDILReturn = SdilReturn.generateFromUserAnswers(request.userAnswers)
-            val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSDILReturn)
-            val amounts: Amounts = Amounts(
-              originalReturnTotal = originalSdilReturn.total,
-              newReturnTotal = currentSDILReturn.total,
-              balanceBroughtForward = balanceBroughtForward * -1,
-              adjustedAmount = currentSDILReturn.total + (balanceBroughtForward * -1)
-            )
-            val sections = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(
-              request.userAnswers, request.subscription, changedPages, amounts, isCheckAnswers = false)
-            request.userAnswers.submittedOn match {
-              case Some(submittedOnDate) =>
-                val getSentDateTime = LocalDateTime.ofInstant(submittedOnDate, ZoneId.of("Europe/London"))
-                val formattedDate = getSentDateTime.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-                val formattedTime = getSentDateTime.format(DateTimeFormatter.ofPattern("h:mma"))
+          val originalSdilReturn = request.originalSdilReturn
+          val returnPeriod = request.returnPeriod
+          val orgName: String = " " + request.subscription.orgName
+          val currentSDILReturn = SdilReturn.generateFromUserAnswers(request.userAnswers)
+          val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSDILReturn)
+          val amounts: Amounts = Amounts(
+            originalReturnTotal = originalSdilReturn.total,
+            newReturnTotal = currentSDILReturn.total,
+            balanceBroughtForward = balanceBroughtForward * -1,
+            adjustedAmount = currentSDILReturn.total + (balanceBroughtForward * -1)
+          )
+          val sections = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(
+            request.userAnswers, request.subscription, changedPages, amounts, isCheckAnswers = false)
+          request.userAnswers.submittedOn match {
+            case Some(submittedOnDate) =>
+              val getSentDateTime = LocalDateTime.ofInstant(submittedOnDate, ZoneId.of("Europe/London"))
+              val formattedDate = getSentDateTime.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+              val formattedTime = getSentDateTime.format(DateTimeFormatter.ofPattern("h:mma"))
 
-                val returnPeriodFormat = DateTimeFormatter.ofPattern("MMMM yyyy")
-                val returnPeriodStart = returnPeriod.start.format(returnPeriodFormat)
-                val returnPeriodEnd = returnPeriod.end.format(returnPeriodFormat)
+              val returnPeriodFormat = DateTimeFormatter.ofPattern("MMMM yyyy")
+              val returnPeriodStart = returnPeriod.start.format(returnPeriodFormat)
+              val returnPeriodEnd = returnPeriod.end.format(returnPeriodFormat)
 
-                Ok(view(orgName, sections, formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd))
+              Ok(view(orgName, sections, formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd))
 
-              case None => genericLogger.logger.error(s"[SoftDrinksIndustryLevyService [submitVariation] - unexpected response while attempting to retreive userAnswers submittedOnDate")
-                Redirect(routes.SelectChangeController.onPageLoad)
-            }
-          }).getOrElse(Redirect(controllers.routes.SelectChangeController.onPageLoad.url))
+            case None =>
+              genericLogger.logger.error(s"[SoftDrinksIndustryLevyService [submitVariation] - unexpected response while attempting to retreive userAnswers submittedOnDate")
+              Redirect(routes.SelectChangeController.onPageLoad)
+          }
         }).recoverWith {
           case _ => genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][Balance] - unexpected response for ${request.sdilEnrolment}")
-          Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url))
+            Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url))
         }
       }
   }

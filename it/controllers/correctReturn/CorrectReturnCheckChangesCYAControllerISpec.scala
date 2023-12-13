@@ -30,7 +30,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForSelectChange(CorrectReturn))
+        setUpForCorrectReturn(emptyUserAnswersForSelectChange(CorrectReturn).copy(correctReturnPeriod = None))
 
         WsTestClient.withClient { client =>
           val result = createClientRequestGet(client, baseUrl + route)
@@ -51,7 +51,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
         given
           .commonPrecondition
 
-        setAnswers(userAnswers)
+        setUpForCorrectReturn(userAnswers)
 
         given.sdilBackend.balance(userAnswers.id, false)
 
@@ -119,7 +119,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers, Some(populatedReturn))
 
           given.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
@@ -184,7 +184,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           given.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
@@ -218,7 +218,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           given.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
@@ -252,7 +252,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
           given
             .commonPreconditionChangeSubscription(diffSubscriptionWithWarehouses)
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           given.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
@@ -287,7 +287,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
           given
             .commonPreconditionChangeSubscription(diffSubscriptionWithWarehouses)
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           given.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
@@ -321,7 +321,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           given.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
@@ -356,7 +356,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             .commonPrecondition
 
           given.sdilBackend.balance(userAnswers.id, false)
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
@@ -387,7 +387,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           given.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
@@ -422,7 +422,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           given.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
@@ -463,7 +463,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           given.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
@@ -503,7 +503,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           given.sdilBackend.balance("", false)
           WsTestClient.withClient { client =>
@@ -517,7 +517,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
       }
 
     }
-
+    testRequiredCorrectReturnDataMissing(baseUrl + route)
     testUnauthorisedUser(baseUrl + route)
     testAuthenticatedUserButNoUserAnswers(baseUrl + route)
   }
@@ -529,7 +529,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
         .sdilBackend.submitSdilReturnsVary("XKSDIL000000022")
         .sdilBackend.submitReturnVariations("XKSDIL000000022")
 
-      setAnswers(userAnswerWithLitresForAllPagesNilSdilReturn
+      setUpForCorrectReturn(userAnswerWithLitresForAllPagesNilSdilReturn
         .set(CorrectionReasonPage, "No longer sell drinks").success.value
         .set(RepaymentMethodPage, BankAccount).success.value)
 

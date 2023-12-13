@@ -22,7 +22,8 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForSelectChange(CorrectReturn))
+        setUpForCorrectReturn(emptyUserAnswersForSelectChange(CorrectReturn)
+        .copy(correctReturnPeriod = None))
 
         WsTestClient.withClient { client =>
           val result = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath("indexDoesntExist"))
@@ -41,7 +42,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath(indexOfWarehouseToBeRemoved))
@@ -62,6 +63,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
         }
       }
     }
+    testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + normalRoutePath(indexOfWarehouseToBeRemoved))
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath(indexOfWarehouseToBeRemoved))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath(indexOfWarehouseToBeRemoved))
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath(indexOfWarehouseToBeRemoved))
@@ -73,7 +75,8 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForSelectChange(CorrectReturn))
+        setUpForCorrectReturn(emptyUserAnswersForSelectChange(CorrectReturn)
+          .copy(correctReturnPeriod = None))
 
         WsTestClient.withClient { client =>
           val result = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath("indexDoesntExist"))
@@ -92,7 +95,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath(indexOfWarehouseToBeRemoved))
@@ -113,6 +116,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
       }
     }
 
+    testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + checkRoutePath(indexOfWarehouseToBeRemoved))
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath(indexOfWarehouseToBeRemoved))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath(indexOfWarehouseToBeRemoved))
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath(indexOfWarehouseToBeRemoved))
@@ -127,7 +131,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(completedUserAnswersForCorrectReturnNewPackerOrImporter.copy(warehouseList =
+            setUpForCorrectReturn(completedUserAnswersForCorrectReturnNewPackerOrImporter.copy(warehouseList =
               Map("warehouseDOS" -> Site(ukAddress))))
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
@@ -147,7 +151,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
               .commonPrecondition
             val userAnswers = completedUserAnswersForCorrectReturnNewPackerOrImporter.copy(warehouseList =
               Map("warehouseUNO" -> Site(ukAddress)))
-            setAnswers(userAnswers)
+            setUpForCorrectReturn(userAnswers)
             getAnswers(userAnswers.id).get.warehouseList.size mustBe 1
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
@@ -177,7 +181,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(
+        setUpForCorrectReturn(
           emptyUserAnswersForCorrectReturn
             .copy(warehouseList = Map(indexOfWarehouseToBeRemoved -> Site(ukAddress))))
         getAnswers(emptyUserAnswersForCorrectReturn.id).get.warehouseList.size mustBe 1
@@ -217,7 +221,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForCorrectReturn.copy(warehouseList =
+            setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(warehouseList =
               Map("warehouseDOS" -> Site(ukAddress), "warehouseUNO" -> Site(ukAddress))))
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
@@ -237,7 +241,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(completedUserAnswersForCorrectReturnNewPackerOrImporter.copy(warehouseList =
+            setUpForCorrectReturn(completedUserAnswersForCorrectReturnNewPackerOrImporter.copy(warehouseList =
               Map("warehouseUNO" -> Site(ukAddress), "warehouseTwo" -> Site(ukAddress))))
             getAnswers(completedUserAnswersForCorrectReturnNewPackerOrImporter.id).get.warehouseList.size mustBe 2
             WsTestClient.withClient { client =>
@@ -267,7 +271,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(
+        setUpForCorrectReturn(
           emptyUserAnswersForCorrectReturn
             .copy(warehouseList = Map(indexOfWarehouseToBeRemoved -> Site(ukAddress))))
         getAnswers(emptyUserAnswersForCorrectReturn.id).get.warehouseList.size mustBe 1

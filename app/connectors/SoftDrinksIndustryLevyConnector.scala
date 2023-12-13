@@ -118,7 +118,8 @@ class SoftDrinksIndustryLevyConnector @Inject()(
                    period: ReturnPeriod
                  )(implicit hc: HeaderCarrier): VariationResult[Option[SdilReturn]] = EitherT {
     sdilSessionCache.fetchEntry[OptPreviousSubmittedReturn](utr, SDILSessionKeys.previousSubmittedReturn(utr, period)).flatMap {
-      case Some(optPreviousReturn) => Future.successful(Right(optPreviousReturn.optReturn))
+      case Some(optPreviousReturn) =>
+        Future.successful(Right(optPreviousReturn.optReturn))
       case None =>
         val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
         http.GET[Option[SdilReturn]](uri)

@@ -23,7 +23,7 @@ class ExemptionsForSmallProducersControllerISpec extends ControllerITTestHelper 
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, correctReturnBaseUrl + route)
@@ -49,7 +49,7 @@ class ExemptionsForSmallProducersControllerISpec extends ControllerITTestHelper 
             given
               .commonPrecondition
 
-            setAnswers(userAnswers)
+            setUpForCorrectReturn(userAnswers)
 
             WsTestClient.withClient { client =>
               val result1 = createClientRequestGet(client, correctReturnBaseUrl + route)
@@ -69,6 +69,7 @@ class ExemptionsForSmallProducersControllerISpec extends ControllerITTestHelper 
           }
         }
       }
+      testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + route)
       testUnauthorisedUser(correctReturnBaseUrl + route)
       testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + route)
       testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + route)
@@ -84,7 +85,7 @@ class ExemptionsForSmallProducersControllerISpec extends ControllerITTestHelper 
                   .commonPrecondition
 
                 val smallProducers = if (smallProducersAdded) smallProducersAddedList else List.empty
-                setAnswers(emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducers))
+                setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducers))
                 WsTestClient.withClient { client =>
                   val yesSelected = key == "yes"
                   val result = createClientRequestPOST(
@@ -118,7 +119,7 @@ class ExemptionsForSmallProducersControllerISpec extends ControllerITTestHelper 
                   .commonPrecondition
 
                 val smallProducers = if (smallProducersAdded) smallProducersAddedList else List.empty
-                setAnswers(emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducers))
+                setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducers))
                 WsTestClient.withClient { client =>
                   val yesSelected = key == "yes"
 
@@ -156,7 +157,7 @@ class ExemptionsForSmallProducersControllerISpec extends ControllerITTestHelper 
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + route, Json.obj("value" -> "")

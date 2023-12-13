@@ -56,11 +56,6 @@ case class UserAnswers(
     Reads.optionNoError(Reads.at(jsPath)).reads(data).getOrElse(None)
   }
 
-  def getCorrectReturnOriginalSDILReturnData(implicit rds: Reads[SdilReturn]): Option[SdilReturn] = {
-    val jsPath = JsPath \ "originalSDILReturn"
-    Reads.optionNoError(Reads.at(jsPath)).reads(data).getOrElse(None)
-  }
-
   def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] = {
 
     val updatedData = data.setObject(page.path, Json.toJson(value)) match {
@@ -99,26 +94,6 @@ case class UserAnswers(
         Success(updatedAnswers)
     }
   }
-
-  def setOriginalSDILReturn(originalSDILReturn: SdilReturn)
-                                 (implicit writes: Writes[SdilReturn]): Try[UserAnswers] = {
-
-    val jsPath = JsPath \ "originalSDILReturn"
-
-    val updatedData = data.setObject(jsPath, Json.toJson(originalSDILReturn)) match {
-      case JsSuccess(jsValue, _) =>
-        Success(jsValue)
-      case JsError(errors) =>
-        Failure(JsResultException(errors))
-    }
-
-    updatedData.flatMap {
-      d =>
-        val updatedAnswers = copy(data = d)
-        Success(updatedAnswers)
-    }
-  }
-
   def setAndRemoveLitresIfReq(page: Settable[Boolean], litresPage: Settable[LitresInBands], value: Boolean)
                              (implicit writes: Writes[Boolean]): Try[UserAnswers] = {
 

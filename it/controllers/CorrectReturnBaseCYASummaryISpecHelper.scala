@@ -89,7 +89,6 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
     .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", smallProducerLitres)).success.value
 
   def userAnswerWithAllNosWithOriginalSdilReturn: UserAnswers = emptyUserAnswersForCorrectReturn
-      .copy(data = Json.obj("originalSDILReturn" -> Json.toJson(populatedReturn)))
       .set(OperatePackagingSiteOwnBrandsPage, false).success.value
       .set(PackagedAsContractPackerPage, false).success.value
       .set(ExemptionsForSmallProducersPage, false).success.value

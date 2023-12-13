@@ -23,7 +23,6 @@ import handlers.ErrorHandler
 import models.SelectChange.UpdateRegisteredDetails
 import models.{CheckMode, Mode}
 import navigation._
-import pages.updateRegisteredDetails.PackagingSiteDetailsPage
 import play.api.data.Form
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}

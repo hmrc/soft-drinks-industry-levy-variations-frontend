@@ -35,11 +35,11 @@ class CorrectReturnOrchestrator @Inject()(returnService: ReturnService,
                                            connector: SoftDrinksIndustryLevyConnector,
                                           sessionService: SessionService){
 
-  def submitReturn(userAnswers: UserAnswers, subscription: RetrievedSubscription)
+  def submitReturn(userAnswers: UserAnswers, subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, originalReturn: SdilReturn)
                   (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = EitherT {
 
-    (userAnswers.correctReturnPeriod, userAnswers.getCorrectReturnOriginalSDILReturnData, userAnswers.getCorrectReturnData) match {
-      case (Some(returnPeriod), Some(originalReturn), Some(correctReturnData)) =>
+    userAnswers.getCorrectReturnData match {
+      case Some(correctReturnData) =>
         submitReturnAndVariationAndUpdateSession(subscription, returnPeriod, originalReturn, userAnswers, correctReturnData).value
       case _ => Future.successful(Left(MissingRequiredAnswers))
     }
@@ -75,8 +75,7 @@ class CorrectReturnOrchestrator @Inject()(returnService: ReturnService,
 
     for {
       sdilReturn <- getSdilReturn(retrievedSubscription, selectedReturnPeriod)
-      userAnswersWithOriginalSdilReturn <- generateUAsWithOriginalSdilReturnSaved(userAnswers, sdilReturn)
-      updatedUserAnswers <- generateUserAnswersWithSdilReturn(userAnswersWithOriginalSdilReturn, sdilReturn, selectedReturnPeriod)
+      updatedUserAnswers <- generateUserAnswersWithSdilReturn(userAnswers, sdilReturn, selectedReturnPeriod)
       _ <- EitherT(sessionService.set(updatedUserAnswers))
     } yield (): Unit
 
@@ -109,16 +108,6 @@ class CorrectReturnOrchestrator @Inject()(returnService: ReturnService,
     val correctReturnUAData = CorrectReturnUserAnswersData.fromSdilReturn(sdilReturn)
     Future.fromTry(userAnswers
       .setForCorrectReturn(correctReturnUAData, sdilReturn.packSmall, selectedReturnPeriod)
-    ).map(Right(_))
-      .recover {
-        case _ => Left(FailedToAddDataToUserAnswers)
-      }
-  }
-
-  private def generateUAsWithOriginalSdilReturnSaved(userAnswers: UserAnswers, sdilReturn: SdilReturn)
-                                               (implicit ec: ExecutionContext): VariationResult[UserAnswers] = EitherT {
-    Future.fromTry(userAnswers
-      .setOriginalSDILReturn(sdilReturn)
     ).map(Right(_))
       .recover {
         case _ => Left(FailedToAddDataToUserAnswers)

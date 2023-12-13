@@ -28,31 +28,10 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
   private def userAnswersWithSmallProducersSet = emptyUserAnswersForCorrectReturn
     .copy(smallProducerList = List(SmallProducer(aliasSuperCola, sdilRefSuperCola, Litreage(100, 200))))
 
-  def testReturnPeriodNotSetForCorrectReturn(url: String): Unit = {
-    "the return period has not been selected" - {
-      "redirect to Select controller" in {
-        setAnswers(emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None))
-        given.commonPreconditionChangeSubscription(diffSubscription)
-
-        WsTestClient.withClient { client =>
-          val result1 = client.url(url)
-            .withFollowRedirects(false)
-            .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .get()
-
-          whenReady(result1) { res =>
-            res.status mustBe 303
-            res.header(HeaderNames.LOCATION).get mustBe routes.SelectController.onPageLoad.url
-          }
-        }
-      }
-    }
-  }
-
   "GET " + normalRoutePath - {
     "Ask user to input a registered small producer's details" in {
       val userAnswers = emptyUserAnswersForCorrectReturn
-      setAnswers(userAnswers)
+      setUpForCorrectReturn(userAnswers)
       given.commonPreconditionChangeSubscription(diffSubscription)
 
       WsTestClient.withClient { client =>
@@ -67,7 +46,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
       }
     }
-    testReturnPeriodNotSetForCorrectReturn(correctReturnBaseUrl + normalRoutePath)
+    testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + normalRoutePath)
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath)
@@ -75,7 +54,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
   "GET " + checkRoutePath - {
     "Ask user to input a registered small producer's details" in {
       val userAnswers = emptyUserAnswersForCorrectReturn
-      setAnswers(userAnswers)
+      setUpForCorrectReturn(userAnswers)
       given.commonPreconditionChangeSubscription(diffSubscription)
 
       WsTestClient.withClient { client =>
@@ -90,7 +69,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
       }
     }
-    testReturnPeriodNotSetForCorrectReturn(correctReturnBaseUrl + checkRoutePath)
+    testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + checkRoutePath)
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath)
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath)
@@ -101,7 +80,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         .commonPreconditionChangeSubscription(diffSubscription)
 
       val userAnswers = userAnswersWithSmallProducersSet
-      setAnswers(userAnswers)
+      setUpForCorrectReturn(userAnswers)
 
       WsTestClient.withClient { client =>
         val result =
@@ -133,7 +112,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         .commonPreconditionChangeSubscription(diffSubscription)
 
       val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None)
-      setAnswers(userAnswers)
+      setUpForCorrectReturn(userAnswers)
 
       WsTestClient.withClient { client =>
         val result =
@@ -160,7 +139,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = false)
 
       val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod))
-      setAnswers(userAnswers)
+      setUpForCorrectReturn(userAnswers)
 
       WsTestClient.withClient { client =>
         val result =
@@ -197,7 +176,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = true)
 
       val userAnswers = emptyUserAnswersForCorrectReturn
-      setAnswers(userAnswers)
+      setUpForCorrectReturn(userAnswers)
 
       WsTestClient.withClient { client =>
         val result =
@@ -217,6 +196,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
       }
 
     }
+    testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + normalRoutePath, Some(validAddASmallProducer))
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath, Some(validAddASmallProducer))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath, Some(validAddASmallProducer))
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath, Some(validAddASmallProducer))
@@ -227,7 +207,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         .commonPreconditionChangeSubscription(diffSubscription)
 
       val userAnswers = userAnswersWithSmallProducersSet
-      setAnswers(userAnswers)
+      setUpForCorrectReturn(userAnswers)
 
       WsTestClient.withClient { client =>
         val result =
@@ -259,7 +239,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         .commonPreconditionChangeSubscription(diffSubscription)
 
       val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None)
-      setAnswers(userAnswers)
+      setUpForCorrectReturn(userAnswers)
 
       WsTestClient.withClient { client =>
         val result =
@@ -286,7 +266,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = false)
 
       val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod))
-      setAnswers(userAnswers)
+      setUpForCorrectReturn(userAnswers)
 
       WsTestClient.withClient { client =>
         val result =
@@ -323,7 +303,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = true)
 
       val userAnswers = emptyUserAnswersForCorrectReturn
-      setAnswers(userAnswers)
+      setUpForCorrectReturn(userAnswers)
 
       WsTestClient.withClient { client =>
         val result =
@@ -349,7 +329,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         .smallProducerStatusError(sdilRefSuperCola, returnPeriod)
 
       val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod))
-      setAnswers(userAnswers)
+      setUpForCorrectReturn(userAnswers)
 
       WsTestClient.withClient { client =>
         val result =
@@ -367,6 +347,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         }
       }
     }
+    testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + checkRoutePath, Some(validAddASmallProducer))
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath, Some(validAddASmallProducer))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath, Some(validAddASmallProducer))
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath, Some(validAddASmallProducer))

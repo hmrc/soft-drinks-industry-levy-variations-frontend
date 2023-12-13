@@ -20,7 +20,6 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.ControllerActions
 import handlers.ErrorHandler
-import models.SelectChange.CorrectReturn
 import models.correctReturn.ChangedPage
 import models.{Amounts, SdilReturn}
 import orchestrators.CorrectReturnOrchestrator
@@ -48,7 +47,7 @@ class CorrectReturnCheckChangesCYAController @Inject()(
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-      request.userAnswers.getCorrectReturnOriginalSDILReturnData.map(originalSdilReturn => {
+      val originalSdilReturn = request.originalSdilReturn
         returnService.getBalanceBroughtForward(request.sdilEnrolment).map(balanceBroughtForward => {
           val orgName: String = " " + request.subscription.orgName
           val currentSDILReturn = SdilReturn.generateFromUserAnswers(request.userAnswers)
@@ -70,12 +69,11 @@ class CorrectReturnCheckChangesCYAController @Inject()(
           case _ => genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][Balance] - unexpected response for ${request.sdilEnrolment}")
             Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url))
         }
-      }).getOrElse(Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url)))
   }
 
-  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
+  def onSubmit: Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-    correctReturnOrchestrator.submitReturn(request.userAnswers, request.subscription).value.map {
+    correctReturnOrchestrator.submitReturn(request.userAnswers, request.subscription, request.returnPeriod, request.originalSdilReturn).value.map {
       case Right(_) => Redirect(routes.CorrectReturnUpdateDoneController.onPageLoad.url)
       case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - received a failed response from return submission")
         InternalServerError(errorHandler.internalServerErrorTemplate)

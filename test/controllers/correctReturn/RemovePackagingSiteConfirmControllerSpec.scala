@@ -17,16 +17,18 @@
 package controllers.correctReturn
 
 import base.SpecBase
+import connectors.SoftDrinksIndustryLevyConnector
 import errors.SessionDatabaseInsertError
 import forms.correctReturn.RemovePackagingSiteConfirmFormProvider
 import models.SelectChange.CorrectReturn
 import models.backend.{Site, UkAddress}
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, SdilReturn, UserAnswers}
 import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -50,12 +52,19 @@ class RemovePackagingSiteConfirmControllerSpec extends SpecBase with MockitoSuga
   val packingSiteTradingName: String = "a name for a packing site here"
   val userAnswersWithPackingSite: UserAnswers = emptyUserAnswersForCorrectReturn
     .copy(packagingSiteList = Map(indexOfPackingSiteToBeRemoved -> Site(addressOfPackingSite, Some(packingSiteTradingName), None, None)))
+  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
+  def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
+    when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    applicationBuilder(userAnswers = userAnswers)
+      .overrides(
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+  }
   "RemovePackagingSiteConfirm Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithPackingSite)).build()
+      val application = correctReturnAction(userAnswers = Some(userAnswersWithPackingSite)).build()
 
       running(application) {
         val request = FakeRequest(GET, packingSiteDetailsRemoveRoute)
@@ -78,7 +87,7 @@ class RemovePackagingSiteConfirmControllerSpec extends SpecBase with MockitoSuga
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(userAnswersWithPackingSite))
+        correctReturnAction(userAnswers = Some(userAnswersWithPackingSite))
           .overrides(
             bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
@@ -99,7 +108,7 @@ class RemovePackagingSiteConfirmControllerSpec extends SpecBase with MockitoSuga
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithPackingSite)).build()
+      val application = correctReturnAction(userAnswers = Some(userAnswersWithPackingSite)).build()
 
       running(application) {
         val request =
@@ -129,7 +138,7 @@ class RemovePackagingSiteConfirmControllerSpec extends SpecBase with MockitoSuga
       when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
       val application =
-        applicationBuilder(userAnswers = Some(userAnswersWithPackingSite))
+        correctReturnAction(userAnswers = Some(userAnswersWithPackingSite))
           .overrides(
             bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)

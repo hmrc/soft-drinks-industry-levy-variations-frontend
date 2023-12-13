@@ -30,7 +30,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, correctReturnBaseUrl + path)
@@ -50,7 +50,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, correctReturnBaseUrl + path)
@@ -64,6 +64,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
           }
         }
       }
+      testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + path)
       testUnauthorisedUser(correctReturnBaseUrl + path)
       testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + path)
       testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + path)
@@ -76,7 +77,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForCorrectReturn)
+            setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
                 client, correctReturnBaseUrl + path, Json.toJson(litresInBandsObj)
@@ -96,7 +97,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
             given
               .commonPrecondition
 
-            setAnswers(userAnswers)
+            setUpForCorrectReturn(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
                 client, correctReturnBaseUrl + path, Json.toJson(litresInBandsDiffObj)
@@ -122,7 +123,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + path, emptyJson
@@ -140,7 +141,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + path, jsonWithNoNumeric
@@ -158,7 +159,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + path, jsonWithNegativeNumber
@@ -176,7 +177,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + path, jsonWithDecimalNumber
@@ -194,7 +195,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + path, jsonWithOutOfRangeNumber
@@ -212,7 +213,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + path, jsonWith0
@@ -237,7 +238,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
           .commonPreconditionChangeSubscription(diffSubscription)
 
 
-        setAnswers(completedUserAnswersForCorrectReturnNewPackerOrImporter.set(ClaimCreditsForLostDamagedPage, true).success.value)
+        setUpForCorrectReturn(completedUserAnswersForCorrectReturnNewPackerOrImporter.set(ClaimCreditsForLostDamagedPage, true).success.value)
 
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(

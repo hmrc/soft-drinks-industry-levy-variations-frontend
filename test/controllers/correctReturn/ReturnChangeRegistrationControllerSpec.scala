@@ -17,16 +17,29 @@
 package controllers.correctReturn
 
 import base.SpecBase
+import connectors.SoftDrinksIndustryLevyConnector
 import models.SelectChange.CorrectReturn
-import models.{LitresInBands, NormalMode}
+import models.{LitresInBands, NormalMode, SdilReturn, UserAnswers}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar.when
+import org.scalatestplus.mockito.MockitoSugar
 import pages.correctReturn.{BroughtIntoUKPage, HowManyBroughtIntoUKPage, PackagedAsContractPackerPage}
+import play.api.inject
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.correctReturn.ReturnChangeRegistrationView
-class ReturnChangeRegistrationControllerSpec extends SpecBase {
+class ReturnChangeRegistrationControllerSpec extends SpecBase with MockitoSugar {
 
   lazy val returnChangeRegistrationRoute: String = routes.ReturnChangeRegistrationController.onPageLoad(NormalMode).url
+  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
+  def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
+    when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    applicationBuilder(userAnswers = userAnswers)
+      .overrides(
+        inject.bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+  }
   "ReturnChangeRegistration Controller" - {
 
     "must return OK and the correct view for a GET when user is a new importer " in {
@@ -34,7 +47,7 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase {
         .set(PackagedAsContractPackerPage, false).success.value
         .set(BroughtIntoUKPage, true).success.value
         .set(HowManyBroughtIntoUKPage, LitresInBands(1L, 1L)).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = correctReturnAction(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, returnChangeRegistrationRoute)
@@ -50,7 +63,7 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase {
     }
 
     "must return OK and the correct view for a GET when user is a new packager " in {
-      val application = applicationBuilder(userAnswers = Some(completedUserAnswersForCorrectReturnNewPackerOrImporter)).build()
+      val application = correctReturnAction(userAnswers = Some(completedUserAnswersForCorrectReturnNewPackerOrImporter)).build()
 
       running(application) {
         val request = FakeRequest(GET, returnChangeRegistrationRoute)

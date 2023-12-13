@@ -17,11 +17,12 @@
 package controllers.correctReturn
 
 import base.SpecBase
+import connectors.SoftDrinksIndustryLevyConnector
 import errors.SessionDatabaseInsertError
 import forms.correctReturn.RemoveSmallProducerConfirmFormProvider
 import models.SelectChange.CorrectReturn
 import models.submission.Litreage
-import models.{CheckMode, NormalMode, SmallProducer, UserAnswers}
+import models.{CheckMode, NormalMode, SdilReturn, SmallProducer, UserAnswers}
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -31,6 +32,7 @@ import pages.correctReturn.RemoveSmallProducerConfirmPage
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -49,7 +51,14 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
   lazy val removeSmallProducerConfirmRoute = routes.RemoveSmallProducerConfirmController.onPageLoad(NormalMode, s"$sdilReferenceParty").url
   lazy val removeSmallProducerConfirmCheckRoute = routes.RemoveSmallProducerConfirmController.onPageLoad(CheckMode, s"$sdilReferenceParty").url
+  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
+  def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
+    when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    applicationBuilder(userAnswers = userAnswers)
+      .overrides(
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+  }
   "RemoveSmallProducerConfirm Controller" - {
 
     List((NormalMode, removeSmallProducerConfirmRoute), (CheckMode, removeSmallProducerConfirmCheckRoute))
@@ -59,7 +68,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
         val userAnswers: UserAnswers = userAnswersForCorrectReturn(false)
 
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        val application = correctReturnAction(userAnswers = Some(userAnswers)).build()
 
         running(application) {
           val request = FakeRequest(GET, controllerRoute)
@@ -80,7 +89,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
         val userAnswers: UserAnswers = userAnswersForCorrectReturn(false).copy(smallProducerList = List.empty)
 
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        val application = correctReturnAction(userAnswers = Some(userAnswers)).build()
 
         running(application) {
           val request = FakeRequest(GET, controllerRoute)
@@ -96,7 +105,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
           val userAnswers: UserAnswers = userAnswersForCorrectReturn(false).copy(smallProducerList = List(SmallProducer("", "XZSDIL000000234", Litreage(2000, 4000))))
 
-          val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+          val application = correctReturnAction(userAnswers = Some(userAnswers)).build()
 
           running(application) {
             val request = FakeRequest(GET, controllerRoute)
@@ -112,7 +121,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
         val userAnswers: UserAnswers = userAnswersForCorrectReturn(false)
 
-        val application = applicationBuilder(userAnswers = Some(userAnswers.set(RemoveSmallProducerConfirmPage, true).success.value)).build()
+        val application = correctReturnAction(userAnswers = Some(userAnswers.set(RemoveSmallProducerConfirmPage, true).success.value)).build()
 
         running(application) {
           val request = FakeRequest(GET, controllerRoute)
@@ -135,7 +144,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
         val application =
-          applicationBuilder(userAnswers = Some(userAnswers.set(RemoveSmallProducerConfirmPage, true).success.value))
+          correctReturnAction(userAnswers = Some(userAnswers.set(RemoveSmallProducerConfirmPage, true).success.value))
             .overrides(
               bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
               bind[SessionService].toInstance(mockSessionService)
@@ -158,7 +167,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
         val userAnswers: UserAnswers = userAnswersForCorrectReturn(false).copy(smallProducerList = List.empty)
 
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        val application = correctReturnAction(userAnswers = Some(userAnswers)).build()
 
         running(application) {
           val request =
@@ -176,7 +185,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
         val userAnswers: UserAnswers = userAnswersForCorrectReturn(false)
 
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        val application = correctReturnAction(userAnswers = Some(userAnswers)).build()
 
         running(application) {
           val request =
@@ -200,7 +209,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
         when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
         val application =
-          applicationBuilder(userAnswers = Some(userAnswersForCorrectReturn(false)))
+          correctReturnAction(userAnswers = Some(userAnswersForCorrectReturn(false)))
             .overrides(
               bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn (onwardRoute)),
               bind[SessionService].toInstance(mockSessionService)

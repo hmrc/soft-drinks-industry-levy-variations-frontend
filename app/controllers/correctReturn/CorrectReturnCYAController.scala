@@ -46,7 +46,7 @@ class CorrectReturnCYAController @Inject()(override
   def onPageLoad: Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
       requiredUserAnswers.requireData(CorrectReturnBaseCYAPage) {
-        request.userAnswers.getCorrectReturnOriginalSDILReturnData.map(originalSdilReturn => {
+        val originalSdilReturn = request.originalSdilReturn
           val balanceBroughtForward = returnService.getBalanceBroughtForward(request.sdilEnrolment)
           val orgName: String = " " + request.subscription.orgName
 
@@ -69,7 +69,6 @@ class CorrectReturnCYAController @Inject()(override
             case _ => genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][Balance] - unexpected response for ${request.sdilEnrolment}")
               Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url))
           }
-          }).getOrElse(Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url)))
       }
   }
 

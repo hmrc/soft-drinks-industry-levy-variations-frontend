@@ -32,7 +32,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
@@ -58,7 +58,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(userAnswers.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
+          setUpForCorrectReturn(userAnswers.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
@@ -78,6 +78,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
         }
       }
     }
+    testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + normalRoutePath)
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath)
@@ -96,7 +97,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(userAnswersWithTwoSmallProducers)
+            setUpForCorrectReturn(userAnswersWithTwoSmallProducers)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -117,7 +118,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(userAnswersWithTwoSmallProducers)
+            setUpForCorrectReturn(userAnswersWithTwoSmallProducers)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -142,7 +143,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(userAnswersWithOneSmallProducer)
+            setUpForCorrectReturn(userAnswersWithOneSmallProducer)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -168,7 +169,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(userAnswersWithOneSmallProducer)
+            setUpForCorrectReturn(userAnswersWithOneSmallProducer)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -198,7 +199,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> "")
@@ -229,7 +230,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath)
@@ -255,7 +256,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(userAnswers.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
+          setUpForCorrectReturn(userAnswers.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath)
@@ -275,6 +276,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
         }
       }
     }
+    testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + checkRoutePath)
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath)
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath)
@@ -293,7 +295,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(userAnswersWithTwoSmallProducers)
+            setUpForCorrectReturn(userAnswersWithTwoSmallProducers)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -314,7 +316,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(userAnswersWithTwoSmallProducers)
+            setUpForCorrectReturn(userAnswersWithTwoSmallProducers)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -339,7 +341,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(userAnswersWithOneSmallProducer)
+            setUpForCorrectReturn(userAnswersWithOneSmallProducer)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -365,7 +367,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(userAnswersWithOneSmallProducer)
+            setUpForCorrectReturn(userAnswersWithOneSmallProducer)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -395,7 +397,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> "")
