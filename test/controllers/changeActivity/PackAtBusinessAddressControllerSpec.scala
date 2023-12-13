@@ -43,8 +43,6 @@ import scala.concurrent.Future
 
 class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
-
   val formProvider = new PackAtBusinessAddressFormProvider()
   val form = formProvider()
   val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
@@ -105,7 +103,6 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
           .overrides(
-            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           )
           .build()
@@ -118,7 +115,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
+        redirectLocation(result).value mustEqual routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
       }
     }
 
@@ -161,7 +158,6 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
           .overrides(
-            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity (onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           ).build()
 

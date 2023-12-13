@@ -1,7 +1,9 @@
 package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
+import models.{CheckMode, NormalMode}
 import models.SelectChange.ChangeActivity
+import models.alf.init._
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.changeActivity.PackAtBusinessAddressPage
@@ -9,6 +11,7 @@ import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
+import testSupport.helpers.ALFTestHelper
 
 class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
 
@@ -132,9 +135,10 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
   }
 
   s"POST " + normalRoutePath - {
-    userAnswersForChangeActivityPackAtBusinessAddressPage.foreach { case (key, userAnswers) =>
-      "when the user selects " + key - {
-        "should update the session with the new value and redirect to the index controller" - {
+    userAnswersForChangeActivityPackAtBusinessAddressPage.get("yes").foreach { userAnswers =>
+      val key = "yes"
+      "when the user selects yes" - {
+        "should update the session with the new value and redirect to the packaging site details controller" - {
           "when the session contains no data for page" in {
             given
               .commonPrecondition
@@ -148,7 +152,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
                 val updatedAnswers = getAnswers(userAnswers.id)
                 val dataStoredForPage = updatedAnswers.fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
                 dataStoredForPage.nonEmpty mustBe true
@@ -177,7 +181,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(defaultCall.url)
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
                   val updatedAnswers = getAnswers(userAnswers.id)
                   val dataStoredForPage = updatedAnswers.fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
                   dataStoredForPage.nonEmpty mustBe true
@@ -187,6 +191,90 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
               }
             }
           }
+        }
+      }
+    }
+
+    "user selected no, user should be taken to ALF in normal mode" in {
+      val journeyConfigToBePosted: JourneyConfig = JourneyConfig(
+        version = 2,
+        options = JourneyOptions(
+          continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/pack-at-business-address/$sdilNumber",
+          homeNavHref = None,
+          signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+          accessibilityFooterUrl = None,
+          phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fchange-activity%2Fpack-at-business-address"),
+          deskProServiceName = None,
+          showPhaseBanner = Some(false),
+          alphaPhase = Some(false),
+          includeHMRCBranding = Some(true),
+          ukMode = Some(true),
+          selectPageConfig = Some(SelectPageConfig(
+            proposalListLimit = Some(10),
+            showSearchAgainLink = Some(true)
+          )),
+          showBackButtons = Some(true),
+          disableTranslations = Some(true),
+          allowedCountryCodes = None,
+          confirmPageConfig = Some(ConfirmPageConfig(
+            showSearchAgainLink = Some(true),
+            showSubHeadingAndInfo = Some(true),
+            showChangeLink = Some(true),
+            showConfirmChangeText = Some(true)
+          )),
+          timeoutConfig = Some(TimeoutConfig(
+            timeoutAmount = 900,
+            timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+            timeoutKeepAliveUrl = Some(controllers.routes.KeepAliveController.keepAlive.url)
+          )),
+          serviceHref = Some(controllers.routes.IndexController.onPageLoad.url),
+          pageHeadingStyle = Some("govuk-heading-l")
+        ),
+        labels = Some(
+          JourneyLabels(
+            en = Some(LanguageLabels(
+              appLevelLabels = Some(AppLevelLabels(
+                navTitle = Some("Soft Drinks Industry Levy"),
+                phaseBannerHtml = None
+              )),
+              selectPageLabels = None,
+              lookupPageLabels = Some(
+                LookupPageLabels(
+                  title = Some("Find UK packaging site address"),
+                  heading = Some("Find UK packaging site address"),
+                  postcodeLabel = Some("Postcode"))),
+              editPageLabels = Some(
+                EditPageLabels(
+                  title = Some("Enter the UK packaging site address"),
+                  heading = Some("Enter the UK packaging site address"),
+                  line1Label = Some("Address line 1"),
+                  line2Label = Some("Address line 2"),
+                  line3Label = Some("Address line 3 (optional)"),
+                  townLabel = Some("Address line 4 (optional)"),
+                  postcodeLabel = Some("Postcode"),
+                  organisationLabel = Some("Packaging site name (optional)"))
+              ),
+              confirmPageLabels = None,
+              countryPickerLabels = None
+            ))
+          )),
+        requestedVersion = None
+      )
+
+      val alfOnRampURL: String = "http://onramp.com"
+
+      given
+        .commonPrecondition
+        .alf.getSuccessResponseFromALFInit(alfOnRampURL)
+      setAnswers(emptyUserAnswersForChangeActivity)
+
+      WsTestClient.withClient { client =>
+        val result1 = createClientRequestPOST(client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false"))
+
+        whenReady(result1) { res =>
+          res.status mustBe 303
+          res.header(HeaderNames.LOCATION) mustBe Some(alfOnRampURL)
+          ALFTestHelper.requestedBodyMatchesExpected(wireMockServer, journeyConfigToBePosted) mustBe true
         }
       }
     }
@@ -222,9 +310,10 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
   }
 
   s"POST " + checkRoutePath - {
-    userAnswersForChangeActivityPackAtBusinessAddressPage.foreach { case (key, userAnswers) =>
-      "when the user selects " + key - {
-        "should update the session with the new value and redirect to the checkAnswers controller" - {
+    userAnswersForChangeActivityPackAtBusinessAddressPage.get("yes").foreach { userAnswers =>
+      val key = "yes"
+      "when the user selects yes" - {
+        "should update the session with the new value and redirect to the packaging site details controller" - {
           "when the session contains no data for page" in {
             given
               .commonPrecondition
@@ -238,7 +327,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
                 val updatedAnswers = getAnswers(userAnswers.id)
                 val dataStoredForPage = updatedAnswers.fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
                 dataStoredForPage.nonEmpty mustBe true
@@ -267,7 +356,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
                   val updatedAnswers = getAnswers(userAnswers.id)
                   val dataStoredForPage = updatedAnswers.fold[Option[Boolean]](None)(_.get(PackAtBusinessAddressPage))
                   dataStoredForPage.nonEmpty mustBe true
@@ -277,6 +366,90 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
               }
             }
           }
+        }
+      }
+    }
+
+    "user selected no, user should be taken to ALF in check mode" in {
+      val journeyConfigToBePosted: JourneyConfig = JourneyConfig(
+        version = 2,
+        options = JourneyOptions(
+          continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/pack-at-business-address/$sdilNumber",
+          homeNavHref = None,
+          signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+          accessibilityFooterUrl = None,
+          phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fchange-activity%2Fpack-at-business-address"),
+          deskProServiceName = None,
+          showPhaseBanner = Some(false),
+          alphaPhase = Some(false),
+          includeHMRCBranding = Some(true),
+          ukMode = Some(true),
+          selectPageConfig = Some(SelectPageConfig(
+            proposalListLimit = Some(10),
+            showSearchAgainLink = Some(true)
+          )),
+          showBackButtons = Some(true),
+          disableTranslations = Some(true),
+          allowedCountryCodes = None,
+          confirmPageConfig = Some(ConfirmPageConfig(
+            showSearchAgainLink = Some(true),
+            showSubHeadingAndInfo = Some(true),
+            showChangeLink = Some(true),
+            showConfirmChangeText = Some(true)
+          )),
+          timeoutConfig = Some(TimeoutConfig(
+            timeoutAmount = 900,
+            timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+            timeoutKeepAliveUrl = Some(controllers.routes.KeepAliveController.keepAlive.url)
+          )),
+          serviceHref = Some(controllers.routes.IndexController.onPageLoad.url),
+          pageHeadingStyle = Some("govuk-heading-l")
+        ),
+        labels = Some(
+          JourneyLabels(
+            en = Some(LanguageLabels(
+              appLevelLabels = Some(AppLevelLabels(
+                navTitle = Some("Soft Drinks Industry Levy"),
+                phaseBannerHtml = None
+              )),
+              selectPageLabels = None,
+              lookupPageLabels = Some(
+                LookupPageLabels(
+                  title = Some("Find UK packaging site address"),
+                  heading = Some("Find UK packaging site address"),
+                  postcodeLabel = Some("Postcode"))),
+              editPageLabels = Some(
+                EditPageLabels(
+                  title = Some("Enter the UK packaging site address"),
+                  heading = Some("Enter the UK packaging site address"),
+                  line1Label = Some("Address line 1"),
+                  line2Label = Some("Address line 2"),
+                  line3Label = Some("Address line 3 (optional)"),
+                  townLabel = Some("Address line 4 (optional)"),
+                  postcodeLabel = Some("Postcode"),
+                  organisationLabel = Some("Packaging site name (optional)"))
+              ),
+              confirmPageLabels = None,
+              countryPickerLabels = None
+            ))
+          )),
+        requestedVersion = None
+      )
+
+      val alfOnRampURL: String = "http://onramp.com"
+      given
+        .commonPrecondition
+        .alf.getSuccessResponseFromALFInit(alfOnRampURL)
+
+      setAnswers(emptyUserAnswersForChangeActivity)
+
+      WsTestClient.withClient { client =>
+        val result1 = createClientRequestPOST(client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false"))
+
+        whenReady(result1) { res =>
+          res.status mustBe 303
+          res.header(HeaderNames.LOCATION) mustBe Some(alfOnRampURL)
+          ALFTestHelper.requestedBodyMatchesExpected(wireMockServer, journeyConfigToBePosted) mustBe true
         }
       }
     }

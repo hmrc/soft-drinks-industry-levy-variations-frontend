@@ -140,7 +140,6 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     case ImportsPage => userAnswers => navigationForImports(userAnswers, NormalMode)
     case HowManyImportsPage => userAnswers => navigationFollowingImports(userAnswers, NormalMode)
     case SuggestDeregistrationPage => _ => controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode)
-    case PackAtBusinessAddressPage => _ => defaultCall
     case RemovePackagingSiteDetailsPage => userAnswers => navigationFollowingRemovePackagingSite(userAnswers, NormalMode)
     case RemoveWarehouseDetailsPage => _ => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
     case _ => _ => defaultCall
