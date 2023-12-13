@@ -34,7 +34,6 @@ import views.html.correctReturn.SecondaryWarehouseDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 class SecondaryWarehouseDetailsController @Inject()(
                                                      override val messagesApi: MessagesApi,

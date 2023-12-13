@@ -18,10 +18,9 @@ package views.summary.changeActivity
 
 import config.FrontendAppConfig
 import models.UserAnswers
-import models.backend.RetrievedSubscription
-import models.changeActivity.AmountProduced.{Large, Small}
+import models.changeActivity.AmountProduced.Small
 import pages.changeActivity.AmountProducedPage
-import pages.updateRegisteredDetails.WarehouseDetailsPage
+import pages.changeActivity.SecondaryWarehouseDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import viewmodels.summary.changeActivity.PackagingSiteDetailsSummary
@@ -62,9 +61,9 @@ object ChangeActivitySummary  {
           ImportsSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
       )
     }
-    val sitesSection: Option[(String, SummaryList)] = if(userAnswers.packagingSiteList.nonEmpty || userAnswers.get(WarehouseDetailsPage).nonEmpty){
+    val sitesSection: Option[(String, SummaryList)] = if(userAnswers.packagingSiteList.nonEmpty || userAnswers.get(SecondaryWarehouseDetailsPage).nonEmpty){
       Option("checkYourAnswers.sites" -> SummaryList(packingSummary.rows ++ warehouseSummary.rows))
-    }else{
+    } else {
       None
     }
 
