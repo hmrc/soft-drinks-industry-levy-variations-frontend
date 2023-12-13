@@ -16,8 +16,8 @@
 
 package controllers.correctReturn
 
-import controllers.actions._
 import controllers.ControllerHelper
+import controllers.actions._
 import forms.correctReturn.PackagingSiteDetailsFormProvider
 import handlers.ErrorHandler
 import models.{Mode, NormalMode}
@@ -25,7 +25,7 @@ import navigation._
 import pages.correctReturn.PackagingSiteDetailsPage
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.{AddressLookupService, PackingDetails, SessionService}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utilities.GenericLogger
@@ -35,7 +35,6 @@ import views.summary.correctReturn.PackagingSiteDetailsSummary
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 class PackagingSiteDetailsController @Inject()(
                                        override val messagesApi: MessagesApi,
