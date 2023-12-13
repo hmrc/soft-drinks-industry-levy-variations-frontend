@@ -32,6 +32,7 @@ class UpdateRegisteredDetailsCYAViewSpec extends ViewSpecHelper {
   object Selectors {
     val heading = "govuk-heading-l"
     val summaryListHeading = "govuk-heading-m"
+    val body = "govuk-body"
     val button = "govuk-button"
     val summaryList = "govuk-summary-list"
     val summaryRow = "govuk-summary-list__row"
@@ -46,10 +47,14 @@ class UpdateRegisteredDetailsCYAViewSpec extends ViewSpecHelper {
       )
     }
     val call = Call("GET","/foo")
-    val html = view(summaryList, call)(request, messages(application))
+    val orgName = " Acme Inc."
+    val html = view(orgName, summaryList, call)(request, messages(application))
     val document = doc(html)
     "should have the expected heading" in {
       document.getElementsByClass(Selectors.heading).text() mustEqual "Check your answers before sending your update"
+    }
+    "should have the expected update text" in {
+      document.getElementsByClass(Selectors.body).text() mustEqual s"This update is for$orgName"
     }
     "contain the correct button" - {
       document.getElementsByClass(Selectors.button).text() mustBe "Confirm updates and send"

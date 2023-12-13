@@ -39,7 +39,7 @@ class ContractPackingSummarySpec extends SpecBase {
         res.rows.head.key.content.asHtml mustBe Html("Package for customers at your own sites?")
         res.rows.head.key.classes mustBe ""
         res.rows.head.value.content.asHtml mustBe Html("Yes")
-        res.rows.head.value.classes.trim mustBe "govuk-!-text-align-right"
+        res.rows.head.value.classes.trim mustBe "sdil-right-align--desktop"
         res.rows.head.actions.head.items.head.href mustBe "/soft-drinks-industry-levy-variations-frontend/change-activity/change-contract-packing"
         res.rows.head.actions.head.items.head.attributes mustBe Map("id" -> "change-contractPacking")
         res.rows.head.actions.head.items.head.content.asHtml mustBe Html("Change")
@@ -47,7 +47,7 @@ class ContractPackingSummarySpec extends SpecBase {
         res.rows(1).key.content.asHtml mustBe Html("Litres in the low band")
         res.rows(1).key.classes mustBe ""
         res.rows(1).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(lowLitres))
-        res.rows(1).value.classes.trim mustBe "govuk-!-text-align-right"
+        res.rows(1).value.classes.trim mustBe "sdil-right-align--desktop"
         res.rows(1).actions.head.items.head.href mustBe "/soft-drinks-industry-levy-variations-frontend/change-activity/change-how-many-contract-packing-next-12-months"
         res.rows(1).actions.head.items.head.attributes mustBe Map("id" -> "change-lowband-litreage-contractPacking")
         res.rows(1).actions.head.items.head.content.asHtml mustBe Html("Change")
@@ -57,7 +57,7 @@ class ContractPackingSummarySpec extends SpecBase {
         res.rows(highLitresRowIndex).key.content.asHtml mustBe Html("Litres in the high band")
         res.rows(highLitresRowIndex).key.classes mustBe ""
         res.rows(highLitresRowIndex).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(highLitres))
-        res.rows(highLitresRowIndex).value.classes.trim mustBe "govuk-!-text-align-right"
+        res.rows(highLitresRowIndex).value.classes.trim mustBe "sdil-right-align--desktop"
         res.rows(highLitresRowIndex).actions.head.items.head.href mustBe "/soft-drinks-industry-levy-variations-frontend/change-activity/change-how-many-contract-packing-next-12-months"
         res.rows(highLitresRowIndex).actions.head.items.head.attributes mustBe Map("id" -> "change-highband-litreage-contractPacking")
         res.rows(highLitresRowIndex).actions.head.items.head.content.asHtml mustBe Html("Change")
@@ -67,12 +67,12 @@ class ContractPackingSummarySpec extends SpecBase {
           res.rows(2).key.content.asHtml mustBe Html("Low band levy")
           res.rows(2).key.classes mustBe ""
           res.rows(2).value.content.asHtml mustBe Html("£180.00")
-          res.rows(2).value.classes.trim mustBe "govuk-!-text-align-right"
+          res.rows(2).value.classes.trim mustBe "sdil-right-align--desktop"
 
           res.rows(4).key.content.asHtml mustBe Html("High band levy")
           res.rows(4).key.classes mustBe ""
           res.rows(4).value.content.asHtml mustBe Html("£480.00")
-          res.rows(4).value.classes.trim mustBe "govuk-!-text-align-right"
+          res.rows(4).value.classes.trim mustBe "sdil-right-align--desktop"
         }
 
         res.rows.size mustBe (if (includeLevyRows) 5 else 3)
@@ -86,13 +86,13 @@ class ContractPackingSummarySpec extends SpecBase {
         res.rows.head.key.content.asHtml mustBe Html("Package for customers at your own sites?")
         res.rows.head.key.classes mustBe ""
         res.rows.head.value.content.asHtml mustBe Html("Yes")
-        res.rows.head.value.classes.trim mustBe "govuk-!-text-align-right"
+        res.rows.head.value.classes.trim mustBe "sdil-right-align--desktop"
         res.rows.head.actions.get mustBe Actions("", List.empty)
 
         res.rows(1).key.content.asHtml mustBe Html("Litres in the low band")
         res.rows(1).key.classes mustBe ""
         res.rows(1).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(lowLitres))
-        res.rows(1).value.classes.trim mustBe "govuk-!-text-align-right"
+        res.rows(1).value.classes.trim mustBe "sdil-right-align--desktop"
         res.rows(1).actions mustBe None
 
         val highLitresRowIndex = if (includeLevyRows) 3 else 2
@@ -100,7 +100,7 @@ class ContractPackingSummarySpec extends SpecBase {
         res.rows(highLitresRowIndex).key.content.asHtml mustBe Html("Litres in the high band")
         res.rows(highLitresRowIndex).key.classes mustBe ""
         res.rows(highLitresRowIndex).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(highLitres))
-        res.rows(highLitresRowIndex).value.classes.trim mustBe "govuk-!-text-align-right"
+        res.rows(highLitresRowIndex).value.classes.trim mustBe "sdil-right-align--desktop"
         res.rows(highLitresRowIndex).actions mustBe None
 
         if (includeLevyRows) {
@@ -108,12 +108,12 @@ class ContractPackingSummarySpec extends SpecBase {
           res.rows(2).key.content.asHtml mustBe Html("Low band levy")
           res.rows(2).key.classes mustBe ""
           res.rows(2).value.content.asHtml mustBe Html("£180.00")
-          res.rows(2).value.classes.trim mustBe "govuk-!-text-align-right"
+          res.rows(2).value.classes.trim mustBe "sdil-right-align--desktop"
 
           res.rows(4).key.content.asHtml mustBe Html("High band levy")
           res.rows(4).key.classes mustBe ""
           res.rows(4).value.content.asHtml mustBe Html("£480.00")
-          res.rows(4).value.classes.trim mustBe "govuk-!-text-align-right"
+          res.rows(4).value.classes.trim mustBe "sdil-right-align--desktop"
         }
 
         res.rows.size mustBe (if (includeLevyRows) 5 else 3)
@@ -126,7 +126,7 @@ class ContractPackingSummarySpec extends SpecBase {
         res.rows.head.key.content.asHtml mustBe Html("Package for customers at your own sites?")
         res.rows.head.key.classes mustBe ""
         res.rows.head.value.content.asHtml mustBe Html("No")
-        res.rows.head.value.classes.trim mustBe "govuk-!-text-align-right"
+        res.rows.head.value.classes.trim mustBe "sdil-right-align--desktop"
         res.rows.head.actions.head.items.head.href mustBe "/soft-drinks-industry-levy-variations-frontend/change-activity/change-contract-packing"
         res.rows.head.actions.head.items.head.attributes mustBe Map("id" -> "change-contractPacking")
         res.rows.head.actions.head.items.head.content.asHtml mustBe Html("Change")

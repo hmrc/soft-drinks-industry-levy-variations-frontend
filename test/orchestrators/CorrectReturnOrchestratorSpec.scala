@@ -263,7 +263,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
     "when the is no return period" - {
       "return an empty map" in {
         val res = orchestrator.separateReturnPeriodsByYear(List())
-        res mustBe Map()
+        res mustBe List()
       }
     }
 
@@ -271,7 +271,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
       "return a map with the year and period" in {
         val returnPeriods = List(ReturnPeriod(2023, 0))
         val res = orchestrator.separateReturnPeriodsByYear(returnPeriods)
-        res mustBe Map(2023 -> returnPeriods)
+        res mustBe List(returnPeriods)
       }
     }
 
@@ -280,19 +280,19 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
         "return a map with the year and ordered return periods when ordered" in {
           val returnPeriods = returnPeriodsFor2022
           val res = orchestrator.separateReturnPeriodsByYear(returnPeriods)
-          res mustBe Map(2022 -> returnPeriods)
+          res mustBe List(returnPeriods)
         }
 
         "return a map with the year and ordered return periods when not ordered" in {
           val returnPeriods = returnPeriodsFor2022.tail ++ List(returnPeriodsFor2022.head)
           val res = orchestrator.separateReturnPeriodsByYear(returnPeriods)
-          res mustBe Map(2022 -> returnPeriodsFor2022)
+          res mustBe List(returnPeriodsFor2022)
         }
 
         "return a map with the year and repeated return periods removed" in {
           val returnPeriods = returnPeriodsFor2022 ++ returnPeriodsFor2022
           val res = orchestrator.separateReturnPeriodsByYear(returnPeriods)
-          res mustBe Map(2022 -> returnPeriodsFor2022)
+          res mustBe List(returnPeriodsFor2022)
         }
       }
 
@@ -300,19 +300,19 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
         "return a ordered map with the return periods sorted by years when already ordered" in {
           val returnPeriods = returnPeriodsFor2022 ++ returnPeriodsFor2020
           val res = orchestrator.separateReturnPeriodsByYear(returnPeriods)
-          res mustBe Map(2022 -> returnPeriodsFor2022, 2020 -> returnPeriodsFor2020)
+          res mustBe List(returnPeriodsFor2022, returnPeriodsFor2020)
         }
 
         "return a ordered map with the return periods sorted by years when not already ordered" in {
           val returnPeriods = returnPeriodsFor2020.tail ++ returnPeriodsFor2022.tail ++ List(returnPeriodsFor2022.head, returnPeriodsFor2020.head)
           val res = orchestrator.separateReturnPeriodsByYear(returnPeriods)
-          res mustBe Map(2022 -> returnPeriodsFor2022, 2020 -> returnPeriodsFor2020)
+          res mustBe List(returnPeriodsFor2022, returnPeriodsFor2020)
         }
 
         "return a ordered map with the return periods sorted by years and repeated return periods removed" in {
           val returnPeriods = returnPeriodsFor2020 ++ returnPeriodsFor2022 ++ returnPeriodsFor2022
           val res = orchestrator.separateReturnPeriodsByYear(returnPeriods)
-          res mustBe Map(2022 -> returnPeriodsFor2022, 2020 -> returnPeriodsFor2020)
+          res mustBe List(returnPeriodsFor2022, returnPeriodsFor2020)
         }
       }
     }

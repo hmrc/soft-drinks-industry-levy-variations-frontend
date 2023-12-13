@@ -36,6 +36,11 @@ trait ITCoreTestData
   val producerName = Some("Super Cola Ltd")
 
   val packAtBusinessAddressSite = Map("1" -> Site(UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX", None), Some("Super Lemonade Plc"), None, None))
+  val packAtBusinessAddressSites =
+    Map(
+      "siteUNO" -> Site(UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX", None), Some("Super Lemonade Plc"), None, None),
+      "siteDOS" -> Site(UkAddress(List("64 Clifton Roundabout", "Worcester"), "WR53 7CX", None), Some("Super Lemonade Plc"), None, None)
+    )
 
   implicit val duration = 5.seconds
 

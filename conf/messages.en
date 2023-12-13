@@ -84,7 +84,7 @@ unauthorised.heading = You can’t access this service with this account
 selectChange.title = What do you need to do?
 selectChange.heading = What do you need to do?
 selectChange.hint = Changes can take up to 15 working days to process.
-selectChange.updateRegisteredDetails = Update contact, packaging site or warehouse details
+selectChange.updateRegisteredDetails = Update contact, address, packaging site or warehouse details
 selectChange.changeActivity = Report a change in the amount of liable drinks produced
 selectChange.cancelRegistration = Cancel Soft Drinks Industry Levy registration
 selectChange.correctReturn = Correct an error in previous return
@@ -491,7 +491,7 @@ correctReturn.returnChangeRegistration.title = You changed your soft drinks busi
 correctReturn.returnChangeRegistration.heading = You changed your soft drinks business activity
 correctReturn.returnChangeRegistration.subtext1 = In this return, you told us that you have packaged liable drinks in the UK.
 correctReturn.returnChangeRegistration.subtext2 = This is different to your registered business activity, so we will update your registration.
-correctReturn.returnChangeRegistration.subtext3 = If you made a mistake, you need to <a href={0}>go back and change your answers</a>.
+correctReturn.returnChangeRegistration.subtext3 = If you made a mistake, you need to <a class ="govuk-link" href={0}>go back and change your answers</a>.
 correctReturn.returnChangeRegistration.subtext4 = If you’re happy with the change, select Update Registration.
 
 correctReturn.removePackagingSiteConfirm.title = Are you sure you want to remove this packaging site?
@@ -594,6 +594,7 @@ updateRegisteredDetails.packingSiteDetailsRemove.error.required = Select yes if 
 
 updateRegisteredDetails.checkYourAnswers.title = Check your answers before sending your update
 updateRegisteredDetails.checkYourAnswers.heading = Check your answers before sending your update
+updateRegisteredDetails.checkYourAnswers.updateFor = This update is for
 updateRegisteredDetails.checkYourAnswers.updateContactDetails.title = Soft Drinks Industry Levy contact
 updateRegisteredDetails.checkYourAnswers.businessAddress.title = Business address
 updateRegisteredDetails.updateContactDetails.change.hidden = Contact Details

@@ -29,7 +29,7 @@ object CorrectReturnBaseCYASummary {
 
   def summaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription, amounts :Amounts)
                             (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
-    (ownBrandsSummarySection(userAnswers) ++ contractPackerSummarySection(userAnswers) ++
+    (ownBrandsSummarySection(userAnswers, subscription = subscription) ++ contractPackerSummarySection(userAnswers) ++
       contractPackedForRegisteredSmallProducersSection(userAnswers) ++ broughtIntoUKSection(userAnswers) ++
       broughtIntoUkFromSmallProducersSection(userAnswers) ++ claimCreditsForExportsSection(userAnswers) ++
       claimCreditsForLostDamagedSection(userAnswers) ++ siteDetailsSection(userAnswers, subscription) ++
@@ -43,7 +43,7 @@ object CorrectReturnBaseCYASummary {
   def changedSummaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription,
                                     changedPages: List[ChangedPage], isCheckAnswers: Boolean = true)
                             (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
-    (ownBrandsSummarySection(userAnswers, changedPages.head.answerChanged, isCheckAnswers) ++
+    (ownBrandsSummarySection(userAnswers, changedPages.head.answerChanged, isCheckAnswers, subscription = subscription) ++
       contractPackerSummarySection(userAnswers, changedPages.apply(2).answerChanged, isCheckAnswers) ++
       contractPackedForRegisteredSmallProducersSection(userAnswers, changedPages.apply(12).answerChanged, isCheckAnswers) ++
       broughtIntoUKSection(userAnswers, changedPages.apply(4).answerChanged, isCheckAnswers) ++
@@ -54,22 +54,24 @@ object CorrectReturnBaseCYASummary {
       ).toSeq
   }
 
-  private def ownBrandsSummarySection(userAnswers: UserAnswers, changedPage: Boolean = true, isCheckAnswers: Boolean = true)
+  private def ownBrandsSummarySection(userAnswers: UserAnswers,
+                                      changedPage: Boolean = true,
+                                      isCheckAnswers: Boolean = true,
+                                      subscription: RetrievedSubscription)
                                      (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Option[(String, SummaryList)] = {
-    val ownBrandsSummary: SummaryList = OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers)
-    val ownBrandsSummaryList: Option[(String, SummaryList)] = if (ownBrandsSummary.rows.isEmpty) None else {
-      Option(
-        "correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader" ->
-          ownBrandsSummary
-      )
-    }
-    val showOwnBrandsSummaryList: Option[(String, SummaryList)] = if (changedPage) {
-      ownBrandsSummaryList
+    if (changedPage && !subscription.activity.smallProducer) {
+      val ownBrandsSummary: SummaryList = OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers)
+      if (ownBrandsSummary.rows.isEmpty) None else {
+        Option(
+          "correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader" ->
+            ownBrandsSummary
+        )
+      }
     } else {
       None
     }
-    showOwnBrandsSummaryList
   }
+
   private def contractPackerSummarySection(userAnswers: UserAnswers, changedPage: Boolean = true, isCheckAnswers: Boolean = true)
                                           (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Option[(String, SummaryList)] = {
     val contractPackedOwnSiteSummary: SummaryList = PackagedAsContractPackerSummary.summaryList(userAnswers, isCheckAnswers)

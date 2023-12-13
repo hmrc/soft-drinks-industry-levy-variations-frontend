@@ -81,16 +81,10 @@ class CorrectReturnOrchestrator @Inject()(returnService: ReturnService,
 
   }
 
-  def separateReturnPeriodsByYear(returnPeriods: List[ReturnPeriod]): Map[Int, List[ReturnPeriod]] = {
-    val orderReturnPeriods = returnPeriods.distinct.sortBy(_.start).reverse
-
-    orderReturnPeriods.foldLeft(Map.empty[Int, List[ReturnPeriod]]) {
-      (returnPeriodsForYears, returnPeriod) =>
-        val year = returnPeriod.year
-        val returnPeriodsForYear = returnPeriodsForYears.get(year)
-          .fold(List(returnPeriod))(_ ++ List(returnPeriod))
-        returnPeriodsForYears ++ Map(year -> returnPeriodsForYear)
-    }
+  def separateReturnPeriodsByYear(returnPeriods: List[ReturnPeriod]): List[List[ReturnPeriod]] = {
+    returnPeriods.distinct.groupBy(_.year).values.toList
+      .map(_.sortBy(_.start).reverse)
+      .sortBy(_.head.year).reverse
   }
 
   def getSdilReturn(retrievedSubscription: RetrievedSubscription,
