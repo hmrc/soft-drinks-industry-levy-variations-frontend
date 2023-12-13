@@ -51,7 +51,7 @@ class ChangeActivityCYAController @Inject()(
     implicit request =>
       requiredUserAnswers.requireData(ChangeActivityCYAPage) {
         val alias: String = request.subscription.orgName
-        val sections = ChangeActivitySummary.summaryListsAndHeadings(request.userAnswers, request.subscription, isCheckAnswers = true)
+        val sections = ChangeActivitySummary.summaryListsAndHeadings(request.userAnswers, isCheckAnswers = true)
         Future.successful(Ok(view(alias, sections, routes.ChangeActivityCYAController.onSubmit)))
       }
   }

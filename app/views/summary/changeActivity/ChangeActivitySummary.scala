@@ -21,13 +21,14 @@ import models.UserAnswers
 import models.backend.RetrievedSubscription
 import models.changeActivity.AmountProduced.{Large, Small}
 import pages.changeActivity.AmountProducedPage
+import pages.updateRegisteredDetails.WarehouseDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import viewmodels.summary.changeActivity.PackagingSiteDetailsSummary
 
 object ChangeActivitySummary  {
 
-  def summaryListsAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription, isCheckAnswers: Boolean)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
+  def summaryListsAndHeadings(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
     val amountProducedSummary: Option[SummaryListRow] = AmountProducedSummary.row(userAnswers, isCheckAnswers)
     val thirdPartyPackagersSummary: Option[SummaryListRow] = ThirdPartyPackagersSummary.row(userAnswers, isCheckAnswers)
     val ownBrandsSummary: SummaryList = OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
@@ -61,10 +62,10 @@ object ChangeActivitySummary  {
           ImportsSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
       )
     }
-    val sitesSection: Option[(String, SummaryList)] = if(subscription.activity.largeProducer && userAnswers.get(AmountProducedPage) == Some(Large)){
-      None
-    }else{
+    val sitesSection: Option[(String, SummaryList)] = if(userAnswers.packagingSiteList.nonEmpty || userAnswers.get(WarehouseDetailsPage).nonEmpty){
       Option("checkYourAnswers.sites" -> SummaryList(packingSummary.rows ++ warehouseSummary.rows))
+    }else{
+      None
     }
 
     (amountProducedSection ++ thirdPartyPackagersSection ++ ownBrandsSection ++ contractSection ++ importsSection ++ sitesSection).toSeq

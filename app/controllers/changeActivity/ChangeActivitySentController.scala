@@ -48,7 +48,7 @@ class ChangeActivitySentController @Inject()(
         val formattedDate = getSentDateTime.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
         val formattedTime = getSentDateTime.format(DateTimeFormatter.ofPattern("h:mma"))
         val alias: String = request.subscription.orgName
-        val sections = ChangeActivitySummary.summaryListsAndHeadings(request.userAnswers, request.subscription, isCheckAnswers = false)
+        val sections = ChangeActivitySummary.summaryListsAndHeadings(request.userAnswers, isCheckAnswers = false)
         Ok(view(alias: String, formattedDate, formattedTime, sections))
       case None => genericLogger.logger.error(s"[SoftDrinksIndustryLevyService [submitVariation] - unexpected response while attempting to retreive userAnswers submittedOnDate")
         Redirect(routes.SelectChangeController.onPageLoad)
