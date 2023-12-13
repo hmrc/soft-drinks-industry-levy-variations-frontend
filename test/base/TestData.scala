@@ -22,7 +22,7 @@ import models.correctReturn.CorrectReturnUserAnswersData
 import models.submission.Litreage
 import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import pages.correctReturn._
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 
 import java.time.{LocalDate, LocalDateTime, ZoneOffset}
 
@@ -31,9 +31,10 @@ trait TestData {
   val userAnswersId: String = "id"
   val sdilNumber: String = "XKSDIL000000022"
 
-  val amounts = Amounts(originalReturnTotal = 0,newReturnTotal = 1320, balanceBroughtForward = 502.75, adjustedAmount = 1822.75)
-  val cyaAmounts = Amounts(originalReturnTotal = 0,newReturnTotal = -66, balanceBroughtForward = 500, adjustedAmount = 434)
-
+  val amounts: Amounts = Amounts(originalReturnTotal = 1525.32, newReturnTotal = 1320.00, balanceBroughtForward = -502.75,
+    totalForQuarterLessForwardBalance = 1822.75, netAdjustedAmount = 297.43)
+  val cyaAmounts: Amounts = Amounts(originalReturnTotal = 0.00, newReturnTotal = -66.00, balanceBroughtForward = -500.00,
+    totalForQuarterLessForwardBalance = 434.00, netAdjustedAmount = 434.00)
   val aSubscription: RetrievedSubscription = RetrievedSubscription(
     utr = "0000000022",
     sdilRef = "XKSDIL000000022",
@@ -73,9 +74,9 @@ trait TestData {
     deregDate = None
   )
 
-  val deregSubscription = aSubscription.copy(deregDate = Some(LocalDate.now.minusMonths(1)))
+  val deregSubscription: RetrievedSubscription = aSubscription.copy(deregDate = Some(LocalDate.now.minusMonths(1)))
 
-  val subscriptionSmallProducer = backend.RetrievedSubscription(
+  val subscriptionSmallProducer: RetrievedSubscription = backend.RetrievedSubscription(
     utr = "0000001611",
     sdilRef = "XKSDIL000000022",
     orgName = "Super Lemonade Plc",
@@ -96,12 +97,12 @@ trait TestData {
   val litres: Long = bandMax - 1
   val smallProducerList: List[SmallProducer] = List(SmallProducer(producerNameParty, sdilReferenceParty, Litreage(litres, litres)))
 
-  val returnPeriods = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
-  val returnPeriod = List(ReturnPeriod(2018, 1))
-  val financialItem1 = ReturnCharge(returnPeriods.head, BigDecimal(-100))
-  val financialItem2 = ReturnCharge(returnPeriods.head, BigDecimal(-200))
-  val financialItemList = List(financialItem1, financialItem2)
-  val submittedDateTime = LocalDateTime.of(2023, 1, 1, 11, 0)
+  val returnPeriods: List[ReturnPeriod] = List(ReturnPeriod(2018, 1), ReturnPeriod(2019, 1))
+  val returnPeriod: List[ReturnPeriod] = List(ReturnPeriod(2018, 1))
+  val financialItem1: ReturnCharge = ReturnCharge(returnPeriods.head, BigDecimal(-100))
+  val financialItem2: ReturnCharge = ReturnCharge(returnPeriods.head, BigDecimal(-200))
+  val financialItemList: List[ReturnCharge] = List(financialItem1, financialItem2)
+  val submittedDateTime: LocalDateTime = LocalDateTime.of(2023, 1, 1, 11, 0)
 
 
   val twoWarehouses: Map[String, Site] = Map(
@@ -109,27 +110,27 @@ trait TestData {
     "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London", "Line 3", ""), "SA13 7CE"), Some("Super Cola Ltd"))
   )
 
-  val returnPeriodsFor2020 = List(ReturnPeriod(2020, 3), ReturnPeriod(2020, 2), ReturnPeriod(2020, 1), ReturnPeriod(2020, 0))
-  val returnPeriodsFor2022 = List(ReturnPeriod(2022, 3), ReturnPeriod(2022, 2), ReturnPeriod(2022, 1), ReturnPeriod(2022, 0))
+  val returnPeriodsFor2020: List[ReturnPeriod] = List(ReturnPeriod(2020, 3), ReturnPeriod(2020, 2), ReturnPeriod(2020, 1), ReturnPeriod(2020, 0))
+  val returnPeriodsFor2022: List[ReturnPeriod] = List(ReturnPeriod(2022, 3), ReturnPeriod(2022, 2), ReturnPeriod(2022, 1), ReturnPeriod(2022, 0))
 
-  val returnPeriodList = returnPeriodsFor2022 ++ returnPeriodsFor2020
+  val returnPeriodList: List[ReturnPeriod] = returnPeriodsFor2022 ++ returnPeriodsFor2020
 
-  val JsonreturnPeriodList = List(Json.toJson(ReturnPeriod(2020, 0)), Json.toJson(ReturnPeriod(2020, 1)),
+  val JsonreturnPeriodList: List[JsValue] = List(Json.toJson(ReturnPeriod(2020, 0)), Json.toJson(ReturnPeriod(2020, 1)),
     Json.toJson(ReturnPeriod(2020, 2)), Json.toJson(ReturnPeriod(2020, 3)),
     Json.toJson(ReturnPeriod(2022, 0)), Json.toJson(ReturnPeriod(2022, 1)),
     Json.toJson(ReturnPeriod(2022, 2)), Json.toJson(ReturnPeriod(2022, 3)))
 
-  lazy val warehouse = Site(UkAddress(List("33 Rhes Priordy"), "WR53 7CX"), Some("ABC Ltd"))
-  lazy val packingSite = Site(
+  lazy val warehouse: Site = Site(UkAddress(List("33 Rhes Priordy"), "WR53 7CX"), Some("ABC Ltd"))
+  lazy val packingSite: Site = Site(
     UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
     Some("88"),
     Some("Wild Lemonade Group"),
     Some(LocalDate.of(2018, 2, 26)))
 
-  lazy val packingSiteMap = Map("000001" -> packingSite)
+  lazy val packingSiteMap: Map[String, Site] = Map("000001" -> packingSite)
 
-  lazy val contactAddress = UkAddress(List("19 Rhes Priordy", "East London"), "E73 2RP")
-  lazy val updatedContactAddress = UkAddress(List("123 Updated Street", "Updated City Name"), "E73 2RP")
+  lazy val contactAddress: UkAddress = UkAddress(List("19 Rhes Priordy", "East London"), "E73 2RP")
+  lazy val updatedContactAddress: UkAddress = UkAddress(List("123 Updated Street", "Updated City Name"), "E73 2RP")
 
   val emptyUserAnswersForUpdateRegisteredDetails: UserAnswers =
     UserAnswers(userAnswersId, SelectChange.UpdateRegisteredDetails, contactAddress = contactAddress)
@@ -141,25 +142,27 @@ trait TestData {
   )
   val warehouseAddedToUserAnswersForUpdateRegisteredDetails: UserAnswers =
     UserAnswers(userAnswersId, SelectChange.UpdateRegisteredDetails, warehouseList = Map("1" -> warehouse), contactAddress = contactAddress)
-  val emptyUserAnswersForChangeActivity = UserAnswers(sdilNumber, SelectChange.ChangeActivity, contactAddress = contactAddress)
+  val emptyUserAnswersForChangeActivity: UserAnswers = UserAnswers(sdilNumber, SelectChange.ChangeActivity, contactAddress = contactAddress)
   val warehouseAddedToUserAnswersForChangeActivity: UserAnswers =
     UserAnswers(userAnswersId, SelectChange.ChangeActivity, warehouseList = Map("1" -> warehouse), contactAddress = contactAddress)
 
-  val expectedCorrectReturnDataForNilReturn = CorrectReturnUserAnswersData(false, None, false, None, false, false, None, false, None, false, None, false, None)
-  val expectedCorrectReturnDataForPopulatedReturn = CorrectReturnUserAnswersData(
-    true, Some(LitresInBands(100, 200)),
-    true, Some(LitresInBands(200, 100)),
-    true,
-    true, Some(LitresInBands(300, 400)),
-    true, Some(LitresInBands(400, 300)),
-    true, Some(LitresInBands(50, 60)),
-    true, Some(LitresInBands(60, 50))
+  val expectedCorrectReturnDataForNilReturn: CorrectReturnUserAnswersData = CorrectReturnUserAnswersData(
+    operatePackagingSiteOwnBrands = false, None, packagedAsContractPacker = false, None, exemptionsForSmallProducers = false,
+    broughtIntoUK = false, None, broughtIntoUkFromSmallProducers = false, None, claimCreditsForExports = false, None, claimCreditsForLostDamaged = false, None)
+  val expectedCorrectReturnDataForPopulatedReturn: CorrectReturnUserAnswersData = CorrectReturnUserAnswersData(
+    operatePackagingSiteOwnBrands = true, Some(LitresInBands(100, 200)),
+    packagedAsContractPacker = true, Some(LitresInBands(200, 100)),
+    exemptionsForSmallProducers = true,
+    broughtIntoUK = true, Some(LitresInBands(300, 400)),
+    broughtIntoUkFromSmallProducers = true, Some(LitresInBands(400, 300)),
+    claimCreditsForExports = true, Some(LitresInBands(50, 60)),
+    claimCreditsForLostDamaged = true, Some(LitresInBands(60, 50))
   )
 
-  val emptyUserAnswersForCorrectReturn = UserAnswers(sdilNumber, SelectChange.CorrectReturn, contactAddress = contactAddress,
+  val emptyUserAnswersForCorrectReturn: UserAnswers = UserAnswers(sdilNumber, SelectChange.CorrectReturn, contactAddress = contactAddress,
     correctReturnPeriod = returnPeriodsFor2022.headOption)
 
-  def userAnswersForCorrectReturn(sdilReturnIsNil: Boolean) = {
+  def userAnswersForCorrectReturn(sdilReturnIsNil: Boolean): UserAnswers = {
     val (correctReturnData, smallProducers) = if (sdilReturnIsNil) {
       (expectedCorrectReturnDataForNilReturn, List())
     } else {
@@ -169,8 +172,8 @@ trait TestData {
       .setForCorrectReturn(correctReturnData, smallProducers, returnPeriod.head).success.value
   }
 
-  val emptySdilReturn: SdilReturn = SdilReturn(Litreage(0, 0), Litreage(0, 0), List.empty,
-    Litreage(0, 0), Litreage(0, 0), Litreage(0, 0), Litreage(0, 0), submittedOn =
+  val emptySdilReturn: SdilReturn = SdilReturn(Litreage(), Litreage(), List.empty,
+    Litreage(), Litreage(), Litreage(), Litreage(), submittedOn =
     Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
 
   val userAnswersForCorrectReturnWithEmptySdilReturn:

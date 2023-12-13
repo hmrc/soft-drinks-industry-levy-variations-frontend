@@ -27,7 +27,7 @@ import play.api.http.Status.NO_CONTENT
 import play.api.libs.json.Json
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import service.VariationResult
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, InternalServerException}
 import utilities.GenericLogger
 
 import javax.inject.Inject
@@ -64,7 +64,8 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     }
   }
 
-  private def smallProducerUrl(sdilRef:String, period:ReturnPeriod):String = s"$sdilUrl/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"
+  private def smallProducerUrl(sdilRef:String, period:ReturnPeriod):String =
+    s"$sdilUrl/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"
 
   def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod)(implicit hc: HeaderCarrier): VariationResult[Option[Boolean]] = EitherT {
     sdilSessionCache.fetchEntry[OptSmallProducer](sdilRef, SDILSessionKeys.smallProducerForPeriod(period)).flatMap {

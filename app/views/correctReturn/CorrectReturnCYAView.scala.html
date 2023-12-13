@@ -14,25 +14,37 @@
  * limitations under the License.
  *@
 
+@import views.summary.correctReturn.AmountToPaySummary
+
 @this(
-    layout: templates.Layout,
-    govukSummaryList: GovukSummaryList,
-    formHelper: FormWithCSRF,
-    govukButton: GovukButton
+        layout: templates.Layout,
+        govukSummaryList: GovukSummaryList,
+        formHelper: FormWithCSRF,
+        govukInsetText: GovukInsetText,
+        govukButton: GovukButton
 )
 
-@(orgName: String, seqSummaryList: Seq[(String, SummaryList)], submitCall: Call)(implicit request: Request[_], messages: Messages)
+@(orgName: String, amounts: Amounts, seqSummaryList: Seq[(String, SummaryList)], submitCall: Call)(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("correctReturn.checkYourAnswers.title"))) {
 
     <h1 class="govuk-heading-l">@messages("correctReturn.checkYourAnswers.title")</h1>
-    <span class="govuk-body">@messages("correctReturn.checkYourAnswers.updateFor")@orgName</span>
+    <p class="govuk-body">@messages("correctReturn.checkYourAnswers.updateFor")@orgName</p>
+
+    @if(amounts.newReturnTotal != 0L) {
+        @govukInsetText(InsetText(
+            id = Some("cya-inset-sub-header"),
+            content = AmountToPaySummary.subheader(amounts.totalForQuarterLessForwardBalance),
+            classes = "govuk-!-margin-top-0"
+        ))
+    }else{
+        <br>
+    }
 
     @for((heading, summaryList) <- seqSummaryList) {
         <h2 class="govuk-heading-m">@messages(heading)</h2>
-    @govukSummaryList(summaryList)
+        @govukSummaryList(summaryList)
     }
-
     @formHelper(action = submitCall, Symbol("autoComplete") -> "off") {
         @govukButton(ButtonViewModel(messages("site.saveContinue")))
     }

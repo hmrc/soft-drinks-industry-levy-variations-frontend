@@ -16,12 +16,18 @@
 
 package models
 
-import play.api.libs.json.{Json, Reads, Writes}
+import play.api.libs.json.{Json, OFormat, Reads, Writes}
 
-case class Amounts(originalReturnTotal: BigDecimal, newReturnTotal: BigDecimal, balanceBroughtForward: BigDecimal, adjustedAmount:BigDecimal)
+case class Amounts(
+                    originalReturnTotal: BigDecimal,
+                    newReturnTotal: BigDecimal,
+                    balanceBroughtForward: BigDecimal,
+                    totalForQuarterLessForwardBalance:BigDecimal,
+                    netAdjustedAmount: BigDecimal
+                  )
 
 object Amounts {
-  implicit val format = Json.format[Amounts]
+  implicit val format: OFormat[Amounts] = Json.format[Amounts]
   implicit val writes: Writes[Amounts] = Json.writes
   implicit val reads: Reads[Amounts] = Json.reads
 }

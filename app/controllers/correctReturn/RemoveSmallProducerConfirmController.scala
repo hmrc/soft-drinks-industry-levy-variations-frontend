@@ -16,11 +16,11 @@
 
 package controllers.correctReturn
 
-import controllers.actions._
 import controllers.ControllerHelper
+import controllers.actions._
 import forms.correctReturn.RemoveSmallProducerConfirmFormProvider
 import handlers.ErrorHandler
-import models.{Mode, UserAnswers}
+import models.Mode
 import navigation._
 import pages.correctReturn.RemoveSmallProducerConfirmPage
 import play.api.i18n.MessagesApi
