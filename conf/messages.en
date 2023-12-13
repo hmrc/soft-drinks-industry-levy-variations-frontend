@@ -139,8 +139,8 @@ cancelRegistration.cancellationRequestDone.accountHomeLink = Go back to your Sof
 cancelRegistration.cancellationRequestDone.detailsSummary = View the details of your update
 
 changeActivity.checkYourAnswers.title = Check your answers before sending your update
-changeActivity.checkYourAnswers.heading = Check your answers before sending your update
 changeActivity.checkYourAnswers.submit = Confirm updates and send
+changeActivity.checkYourAnswers.updateFor = This update is for
 changeActivity.checkYourAnswers.amountProducedSection = Packaged globally
 changeActivity.checkYourAnswers.thirdPartyPackagersSection = Third party packagers
 changeActivity.checkYourAnswers.operatePackingSiteOwnBrandsSection = Packaged in the UK
