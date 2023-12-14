@@ -237,8 +237,8 @@ changeActivity.removePackagingSiteDetails.title = Are you sure you want to remov
 changeActivity.removePackagingSiteDetails.heading = Are you sure you want to remove this packaging site?
 changeActivity.removePackagingSiteDetails.error.required = Select yes if you want to remove this packaging site
 
-changeActivity.secondaryWarehouseDetails.title = Change your UK warehouse details
-changeActivity.secondaryWarehouseDetails.heading = Change your UK warehouse details
+changeActivity.secondaryWarehouseDetails.title = UK warehouse details
+changeActivity.secondaryWarehouseDetails.heading = UK warehouse details
 changeActivity.secondaryWarehouseDetails.subtext = You do not have any registered warehouses.
 changeActivity.secondaryWarehouseDetails.subHeading = Do you want to add a UK warehouse?
 changeActivity.secondaryWarehouseDetails.detailsLink = Why should I register a warehouse?
