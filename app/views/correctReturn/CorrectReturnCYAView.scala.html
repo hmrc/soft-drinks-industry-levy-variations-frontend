@@ -15,13 +15,15 @@
  *@
 
 @import views.summary.correctReturn.AmountToPaySummary
+@import views.html.helpers.printLinkWithJs
 
 @this(
         layout: templates.Layout,
         govukSummaryList: GovukSummaryList,
         formHelper: FormWithCSRF,
         govukInsetText: GovukInsetText,
-        govukButton: GovukButton
+        govukButton: GovukButton,
+        printLinkWithJs: printLinkWithJs
 )
 
 @(orgName: String, amounts: Amounts, seqSummaryList: Seq[(String, SummaryList)], submitCall: Call)(implicit request: Request[_], messages: Messages)
@@ -48,4 +50,6 @@
     @formHelper(action = submitCall, Symbol("autoComplete") -> "off") {
         @govukButton(ButtonViewModel(messages("site.saveContinue")))
     }
+
+    @printLinkWithJs(messages("site.print"))
 }
