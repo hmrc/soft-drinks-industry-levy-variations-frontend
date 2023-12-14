@@ -33,7 +33,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title mustBe "Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
+            page.title mustBe "UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
             val summaryList = page.getElementsByClass("govuk-caption-m")
             summaryList.text mustBe "You do not have any registered warehouses."
             val radioInputs = page.getElementsByClass("govuk-radios__input")
@@ -64,7 +64,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title mustBe "Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
+              page.title mustBe "UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
               val summaryList = page.getElementsByClass("govuk-caption-m")
 
               summaryList.text mustBe warehouseList.values
@@ -101,7 +101,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title mustBe "Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
+              page.title mustBe "UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
               val summaryList = page.getElementsByClass("govuk-caption-m")
               summaryList.text mustBe "You do not have any registered warehouses."
               val radioInputs = page.getElementsByClass("govuk-radios__input")
@@ -135,7 +135,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title mustBe "Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
+            page.title mustBe "UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
             val summaryList = page.getElementsByClass("govuk-caption-m")
             summaryList.text mustBe "You do not have any registered warehouses."
             val radioInputs = page.getElementsByClass("govuk-radios__input")
@@ -166,7 +166,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title mustBe "Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
+              page.title mustBe "UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
               val summaryList = page.getElementsByClass("govuk-caption-m")
 
               summaryList.text mustBe warehouseList.values
@@ -203,7 +203,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title mustBe "Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
+              page.title mustBe "UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
               val summaryList = page.getElementsByClass("govuk-caption-m")
               summaryList.text mustBe "You do not have any registered warehouses."
               val radioInputs = page.getElementsByClass("govuk-radios__input")
@@ -349,7 +349,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title mustBe "Error: Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
+            page.title mustBe "Error: UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
@@ -492,7 +492,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title mustBe "Error: Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
+            page.title mustBe "Error: UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
