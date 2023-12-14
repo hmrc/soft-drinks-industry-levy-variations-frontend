@@ -31,8 +31,8 @@ class ChangeActivityCYAViewSpec extends ViewSpecHelper {
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
-    val PRE_HEADER_CAPTION = "govuk-caption-l"
     val heading = "govuk-heading-l"
+    val body = "govuk-body"
     val summaryListHeading = "govuk-heading-m"
     val button = "govuk-button"
     val summaryList = "govuk-summary-list"
@@ -48,15 +48,15 @@ class ChangeActivityCYAViewSpec extends ViewSpecHelper {
       )
     }
     val call = Call("GET","/foo")
-    val ALIAS = "ALIAS"
-    val html = view(ALIAS, summaryList, call)(request, messages(application))
+    val orgName = " Acme Inc."
+    val html = view(orgName, summaryList, call)(request, messages(application))
     val document = doc(html)
-    "should have the expected pre header caption" in {
-      document.getElementsByClass(Selectors.PRE_HEADER_CAPTION).text() mustEqual ALIAS
-    }
-
     "should have the expected heading" in {
       document.getElementsByTag("h1").text() mustEqual "Check your answers before sending your update"
+    }
+
+    "should have the expected body" in {
+      document.getElementsByClass(Selectors.body).text() mustEqual s"This update is for$orgName"
     }
 
     "contain the correct button" in {

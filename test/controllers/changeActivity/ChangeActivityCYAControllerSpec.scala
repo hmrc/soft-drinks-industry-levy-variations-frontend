@@ -57,7 +57,7 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency w
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual view(
-            aSubscription.orgName,
+            " " + aSubscription.orgName,
             ChangeActivitySummary.summaryListsAndHeadings(userAnswers, isCheckAnswers = true),
             routes.ChangeActivityCYAController.onSubmit
           )(request, messages(application)).toString
