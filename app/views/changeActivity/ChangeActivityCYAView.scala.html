@@ -14,11 +14,14 @@
  * limitations under the License.
  *@
 
+@import views.html.helpers.printLinkWithJs
+
 @this(
     layout: templates.Layout,
     govukSummaryList: GovukSummaryList,
     formHelper: FormWithCSRF,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    printLinkWithJs: printLinkWithJs
 )
 
 @(
@@ -40,4 +43,6 @@
     @formHelper(action = submitCall, Symbol("autoComplete") -> "off") {
         @govukButton(ButtonViewModel(messages("updateRegisteredDetails.checkYourAnswers.submit")))
     }
+
+    @printLinkWithJs(messages("site.print"))
 }
