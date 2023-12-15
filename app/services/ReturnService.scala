@@ -16,12 +16,14 @@
 
 package services
 
+import cats.data.EitherT
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
+import errors.VariationsErrors
 import models.backend.{FinancialLineItem, RetrievedSubscription}
 import models.correctReturn.{CorrectReturnUserAnswersData, ReturnsVariation}
 import models.submission.ReturnVariationData
-import models.{ReturnPeriod, SdilReturn, UserAnswers}
+import models.{Amounts, ReturnPeriod, SdilReturn, UserAnswers}
 import pages.correctReturn.{CorrectionReasonPage, RepaymentMethodPage}
 import service.VariationResult
 import uk.gov.hmrc.http.HeaderCarrier
@@ -50,7 +52,15 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector)(im
     }
   }
 
-
+  def calculateAmounts(sdilRef: String,
+                       userAnswers: UserAnswers,
+                       returnPeriod: ReturnPeriod)
+                      (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Amounts] = {
+    for {
+      isSmallProducer <- sdilConnector.checkSmallProducerStatus(sdilRef, returnPeriod)
+      balanceBroughtForward <- EitherT.right[VariationsErrors](getBalanceBroughtForward(sdilRef))
+    } yield getAmounts(userAnswers, balanceBroughtForward, isSmallProducer.getOrElse(false))
+  }
 
   def submitSdilReturnsVary(subscription: RetrievedSubscription,
                              userAnswers: UserAnswers,
@@ -102,5 +112,13 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector)(im
   }
 
   def instantNow: Instant = Instant.now()
+
+  private def getAmounts(userAnswers: UserAnswers, balanceBroughtForward: BigDecimal, isSmallProducer: Boolean): Amounts = {
+    val originalReturnTotal: BigDecimal = userAnswers.getCorrectReturnOriginalSDILReturnData.map(_.total).getOrElse(BigDecimal(0))
+    val totalForQuarter = SdilReturn.generateFromUserAnswers(userAnswers).total
+    val totalForQuarterLessForwardBalance = totalForQuarter - balanceBroughtForward
+    val netAdjustedAmount: BigDecimal = (totalForQuarter - originalReturnTotal) - balanceBroughtForward
+    Amounts(originalReturnTotal, totalForQuarter, balanceBroughtForward, totalForQuarterLessForwardBalance, netAdjustedAmount)
+  }
 
 }
