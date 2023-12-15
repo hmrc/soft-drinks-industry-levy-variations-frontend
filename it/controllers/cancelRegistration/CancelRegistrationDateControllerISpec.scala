@@ -7,10 +7,11 @@ import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.cancelRegistration.CancelRegistrationDatePage
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
-import play.api.libs.json.Json
+import play.api.libs.json.{JsObject, Json}
 import play.api.test.WsTestClient
 
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import scala.util.Random
 
 
@@ -19,8 +20,9 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
   val normalRoutePath = "/date"
   val checkRoutePath = "/change-date"
   val random = new Random()
-  val validCancellationDate = LocalDate.now().plusDays(random.nextLong(13))
-  val validCancellationDateJson = Json.obj(
+  val currentDate: String = LocalDate.now.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+  val validCancellationDate: LocalDate = LocalDate.now().plusDays(random.nextLong(13))
+  val validCancellationDateJson: JsObject = Json.obj(
     "cancelRegistrationDate.day" -> validCancellationDate.getDayOfMonth.toString,
     "cancelRegistrationDate.month" -> validCancellationDate.getMonth.getValue.toString,
     "cancelRegistrationDate.year" -> validCancellationDate.getYear.toString
@@ -301,12 +303,13 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
             page.title must include("Error: " + Messages("cancelRegistration.cancelRegistrationDate" + ".title"))
+
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#cancelRegistrationDate.day"
-            errorSummary.text() mustBe "The date you are cancelling your registration must be a real date, like 31 7 2020"
+            errorSummary.text() mustBe s"The date you are cancelling your registration must be a real date, like $currentDate"
           }
         }
       }
@@ -479,7 +482,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
             errorSummary
               .select("a")
               .attr("href") mustBe "#cancelRegistrationDate.day"
-            errorSummary.text() mustBe "The date you are cancelling your registration must be a real date, like 31 7 2020"
+            errorSummary.text() mustBe s"The date you are cancelling your registration must be a real date, like $currentDate"
           }
         }
       }
