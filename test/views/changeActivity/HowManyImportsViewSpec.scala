@@ -50,12 +50,12 @@ class HowManyImportsViewSpec extends LitresSpecHelper {
 
         "should have the expected title" in {
           document.title() mustBe
-            "How many litres will you bring into the uk in the next 12 months? - Soft Drinks Industry Levy - GOV.UK"
+            "How many litres will you bring into the UK in the next 12 months? - Soft Drinks Industry Levy - GOV.UK"
         }
 
         "should have the expected heading" in {
           document.getElementsByClass(Selectors.heading).text() mustBe
-            "How many litres will you bring into the uk in the next 12 months?"
+            "How many litres will you bring into the UK in the next 12 months?"
         }
 
         "should include a govuk body with the expected content" in {
@@ -68,7 +68,7 @@ class HowManyImportsViewSpec extends LitresSpecHelper {
 
 
         "and the form has errors" - {
-          val errorTitle = "Error: How many litres will you bring into the uk in the next 12 months?"
+          val errorTitle = "Error: How many litres will you bring into the UK in the next 12 months?"
           testEmptyFormErrors(documentFormErrorsEmpty, errorTitle)
           testNoNumericFormErrors(documentFormErrorsNoneNumeric, errorTitle)
           testNegativeFormErrors(documentFormErrorsNegative, errorTitle)
