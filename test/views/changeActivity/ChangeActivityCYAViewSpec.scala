@@ -56,7 +56,7 @@ class ChangeActivityCYAViewSpec extends ViewSpecHelper {
     }
 
     "should have the expected body" in {
-      document.getElementsByClass(Selectors.body).text() mustEqual s"This update is for$orgName"
+      document.getElementsByClass(Selectors.body).text() mustEqual s"This update is for$orgName Print this page"
     }
 
     "contain the correct button" in {
