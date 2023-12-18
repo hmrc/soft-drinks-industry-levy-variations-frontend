@@ -219,7 +219,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
               val page = Jsoup.parse(res.body)
               page.title must include(Messages("changeActivity.checkYourAnswers.title"))
               page.getElementsByClass("govuk-body").text() mustBe
-                s"${Messages("changeActivity.checkYourAnswers.updateFor")} Super Lemonade Plc"
+                s"${Messages("changeActivity.checkYourAnswers.updateFor")} Super Lemonade Plc Print this page"
               val sectionIndexes: Seq[Option[Int]] = List(
                 amountProducedValue.nonEmpty,
                 thirdPartyPackagingValue.nonEmpty && amountProducedValue.contains(Small),
