@@ -38,7 +38,7 @@ private[mappings] class LocalDateFormatter(
                                           ) extends Formatter[LocalDate] with Formatters {
 
   private val fieldKeys: List[String] = List("day", "month", "year")
-  private val theCurrentDate = LocalDate.now.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+  private val theCurrentDate = LocalDate.now.format(DateTimeFormatter.ofPattern("d M yyyy"))
   private def toDate(key: String, day: Int, month: Int, year: Int): Either[Seq[FormError], LocalDate] =
     Try(LocalDate.of(year, month, day)) match {
       case Success(date) =>

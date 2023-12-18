@@ -404,7 +404,7 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
     )
 
     val result = form.bind(data)
-    val currentDate = LocalDate.now.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+    val currentDate = LocalDate.now.format(DateTimeFormatter.ofPattern("d M yyyy"))
     val invalidErrorWithCurrentDate =
       List(s"The date you are cancelling your registration must be a real date, like <span style='white-space: nowrap'>$currentDate</span>")
     result.errors must contain(

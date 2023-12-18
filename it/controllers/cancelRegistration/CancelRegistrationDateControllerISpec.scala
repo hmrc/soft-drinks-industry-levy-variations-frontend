@@ -20,7 +20,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
   val normalRoutePath = "/date"
   val checkRoutePath = "/change-date"
   val random = new Random()
-  val currentDate: String = LocalDate.now.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+  val currentDate: String = LocalDate.now.format(DateTimeFormatter.ofPattern("d M yyyy"))
   val validCancellationDate: LocalDate = LocalDate.now().plusDays(random.nextLong(13))
   val validCancellationDateJson: JsObject = Json.obj(
     "cancelRegistrationDate.day" -> validCancellationDate.getDayOfMonth.toString,
