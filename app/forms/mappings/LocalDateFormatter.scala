@@ -38,8 +38,9 @@ private[mappings] class LocalDateFormatter(
                                           ) extends Formatter[LocalDate] with Formatters {
 
   private val fieldKeys: List[String] = List("day", "month", "year")
-  private val theCurrentDate = LocalDate.now.format(DateTimeFormatter.ofPattern("d M yyyy"))
-  private def toDate(key: String, day: Int, month: Int, year: Int): Either[Seq[FormError], LocalDate] =
+
+  private def toDate(key: String, day: Int, month: Int, year: Int): Either[Seq[FormError], LocalDate] = {
+    val theCurrentDate = LocalDate.now.format(DateTimeFormatter.ofPattern("d M yyyy"))
     Try(LocalDate.of(year, month, day)) match {
       case Success(date) =>
         Right(date)
@@ -48,6 +49,7 @@ private[mappings] class LocalDateFormatter(
           Seq(s"The date you are cancelling your registration must be a real date, like <span style='white-space: nowrap'>$theCurrentDate</span>"),
           args)))
     }
+  }
 
   private def formatDate(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
 
