@@ -82,6 +82,10 @@ class ChangeActivityCYAViewSpec extends ViewSpecHelper {
       document.select(Selectors.form).attr("action") mustEqual call.url
     }
 
+    "contain a print link" in {
+      document.getElementById("printPage").text() mustBe "Print this page"
+    }
+
     testBackLink(document)
     validateTimeoutDialog(document)
     validateTechnicalHelpLinkPresent(document)

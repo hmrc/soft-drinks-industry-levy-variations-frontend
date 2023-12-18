@@ -20,30 +20,34 @@ import config.FrontendAppConfig
 import controllers.cancelRegistration.routes
 import forms.cancelRegistration.CancelRegistrationDateFormProvider
 import models.{CheckMode, NormalMode}
+import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
+import views.ViewSpecHelper
 import views.html.cancelRegistration.CancelRegistrationDateView
 
 import java.time.LocalDate
-import views.ViewSpecHelper
+import java.time.format.DateTimeFormatter
 
 
 class CancelRegistrationDateViewSpec extends ViewSpecHelper {
 
-  val appConfig = application.injector.instanceOf[FrontendAppConfig]
+  val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
-  val view = application.injector.instanceOf[CancelRegistrationDateView]
+  val view: CancelRegistrationDateView = application.injector.instanceOf[CancelRegistrationDateView]
   val formProvider = new CancelRegistrationDateFormProvider(appConfig)
-  val form = formProvider.apply()
+  val form: Form[LocalDate] = formProvider.apply()
   implicit val request: Request[_] = FakeRequest()
+  val currentDate: String = LocalDate.now.format(DateTimeFormatter.ofPattern("d M yyyy"))
 
   object Selectors {
     val heading = "govuk-fieldset__heading"
     val legend = "govuk-fieldset__legend  govuk-fieldset__legend--l"
     val dateItems = "govuk-date-input__item"
-    val dateLables = "govuk-label govuk-date-input__label"
+    val dateLabels = "govuk-label govuk-date-input__label"
     val errorSummaryList = "govuk-list govuk-error-summary__list"
+    val hint = "govuk-hint"
     val button = "govuk-button"
     val form = "form"
   }
@@ -61,6 +65,18 @@ class CancelRegistrationDateViewSpec extends ViewSpecHelper {
       legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("cancelRegistration.cancelRegistrationDate" + ".heading")
     }
 
+    "should include a hint with the acceptable date range" in {
+      val hintText = document.getElementsByClass(Selectors.hint)
+      hintText.size() mustBe 1
+      hintText.get(0).text() must include(s"For example, $currentDate")
+    }
+
+    "should include a hint with the current date" in {
+      val hintText = document.getElementsByClass(Selectors.hint)
+      hintText.size() mustBe 1
+      hintText.get(0).text() must include("This must be from today or up to 14 days from now.")
+    }
+
     "when the form is not prepopulated and has no errors" - {
 
       "should include the expected date fields" - {
@@ -73,21 +89,21 @@ class CancelRegistrationDateViewSpec extends ViewSpecHelper {
           val dateItem1 = dateItems
             .get(0)
           dateItem1
-            .getElementsByClass(Selectors.dateLables)
+            .getElementsByClass(Selectors.dateLabels)
             .text() mustBe "Day"
         }
         s"that has Month field" in {
           val dateItem1 = dateItems
             .get(1)
           dateItem1
-            .getElementsByClass(Selectors.dateLables)
+            .getElementsByClass(Selectors.dateLabels)
             .text() mustBe "Month"
         }
         s"that has Year field" in {
           val dateItem1 = dateItems
             .get(2)
           dateItem1
-            .getElementsByClass(Selectors.dateLables)
+            .getElementsByClass(Selectors.dateLabels)
             .text() mustBe "Year"
         }
       }
@@ -133,6 +149,7 @@ class CancelRegistrationDateViewSpec extends ViewSpecHelper {
           .attr("href") mustBe "#cancelRegistrationDate.day"
         errorSummary.text() mustBe Messages("cancelRegistrationDate.error.required.all")
       }
+
     }
 
     testBackLink(document)

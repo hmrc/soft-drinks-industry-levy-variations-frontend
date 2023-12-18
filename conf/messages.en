@@ -102,11 +102,12 @@ cancelRegistration.reason.change.hidden = your reason for cancelling
 
 cancelRegistration.cancelRegistrationDate.title = What date are you cancelling your registration from?
 cancelRegistration.cancelRegistrationDate.heading = What date are you cancelling your registration from?
-cancelRegistration.cancelRegistrationDate.hint = For example, 12 11 2007
+cancelRegistration.cancelRegistrationDate.hintWithin14Days = This must be from today or up to 14 days from now.
+cancelRegistration.cancelRegistrationDate.hintDateExample = For example, {0}
 cancelRegistration.cancelRegistrationDate.checkYourAnswersLabel = Date of cancellation
 cancelRegistration.cancelRegistrationDate.change.hidden = date of cancellation
 
-cancelRegistrationDate.error.invalid = The date you are cancelling your registration must be a real date, like <span style="white-space: nowrap">31 7 2020</span>
+cancelRegistrationDate.error.invalid = The date you are cancelling your registration must be a real date, like <span style="white-space: nowrap">{0}</span>
 cancelRegistrationDate.error.required.all = Enter the date you are cancelling your registration
 cancelRegistrationDate.error.required.two = The date you are cancelling your registration from must include {0} and {1}
 cancelRegistrationDate.error.required = The date you are cancelling your registration from must include {0}

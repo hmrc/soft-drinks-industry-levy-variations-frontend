@@ -20,6 +20,7 @@ import play.api.data.FormError
 import play.api.data.format.Formatter
 
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import scala.util.{Failure, Success, Try}
 
 private[mappings] class LocalDateFormatter(
@@ -38,13 +39,17 @@ private[mappings] class LocalDateFormatter(
 
   private val fieldKeys: List[String] = List("day", "month", "year")
 
-  private def toDate(key: String, day: Int, month: Int, year: Int): Either[Seq[FormError], LocalDate] =
+  private def toDate(key: String, day: Int, month: Int, year: Int): Either[Seq[FormError], LocalDate] = {
+    val theCurrentDate = LocalDate.now.format(DateTimeFormatter.ofPattern("d M yyyy"))
     Try(LocalDate.of(year, month, day)) match {
       case Success(date) =>
         Right(date)
       case Failure(_) =>
-        Left(Seq(FormError(key, invalidKey, args)))
+        Left(Seq(FormError(key,
+          Seq(s"The date you are cancelling your registration must be a real date, like <span style='white-space: nowrap'>$theCurrentDate</span>"),
+          args)))
     }
+  }
 
   private def formatDate(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
 
