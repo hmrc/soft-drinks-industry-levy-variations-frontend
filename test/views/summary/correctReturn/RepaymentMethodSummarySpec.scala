@@ -38,7 +38,7 @@ class RepaymentMethodSummarySpec extends SpecBase {
       val repaymentMethodSummaryRow = RepaymentMethodSummary.row(userAnswersWithRepaymentMethod)
 
       repaymentMethodSummaryRow.head.key.content.asHtml.toString mustBe "Repayment method"
-      repaymentMethodSummaryRow.head.value.content.asHtml.toString mustBe "Credited to our Soft Drinks Industry Levy account"
+      repaymentMethodSummaryRow.head.value.content.asHtml.toString mustBe "Credited to your Soft Drinks Industry Levy account"
       repaymentMethodSummaryRow.head.actions.toList.head.items.head.content.asHtml.toString() must include("Change")
     }
 
