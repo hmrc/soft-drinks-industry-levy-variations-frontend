@@ -56,7 +56,7 @@ class ChangeActivityCYAViewSpec extends ViewSpecHelper {
     }
 
     "should have the expected body" in {
-      document.getElementsByClass(Selectors.body).text() mustEqual s"This update is for$orgName"
+      document.getElementsByClass(Selectors.body).text() must include(s"This update is for$orgName")
     }
 
     "contain the correct button" in {
@@ -80,6 +80,10 @@ class ChangeActivityCYAViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" in {
       document.select(Selectors.form).attr("action") mustEqual call.url
+    }
+
+    "contain a print link" in {
+      document.getElementById("printPage").text() mustBe "Print this page"
     }
 
     testBackLink(document)
