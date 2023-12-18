@@ -21,7 +21,8 @@ import controllers.actions._
 import forms.changeActivity.PackAtBusinessAddressFormProvider
 import handlers.ErrorHandler
 import models.Mode
-import models.backend.{Site, UkAddress}
+import models.SelectChange.ChangeActivity
+import models.backend.Site
 import navigation._
 import pages.changeActivity.PackAtBusinessAddressPage
 import play.api.i18n.MessagesApi
@@ -33,8 +34,6 @@ import views.html.changeActivity.PackAtBusinessAddressView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import models.SelectChange.ChangeActivity
-
 import scala.util.Try
 
 class PackAtBusinessAddressController @Inject()(

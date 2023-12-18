@@ -23,7 +23,6 @@ import forms.changeActivity.PackAtBusinessAddressFormProvider
 import models.NormalMode
 import models.SelectChange.ChangeActivity
 import models.backend.{RetrievedSubscription, UkAddress}
-import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
 import org.mockito.Mockito.when
@@ -31,7 +30,6 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.changeActivity.PackAtBusinessAddressPage
 import play.api.i18n.Messages
 import play.api.inject.bind
-import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SessionService
