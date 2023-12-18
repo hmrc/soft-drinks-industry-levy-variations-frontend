@@ -124,21 +124,6 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         .set(ClaimCreditsForLostDamagedPage, true).success.value
         .set(HowManyCreditsForLostDamagedPage, litres).success.value
 
-      val changedPages = List(
-        ChangedPage(OperatePackagingSiteOwnBrandsPage, answerChanged = true),
-        ChangedPage(HowManyOperatePackagingSiteOwnBrandsPage, answerChanged = true),
-        ChangedPage(PackagedAsContractPackerPage, answerChanged = true),
-        ChangedPage(HowManyPackagedAsContractPackerPage, answerChanged = true),
-        ChangedPage(BroughtIntoUKPage, answerChanged = false),
-        ChangedPage(HowManyBroughtIntoUKPage, answerChanged = true),
-        ChangedPage(BroughtIntoUkFromSmallProducersPage, answerChanged = false),
-        ChangedPage(HowManyBroughtIntoUkFromSmallProducersPage, answerChanged = false),
-        ChangedPage(ClaimCreditsForExportsPage, answerChanged = true),
-        ChangedPage(HowManyClaimCreditsForExportsPage, answerChanged = true),
-        ChangedPage(ClaimCreditsForLostDamagedPage, answerChanged = true),
-        ChangedPage(HowManyCreditsForLostDamagedPage, answerChanged = true),
-        ChangedPage(ExemptionsForSmallProducersPage, answerChanged = true))
-
       val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockCorrectReturnOrchestrator))
         .build()
@@ -185,21 +170,6 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         .set(ClaimCreditsForLostDamagedPage, true).success.value
         .set(HowManyCreditsForLostDamagedPage, litres).success.value
 
-      val changedPages = List(
-        ChangedPage(OperatePackagingSiteOwnBrandsPage, answerChanged = true),
-        ChangedPage(HowManyOperatePackagingSiteOwnBrandsPage, answerChanged = true),
-        ChangedPage(PackagedAsContractPackerPage, answerChanged = true),
-        ChangedPage(HowManyPackagedAsContractPackerPage, answerChanged = true),
-        ChangedPage(BroughtIntoUKPage, answerChanged = false),
-        ChangedPage(HowManyBroughtIntoUKPage, answerChanged = true),
-        ChangedPage(BroughtIntoUkFromSmallProducersPage, answerChanged = false),
-        ChangedPage(HowManyBroughtIntoUkFromSmallProducersPage, answerChanged = false),
-        ChangedPage(ClaimCreditsForExportsPage, answerChanged = true),
-        ChangedPage(HowManyClaimCreditsForExportsPage, answerChanged = true),
-        ChangedPage(ClaimCreditsForLostDamagedPage, answerChanged = true),
-        ChangedPage(HowManyCreditsForLostDamagedPage, answerChanged = true),
-        ChangedPage(ExemptionsForSmallProducersPage, answerChanged = true))
-
       val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockCorrectReturnOrchestrator))
         .build()
@@ -245,21 +215,6 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         .set(HowManyClaimCreditsForExportsPage, litres).success.value
         .set(ClaimCreditsForLostDamagedPage, true).success.value
         .set(HowManyCreditsForLostDamagedPage, litres).success.value
-
-      val changedPages = List(
-        ChangedPage(OperatePackagingSiteOwnBrandsPage, answerChanged = true),
-        ChangedPage(HowManyOperatePackagingSiteOwnBrandsPage, answerChanged = true),
-        ChangedPage(PackagedAsContractPackerPage, answerChanged = true),
-        ChangedPage(HowManyPackagedAsContractPackerPage, answerChanged = true),
-        ChangedPage(BroughtIntoUKPage, answerChanged = false),
-        ChangedPage(HowManyBroughtIntoUKPage, answerChanged = true),
-        ChangedPage(BroughtIntoUkFromSmallProducersPage, answerChanged = false),
-        ChangedPage(HowManyBroughtIntoUkFromSmallProducersPage, answerChanged = false),
-        ChangedPage(ClaimCreditsForExportsPage, answerChanged = true),
-        ChangedPage(HowManyClaimCreditsForExportsPage, answerChanged = true),
-        ChangedPage(ClaimCreditsForLostDamagedPage, answerChanged = true),
-        ChangedPage(HowManyCreditsForLostDamagedPage, answerChanged = true),
-        ChangedPage(ExemptionsForSmallProducersPage, answerChanged = true))
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockCorrectReturnOrchestrator))

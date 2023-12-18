@@ -27,7 +27,7 @@ import play.api.http.Status.NO_CONTENT
 import play.api.libs.json.Json
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import service.VariationResult
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, InternalServerException}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import utilities.GenericLogger
 
 import javax.inject.Inject

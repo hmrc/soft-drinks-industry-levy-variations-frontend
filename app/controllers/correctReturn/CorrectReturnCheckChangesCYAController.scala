@@ -19,7 +19,6 @@ package controllers.correctReturn
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{ControllerActions, RequiredUserAnswersForCorrectReturn}
-import errors.UnexpectedResponseFromSDIL
 import handlers.ErrorHandler
 import models.SdilReturn
 import models.SelectChange.CorrectReturn
