@@ -26,6 +26,10 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
+@hintContent = {
+<p class="govuk-body">@messages("correctReturn.operatePackagingSiteOwnBrands.hint")</p>
+}
+
 @layout(pageTitle = title(form, messages("correctReturn.operatePackagingSiteOwnBrands.title"))) {
 
     @formHelper(action = routes.OperatePackagingSiteOwnBrandsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
@@ -38,7 +42,7 @@
             RadiosViewModel.yesNo(
                 field = form("value"),
                 legend = LegendViewModel(messages("correctReturn.operatePackagingSiteOwnBrands.heading")).asPageHeading(),
-                hint = Some(Hint(content = Text(messages("correctReturn.operatePackagingSiteOwnBrands.hint"))))
+                hint = Some(Hint(content = HtmlContent(hintContent)))
             )
         )
 
