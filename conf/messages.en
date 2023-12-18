@@ -308,7 +308,6 @@ correctReturn.select.change.hidden = which return you need to correct
 
 correctReturn.correctionReason.title = Why do you need to correct this return?
 correctReturn.correctionReason.checkYourAnswersLabel = Reason for correcting
-correctReturn.correctionReason.characterCount = Enter a maximum of 255 characters
 correctReturn.correctionReason.hint = Make sure you provide as much detail as you can.  We may get in touch with your contact person to discuss this.
 correctReturn.correctionReason.error.required = Enter a reason for correcting your return
 correctReturn.correctionReason.error.length = Reason for correcting the return must be 255 characters or less

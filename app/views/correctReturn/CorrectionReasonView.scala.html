@@ -27,10 +27,7 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
 
-@detailsAndHint = {
-    <p class="govuk-body">@messages("correctReturn.correctionReason.hint")</p>
-    <p>@messages("correctReturn.correctionReason.characterCount")</p>
-}
+@details = { <p class="govuk-body">@messages("correctReturn.correctionReason.hint")</p> }
 
 @layout(pageTitle = title(form, messages("correctReturn.correctionReason.title"))) {
 
@@ -46,7 +43,7 @@
             name = "value",
             label = messages("correctReturn.correctionReason.title"),
             isPageHeading = true,
-            hint = Some(HtmlContent(detailsAndHint)),
+            hint = Some(HtmlContent(details)),
             threshold = Some(0),
             maxLength = Some(255)
         )
