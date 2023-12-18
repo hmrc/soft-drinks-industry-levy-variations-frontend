@@ -17,7 +17,6 @@
 package forms.mappings
 
 import java.time.LocalDate
-
 import generators.Generators
 import org.scalacheck.Gen
 import org.scalatest.OptionValues
@@ -25,6 +24,8 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.data.{Form, FormError}
+
+import java.time.format.DateTimeFormatter
 
 class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with Generators with OptionValues
   with Mappings {
@@ -403,9 +404,12 @@ class DateMappingsSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
     )
 
     val result = form.bind(data)
-
+    val currentDate = LocalDate.now.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+    val invalidErrorWithCurrentDate =
+      List(s"The date you are cancelling your registration must be a real date, like <span style='white-space: nowrap'>$currentDate</span>")
     result.errors must contain(
-      FormError("value", "error.invalid", List.empty)
+
+      FormError("value", invalidErrorWithCurrentDate, List.empty)
     )
   }
 
