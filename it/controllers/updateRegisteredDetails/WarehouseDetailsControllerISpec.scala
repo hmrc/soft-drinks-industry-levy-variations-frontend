@@ -369,7 +369,33 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
           }
         }
       }
+      "when the user has warehouses and does not select yes or no" - {
+        "should return 400 with required error" in {
+          given
+            .commonPrecondition
+          val userAnswersWithWarehouses = emptyUserAnswersForUpdateRegisteredDetails.copy(warehouseList = warehousesFromSubscription)
+          setAnswers(userAnswersWithWarehouses)
+          WsTestClient.withClient { client =>
+            val result = createClientRequestPOST(
+              client, updateRegisteredDetailsBaseUrl + normalRoutePath, Json.obj("value" -> "")
+            )
+
+            whenReady(result) { res =>
+              res.status mustBe 400
+              val page = Jsoup.parse(res.body)
+              page.title mustBe "Error: Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
+              val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
+                .first()
+              errorSummary
+                .select("a")
+                .attr("href") mustBe "#value"
+              errorSummary.text() mustBe "Select yes if you want to register another UK warehouse"
+            }
+          }
+        }
+      }
     }
+
     testUnauthorisedUser(updateRegisteredDetailsBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl +
