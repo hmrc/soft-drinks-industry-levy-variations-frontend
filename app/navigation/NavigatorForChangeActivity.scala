@@ -102,13 +102,15 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
   }
 
   private def navigateFollowingImportsForAmountProducedSmall(userAnswers: UserAnswers, mode: Mode): Call = {
-    (userAnswers.get(ContractPackingPage), userAnswers.get(SecondaryWarehouseDetailsPage), mode) match {
-      case (Some(true), _, NormalMode) if userAnswers.packagingSiteList.isEmpty => routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
-      case (Some(true), _, NormalMode) => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
-      case (Some(false), _, NormalMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
-      case (None, _, NormalMode) => routes.ContractPackingController.onPageLoad(NormalMode)
-      case (_, Some(_), _) => routes.ChangeActivityCYAController.onPageLoad
-      case _ => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
+    val isVoluntaryReg = userAnswers.getChangeActivityData.exists(_.isVoluntary)
+    (isVoluntaryReg, userAnswers.get(ContractPackingPage), userAnswers.get(SecondaryWarehouseDetailsPage), mode) match {
+      case (_, None, _, NormalMode) => routes.ContractPackingController.onPageLoad(NormalMode)
+      case (false, Some(true), _, NormalMode) if userAnswers.packagingSiteList.isEmpty => routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
+      case (false, Some(true), _, NormalMode) => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
+      case (false, Some(false), _, NormalMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+      case (false, _, None, CheckMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
+      case (false, _, Some(_), CheckMode) => routes.ChangeActivityCYAController.onPageLoad
+      case (true, _, _, _) => routes.ChangeActivityCYAController.onPageLoad
     }
   }
 
@@ -122,12 +124,12 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
 
   private def navigateFollowingImportsForAmountProducedNone(userAnswers: UserAnswers, mode: Mode): Call =
     (userAnswers.get(ContractPackingPage), userAnswers.get(SecondaryWarehouseDetailsPage), mode) match {
+      case (None, _, NormalMode) => routes.ContractPackingController.onPageLoad(NormalMode)
       case (Some(true), _, NormalMode) if userAnswers.packagingSiteList.isEmpty => routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
       case (Some(true), _, NormalMode) => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
       case (Some(false), _, NormalMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
-      case (None, _, NormalMode) => routes.ContractPackingController.onPageLoad(NormalMode)
-      case (_, Some(_), CheckMode) => routes.ChangeActivityCYAController.onPageLoad
-      case (_, _, mode) => routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
+      case (_, None, mode) => routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
+      case (_, _, CheckMode) => routes.ChangeActivityCYAController.onPageLoad
     }
 
   override val normalRoutes: Page => UserAnswers => Call = {

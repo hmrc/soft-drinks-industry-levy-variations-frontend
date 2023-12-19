@@ -298,7 +298,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
               result mustBe routes.ContractPackingController.onPageLoad(NormalMode)
             }
 
-            "And Contract Packing answered" - {
+            "And Contract Packing answered and registration is not voluntary" - {
               "navigate to Pack At Business Address if contract packing and packaging sites empty" in {
                 val userAnswers = initialUserAnswersWithAmountProducedSmall
                   .set(ContractPackingPage, true).success.value
@@ -320,6 +320,20 @@ class NavigatorForChangeActivitySpec extends SpecBase {
                   .set(ContractPackingPage, false).success.value
                 val result = navigateFollowingImportsPage(userAnswers)
                 result mustBe routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+              }
+            }
+
+            if (followingImports.page == ImportsPage) {
+              "and Contract Packing answered and registration is voluntary" - {
+                "navigate to Check Your Answers" in {
+                  val isVoluntaryRegUserAnswers = emptyUserAnswersForChangeActivity
+                    .set(AmountProducedPage, AmountProduced.Small).success.value
+                    .set(ThirdPartyPackagersPage, true).success.value
+                    .set(ContractPackingPage, false).success.value
+                    .set(ImportsPage, false).success.value
+                  val result = navigator.nextPage(ImportsPage, NormalMode, isVoluntaryRegUserAnswers)
+                  result mustBe routes.ChangeActivityCYAController.onPageLoad
+                }
               }
             }
           }

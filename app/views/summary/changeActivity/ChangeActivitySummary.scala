@@ -61,10 +61,8 @@ object ChangeActivitySummary  {
           ImportsSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
       )
     }
-    val sitesSection: Option[(String, SummaryList)] = if(userAnswers.packagingSiteList.nonEmpty || userAnswers.get(SecondaryWarehouseDetailsPage).nonEmpty){
+    val sitesSection: Option[(String, SummaryList)] = if (userAnswers.getChangeActivityData.exists(_.isVoluntary)) None else {
       Option("checkYourAnswers.sites" -> SummaryList(packingSummary.rows ++ warehouseSummary.rows))
-    } else {
-      None
     }
 
     (amountProducedSection ++ thirdPartyPackagersSection ++ ownBrandsSection ++ contractSection ++ importsSection ++ sitesSection).toSeq
