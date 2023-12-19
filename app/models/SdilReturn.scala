@@ -18,6 +18,7 @@ package models
 
 import config.FrontendAppConfig
 import models.submission.Litreage
+import pages.correctReturn.ExemptionsForSmallProducersPage
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.Instant
@@ -55,26 +56,33 @@ case class SdilReturn(
 }
 
 object SdilReturn {
+
+  def packSmallValueFromUserAnswers(userAnswers: UserAnswers): List[SmallProducer] = {
+    userAnswers.get(ExemptionsForSmallProducersPage) match {
+      case Some(true) => userAnswers.smallProducerList
+      case _ => List.empty
+    }
+  }
+
   def generateFromUserAnswers(userAnswers: UserAnswers, submitted: Option[Instant] = None): SdilReturn = {
-    userAnswers.getCorrectReturnData
-      .fold[SdilReturn](emptySdilReturn(userAnswers)) { correctReturnData =>
-        SdilReturn(
-          ownBrand = correctReturnData.ownBrandsLitreage,
-          packLarge = correctReturnData.contractPackerLitreage,
-          packSmall = userAnswers.smallProducerList,
-          importLarge = correctReturnData.broughtIntoUkLitreage,
-          importSmall = correctReturnData.broughtIntoUkFromSmallProducerLitreage,
-          export = correctReturnData.exportsLitreage,
-          wastage = correctReturnData.lostDamagedLitreage,
-          submittedOn = submitted
-        )
-      }
+    userAnswers.getCorrectReturnData.map(correctReturnData => {
+      SdilReturn(
+        ownBrand = correctReturnData.ownBrandsLitreage,
+        packLarge = correctReturnData.contractPackerLitreage,
+        packSmall = packSmallValueFromUserAnswers(userAnswers),
+        importLarge = correctReturnData.broughtIntoUkLitreage,
+        importSmall = correctReturnData.broughtIntoUkFromSmallProducerLitreage,
+        export = correctReturnData.exportsLitreage,
+        wastage = correctReturnData.lostDamagedLitreage,
+        submittedOn = submitted
+      )
+    }).getOrElse(emptySdilReturn(userAnswers))
   }
 
   def emptySdilReturn(userAnswers: UserAnswers) = SdilReturn(
     ownBrand = Litreage(0L, 0L),
     packLarge = Litreage(0L, 0L),
-    packSmall = userAnswers.smallProducerList,
+    packSmall = packSmallValueFromUserAnswers(userAnswers),
     importLarge = Litreage(0L, 0L),
     importSmall = Litreage(0L, 0L),
     export = Litreage(0L, 0L),
