@@ -29,7 +29,7 @@ class WarehouseDetailsViewSpec extends ViewSpecHelper {
 
   val view: WarehouseDetailsView = application.injector.instanceOf[WarehouseDetailsView]
   val formProvider = new WarehouseDetailsFormProvider
-  val form: Form[Boolean] = formProvider.apply()
+  val form: Form[Boolean] = formProvider.apply(hasWarehouses = true)
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
@@ -217,7 +217,7 @@ class WarehouseDetailsViewSpec extends ViewSpecHelper {
         errorSummary
           .select("a")
           .attr("href") mustBe "#value"
-        errorSummary.text() mustBe "Select yes if you want to register a UK warehouse"
+        errorSummary.text() mustBe "Select yes if you want to register another UK warehouse"
       }
     }
 

@@ -51,7 +51,7 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
   def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new WarehouseDetailsFormProvider()
-  val form: Form[Boolean] = formProvider()
+  val form: Form[Boolean] = formProvider(false)
 
   lazy val warehouseDetailsRoute: String = routes.WarehouseDetailsController.onPageLoad(NormalMode).url
   lazy val warehouseDetailsCheckRoute: String = routes.WarehouseDetailsController.onPageLoad(CheckMode).url

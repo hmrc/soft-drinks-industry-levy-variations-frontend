@@ -22,9 +22,10 @@ import play.api.data.FormError
 class WarehouseDetailsFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "updateRegisteredDetails.warehouseDetails.error.required"
+  val requiredKeyNoWarehouses = "updateRegisteredDetails.warehouseDetails.error.requiredNoWarehouses"
   val invalidKey = "error.boolean"
 
-  val form = new WarehouseDetailsFormProvider()()
+  val form = new WarehouseDetailsFormProvider()(true)
 
   ".value" - {
 
@@ -40,6 +41,18 @@ class WarehouseDetailsFormProviderSpec extends BooleanFieldBehaviours {
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+  }
+
+  ".value when no warehouses exist" - {
+
+    val fieldName = "value"
+    val form = new WarehouseDetailsFormProvider()(false)
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKeyNoWarehouses)
     )
   }
 }
