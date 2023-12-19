@@ -207,19 +207,35 @@ object ChangeActivityCYAGenerators {
     })
   }).flatten
 
-  val smallTestCaseOptions: List[UserAnswerOptions] = Answers.Answered.flatMap(tpp => {
-    Answers.Answered.map(ob => {
-      Answers.Answered.map(imp => {
-        List(
-          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(imp), warehouseValues(Answers.Yes), packingSitesValues(Answers.Yes), packAtBusinessAddressValues(Answers.Yes)),
-          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(imp), warehouseValues(Answers.Yes), packingSitesValues(Answers.Yes), packAtBusinessAddressValues(Answers.No)),
-          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), warehouseValues(Answers.Yes), packingSitesValues(Answers.Yes), packAtBusinessAddressValues(Answers.Yes)),
-          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), warehouseValues(Answers.Yes), packingSitesValues(Answers.Yes), packAtBusinessAddressValues(Answers.No)),
-          UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(tpp), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), warehouseValues(Answers.Yes), packingSitesValues(Answers.Yes), packAtBusinessAddressValues(Answers.Unanswered))
-        )
-      })
+  val smallTestCaseNoTPPOptions: List[UserAnswerOptions] = Answers.Answered.flatMap(ob => {
+    Answers.Answered.map(imp => {
+      List(
+        UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(Answers.No), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(imp), warehouseValues(Answers.Yes), packingSitesValues(Answers.Yes), packAtBusinessAddressValues(Answers.Yes)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(Answers.No), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(imp), warehouseValues(Answers.Yes), packingSitesValues(Answers.Yes), packAtBusinessAddressValues(Answers.No)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(Answers.No), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), warehouseValues(Answers.Yes), packingSitesValues(Answers.Yes), packAtBusinessAddressValues(Answers.Yes)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(Answers.No), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), warehouseValues(Answers.Yes), packingSitesValues(Answers.Yes), packAtBusinessAddressValues(Answers.No)),
+        UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(Answers.No), ownBrandsValues(ob), contractValues(Answers.No), importValues(imp), warehouseValues(Answers.Yes), packingSitesValues(Answers.Yes), packAtBusinessAddressValues(Answers.Unanswered))
+      )
     })
-  }).flatten.flatten
+  }).flatten
+
+  val smallTestCaseWithTPPOptions: List[UserAnswerOptions] = Answers.Answered.flatMap(ob => {
+    List(
+      UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(Answers.Yes), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(Answers.Yes), warehouseValues(Answers.Yes), packingSitesValues(Answers.Yes), packAtBusinessAddressValues(Answers.Yes)),
+      UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(Answers.Yes), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(Answers.Yes), warehouseValues(Answers.Yes), packingSitesValues(Answers.Yes), packAtBusinessAddressValues(Answers.No)),
+      UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(Answers.Yes), ownBrandsValues(ob), contractValues(Answers.No), importValues(Answers.Yes), warehouseValues(Answers.Yes), packingSitesValues(Answers.Yes), packAtBusinessAddressValues(Answers.Yes)),
+      UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(Answers.Yes), ownBrandsValues(ob), contractValues(Answers.No), importValues(Answers.Yes), warehouseValues(Answers.Yes), packingSitesValues(Answers.Yes), packAtBusinessAddressValues(Answers.No)),
+      UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(Answers.Yes), ownBrandsValues(ob), contractValues(Answers.No), importValues(Answers.Yes), warehouseValues(Answers.Yes), packingSitesValues(Answers.Yes), packAtBusinessAddressValues(Answers.Unanswered)),
+      UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(Answers.Yes), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(Answers.No), warehouseValues(Answers.Yes), packingSitesValues(Answers.Yes), packAtBusinessAddressValues(Answers.Yes)),
+      UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(Answers.Yes), ownBrandsValues(ob), contractValues(Answers.Yes), importValues(Answers.No), warehouseValues(Answers.Yes), packingSitesValues(Answers.Yes), packAtBusinessAddressValues(Answers.No)),
+    )
+  })
+
+  val smallTestCaseVoluntaryOptions: List[UserAnswerOptions] = Answers.Answered.flatMap(ob => {
+    List(
+      UserAnswerOptions(amountProducedValues(APAnswers.Small), thirdPartyPackagingValues(Answers.Yes), ownBrandsValues(ob), contractValues(Answers.No), importValues(Answers.No), warehouseValues(Answers.Unanswered), packingSitesValues(Answers.Unanswered), packAtBusinessAddressValues(Answers.Unanswered))
+    )
+  })
 
   val noneTestCaseOptions: List[UserAnswerOptions] = Answers.All.flatMap(tpp => {
     Answers.All.map(ob => {
@@ -235,7 +251,9 @@ object ChangeActivityCYAGenerators {
     })
   }).flatten.flatten
 
-  val testCaseOptions: List[UserAnswerOptions] = largeTestCaseOptions ++ smallTestCaseOptions ++ noneTestCaseOptions
+  val testCaseOptions: List[UserAnswerOptions] = largeTestCaseOptions ++
+    smallTestCaseNoTPPOptions ++ smallTestCaseWithTPPOptions ++ smallTestCaseVoluntaryOptions ++
+    noneTestCaseOptions
 
   def getKeyStringFromUserAnswerOptions(userAnswerOptions: UserAnswerOptions): String = {
     val keyStrings: List[String] = List(
