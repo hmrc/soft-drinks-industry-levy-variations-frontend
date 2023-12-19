@@ -15,11 +15,14 @@
  *@
 
 @import views.html.helpers._
+@import views.html.helpers.printLinkWithJs
+
 @this(
     layout: templates.Layout,
     govukSummaryList: GovukSummaryList,
     formHelper: FormWithCSRF,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    printLinkWithJs: printLinkWithJs
 )
 
 @(orgName: String, seqSummaryList: Seq[(String, SummaryList)], submitCall: Call)(implicit request: Request[_], messages: Messages)
@@ -38,4 +41,5 @@
        @govukButton(ButtonViewModel(messages("updateRegisteredDetails.checkYourAnswers.submit")))
      }
 
+    @printLinkWithJs(messages("site.print"))
 }
