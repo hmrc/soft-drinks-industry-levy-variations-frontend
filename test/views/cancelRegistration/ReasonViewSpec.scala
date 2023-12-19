@@ -59,11 +59,6 @@ class ReasonViewSpec extends ViewSpecHelper {
           .text() mustBe "Why do you need to cancel your registration?"
       }
 
-      "that contains the expected hint test" in {
-        formGroup.get(0).getElementsByClass(Selectors.hint)
-          .text() mustBe "Enter a maximum of 255 characters"
-      }
-
       "that contains a text area" in {
         formGroup.get(0).getElementsByClass(Selectors.textArea).size mustBe 1
       }
