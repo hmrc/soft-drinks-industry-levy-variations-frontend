@@ -30,7 +30,6 @@ import pages.correctReturn.{CorrectionReasonPage, RepaymentMethodPage}
 import play.api.libs.json.Json
 
 import java.time.LocalDate
-import scala.concurrent.Future
 
 class ReturnServiceSpec extends SpecBase with MockitoSugar {
 
