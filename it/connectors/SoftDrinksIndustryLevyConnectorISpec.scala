@@ -351,8 +351,8 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
 
             val res = sdilConnector.balance(aSubscription.sdilRef, true)
 
-            whenReady(res) { result =>
-              result mustBe BigDecimal(1000)
+            whenReady(res.value) { result =>
+              result mustBe Right(BigDecimal(1000))
             }
           }
         }
@@ -368,8 +368,8 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
 
             val res = sdilConnector.balance(aSubscription.sdilRef, false)
 
-            whenReady(res) { result =>
-              result mustBe BigDecimal(1000)
+            whenReady(res.value) { result =>
+              result mustBe Right(BigDecimal(1000))
             }
           }
         }
@@ -388,8 +388,8 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
 
             val res = sdilConnector.balanceHistory(aSubscription.sdilRef, true)
 
-            whenReady(res) { result =>
-              result mustBe allFinicialItems
+            whenReady(res.value) { result =>
+              result mustBe Right(allFinicialItems)
             }
           }
         }
@@ -398,12 +398,13 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
       "and the balanceHistory is in the cache" - {
         "should return the balanceHistory" in {
           val res = for {
-            _ <- sdilSessionCache.save[List[FinancialLineItem]](SDIL_REF, SDILSessionKeys.balanceHistory(true), allFinicialItems)
+            _ <- EitherT.right[VariationsErrors](sdilSessionCache.save[List[FinancialLineItem]](SDIL_REF,
+              SDILSessionKeys.balanceHistory(true), allFinicialItems))
             result <- sdilConnector.balanceHistory(aSubscription.sdilRef, true)
           } yield result
 
-          whenReady(res) { result =>
-            result mustBe allFinicialItems
+          whenReady(res.value) { result =>
+            result mustBe Right(allFinicialItems)
           }
         }
       }
@@ -418,8 +419,8 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
 
             val res = sdilConnector.balanceHistory(aSubscription.sdilRef, false)
 
-            whenReady(res) { result =>
-              result mustBe List.empty
+            whenReady(res.value) { result =>
+              result mustBe Right(List.empty)
             }
           }
         }
@@ -428,12 +429,12 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
       "and the balanceHistory is in the cache" - {
         "should return the balanceHistory from the cache" in {
           val res = for {
-            _ <- sdilSessionCache.save[List[FinancialLineItem]](SDIL_REF, SDILSessionKeys.balanceHistory(false), allFinicialItems)
+            _ <- EitherT.right[VariationsErrors](sdilSessionCache.save[List[FinancialLineItem]](SDIL_REF, SDILSessionKeys.balanceHistory(false), allFinicialItems))
             result <- sdilConnector.balanceHistory(aSubscription.sdilRef, false)
           } yield result
 
-          whenReady(res) { result =>
-            result mustBe allFinicialItems
+          whenReady(res.value) { result =>
+            result mustBe Right(allFinicialItems)
           }
         }
       }

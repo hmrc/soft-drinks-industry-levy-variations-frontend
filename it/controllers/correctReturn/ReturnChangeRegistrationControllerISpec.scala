@@ -22,7 +22,7 @@ class ReturnChangeRegistrationControllerISpec extends ControllerITTestHelper {
       given
         .commonPrecondition
 
-      setAnswers(emptyUserAnswersForCorrectReturn)
+      setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
       WsTestClient.withClient { client =>
         val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
@@ -34,6 +34,7 @@ class ReturnChangeRegistrationControllerISpec extends ControllerITTestHelper {
         }
       }
     }
+    testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + normalRoutePath)
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath)
@@ -44,7 +45,7 @@ class ReturnChangeRegistrationControllerISpec extends ControllerITTestHelper {
       given
         .commonPrecondition
 
-      setAnswers(completedUserAnswersForCorrectReturnNewPackerOrImporter)
+      setUpForCorrectReturn(completedUserAnswersForCorrectReturnNewPackerOrImporter)
       WsTestClient.withClient { client =>
         val result = createClientRequestPOSTNoData(client, correctReturnBaseUrl + normalRoutePath, "")
 
@@ -59,7 +60,7 @@ class ReturnChangeRegistrationControllerISpec extends ControllerITTestHelper {
       given
         .commonPrecondition
 
-      setAnswers(completedUserAnswersForCorrectReturnNewPackerOrImporter.set(PackagedAsContractPackerPage, false).success.value)
+      setUpForCorrectReturn(completedUserAnswersForCorrectReturnNewPackerOrImporter.set(PackagedAsContractPackerPage, false).success.value)
       WsTestClient.withClient { client =>
         val result = createClientRequestPOSTNoData(client, correctReturnBaseUrl + normalRoutePath, "")
 

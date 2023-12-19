@@ -49,7 +49,7 @@ class CorrectReturnCYAController @Inject()(override
     implicit request =>
       requiredUserAnswers.requireData(CorrectReturnBaseCYAPage) {
 
-        val calculateAmounts = correctReturnOrchestrator.calculateAmounts(request.sdilEnrolment, request.userAnswers, request.returnPeriod)
+        val calculateAmounts = correctReturnOrchestrator.calculateAmounts(request.sdilEnrolment, request.userAnswers, request.returnPeriod, request.originalSdilReturn)
 
         val result = calculateAmounts.value.map {
           case Right(amounts) =>

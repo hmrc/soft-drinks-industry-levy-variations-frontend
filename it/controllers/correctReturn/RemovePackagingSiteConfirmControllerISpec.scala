@@ -24,7 +24,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
         WsTestClient.withClient { client =>
           val result = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath("indexDoesntExist"))
@@ -43,7 +43,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved))
@@ -65,6 +65,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
         }
       }
     }
+    testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved))
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved))
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath(indexOfPackingSiteToBeRemoved))
@@ -76,7 +77,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
         WsTestClient.withClient { client =>
           val result = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath("indexDoesntExist"))
@@ -95,7 +96,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved))
@@ -115,7 +116,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
         }
       }
     }
-
+    testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved))
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved))
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath(indexOfPackingSiteToBeRemoved))
@@ -131,7 +132,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
               given
                 .commonPrecondition
 
-              setAnswers(emptyUserAnswersForCorrectReturn)
+              setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
               WsTestClient.withClient { client =>
                 val yesSelected = key == "yes"
                 val result = createClientRequestPOST(
@@ -149,7 +150,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
               given
                 .commonPrecondition
 
-              setAnswers(userAnswers)
+              setUpForCorrectReturn(userAnswers)
               val numberOfPackagingSites = if (lastPackagingSite) 1 else 2
               getAnswers(userAnswers.id).get.packagingSiteList.size mustBe numberOfPackagingSites
               WsTestClient.withClient { client =>
@@ -188,7 +189,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(
+        setUpForCorrectReturn(
           emptyUserAnswersForCorrectReturn
             .copy(packagingSiteList = Map(indexOfPackingSiteToBeRemoved -> Site(ukAddress, None, None, None))))
         getAnswers(emptyUserAnswersForCorrectReturn.id).get.packagingSiteList.size mustBe 1
@@ -228,7 +229,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
               given
                 .commonPrecondition
 
-              setAnswers(emptyUserAnswersForCorrectReturn)
+              setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
               WsTestClient.withClient { client =>
                 val yesSelected = key == "yes"
                 val result = createClientRequestPOST(
@@ -246,7 +247,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
               given
                 .commonPrecondition
 
-              setAnswers(userAnswers)
+              setUpForCorrectReturn(userAnswers)
               val numberOfPackagingSites = if (lastPackagingSite) 1 else 2
               getAnswers(userAnswers.id).get.packagingSiteList.size mustBe numberOfPackagingSites
               WsTestClient.withClient { client =>
@@ -285,7 +286,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(
+        setUpForCorrectReturn(
           emptyUserAnswersForCorrectReturn
             .copy(packagingSiteList = Map(indexOfPackingSiteToBeRemoved -> Site(ukAddress, None, None, None))))
         getAnswers(emptyUserAnswersForCorrectReturn.id).get.packagingSiteList.size mustBe 1

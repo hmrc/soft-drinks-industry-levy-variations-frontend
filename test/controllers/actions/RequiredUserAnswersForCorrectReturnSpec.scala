@@ -41,7 +41,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
       RetrievedActivity(smallProducer = true,largeProducer = true,contractPacker = true,importer = true,voluntaryRegistration = true),
       LocalDate.now(),List.empty, List.empty,Contact(None,None,"",""),None),
     emptyUserAnswersForCorrectReturn,
-    ReturnPeriod(2022, 3)
+    ReturnPeriod(2022, 3),
+    emptySdilReturn
   )
 
   val basicJourney =

@@ -17,7 +17,7 @@
 package models.requests
 
 import models.backend.RetrievedSubscription
-import models.{ReturnPeriod, UserAnswers}
+import models.{ReturnPeriod, SdilReturn, UserAnswers}
 import play.api.mvc.{Request, WrappedRequest}
 
 case class OptionalDataRequest[A] (request: Request[A],
@@ -40,4 +40,5 @@ case class CorrectReturnDataRequest[A] (request: Request[A],
                                         sdilEnrolment: String,
                                         subscription: RetrievedSubscription,
                                         userAnswers: UserAnswers,
-                                        returnPeriod: ReturnPeriod) extends DataRequest[A](request)
+                                        returnPeriod: ReturnPeriod,
+                                        originalSdilReturn: SdilReturn) extends DataRequest[A](request)

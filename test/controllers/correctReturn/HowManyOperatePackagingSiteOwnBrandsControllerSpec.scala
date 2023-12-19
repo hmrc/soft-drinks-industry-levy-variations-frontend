@@ -17,10 +17,11 @@
 package controllers.correctReturn
 
 import base.SpecBase
+import connectors.SoftDrinksIndustryLevyConnector
 import errors.SessionDatabaseInsertError
 import forms.HowManyLitresFormProvider
 import models.SelectChange.CorrectReturn
-import models.{LitresInBands, NormalMode}
+import models.{LitresInBands, NormalMode, SdilReturn, UserAnswers}
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -28,6 +29,7 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.correctReturn.HowManyOperatePackagingSiteOwnBrandsPage
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -45,12 +47,20 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
   val form = formProvider()
 
   lazy val howManyOperatePackagingSiteOwnBrandsRoute = routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
+  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+
+  def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
+    when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    applicationBuilder(userAnswers = userAnswers)
+      .overrides(
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+  }
 
   "HowManyOperatePackagingSiteOwnBrands Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
+      val application = correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
 
       running(application) {
         val request = FakeRequest(GET, howManyOperatePackagingSiteOwnBrandsRoute)
@@ -68,7 +78,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
 
       val userAnswers = emptyUserAnswersForCorrectReturn.set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 200)).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = correctReturnAction(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, howManyOperatePackagingSiteOwnBrandsRoute)
@@ -89,7 +99,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+        correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn))
           .overrides(
             bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
@@ -110,7 +120,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
+      val application = correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
 
       running(application) {
         val request =
@@ -133,7 +143,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CorrectReturn))).build()
+      val application = correctReturnAction(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CorrectReturn))).build()
 
       running(application) {
         val request =
@@ -154,7 +164,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
       when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+        correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn))
           .overrides(
             bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)

@@ -33,7 +33,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
@@ -61,7 +61,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn.copy(warehouseList = warehouseList))
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(warehouseList = warehouseList))
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
@@ -97,7 +97,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
@@ -116,6 +116,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
         }
       }
     }
+    testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + normalRoutePath)
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath)
@@ -128,7 +129,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath)
@@ -156,7 +157,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn.copy(warehouseList = warehouseList))
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(warehouseList = warehouseList))
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath)
@@ -192,7 +193,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath)
@@ -211,6 +212,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
         }
       }
     }
+    testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + checkRoutePath)
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath)
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath)
@@ -223,7 +225,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> "false")
@@ -313,7 +315,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
       given
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
-      setAnswers(emptyUserAnswersForCorrectReturn)
+      setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
       WsTestClient.withClient { client =>
         val result = createClientRequestPOST(
@@ -334,7 +336,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> "")
@@ -365,7 +367,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> "false")
@@ -455,7 +457,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
       given
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
-      setAnswers(emptyUserAnswersForCorrectReturn)
+      setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
       WsTestClient.withClient { client =>
         val result = createClientRequestPOST(
@@ -476,7 +478,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> "")

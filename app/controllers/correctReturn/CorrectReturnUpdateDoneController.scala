@@ -32,7 +32,7 @@ import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, ZoneId}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class CorrectReturnUpdateDoneController @Inject()(
                                                    override val messagesApi: MessagesApi,
@@ -47,29 +47,26 @@ class CorrectReturnUpdateDoneController @Inject()(
   def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
       requiredUserAnswers.requireData(CorrectReturnUpdateDonePage) {
-        request.userAnswers.getCorrectReturnOriginalSDILReturnData.map(originalSdilReturn => {
-          val calculateAmounts = correctReturnOrchestrator.calculateAmounts(request.sdilEnrolment, request.userAnswers, request.returnPeriod)
-          val result = calculateAmounts.value.map {
-            case Right(amounts) =>
-              val orgName: String = " " + request.subscription.orgName
-              val currentSDILReturn =  SdilReturn.generateFromUserAnswers(request.userAnswers)
-              val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSDILReturn)
-              val getSentDateTime = LocalDateTime.ofInstant(request.userAnswers.submittedOn.get, ZoneId.of("Europe/London"))
-              val formattedDate = getSentDateTime.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-              val formattedTime = getSentDateTime.format(DateTimeFormatter.ofPattern("h:mma"))
-              val returnPeriod = request.userAnswers.correctReturnPeriod
-              val returnPeriodFormat = DateTimeFormatter.ofPattern("MMMM yyyy")
-              val returnPeriodStart = returnPeriod.head.start.format(returnPeriodFormat)
-              val returnPeriodEnd = returnPeriod.head.end.format(returnPeriodFormat)
-              val sections = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(request.userAnswers,
-                request.subscription, changedPages, isCheckAnswers = false, amounts)
-              Ok(view(orgName, sections, formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd))
-            case Left(_) =>
-              genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][Balance] - unexpected response for ${request.sdilEnrolment}")
-              Redirect(controllers.routes.SelectChangeController.onPageLoad.url)
-          }
-          result
-        }).getOrElse(Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url)))
+        val calculateAmounts = correctReturnOrchestrator.calculateAmounts(request.sdilEnrolment, request.userAnswers, request.returnPeriod, request.originalSdilReturn)
+        calculateAmounts.value.map {
+          case Right(amounts) =>
+            val orgName: String = " " + request.subscription.orgName
+            val currentSDILReturn = SdilReturn.generateFromUserAnswers(request.userAnswers)
+            val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(request.originalSdilReturn, currentSDILReturn)
+            val getSentDateTime = LocalDateTime.ofInstant(request.userAnswers.submittedOn.get, ZoneId.of("Europe/London"))
+            val formattedDate = getSentDateTime.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+            val formattedTime = getSentDateTime.format(DateTimeFormatter.ofPattern("h:mma"))
+            val returnPeriod = request.userAnswers.correctReturnPeriod
+            val returnPeriodFormat = DateTimeFormatter.ofPattern("MMMM yyyy")
+            val returnPeriodStart = returnPeriod.head.start.format(returnPeriodFormat)
+            val returnPeriodEnd = returnPeriod.head.end.format(returnPeriodFormat)
+            val sections = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(request.userAnswers,
+              request.subscription, changedPages, isCheckAnswers = false, amounts)
+            Ok(view(orgName, sections, formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd))
+          case Left(_) =>
+            genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][Balance] - unexpected response for ${request.sdilEnrolment}")
+            Redirect(controllers.routes.SelectChangeController.onPageLoad.url)
+        }
       }
   }
 }

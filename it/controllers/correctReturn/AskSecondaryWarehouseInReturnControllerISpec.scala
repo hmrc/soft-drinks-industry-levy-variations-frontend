@@ -23,7 +23,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
@@ -49,7 +49,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
@@ -69,6 +69,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
         }
       }
     }
+    testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + normalRoutePath)
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath)
@@ -80,7 +81,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath)
@@ -106,7 +107,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath)
@@ -126,7 +127,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
         }
       }
     }
-
+    testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + checkRoutePath)
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath)
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath)
@@ -139,7 +140,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> "false")
@@ -159,7 +160,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn.set(AskSecondaryWarehouseInReturnPage, false).success.value)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(AskSecondaryWarehouseInReturnPage, false).success.value)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> "false")
@@ -252,7 +253,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
       given
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
-      setAnswers(emptyUserAnswersForCorrectReturn)
+      setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
       WsTestClient.withClient { client =>
         val result = createClientRequestPOST(
@@ -273,7 +274,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> "")
@@ -305,7 +306,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> "false")
@@ -325,7 +326,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForCorrectReturn.set(AskSecondaryWarehouseInReturnPage, false).success.value)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(AskSecondaryWarehouseInReturnPage, false).success.value)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> "false")
@@ -418,7 +419,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
       given
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
-      setAnswers(emptyUserAnswersForCorrectReturn)
+      setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
       WsTestClient.withClient { client =>
         val result = createClientRequestPOST(
@@ -439,7 +440,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> "")

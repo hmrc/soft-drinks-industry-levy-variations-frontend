@@ -27,7 +27,7 @@ import play.api.http.Status.NO_CONTENT
 import play.api.libs.json.Json
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import service.VariationResult
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse, InternalServerException}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import utilities.GenericLogger
 
 import javax.inject.Inject
@@ -87,30 +87,36 @@ class SoftDrinksIndustryLevyConnector @Inject()(
   def balance(
                sdilRef: String,
                withAssessment: Boolean
-             )(implicit hc: HeaderCarrier): Future[BigDecimal] = {
+             )(implicit hc: HeaderCarrier): VariationResult[BigDecimal] = EitherT {
     sdilSessionCache.fetchEntry[BigDecimal](sdilRef, SDILSessionKeys.balance(withAssessment)).flatMap {
-      case Some(b) => Future.successful(b)
+      case Some(b) => Future.successful(Right(b))
       case None =>
         http.GET[BigDecimal](s"$sdilUrl/balance/$sdilRef/$withAssessment")
           .flatMap { b =>
             sdilSessionCache.save[BigDecimal](sdilRef, SDILSessionKeys.balance(withAssessment), b)
-              .map(_ => b)
-          }
+              .map(_ => Right(b))
+          }.recover {
+          case _ => genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][balance] - unexpected response for $sdilRef")
+            Left(UnexpectedResponseFromSDIL)
+        }
     }
   }
 
   def balanceHistory(
                       sdilRef: String,
                       withAssessment: Boolean
-                    )(implicit hc: HeaderCarrier): Future[List[FinancialLineItem]] = {
+                    )(implicit hc: HeaderCarrier): VariationResult[List[FinancialLineItem]] = EitherT{
     import FinancialLineItem.formatter
     sdilSessionCache.fetchEntry[List[FinancialLineItem]](sdilRef, SDILSessionKeys.balanceHistory(withAssessment)).flatMap {
-      case Some(fli) => Future.successful(fli)
+      case Some(fli) => Future.successful(Right(fli))
       case None =>
         http.GET[List[FinancialLineItem]](s"$sdilUrl/balance/$sdilRef/history/all/$withAssessment")
           .flatMap{ fli => sdilSessionCache.save[List[FinancialLineItem]](sdilRef, SDILSessionKeys.balanceHistory(withAssessment), fli)
-            .map(_ => fli)
-          }
+            .map(_ => Right(fli))
+          }.recover {
+          case _ => genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][balance] - unexpected response for $sdilRef")
+            Left(UnexpectedResponseFromSDIL)
+        }
     }
   }
 
@@ -119,7 +125,8 @@ class SoftDrinksIndustryLevyConnector @Inject()(
                    period: ReturnPeriod
                  )(implicit hc: HeaderCarrier): VariationResult[Option[SdilReturn]] = EitherT {
     sdilSessionCache.fetchEntry[OptPreviousSubmittedReturn](utr, SDILSessionKeys.previousSubmittedReturn(utr, period)).flatMap {
-      case Some(optPreviousReturn) => Future.successful(Right(optPreviousReturn.optReturn))
+      case Some(optPreviousReturn) =>
+        Future.successful(Right(optPreviousReturn.optReturn))
       case None =>
         val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
         http.GET[Option[SdilReturn]](uri)

@@ -21,7 +21,7 @@ import connectors.SoftDrinksIndustryLevyConnector
 import errors.UnexpectedResponseFromSDIL
 import models.correctReturn.{AddASmallProducer, ChangedPage, RepaymentMethod}
 import models.submission.Litreage
-import models.{Amounts, LitresInBands, SmallProducer}
+import models.{Amounts, LitresInBands, SdilReturn, SmallProducer, UserAnswers}
 import navigation.{FakeNavigatorForCorrectReturn, NavigatorForCorrectReturn}
 import orchestrators.CorrectReturnOrchestrator
 import org.jsoup.Jsoup
@@ -31,6 +31,7 @@ import org.mockito.MockitoSugar.mock
 import pages.correctReturn._
 import play.api.inject
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -41,7 +42,14 @@ import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryListFluency {
 
   val mockCorrectReturnOrchestrator: CorrectReturnOrchestrator = mock[CorrectReturnOrchestrator]
-  val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
+  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+
+  def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
+    when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    applicationBuilder(userAnswers = userAnswers)
+      .overrides(
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+  }
 
   def onwardRoute: Call = Call("GET", "/foo")
 
@@ -84,13 +92,13 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         ChangedPage(HowManyCreditsForLostDamagedPage, answerChanged = true),
         ChangedPage(ExemptionsForSmallProducersPage, answerChanged = true))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+      val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockCorrectReturnOrchestrator))
         .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
-        when(mockCorrectReturnOrchestrator.calculateAmounts(any(), any(), any())(any(),any())) thenReturn createSuccessVariationResult(amounts)
+        when(mockCorrectReturnOrchestrator.calculateAmounts(any(), any(), any(), any())(any(),any())) thenReturn createSuccessVariationResult(amounts)
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[CorrectReturnCheckChangesCYAView]
@@ -139,13 +147,13 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         ChangedPage(HowManyCreditsForLostDamagedPage, answerChanged = true),
         ChangedPage(ExemptionsForSmallProducersPage, answerChanged = true))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+      val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockCorrectReturnOrchestrator))
         .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
-        when(mockCorrectReturnOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
+        when(mockCorrectReturnOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
 
         val result = route(application, request).value
 
@@ -200,13 +208,13 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         ChangedPage(HowManyCreditsForLostDamagedPage, answerChanged = true),
         ChangedPage(ExemptionsForSmallProducersPage, answerChanged = true))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+      val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockCorrectReturnOrchestrator))
         .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
-        when(mockCorrectReturnOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
+        when(mockCorrectReturnOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
 
         val result = route(application, request).value
 
@@ -261,13 +269,13 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         ChangedPage(HowManyCreditsForLostDamagedPage, answerChanged = true),
         ChangedPage(ExemptionsForSmallProducersPage, answerChanged = true))
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+      val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockCorrectReturnOrchestrator))
         .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
-        when(mockCorrectReturnOrchestrator.calculateAmounts(any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
+        when(mockCorrectReturnOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
 
         val result = route(application, request).value
 
@@ -286,7 +294,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must submit successfully " in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+      val application = correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn))
           .overrides(
             bind[CorrectReturnOrchestrator].toInstance(mockCorrectReturnOrchestrator)
           )
@@ -294,7 +302,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
 
       running(application) {
         val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url).withFormUrlEncodedBody()
-        when (mockCorrectReturnOrchestrator.submitReturn(any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
+        when (mockCorrectReturnOrchestrator.submitReturn(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
 
         val result = route(application, request).value
 
@@ -304,14 +312,14 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must return internal server error if submission is not a success" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+      val application = correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn))
         .overrides(
           bind[CorrectReturnOrchestrator].toInstance(mockCorrectReturnOrchestrator)
         )
         .build()
 
       running(application) {
-        when (mockCorrectReturnOrchestrator.submitReturn(any(), any())(any(), any())) thenReturn createFailureVariationResult(UnexpectedResponseFromSDIL)
+        when (mockCorrectReturnOrchestrator.submitReturn(any(), any(), any(), any())(any(), any())) thenReturn createFailureVariationResult(UnexpectedResponseFromSDIL)
 
         val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url).withFormUrlEncodedBody()
 

@@ -22,7 +22,7 @@ import errors.SessionDatabaseInsertError
 import forms.correctReturn.PackAtBusinessAddressFormProvider
 import models.SelectChange.CorrectReturn
 import models.backend.{RetrievedSubscription, UkAddress}
-import models.NormalMode
+import models.{NormalMode, SdilReturn, UserAnswers}
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.{any, anyString, eq => matching}
@@ -31,6 +31,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import pages.correctReturn.PackAtBusinessAddressPage
 import play.api.i18n.Messages
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -47,18 +48,25 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
   val formProvider = new PackAtBusinessAddressFormProvider()
   val form = formProvider()
-  val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
   var usersRetrievedSubscription: RetrievedSubscription = aSubscription
   val businessName: String = usersRetrievedSubscription.orgName
   val businessAddress: UkAddress = usersRetrievedSubscription.address
 
   lazy val packAtBusinessAddressRoute = routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url
+  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+
+  def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
+    when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    applicationBuilder(userAnswers = userAnswers)
+      .overrides(
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+  }
 
   "PackAtBusinessAddress Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
+      val application = correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
 
       running(application) {
         val request = FakeRequest(GET, packAtBusinessAddressRoute)
@@ -79,7 +87,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
       val userAnswers = emptyUserAnswersForCorrectReturn.set(PackAtBusinessAddressPage, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = correctReturnAction(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, packAtBusinessAddressRoute)
@@ -103,7 +111,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+        correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn))
           .overrides(
             bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
@@ -124,7 +132,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
+      val application = correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
 
       running(application) {
         val request =
@@ -159,7 +167,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
       when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+        correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn))
           .overrides(
             bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn (onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)

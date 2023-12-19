@@ -177,7 +177,7 @@ trait TestData {
     Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
 
   val userAnswersForCorrectReturnWithEmptySdilReturn:
-    UserAnswers = userAnswersForCorrectReturn(true).copy(data = Json.obj("originalSDILReturn" -> Json.toJson(emptySdilReturn)))
+    UserAnswers = userAnswersForCorrectReturn(true)
   val userAnswerTwoWarehouses: UserAnswers = userAnswersForCorrectReturn(true).copy(warehouseList = twoWarehouses)
   val emptyUserAnswersForCancelRegistration: UserAnswers = UserAnswers(sdilNumber, SelectChange.CancelRegistration, contactAddress = contactAddress)
 

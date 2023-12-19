@@ -17,17 +17,19 @@
 package controllers.correctReturn
 
 import base.SpecBase
+import connectors.SoftDrinksIndustryLevyConnector
 import errors.SessionDatabaseInsertError
 import forms.correctReturn.RemoveWarehouseDetailsFormProvider
 import models.SelectChange.CorrectReturn
 import models.backend.{Site, UkAddress}
-import models.{NormalMode, UserAnswers}
+import models.{NormalMode, SdilReturn, UserAnswers}
 import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -51,12 +53,20 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
   val warehouseTradingName: String = "a name for a warehouse here"
   val userAnswersWithWarehouse: UserAnswers = emptyUserAnswersForCorrectReturn
     .copy(warehouseList = Map(indexOfWarehouseToBeRemoved -> Site(addressOfWarehouse, Some(warehouseTradingName))))
+  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+
+  def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
+    when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    applicationBuilder(userAnswers = userAnswers)
+      .overrides(
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+  }
 
   "Correct Return RemoveWarehouseDetails Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithWarehouse)).build()
+      val application = correctReturnAction(userAnswers = Some(userAnswersWithWarehouse)).build()
 
       running(application) {
         val request = FakeRequest(GET, removeWarehouseDetailsRoute)
@@ -74,7 +84,7 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
 
     "must redirect to warehouse details when warehouse index does not exist on warehouse list on GET" in {
       val userAnswers = Some(userAnswersWithWarehouse.copy(warehouseList = twoWarehouses))
-      val application = applicationBuilder(userAnswers).overrides(
+      val application = correctReturnAction(userAnswers).overrides(
         bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute))
       )
         .build()
@@ -103,7 +113,7 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(userAnswersWithWarehouse))
+        correctReturnAction(userAnswers = Some(userAnswersWithWarehouse))
           .overrides(
             bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
@@ -124,7 +134,7 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswersWithWarehouse)).build()
+      val application = correctReturnAction(userAnswers = Some(userAnswersWithWarehouse)).build()
 
       running(application) {
         val request =
@@ -145,7 +155,7 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
 
     "must redirect to warehouse details when warehouse index does not exist on warehouse list on POST" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
+      val application = correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
 
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
@@ -176,7 +186,7 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
       when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
       val application =
-        applicationBuilder(userAnswers = Some(userAnswersWithWarehouse))
+        correctReturnAction(userAnswers = Some(userAnswersWithWarehouse))
           .overrides(
             bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn (onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)

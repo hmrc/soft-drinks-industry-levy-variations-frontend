@@ -17,8 +17,9 @@
 package controllers.correctReturn
 
 import base.SpecBase
+import connectors.SoftDrinksIndustryLevyConnector
 import forms.correctReturn.SecondaryWarehouseDetailsFormProvider
-import models.NormalMode
+import models.{NormalMode, SdilReturn, UserAnswers}
 import models.SelectChange.CorrectReturn
 import models.backend.{Site, UkAddress}
 import navigation._
@@ -29,6 +30,7 @@ import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.correctReturn.SecondaryWarehouseDetailsPage
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -49,12 +51,19 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
   val form = formProvider()
 
   lazy val secondaryWarehouseDetailsRoute = routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url
+  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
+  def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
+    when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    applicationBuilder(userAnswers = userAnswers)
+      .overrides(
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+  }
   "SecondaryWarehouseDetails Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(warehouseList = twoWarehouses))).build()
+      val application = correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(warehouseList = twoWarehouses))).build()
 
       running(application) {
 
@@ -80,7 +89,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
       val userAnswers = emptyUserAnswersForCorrectReturn.set(SecondaryWarehouseDetailsPage, true).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers.copy(warehouseList = twoWarehouses))).build()
+      val application = correctReturnAction(userAnswers = Some(userAnswers.copy(warehouseList = twoWarehouses))).build()
 
       running(application) {
 
@@ -117,7 +126,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
       val userAnswers = emptyUserAnswersForCorrectReturn
 
       val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
+        correctReturnAction(userAnswers = Some(userAnswers))
           .overrides(
             bind[Navigator].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
             bind[SessionRepository].toInstance(mockSessionRepository),
@@ -143,7 +152,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(userAnswerTwoWarehouses)).build()
+      val application = correctReturnAction(userAnswers = Some(userAnswerTwoWarehouses)).build()
 
       running(application) {
 

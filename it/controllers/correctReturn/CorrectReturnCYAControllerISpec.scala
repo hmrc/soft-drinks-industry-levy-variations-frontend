@@ -26,7 +26,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForSelectChange(CorrectReturn))
+        setUpForCorrectReturn(emptyUserAnswersForSelectChange(CorrectReturn).copy(correctReturnPeriod = None))
 
         WsTestClient.withClient { client =>
           val result = createClientRequestGet(client, baseUrl + route)
@@ -47,7 +47,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
         given
           .commonPrecondition
 
-        setAnswers(userAnswers)
+        setUpForCorrectReturn(userAnswers)
 
         given.sdilBackend.balance(userAnswers.id, withAssessment = false)
 
@@ -112,7 +112,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers, Some(populatedReturn))
 
           given.sdilBackend.balance(userAnswers.id, withAssessment = false)
 
@@ -173,7 +173,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
         }
       }
     }
-
+    testRequiredCorrectReturnDataMissing(baseUrl + route)
     testUnauthorisedUser(baseUrl + route)
     testAuthenticatedUserButNoUserAnswers(baseUrl + route)
   }
@@ -183,7 +183,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
       given
         .commonPrecondition
 
-      setAnswers(emptyUserAnswersForSelectChange(CorrectReturn))
+      setUpForCorrectReturn(emptyUserAnswersForSelectChange(CorrectReturn))
 
       WsTestClient.withClient { client =>
         val result = createClientRequestPOST(client, baseUrl + route, Json.obj())

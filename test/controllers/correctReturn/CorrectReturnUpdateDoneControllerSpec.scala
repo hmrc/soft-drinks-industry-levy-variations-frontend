@@ -17,16 +17,18 @@
 package controllers.correctReturn
 
 import base.SpecBase
+import connectors.SoftDrinksIndustryLevyConnector
 import controllers.correctReturn.routes._
 import models.correctReturn.{AddASmallProducer, ChangedPage, RepaymentMethod}
 import models.submission.Litreage
-import models.{LitresInBands, ReturnPeriod, SmallProducer}
+import models.{LitresInBands, ReturnPeriod, SdilReturn, SmallProducer, UserAnswers}
 import orchestrators.CorrectReturnOrchestrator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
 import pages.correctReturn._
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
@@ -50,7 +52,14 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
   val returnPeriodEnd: String = currentReturnPeriod.end.format(returnPeriodFormat)
 
   val mockReturnOrchestrator: CorrectReturnOrchestrator = mock[CorrectReturnOrchestrator]
+  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
+  def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
+    when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    applicationBuilder(userAnswers = userAnswers)
+      .overrides(
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+  }
   "Update Done Controller" - {
 
     "must return OK and the correct view for a GET" in {
@@ -92,7 +101,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
       val currentReturnPeriod = ReturnPeriod(2023, 1)
       val testTime = Instant.now()
-      val application = applicationBuilder(userAnswers = Some(userAnswers.copy(correctReturnPeriod = Option(currentReturnPeriod),
+      val application = correctReturnAction(userAnswers = Some(userAnswers.copy(correctReturnPeriod = Option(currentReturnPeriod),
         submittedOn = Some(testTime))))
         .overrides(bind[CorrectReturnOrchestrator].toInstance(mockReturnOrchestrator))
         .build()
@@ -100,7 +109,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       running(application) {
         val request = FakeRequest(GET, CorrectReturnUpdateDoneController.onPageLoad.url)
 
-        when(mockReturnOrchestrator.calculateAmounts(any(), any(), any())(any(),any())) thenReturn createSuccessVariationResult(amounts)
+        when(mockReturnOrchestrator.calculateAmounts(any(), any(), any(), any())(any(),any())) thenReturn createSuccessVariationResult(amounts)
 
         val result = route(application, request).value
 

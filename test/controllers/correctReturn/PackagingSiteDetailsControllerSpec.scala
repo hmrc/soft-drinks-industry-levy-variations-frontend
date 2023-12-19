@@ -20,7 +20,8 @@ import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import forms.correctReturn.PackagingSiteDetailsFormProvider
 import models.SelectChange.CorrectReturn
-import models.{CheckMode, Mode, NormalMode}
+import models.backend.RetrievedSubscription
+import models.{CheckMode, Mode, NormalMode, SdilReturn, UserAnswers}
 import navigation._
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
@@ -29,6 +30,7 @@ import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -53,13 +55,21 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
   def packagingSiteDetailsRouteForMode(mode: Mode): String = if (mode == CheckMode) packagingSiteDetailsCheckRoute else packagingSiteDetailsRoute
 
   lazy val emptyUserAnswersForCorrectReturnWithPackagingSite = emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packingSiteMap)
+  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+
+  def correctReturnAction(userAnswers: Option[UserAnswers], subscription: Option[RetrievedSubscription] = Some(aSubscription), optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
+    when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    applicationBuilder(userAnswers = userAnswers, subscription = Some(aSubscription))
+      .overrides(
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+  }
 
   "PackagingSiteDetails Controller within Correct Returns" - {
 
     List(NormalMode, CheckMode).foreach(mode => {
       s"must return OK and the correct view for a GET in $mode" in {
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturnWithPackagingSite)).build()
+        val application = correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturnWithPackagingSite)).build()
 
         val summary = SummaryListViewModel(
           rows = PackagingSiteDetailsSummary.row2(packingSiteMap, mode)
@@ -85,7 +95,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
 
         val userAnswers = emptyUserAnswersForCorrectReturnWithPackagingSite
 
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        val application = correctReturnAction(userAnswers = Some(userAnswers)).build()
 
         running(application) {
           val request = FakeRequest(GET, packagingSiteDetailsRouteForMode(mode))
@@ -113,11 +123,10 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
         when(mockSdilConnector.retrieveSubscription(any(), any())(any())) thenReturn createSuccessVariationResult(Some(aSubscription))
 
         val application =
-          applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn), subscription = Some(aSubscription))
+          correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn), subscription = Some(aSubscription))
             .overrides(
               bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
-              bind[SessionService].toInstance(mockSessionService),
-              bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)
+              bind[SessionService].toInstance(mockSessionService)
             )
             .build()
 
@@ -139,7 +148,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
           rows = PackagingSiteDetailsSummary.row2(packingSiteMap, mode)
         )
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturnWithPackagingSite)).build()
+        val application = correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturnWithPackagingSite)).build()
 
         running(application) {
           val request =
@@ -173,7 +182,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
       val userAnswers = emptyUserAnswersForCorrectReturn
 
       val application =
-        applicationBuilder(userAnswers = Some(userAnswers))
+        correctReturnAction(userAnswers = Some(userAnswers))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[AddressLookupService].toInstance(mockAddressLookupService)

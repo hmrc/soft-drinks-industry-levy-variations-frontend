@@ -11,7 +11,6 @@ import testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import scala.concurrent.Future
 
 trait ControllerITTestHelper extends Specifications with TestConfiguration with ITCoreTestData {
-
   def createClientRequestGet(client: WSClient, url: String): Future[WSResponse] = {
     client.url(url)
       .withFollowRedirects(false)
@@ -37,7 +36,54 @@ trait ControllerITTestHelper extends Specifications with TestConfiguration with 
       .post(body)
   }
 
-  def emptyUserAnswersForSelectChange(selectChange: SelectChange) = UserAnswers(sdilNumber, selectChange, contactAddress = ukAddress)
+  def emptyUserAnswersForSelectChange(selectChange: SelectChange) = {
+    if(selectChange == SelectChange.CorrectReturn) {
+      emptyUserAnswersForCorrectReturn
+    } else {
+      UserAnswers(sdilNumber, selectChange, contactAddress = ukAddress)
+    }
+  }
+
+  def testRequiredCorrectReturnDataMissing(url: String, optJson: Option[JsValue] = None): Unit = {
+    "should redirect to select return page" - {
+      "when the user is authenticated" - {
+        "but the returnPeriod is missing from userAnswers" in {
+          given.commonPrecondition
+
+          setAnswers(emptyUserAnswersForCorrectReturn)
+
+          WsTestClient.withClient { client =>
+            val result1 = optJson match {
+              case Some(json) => createClientRequestPOST(client, url, json)
+              case _ => createClientRequestGet(client, url)
+            }
+
+            whenReady(result1) { res =>
+              res.status mustBe 303
+              res.header(HeaderNames.LOCATION).get mustBe controllers.correctReturn.routes.SelectController.onPageLoad.url
+            }
+          }
+        }
+
+        "but there is no sdilReturn for correctReturnPeriod" in {
+          given.commonPrecondition
+
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn, None)
+          WsTestClient.withClient { client =>
+            val result1 = optJson match {
+              case Some(json) => createClientRequestPOST(client, url, json)
+              case _ => createClientRequestGet(client, url)
+            }
+
+            whenReady(result1) { res =>
+              res.status mustBe 303
+              res.header(HeaderNames.LOCATION).get mustBe controllers.correctReturn.routes.SelectController.onPageLoad.url
+            }
+          }
+        }
+      }
+    }
+  }
 
 
   def testUnauthorisedUser(url: String, optJson: Option[JsValue] = None): Unit = {

@@ -21,7 +21,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
@@ -47,7 +47,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
@@ -67,6 +67,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
         }
       }
     }
+    testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + normalRoutePath)
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath)
@@ -78,7 +79,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath)
@@ -104,7 +105,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath)
@@ -125,6 +126,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
       }
     }
 
+    testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + checkRoutePath)
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath)
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath)
@@ -138,7 +140,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForCorrectReturn)
+            setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -164,7 +166,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
             given
               .commonPrecondition
 
-            setAnswers(userAnswers)
+            setUpForCorrectReturn(userAnswers)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -194,7 +196,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> "")
@@ -229,7 +231,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForCorrectReturn)
+            setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
                 client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> yesSelected.toString)
@@ -254,7 +256,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
             given
               .commonPrecondition
 
-            setAnswers(userAnswers)
+            setUpForCorrectReturn(userAnswers)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -284,7 +286,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn)
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> "")

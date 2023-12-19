@@ -17,20 +17,24 @@
 package controllers.actions
 
 import com.google.inject.Inject
+import connectors.SoftDrinksIndustryLevyConnector
 import controllers.routes
 import handlers.ErrorHandler
-import models.SelectChange
 import models.requests.{CorrectReturnDataRequest, DataRequest, OptionalDataRequest, RequiredDataRequest}
+import models.{ReturnPeriod, SelectChange, UserAnswers}
 import orchestrators.SelectChangeOrchestrator
 import play.api.mvc.Results.{InternalServerError, Redirect}
 import play.api.mvc.{ActionBuilder, ActionRefiner, AnyContent, Result}
+import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ExecutionContext, Future}
 
 class ControllerActions @Inject()(identify: IdentifierAction,
                                   getData: DataRetrievalAction,
                                   selectChangeOrchestrator: SelectChangeOrchestrator,
-                                  errorHandler: ErrorHandler)(implicit ec: ExecutionContext) {
+                                  errorHandler: ErrorHandler,
+                                  sdilConnector: SoftDrinksIndustryLevyConnector)(implicit ec: ExecutionContext) {
 
   def withRequiredData[A]: ActionBuilder[DataRequest, AnyContent] = {
     identify andThen getData andThen dataRequiredAction
@@ -47,12 +51,11 @@ class ControllerActions @Inject()(identify: IdentifierAction,
   private def correctReturnDataRequiredAction: ActionRefiner[OptionalDataRequest, CorrectReturnDataRequest] =
     new ActionRefiner[OptionalDataRequest, CorrectReturnDataRequest] {
       override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, CorrectReturnDataRequest[A]]] = {
+        implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
         request.userAnswers match {
           case Some(userAnswers) if userAnswers.journeyType == SelectChange.CorrectReturn =>
             userAnswers.correctReturnPeriod match {
-              case Some(returnPeriod) => Future.successful(
-                Right(CorrectReturnDataRequest(request.request, request.sdilEnrolment,
-                request.subscription, userAnswers, returnPeriod)))
+              case Some(returnPeriod) => getOriginalReturnAndCreateDataRequest(userAnswers, returnPeriod, request)
               case None => Future.successful(Left(Redirect(controllers.correctReturn.routes.SelectController.onPageLoad)))
             }
           case _ => Future.successful(Left(Redirect(routes.SelectChangeController.onPageLoad)))
@@ -60,6 +63,18 @@ class ControllerActions @Inject()(identify: IdentifierAction,
       }
 
       override protected def executionContext: ExecutionContext = ec
+
+      private def getOriginalReturnAndCreateDataRequest[T](userAnswers: UserAnswers,
+                                                           returnPeriod: ReturnPeriod,
+                                                           request: OptionalDataRequest[T])
+                                   (implicit hc: HeaderCarrier): Future[Either[Result, CorrectReturnDataRequest[T]]] = {
+        sdilConnector.getReturn(request.subscription.utr, returnPeriod).value.map{
+          case Right(Some(sdilReturn)) => Right(CorrectReturnDataRequest(request.request, request.sdilEnrolment,
+            request.subscription, userAnswers, returnPeriod, sdilReturn))
+          case Right(_) => Left(Redirect(controllers.correctReturn.routes.SelectController.onPageLoad))
+          case _ => Left(InternalServerError(errorHandler.internalServerErrorTemplate(request)))
+        }
+      }
     }
 
   private def journeyDataRequiredAction(journeyType: SelectChange): ActionRefiner[OptionalDataRequest, DataRequest] =
@@ -84,7 +99,7 @@ class ControllerActions @Inject()(identify: IdentifierAction,
 
   private def dataRequiredAction: ActionRefiner[OptionalDataRequest, DataRequest] =
     new ActionRefiner[OptionalDataRequest, DataRequest] {
-      override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
+      override protected def refine[T](request: OptionalDataRequest[T]): Future[Either[Result, DataRequest[T]]] = {
         request.userAnswers match {
           case Some(data) =>
             Future.successful(Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, data)))

@@ -26,7 +26,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packAtBusinessAddressSite))
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packAtBusinessAddressSite))
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
@@ -52,7 +52,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
@@ -72,6 +72,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
         }
       }
     }
+    testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + normalRoutePath)
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath)
@@ -83,7 +84,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packAtBusinessAddressSite))
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packAtBusinessAddressSite))
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath)
@@ -109,7 +110,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
           given
             .commonPrecondition
 
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath)
@@ -130,6 +131,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
       }
     }
 
+    testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + checkRoutePath)
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath)
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath)
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath)
@@ -208,7 +210,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
       given
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
-      setAnswers(emptyUserAnswersForCorrectReturn)
+      setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
       WsTestClient.withClient { client =>
         val result = createClientRequestPOST(
@@ -231,7 +233,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
           given
             .commonPrecondition
           val userAnswers = emptyUserAnswersForCorrectReturn
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> false.toString)
@@ -251,7 +253,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
             .commonPreconditionChangeSubscription(diffSubscription.copy(activity = diffSubscription.activity.copy(importer = false)))
           val userAnswers = emptyUserAnswersForCorrectReturn
             .set(BroughtIntoUKPage, true).success.value
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> false.toString)
@@ -273,7 +275,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packAtBusinessAddressSite))
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packAtBusinessAddressSite))
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> "")
@@ -371,7 +373,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
       given
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
-      setAnswers(emptyUserAnswersForCorrectReturn)
+      setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
       WsTestClient.withClient { client =>
         val result = createClientRequestPOST(
@@ -394,7 +396,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
             .commonPrecondition
 
           val userAnswers = emptyUserAnswersForCorrectReturn
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> false.toString)
@@ -415,7 +417,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
 
           val userAnswers = emptyUserAnswersForCorrectReturn
             .set(BroughtIntoUKPage, true).success.value
-          setAnswers(userAnswers)
+          setUpForCorrectReturn(userAnswers)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> false.toString)
@@ -437,7 +439,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packAtBusinessAddressSite))
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packAtBusinessAddressSite))
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> "")
