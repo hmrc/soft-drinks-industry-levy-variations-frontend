@@ -102,11 +102,12 @@ cancelRegistration.reason.change.hidden = your reason for cancelling
 
 cancelRegistration.cancelRegistrationDate.title = What date are you cancelling your registration from?
 cancelRegistration.cancelRegistrationDate.heading = What date are you cancelling your registration from?
-cancelRegistration.cancelRegistrationDate.hint = For example, 12 11 2007
+cancelRegistration.cancelRegistrationDate.hintWithin14Days = This must be from today or up to 14 days from now.
+cancelRegistration.cancelRegistrationDate.hintDateExample = For example, {0}
 cancelRegistration.cancelRegistrationDate.checkYourAnswersLabel = Date of cancellation
 cancelRegistration.cancelRegistrationDate.change.hidden = date of cancellation
 
-cancelRegistrationDate.error.invalid = The date you are cancelling your registration must be a real date, like <span style="white-space: nowrap">31 7 2020</span>
+cancelRegistrationDate.error.invalid = The date you are cancelling your registration must be a real date, like <span style="white-space: nowrap">{0}</span>
 cancelRegistrationDate.error.required.all = Enter the date you are cancelling your registration
 cancelRegistrationDate.error.required.two = The date you are cancelling your registration from must include {0} and {1}
 cancelRegistrationDate.error.required = The date you are cancelling your registration from must include {0}
@@ -308,7 +309,6 @@ correctReturn.select.change.hidden = which return you need to correct
 
 correctReturn.correctionReason.title = Why do you need to correct this return?
 correctReturn.correctionReason.checkYourAnswersLabel = Reason for correcting
-correctReturn.correctionReason.characterCount = Enter a maximum of 255 characters
 correctReturn.correctionReason.hint = Make sure you provide as much detail as you can.  We may get in touch with your contact person to discuss this.
 correctReturn.correctionReason.error.required = Enter a reason for correcting your return
 correctReturn.correctionReason.error.length = Reason for correcting the return must be 255 characters or less
@@ -318,7 +318,7 @@ correctReturn.repaymentMethod.heading = How do you want the credit to be repaid?
 correctReturn.repaymentMethod.title = How do you want the credit to be repaid?
 correctReturn.repaymentMethod.hint = Repayment is not guaranteed. We may wish to discuss the claim with you before deciding whether to make a repayment.
 correctReturn.repaymentMethod.bankAccount = Paid into the bank account for this business
-correctReturn.repaymentMethod.sdilAccount = Credited to our Soft Drinks Industry Levy account
+correctReturn.repaymentMethod.sdilAccount = Credited to your Soft Drinks Industry Levy account
 correctReturn.repaymentMethod.error.required = Select how you want the credit to be repaid
 correctReturn.repaymentMethod.checkYourAnswersLabel = Repayment method
 correctReturn.repaymentMethod.change.hidden = the repayment method
