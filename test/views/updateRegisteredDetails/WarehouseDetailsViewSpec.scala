@@ -29,7 +29,7 @@ class WarehouseDetailsViewSpec extends ViewSpecHelper {
 
   val view: WarehouseDetailsView = application.injector.instanceOf[WarehouseDetailsView]
   val formProvider = new WarehouseDetailsFormProvider
-  val form: Form[Boolean] = formProvider.apply()
+  val form: Form[Boolean] = formProvider.apply(hasWarehouses = true)
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
@@ -52,7 +52,7 @@ class WarehouseDetailsViewSpec extends ViewSpecHelper {
       document.title() mustBe "Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
     }
 
-    "should include a legend with the expected heading" in {
+    "should include a legend with the expected subheading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
       legend.get(0).getElementsByClass(Selectors.legend).text() mustBe "Do you want to add another warehouse?"

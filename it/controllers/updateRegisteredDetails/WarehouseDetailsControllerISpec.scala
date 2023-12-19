@@ -33,7 +33,8 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data (no warehouses)" - {
       "should return OK and render the WarehouseDetails page with no data populated " +
-        "(with message displaying no warehouses added)" in {
+        "(with message displaying no warehouses added) " +
+        "with subheading asking if user would like to add a warehouse" in {
         given
           .commonPrecondition
 
@@ -48,6 +49,8 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
             page.title must include(Messages("updateRegisteredDetails.warehouseDetails" + ".title"))
             val summaryList = page.getElementsByClass("govuk-caption-m")
             summaryList.text mustBe "You don't have any registered warehouses."
+            val legend = page.getElementsByClass("govuk-fieldset__legend  govuk-fieldset__legend--m")
+            legend.text mustBe "Do you want to add a warehouse?"
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -62,7 +65,8 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
     "GET " + normalRoutePath - {
       "when the userAnswers contains some warehouses" - {
         "should return OK and render the WarehouseDetails page with no data populated " +
-          "(with message displaying summary list of warehouses)" in {
+          "(with message displaying summary list of warehouses)" +
+          "with subheading asking if user would like to add another warehouse" in {
           given
             .commonPrecondition
 
@@ -78,6 +82,8 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
               page.title must include(Messages("updateRegisteredDetails.warehouseDetails" + ".title"))
               val summaryList = page.getElementsByClass("govuk-caption-m")
               summaryList.text mustBe "ABC Ltd 33 Rhes Priordy WR53 7CX Remove warehouse ABC Ltd at 33 Rhes Priordy"
+              val legend = page.getElementsByClass("govuk-fieldset__legend  govuk-fieldset__legend--m")
+              legend.text mustBe "Do you want to add another warehouse?"
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -359,11 +365,37 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe "Select yes if you want to register another UK warehouse"
+            errorSummary.text() mustBe "Select yes if you want to register a UK warehouse"
+          }
+        }
+      }
+      "when the user has warehouses and does not select yes or no" - {
+        "should return 400 with required error" in {
+          given
+            .commonPrecondition
+          val userAnswersWithWarehouses = emptyUserAnswersForUpdateRegisteredDetails.copy(warehouseList = warehousesFromSubscription)
+          setAnswers(userAnswersWithWarehouses)
+          WsTestClient.withClient { client =>
+            val result = createClientRequestPOST(
+              client, updateRegisteredDetailsBaseUrl + normalRoutePath, Json.obj("value" -> "")
+            )
+
+            whenReady(result) { res =>
+              res.status mustBe 400
+              val page = Jsoup.parse(res.body)
+              page.title mustBe "Error: Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
+              val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
+                .first()
+              errorSummary
+                .select("a")
+                .attr("href") mustBe "#value"
+              errorSummary.text() mustBe "Select yes if you want to register another UK warehouse"
+            }
           }
         }
       }
     }
+
     testUnauthorisedUser(updateRegisteredDetailsBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl +
@@ -481,7 +513,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe "Select yes if you want to register another UK warehouse"
+            errorSummary.text() mustBe "Select yes if you want to register a UK warehouse"
           }
         }
       }
