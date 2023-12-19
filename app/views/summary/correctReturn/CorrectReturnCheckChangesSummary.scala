@@ -38,11 +38,7 @@ object CorrectReturnCheckChangesSummary {
                                (implicit messages: Messages): Option[(String, SummaryList)] = {
     val correctionReasonSummary: Option[SummaryListRow] = CorrectionReasonSummary.row(userAnswers, isCheckAnswers)
     val repaymentMethodSummary: Option[SummaryListRow] = RepaymentMethodSummary.row(userAnswers, isCheckAnswers)
-
-    val correctionSectionSummaryList: Option[SummaryList] = for {
-      correctionReason <- correctionReasonSummary
-      repaymentMethod <- repaymentMethodSummary
-    } yield SummaryList(Seq(correctionReason, repaymentMethod))
+    val correctionSectionSummaryList = Option(SummaryList(Seq(correctionReasonSummary, repaymentMethodSummary).flatten))
     correctionSectionSummaryList.map("correctReturn.correctionSection.checkYourAnswersLabel" -> _)
   }
 

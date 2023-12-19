@@ -19,7 +19,7 @@ package controllers.actions
 import models.backend.RetrievedSubscription
 import models.correctReturn.{AddASmallProducer, RepaymentMethod}
 import models.requests.DataRequest
-import models.{CheckMode, LitresInBands}
+import models.{CheckMode, LitresInBands, UserAnswers}
 import pages.correctReturn._
 import pages.{Page, QuestionPage}
 import play.api.libs.json.Reads
@@ -57,7 +57,7 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
   }
 
   private[controllers] def checkChangesRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
-    val userAnswersMissing: List[CorrectReturnRequiredPage[_, _, _]] = returnMissingAnswers(correctChangesJourney)
+    val userAnswersMissing: List[CorrectReturnRequiredPage[_, _, _]] = returnMissingAnswers(checkChangesJourney)
     userAnswersMissing.headOption.map(_.pageRequired.asInstanceOf[Page]) match {
       case Some(page) => genericLogger.logger.warn(s"${request.userAnswers.id} has hit check changes CYA and is missing $userAnswersMissing")
         Future.successful(Redirect(page.url(CheckMode)))
@@ -134,11 +134,10 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
       warehouseListReturnChange
   }
 
-  private[controllers] def correctChangesJourney: List[CorrectReturnRequiredPage[_, _, _]] = {
-    List(
-      CorrectReturnRequiredPage(CorrectionReasonPage, None)(implicitly[Reads[String]]),
-      CorrectReturnRequiredPage(RepaymentMethodPage, None)(implicitly[Reads[RepaymentMethod]])
-    )
+  private[controllers] def checkChangesJourney(implicit dataRequest: DataRequest[_]): List[CorrectReturnRequiredPage[_, _, _]] = {
+    val balanceRepaymentRequired = dataRequest.userAnswers.get(BalanceRepaymentRequired).contains(true)
+    List(CorrectReturnRequiredPage(CorrectionReasonPage, None)(implicitly[Reads[String]])) ++
+      (if (balanceRepaymentRequired) List(CorrectReturnRequiredPage(RepaymentMethodPage, None)(implicitly[Reads[RepaymentMethod]])) else List.empty)
   }
 
   private[controllers] def addASmallProducerReturnChange: DataRequest[_] => List[CorrectReturnRequiredPage[_, _, _]] = { (request: DataRequest[_]) =>

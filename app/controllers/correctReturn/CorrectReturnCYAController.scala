@@ -18,32 +18,36 @@ package controllers.correctReturn
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import controllers.ControllerHelper
 import controllers.actions._
+import handlers.ErrorHandler
 import models.NormalMode
 import models.SelectChange.CorrectReturn
+import navigation.{Navigator, NavigatorForCorrectReturn}
 import orchestrators.CorrectReturnOrchestrator
-import pages.correctReturn.CorrectReturnBaseCYAPage
+import pages.correctReturn.{BalanceRepaymentRequired, CorrectReturnBaseCYAPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.ReturnService
+import services.{ReturnService, SessionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilities.GenericLogger
 import views.html.correctReturn.CorrectReturnCYAView
 import views.summary.correctReturn.CorrectReturnBaseCYASummary
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
-class CorrectReturnCYAController @Inject()(override
-                                           val messagesApi: MessagesApi,
+class CorrectReturnCYAController @Inject()(override val messagesApi: MessagesApi,
+                                           val sessionService: SessionService,
+                                           val navigator: NavigatorForCorrectReturn,
                                            controllerActions: ControllerActions,
                                            val controllerComponents: MessagesControllerComponents,
                                            requiredUserAnswers: RequiredUserAnswersForCorrectReturn,
                                            returnService: ReturnService,
                                            correctReturnOrchestrator: CorrectReturnOrchestrator,
                                            view: CorrectReturnCYAView,
-                                           genericLogger: GenericLogger)
-                                          (implicit config: FrontendAppConfig, ec: ExecutionContext)
-  extends FrontendBaseController with I18nSupport {
+                                           val genericLogger: GenericLogger,
+                                           val errorHandler: ErrorHandler
+                                          )(implicit config: FrontendAppConfig, val ec: ExecutionContext) extends ControllerHelper with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
@@ -51,7 +55,7 @@ class CorrectReturnCYAController @Inject()(override
 
         val calculateAmounts = correctReturnOrchestrator.calculateAmounts(request.sdilEnrolment, request.userAnswers, request.returnPeriod, request.originalSdilReturn)
 
-        val result = calculateAmounts.value.map {
+        calculateAmounts.value.map {
           case Right(amounts) =>
             val orgName: String = " " + request.subscription.orgName
             val sections = CorrectReturnBaseCYASummary.summaryListAndHeadings(request.userAnswers, request.subscription, amounts)
@@ -60,11 +64,32 @@ class CorrectReturnCYAController @Inject()(override
             genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][Balance] - unexpected response for ${request.sdilEnrolment}")
             Redirect(controllers.routes.SelectChangeController.onPageLoad.url)
         }
-        result
       }
   }
 
-  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
-    Redirect(routes.CorrectionReasonController.onPageLoad(NormalMode).url)
+  def onSubmit: Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
+    implicit request =>
+      requiredUserAnswers.requireData(CorrectReturnBaseCYAPage) {
+
+        val calculateAmounts = correctReturnOrchestrator.calculateAmounts(request.sdilEnrolment, request.userAnswers, request.returnPeriod, request.originalSdilReturn)
+
+        calculateAmounts.value.flatMap {
+          case Right(amounts) =>
+//            TODO: THIS IS CORRECT WAY AROUND, NEED TO DELETE REPAYMENT METHOD IF THIS IS FALSE
+            val balanceRepaymentRequired = amounts.newReturnTotal < amounts.originalReturnTotal
+            val updatedAnswers = request.userAnswers.set(BalanceRepaymentRequired, balanceRepaymentRequired)
+            for {
+              _ <- updateDatabaseWithoutRedirect(updatedAnswers, CorrectReturnBaseCYAPage)
+              redirect <- Future.successful(Redirect(routes.CorrectionReasonController.onPageLoad(NormalMode).url))
+            } yield redirect
+          case Left(_) =>
+            genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][Balance] - unexpected response for ${request.sdilEnrolment}")
+            Future.successful(Redirect(routes.CorrectReturnCYAController.onPageLoad.url))
+        }
+      }
   }
+
+//  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
+//    Redirect(routes.CorrectionReasonController.onPageLoad(NormalMode).url)
+//  }
 }
