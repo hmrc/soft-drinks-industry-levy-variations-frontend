@@ -510,8 +510,6 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             val result = createClientRequestGet(client, baseUrl + route)
 
             whenReady(result) { res =>
-              println("|********************")
-              println(res)
               res.header(HeaderNames.LOCATION) mustBe Some(controllers.routes.SelectChangeController.onPageLoad.url)
             }
           }
