@@ -54,7 +54,7 @@ class UpdateRegisteredDetailsCYAViewSpec extends ViewSpecHelper {
       document.getElementsByClass(Selectors.heading).text() mustEqual "Check your answers before sending your update"
     }
     "should have the expected update text" in {
-      document.getElementsByClass(Selectors.body).text() mustEqual s"This update is for$orgName"
+      document.getElementsByClass(Selectors.body).text() mustEqual s"This update is for$orgName Print this page"
     }
     "contain the correct button" - {
       document.getElementsByClass(Selectors.button).text() mustBe "Confirm updates and send"

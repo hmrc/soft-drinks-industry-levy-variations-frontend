@@ -16,10 +16,8 @@
 
 package services
 
-import cats.data.EitherT
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
-import errors.VariationsErrors
 import models.backend.{FinancialLineItem, RetrievedSubscription}
 import models.correctReturn.{CorrectReturnUserAnswersData, ReturnsVariation}
 import models.submission.ReturnVariationData
@@ -31,7 +29,7 @@ import utilities.UserTypeCheck
 
 import java.time.Instant
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 @Singleton
 class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector)(implicit config: FrontendAppConfig) {
