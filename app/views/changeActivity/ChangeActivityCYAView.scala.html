@@ -14,23 +14,26 @@
  * limitations under the License.
  *@
 
+@import views.html.helpers.printLinkWithJs
+
 @this(
     layout: templates.Layout,
     govukSummaryList: GovukSummaryList,
     formHelper: FormWithCSRF,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    printLinkWithJs: printLinkWithJs
 )
 
 @(
-    alias: String,
+    orgName: String,
     seqSummaryList: Seq[(String, SummaryList)],
     submitCall: Call
 )(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("changeActivity.checkYourAnswers.title"))) {
 
-    <span class="govuk-caption-l" id="pre-header-caption">@alias</span>
-    <h1 class="govuk-heading-l">@messages("changeActivity.checkYourAnswers.heading")</h1>
+    <h1 class="govuk-heading-l">@messages("changeActivity.checkYourAnswers.title")</h1>
+    <span class="govuk-body">@messages("changeActivity.checkYourAnswers.updateFor")@orgName</span>
 
     @for((heading, summaryList) <- seqSummaryList) {
         <h2 class="govuk-heading-m">@messages(heading)</h2>
@@ -40,4 +43,6 @@
     @formHelper(action = submitCall, Symbol("autoComplete") -> "off") {
         @govukButton(ButtonViewModel(messages("updateRegisteredDetails.checkYourAnswers.submit")))
     }
+
+    @printLinkWithJs(messages("site.print"))
 }

@@ -212,7 +212,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe "Select yes if you want to claim a credit for any liable drinks that has been lost or destroyed"
+            errorSummary.text() mustBe "Select yes if you want to claim a credit for any liable drinks that have been lost or destroyed"
           }
         }
       }
@@ -302,7 +302,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe "Select yes if you want to claim a credit for any liable drinks that has been lost or destroyed"
+            errorSummary.text() mustBe "Select yes if you want to claim a credit for any liable drinks that have been lost or destroyed"
           }
         }
       }

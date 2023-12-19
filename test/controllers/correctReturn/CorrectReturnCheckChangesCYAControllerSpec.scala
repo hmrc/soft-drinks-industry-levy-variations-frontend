@@ -21,9 +21,10 @@ import connectors.SoftDrinksIndustryLevyConnector
 import errors.UnexpectedResponseFromSDIL
 import models.correctReturn.{AddASmallProducer, ChangedPage, RepaymentMethod}
 import models.submission.Litreage
-import models.{LitresInBands, SdilReturn, SmallProducer, UserAnswers}
+import models.{Amounts, LitresInBands, SdilReturn, SmallProducer, UserAnswers}
 import navigation.{FakeNavigatorForCorrectReturn, NavigatorForCorrectReturn}
 import orchestrators.CorrectReturnOrchestrator
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
@@ -34,25 +35,23 @@ import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.ReturnService
 import viewmodels.govuk.SummaryListFluency
 import views.html.correctReturn.CorrectReturnCheckChangesCYAView
 import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 
-import scala.concurrent.Future
-
 class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryListFluency {
 
-  val mockReturnService: ReturnService = mock[ReturnService]
   val mockCorrectReturnOrchestrator: CorrectReturnOrchestrator = mock[CorrectReturnOrchestrator]
-  val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
-  def onwardRoute: Call = Call("GET", "/foo")
+  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+
   def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
     when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers)
       .overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
   }
+
+  def onwardRoute: Call = Call("GET", "/foo")
 
   "Check Changes Controller" - {
 
@@ -94,22 +93,203 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         ChangedPage(ExemptionsForSmallProducersPage, answerChanged = true))
 
       val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(
-        bind[ReturnService].toInstance(mockReturnService))
+        bind[CorrectReturnOrchestrator].toInstance(mockCorrectReturnOrchestrator))
         .build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
-        when (mockReturnService.getBalanceBroughtForward(any())(any(),any())) thenReturn Future.successful(-502.75)
-
+        when(mockCorrectReturnOrchestrator.calculateAmounts(any(), any(), any(), any())(any(),any())) thenReturn createSuccessVariationResult(amounts)
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[CorrectReturnCheckChangesCYAView]
         val orgName = " Super Lemonade Plc"
-        val section = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(userAnswers, aSubscription, changedPages, amounts)
-
+        val section = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(userAnswers, aSubscription, changedPages,
+          isCheckAnswers = true, amounts)
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(orgName, section,
           controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onSubmit)(request, messages(application)).toString
+      }
+    }
+
+    "must return OK and contain correct net adjusted amount when prior return total was £0" in {
+      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", Litreage())
+      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", Litreage())
+      val amounts1 = Amounts(0.00, 4200.00, -300.00, 4500.00, 4500.00)
+      val litres = LitresInBands(0, 0)
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
+          smallProducerList = List(superCola, sparkyJuice))
+        .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+        .set(HowManyOperatePackagingSiteOwnBrandsPage, litres).success.value
+        .set(PackagedAsContractPackerPage, true).success.value
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(10000, 10000)).success.value
+        .set(ExemptionsForSmallProducersPage, true).success.value
+        .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", litres)).success.value
+        .set(BroughtIntoUKPage, false).success.value
+        .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+        .set(ClaimCreditsForExportsPage, true).success.value
+        .set(HowManyClaimCreditsForExportsPage, litres).success.value
+        .set(ClaimCreditsForLostDamagedPage, true).success.value
+        .set(HowManyCreditsForLostDamagedPage, litres).success.value
+
+      val changedPages = List(
+        ChangedPage(OperatePackagingSiteOwnBrandsPage, answerChanged = true),
+        ChangedPage(HowManyOperatePackagingSiteOwnBrandsPage, answerChanged = true),
+        ChangedPage(PackagedAsContractPackerPage, answerChanged = true),
+        ChangedPage(HowManyPackagedAsContractPackerPage, answerChanged = true),
+        ChangedPage(BroughtIntoUKPage, answerChanged = false),
+        ChangedPage(HowManyBroughtIntoUKPage, answerChanged = true),
+        ChangedPage(BroughtIntoUkFromSmallProducersPage, answerChanged = false),
+        ChangedPage(HowManyBroughtIntoUkFromSmallProducersPage, answerChanged = false),
+        ChangedPage(ClaimCreditsForExportsPage, answerChanged = true),
+        ChangedPage(HowManyClaimCreditsForExportsPage, answerChanged = true),
+        ChangedPage(ClaimCreditsForLostDamagedPage, answerChanged = true),
+        ChangedPage(HowManyCreditsForLostDamagedPage, answerChanged = true),
+        ChangedPage(ExemptionsForSmallProducersPage, answerChanged = true))
+
+      val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockCorrectReturnOrchestrator))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        when(mockCorrectReturnOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text must include("Balance")
+        page.getElementsByTag("dt").text() must include("Original return total")
+        page.getElementsByClass("original-return-total").text() must include("£0.00")
+        page.getElementsByTag("dt").text() must include("New return total")
+        page.getElementsByClass("new-return-total").text() must include("£4,200.00")
+        page.getElementsByTag("dt").text() must include("Account balance")
+        page.getElementsByClass("balance-brought-forward").text() mustBe "£300.00"
+        page.getElementsByTag("dt").text() must include("Net adjusted amount")
+        page.getElementsByClass("net-adjusted-amount").text() must include("£4,500.00")
+        page.getElementsByClass("net-adjusted-amount").text() mustNot include("−£4,500.00")
+      }
+    }
+
+    "must return OK and contain correct net adjusted amount when prior return total is less than new return total" in {
+      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", Litreage())
+      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", Litreage())
+      val amounts1 = Amounts(4000.00, 4200.00, -300.00, 4500.00, 500.00)
+      val litres = LitresInBands(0, 0)
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
+          smallProducerList = List(superCola, sparkyJuice))
+        .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+        .set(HowManyOperatePackagingSiteOwnBrandsPage, litres).success.value
+        .set(PackagedAsContractPackerPage, true).success.value
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(10000, 10000)).success.value
+        .set(ExemptionsForSmallProducersPage, true).success.value
+        .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", litres)).success.value
+        .set(BroughtIntoUKPage, false).success.value
+        .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+        .set(ClaimCreditsForExportsPage, true).success.value
+        .set(HowManyClaimCreditsForExportsPage, litres).success.value
+        .set(ClaimCreditsForLostDamagedPage, true).success.value
+        .set(HowManyCreditsForLostDamagedPage, litres).success.value
+
+      val changedPages = List(
+        ChangedPage(OperatePackagingSiteOwnBrandsPage, answerChanged = true),
+        ChangedPage(HowManyOperatePackagingSiteOwnBrandsPage, answerChanged = true),
+        ChangedPage(PackagedAsContractPackerPage, answerChanged = true),
+        ChangedPage(HowManyPackagedAsContractPackerPage, answerChanged = true),
+        ChangedPage(BroughtIntoUKPage, answerChanged = false),
+        ChangedPage(HowManyBroughtIntoUKPage, answerChanged = true),
+        ChangedPage(BroughtIntoUkFromSmallProducersPage, answerChanged = false),
+        ChangedPage(HowManyBroughtIntoUkFromSmallProducersPage, answerChanged = false),
+        ChangedPage(ClaimCreditsForExportsPage, answerChanged = true),
+        ChangedPage(HowManyClaimCreditsForExportsPage, answerChanged = true),
+        ChangedPage(ClaimCreditsForLostDamagedPage, answerChanged = true),
+        ChangedPage(HowManyCreditsForLostDamagedPage, answerChanged = true),
+        ChangedPage(ExemptionsForSmallProducersPage, answerChanged = true))
+
+      val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockCorrectReturnOrchestrator))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        when(mockCorrectReturnOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text must include("Balance")
+        page.getElementsByTag("dt").text() must include("Original return total")
+        page.getElementsByClass("original-return-total").text() must include("£4,000.00")
+        page.getElementsByTag("dt").text() must include("New return total")
+        page.getElementsByClass("new-return-total").text() must include("£4,200.00")
+        page.getElementsByTag("dt").text() must include("Account balance")
+        page.getElementsByClass("balance-brought-forward").text() mustBe "£300.00"
+        page.getElementsByTag("dt").text() must include("Net adjusted amount")
+        page.getElementsByClass("net-adjusted-amount").text() must include("£500.00")
+        page.getElementsByClass("net-adjusted-amount").text() mustNot include("−£500.00")
+      }
+    }
+
+    "must return OK and contain correct net adjusted amount when prior return total is more than new return total" in {
+      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", Litreage())
+      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", Litreage())
+      val amounts1 = Amounts(40200.00, 4200.00, -300.00, 4500.00, -35700.00)
+      val litres = LitresInBands(0, 0)
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
+          smallProducerList = List(superCola, sparkyJuice))
+        .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+        .set(HowManyOperatePackagingSiteOwnBrandsPage, litres).success.value
+        .set(PackagedAsContractPackerPage, true).success.value
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(10000, 10000)).success.value
+        .set(ExemptionsForSmallProducersPage, true).success.value
+        .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", litres)).success.value
+        .set(BroughtIntoUKPage, false).success.value
+        .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+        .set(ClaimCreditsForExportsPage, true).success.value
+        .set(HowManyClaimCreditsForExportsPage, litres).success.value
+        .set(ClaimCreditsForLostDamagedPage, true).success.value
+        .set(HowManyCreditsForLostDamagedPage, litres).success.value
+
+      val changedPages = List(
+        ChangedPage(OperatePackagingSiteOwnBrandsPage, answerChanged = true),
+        ChangedPage(HowManyOperatePackagingSiteOwnBrandsPage, answerChanged = true),
+        ChangedPage(PackagedAsContractPackerPage, answerChanged = true),
+        ChangedPage(HowManyPackagedAsContractPackerPage, answerChanged = true),
+        ChangedPage(BroughtIntoUKPage, answerChanged = false),
+        ChangedPage(HowManyBroughtIntoUKPage, answerChanged = true),
+        ChangedPage(BroughtIntoUkFromSmallProducersPage, answerChanged = false),
+        ChangedPage(HowManyBroughtIntoUkFromSmallProducersPage, answerChanged = false),
+        ChangedPage(ClaimCreditsForExportsPage, answerChanged = true),
+        ChangedPage(HowManyClaimCreditsForExportsPage, answerChanged = true),
+        ChangedPage(ClaimCreditsForLostDamagedPage, answerChanged = true),
+        ChangedPage(HowManyCreditsForLostDamagedPage, answerChanged = true),
+        ChangedPage(ExemptionsForSmallProducersPage, answerChanged = true))
+
+      val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockCorrectReturnOrchestrator))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        when(mockCorrectReturnOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text must include("Balance")
+        page.getElementsByTag("dt").text() must include("Original return total")
+        page.getElementsByClass("original-return-total").text() must include("£40,200.00")
+        page.getElementsByTag("dt").text() must include("New return total")
+        page.getElementsByClass("new-return-total").text() must include("£4,200.00")
+        page.getElementsByTag("dt").text() must include("Account balance")
+        page.getElementsByClass("balance-brought-forward").text() mustBe "£300.00"
+        page.getElementsByTag("dt").text() must include("Net adjusted amount")
+        page.getElementsByClass("net-adjusted-amount").text() must include("−£35,700.00")
       }
     }
 
@@ -151,7 +331,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
 
     "return to select change if user answers fails" in {
       val application =
-        correctReturnAction(userAnswers = None)
+        applicationBuilder(userAnswers = None)
           .overrides(
             inject.bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute))
           )

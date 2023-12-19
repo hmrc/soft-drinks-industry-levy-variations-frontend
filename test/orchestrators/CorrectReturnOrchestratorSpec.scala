@@ -39,23 +39,21 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
   val mockReturnsService: ReturnService = mock[ReturnService]
   val mockSessionService: SessionService = mock[SessionService]
 
-  val emptyReturn: SdilReturn = SdilReturn(Litreage(0, 0), Litreage(0, 0), List.empty, Litreage(0, 0), Litreage(0, 0), Litreage(0, 0), Litreage(0, 0), submittedOn =
-    Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
+  val emptyReturn: SdilReturn = SdilReturn(Litreage(), Litreage(), List.empty, Litreage(), Litreage(), Litreage(), Litreage(),
+    submittedOn = Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
   val populatedReturn: SdilReturn = SdilReturn(Litreage(100, 200), Litreage(200, 100),
     smallProducerList, Litreage(300, 400), Litreage(400, 300), Litreage(50, 60), Litreage(60, 50),
     submittedOn = Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
-
   val sdilReturnsExamples: Map[String, SdilReturn] = Map("a nilReturn" -> emptyReturn, "not a nilReturn" -> populatedReturn)
-
+  val requestReturnPeriod: ReturnPeriod = ReturnPeriod(submittedDateTime.getYear, 1)
   def getExpectedUserAnswersCorrectReturnData(key: String): CorrectReturnUserAnswersData = if (key == "a nilReturn") {
     expectedCorrectReturnDataForNilReturn
   } else {
     expectedCorrectReturnDataForPopulatedReturn
   }
 
-  val submittedInstant = submittedDateTime.toInstant(ZoneOffset.UTC)
-
-  val orchestrator = new CorrectReturnOrchestrator(mockReturnsService, mockSdilConnector, mockSessionService) {
+  val submittedInstant: Instant = submittedDateTime.toInstant(ZoneOffset.UTC)
+  val orchestrator: CorrectReturnOrchestrator = new CorrectReturnOrchestrator(mockReturnsService, mockSdilConnector, mockSessionService) {
     override def instantNow: Instant = submittedInstant
   }
 
@@ -104,7 +102,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
           s"when the sdilReturn is $key and the user answers data is empty" in {
             val returnPeriod = returnPeriodList.head
             val expectedGeneratedUA = emptyUserAnswersForCorrectReturn.copy(
-              smallProducerList = if(key == "a nilReturn") {List()} else {smallProducerList},
+              smallProducerList = if(key == "a nilReturn") {List()} else smallProducerList,
               data = Json.obj(("correctReturn", Json.toJson(getExpectedUserAnswersCorrectReturnData(key)))),
               correctReturnPeriod = Some(returnPeriod)
             )
@@ -200,19 +198,19 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
 
     "should return unit" - {
       "when the calls to submit sdilReturnVary and returns variation are successful" - {
-        "and the user answers contains all correctReturn data" in {
+        "and the user answers contain the correctReturn returnPeriod, all correctReturn data and the original return" in {
 
           val litres = LitresInBands(2000, 4000)
           val litreage = Litreage(2000, 4000)
           val returnPeriod = returnPeriodList.head
           val correctReturnUserAnswersData = CorrectReturnUserAnswersData(
-            true, Some(litres),
-            true, Some(litres),
-            false,
-            true, Some(litres),
-            true, Some(litres),
-            true, Some(litres),
-            true, Some(litres)
+            operatePackagingSiteOwnBrands = true, Some(litres),
+            packagedAsContractPacker = true, Some(litres),
+            exemptionsForSmallProducers = false,
+            broughtIntoUK = true, Some(litres),
+            broughtIntoUkFromSmallProducers = true, Some(litres),
+            claimCreditsForExports = true, Some(litres),
+            claimCreditsForLostDamaged = true, Some(litres)
           )
           val smallProducerList = List(SmallProducer("", "XZSDIL000000234", Litreage(2000, 4000)))
 
@@ -240,24 +238,8 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
         }
       }
     }
-
-    "should return MissingRequiredAnswers" - {
-      "when the user answers doesn't contain the correctReturnData" in {
-        val returnPeriod = returnPeriodList.head
-
-        val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
-          .copy(data = Json.obj(), packagingSiteList = Map.empty, warehouseList = Map.empty, correctReturnPeriod = Some(returnPeriod))
-          .set(CorrectionReasonPage, "foo").success.value
-          .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-
-        val res = orchestrator.submitReturn(userAnswers, aSubscription, returnPeriod, emptySdilReturn)(hc, ec)
-
-        whenReady(res.value) { result =>
-          result mustBe Left(MissingRequiredAnswers)
-        }
-      }
-    }
   }
+
 
   "separateReturnPeriodsByYear" - {
     "when the is no return period" - {
@@ -317,4 +299,18 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
       }
     }
   }
+
+  "calculateAmounts" - {
+    "should call the returns service and return the amounts" in {
+
+      when(mockReturnsService.calculateAmounts(sdilReference, userAnswersForCorrectReturnWithEmptySdilReturn, requestReturnPeriod, emptySdilReturn)
+      (hc, ec)).thenReturn(createSuccessVariationResult(amounts))
+      val res = orchestrator.calculateAmounts(sdilReference, userAnswersForCorrectReturnWithEmptySdilReturn, requestReturnPeriod, emptySdilReturn)
+
+      whenReady(res.value) { result =>
+        result mustBe Right(amounts)
+      }
+    }
+  }
+
 }

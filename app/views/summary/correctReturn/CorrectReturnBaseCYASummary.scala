@@ -23,21 +23,16 @@ import models.{Amounts, UserAnswers}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.summary.correctReturn.ExemptionsForSmallProducersSummary
-import views.helpers.AmountToPaySummary
 
 object CorrectReturnBaseCYASummary {
 
-  def summaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription, amounts :Amounts)
+  def summaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription, amounts: Amounts)
                             (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
     (ownBrandsSummarySection(userAnswers, subscription = subscription) ++ contractPackerSummarySection(userAnswers) ++
       contractPackedForRegisteredSmallProducersSection(userAnswers) ++ broughtIntoUKSection(userAnswers) ++
       broughtIntoUkFromSmallProducersSection(userAnswers) ++ claimCreditsForExportsSection(userAnswers) ++
       claimCreditsForLostDamagedSection(userAnswers) ++ siteDetailsSection(userAnswers, subscription) ++
-      changedBalance(amounts)).toSeq
-  }
-
-  def changedBalance(amounts: Amounts)(implicit messages: Messages): Option[(String, SummaryList)] = {
-    Option("correctReturn.balance" -> AmountToPaySummary.amountToPaySummary(amounts))
+      amountToPaySummarySection(amounts)).toSeq
   }
 
   def changedSummaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription,
@@ -186,4 +181,11 @@ object CorrectReturnBaseCYASummary {
                                  isCheckAnswers: Boolean = true)(implicit messages: Messages): Option[(String, SummaryList)] =
     UKSitesSummary.getHeadingAndSummary(userAnswers, isCheckAnswers, subscription)
 
+  private def amountToPaySummarySection(amounts: Amounts)
+                                       (implicit messages: Messages): Option[(String, SummaryList)] =
+    if (AmountToPaySummary.amountToPaySummary(amounts).rows.isEmpty) {
+      None
+    } else {
+      Option("correctReturn.checkYourAnswers.summary" -> AmountToPaySummary.amountToPaySummary(amounts))
+    }
 }

@@ -49,7 +49,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
 
         setUpForCorrectReturn(userAnswers)
 
-        given.sdilBackend.balance(userAnswers.id, false)
+        given.sdilBackend.balance(userAnswers.id, withAssessment = false)
 
         WsTestClient.withClient { client =>
           val result = createClientRequestGet(client, baseUrl + route)
@@ -63,42 +63,42 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
             val operatePackagingSites = page.getElementsByClass("govuk-summary-list").get(0)
 
             page.getElementsByTag("h2").get(0).text() mustBe "Own brands packaged at your own site"
-            validateOperatePackagingSitesWithLitresSummaryList(operatePackagingSites, operatePackagingSiteLitres, true)
+            validateOperatePackagingSitesWithLitresSummaryList(operatePackagingSites, operatePackagingSiteLitres, isCheckAnswers = true)
 
             val contractPacking = page.getElementsByClass("govuk-summary-list").get(1)
 
             page.getElementsByTag("h2").get(1).text() mustBe "Contract packed at your own site"
-            validateContractPackingWithLitresSummaryList(contractPacking, contractPackingLitres, true)
+            validateContractPackingWithLitresSummaryList(contractPacking, contractPackingLitres, isCheckAnswers = true)
 
             val contractPackedForSmallProducers = page.getElementsByClass("govuk-summary-list").get(2)
 
             page.getElementsByTag("h2").get(2).text() mustBe "Contract packed for registered small producers"
-            validateContractPackedForSmallProducersWithLitresSummaryList(contractPackedForSmallProducers, smallProducerLitres, true)
+            validateContractPackedForSmallProducersWithLitresSummaryList(contractPackedForSmallProducers, smallProducerLitres, isCheckAnswers = true)
 
             val imports = page.getElementsByClass("govuk-summary-list").get(3)
 
             page.getElementsByTag("h2").get(3).text() mustBe "Brought into the UK"
-            validateImportsWithLitresSummaryList(imports, importsLitres, true)
+            validateImportsWithLitresSummaryList(imports, importsLitres, isCheckYourAnswers = true)
 
             val importsSmallProducers = page.getElementsByClass("govuk-summary-list").get(4)
 
             page.getElementsByTag("h2").get(4).text() mustBe "Brought into the UK from small producers"
-            validateImportsFromSmallProducersWithLitresSummaryList(importsSmallProducers, importsLitres, true)
+            validateImportsFromSmallProducersWithLitresSummaryList(importsSmallProducers, importsLitres, isCheckYourAnswers = true)
 
             val exported = page.getElementsByClass("govuk-summary-list").get(5)
 
             page.getElementsByTag("h2").get(5).text() mustBe "Exported"
-            validateExportsWithLitresSummaryList(exported, importsLitres, true)
+            validateExportsWithLitresSummaryList(exported, importsLitres, isCheckAnswers = true)
 
             val lostOrDamaged = page.getElementsByClass("govuk-summary-list").get(6)
 
             page.getElementsByTag("h2").get(6).text() mustBe "Lost or destroyed"
-            validateLostOrDamagedWithLitresSummaryList(lostOrDamaged, importsLitres, true)
+            validateLostOrDamagedWithLitresSummaryList(lostOrDamaged, importsLitres, isCheckAnswers = true)
 
             val siteDetailsSummaryListItem = page.getElementsByClass("govuk-summary-list").get(7)
 
             page.getElementsByTag("h2").get(7).text() mustBe "UK site details"
-            validateSiteDetailsSummary(userAnswers, aSubscription, siteDetailsSummaryListItem, 1, 2, true)
+            validateSiteDetailsSummary(userAnswers, aSubscription, siteDetailsSummaryListItem, 1, 2)
 
             page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCYAController.onSubmit.url
             page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Save and continue"
@@ -114,7 +114,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
 
           setUpForCorrectReturn(userAnswers, Some(populatedReturn))
 
-          given.sdilBackend.balance(userAnswers.id, false)
+          given.sdilBackend.balance(userAnswers.id, withAssessment = false)
 
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
@@ -127,48 +127,45 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
 
               val operatePackagingSites = page.getElementsByClass("govuk-summary-list").get(0)
               page.getElementsByTag("h2").get(0).text() mustBe "Own brands packaged at your own site"
-              validateOperatePackagingSitesWithNoLitresSummaryList(operatePackagingSites, true)
+              validateOperatePackagingSitesWithNoLitresSummaryList(operatePackagingSites, isCheckAnswers = true)
 
               val contractPacking = page.getElementsByClass("govuk-summary-list").get(1)
 
               page.getElementsByTag("h2").get(1).text() mustBe "Contract packed at your own site"
-              validateContractPackingWithNoLitresSummaryList(contractPacking, true)
+              validateContractPackingWithNoLitresSummaryList(contractPacking, isCheckYourAnswers = true)
 
               val contractPackedForSmallProducers = page.getElementsByClass("govuk-summary-list").get(2)
 
               page.getElementsByTag("h2").get(2).text() mustBe "Contract packed for registered small producers"
-              validateContractPackedForSmallProducersWithNoLitresSummaryList(contractPackedForSmallProducers, true)
+              validateContractPackedForSmallProducersWithNoLitresSummaryList(contractPackedForSmallProducers, isCheckYourAnswers = true)
 
               val imports = page.getElementsByClass("govuk-summary-list").get(3)
 
               page.getElementsByTag("h2").get(3).text() mustBe "Brought into the UK"
-              validateImportsWithNoLitresSummaryList(imports, true)
+              validateImportsWithNoLitresSummaryList(imports, isCheckYourAnswers = true)
 
               val importsFromSmallProducers = page.getElementsByClass("govuk-summary-list").get(4)
 
               page.getElementsByTag("h2").get(4).text() mustBe "Brought into the UK from small producers"
-              validateImportsFromSmallProducersWithNoLitresSummaryList(importsFromSmallProducers, true)
+              validateImportsFromSmallProducersWithNoLitresSummaryList(importsFromSmallProducers, isCheckYourAnswers = true)
 
               val exports = page.getElementsByClass("govuk-summary-list").get(5)
 
               page.getElementsByTag("h2").get(5).text() mustBe "Exported"
-              validateExportsWithNoLitresSummaryList(exports, true)
+              validateExportsWithNoLitresSummaryList(exports, isCheckYourAnswers = true)
 
               val lostOrDamaged = page.getElementsByClass("govuk-summary-list").get(6)
 
               page.getElementsByTag("h2").get(6).text() mustBe "Lost or destroyed"
-              validateLostOrDamagedWithNoLitresSummaryList(lostOrDamaged, true)
+              validateLostOrDamagedWithNoLitresSummaryList(lostOrDamaged, isCheckYourAnswers = true)
 
-              page.getElementsByTag("h2").get(7).text() mustBe "Balance"
-              page.getElementsByClass("govuk-summary-list__key").get(7).text() mustBe "Original return total"
-              page.getElementsByClass("govuk-summary-list__value  original-return-total sdil-right-align--desktop").get(0).text() mustBe "£229.80"
-              page.getElementsByClass("govuk-summary-list__key").get(8).text() mustBe "New return total"
-              page.getElementsByClass("govuk-summary-list__value  new-return-total sdil-right-align--desktop").get(0).text() mustBe "£0.00"
-              page.getElementsByClass("govuk-summary-list__key").get(9).text() mustBe "Account balance"
-              page.getElementsByClass("govuk-summary-list__value  balance-brought-forward sdil-right-align--desktop").get(0).text() mustBe "−£1,000.00"
-              page.getElementsByClass("govuk-summary-list__key").get(10).text() mustBe "Net adjusted amount"
-              page.getElementsByClass("govuk-summary-list__value  total sdil-right-align--desktop govuk-!-font-weight-bold").get(0).text() mustBe "−£1,000.00"
-
+              page.getElementsByTag("h2").get(7).text() mustBe "Summary"
+              page.getElementsByClass("govuk-summary-list__key").get(7).text() mustBe "Total this quarter"
+              page.getElementsByClass("govuk-summary-list__value  total-for-quarter govuk-!-text-align-right").get(0).text() mustBe "£0.00"
+              page.getElementsByClass("govuk-summary-list__key").get(8).text() mustBe "Balance brought forward"
+              page.getElementsByClass("govuk-summary-list__value  balance-brought-forward govuk-!-text-align-right").get(0).text() mustBe "−£1,000.00"
+              page.getElementsByClass("govuk-summary-list__key").get(9).text() mustBe "Total"
+              page.getElementsByClass("govuk-summary-list__value  total govuk-!-text-align-right govuk-!-font-weight-bold").get(0).text() mustBe "−£1,000.00"
               page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCYAController.onSubmit.url
               page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Save and continue"
             }

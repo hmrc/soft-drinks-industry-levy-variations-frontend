@@ -16,12 +16,14 @@
 
 package services
 
+import cats.data.EitherT
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
+import errors.VariationsErrors
 import models.backend.{FinancialLineItem, RetrievedSubscription}
 import models.correctReturn.{CorrectReturnUserAnswersData, ReturnsVariation}
 import models.submission.ReturnVariationData
-import models.{ReturnPeriod, SdilReturn, UserAnswers}
+import models.{Amounts, ReturnPeriod, SdilReturn, UserAnswers}
 import pages.correctReturn.{CorrectionReasonPage, RepaymentMethodPage}
 import service.VariationResult
 import uk.gov.hmrc.http.HeaderCarrier
@@ -40,7 +42,7 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector)(im
       (n, acc.headOption.fold(n.amount)(_._2 + n.amount)) :: acc
   }
   def getBalanceBroughtForward(sdilRef: String)
-                              (implicit hc: HeaderCarrier, ec: ExecutionContext): Future[BigDecimal] = {
+                              (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[BigDecimal] = {
     if (config.balanceAllEnabled) {
       sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { financialItem =>
         extractTotal(listItemsWithTotal(financialItem))
@@ -50,7 +52,16 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector)(im
     }
   }
 
-
+  def calculateAmounts(sdilRef: String,
+                       userAnswers: UserAnswers,
+                       returnPeriod: ReturnPeriod,
+                       originalReturn: SdilReturn)
+                      (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Amounts] = {
+    for {
+      isSmallProducer <- sdilConnector.checkSmallProducerStatus(sdilRef, returnPeriod)
+      balanceBroughtForward <- getBalanceBroughtForward(sdilRef)
+    } yield getAmounts(userAnswers, originalReturn, balanceBroughtForward, isSmallProducer.getOrElse(false))
+  }
 
   def submitSdilReturnsVary(subscription: RetrievedSubscription,
                              userAnswers: UserAnswers,
@@ -102,5 +113,13 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector)(im
   }
 
   def instantNow: Instant = Instant.now()
+
+  private def getAmounts(userAnswers: UserAnswers, originalReturn: SdilReturn, balanceBroughtForward: BigDecimal, isSmallProducer: Boolean): Amounts = {
+    val originalReturnTotal: BigDecimal = originalReturn.total
+    val totalForQuarter = SdilReturn.generateFromUserAnswers(userAnswers).total
+    val totalForQuarterLessForwardBalance = totalForQuarter - balanceBroughtForward
+    val netAdjustedAmount: BigDecimal = (totalForQuarter - originalReturnTotal) - balanceBroughtForward
+    Amounts(originalReturnTotal, totalForQuarter, balanceBroughtForward, totalForQuarterLessForwardBalance, netAdjustedAmount)
+  }
 
 }

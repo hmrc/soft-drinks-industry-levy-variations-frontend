@@ -22,6 +22,7 @@ import controllers.correctReturn.routes._
 import models.correctReturn.{AddASmallProducer, ChangedPage, RepaymentMethod}
 import models.submission.Litreage
 import models.{LitresInBands, ReturnPeriod, SdilReturn, SmallProducer, UserAnswers}
+import orchestrators.CorrectReturnOrchestrator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
@@ -30,14 +31,12 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.ReturnService
 import viewmodels.govuk.SummaryListFluency
 import views.html.correctReturn.CorrectReturnUpdateDoneView
 import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 
-import java.time.{Instant, LocalDateTime, ZoneId}
 import java.time.format.DateTimeFormatter
-import scala.concurrent.Future
+import java.time.{Instant, LocalDateTime, ZoneId}
 
 class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFluency {
 
@@ -47,12 +46,12 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
   val formattedDate: String = getSentDateTime.format(dateFormatter)
   val formattedTime: String = getSentDateTime.format(timeFormatter)
 
-  val returnPeriodFormat = DateTimeFormatter.ofPattern("MMMM yyyy")
-  val currentReturnPeriod = ReturnPeriod(getSentDateTime.toLocalDate)
-  val returnPeriodStart = currentReturnPeriod.start.format(returnPeriodFormat)
-  val returnPeriodEnd = currentReturnPeriod.end.format(returnPeriodFormat)
+  val returnPeriodFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("MMMM yyyy")
+  val currentReturnPeriod: ReturnPeriod = ReturnPeriod(getSentDateTime.toLocalDate)
+  val returnPeriodStart: String = currentReturnPeriod.start.format(returnPeriodFormat)
+  val returnPeriodEnd: String = currentReturnPeriod.end.format(returnPeriodFormat)
 
-  val mockReturnService: ReturnService = mock[ReturnService]
+  val mockReturnOrchestrator: CorrectReturnOrchestrator = mock[CorrectReturnOrchestrator]
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
   def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
@@ -61,7 +60,6 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       .overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
   }
-
   "Update Done Controller" - {
 
     "must return OK and the correct view for a GET" in {
@@ -103,28 +101,29 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
       val currentReturnPeriod = ReturnPeriod(2023, 1)
       val testTime = Instant.now()
-      val application = correctReturnAction(userAnswers = Some(userAnswers.copy(correctReturnPeriod = Option(currentReturnPeriod), submittedOn = Some(testTime))))
-        .overrides(bind[ReturnService].toInstance(mockReturnService))
+      val application = correctReturnAction(userAnswers = Some(userAnswers.copy(correctReturnPeriod = Option(currentReturnPeriod),
+        submittedOn = Some(testTime))))
+        .overrides(bind[CorrectReturnOrchestrator].toInstance(mockReturnOrchestrator))
         .build()
 
       running(application) {
         val request = FakeRequest(GET, CorrectReturnUpdateDoneController.onPageLoad.url)
 
-        when (mockReturnService.getBalanceBroughtForward(any())(any(),any())) thenReturn Future.successful(-502.75)
+        when(mockReturnOrchestrator.calculateAmounts(any(), any(), any(), any())(any(),any())) thenReturn createSuccessVariationResult(amounts)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[CorrectReturnUpdateDoneView]
         val orgName = " Super Lemonade Plc"
-        val section = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(userAnswers, aSubscription, changedPages, amounts, isCheckAnswers = false)
-
+        val section = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(userAnswers, aSubscription, changedPages,
+          isCheckAnswers = false, amounts)
         val returnPeriodFormat = DateTimeFormatter.ofPattern("MMMM yyyy")
         val returnPeriodStart = currentReturnPeriod.start.format(returnPeriodFormat)
         val returnPeriodEnd = currentReturnPeriod.end.format(returnPeriodFormat)
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(orgName, section,
-          formattedDate, LocalDateTime.ofInstant(testTime, ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")), returnPeriodStart, returnPeriodEnd)(request, messages(application), frontendAppConfig).toString
+        contentAsString(result) mustEqual view(orgName, section, formattedDate, LocalDateTime.ofInstant(testTime, ZoneId.of("Europe/London"))
+          .format(DateTimeFormatter.ofPattern("h:mma")), returnPeriodStart, returnPeriodEnd)(request, messages(application), frontendAppConfig).toString
       }
     }
   }

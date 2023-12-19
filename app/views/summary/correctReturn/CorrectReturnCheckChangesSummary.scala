@@ -22,16 +22,15 @@ import models.correctReturn.ChangedPage
 import models.{Amounts, UserAnswers}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
-import views.helpers.AmountToPaySummary
 
 object CorrectReturnCheckChangesSummary {
 
   def changeSpecificSummaryListAndHeadings(userAnswers: UserAnswers, subscription: RetrievedSubscription,
-                                           changedPages: List[ChangedPage], amounts: Amounts, isCheckAnswers: Boolean = true)
+                                           changedPages: List[ChangedPage], isCheckAnswers: Boolean = true, amounts: Amounts)
                                           (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
     val mainSection = CorrectReturnBaseCYASummary.changedSummaryListAndHeadings(userAnswers, subscription, changedPages, isCheckAnswers)
     val correctionDetailsSection = correctionSection(userAnswers, isCheckAnswers)
-    val balanceSection = Map("correctReturn.balance"-> AmountToPaySummary.amountToPaySummary(amounts))
+    val balanceSection = Map("correctReturn.checkChanges.balanceHeader"-> AmountToPaySummary.amountToPayBalance(amounts))
     mainSection ++ correctionDetailsSection ++ balanceSection
   }
 

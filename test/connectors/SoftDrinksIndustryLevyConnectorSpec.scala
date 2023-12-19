@@ -128,10 +128,10 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
         val res = softDrinksIndustryLevyConnector.balance(sdilNumber, false)
 
         whenReady(
-          res
+          res.value
         ) {
           response =>
-            response mustEqual BigDecimal(1000)
+            response mustEqual Right(BigDecimal(1000))
         }
       }
 
@@ -142,10 +142,10 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
       val res = softDrinksIndustryLevyConnector.balanceHistory(sdilNumber, false)
 
       whenReady(
-        res
+        res.value
       ) {
         response =>
-          response mustEqual financialItemList
+          response mustEqual Right(financialItemList)
       }
     }
 

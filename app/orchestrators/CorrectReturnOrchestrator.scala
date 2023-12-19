@@ -22,7 +22,7 @@ import connectors.SoftDrinksIndustryLevyConnector
 import errors.{FailedToAddDataToUserAnswers, MissingRequiredAnswers, NoSdilReturnForPeriod, NoVariableReturns}
 import models.backend.RetrievedSubscription
 import models.correctReturn.CorrectReturnUserAnswersData
-import models.{ReturnPeriod, SdilReturn, UserAnswers}
+import models.{Amounts, ReturnPeriod, SdilReturn, UserAnswers}
 import service.VariationResult
 import services.{ReturnService, SessionService}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class CorrectReturnOrchestrator @Inject()(returnService: ReturnService,
-                                           connector: SoftDrinksIndustryLevyConnector,
+                                          connector: SoftDrinksIndustryLevyConnector,
                                           sessionService: SessionService){
 
   def submitReturn(userAnswers: UserAnswers, subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, originalReturn: SdilReturn)
@@ -109,4 +109,12 @@ class CorrectReturnOrchestrator @Inject()(returnService: ReturnService,
   }
 
   def instantNow: Instant = Instant.now()
+
+  def calculateAmounts(sdilRef: String,
+                       userAnswers: UserAnswers,
+                       returnPeriod: ReturnPeriod,
+                       originalReturn: SdilReturn)
+                      (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Amounts] = {
+    returnService.calculateAmounts(sdilRef, userAnswers, returnPeriod, originalReturn)
+  }
 }

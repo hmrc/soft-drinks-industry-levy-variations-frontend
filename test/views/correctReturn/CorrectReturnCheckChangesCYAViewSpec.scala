@@ -46,7 +46,8 @@ class CorrectReturnCheckChangesCYAViewSpec extends ViewSpecHelper {
     val summaryList: Seq[(String, SummaryList)] = {
       Seq(
         "foo" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bar"))))),
-        "wizz" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bang")))))
+        "wizz" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bang"))))),
+        "Balance" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("£1.00")))))
       )
     }
     val call = Call("GET","/foo")
@@ -76,10 +77,13 @@ class CorrectReturnCheckChangesCYAViewSpec extends ViewSpecHelper {
         .getElementsByClass(Selectors.summaryValue).first().text() mustBe "bar"
       document.getElementsByClass(Selectors.summaryListHeading).get(1).text() mustBe "wizz"
       document.getElementsByClass(Selectors.summaryList)
-        .last()
+        .get(1)
         .getElementsByClass(Selectors.summaryRow)
         .first()
         .getElementsByClass(Selectors.summaryValue).first().text() mustBe "bang"
+    }
+    "contains a balance section" in {
+      document.getElementsByClass(Selectors.summaryListHeading).get(2).text() mustBe "Balance"
     }
 
     "contain a section before the submit action that contains the correct text" in {

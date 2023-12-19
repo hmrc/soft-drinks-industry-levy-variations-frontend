@@ -139,8 +139,8 @@ cancelRegistration.cancellationRequestDone.accountHomeLink = Go back to your Sof
 cancelRegistration.cancellationRequestDone.detailsSummary = View the details of your update
 
 changeActivity.checkYourAnswers.title = Check your answers before sending your update
-changeActivity.checkYourAnswers.heading = Check your answers before sending your update
 changeActivity.checkYourAnswers.submit = Confirm updates and send
+changeActivity.checkYourAnswers.updateFor = This update is for
 changeActivity.checkYourAnswers.amountProducedSection = Packaged globally
 changeActivity.checkYourAnswers.thirdPartyPackagersSection = Third party packagers
 changeActivity.checkYourAnswers.operatePackingSiteOwnBrandsSection = Packaged in the UK
@@ -159,7 +159,7 @@ brandsPackaged.hint = This includes brands you own or have the rights to manufac
 whatDoesPackagedMean.summary = What does 'packaged' mean?
 whatDoesPackagedMean.content = A liable drink is packaged if it is bottled, canned, or otherwise packaged, so it is ready to either drink or dilute.
 whatIsALiableDrink.summary = What is a liable drink?
-whatIsALiableDrink.content = A drink is liable if it meets all of the following conditions
+whatIsALiableDrink.content = A drink is liable if it meets all of the following conditions:
 whatIsALiableDrink.bullet1 = it has a content of 1.2% alcohol by volume or less
 whatIsALiableDrink.bullet2 = it is either ready to drink, or to be drunk it must be diluted with water, mixed with crushed ice or processed to make crushed ice, mixed with carbon dioxide, or a combination of these
 whatIsALiableDrink.bullet3 = it is packaged ready for sale
@@ -195,7 +195,7 @@ changeActivity.imports.title = Do you bring liable drinks into the UK from anywh
 changeActivity.imports.checkYourAnswersLabel = Do you bring liable drinks into the UK?
 changeActivity.imports.error.required = Select yes if do you bring liable drinks into the UK from anywhere outside of the UK
 changeActivity.imports.change.hidden = whether you bring liable drinks into the UK
-howManyImports.title = How many litres of liable drinks have you brought into the UK from anywhere outside of the UK?
+howManyImports.title = How many litres will you bring into the UK in the next 12 months?
 howManyImports.subtext = Do not include liable drinks from small producers or your own brands if you are a registered small producer.
 changeActivity.imports.lowband.litres.hidden = number of litres in low band brought into the UK
 changeActivity.imports.highband.litres.hidden = number of litres in high band brought into the UK
@@ -237,8 +237,8 @@ changeActivity.removePackagingSiteDetails.title = Are you sure you want to remov
 changeActivity.removePackagingSiteDetails.heading = Are you sure you want to remove this packaging site?
 changeActivity.removePackagingSiteDetails.error.required = Select yes if you want to remove this packaging site
 
-changeActivity.secondaryWarehouseDetails.title = Change your UK warehouse details
-changeActivity.secondaryWarehouseDetails.heading = Change your UK warehouse details
+changeActivity.secondaryWarehouseDetails.title = UK warehouse details
+changeActivity.secondaryWarehouseDetails.heading = UK warehouse details
 changeActivity.secondaryWarehouseDetails.subtext = You do not have any registered warehouses.
 changeActivity.secondaryWarehouseDetails.subHeading = Do you want to add a UK warehouse?
 changeActivity.secondaryWarehouseDetails.detailsLink = Why should I register a warehouse?
@@ -475,7 +475,7 @@ correctReturn.claimCreditsForLostDamaged.detailsContent5 = reprocessed
 correctReturn.claimCreditsForLostDamaged.detailsContent6 = lost
 correctReturn.claimCreditsForLostDamaged.detailsContent7 = spilled and can’t be used
 correctReturn.claimCreditsForLostDamaged.detailsContent8 = To be able to claim this credit, you must have documentation containing information such as the details of the incident, how and where it occurred, the amount of liable drinks and whether it was in the low band or the high band.
-correctReturn.claimCreditsForLostDamaged.error.required = Select yes if you want to claim a credit for any liable drinks that has been lost or destroyed
+correctReturn.claimCreditsForLostDamaged.error.required = Select yes if you want to claim a credit for any liable drinks that have been lost or destroyed
 correctReturn.claimCreditsForLostDamaged.checkYourAnswersSectionHeader = Lost or destroyed
 correctReturn.claimCreditsForLostDamaged.checkYourAnswersLabel = Claiming credits for lost or destroyed liable drinks?
 correctReturn.claimCreditsForLostDamaged.change.hidden = whether you want to claim credits for lost or destroyed liable drinks
@@ -535,6 +535,13 @@ correctReturn.askSecondaryWarehouseInReturn.detailsContent1 = You can delay when
 correctReturn.askSecondaryWarehouseInReturn.detailsContent2 = Because you changed your business activity, you can choose to register any of the UK warehouses you use to store liable drinks.
 
 correctReturn.correctionSection.checkYourAnswersLabel = Correction details
+correctReturn.checkYourAnswers.youNeedToPay = You need to pay {0}
+correctReturn.checkYourAnswers.yourSoftDrinksLevyAccountsWillBeCredited = Your Soft Drinks Levy Account will be credited {0}
+correctReturn.checkYourAnswers.summary = Summary
+correctReturn.checkYourAnswers.totalThisQuarter = Total this quarter
+correctReturn.checkYourAnswers.balanceBroughtForward = Balance brought forward
+correctReturn.checkYourAnswers.total = Total
+correctReturn.checkYourAnswers.financiallineitem.returncharge = Return <br/><span class="form-hint">for {0} to {1}</span>
 
 correctReturn.checkYourAnswers.updateFor = This update is for
 correctReturn.checkYourAnswers.title = Check your answers before sending your update
@@ -543,13 +550,17 @@ correctReturn.checkChanges.updateFor = This update is for
 correctReturn.checkChanges.title = Check your answers before sending your correction
 correctReturn.checkChanges.confirmationStatement = By sending this correction you are confirming that, to the best of your knowledge, the details you are providing are correct.
 correctReturn.checkChanges.balanceHeader = Balance
+correctReturn.checkChanges.originalReturnTotal = Original return total
+correctReturn.checkChanges.newReturnTotal = New return total
+correctReturn.checkChanges.balanceBroughtForward = Account balance
+correctReturn.checkChanges.adjustedAmount = Net adjusted amount
 correctReturn.checkChanges.sendReturnHeader = Send your return
 correctReturn.checkChanges.confirmAndSend = Confirm details and send correction
 
 correctReturn.updateDone.title = Correction sent
 correctReturn.updateDone.panel.message = We will review the details you updated and get back to you
 correctReturn.updateDone.updateInfo.p1 = The corrected <span style="white-space: nowrap">{0}</span> to <span style="white-space: nowrap">{1}</span> return for <span style="white-space: nowrap">{2}</span> was sent on <span style="white-space: nowrap">{3}</span> at <span style="white-space: nowrap">{4}.</span>
-correctReturn.updateDone.updateInfo.p2 = Do not make any payments until we have confirmed how much you need to page, as you will be charged interest on your adjusted amount.
+correctReturn.updateDone.updateInfo.p2 = Do not make any payments until we have confirmed how much you need to pay, as you will be charged interest on your adjusted amount.
 correctReturn.updateDone.whatNextText = We may get in touch with your contact person to discuss your changes. Once we have approved your correction, your account balance will be updated.
 correctReturn.updateDone.accountHomeLink = Go back to your Soft Drinks Industry Levy details
 correctReturn.updateDone.detailsSummary = View the details of your update
@@ -651,13 +662,6 @@ checkYourAnswers.warehouse.checkYourAnswersLabel.multiple = You have {0} warehou
 checkYourAnswers.warehouse.checkYourAnswersLabel.one = You have {0} warehouse
 checkYourAnswers.sites.warehouse.change.hidden.one = the UK warehouse you use to store liable drinks
 checkYourAnswers.sites.warehouse.change.hidden.multiple = the UK warehouses you use to store liable drinks
-
-
-correctReturn.balance = Balance
-correctReturn.originalReturnTotal = Original return total
-correctReturn.newReturnTotal = New return total
-correctReturn.balanceBroughtForward = Account balance
-correctReturn.adjustedAmount = Net adjusted amount
 
 litres.lowBandLevy = Low band levy
 litres.highBandLevy = High band levy

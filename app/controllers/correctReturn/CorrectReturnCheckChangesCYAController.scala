@@ -18,57 +18,54 @@ package controllers.correctReturn
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions.ControllerActions
+import controllers.actions.{ControllerActions, RequiredUserAnswersForCorrectReturn}
 import handlers.ErrorHandler
+import models.SdilReturn
 import models.correctReturn.ChangedPage
-import models.{Amounts, SdilReturn}
 import orchestrators.CorrectReturnOrchestrator
+import pages.correctReturn.CorrectReturnUpdateDonePage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.ReturnService
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilities.GenericLogger
 import views.html.correctReturn.CorrectReturnCheckChangesCYAView
 import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class CorrectReturnCheckChangesCYAController @Inject()(
-                                            override val messagesApi: MessagesApi,
-                                            controllerActions: ControllerActions,
-                                            val controllerComponents: MessagesControllerComponents,
-                                            view: CorrectReturnCheckChangesCYAView,
-                                            returnService: ReturnService,
-                                            correctReturnOrchestrator: CorrectReturnOrchestrator,
-                                            genericLogger: GenericLogger,
-                                            val errorHandler: ErrorHandler
-                                          )(implicit config: FrontendAppConfig, ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+                                                        override val messagesApi: MessagesApi,
+                                                        controllerActions: ControllerActions,
+                                                        val controllerComponents: MessagesControllerComponents,
+                                                        val requiredUserAnswers: RequiredUserAnswersForCorrectReturn,
+                                                        view: CorrectReturnCheckChangesCYAView,
+                                                        correctReturnOrchestrator: CorrectReturnOrchestrator,
+                                                        genericLogger: GenericLogger,
+                                                        val errorHandler: ErrorHandler
+                                                      )(implicit config: FrontendAppConfig, ec: ExecutionContext)
+  extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-      val originalSdilReturn = request.originalSdilReturn
-        returnService.getBalanceBroughtForward(request.sdilEnrolment).map(balanceBroughtForward => {
-          val orgName: String = " " + request.subscription.orgName
+      requiredUserAnswers.requireData(CorrectReturnUpdateDonePage) {
+        println("*************HERE!!!!!!!!!!!!**************")
           val currentSDILReturn = SdilReturn.generateFromUserAnswers(request.userAnswers)
-          val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(originalSdilReturn, currentSDILReturn)
-          val amounts: Amounts = Amounts(
-            originalReturnTotal = originalSdilReturn.total,
-            newReturnTotal = currentSDILReturn.total,
-            balanceBroughtForward = balanceBroughtForward * -1,
-            adjustedAmount = currentSDILReturn.total + (balanceBroughtForward * -1)
-          )
-          val sections: Seq[(String, SummaryList)] = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(
-            request.userAnswers,
-            request.subscription,
-            changedPages,
-            amounts
-          )
-          Ok(view(orgName, sections, routes.CorrectReturnCheckChangesCYAController.onSubmit))
-        }).recoverWith {
-          case _ => genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][Balance] - unexpected response for ${request.sdilEnrolment}")
-            Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url))
-        }
+        println(currentSDILReturn)
+          val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(request.originalSdilReturn, currentSDILReturn)
+        println(changedPages)
+          val calculateAmounts = correctReturnOrchestrator.calculateAmounts(request.sdilEnrolment, request.userAnswers, request.returnPeriod, request.originalSdilReturn)
+
+          calculateAmounts.value.map {
+            case Right(amounts) =>
+              val orgName: String = " " + request.subscription.orgName
+              val sections = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(request.userAnswers,
+                request.subscription, changedPages, isCheckAnswers = true, amounts)
+              Ok(view(orgName, sections, routes.CorrectReturnCheckChangesCYAController.onSubmit))
+            case Left(_) =>
+              genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][Balance] - unexpected response for ${request.sdilEnrolment}")
+              Redirect(controllers.routes.SelectChangeController.onPageLoad.url)
+          }
+      }
   }
 
   def onSubmit: Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {

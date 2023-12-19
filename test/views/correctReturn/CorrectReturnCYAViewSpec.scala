@@ -14,25 +14,29 @@
  * limitations under the License.
  */
 
-package views.changeActivity
+package views.correctReturn
 
+import models.Amounts
+import org.jsoup.nodes.Document
 import play.api.mvc.{Call, Request}
 import play.api.test.FakeRequest
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.Value
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import views.ViewSpecHelper
-import views.html.changeActivity.ChangeActivityCYAView
+import views.html.correctReturn.CorrectReturnCYAView
 
 
-class ChangeActivityCYAViewSpec extends ViewSpecHelper {
+class CorrectReturnCYAViewSpec extends ViewSpecHelper {
 
-  val view: ChangeActivityCYAView = application.injector.instanceOf[ChangeActivityCYAView]
+  val view: CorrectReturnCYAView = application.injector.instanceOf[CorrectReturnCYAView]
   implicit val request: Request[_] = FakeRequest()
-
+  val summaryAmounts: Amounts = Amounts(1000, -100, 500, -600, -400)
   object Selectors {
-    val heading = "govuk-heading-l"
     val body = "govuk-body"
+    val heading = "govuk-heading-l"
+    val insetText = "govuk-inset-text"
     val summaryListHeading = "govuk-heading-m"
     val button = "govuk-button"
     val summaryList = "govuk-summary-list"
@@ -40,6 +44,7 @@ class ChangeActivityCYAViewSpec extends ViewSpecHelper {
     val summaryValue = "govuk-summary-list__value"
     val form = "form"
   }
+
   "View" - {
     val summaryList: Seq[(String, SummaryList)] = {
       Seq(
@@ -48,19 +53,25 @@ class ChangeActivityCYAViewSpec extends ViewSpecHelper {
       )
     }
     val call = Call("GET","/foo")
-    val orgName = " Acme Inc."
-    val html = view(orgName, summaryList, call)(request, messages(application))
-    val document = doc(html)
+
+    val orgName: String = " " + aSubscription.orgName
+    val html: HtmlFormat.Appendable = view(orgName, summaryAmounts, summaryList, call)(request, messages(application))
+    val document: Document = doc(html)
+
     "should have the expected heading" in {
       document.getElementsByTag("h1").text() mustEqual "Check your answers before sending your update"
     }
 
-    "should have the expected body" in {
-      document.getElementsByClass(Selectors.body).text() mustEqual s"This update is for$orgName Print this page"
+    "should have the expected post header caption" in {
+      document.getElementsByClass(Selectors.body).get(0).text() mustEqual "This update is for Super Lemonade Plc"
+    }
+
+    "should have the expected inset text" in {
+      document.getElementsByClass(Selectors.insetText).get(0).text() mustEqual "Your Soft Drinks Levy Account will be credited £600.00"
     }
 
     "contain the correct button" in {
-      document.getElementsByClass(Selectors.button).text() mustBe "Confirm updates and send"
+      document.getElementsByClass(Selectors.button).text() mustBe "Save and continue"
     }
 
     "contain the correct summary lists" in {

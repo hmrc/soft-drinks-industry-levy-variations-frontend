@@ -157,7 +157,7 @@ class AmountProducedViewSpec extends ViewSpecHelper {
       details.get(1).getElementsByClass("govuk-details__summary")
         .text() mustEqual "What is a liable drink?"
       details.get(1).getElementsByClass("govuk-body")
-        .text() mustEqual "A drink is liable if it meets all of the following conditions"
+        .text() mustEqual "A drink is liable if it meets all of the following conditions:"
       details.get(1).getElementsByClass("govuk-details__text")
         .text() must include("it has a content of 1.2% alcohol by volume or less")
     }
