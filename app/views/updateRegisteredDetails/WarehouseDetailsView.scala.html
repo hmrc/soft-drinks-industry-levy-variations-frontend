@@ -25,6 +25,7 @@
     govukSummaryList: GovukSummaryList
 )
 
+
 @(form: Form[_], mode: Mode, warehouses: Option[SummaryList])(implicit request: Request[_], messages: Messages)
 
 @layout(pageTitle = title(form, messages("updateRegisteredDetails.warehouseDetails.title"))) {
@@ -54,7 +55,12 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("updateRegisteredDetails.warehouseDetails.subHeading")).asPageSubHeading(),
+                legend = LegendViewModel(
+                    if (warehouses.isEmpty) {
+                        messages("updateRegisteredDetails.warehouseDetails.subHeading", "a")
+                    } else {
+                        messages("updateRegisteredDetails.warehouseDetails.subHeading", "another")
+                    }).asPageSubHeading(),
                 hint = None
             )
         )

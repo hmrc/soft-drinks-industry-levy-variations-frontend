@@ -52,10 +52,10 @@ class WarehouseDetailsViewSpec extends ViewSpecHelper {
       document.title() mustBe "Change your UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
     }
 
-    "should include a legend with the expected heading" in {
+    "should include a legend with the expected subheading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.legend).text() mustBe "Do you want to add another warehouse?"
+      legend.get(0).getElementsByClass(Selectors.legend).text() mustBe "Do you want to add a warehouse?"
     }
 
     "when the form is not preoccupied and has no errors" - {
@@ -217,7 +217,7 @@ class WarehouseDetailsViewSpec extends ViewSpecHelper {
         errorSummary
           .select("a")
           .attr("href") mustBe "#value"
-        errorSummary.text() mustBe "Select yes if you want to register another UK warehouse"
+        errorSummary.text() mustBe "Select yes if you want to register a UK warehouse"
       }
     }
 

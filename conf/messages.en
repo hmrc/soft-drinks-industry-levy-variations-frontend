@@ -641,9 +641,9 @@ updateRegisteredDetails.businessAddress.change.hidden = business address
 updateRegisteredDetails.warehouseDetails.title = Change your UK warehouse details
 updateRegisteredDetails.warehouseDetails.heading = Change your UK warehouse details
 updateRegisteredDetails.warehouseDetails.subtext = You don''t have any registered warehouses.
-updateRegisteredDetails.warehouseDetails.subHeading = Do you want to add another warehouse?
+updateRegisteredDetails.warehouseDetails.subHeading = Do you want to add {0} warehouse?
 updateRegisteredDetails.warehouseDetails.checkYourAnswersLabel = Change your UK warehouse details
-updateRegisteredDetails.warehouseDetails.error.required = Select yes if you want to register another UK warehouse
+updateRegisteredDetails.warehouseDetails.error.required = Select yes if you want to register a UK warehouse
 updateRegisteredDetails.warehouseDetails.remove.hidden = warehouse {0} at {1}
 
 updateRegisteredDetails.updateDone.title = Update sent
