@@ -226,7 +226,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
                 ownBrandsValue.nonEmpty,
                 contractValue.nonEmpty,
                 importValue.nonEmpty,
-                packingSitesValues.nonEmpty || warehouseValues.nonEmpty
+                packingSiteValue.nonEmpty || warehouseValue.nonEmpty
               ).foldLeft(Seq[Option[Int]]()) { (indexes, sectionDefined) =>
                 indexes :+ (if (sectionDefined) Option(indexes.filter(_.nonEmpty).flatten.size) else None)
               }
