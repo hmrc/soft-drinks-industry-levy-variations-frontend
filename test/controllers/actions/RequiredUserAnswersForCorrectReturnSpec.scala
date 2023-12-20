@@ -157,7 +157,6 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
   }
 
   "checkChangesRequiredData" - {
-// TODO: UPDATE THESE TESTS TO REFLECT NOT NEEDING REPAYMENT METHOD IF BALANCEREPAYMENTREQUIRED false
     "should return Redirect to Correction Reason page when user answers past check your answers is empty and balance repayment required" in {
       val userAnswers = basicRequestWithEmptyAnswers.userAnswers
         .set(BalanceRepaymentRequired, true).success.value

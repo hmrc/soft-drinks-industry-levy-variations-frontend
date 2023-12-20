@@ -38,7 +38,6 @@ object CorrectReturnCheckChangesSummary {
   private def correctionSection(userAnswers: UserAnswers, isCheckAnswers: Boolean)
                                (implicit messages: Messages): Option[(String, SummaryList)] = {
     val correctionReasonSummary: Option[SummaryListRow] = CorrectionReasonSummary.row(userAnswers, isCheckAnswers)
-//    TODO: REFACTOR?
     val repaymentMethodSummary: Option[SummaryListRow] = userAnswers.get(BalanceRepaymentRequired) match {
       case Some(true) => RepaymentMethodSummary.row(userAnswers, isCheckAnswers)
       case _ => None

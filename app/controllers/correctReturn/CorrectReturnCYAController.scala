@@ -89,8 +89,4 @@ class CorrectReturnCYAController @Inject()(override val messagesApi: MessagesApi
         }
       }
   }
-
-//  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn) {
-//    Redirect(routes.CorrectionReasonController.onPageLoad(NormalMode).url)
-//  }
 }
