@@ -157,28 +157,51 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
   }
 
   "checkChangesRequiredData" - {
-
-    "should return Redirect to Correction Reason page when user answers past check your answers is empty" in {
-      val res = requiredUserAnswers.checkChangesRequiredData(Future.successful(Ok("")))(basicRequestWithEmptyAnswers)
+// TODO: UPDATE THESE TESTS TO REFLECT NOT NEEDING REPAYMENT METHOD IF BALANCEREPAYMENTREQUIRED false
+    "should return Redirect to Correction Reason page when user answers past check your answers is empty and balance repayment required" in {
+      val userAnswers = basicRequestWithEmptyAnswers.userAnswers
+        .set(BalanceRepaymentRequired, true).success.value
+      val res = requiredUserAnswers.checkChangesRequiredData(Future.successful(Ok("")))(
+        basicRequestWithEmptyAnswers.copy(userAnswers = userAnswers))
       redirectLocation(res).get mustBe routes.CorrectionReasonController.onPageLoad(CheckMode).url
     }
 
-    "should return Redirect to Repayment reason page if it is not filled in" in {
+    "should return Redirect to Repayment reason page if it is not filled in and balance repayment required" in {
       val completedUserAnswers = emptyUserAnswersForCorrectReturn
+        .set(BalanceRepaymentRequired, true).success.value
         .set(CorrectionReasonPage, "some info").success.value
 
-      val res =
-        requiredUserAnswers.checkChangesRequiredData(Future.successful(Ok("")))(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers))
+      val res = requiredUserAnswers.checkChangesRequiredData(Future.successful(Ok("")))(
+        basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers))
       redirectLocation(res).get mustBe routes.RepaymentMethodController.onPageLoad(CheckMode).url
     }
 
-    "should allow user to continue if all user answers are filled in" in {
+    "should allow user to continue if Correction Reason and Repayment Method filled in and balance repayment required" in {
       val completedUserAnswers = emptyUserAnswersForCorrectReturn
+        .set(BalanceRepaymentRequired, true).success.value
         .set(CorrectionReasonPage, "some info").success.value
         .set(RepaymentMethodPage, RepaymentMethod.BankAccount).success.value
 
-      val res =
-        requiredUserAnswers.checkChangesRequiredData(Future.successful(Ok("")))(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers))
+      val res = requiredUserAnswers.checkChangesRequiredData(Future.successful(Ok("")))(
+        basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers))
+      status(res) mustBe OK
+    }
+
+    "should return Redirect to Correction Reason page when user answers past check your answers is empty and balance repayment not required" in {
+      val userAnswers = basicRequestWithEmptyAnswers.userAnswers
+        .set(BalanceRepaymentRequired, false).success.value
+      val res = requiredUserAnswers.checkChangesRequiredData(Future.successful(Ok("")))(
+        basicRequestWithEmptyAnswers.copy(userAnswers = userAnswers))
+      redirectLocation(res).get mustBe routes.CorrectionReasonController.onPageLoad(CheckMode).url
+    }
+
+    "should allow user to continue if Correction Reason filled in and balance repayment not required" in {
+      val completedUserAnswers = emptyUserAnswersForCorrectReturn
+        .set(BalanceRepaymentRequired, false).success.value
+        .set(CorrectionReasonPage, "some info").success.value
+
+      val res = requiredUserAnswers.checkChangesRequiredData(Future.successful(Ok("")))(
+        basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers))
       status(res) mustBe OK
     }
   }

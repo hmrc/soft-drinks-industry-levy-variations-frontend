@@ -53,7 +53,8 @@ class CorrectReturnCYAController @Inject()(override val messagesApi: MessagesApi
     implicit request =>
       requiredUserAnswers.requireData(CorrectReturnBaseCYAPage) {
 
-        val calculateAmounts = correctReturnOrchestrator.calculateAmounts(request.sdilEnrolment, request.userAnswers, request.returnPeriod, request.originalSdilReturn)
+        val calculateAmounts = correctReturnOrchestrator.calculateAmounts(
+          request.sdilEnrolment, request.userAnswers, request.returnPeriod, request.originalSdilReturn)
 
         calculateAmounts.value.map {
           case Right(amounts) =>
@@ -71,11 +72,11 @@ class CorrectReturnCYAController @Inject()(override val messagesApi: MessagesApi
     implicit request =>
       requiredUserAnswers.requireData(CorrectReturnBaseCYAPage) {
 
-        val calculateAmounts = correctReturnOrchestrator.calculateAmounts(request.sdilEnrolment, request.userAnswers, request.returnPeriod, request.originalSdilReturn)
+        val calculateAmounts = correctReturnOrchestrator.calculateAmounts(
+          request.sdilEnrolment, request.userAnswers, request.returnPeriod, request.originalSdilReturn)
 
         calculateAmounts.value.flatMap {
           case Right(amounts) =>
-//            TODO: THIS IS CORRECT WAY AROUND, NEED TO DELETE REPAYMENT METHOD IF THIS IS FALSE
             val balanceRepaymentRequired = amounts.newReturnTotal < amounts.originalReturnTotal
             val updatedAnswers = request.userAnswers.set(BalanceRepaymentRequired, balanceRepaymentRequired)
             for {

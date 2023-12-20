@@ -22,7 +22,7 @@ import models.backend.{FinancialLineItem, RetrievedSubscription}
 import models.correctReturn.{CorrectReturnUserAnswersData, ReturnsVariation}
 import models.submission.ReturnVariationData
 import models.{Amounts, ReturnPeriod, SdilReturn, UserAnswers}
-import pages.correctReturn.{CorrectionReasonPage, RepaymentMethodPage}
+import pages.correctReturn.{BalanceRepaymentRequired, CorrectionReasonPage, RepaymentMethodPage}
 import service.VariationResult
 import uk.gov.hmrc.http.HeaderCarrier
 import utilities.UserTypeCheck
@@ -67,6 +67,11 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector)(im
                              returnPeriod: ReturnPeriod,
                              revisedReturn: SdilReturn)
                            (implicit hc: HeaderCarrier): VariationResult[Unit] = {
+    //    TODO: REFACTOR?
+    val repaymentMethod = userAnswers.get(BalanceRepaymentRequired) match {
+      case Some(false) => userAnswers.get(RepaymentMethodPage).map(_.toString)
+      case _ => None
+    }
     val returnsVariation = ReturnVariationData(
       original = originalReturn,
       revised = revisedReturn,
@@ -74,7 +79,7 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector)(im
       orgName = subscription.orgName,
       address = subscription.address,
       reason = userAnswers.get(CorrectionReasonPage).getOrElse(""),
-      repaymentMethod = userAnswers.get(RepaymentMethodPage).map(_.toString)
+      repaymentMethod = repaymentMethod
     )
 
     sdilConnector.submitSdilReturnsVary(subscription.sdilRef, returnsVariation)
