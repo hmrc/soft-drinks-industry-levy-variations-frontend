@@ -5,7 +5,7 @@ import models.SelectChange.CorrectReturn
 import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import pages.correctReturn.CorrectionReasonPage
+import pages.correctReturn.{BalanceRepaymentRequired, CorrectionReasonPage}
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
@@ -125,47 +125,64 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
 
   s"POST " + normalRoutePath - {
     "when the user answers the question" - {
-      "should update the session with the new values and redirect to the repayment controller" - {
-        "when the session contains no data for page" in {
-          given
-            .commonPrecondition
+      List(true, false).foreach(balanceRepaymentRequired => {
+        "should update the session with the new values and redirect to the repayment controller" +
+          s"when balance repayment ${if (balanceRepaymentRequired) " not" else ""}required" - {
+          "when the session contains no data for page" in {
+            given
+              .commonPrecondition
 
-          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
-          WsTestClient.withClient { client =>
-            val result = createClientRequestPOST(
-              client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> correctionReasonDiff)
-            )
+            val userAnswers = emptyUserAnswersForCorrectReturn
+              .set(BalanceRepaymentRequired, balanceRepaymentRequired).success.value
+            setUpForCorrectReturn(userAnswers)
+            WsTestClient.withClient { client =>
+              val result = createClientRequestPOST(
+                client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> correctionReasonDiff)
+              )
 
-            whenReady(result) { res =>
-              res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.correctReturn.routes.RepaymentMethodController.onPageLoad(NormalMode).url)
-              val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[String]](None)(_.get(CorrectionReasonPage))
-              dataStoredForPage.nonEmpty mustBe true
-              dataStoredForPage.get mustBe correctionReasonDiff
+              whenReady(result) { res =>
+                res.status mustBe 303
+                val expectedLocation = if (balanceRepaymentRequired) {
+                  routes.RepaymentMethodController.onPageLoad(NormalMode).url
+                } else {
+                  routes.CorrectReturnCheckChangesCYAController.onPageLoad.url
+                }
+                res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
+                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[String]](None)(_.get(CorrectionReasonPage))
+                dataStoredForPage.nonEmpty mustBe true
+                dataStoredForPage.get mustBe correctionReasonDiff
+              }
+            }
+          }
+
+          "when the session already contains data for page" in {
+            given
+              .commonPrecondition
+
+            val userAnswersWithData = userAnswers
+              .set(BalanceRepaymentRequired, balanceRepaymentRequired).success.value
+            setUpForCorrectReturn(userAnswersWithData)
+            WsTestClient.withClient { client =>
+              val result = createClientRequestPOST(
+                client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> correctionReasonDiff)
+              )
+
+              whenReady(result) { res =>
+                res.status mustBe 303
+                val expectedLocation = if (balanceRepaymentRequired) {
+                  routes.RepaymentMethodController.onPageLoad(NormalMode).url
+                } else {
+                  routes.CorrectReturnCheckChangesCYAController.onPageLoad.url
+                }
+                res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
+                val dataStoredForPage = getAnswers(userAnswersWithData.id).fold[Option[String]](None)(_.get(CorrectionReasonPage))
+                dataStoredForPage.nonEmpty mustBe true
+                dataStoredForPage.get mustBe correctionReasonDiff
+              }
             }
           }
         }
-
-        "when the session already contains data for page" in {
-          given
-            .commonPrecondition
-
-          setUpForCorrectReturn(userAnswers)
-          WsTestClient.withClient { client =>
-            val result = createClientRequestPOST(
-              client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> correctionReasonDiff)
-            )
-
-            whenReady(result) { res =>
-              res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.correctReturn.routes.RepaymentMethodController.onPageLoad(NormalMode).url)
-              val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[String]](None)(_.get(CorrectionReasonPage))
-              dataStoredForPage.nonEmpty mustBe true
-              dataStoredForPage.get mustBe correctionReasonDiff
-            }
-          }
-        }
-      }
+      })
     }
 
     "should return 400 with required error" - {
