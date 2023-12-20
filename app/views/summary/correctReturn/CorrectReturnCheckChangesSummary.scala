@@ -40,7 +40,7 @@ object CorrectReturnCheckChangesSummary {
     val correctionReasonSummary: Option[SummaryListRow] = CorrectionReasonSummary.row(userAnswers, isCheckAnswers)
 //    TODO: REFACTOR?
     val repaymentMethodSummary: Option[SummaryListRow] = userAnswers.get(BalanceRepaymentRequired) match {
-      case Some(false) => RepaymentMethodSummary.row(userAnswers, isCheckAnswers)
+      case Some(true) => RepaymentMethodSummary.row(userAnswers, isCheckAnswers)
       case _ => None
     }
     val correctionSectionSummaryList = Option(SummaryList(Seq(correctionReasonSummary, repaymentMethodSummary).flatten))

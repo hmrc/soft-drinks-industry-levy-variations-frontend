@@ -69,7 +69,7 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector)(im
                            (implicit hc: HeaderCarrier): VariationResult[Unit] = {
     //    TODO: REFACTOR?
     val repaymentMethod = userAnswers.get(BalanceRepaymentRequired) match {
-      case Some(false) => userAnswers.get(RepaymentMethodPage).map(_.toString)
+      case Some(true) => userAnswers.get(RepaymentMethodPage).map(_.toString)
       case _ => None
     }
     val returnsVariation = ReturnVariationData(

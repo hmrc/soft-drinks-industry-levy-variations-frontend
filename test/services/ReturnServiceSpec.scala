@@ -26,7 +26,7 @@ import models.{LitresInBands, SdilReturn}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.correctReturn.{CorrectionReasonPage, RepaymentMethodPage}
+import pages.correctReturn.{BalanceRepaymentRequired, CorrectionReasonPage, RepaymentMethodPage}
 import play.api.libs.json.Json
 
 import java.time.LocalDate
@@ -84,8 +84,9 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
     val originalReturn = emptySdilReturn
     val revisedReturn = emptySdilReturn.copy(ownBrand = Litreage(200, 200))
     "should submit the sdilReturnsVary and return unit" - {
-      "when the userAnswers contains correction reason and payment method" in {
+      "when the userAnswers contains correction reason and payment method and balance repayment required" in {
         val userAnswers = emptyUserAnswersForCorrectReturn
+          .set(BalanceRepaymentRequired, true).success.value
           .set(CorrectionReasonPage, "testing").success.value
           .set(RepaymentMethodPage, RepaymentMethod.BankAccount).success.value
         val expectedReturnVariation = ReturnVariationData(
@@ -98,6 +99,24 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
         val res = returnService.submitSdilReturnsVary(aSubscription, userAnswers, originalReturn, returnPeriod, revisedReturn)
 
         whenReady(res.value) {result =>
+          result mustBe Right((): Unit)
+        }
+      }
+
+      "when the userAnswers contains correction reason and balance repayment not required" in {
+        val userAnswers = emptyUserAnswersForCorrectReturn
+          .set(BalanceRepaymentRequired, false).success.value
+          .set(CorrectionReasonPage, "testing").success.value
+        val expectedReturnVariation = ReturnVariationData(
+          originalReturn, revisedReturn, returnPeriod, aSubscription.orgName,
+          aSubscription.address, "testing", None
+        )
+        when(mockSdilConnector.submitSdilReturnsVary(aSubscription.sdilRef, expectedReturnVariation)(hc))
+          .thenReturn(createSuccessVariationResult((): Unit))
+
+        val res = returnService.submitSdilReturnsVary(aSubscription, userAnswers, originalReturn, returnPeriod, revisedReturn)
+
+        whenReady(res.value) { result =>
           result mustBe Right((): Unit)
         }
       }
