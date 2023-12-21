@@ -202,10 +202,10 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
         PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitBoolean), PreviousPage(ContractPackingPage, List(true, false))(implicitBoolean))
     )
     if (emptyPackagingSites) {
-      List(pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackAtBusinessAddressPage, _)(implicitBoolean)),
-        pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean))).flatten
+      List(pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean)),
+        List(RequiredPage(PackAtBusinessAddressPage, List.empty)(implicitly[Reads[Boolean]]))).flatten
     } else {
-      List(pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean))).flatten
+      pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean))
     }
   }
 }
