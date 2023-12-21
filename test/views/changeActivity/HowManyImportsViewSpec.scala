@@ -60,7 +60,7 @@ class HowManyImportsViewSpec extends LitresSpecHelper {
 
         "should include a govuk body with the expected content" in {
           document.getElementsByClass(Selectors.body).text() mustBe
-          "Do not include liable drinks from small producers or your own brands if you are a registered small producer."
+          "If you do not have the exact volumes you can enter an estimate."
         }
 
         testLitresInBandsNoPrepopulatedData(document)
