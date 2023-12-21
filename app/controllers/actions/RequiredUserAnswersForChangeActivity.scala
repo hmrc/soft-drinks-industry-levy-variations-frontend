@@ -76,14 +76,14 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
     }
   }
 
-  val implicitAmountProduced = implicitly[Reads[AmountProduced]]
-  val implicitBands = implicitly[Reads[LitresInBands]]
-  val implicitBoolean = implicitly[Reads[Boolean]]
+  private val implicitAmountProduced = implicitly[Reads[AmountProduced]]
+  private val implicitBands = implicitly[Reads[LitresInBands]]
+  private val implicitBoolean = implicitly[Reads[Boolean]]
 
-  val largeProducer = AmountProduced.enumerable.withName("large").get
-  val smallProducer = AmountProduced.enumerable.withName("small").get
-  val noneProducer = AmountProduced.enumerable.withName("none").get
-  val previousPageSmallOrNonProducer = PreviousPage(AmountProducedPage, List(smallProducer, noneProducer))(implicitly[Reads[AmountProduced]])
+  val largeProducer: AmountProduced = AmountProduced.enumerable.withName("large").get
+  val smallProducer: AmountProduced = AmountProduced.enumerable.withName("small").get
+  private val noneProducer: AmountProduced = AmountProduced.enumerable.withName("none").get
+  private val previousPageSmallOrNonProducer = PreviousPage(AmountProducedPage, List(smallProducer, noneProducer))(implicitly[Reads[AmountProduced]])
 
   private[controllers] def journey: List[RequiredPage[_,_,_]] = {
 
@@ -118,9 +118,10 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
         PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitBoolean), PreviousPage(ContractPackingPage, List(true, false))(implicitBoolean))
     )
     if (emptyPackagingSites) {
-      pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean))
+      List(pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean)),
+        List(RequiredPage(PackAtBusinessAddressPage, List.empty)(implicitly[Reads[Boolean]]))).flatten
     } else {
-      List.empty
+      pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean))
     }
   }
 }

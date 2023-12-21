@@ -364,7 +364,8 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         HowManyOperatePackagingSiteOwnBrandsPage,
         ImportsPage,
         HowManyImportsPage,
-        PackagingSiteDetailsPage
+        PackagingSiteDetailsPage,
+        SecondaryWarehouseDetailsPage
       ).foreach { eachPage =>
         s"when $eachPage is filtered out from a full list of user answers of true, the user is taken to that page that is required " +
         s"for ${AmountProduced.Small}" in {
