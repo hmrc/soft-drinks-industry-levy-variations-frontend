@@ -22,7 +22,11 @@ import models.backend.Site
 import models.changeActivity.AmountProduced.{Large, None, Small}
 import models.changeActivity.AmountProduced
 import models.requests.{DataRequest, RequiredDataRequest}
+<<<<<<< HEAD
 import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
+=======
+import models.{CheckMode, LitresInBands, UserAnswers}
+>>>>>>> 916fe540 (DLS-9640 update return missing answers method to simplify conditional on line 68)
 import pages.{QuestionPage, changeActivity}
 import pages.changeActivity._
 import play.api.libs.json.Reads

@@ -107,6 +107,7 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
 
   private[controllers] def returnMissingAnswers[A: ClassTag, B: ClassTag](list: List[RequiredPage[_, _, _]])
                                                                          (implicit request: DataRequest[_]): List[RequiredPage[_, _, _]] = {
+
     val missingList = list.filterNot { listItem =>
       val currentPageFromUserAnswers: Option[A] = request.userAnswers.get(listItem.pageRequired
         .asInstanceOf[QuestionPage[A]])(listItem.reads.asInstanceOf[Reads[A]])
@@ -129,7 +130,6 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
         case _ => true
       }
     }
-    println(Console.YELLOW + "missing list " + missingList + Console.WHITE)
     missingList
   }
 
