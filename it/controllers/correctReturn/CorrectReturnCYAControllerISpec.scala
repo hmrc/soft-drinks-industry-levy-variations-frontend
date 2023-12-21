@@ -114,7 +114,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
 
           setUpForCorrectReturn(userAnswers, Some(populatedReturn))
 
-          given.sdilBackend.balance(userAnswers.id, withAssessment = false)
+          given.sdilBackend.balance(userAnswers.id, withAssessment = false, 500)
 
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
@@ -163,9 +163,9 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
               page.getElementsByClass("govuk-summary-list__key").get(7).text() mustBe "Total this quarter"
               page.getElementsByClass("govuk-summary-list__value  total-for-quarter govuk-!-text-align-right").get(0).text() mustBe "£0.00"
               page.getElementsByClass("govuk-summary-list__key").get(8).text() mustBe "Balance brought forward"
-              page.getElementsByClass("govuk-summary-list__value  balance-brought-forward govuk-!-text-align-right").get(0).text() mustBe "−£1,000.00"
+              page.getElementsByClass("govuk-summary-list__value  balance-brought-forward govuk-!-text-align-right").get(0).text() mustBe "−£500.00"
               page.getElementsByClass("govuk-summary-list__key").get(9).text() mustBe "Total"
-              page.getElementsByClass("govuk-summary-list__value  total govuk-!-text-align-right govuk-!-font-weight-bold").get(0).text() mustBe "−£1,000.00"
+              page.getElementsByClass("govuk-summary-list__value  total govuk-!-text-align-right govuk-!-font-weight-bold").get(0).text() mustBe "−£500.00"
               page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCYAController.onSubmit.url
               page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Save and continue"
             }
@@ -180,10 +180,13 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
 
   "POST " + routes.CorrectReturnCYAController.onPageLoad.url - {
     "should redirect to Correction Reason controller" in {
+      val userAnswers = userAnswerWithAllNosWithOriginalSdilReturn
       given
         .commonPrecondition
 
-      setUpForCorrectReturn(emptyUserAnswersForSelectChange(CorrectReturn))
+      setUpForCorrectReturn(userAnswers, Some(populatedReturn))
+
+      given.sdilBackend.balance(userAnswers.id, withAssessment = false)
 
       WsTestClient.withClient { client =>
         val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
@@ -191,6 +194,27 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
         whenReady(result) { res =>
           res.status mustBe 303
           res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectionReasonController.onPageLoad(NormalMode).url)
+        }
+      }
+    }
+
+    "when the balance has failed" - {
+      "the user should be redirected to Correct Return CYA and the error should be logged" in {
+        val correctReturnData = nilCorrectReturnUAData
+          .copy(broughtIntoUK = true, howManyBroughtIntoUK = Some(operatePackagingSiteLitres))
+        val userAnswers = userAnswerWithAllNosWithOriginalSdilReturn
+        given
+          .commonPrecondition
+
+        setUpForCorrectReturn(userAnswers)
+
+        given.sdilBackend.balance("", false)
+        WsTestClient.withClient { client =>
+          val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
+
+          whenReady(result) { res =>
+            res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
+          }
         }
       }
     }

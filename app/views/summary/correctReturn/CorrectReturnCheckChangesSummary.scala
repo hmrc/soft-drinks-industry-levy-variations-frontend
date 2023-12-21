@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import models.backend.RetrievedSubscription
 import models.correctReturn.ChangedPage
 import models.{Amounts, UserAnswers}
+import pages.correctReturn.BalanceRepaymentRequired
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 
@@ -37,12 +38,11 @@ object CorrectReturnCheckChangesSummary {
   private def correctionSection(userAnswers: UserAnswers, isCheckAnswers: Boolean)
                                (implicit messages: Messages): Option[(String, SummaryList)] = {
     val correctionReasonSummary: Option[SummaryListRow] = CorrectionReasonSummary.row(userAnswers, isCheckAnswers)
-    val repaymentMethodSummary: Option[SummaryListRow] = RepaymentMethodSummary.row(userAnswers, isCheckAnswers)
-
-    val correctionSectionSummaryList: Option[SummaryList] = for {
-      correctionReason <- correctionReasonSummary
-      repaymentMethod <- repaymentMethodSummary
-    } yield SummaryList(Seq(correctionReason, repaymentMethod))
+    val repaymentMethodSummary: Option[SummaryListRow] = userAnswers.get(BalanceRepaymentRequired) match {
+      case Some(true) => RepaymentMethodSummary.row(userAnswers, isCheckAnswers)
+      case _ => None
+    }
+    val correctionSectionSummaryList = Option(SummaryList(Seq(correctionReasonSummary, repaymentMethodSummary).flatten))
     correctionSectionSummaryList.map("correctReturn.correctionSection.checkYourAnswersLabel" -> _)
   }
 

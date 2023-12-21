@@ -190,36 +190,35 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
       routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
     }
   }
-
-  private def navigationForCorrectionReason(mode: Mode): Call = {
-    if (mode == NormalMode) {
-      routes.RepaymentMethodController.onPageLoad(mode)
-    } else {
-      routes.CorrectReturnCheckChangesCYAController.onPageLoad
+  
+  private def navigationForCorrectionReason(mode: Mode, userAnswers: UserAnswers): Call = {
+    (mode, userAnswers.get(BalanceRepaymentRequired)) match {
+      case (NormalMode, Some(true)) => routes.RepaymentMethodController.onPageLoad(NormalMode)
+      case _ => routes.CorrectReturnCheckChangesCYAController.onPageLoad
     }
   }
 
   override val normalRoutes: Page => UserAnswers => Call = {
-    case RemovePackagingSiteConfirmPage => userAnswers => navigationForRemovePackagingSiteConfirm(userAnswers, NormalMode)
+    case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
+    case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.PackagedAsContractPackerController.onPageLoad(NormalMode)
+    case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, NormalMode)
+    case HowManyPackagedAsContractPackerPage => _ => routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
+    case ExemptionsForSmallProducersPage => userAnswers => navigationForExemptionsForSmallProducers(userAnswers, NormalMode)
+    case AddASmallProducerPage => _ => navigationForAddASmallProducer(NormalMode)
+    case SmallProducerDetailsPage => userAnswers => navigationForSmallProducerDetails(userAnswers, NormalMode)
+    case RemoveSmallProducerConfirmPage => userAnswers => navigationForRemoveSmallProducerConfirm(userAnswers, NormalMode)
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, NormalMode)
     case HowManyBroughtIntoUKPage => _ => routes.BroughtIntoUkFromSmallProducersController.onPageLoad(NormalMode)
     case BroughtIntoUkFromSmallProducersPage => userAnswers => navigationForBroughtIntoUkFromSmallProducers(userAnswers, NormalMode)
     case HowManyBroughtIntoUkFromSmallProducersPage => _ => routes.ClaimCreditsForExportsController.onPageLoad(NormalMode)
     case ClaimCreditsForExportsPage => userAnswers => navigationForClaimCreditsForExports(userAnswers, NormalMode)
     case HowManyClaimCreditsForExportsPage => _ => routes.ClaimCreditsForLostDamagedController.onPageLoad(NormalMode)
-    case ExemptionsForSmallProducersPage => userAnswers => navigationForExemptionsForSmallProducers(userAnswers, NormalMode)
-    case AddASmallProducerPage => _ => navigationForAddASmallProducer(NormalMode)
-    case SmallProducerDetailsPage => userAnswers => navigationForSmallProducerDetails(userAnswers, NormalMode)
+    case RemovePackagingSiteConfirmPage => userAnswers => navigationForRemovePackagingSiteConfirm(userAnswers, NormalMode)
     case AskSecondaryWarehouseInReturnPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case SecondaryWarehouseDetailsPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case RemoveWarehouseDetailsPage => userAnswers => navigationForRemoveWarehouse(userAnswers, NormalMode)
-    case CorrectionReasonPage => _ => navigationForCorrectionReason(NormalMode)
-    case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
-    case HowManyOperatePackagingSiteOwnBrandsPage => userAnswers => routes.PackagedAsContractPackerController.onPageLoad(NormalMode)
+    case CorrectionReasonPage => userAnswers => navigationForCorrectionReason(NormalMode, userAnswers)
     case RepaymentMethodPage => userAnswers => routes.CorrectReturnCheckChangesCYAController.onPageLoad
-    case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, NormalMode)
-    case HowManyPackagedAsContractPackerPage => _ => routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
-    case RemoveSmallProducerConfirmPage => userAnswers => navigationForRemoveSmallProducerConfirm(userAnswers, NormalMode)
     case _ => _ => defaultCall
   }
 
@@ -233,26 +232,26 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   }
 
   override val checkRouteMap: Page => UserAnswers => Call = {
+    case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
+    case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.CorrectReturnCYAController.onPageLoad
+    case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, CheckMode)
+    case ExemptionsForSmallProducersPage => userAnswers => navigationForExemptionsForSmallProducers(userAnswers, CheckMode)
+    case AddASmallProducerPage => _ => navigationForAddASmallProducer(CheckMode)
+    case SmallProducerDetailsPage => userAnswers => navigationForSmallProducerDetails(userAnswers, CheckMode)
+    case RemoveSmallProducerConfirmPage => userAnswers => navigationForRemoveSmallProducerConfirm(userAnswers, CheckMode)
     case BroughtIntoUKPage => userAnswers => navigationForBroughtIntoUK(userAnswers, CheckMode)
     case BroughtIntoUkFromSmallProducersPage => userAnswers => navigationForBroughtIntoUkFromSmallProducers(userAnswers, CheckMode)
     case HowManyBroughtIntoUkFromSmallProducersPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case ClaimCreditsForExportsPage => userAnswers => navigationForClaimCreditsForExports(userAnswers, CheckMode)
     case HowManyClaimCreditsForExportsPage => _ => routes.CorrectReturnCYAController.onPageLoad
-    case ExemptionsForSmallProducersPage => userAnswers => navigationForExemptionsForSmallProducers(userAnswers, CheckMode)
-    case AddASmallProducerPage => _ => navigationForAddASmallProducer(CheckMode)
-    case SmallProducerDetailsPage => userAnswers => navigationForSmallProducerDetails(userAnswers, CheckMode)
-    case PackagedAsContractPackerPage => userAnswers => navigationForPackagedAsContractPacker(userAnswers, CheckMode)
-    case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
-    case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case ClaimCreditsForLostDamagedPage => userAnswers => navigationForCreditsForLostDamagedInCheckMode(userAnswers)
     case HowManyCreditsForLostDamagedPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case PackagingSiteDetailsPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case RemovePackagingSiteConfirmPage => userAnswers => navigationForRemovePackagingSiteConfirm(userAnswers, CheckMode)
-    case RemoveSmallProducerConfirmPage => userAnswers => navigationForRemoveSmallProducerConfirm(userAnswers, CheckMode)
     case AskSecondaryWarehouseInReturnPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case SecondaryWarehouseDetailsPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case RemoveWarehouseDetailsPage => userAnswers => navigationForRemoveWarehouse(userAnswers, CheckMode)
-    case CorrectionReasonPage => _ => navigationForCorrectionReason(CheckMode)
+    case CorrectionReasonPage => userAnswers => navigationForCorrectionReason(CheckMode, userAnswers)
     case RepaymentMethodPage => _ => routes.CorrectReturnCheckChangesCYAController.onPageLoad
     case _ => _ => routes.CorrectReturnCYAController.onPageLoad
   }

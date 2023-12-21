@@ -453,11 +453,12 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
       }
 
       s"when the user has made their changes" - {
-        "should render the check changes page with balance" in {
+        "should render the check changes page with balance when balance repayment required" in {
           val correctReturnData = nilCorrectReturnUAData
             .copy(broughtIntoUK = true, howManyBroughtIntoUK = Some(operatePackagingSiteLitres))
           val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
             .copy(warehouseList = warehousesFromSubscription)
+            .set(BalanceRepaymentRequired, true).success.value
             .set(CorrectionReasonPage, "I forgot something").success.value
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
           given
@@ -490,9 +491,47 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             }
           }
         }
+
+        "should render the check changes page with balance when balance repayment not required" in {
+          val correctReturnData = nilCorrectReturnUAData
+            .copy(broughtIntoUK = true, howManyBroughtIntoUK = Some(operatePackagingSiteLitres))
+          val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
+            .copy(warehouseList = warehousesFromSubscription)
+            .set(BalanceRepaymentRequired, false).success.value
+            .set(CorrectionReasonPage, "I forgot something").success.value
+          given
+            .commonPrecondition
+
+          setUpForCorrectReturn(userAnswers)
+
+          given.sdilBackend.balance(userAnswers.id, false, 500)
+          WsTestClient.withClient { client =>
+            val result = createClientRequestGet(client, baseUrl + route)
+
+            whenReady(result) { res =>
+              res.status mustBe OK
+
+              val page = Jsoup.parse(res.body)
+              page.title mustBe "Check your answers before sending your correction - Soft Drinks Industry Levy - GOV.UK"
+              page.getElementsByClass("govuk-summary-list").size() mustBe 4
+
+              page.getElementsByTag("h2").get(3).text() mustBe "Balance"
+              page.getElementsByClass("govuk-summary-list__key").get(7).text() mustBe "Original return total"
+              page.getElementsByClass("govuk-summary-list__value  original-return-total govuk-!-text-align-right").get(0).text() mustBe "£0.00"
+              page.getElementsByClass("govuk-summary-list__key").get(8).text() mustBe "New return total"
+              page.getElementsByClass("govuk-summary-list__value  new-return-total govuk-!-text-align-right").get(0).text() mustBe "£660.00"
+              page.getElementsByClass("govuk-summary-list__key").get(9).text() mustBe "Account balance"
+              page.getElementsByClass("govuk-summary-list__value  balance-brought-forward govuk-!-text-align-right").get(0).text() mustBe "−£500.00"
+              page.getElementsByClass("govuk-summary-list__key").get(10).text() mustBe "Net adjusted amount"
+              page.getElementsByClass("govuk-summary-list__value  net-adjusted-amount govuk-!-text-align-right govuk-!-font-weight-bold")
+                .get(0).text() mustBe "£160.00"
+              page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm details and send correction"
+            }
+          }
+        }
       }
 
-      s"when the balance has failed" - {
+      "when the balance has failed" - {
         "the user should be redirected to select change and the error should be logged" in {
           val correctReturnData = nilCorrectReturnUAData
             .copy(broughtIntoUK = true, howManyBroughtIntoUK = Some(operatePackagingSiteLitres))
@@ -523,15 +562,39 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
   }
 
   "POST " + routes.CorrectReturnCheckChangesCYAController.onSubmit.url - {
-    "should redirect to select return to correct page" in {
+    "should redirect to correct return update done page when balance repayment required" in {
       given
         .commonPrecondition
         .sdilBackend.submitSdilReturnsVary("XKSDIL000000022")
         .sdilBackend.submitReturnVariations("XKSDIL000000022")
 
-      setUpForCorrectReturn(userAnswerWithLitresForAllPagesNilSdilReturn
+      val userAnswers = userAnswerWithLitresForAllPagesNilSdilReturn
+        .set(BalanceRepaymentRequired, true).success.value
         .set(CorrectionReasonPage, "No longer sell drinks").success.value
-        .set(RepaymentMethodPage, BankAccount).success.value)
+        .set(RepaymentMethodPage, BankAccount).success.value
+      setUpForCorrectReturn(userAnswers)
+
+      WsTestClient.withClient { client =>
+        val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
+
+        whenReady(result) { res =>
+          res.status mustBe 303
+          res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+          checkReturnsVariationSubmission.checkReturnVariationSubmissionSent(wireMockServer, populatedReturn)
+        }
+      }
+    }
+
+    "should redirect to correct return update done page when balance repayment not required" in {
+      given
+        .commonPrecondition
+        .sdilBackend.submitSdilReturnsVary("XKSDIL000000022")
+        .sdilBackend.submitReturnVariations("XKSDIL000000022")
+
+      val userAnswers = userAnswerWithLitresForAllPagesNilSdilReturn
+        .set(BalanceRepaymentRequired, false).success.value
+        .set(CorrectionReasonPage, "No longer sell drinks").success.value
+      setUpForCorrectReturn(userAnswers)
 
       WsTestClient.withClient { client =>
         val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
