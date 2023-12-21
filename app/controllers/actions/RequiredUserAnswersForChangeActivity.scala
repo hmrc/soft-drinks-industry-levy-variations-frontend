@@ -42,7 +42,8 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
     val fullJourney = journey ++ packagingSiteChangeActivityJourney(request.userAnswers.packagingSiteList.isEmpty)
     val userAnswersMissing: List[RequiredPage[_,_,_]] = returnMissingAnswers(fullJourney)
     if (userAnswersMissing.nonEmpty) {
-      genericLogger.logger.warn(s"${request.userAnswers.id} has hit CYA and is missing $userAnswersMissing, user will be redirected to ${userAnswersMissing.head.pageRequired}")
+      genericLogger.logger.warn(
+        s"${request.userAnswers.id} has hit CYA and is missing $userAnswersMissing, user will be redirected to ${userAnswersMissing.head.pageRequired}")
       Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(CheckMode)))
     } else {
       action
@@ -52,7 +53,8 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
   private[controllers] def returnMissingAnswers[A: ClassTag, B: ClassTag](list: List[RequiredPage[_, _, _]])
                                                                          (implicit request: DataRequest[_]): List[RequiredPage[_, _, _]] = {
     list.filterNot { listItem =>
-      val currentPageFromUserAnswers: Option[A] = request.userAnswers.get(listItem.pageRequired.asInstanceOf[QuestionPage[A]])(listItem.reads.asInstanceOf[Reads[A]])
+      val currentPageFromUserAnswers: Option[A] = request.userAnswers.get(listItem.pageRequired
+        .asInstanceOf[QuestionPage[A]])(listItem.reads.asInstanceOf[Reads[A]])
       (currentPageFromUserAnswers.isDefined, listItem.basedOnPreviousPages.nonEmpty) match {
         case (false, true) =>
           val previousUserAnswersMatchedToResultInCurrentPageRequired: List[Boolean] = listItem.basedOnPreviousPages.map { previousListItem =>
@@ -63,10 +65,10 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
               case _ => !previousPageAnswer.exists(i => previousPageRequired.previousPageAnswerRequired.contains(i))
             }
           }
-          if (previousUserAnswersMatchedToResultInCurrentPageRequired.contains(true) && previousUserAnswersMatchedToResultInCurrentPageRequired.contains(false)) {
+          if (previousUserAnswersMatchedToResultInCurrentPageRequired.contains(true)) {
             true
           } else {
-            !previousUserAnswersMatchedToResultInCurrentPageRequired.contains(false)
+            false
           }
         case (false, _) => false
         case _ => true

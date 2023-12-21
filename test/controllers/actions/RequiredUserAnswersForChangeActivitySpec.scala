@@ -22,7 +22,7 @@ import models.changeActivity.AmountProduced.{Large, None, Small}
 import models.changeActivity.AmountProduced
 import models.requests.{DataRequest, RequiredDataRequest}
 import models.{CheckMode, LitresInBands, UserAnswers}
-import pages.QuestionPage
+import pages.{QuestionPage, changeActivity}
 import pages.changeActivity._
 import play.api.libs.json.Reads
 import play.api.mvc.Results.Ok
@@ -386,6 +386,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
           res.get mustBe eachPage.url(CheckMode)
         }
       }
+
       List[QuestionPage[_]](
         AmountProducedPage,
         ContractPackingPage,
