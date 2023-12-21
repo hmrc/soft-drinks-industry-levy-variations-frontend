@@ -41,7 +41,8 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
   def dataRequest(userAnswers: UserAnswers): DataRequest[AnyContentAsEmpty.type] = RequiredDataRequest(FakeRequest(), "", aSubscription, userAnswers)
   "requireData" - {
     "should return result passed in when not a page matched in function" in {
-      contentAsString(requiredUserAnswers.requireData(AmountProducedPage)(exampleSuccessAction)(dataRequest(emptyUserAnswersForChangeActivity))) mustBe exampleSuccessActionResult
+      contentAsString(requiredUserAnswers.requireData(AmountProducedPage)(exampleSuccessAction)
+      (dataRequest(emptyUserAnswersForChangeActivity))) mustBe exampleSuccessActionResult
     }
     s"should return result passed in when page is $ChangeActivityCYAPage" - {
       s"when AmountProduced is $Large and all answers are answered" in {
@@ -58,7 +59,8 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(PackagingSiteDetailsPage, true).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
+        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
       }
     }
 
@@ -73,10 +75,11 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
+        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
       }
 
-      s"when $AmountProducedPage is $Small contract packing is false and pack at business address is not answered" in {
+      s"when $AmountProducedPage is $Small, $ThirdPartyPackagersPage is true, contract packing is false and pack at business address is not answered" in {
         val userAnswers = {
           emptyUserAnswersForChangeActivity
             .set(AmountProducedPage, Small).success.value
@@ -88,7 +91,8 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
+        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
       }
 
       s"when $AmountProducedPage is $None and all answers are answered" in {
@@ -103,7 +107,8 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(PackagingSiteDetailsPage, true).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
+        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
       }
 
       s"when $AmountProducedPage is $None, contract packing is false and pack at business address is not answered" in {
@@ -115,7 +120,8 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
+        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
       }
 
       s"when all $LitresInBands are not required" in {
@@ -128,7 +134,8 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(ImportsPage, false).success.value
             .set(SecondaryWarehouseDetailsPage, false).success.value
         }
-        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
+        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
       }
 
       s"when AmountProduced is $Small, $ThirdPartyPackagersPage is true, $ContractPackingPage is false, $OperatePackagingSiteOwnBrandsPage " +
@@ -142,7 +149,8 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(ImportsPage, false).success.value
             .set(SecondaryWarehouseDetailsPage, false).success.value
         }
-        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
+        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
       }
 
       s"when AmountProduced is $Small, $ThirdPartyPackagersPage is true, $OperatePackagingSiteOwnBrandsPage is true, $ContractPackingPage " +
@@ -157,7 +165,76 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(ImportsPage, false).success.value
             .set(SecondaryWarehouseDetailsPage, false).success.value
         }
-        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
+        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+      }
+
+      s"when AmountProduced is $Small, $ThirdPartyPackagersPage is false, $OperatePackagingSiteOwnBrandsPage is true, " +
+        s"$ContractPackingPage is true, $ImportsPage is false" in {
+        val userAnswers = {
+          emptyUserAnswersForChangeActivity
+            .set(AmountProducedPage, Small).success.value
+            .set(ThirdPartyPackagersPage, false).success.value
+            .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+            .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1, 1)).success.value
+            .set(ContractPackingPage, true).success.value
+            .set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value
+            .set(ImportsPage, false).success.value
+            .set(PackagingSiteDetailsPage, false).success.value
+            .set(SecondaryWarehouseDetailsPage, false).success.value
+        }
+        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
+        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+      }
+
+      s"when AmountProduced is $Small, $ThirdPartyPackagersPage is false, $OperatePackagingSiteOwnBrandsPage is false, " +
+        s"$ContractPackingPage is true, $ImportsPage is false" in {
+        val userAnswers = {
+          emptyUserAnswersForChangeActivity
+            .set(AmountProducedPage, Small).success.value
+            .set(ThirdPartyPackagersPage, false).success.value
+            .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+            .set(ContractPackingPage, true).success.value
+            .set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value
+            .set(ImportsPage, false).success.value
+            .set(PackagingSiteDetailsPage, false).success.value
+            .set(SecondaryWarehouseDetailsPage, false).success.value
+        }
+        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
+        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+      }
+
+      s"when AmountProduced is $Small, $ThirdPartyPackagersPage is false, $OperatePackagingSiteOwnBrandsPage is true, " +
+        s"$ContractPackingPage is false, $ImportsPage is true" in {
+        val userAnswers = {
+          emptyUserAnswersForChangeActivity
+            .set(AmountProducedPage, Small).success.value
+            .set(ThirdPartyPackagersPage, false).success.value
+            .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+            .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1, 1)).success.value
+            .set(ContractPackingPage, false).success.value
+            .set(ImportsPage, true).success.value
+            .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
+            .set(SecondaryWarehouseDetailsPage, false).success.value
+        }
+        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
+        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+      }
+
+      s"when AmountProduced is $Small, $ThirdPartyPackagersPage is false, $OperatePackagingSiteOwnBrandsPage is false, " +
+        s"$ContractPackingPage is false, $ImportsPage is true" in {
+        val userAnswers = {
+          emptyUserAnswersForChangeActivity
+            .set(AmountProducedPage, Small).success.value
+            .set(ThirdPartyPackagersPage, false).success.value
+            .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+            .set(ContractPackingPage, false).success.value
+            .set(ImportsPage, true).success.value
+            .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
+            .set(SecondaryWarehouseDetailsPage, false).success.value
+        }
+        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
+        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
       }
     }
 
@@ -234,7 +311,8 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         HowManyImportsPage,
         PackagingSiteDetailsPage
       ).foreach { eachPage =>
-        s"when $eachPage is filtered out from a full list of user answers set to true, the user is taken to that page that is required for ${AmountProduced.Large}" in {
+        s"when $eachPage is filtered out from a full list of user answers set to true, the user is taken to that page that is required for " +
+          s"${AmountProduced.Large}" in {
           val userAnswers = {
             emptyUserAnswersForChangeActivity
               .set(AmountProducedPage, AmountProduced.Large).success.value
@@ -259,7 +337,9 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         OperatePackagingSiteOwnBrandsPage,
         ImportsPage
       ).foreach { eachPage =>
-        s"when $eachPage is filtered out from a full list of user answers set to false, the user is taken to that page that is required for ${AmountProduced.Large}" in {
+        s"when $eachPage is filtered out from a full list of user answers set to false, the user is taken to that page that is required " +
+        s"for ${AmountProduced.Large}" in {
+
           val userAnswers = {
             emptyUserAnswersForChangeActivity
               .set(AmountProducedPage, AmountProduced.Large).success.value
@@ -286,7 +366,8 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         HowManyImportsPage,
         PackagingSiteDetailsPage
       ).foreach { eachPage =>
-        s"when $eachPage is filtered out from a full list of user answers of true, the user is taken to that page that is required for ${AmountProduced.Small}" in {
+        s"when $eachPage is filtered out from a full list of user answers of true, the user is taken to that page that is required " +
+        s"for ${AmountProduced.Small}" in {
           val userAnswers = {
             emptyUserAnswersForChangeActivity
               .set(AmountProducedPage, AmountProduced.Small).success.value
@@ -313,7 +394,8 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         ImportsPage,
         HowManyImportsPage
       ).foreach { eachPage =>
-        s"when $eachPage is filtered out from a full list of user answers of false, the user is taken to that page that is required for ${AmountProduced.Small}" in {
+        s"when $eachPage is filtered out from a full list of user answers of false, the user is taken to that page that is required " +
+        s"for ${AmountProduced.Small}" in {
           val userAnswers = {
             emptyUserAnswersForChangeActivity
               .set(AmountProducedPage, AmountProduced.Small).success.value
@@ -339,7 +421,8 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         ImportsPage,
         HowManyImportsPage
       ).foreach { eachPage =>
-        s"when $eachPage is filtered out from a full list of user answers of true, the user is taken to that page that is required for ${AmountProduced.None}" in {
+        s"when $eachPage is filtered out from a full list of user answers of true, the user is taken to that page that is required " +
+        s"for ${AmountProduced.None}" in {
           val userAnswers = {
             emptyUserAnswersForChangeActivity
               .set(AmountProducedPage, AmountProduced.None).success.value
@@ -364,7 +447,8 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         ImportsPage,
         HowManyImportsPage
       ).foreach { eachPage =>
-        s"when $eachPage is filtered out from a full list of user answers of false, the user is taken to that page that is required for ${AmountProduced.None}" in {
+        s"when $eachPage is filtered out from a full list of user answers of false, the user is taken to that page that is required " +
+        s"for ${AmountProduced.None}" in {
           val userAnswers = {
             emptyUserAnswersForChangeActivity
               .set(AmountProducedPage, AmountProduced.None).success.value
