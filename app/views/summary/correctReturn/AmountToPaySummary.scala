@@ -37,19 +37,19 @@ object AmountToPaySummary  {
         key = "correctReturn.checkYourAnswers.totalThisQuarter",
         value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(totalForQuarter)
           .replace("-", "&minus;")))
-          .withCssClass("total-for-quarter govuk-!-text-align-right")
+          .withCssClass("total-for-quarter sdil-right-align--desktop")
       ),
       SummaryListRowViewModel(
         key = "correctReturn.checkYourAnswers.balanceBroughtForward",
         value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(negatedBalanceBroughtForward)
           .replace("-", "&minus;")))
-          .withCssClass("balance-brought-forward govuk-!-text-align-right")
+          .withCssClass("balance-brought-forward sdil-right-align--desktop")
       ),
       SummaryListRowViewModel(
         key = "correctReturn.checkYourAnswers.total",
         value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(total)
           .replace("-", "&minus;")))
-          .withCssClass("total govuk-!-text-align-right govuk-!-font-weight-bold")
+          .withCssClass("total sdil-right-align--desktop govuk-!-font-weight-bold")
       ))
     )
   }
@@ -76,22 +76,22 @@ object AmountToPaySummary  {
       SummaryListRowViewModel(
         key = "correctReturn.checkChanges.originalReturnTotal",
         value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(originalReturnTotal).replace("-", "&minus;")))
-          .withCssClass("original-return-total govuk-!-text-align-right")
+          .withCssClass("original-return-total sdil-right-align--desktop")
       ),
       SummaryListRowViewModel(
         key = "correctReturn.checkChanges.newReturnTotal",
         value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(newReturnTotal).replace("-", "&minus;")))
-          .withCssClass("new-return-total govuk-!-text-align-right")
+          .withCssClass("new-return-total sdil-right-align--desktop")
       ),
       SummaryListRowViewModel(
         key = "correctReturn.checkChanges.balanceBroughtForward",
         value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(negatedBalanceBroughtForward).replace("-", "&minus;")))
-          .withCssClass("balance-brought-forward govuk-!-text-align-right")
+          .withCssClass("balance-brought-forward sdil-right-align--desktop")
       ),
       SummaryListRowViewModel(
         key = "correctReturn.checkChanges.adjustedAmount",
         value = ValueViewModel(HtmlContent(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(adjustedAmount).replace("-", "&minus;")))
-          .withCssClass("net-adjusted-amount govuk-!-text-align-right govuk-!-font-weight-bold")
+          .withCssClass("net-adjusted-amount sdil-right-align--desktop govuk-!-font-weight-bold")
       ))
     )
   }

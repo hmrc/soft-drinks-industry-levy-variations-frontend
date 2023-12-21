@@ -161,11 +161,11 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
 
               page.getElementsByTag("h2").get(7).text() mustBe "Summary"
               page.getElementsByClass("govuk-summary-list__key").get(7).text() mustBe "Total this quarter"
-              page.getElementsByClass("govuk-summary-list__value  total-for-quarter govuk-!-text-align-right").get(0).text() mustBe "£0.00"
+              page.getElementsByClass("govuk-summary-list__value  total-for-quarter sdil-right-align--desktop").get(0).text() mustBe "£0.00"
               page.getElementsByClass("govuk-summary-list__key").get(8).text() mustBe "Balance brought forward"
-              page.getElementsByClass("govuk-summary-list__value  balance-brought-forward govuk-!-text-align-right").get(0).text() mustBe "−£500.00"
+              page.getElementsByClass("govuk-summary-list__value  balance-brought-forward sdil-right-align--desktop").get(0).text() mustBe "−£500.00"
               page.getElementsByClass("govuk-summary-list__key").get(9).text() mustBe "Total"
-              page.getElementsByClass("govuk-summary-list__value  total govuk-!-text-align-right govuk-!-font-weight-bold").get(0).text() mustBe "−£500.00"
+              page.getElementsByClass("govuk-summary-list__value  total sdil-right-align--desktop govuk-!-font-weight-bold").get(0).text() mustBe "−£500.00"
               page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCYAController.onSubmit.url
               page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Save and continue"
             }
