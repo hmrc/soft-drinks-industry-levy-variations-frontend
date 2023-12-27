@@ -41,7 +41,6 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
   private[controllers] def checkYourAnswersRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
     val fullJourney = journey ++ packagingSiteChangeActivityJourney(request.userAnswers.packagingSiteList.isEmpty)
     val userAnswersMissing: List[RequiredPage[_,_,_]] = returnMissingAnswers(fullJourney)
-    println(Console.YELLOW + "missing pages: " + userAnswersMissing + Console.WHITE)
     if (userAnswersMissing.nonEmpty) {
       genericLogger.logger.warn(
         s"${request.userAnswers.id} has hit CYA and is missing $userAnswersMissing, user will be redirected to ${userAnswersMissing.head.pageRequired}")
