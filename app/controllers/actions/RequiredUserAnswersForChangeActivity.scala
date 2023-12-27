@@ -45,7 +45,6 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
   private[controllers] def checkYourAnswersRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
     val fullJourney = baseJourney ++ packagingSiteChangeActivityJourney(request.userAnswers.packagingSiteList.isEmpty)
     val userAnswersMissing: List[RequiredPage[_,_,_]] = returnMissingAnswers(fullJourney)
-    println(Console.YELLOW + "Missing UAs" + userAnswersMissing + Console.WHITE)
     if (userAnswersMissing.nonEmpty) {
       genericLogger.logger.warn(
         s"${request.userAnswers.id} has hit CYA and is missing $userAnswersMissing, user will be redirected to ${userAnswersMissing.head.pageRequired}")
@@ -202,8 +201,8 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
         PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitBoolean), PreviousPage(ContractPackingPage, List(true, false))(implicitBoolean))
     )
     if (emptyPackagingSites) {
-      List(pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean)),
-        List(RequiredPage(PackAtBusinessAddressPage, List.empty)(implicitly[Reads[Boolean]]))).flatten
+      List(pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackAtBusinessAddressPage, _)(implicitBoolean)),
+        pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean))).flatten
     } else {
       List(pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean))).flatten
     }

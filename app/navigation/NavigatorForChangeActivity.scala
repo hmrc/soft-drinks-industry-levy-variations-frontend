@@ -106,10 +106,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     (isVoluntaryReg, userAnswers.get(ContractPackingPage), userAnswers.get(SecondaryWarehouseDetailsPage), mode) match {
       case (_, None, _, NormalMode) => routes.ContractPackingController.onPageLoad(NormalMode)
       case (false, Some(true), _, NormalMode) if userAnswers.packagingSiteList.isEmpty => routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
-      case (false, Some(true), _, NormalMode) => {
-        println(Console.YELLOW + "Reaching nav following imports" + Console.WHITE)
-        routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
-      }
+      case (false, Some(true), _, NormalMode) => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
       case (false, Some(false), _, NormalMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
       case (false, _, None, CheckMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
       case (false, _, Some(_), CheckMode) => routes.ChangeActivityCYAController.onPageLoad

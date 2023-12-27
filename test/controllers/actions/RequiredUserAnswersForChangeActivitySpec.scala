@@ -186,6 +186,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(ContractPackingPage, true).success.value
             .set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value
             .set(ImportsPage, false).success.value
+            .set(PackAtBusinessAddressPage, true).success.value
             .set(PackagingSiteDetailsPage, false).success.value
             .set(SecondaryWarehouseDetailsPage, false).success.value
         }
@@ -203,6 +204,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(ContractPackingPage, true).success.value
             .set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value
             .set(ImportsPage, false).success.value
+            .set(PackAtBusinessAddressPage, true).success.value
             .set(PackagingSiteDetailsPage, false).success.value
             .set(SecondaryWarehouseDetailsPage, false).success.value
         }
