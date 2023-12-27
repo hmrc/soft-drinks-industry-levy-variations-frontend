@@ -17,6 +17,7 @@
 package controllers.actions
 
 import base.SpecBase
+import controllers.actions
 import models.backend.Site
 import models.changeActivity.AmountProduced.{Large, None, Small}
 import models.changeActivity.AmountProduced
@@ -44,6 +45,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
       contentAsString(requiredUserAnswers.requireData(AmountProducedPage)(exampleSuccessAction)
       (dataRequest(emptyUserAnswersForChangeActivity))) mustBe exampleSuccessActionResult
     }
+
     s"should return result passed in when page is $ChangeActivityCYAPage" - {
       s"when AmountProduced is $Large and all answers are answered" in {
         val userAnswers = {
@@ -548,7 +550,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
       s"should return all missing answers when user answers is empty and packaging site list is ${if (packagingSitesEmpty) "" else "not "}empty" in {
         val userAnswers = emptyUserAnswersForChangeActivity.copy(packagingSiteList = packagingSiteList)
         implicit val dataRequest: DataRequest[AnyContentAsEmpty.type] = RequiredDataRequest(FakeRequest(), "", aSubscription, userAnswers)
-        val journey = requiredUserAnswers.journey ++
+        val journey = requiredUserAnswers.baseJourney ++
           requiredUserAnswers.packagingSiteChangeActivityJourney(packagingSitesEmpty)
         val res = requiredUserAnswers.returnMissingAnswers(journey)
         res mustBe
@@ -574,7 +576,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         }
         implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
 
-        val journey = requiredUserAnswers.journey ++
+        val journey = requiredUserAnswers.baseJourney ++
           requiredUserAnswers.packagingSiteChangeActivityJourney(packagingSitesEmpty)
         val res = requiredUserAnswers.returnMissingAnswers(journey)
         val requiredPages = if (packagingSitesEmpty) {
@@ -612,7 +614,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
         implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-        val journey = requiredUserAnswers.journey ++
+        val journey = requiredUserAnswers.baseJourney ++
           requiredUserAnswers.packagingSiteChangeActivityJourney(packagingSitesEmpty)
         val res = requiredUserAnswers.returnMissingAnswers(journey)
         val requiredPages = if (packagingSitesEmpty) {
@@ -669,7 +671,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
         implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-        val journey = requiredUserAnswers.journey ++
+        val journey = requiredUserAnswers.baseJourney ++
           requiredUserAnswers.packagingSiteChangeActivityJourney(packagingSitesEmpty)
         val res = requiredUserAnswers.returnMissingAnswers(journey)
 
@@ -689,7 +691,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
         implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-        val journey = requiredUserAnswers.journey ++
+        val journey = requiredUserAnswers.baseJourney ++
           requiredUserAnswers.packagingSiteChangeActivityJourney(packagingSitesEmpty)
         val res = requiredUserAnswers.returnMissingAnswers(journey)
 
