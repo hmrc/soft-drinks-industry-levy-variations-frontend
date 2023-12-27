@@ -121,7 +121,7 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
       List(pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean)),
         List(RequiredPage(PackAtBusinessAddressPage, List.empty)(implicitly[Reads[Boolean]]))).flatten
     } else {
-      pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean))
+      List(pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean))).flatten
     }
   }
 }

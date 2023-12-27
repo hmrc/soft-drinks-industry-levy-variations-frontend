@@ -23,6 +23,7 @@ import handlers.ErrorHandler
 import models.Mode
 import models.SelectChange.ChangeActivity
 import navigation._
+import pages.changeActivity.SecondaryWarehouseDetailsPage
 import play.api.data.Form
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
@@ -77,8 +78,11 @@ class SecondaryWarehouseDetailsController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, summaryList, mode))),
 
-        value =>
+        value => {
+          val updatedAnswers = request.userAnswers.set(SecondaryWarehouseDetailsPage, value)
+          updateDatabaseWithoutRedirect(updatedAnswers, SecondaryWarehouseDetailsPage)
           getOnwardUrl(value, mode).map(Redirect(_))
+        }
       )
   }
 
