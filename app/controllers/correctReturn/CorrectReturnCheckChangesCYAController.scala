@@ -23,7 +23,7 @@ import handlers.ErrorHandler
 import models.SdilReturn
 import models.correctReturn.ChangedPage
 import orchestrators.CorrectReturnOrchestrator
-import pages.correctReturn.CorrectReturnUpdateDonePage
+import pages.correctReturn.{CorrectReturnCheckChangesPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -47,7 +47,7 @@ class CorrectReturnCheckChangesCYAController @Inject()(
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-      requiredUserAnswers.requireData(CorrectReturnUpdateDonePage) {
+      requiredUserAnswers.requireData(CorrectReturnCheckChangesPage) {
           val currentSDILReturn = SdilReturn.generateFromUserAnswers(request.userAnswers)
           val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(request.originalSdilReturn, currentSDILReturn)
           val calculateAmounts = correctReturnOrchestrator.calculateAmounts(request.sdilEnrolment, request.userAnswers, request.returnPeriod, request.originalSdilReturn)
