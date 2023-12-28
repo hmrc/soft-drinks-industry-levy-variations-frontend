@@ -19,14 +19,16 @@ package controllers.changeActivity
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.changeActivity.ContractPackingFormProvider
-import models.NormalMode
+import models.{NormalMode, UserAnswers}
 import models.SelectChange.ChangeActivity
+import models.changeActivity.AmountProduced
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.changeActivity.ContractPackingPage
+import pages.changeActivity._
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -39,18 +41,23 @@ import scala.concurrent.Future
 
 class ContractPackingControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new ContractPackingFormProvider()
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  lazy val contractPackingRoute = routes.ContractPackingController.onPageLoad(NormalMode).url
+  val contractPackingJourneyUserAnswers: UserAnswers = emptyUserAnswersForChangeActivity
+    .set(AmountProducedPage, AmountProduced.Small).success.value
+    .set(ThirdPartyPackagersPage, true).success.value
+    .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+
+  lazy val contractPackingRoute: String = routes.ContractPackingController.onPageLoad(NormalMode).url
 
   "ContractPacking Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+      val application = applicationBuilder(userAnswers = Some(contractPackingJourneyUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, contractPackingRoute)
@@ -66,7 +73,7 @@ class ContractPackingControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswersForChangeActivity.set(ContractPackingPage, true).success.value
+      val userAnswers = contractPackingJourneyUserAnswers.set(ContractPackingPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -89,7 +96,7 @@ class ContractPackingControllerSpec extends SpecBase with MockitoSugar {
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
+        applicationBuilder(userAnswers = Some(contractPackingJourneyUserAnswers))
           .overrides(
             bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
@@ -110,7 +117,7 @@ class ContractPackingControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+      val application = applicationBuilder(userAnswers = Some(contractPackingJourneyUserAnswers)).build()
 
       running(application) {
         val request =
