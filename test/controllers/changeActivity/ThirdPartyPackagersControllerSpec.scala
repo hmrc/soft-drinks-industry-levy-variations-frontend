@@ -20,14 +20,16 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.changeActivity.ThirdPartyPackagersFormProvider
 import helpers.LoggerHelper
-import models.NormalMode
+import models.{NormalMode, UserAnswers}
 import models.SelectChange.ChangeActivity
+import models.changeActivity.AmountProduced
 import navigation.{FakeNavigatorForChangeActivity, NavigatorForChangeActivity}
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.changeActivity.ThirdPartyPackagersPage
+import pages.changeActivity.{AmountProducedPage, ThirdPartyPackagersPage}
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -40,18 +42,20 @@ import scala.concurrent.Future
 
 class ThirdPartyPackagersControllerSpec extends SpecBase with MockitoSugar with LoggerHelper {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new ThirdPartyPackagersFormProvider()
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  lazy val thirdPartyPackagersRoute = routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url
+  lazy val thirdPartyPackagersRoute: String = routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url
+  val thirdPartyPackagersJourneyUserAnswers: UserAnswers = emptyUserAnswersForChangeActivity
+    .set(AmountProducedPage, AmountProduced.Small).success.value
 
   "ThirdPartyPackagers Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+      val application = applicationBuilder(userAnswers = Some(thirdPartyPackagersJourneyUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, thirdPartyPackagersRoute)
@@ -67,7 +71,7 @@ class ThirdPartyPackagersControllerSpec extends SpecBase with MockitoSugar with 
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers =emptyUserAnswersForChangeActivity.set(ThirdPartyPackagersPage, true).success.value
+      val userAnswers =thirdPartyPackagersJourneyUserAnswers.set(ThirdPartyPackagersPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -90,7 +94,7 @@ class ThirdPartyPackagersControllerSpec extends SpecBase with MockitoSugar with 
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
+        applicationBuilder(userAnswers = Some(thirdPartyPackagersJourneyUserAnswers))
           .overrides(
             bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
@@ -111,7 +115,7 @@ class ThirdPartyPackagersControllerSpec extends SpecBase with MockitoSugar with 
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+      val application = applicationBuilder(userAnswers = Some(thirdPartyPackagersJourneyUserAnswers)).build()
 
       running(application) {
         val request =
@@ -156,7 +160,7 @@ class ThirdPartyPackagersControllerSpec extends SpecBase with MockitoSugar with 
       when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
+        applicationBuilder(userAnswers = Some(thirdPartyPackagersJourneyUserAnswers))
           .overrides(
             bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity (onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)

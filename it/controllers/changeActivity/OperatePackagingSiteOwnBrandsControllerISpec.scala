@@ -26,6 +26,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
     val noSelected = operateOwnBrandsJourneyUserAnswers.set(OperatePackagingSiteOwnBrandsPage, false).success.value
     Map("yes" -> yesSelected, "no" -> noSelected)
   }
+
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the OperatePackagingSiteOwnBrands page with no data populated" in {
