@@ -99,7 +99,8 @@ class ExemptionsForSmallProducersControllerISpec extends ControllerITTestHelper 
                       (route == checkRoutePath, smallProducersAdded) match {
                         case (true, true) => routes.SmallProducerDetailsController.onPageLoad(CheckMode).url
                         case (true, false) => routes.AddASmallProducerController.onPageLoad(CheckMode).url
-                        case (false, _) => routes.AddASmallProducerController.onPageLoad(NormalMode).url
+                        case (false, true) => routes.SmallProducerDetailsController.onPageLoad(NormalMode).url
+                        case (false, false) => routes.AddASmallProducerController.onPageLoad(NormalMode).url
                       }
                     } else if (route == checkRoutePath) {
                       routes.CorrectReturnCYAController.onPageLoad.url
@@ -133,7 +134,8 @@ class ExemptionsForSmallProducersControllerISpec extends ControllerITTestHelper 
                       (route == checkRoutePath, smallProducersAdded) match {
                         case (true, true) => routes.SmallProducerDetailsController.onPageLoad(CheckMode).url
                         case (true, false) => routes.AddASmallProducerController.onPageLoad(CheckMode).url
-                        case (false, _) => routes.AddASmallProducerController.onPageLoad(NormalMode).url
+                        case (false, true) => routes.SmallProducerDetailsController.onPageLoad(NormalMode).url
+                        case (false, false) => routes.AddASmallProducerController.onPageLoad(NormalMode).url
                       }
                     } else if (route == checkRoutePath) {
                       routes.CorrectReturnCYAController.onPageLoad.url
