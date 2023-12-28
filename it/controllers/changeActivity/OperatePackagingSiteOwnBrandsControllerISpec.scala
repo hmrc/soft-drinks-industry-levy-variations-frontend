@@ -2,10 +2,11 @@ package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.ChangeActivity
-import models.{CheckMode, NormalMode}
+import models.changeActivity.AmountProduced
+import models.{CheckMode, NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import pages.changeActivity.OperatePackagingSiteOwnBrandsPage
+import pages.changeActivity._
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
@@ -15,13 +16,23 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
   val normalRoutePath = "/operate-packaging-site"
   val checkRoutePath = "/change-operate-packaging-site"
 
+  val operateOwnBrandsJourneyUserAnswers: UserAnswers = emptyUserAnswersForChangeActivity
+    .set(ContractPackingPage, true).success.value
+    .set(AmountProducedPage, AmountProduced.Small).success.value
+    .set(ThirdPartyPackagersPage, true).success.value
+
+  val userAnswersForChangeActivityOwnBrandsPage: Map[String, UserAnswers] = {
+    val yesSelected = operateOwnBrandsJourneyUserAnswers.set(OperatePackagingSiteOwnBrandsPage, true).success.value
+    val noSelected = operateOwnBrandsJourneyUserAnswers.set(OperatePackagingSiteOwnBrandsPage, false).success.value
+    Map("yes" -> yesSelected, "no" -> noSelected)
+  }
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the OperatePackagingSiteOwnBrands page with no data populated" in {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        setAnswers(operateOwnBrandsJourneyUserAnswers)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, changeActivityBaseUrl + normalRoutePath)
@@ -41,7 +52,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
       }
     }
 
-    userAnswersForChangeActivityOperatePackagingSiteOwnBrandsPage.foreach { case (key, userAnswers) =>
+    userAnswersForChangeActivityOwnBrandsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
           given
@@ -78,7 +89,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        setAnswers(operateOwnBrandsJourneyUserAnswers)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, changeActivityBaseUrl + checkRoutePath)
@@ -98,7 +109,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
       }
     }
 
-    userAnswersForChangeActivityOperatePackagingSiteOwnBrandsPage.foreach { case (key, userAnswers) =>
+    userAnswersForChangeActivityOwnBrandsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
           given
@@ -131,14 +142,14 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
   }
 
   s"POST " + normalRoutePath - {
-    userAnswersForChangeActivityOperatePackagingSiteOwnBrandsPage.foreach { case (key, userAnswers) =>
+    userAnswersForChangeActivityOwnBrandsPage.foreach { case (key, userAnswers) =>
       "when the user selects " + key - {
         "should update the session with the new value and redirect to the index controller" - {
           "when the session contains no data for page" in {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForChangeActivity)
+            setAnswers(operateOwnBrandsJourneyUserAnswers)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -194,7 +205,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        setAnswers(operateOwnBrandsJourneyUserAnswers)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "")
@@ -221,7 +232,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
   }
 
   s"POST " + checkRoutePath - {
-    userAnswersForChangeActivityOperatePackagingSiteOwnBrandsPage.foreach { case (key, userAnswers) =>
+    userAnswersForChangeActivityOwnBrandsPage.foreach { case (key, userAnswers) =>
       "when the user selects " + key - {
         val yesSelected = key == "yes"
         "should update the session with the new value and redirect to the checkAnswers controller" - {

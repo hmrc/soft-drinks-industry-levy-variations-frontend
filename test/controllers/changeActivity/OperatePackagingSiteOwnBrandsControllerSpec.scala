@@ -19,14 +19,16 @@ package controllers.changeActivity
 import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.changeActivity.OperatePackagingSiteOwnBrandsFormProvider
-import models.NormalMode
+import models.{NormalMode, UserAnswers}
 import models.SelectChange.ChangeActivity
+import models.changeActivity.AmountProduced
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.changeActivity.OperatePackagingSiteOwnBrandsPage
+import pages.changeActivity._
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -39,18 +41,22 @@ import scala.concurrent.Future
 
 class OperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new OperatePackagingSiteOwnBrandsFormProvider()
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
+  val operateOwnBrandsJourneyUserAnswers: UserAnswers = emptyUserAnswersForChangeActivity
+    .set(ContractPackingPage, true).success.value
+    .set(AmountProducedPage, AmountProduced.Small).success.value
+    .set(ThirdPartyPackagersPage, true).success.value
 
-  lazy val operatePackagingSiteOwnBrandsRoute = routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
+  lazy val operatePackagingSiteOwnBrandsRoute: String = routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
 
   "OperatePackagingSiteOwnBrands Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+      val application = applicationBuilder(userAnswers = Some(operateOwnBrandsJourneyUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, operatePackagingSiteOwnBrandsRoute)
@@ -66,7 +72,7 @@ class OperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with MockitoS
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswersForChangeActivity.set(OperatePackagingSiteOwnBrandsPage, true).success.value
+      val userAnswers = operateOwnBrandsJourneyUserAnswers.set(OperatePackagingSiteOwnBrandsPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -89,7 +95,7 @@ class OperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with MockitoS
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
+        applicationBuilder(userAnswers = Some(operateOwnBrandsJourneyUserAnswers))
           .overrides(
             bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
@@ -110,7 +116,7 @@ class OperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with MockitoS
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+      val application = applicationBuilder(userAnswers = Some(operateOwnBrandsJourneyUserAnswers)).build()
 
       running(application) {
         val request =
@@ -155,7 +161,7 @@ class OperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with MockitoS
       when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
+        applicationBuilder(userAnswers = Some(operateOwnBrandsJourneyUserAnswers))
           .overrides(
             bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity (onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)

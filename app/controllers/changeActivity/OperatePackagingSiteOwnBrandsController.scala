@@ -32,12 +32,14 @@ import views.html.changeActivity.OperatePackagingSiteOwnBrandsView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import models.SelectChange.ChangeActivity
+import play.api.data.Form
 
 class OperatePackagingSiteOwnBrandsController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          val sessionService: SessionService,
                                          val navigator: NavigatorForChangeActivity,
                                          controllerActions: ControllerActions,
+                                         requiredUserAnswers: RequiredUserAnswersForChangeActivity,
                                          formProvider: OperatePackagingSiteOwnBrandsFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: OperatePackagingSiteOwnBrandsView,
@@ -45,17 +47,18 @@ class OperatePackagingSiteOwnBrandsController @Inject()(
                                           val errorHandler: ErrorHandler
                                  )(implicit val ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
+      requiredUserAnswers.requireData(OperatePackagingSiteOwnBrandsPage) {
+        val preparedForm = request.userAnswers.get(OperatePackagingSiteOwnBrandsPage) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
 
-      val preparedForm = request.userAnswers.get(OperatePackagingSiteOwnBrandsPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+        Future.successful(Ok(view(preparedForm, mode)))
       }
-
-      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
