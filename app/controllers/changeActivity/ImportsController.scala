@@ -26,6 +26,7 @@ import models.changeActivity.AmountProduced
 import models.{Mode, UserAnswers}
 import navigation._
 import pages.changeActivity.{AmountProducedPage, ContractPackingPage, HowManyImportsPage, ImportsPage}
+import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import services.SessionService
@@ -51,7 +52,7 @@ class ImportsController @Inject()(
                                          val errorHandler: ErrorHandler
                                  )(implicit val ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>

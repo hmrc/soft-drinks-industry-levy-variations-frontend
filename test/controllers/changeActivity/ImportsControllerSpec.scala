@@ -27,7 +27,7 @@ import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.changeActivity.{AmountProducedPage, ContractPackingPage, ImportsPage}
+import pages.changeActivity.{AmountProducedPage, ContractPackingPage, ImportsPage, OperatePackagingSiteOwnBrandsPage, ThirdPartyPackagersPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -45,13 +45,18 @@ class ImportsControllerSpec extends SpecBase with MockitoSugar {
   val formProvider = new ImportsFormProvider()
   val form = formProvider()
 
-  lazy val importsRoute = routes.ImportsController.onPageLoad(NormalMode).url
+  lazy val importsRoute: String = routes.ImportsController.onPageLoad(NormalMode).url
 
   "Imports Controller" - {
 
     "must return OK and the correct view for a GET" in {
+      val importsJourneyUserAnswers = emptyUserAnswersForChangeActivity
+        .set(ContractPackingPage, true).success.value
+        .set(AmountProducedPage, AmountProduced.Small).success.value
+        .set(ThirdPartyPackagersPage, true).success.value
+        .set(OperatePackagingSiteOwnBrandsPage, false).success.value
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+      val application = applicationBuilder(userAnswers = Some(importsJourneyUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, importsRoute)
@@ -67,7 +72,12 @@ class ImportsControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswersForChangeActivity.set(ImportsPage, true).success.value
+      val userAnswers = emptyUserAnswersForChangeActivity
+        .set(ContractPackingPage, true).success.value
+        .set(AmountProducedPage, AmountProduced.Small).success.value
+        .set(ThirdPartyPackagersPage, true).success.value
+        .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+        .set(ImportsPage, true).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -83,14 +93,19 @@ class ImportsControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to the next page when valid data is submitted and prior answers have been completed" in {
 
       val mockSessionService = mock[SessionService]
 
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+      val importsJourneyUserAnswers = emptyUserAnswersForChangeActivity
+        .set(ContractPackingPage, true).success.value
+        .set(AmountProducedPage, AmountProduced.Small).success.value
+        .set(ThirdPartyPackagersPage, true).success.value
+        .set(OperatePackagingSiteOwnBrandsPage, false).success.value
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
+        applicationBuilder(userAnswers = Some(importsJourneyUserAnswers))
           .overrides(
             bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
