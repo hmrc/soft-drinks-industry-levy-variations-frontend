@@ -17,17 +17,12 @@
 package controllers.actions
 
 import base.SpecBase
-import controllers.actions
 import models.backend.Site
-import models.changeActivity.AmountProduced.{Large, None, Small}
 import models.changeActivity.AmountProduced
+import models.changeActivity.AmountProduced.{Large, None, Small}
 import models.requests.{DataRequest, RequiredDataRequest}
-<<<<<<< HEAD
 import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
-=======
-import models.{CheckMode, LitresInBands, UserAnswers}
->>>>>>> 916fe540 (DLS-9640 update return missing answers method to simplify conditional on line 68)
-import pages.{QuestionPage, changeActivity}
+import pages.QuestionPage
 import pages.changeActivity._
 import play.api.libs.json.Reads
 import play.api.mvc.Results.Ok
