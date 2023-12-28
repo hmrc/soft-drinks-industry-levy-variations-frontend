@@ -18,7 +18,7 @@ package controllers.actions
 
 import models.changeActivity.AmountProduced
 import models.requests.DataRequest
-import models.{CheckMode, LitresInBands}
+import models.{CheckMode, LitresInBands, NormalMode}
 import pages.changeActivity._
 import pages.{Page, QuestionPage}
 import play.api.libs.json.Reads
@@ -62,44 +62,44 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
       genericLogger.logger.warn(
         s"${request.userAnswers.id} has hit $ThirdPartyPackagersPage and is missing $userAnswersMissing, user will be redirected" +
           s" to ${userAnswersMissing.head.pageRequired}")
-      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(CheckMode)))
+      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(NormalMode)))
     } else {
       action
     }
   }
 
   private[controllers] def operatePackagingSiteOwnBrandsPageRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
-    val upToOperatePackagingSiteOwnBrandsJourney = thirdPartyPackagersPageJourney ++ operatePackagingSiteOwnBrandsPageJourney
+    val upToOperatePackagingSiteOwnBrandsJourney = operatePackagingSiteOwnBrandsPageJourney
     val userAnswersMissing: List[RequiredPage[_, _, _]] = returnMissingAnswers(upToOperatePackagingSiteOwnBrandsJourney)
     if (userAnswersMissing.nonEmpty) {
       genericLogger.logger.warn(
         s"${request.userAnswers.id} has hit $OperatePackagingSiteOwnBrandsPage and is missing $userAnswersMissing," +
           s" user will be redirected to ${userAnswersMissing.head.pageRequired}")
-      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(CheckMode)))
+      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(NormalMode)))
     } else {
       action
     }
   }
 
   private[controllers] def contractPackagingPageRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
-    val upToContractPackagingPageJourney = thirdPartyPackagersPageJourney ++ operatePackagingSiteOwnBrandsPageJourney ++ contractPackagingPageJourney
+    val upToContractPackagingPageJourney = contractPackagingPageJourney
     val userAnswersMissing: List[RequiredPage[_, _, _]] = returnMissingAnswers(upToContractPackagingPageJourney)
     if (userAnswersMissing.nonEmpty) {
       genericLogger.logger.warn(
         s"${request.userAnswers.id} has hit $ContractPackingPage and is missing $userAnswersMissing, redirected to ${userAnswersMissing.head.pageRequired}")
-      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(CheckMode)))
+      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(NormalMode)))
     } else {
       action
     }
   }
 
   private[controllers] def importsPageRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
-    val upToImportsPageJourney = thirdPartyPackagersPageJourney ++ operatePackagingSiteOwnBrandsPageJourney ++ contractPackagingPageJourney ++ importsPageJourney
+    val upToImportsPageJourney = importsPageJourney
     val userAnswersMissing: List[RequiredPage[_, _, _]] = returnMissingAnswers(upToImportsPageJourney)
     if (userAnswersMissing.nonEmpty) {
       genericLogger.logger.warn(
         s"${request.userAnswers.id} has hit $ImportsPage and is missing $userAnswersMissing, user redirected to ${userAnswersMissing.head.pageRequired}")
-      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(CheckMode)))
+      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(NormalMode)))
     } else {
       action
     }
@@ -153,6 +153,7 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
       List(List(PreviousPage(ImportsPage, List(true))(implicitBoolean)))
     List(
       importsPageJourney,
+      List(RequiredPage(ImportsPage, List.empty)(implicitBoolean)),
       pagesRequiredForHowManyOperatePackagingSiteOwnBrandsPage.map(RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, _)(implicitBands)),
       pagesRequiredForHowManyContractPackingPage.map(RequiredPage(HowManyContractPackingPage, _)(implicitBands)),
       pagesRequiredForHowManyImportsPage.map(RequiredPage(HowManyImportsPage, _)(implicitBands)),
@@ -162,16 +163,14 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
 
   private[controllers] def thirdPartyPackagersPageJourney: List[RequiredPage[_, _, _]] = {
     List(
-      List(RequiredPage(ThirdPartyPackagersPage, List(PreviousPage(AmountProducedPage, List(smallProducer))(implicitAmountProduced)))(implicitBoolean))
+      List(RequiredPage(AmountProducedPage, List(smallProducer))(implicitAmountProduced))
       ).flatten
     }
 
   private[controllers] def operatePackagingSiteOwnBrandsPageJourney: List[RequiredPage[_, _, _]] = {
     List(
       List(RequiredPage(AmountProducedPage, List(smallProducer, largeProducer))(implicitAmountProduced)),
-      List(RequiredPage(ThirdPartyPackagersPage, List(PreviousPage(AmountProducedPage, List(smallProducer))(implicitAmountProduced)))(implicitBoolean)),
-      List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(PreviousPage(AmountProducedPage,
-        List(smallProducer, largeProducer))(implicitAmountProduced)))(implicitBoolean))
+      List(RequiredPage(ThirdPartyPackagersPage, List(PreviousPage(AmountProducedPage, List(smallProducer))(implicitAmountProduced)))(implicitBoolean))
     ).flatten
  }
 
@@ -180,8 +179,7 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
         List(RequiredPage(AmountProducedPage, List.empty)(implicitAmountProduced)),
         List(RequiredPage(ThirdPartyPackagersPage, List(PreviousPage(AmountProducedPage, List(smallProducer))(implicitAmountProduced)))(implicitBoolean)),
         List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(PreviousPage(AmountProducedPage,
-          List(smallProducer, largeProducer))(implicitAmountProduced)))(implicitBoolean)),
-        List(RequiredPage(ContractPackingPage, List.empty)(implicitBoolean))
+          List(smallProducer, largeProducer))(implicitAmountProduced)))(implicitBoolean))
       ).flatten
   }
 
@@ -191,8 +189,7 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
       List(RequiredPage(ThirdPartyPackagersPage, List(PreviousPage(AmountProducedPage, List(smallProducer))(implicitAmountProduced)))(implicitBoolean)),
       List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(PreviousPage(AmountProducedPage,
         List(smallProducer, largeProducer))(implicitAmountProduced)))(implicitBoolean)),
-      List(RequiredPage(ContractPackingPage, List.empty)(implicitBoolean)),
-      List(RequiredPage(ImportsPage, List.empty)(implicitBoolean))
+      List(RequiredPage(ContractPackingPage, List.empty)(implicitBoolean))
     ).flatten
   }
 

@@ -22,7 +22,7 @@ import models.backend.Site
 import models.changeActivity.AmountProduced.{Large, None, Small}
 import models.changeActivity.AmountProduced
 import models.requests.{DataRequest, RequiredDataRequest}
-import models.{CheckMode, LitresInBands, UserAnswers}
+import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
 import pages.{QuestionPage, changeActivity}
 import pages.changeActivity._
 import play.api.libs.json.Reads
@@ -718,6 +718,270 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
       }
       implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
       contentAsString(requiredUserAnswers.checkYourAnswersRequiredData(exampleSuccessAction)) mustBe exampleSuccessActionResult
+    }
+  }
+
+  s"ThirdPartyPackagerRequiredData" - {
+    s"should return empty missing answer list when producer is $Small" in {
+      val userAnswers = {
+        emptyUserAnswersForChangeActivity
+          .set(AmountProducedPage, Small).success.value
+      }
+      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+      val journey = requiredUserAnswers.thirdPartyPackagersPageJourney
+      val res = requiredUserAnswers.returnMissingAnswers(journey)
+
+      res mustBe List.empty
+    }
+  }
+
+  s"OperatePackagingSiteRequiredData" - {
+    s"should redirect to the appropriate missing page when missing answers required for $OperatePackagingSiteOwnBrandsPage" - {
+      s"when AmountProduced is $Small and $ThirdPartyPackagersPage has not been completed, on page load of $OperatePackagingSiteOwnBrandsPage should" +
+        s" redirect to $ThirdPartyPackagersPage" in {
+        val userAnswers = {
+          emptyUserAnswersForChangeActivity
+            .set(AmountProducedPage, Small).success.value
+        }
+        val res = redirectLocation(requiredUserAnswers.requireData(OperatePackagingSiteOwnBrandsPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        res.get mustBe controllers.changeActivity.routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url
+      }
+    }
+
+    s"should return correct missing answer list when producer is $Small" in {
+      val userAnswers = {
+        emptyUserAnswersForChangeActivity
+          .set(AmountProducedPage, Small).success.value
+      }
+      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+      val journey = requiredUserAnswers.operatePackagingSiteOwnBrandsPageJourney
+      val res = requiredUserAnswers.returnMissingAnswers(journey)
+
+      res mustBe List(RequiredPage(ThirdPartyPackagersPage, List(
+        PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get))
+        (implicitly[Reads[AmountProduced]])))(implicitly[Reads[Boolean]]))
+    }
+
+    s"should return empty missing answer list when producer is $Large" in {
+      val userAnswers = {
+        emptyUserAnswersForChangeActivity
+          .set(AmountProducedPage, Large).success.value
+      }
+      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+      val journey = requiredUserAnswers.operatePackagingSiteOwnBrandsPageJourney
+      val res = requiredUserAnswers.returnMissingAnswers(journey)
+
+      res mustBe List.empty
+    }
+  }
+
+  s"ContractPackingPageRequiredData" - {
+    s"should redirect to the appropriate missing page when missing answers required for $ContractPackingPage" - {
+      s"when AmountProduced is $Small and $ThirdPartyPackagersPage has not been completed, on page load of $ContractPackingPage should" +
+        s" redirect to $ThirdPartyPackagersPage" in {
+        val userAnswers = {
+          emptyUserAnswersForChangeActivity
+            .set(AmountProducedPage, Small).success.value
+            .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+        }
+        val res = redirectLocation(requiredUserAnswers.requireData(ContractPackingPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        res.get mustBe controllers.changeActivity.routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url
+      }
+    }
+
+    s"should return correct missing answer list when producer is $Small and no other answers have been set" in {
+      val userAnswers = {
+        emptyUserAnswersForChangeActivity
+          .set(AmountProducedPage, Small).success.value
+      }
+      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+      val journey = requiredUserAnswers.contractPackagingPageJourney
+      val res = requiredUserAnswers.returnMissingAnswers(journey)
+
+      res mustBe List(
+        List(RequiredPage(ThirdPartyPackagersPage, List(
+          PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get))
+          (implicitly[Reads[AmountProduced]])))(implicitly[Reads[Boolean]])),
+        List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(
+          PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get,
+            AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]])))
+        (implicitly[Reads[Boolean]]))
+      ).flatten
+    }
+
+    s"should return correct missing answer list when producer is $Large" in {
+      val userAnswers = {
+        emptyUserAnswersForChangeActivity
+          .set(AmountProducedPage, Large).success.value
+      }
+      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+      val journey = requiredUserAnswers.contractPackagingPageJourney
+      val res = requiredUserAnswers.returnMissingAnswers(journey)
+
+      res mustBe List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(
+        PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get,
+          AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]])))(implicitly[Reads[Boolean]]))
+    }
+
+    s"should return empty missing answer list when producer is $None" in {
+      val userAnswers = {
+        emptyUserAnswersForChangeActivity
+          .set(AmountProducedPage, None).success.value
+      }
+      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+      val journey = requiredUserAnswers.contractPackagingPageJourney
+      val res = requiredUserAnswers.returnMissingAnswers(journey)
+
+      res mustBe List.empty
+    }
+  }
+
+  s"ImportsPageRequiredData" - {
+    s"should redirect to the appropriate missing page when missing answers required for $ImportsPage" - {
+      s"when AmountProduced is $Small and all other pages have not been completed, on page load of $ImportsPage should" +
+        s" redirect to $ThirdPartyPackagersPage" in {
+        val userAnswers = {
+          emptyUserAnswersForChangeActivity
+            .set(AmountProducedPage, Small).success.value
+        }
+        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        res.get mustBe controllers.changeActivity.routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url
+      }
+
+      s"when AmountProduced is $Small and $ThirdPartyPackagersPage has been completed, on page load of $ImportsPage should" +
+        s" redirect to $OperatePackagingSiteOwnBrandsPage" in {
+        val userAnswers = {
+          emptyUserAnswersForChangeActivity
+            .set(AmountProducedPage, Small).success.value
+            .set(ThirdPartyPackagersPage, true).success.value
+        }
+        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        res.get mustBe controllers.changeActivity.routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
+      }
+
+      s"when AmountProduced is $Small and $ThirdPartyPackagersPage and $OperatePackagingSiteOwnBrandsPage have been completed, " +
+        s"on page load of $ImportsPage should redirect to $ContractPackingPage" in {
+        val userAnswers = {
+          emptyUserAnswersForChangeActivity
+            .set(AmountProducedPage, Small).success.value
+            .set(ThirdPartyPackagersPage, true).success.value
+            .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+        }
+        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        res.get mustBe controllers.changeActivity.routes.ContractPackingController.onPageLoad(NormalMode).url
+      }
+
+      s"when AmountProduced is $Small and $ContractPackingPage has been completed, on page load of $ImportsPage should" +
+        s" redirect to $ThirdPartyPackagersPage" in {
+        val userAnswers = {
+          emptyUserAnswersForChangeActivity
+            .set(AmountProducedPage, Small).success.value
+            .set(ContractPackingPage, false).success.value
+        }
+        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        res.get mustBe controllers.changeActivity.routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url
+      }
+
+      s"when AmountProduced is $Small and $ThirdPartyPackagersPage and $ContractPackingPage have been completed, " +
+        s"on page load of $ImportsPage should redirect to $OperatePackagingSiteOwnBrandsPage" in {
+        val userAnswers = {
+          emptyUserAnswersForChangeActivity
+            .set(AmountProducedPage, Small).success.value
+            .set(ThirdPartyPackagersPage, true).success.value
+            .set(ContractPackingPage, false).success.value
+        }
+        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        res.get mustBe controllers.changeActivity.routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
+      }
+
+      s"when AmountProduced is $Large and no other pages have been completed, on page load of $ImportsPage should" +
+        s" redirect to $OperatePackagingSiteOwnBrandsPage" in {
+        val userAnswers = {
+          emptyUserAnswersForChangeActivity
+            .set(AmountProducedPage, Large).success.value
+        }
+        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        res.get mustBe controllers.changeActivity.routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
+      }
+
+      s"when AmountProduced is $Large and $OperatePackagingSiteOwnBrandsPage has been completed, on page load of $ImportsPage should" +
+        s" redirect to $ContractPackingPage" in {
+        val userAnswers = {
+          emptyUserAnswersForChangeActivity
+            .set(AmountProducedPage, Large).success.value
+            .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+        }
+        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        res.get mustBe controllers.changeActivity.routes.ContractPackingController.onPageLoad(NormalMode).url
+      }
+
+      s"when AmountProduced is $Large and $ContractPackingPage has been completed, on page load of $ImportsPage should" +
+        s" redirect to $OperatePackagingSiteOwnBrandsPage" in {
+        val userAnswers = {
+          emptyUserAnswersForChangeActivity
+            .set(AmountProducedPage, Large).success.value
+            .set(ContractPackingPage, false).success.value
+        }
+        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        res.get mustBe controllers.changeActivity.routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
+      }
+
+      s"when AmountProduced is $None and all other pages have not been completed, on page load of $ImportsPage should" +
+        s" redirect to $ContractPackingPage" in {
+        val userAnswers = {
+          emptyUserAnswersForChangeActivity
+            .set(AmountProducedPage, None).success.value
+        }
+        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        res.get mustBe controllers.changeActivity.routes.ContractPackingController.onPageLoad(NormalMode).url
+      }
+    }
+
+    s"should return correct missing answer list when producer is $Small and no other answers have been set" in {
+      val userAnswers = {
+        emptyUserAnswersForChangeActivity
+          .set(AmountProducedPage, Small).success.value
+      }
+      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+      val journey = requiredUserAnswers.importsPageJourney
+      val res = requiredUserAnswers.returnMissingAnswers(journey)
+
+      res mustBe List(
+        List(RequiredPage(ThirdPartyPackagersPage, List(
+          PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get))
+          (implicitly[Reads[AmountProduced]])))(implicitly[Reads[Boolean]])),
+        List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(
+          PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get,
+            AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]])))
+        (implicitly[Reads[Boolean]])),
+        List(RequiredPage(ContractPackingPage, List.empty)(implicitly[Reads[Boolean]]))).flatten
+    }
+
+    s"should return correct missing answer list when producer is $Large" in {
+      val userAnswers = {
+        emptyUserAnswersForChangeActivity
+          .set(AmountProducedPage, Large).success.value
+      }
+      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+      val journey = requiredUserAnswers.importsPageJourney
+      val res = requiredUserAnswers.returnMissingAnswers(journey)
+
+      res mustBe List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(
+        PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get,
+          AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]])))(implicitly[Reads[Boolean]]),
+        RequiredPage(ContractPackingPage, List.empty)(implicitly[Reads[Boolean]]))
+    }
+
+    s"should return correct missing answer list when producer is $None" in {
+      val userAnswers = {
+        emptyUserAnswersForChangeActivity
+          .set(AmountProducedPage, None).success.value
+      }
+      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+      val journey = requiredUserAnswers.importsPageJourney
+      val res = requiredUserAnswers.returnMissingAnswers(journey)
+
+      res mustBe List(RequiredPage(ContractPackingPage, List.empty)(implicitly[Reads[Boolean]]))
     }
   }
 }
