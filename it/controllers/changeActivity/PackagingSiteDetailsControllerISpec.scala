@@ -193,7 +193,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
-                dataStoredForPage.isEmpty mustBe false
+                dataStoredForPage.isEmpty mustBe true
               }
             }
           }
@@ -266,7 +266,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
           requestedVersion = None
         )
         val expectedResultInDB: Some[JsObject] = Some(
-          Json.obj("imports" -> true, "changeActivity" -> Json.obj("packagingSiteDetails" -> true))
+          Json.obj("imports" -> true)
         )
 
         val alfOnRampURL: String = "http://onramp.com"
@@ -338,7 +338,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
               res.status mustBe 303
               res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivityCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
-              dataStoredForPage.isEmpty mustBe false
+              dataStoredForPage.isEmpty mustBe true
             }
           }
         }
@@ -411,7 +411,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         requestedVersion = None
       )
       val expectedResultInDB: Some[JsObject] = Some(
-        Json.obj("imports" -> true, "changeActivity" -> Json.obj("packagingSiteDetails" -> true))
+        Json.obj("imports" -> true)
       )
 
       val alfOnRampURL: String = "http://onramp.com"
