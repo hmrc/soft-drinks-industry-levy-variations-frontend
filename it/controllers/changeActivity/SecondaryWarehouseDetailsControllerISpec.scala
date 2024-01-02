@@ -312,8 +312,8 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           )),
         requestedVersion = None
       )
-      val expectedResultInDB: Some[JsObject] = Some(Json.obj())
 
+      val expectedResultInDB: Some[JsObject] = Some(Json.obj())
       val alfOnRampURL: String = "http://onramp.com"
 
       given

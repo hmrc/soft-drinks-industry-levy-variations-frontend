@@ -3,7 +3,7 @@ package controllers.changeActivity
 import controllers.{ControllerITTestHelper, LitresISpecHelper}
 import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced
-import models.{CheckMode, LitresInBands, NormalMode}
+import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.changeActivity._
@@ -19,11 +19,16 @@ class ImportsControllerISpec extends ControllerITTestHelper with LitresISpecHelp
 
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
-      "should return OK and render the Imports page with no data populated" in {
+      "should return OK and render the Imports page with no data populated when all previous answers have been set" in {
         given
           .commonPrecondition
+        val importsJourneyUserAnswers = emptyUserAnswersForChangeActivity
+          .set(ContractPackingPage, true).success.value
+          .set(AmountProducedPage, AmountProduced.Small).success.value
+          .set(ThirdPartyPackagersPage, true).success.value
+          .set(OperatePackagingSiteOwnBrandsPage, false).success.value
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        setAnswers(importsJourneyUserAnswers)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, changeActivityBaseUrl + normalRoutePath)
@@ -43,6 +48,17 @@ class ImportsControllerISpec extends ControllerITTestHelper with LitresISpecHelp
       }
     }
 
+    val importsJourneyUserAnswers = emptyUserAnswersForChangeActivity
+      .set(ContractPackingPage, true).success.value
+      .set(AmountProducedPage, AmountProduced.Small).success.value
+      .set(ThirdPartyPackagersPage, true).success.value
+      .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+
+    val userAnswersForChangeActivityImportsPage: Map[String, UserAnswers] = {
+      val yesSelected = importsJourneyUserAnswers.set(ImportsPage, true).success.value
+      val noSelected = importsJourneyUserAnswers.set(ImportsPage, false).success.value
+      Map("yes" -> yesSelected, "no" -> noSelected)
+    }
     userAnswersForChangeActivityImportsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
@@ -76,11 +92,17 @@ class ImportsControllerISpec extends ControllerITTestHelper with LitresISpecHelp
 
   s"GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
-      "should return OK and render the Imports page with no data populated" in {
+      "should return OK and render the Imports page with no data populated when previous questions have been answered" in {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        val importsJourneyUserAnswers = emptyUserAnswersForChangeActivity
+          .set(ContractPackingPage, true).success.value
+          .set(AmountProducedPage, AmountProduced.Small).success.value
+          .set(ThirdPartyPackagersPage, true).success.value
+          .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+
+        setAnswers(importsJourneyUserAnswers)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, changeActivityBaseUrl + checkRoutePath)
@@ -99,7 +121,17 @@ class ImportsControllerISpec extends ControllerITTestHelper with LitresISpecHelp
         }
       }
     }
+    val importsJourneyUserAnswers = emptyUserAnswersForChangeActivity
+      .set(ContractPackingPage, true).success.value
+      .set(AmountProducedPage, AmountProduced.Small).success.value
+      .set(ThirdPartyPackagersPage, true).success.value
+      .set(OperatePackagingSiteOwnBrandsPage, false).success.value
 
+    val userAnswersForChangeActivityImportsPage: Map[String, UserAnswers] = {
+      val yesSelected = importsJourneyUserAnswers.set(ImportsPage, true).success.value
+      val noSelected = importsJourneyUserAnswers.set(ImportsPage, false).success.value
+      Map("yes" -> yesSelected, "no" -> noSelected)
+    }
     userAnswersForChangeActivityImportsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {

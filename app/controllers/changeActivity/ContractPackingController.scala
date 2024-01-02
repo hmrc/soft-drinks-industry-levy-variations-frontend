@@ -32,12 +32,14 @@ import views.html.changeActivity.ContractPackingView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import models.SelectChange.ChangeActivity
+import play.api.data.Form
 
 class ContractPackingController @Inject()(
                                          override val messagesApi: MessagesApi,
                                          val sessionService: SessionService,
                                          val navigator: NavigatorForChangeActivity,
                                          controllerActions: ControllerActions,
+                                         requiredUserAnswers: RequiredUserAnswersForChangeActivity,
                                          formProvider: ContractPackingFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: ContractPackingView,
@@ -45,17 +47,18 @@ class ContractPackingController @Inject()(
                                           val errorHandler: ErrorHandler
                                  )(implicit val ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
+      requiredUserAnswers.requireData(ContractPackingPage) {
+        val preparedForm = request.userAnswers.get(ContractPackingPage) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
 
-      val preparedForm = request.userAnswers.get(ContractPackingPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+        Future.successful(Ok(view(preparedForm, mode)))
       }
-
-      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {

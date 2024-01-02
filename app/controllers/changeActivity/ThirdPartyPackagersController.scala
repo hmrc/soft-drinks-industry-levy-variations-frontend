@@ -29,6 +29,7 @@ import services.SessionService
 import utilities.GenericLogger
 import views.html.changeActivity.ThirdPartyPackagersView
 import models.SelectChange.ChangeActivity
+import play.api.data.Form
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,6 +39,7 @@ class ThirdPartyPackagersController @Inject()(
                                                val sessionService: SessionService,
                                                val navigator: NavigatorForChangeActivity,
                                                controllerActions: ControllerActions,
+                                               requiredUserAnswers: RequiredUserAnswersForChangeActivity,
                                                formProvider: ThirdPartyPackagersFormProvider,
                                                val controllerComponents: MessagesControllerComponents,
                                                view: ThirdPartyPackagersView,
@@ -45,17 +47,18 @@ class ThirdPartyPackagersController @Inject()(
                                                val genericLogger: GenericLogger
                                              )(implicit val ec: ExecutionContext) extends ControllerHelper  with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
+      requiredUserAnswers.requireData(ThirdPartyPackagersPage) {
+        val preparedForm = request.userAnswers.get(ThirdPartyPackagersPage) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
 
-      val preparedForm = request.userAnswers.get(ThirdPartyPackagersPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+        Future.successful(Ok(view(preparedForm, mode)))
       }
-
-      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {

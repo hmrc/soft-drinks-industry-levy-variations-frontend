@@ -1,11 +1,12 @@
 package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
-import models.NormalMode
+import models.{NormalMode, UserAnswers}
 import models.SelectChange.ChangeActivity
+import models.changeActivity.AmountProduced
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.changeActivity.ThirdPartyPackagersPage
+import pages.changeActivity._
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.Json
@@ -15,6 +16,14 @@ class ThirdPartyPackagersControllerISpec extends ControllerITTestHelper {
 
   val normalRoutePath = "/third-party-packagers"
   val checkRoutePath = "/change-third-party-packagers"
+  val thirdPartyPackagersJourneyUserAnswers: UserAnswers = emptyUserAnswersForChangeActivity
+    .set(AmountProducedPage, AmountProduced.Small).success.value
+
+  override val userAnswersForChangeActivityThirdPartyPackagersPage: Map[String, UserAnswers] = {
+    val yesSelected = thirdPartyPackagersJourneyUserAnswers.set(ThirdPartyPackagersPage, true).success.value
+    val noSelected = thirdPartyPackagersJourneyUserAnswers.set(ThirdPartyPackagersPage, false).success.value
+    Map("yes" -> yesSelected, "no" -> noSelected)
+  }
 
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
@@ -22,7 +31,7 @@ class ThirdPartyPackagersControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        setAnswers(thirdPartyPackagersJourneyUserAnswers)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, changeActivityBaseUrl +  normalRoutePath)
@@ -78,7 +87,7 @@ class ThirdPartyPackagersControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        setAnswers(thirdPartyPackagersJourneyUserAnswers)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, changeActivityBaseUrl  + checkRoutePath)
@@ -138,7 +147,7 @@ class ThirdPartyPackagersControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForChangeActivity)
+            setAnswers(thirdPartyPackagersJourneyUserAnswers)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -183,7 +192,7 @@ class ThirdPartyPackagersControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        setAnswers(thirdPartyPackagersJourneyUserAnswers)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, changeActivityBaseUrl  + normalRoutePath, Json.obj("value" -> "")
@@ -216,7 +225,7 @@ class ThirdPartyPackagersControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForChangeActivity)
+            setAnswers(thirdPartyPackagersJourneyUserAnswers)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(

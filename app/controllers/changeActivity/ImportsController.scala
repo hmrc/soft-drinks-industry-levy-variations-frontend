@@ -26,6 +26,7 @@ import models.changeActivity.AmountProduced
 import models.{Mode, UserAnswers}
 import navigation._
 import pages.changeActivity.{AmountProducedPage, ContractPackingPage, HowManyImportsPage, ImportsPage}
+import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import services.SessionService
@@ -42,25 +43,26 @@ class ImportsController @Inject()(
                                          val sessionService: SessionService,
                                          val navigator: NavigatorForChangeActivity,
                                          controllerActions: ControllerActions,
+                                         requiredUserAnswers: RequiredUserAnswersForChangeActivity,
                                          formProvider: ImportsFormProvider,
                                          connector: SoftDrinksIndustryLevyConnector,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: ImportsView,
-                                          val genericLogger: GenericLogger,
-                                          val errorHandler: ErrorHandler
+                                         val genericLogger: GenericLogger,
+                                         val errorHandler: ErrorHandler
                                  )(implicit val ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
-
-      val preparedForm = request.userAnswers.get(ImportsPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      requiredUserAnswers.requireData(ImportsPage) {
+        val preparedForm = request.userAnswers.get(ImportsPage) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+        Future.successful(Ok(view(preparedForm, mode)))
       }
-
-      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {

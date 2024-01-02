@@ -2,10 +2,11 @@ package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.ChangeActivity
-import models.{CheckMode, NormalMode}
+import models.changeActivity.AmountProduced
+import models.{CheckMode, NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import pages.changeActivity.ContractPackingPage
+import pages.changeActivity._
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
@@ -14,14 +15,23 @@ class ContractPackingControllerISpec extends ControllerITTestHelper {
 
   val normalRoutePath = "/contract-packing"
   val checkRoutePath = "/change-contract-packing"
+  val contractPackingJourneyUserAnswers: UserAnswers = emptyUserAnswersForChangeActivity
+    .set(AmountProducedPage, AmountProduced.Small).success.value
+    .set(ThirdPartyPackagersPage, true).success.value
+    .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+  override val userAnswersForChangeActivityContractPackingPage: Map[String, UserAnswers] = {
+    val yesSelected = contractPackingJourneyUserAnswers.set(ContractPackingPage, true).success.value
+    val noSelected = contractPackingJourneyUserAnswers.set(ContractPackingPage, false).success.value
+    Map("yes" -> yesSelected, "no" -> noSelected)
+  }
 
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
-      "should return OK and render the ContractPacking page with no data populated" in {
+      "should return OK and render the ContractPacking page with no data populated when prior answers are completed" in {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        setAnswers(contractPackingJourneyUserAnswers)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, changeActivityBaseUrl + normalRoutePath)
@@ -80,7 +90,7 @@ class ContractPackingControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        setAnswers(contractPackingJourneyUserAnswers)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, changeActivityBaseUrl + checkRoutePath)
@@ -142,7 +152,7 @@ class ContractPackingControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForChangeActivity)
+            setAnswers(contractPackingJourneyUserAnswers)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
@@ -168,7 +178,7 @@ class ContractPackingControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(userAnswers)
+            setAnswers(contractPackingJourneyUserAnswers)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(

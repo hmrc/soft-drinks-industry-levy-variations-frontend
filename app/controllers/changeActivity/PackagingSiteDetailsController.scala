@@ -23,6 +23,7 @@ import handlers.ErrorHandler
 import models.SelectChange.ChangeActivity
 import models.{CheckMode, Mode}
 import navigation._
+import pages.changeActivity.PackagingSiteDetailsPage
 import play.api.data.Form
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
@@ -74,14 +75,16 @@ class PackagingSiteDetailsController @Inject()(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
 
-        value =>
+        value => {
+          val updatedAnswers = request.userAnswers.set(PackagingSiteDetailsPage, value)
+          updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage)
           getOnwardUrl(value, mode).map(Redirect(_))
+        }
       )
   }
 
   private def getOnwardUrl(addPackagingSite: Boolean, mode: Mode)
     (implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages, requestHeader: RequestHeader): Future[String] = {
-
     if(addPackagingSite) {
       addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode)(hc, ec, messages, requestHeader)
     } else if(mode == CheckMode) {
