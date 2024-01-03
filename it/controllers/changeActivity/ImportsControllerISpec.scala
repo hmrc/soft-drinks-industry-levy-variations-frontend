@@ -429,7 +429,7 @@ class ImportsControllerISpec extends ControllerITTestHelper with LitresISpecHelp
         }
 
         "and redirect to the to suggest de-registration page" - {
-          "when not a contract packer, has activity type None and no returns pending" in {
+          "when not a contract packer, has activity type None" in {
             given.returnPendingNotFoundPreCondition
             setAnswers(emptyUserAnswersForChangeActivity
               .set(ContractPackingPage, false).success.value
@@ -443,28 +443,6 @@ class ImportsControllerISpec extends ControllerITTestHelper with LitresISpecHelp
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(routes.SuggestDeregistrationController.onPageLoad().url)
-                val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Boolean]](None)(_.get(ImportsPage))
-                dataStoredForPage.get mustBe false
-              }
-            }
-          }
-        }
-
-        "and redirect to packaging file return before de-registration page" - {
-          "when not a contract packer, has activity type None and has returns pending" in {
-            given.commonPrecondition
-            setAnswers(emptyUserAnswersForChangeActivity
-              .set(ContractPackingPage, false).success.value
-              .set(AmountProducedPage, AmountProduced.None).success.value)
-
-            WsTestClient.withClient { client =>
-              val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> false)
-              )
-
-              whenReady(result) { res =>
-                res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad().url)
                 val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Boolean]](None)(_.get(ImportsPage))
                 dataStoredForPage.get mustBe false
               }
@@ -551,29 +529,6 @@ class ImportsControllerISpec extends ControllerITTestHelper with LitresISpecHelp
             val userAnswers = emptyUserAnswersForChangeActivity
               .set(AmountProducedPage, AmountProduced.Large).success.value
               .set(OperatePackagingSiteOwnBrandsPage, false).success.value
-
-            setAnswers(userAnswers)
-            WsTestClient.withClient { client =>
-              val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false")
-              )
-
-              whenReady(result) { res =>
-                res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.ContractPackingController.onPageLoad(NormalMode).url)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ImportsPage))
-                dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe false
-              }
-            }
-          }
-
-          s"when the session contains data stating activity type is Small" in {
-            given
-              .commonPrecondition
-
-            val userAnswers = emptyUserAnswersForChangeActivity
-              .set(AmountProducedPage, AmountProduced.Small).success.value
 
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
@@ -980,7 +935,7 @@ class ImportsControllerISpec extends ControllerITTestHelper with LitresISpecHelp
 
                     whenReady(result) { res =>
                       res.status mustBe 303
-                      res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                      res.header(HeaderNames.LOCATION) mustBe Some(routes.AmountProducedController.onPageLoad(NormalMode).url)
                       val dataStoredForPage = getAnswers(emptyUserAnswersForChangeActivity.id).fold[Option[Boolean]](None)(_.get(ImportsPage))
                       dataStoredForPage.nonEmpty mustBe true
                       dataStoredForPage.get mustBe false
@@ -1083,7 +1038,7 @@ class ImportsControllerISpec extends ControllerITTestHelper with LitresISpecHelp
               }
 
               "and redirect to the to suggest de-registration page" - {
-                "when not a contract packer, has activity type None and no returns pending" in {
+                "when not a contract packer, has activity type None" in {
                   given.returnPendingNotFoundPreCondition
                   setAnswers(emptyUserAnswersForChangeActivity
                     .set(ContractPackingPage, false).success.value
@@ -1097,28 +1052,6 @@ class ImportsControllerISpec extends ControllerITTestHelper with LitresISpecHelp
                     whenReady(result) { res =>
                       res.status mustBe 303
                       res.header(HeaderNames.LOCATION) mustBe Some(routes.SuggestDeregistrationController.onPageLoad().url)
-                      val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Boolean]](None)(_.get(ImportsPage))
-                      dataStoredForPage.get mustBe false
-                    }
-                  }
-                }
-              }
-
-              "and redirect to packaging file return before de-registration page" - {
-                "when not a contract packer, has activity type None and has returns pending" in {
-                  given.commonPrecondition
-                  setAnswers(emptyUserAnswersForChangeActivity
-                    .set(ContractPackingPage, false).success.value
-                    .set(AmountProducedPage, AmountProduced.None).success.value)
-
-                  WsTestClient.withClient { client =>
-                    val result = createClientRequestPOST(
-                      client, changeActivityBaseUrl + checkRoutePath, Json.obj("value" -> false)
-                    )
-
-                    whenReady(result) { res =>
-                      res.status mustBe 303
-                      res.header(HeaderNames.LOCATION) mustBe Some(controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad().url)
                       val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Boolean]](None)(_.get(ImportsPage))
                       dataStoredForPage.get mustBe false
                     }

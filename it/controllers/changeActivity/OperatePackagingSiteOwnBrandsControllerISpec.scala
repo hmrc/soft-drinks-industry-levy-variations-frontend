@@ -28,7 +28,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
   }
 
   "GET " + normalRoutePath - {
-    "when the userAnswers contains no data" - {
+    "when the userAnswers contains no data for the page" - {
       "should return OK and render the OperatePackagingSiteOwnBrands page with no data populated" in {
         given
           .commonPrecondition
@@ -48,6 +48,40 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
             radioInputs.get(0).hasAttr("checked") mustBe false
             radioInputs.get(1).attr("value") mustBe "false"
             radioInputs.get(1).hasAttr("checked") mustBe false
+          }
+        }
+      }
+    }
+
+    "When a previous page has not been answered" - {
+      s"should redirect to the $AmountProducedPage page " in {
+        given
+          .commonPrecondition
+
+        setAnswers(operateOwnBrandsJourneyUserAnswers.remove(AmountProducedPage).success.value)
+
+        WsTestClient.withClient { client =>
+          val result1 = createClientRequestGet(client, changeActivityBaseUrl + normalRoutePath)
+
+          whenReady(result1) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION) mustBe Some(routes.AmountProducedController.onPageLoad(NormalMode).url)
+          }
+        }
+      }
+
+      s"should redirect to the $ThirdPartyPackagersPage page " in {
+        given
+          .commonPrecondition
+
+        setAnswers(operateOwnBrandsJourneyUserAnswers.remove(ThirdPartyPackagersPage).success.value)
+
+        WsTestClient.withClient { client =>
+          val result1 = createClientRequestGet(client, changeActivityBaseUrl + normalRoutePath)
+
+          whenReady(result1) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION) mustBe Some(routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url)
           }
         }
       }

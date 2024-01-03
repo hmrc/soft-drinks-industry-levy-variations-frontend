@@ -27,7 +27,8 @@ import viewmodels.summary.changeActivity.PackagingSiteDetailsSummary
 
 object ChangeActivitySummary  {
 
-  def summaryListsAndHeadings(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
+  def summaryListsAndHeadings(userAnswers: UserAnswers, isCheckAnswers: Boolean)
+                             (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
     val amountProducedSummary: Option[SummaryListRow] = AmountProducedSummary.row(userAnswers, isCheckAnswers)
     val thirdPartyPackagersSummary: Option[SummaryListRow] = ThirdPartyPackagersSummary.row(userAnswers, isCheckAnswers)
     val ownBrandsSummary: SummaryList = OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
@@ -38,11 +39,14 @@ object ChangeActivitySummary  {
     val amountProducedSection: Option[(String, SummaryList)] = amountProducedSummary.map(summary => {
       "changeActivity.checkYourAnswers.amountProducedSection" -> SummaryList(Seq(summary))
     })
-    val thirdPartyPackagersSection: Option[(String, SummaryList)] = if (userAnswers.get(AmountProducedPage).contains(Small)) {
-      thirdPartyPackagersSummary.map(summary => {
-        "changeActivity.checkYourAnswers.thirdPartyPackagersSection" -> SummaryList(Seq(summary))
-      })
-    } else None
+    val thirdPartyPackagersSection: Option[(String, SummaryList)] =
+      if(userAnswers.get(AmountProducedPage).contains(Small)) {
+        thirdPartyPackagersSummary.map(summary => {
+          "changeActivity.checkYourAnswers.thirdPartyPackagersSection" -> SummaryList(Seq(summary))
+        })
+      } else {
+        None
+      }
     val ownBrandsSection: Option[(String, SummaryList)] = if (ownBrandsSummary.rows.isEmpty) None else {
       Option(
         "changeActivity.checkYourAnswers.operatePackingSiteOwnBrandsSection" ->

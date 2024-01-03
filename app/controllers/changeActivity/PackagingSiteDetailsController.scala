@@ -55,7 +55,7 @@ class PackagingSiteDetailsController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
-      if (request.userAnswers.packagingSiteList.isEmpty && mode == CheckMode) {
+      if (request.userAnswers.packagingSiteList.isEmpty) {
         Redirect(routes.PackAtBusinessAddressController.onPageLoad(mode).url)
       } else {
         val siteList: SummaryList = SummaryListViewModel(

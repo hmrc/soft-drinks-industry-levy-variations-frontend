@@ -19,7 +19,8 @@ class ContractPackingControllerISpec extends ControllerITTestHelper {
     .set(AmountProducedPage, AmountProduced.Small).success.value
     .set(ThirdPartyPackagersPage, true).success.value
     .set(OperatePackagingSiteOwnBrandsPage, false).success.value
-  override val userAnswersForChangeActivityContractPackingPage: Map[String, UserAnswers] = {
+    .set(ImportsPage, true).success.value
+  val contractPackingJourneyUserAnswersWithPage: Map[String, UserAnswers] = {
     val yesSelected = contractPackingJourneyUserAnswers.set(ContractPackingPage, true).success.value
     val noSelected = contractPackingJourneyUserAnswers.set(ContractPackingPage, false).success.value
     Map("yes" -> yesSelected, "no" -> noSelected)
@@ -52,7 +53,7 @@ class ContractPackingControllerISpec extends ControllerITTestHelper {
       }
     }
 
-    userAnswersForChangeActivityContractPackingPage.foreach { case (key, userAnswers) =>
+    contractPackingJourneyUserAnswersWithPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
           given
@@ -111,7 +112,7 @@ class ContractPackingControllerISpec extends ControllerITTestHelper {
       }
     }
 
-    userAnswersForChangeActivityContractPackingPage.foreach { case (key, userAnswers) =>
+    contractPackingJourneyUserAnswersWithPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
           given
@@ -145,7 +146,7 @@ class ContractPackingControllerISpec extends ControllerITTestHelper {
   }
 
   s"POST " + normalRoutePath - {
-    userAnswersForChangeActivityContractPackingPage.foreach { case (key, userAnswers) =>
+    contractPackingJourneyUserAnswersWithPage.foreach { case (key, userAnswers) =>
       "when the user selects " + key - {
         "should update the session with the new value and redirect to the HowManyContractPacking controller" - {
           "when the session contains no data for page" in {
@@ -236,7 +237,9 @@ class ContractPackingControllerISpec extends ControllerITTestHelper {
   }
 
   s"POST " + checkRoutePath - {
-    userAnswersForChangeActivityContractPackingPage.foreach { case (key, userAnswers) =>
+
+    contractPackingJourneyUserAnswersWithPage
+      .foreach { case (key, userAnswers) =>
       "when the user selects " + key - {
         val yesSelected = key == "yes"
         "should update the session with the new value and redirect to the checkAnswers controller" - {
@@ -244,7 +247,7 @@ class ContractPackingControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForChangeActivity)
+            setAnswers(contractPackingJourneyUserAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
                 client, changeActivityBaseUrl + checkRoutePath, Json.obj("value" -> yesSelected.toString)

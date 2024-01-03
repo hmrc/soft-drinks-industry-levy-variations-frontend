@@ -774,7 +774,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
     }
   }
 
-  s"ContractPackingPageRequiredData" - {
+  "ContractPackingPageRequiredData" - {
     s"should redirect to the appropriate missing page when missing answers required for $ContractPackingPage" - {
       s"when AmountProduced is $Small and $ThirdPartyPackagersPage has not been completed, on page load of $ContractPackingPage should" +
         s" redirect to $ThirdPartyPackagersPage" in {

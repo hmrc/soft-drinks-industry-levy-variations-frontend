@@ -239,7 +239,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
               res.status mustBe 303
               res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Boolean]](None)(_.get(SecondaryWarehouseDetailsPage))
-              dataStoredForPage.isEmpty mustBe true
+              dataStoredForPage.isEmpty mustBe false
             }
           }
         }
@@ -313,7 +313,10 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
         requestedVersion = None
       )
 
-      val expectedResultInDB: Some[JsObject] = Some(Json.obj())
+      val expectedResultInDB: Some[JsObject] = Some(
+        Json.obj("changeActivity" -> Json.obj("secondaryWarehouseDetails" -> true))
+      )
+
       val alfOnRampURL: String = "http://onramp.com"
 
       given
@@ -382,7 +385,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
               res.status mustBe 303
               res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Boolean]](None)(_.get(SecondaryWarehouseDetailsPage))
-              dataStoredForPage.isEmpty mustBe true
+              dataStoredForPage.isEmpty mustBe false
             }
           }
         }
@@ -455,7 +458,9 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           )),
         requestedVersion = None
       )
-      val expectedResultInDB: Some[JsObject] = Some(Json.obj())
+      val expectedResultInDB: Some[JsObject] = Some(
+        Json.obj("changeActivity" -> Json.obj("secondaryWarehouseDetails" -> true))
+      )
 
       val alfOnRampURL: String = "http://onramp.com"
 

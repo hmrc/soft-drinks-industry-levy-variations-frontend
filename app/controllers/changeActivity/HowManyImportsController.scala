@@ -20,10 +20,11 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.HowManyLitresFormProvider
 import handlers.ErrorHandler
-import models.Mode
 import models.SelectChange.ChangeActivity
+import models.{LitresInBands, Mode}
 import navigation._
 import pages.changeActivity.HowManyImportsPage
+import play.api.data.Form
 import play.api.i18n.MessagesApi
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
@@ -38,6 +39,7 @@ class HowManyImportsController @Inject()(
                                          val sessionService: SessionService,
                                          val navigator: NavigatorForChangeActivity,
                                          controllerActions: ControllerActions,
+                                         requiredUserAnswers: RequiredUserAnswersForChangeActivity,
                                          formProvider: HowManyLitresFormProvider,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: HowManyImportsView,
@@ -45,22 +47,22 @@ class HowManyImportsController @Inject()(
                                          val errorHandler: ErrorHandler
                                  )(implicit val ec: ExecutionContext) extends ControllerHelper {
 
-  val form = formProvider()
+  val form: Form[LitresInBands] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
+      requiredUserAnswers.requireData(HowManyImportsPage) {
+        val preparedForm = request.userAnswers.get(HowManyImportsPage) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
 
-      val preparedForm = request.userAnswers.get(HowManyImportsPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      Future.successful(Ok(view(preparedForm, mode)))
       }
-
-      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
-
       form.bindFromRequest().fold(
         formWithErrors =>
           Future.successful(BadRequest(view(formWithErrors, mode))),
