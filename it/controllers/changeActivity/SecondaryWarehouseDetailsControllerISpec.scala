@@ -1,12 +1,14 @@
 package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
+import models.LitresInBands
 import models.SelectChange.ChangeActivity
 import models.alf.init._
 import models.backend.{Site, UkAddress}
+import models.changeActivity.AmountProduced
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import pages.changeActivity.SecondaryWarehouseDetailsPage
+import pages.changeActivity.{AmountProducedPage, ContractPackingPage, HowManyImportsPage, ImportsPage, SecondaryWarehouseDetailsPage}
 import play.api.http.HeaderNames
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.WsTestClient
@@ -223,13 +225,19 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
   }
 
   "POST " + normalRoutePath - {
+    val updatedUserAnswers = emptyUserAnswersForChangeActivity
+      .set(AmountProducedPage, AmountProduced.None).success.value
+      .set(ContractPackingPage, false).success.value
+      .set(ImportsPage, true).success.value
+      .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
+
     "when the user selects no" - {
       "should not update the session with the selected value and redirect to the CYA controller" - {
         "when the session contains no data for page" in {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForChangeActivity)
+          setAnswers(updatedUserAnswers)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false")
@@ -314,7 +322,8 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
       )
 
       val expectedResultInDB: Some[JsObject] = Some(
-        Json.obj("changeActivity" -> Json.obj("secondaryWarehouseDetails" -> true))
+        Json.obj("changeActivity" -> Json.obj("amountProduced" -> "none", "contractPacking" -> false, "imports" -> true,
+          "howManyImports" -> Json.obj("lowBand" -> 1, "highBand" -> 1), "secondaryWarehouseDetails" -> true))
       )
 
       val alfOnRampURL: String = "http://onramp.com"
@@ -322,7 +331,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
       given
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
-      setAnswers(emptyUserAnswersForChangeActivity)
+      setAnswers(updatedUserAnswers)
 
       WsTestClient.withClient { client =>
         val result = createClientRequestPOST(
@@ -369,13 +378,19 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
   }
 
   "POST " + checkRoutePath - {
+    val updatedUserAnswers = emptyUserAnswersForChangeActivity
+      .set(AmountProducedPage, AmountProduced.None).success.value
+      .set(ContractPackingPage, false).success.value
+      .set(ImportsPage, true).success.value
+      .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
+
     "when the user selects no" - {
       "should not update the session with the selected value and redirect to the CYA controller" - {
         "when the session contains no data for page" in {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForChangeActivity)
+          setAnswers(updatedUserAnswers)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, changeActivityBaseUrl + checkRoutePath, Json.obj("value" -> "false")
@@ -458,8 +473,10 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           )),
         requestedVersion = None
       )
+
       val expectedResultInDB: Some[JsObject] = Some(
-        Json.obj("changeActivity" -> Json.obj("secondaryWarehouseDetails" -> true))
+        Json.obj("changeActivity" -> Json.obj("amountProduced" -> "none", "contractPacking" -> false, "imports" -> true,
+          "howManyImports" -> Json.obj("lowBand" -> 1, "highBand" -> 1), "secondaryWarehouseDetails" -> true))
       )
 
       val alfOnRampURL: String = "http://onramp.com"
@@ -467,7 +484,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
       given
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
-      setAnswers(emptyUserAnswersForChangeActivity)
+      setAnswers(updatedUserAnswers)
 
       WsTestClient.withClient { client =>
         val result = createClientRequestPOST(
