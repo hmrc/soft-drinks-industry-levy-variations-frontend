@@ -16,33 +16,44 @@
 
 package controllers.changeActivity
 
+import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
+import handlers.ErrorHandler
 import models.NormalMode
+import models.SelectChange.ChangeActivity
 import navigation.NavigatorForChangeActivity
-import pages.changeActivity.SuggestDeregistrationPage
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.changeActivity.SuggestDeregistrationView
-import models.SelectChange.ChangeActivity
 
 import javax.inject.Inject
+import scala.concurrent.ExecutionContext
 
 class SuggestDeregistrationController @Inject()(
                                        override val messagesApi: MessagesApi,
                                        controllerActions: ControllerActions,
                                        val navigator: NavigatorForChangeActivity,
+                                       connector: SoftDrinksIndustryLevyConnector,
                                        val controllerComponents: MessagesControllerComponents,
+                                       val errorHandler: ErrorHandler,
                                        view: SuggestDeregistrationView
-                                     ) extends FrontendBaseController with I18nSupport {
+                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
       Ok(view())
   }
 
-  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
+  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
-      Redirect(navigator.nextPage(SuggestDeregistrationPage, NormalMode, request.userAnswers))
+      connector.returnsPending(request.subscription.utr).value.map {
+        case Right(returns) if returns.nonEmpty =>
+          Redirect(controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad())
+        case Right(_) =>
+          Redirect(controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode))
+        case _ =>
+          InternalServerError(errorHandler.internalServerErrorTemplate)
+      }
   }
 }

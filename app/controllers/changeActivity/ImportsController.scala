@@ -16,27 +16,23 @@
 
 package controllers.changeActivity
 
-import connectors.SoftDrinksIndustryLevyConnector
 import controllers.ControllerHelper
 import controllers.actions._
 import forms.changeActivity.ImportsFormProvider
 import handlers.ErrorHandler
+import models.Mode
 import models.SelectChange.ChangeActivity
-import models.changeActivity.AmountProduced
-import models.{Mode, UserAnswers}
 import navigation._
-import pages.changeActivity.{AmountProducedPage, ContractPackingPage, HowManyImportsPage, ImportsPage}
+import pages.changeActivity.{HowManyImportsPage, ImportsPage}
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SessionService
-import uk.gov.hmrc.http.HeaderCarrier
 import utilities.GenericLogger
 import views.html.changeActivity.ImportsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 class ImportsController @Inject()(
                                          override val messagesApi: MessagesApi,
@@ -45,7 +41,6 @@ class ImportsController @Inject()(
                                          controllerActions: ControllerActions,
                                          requiredUserAnswers: RequiredUserAnswersForChangeActivity,
                                          formProvider: ImportsFormProvider,
-                                         connector: SoftDrinksIndustryLevyConnector,
                                          val controllerComponents: MessagesControllerComponents,
                                          view: ImportsView,
                                          val genericLogger: GenericLogger,
@@ -75,34 +70,8 @@ class ImportsController @Inject()(
 
         value => {
           val updatedAnswers = userAnswers.setAndRemoveLitresIfReq(ImportsPage, HowManyImportsPage, value)
-          if (value || ifStillLiableForLevy(userAnswers)) {
-            updateDatabaseAndRedirect(updatedAnswers, ImportsPage, mode)
-          } else {
-            handleUserWhoIsNoLongerLiableForLevy(updatedAnswers, request.subscription.utr)
+          updateDatabaseAndRedirect(updatedAnswers, ImportsPage, mode)
           }
-        }
       )
   }
-
-  private def ifStillLiableForLevy(userAnswers: UserAnswers): Boolean = {
-    val hasAmountProducedNone = userAnswers.get(AmountProducedPage).contains(AmountProduced.None)
-    val isContractPacker = userAnswers.get(ContractPackingPage).getOrElse(false)
-    !hasAmountProducedNone || isContractPacker
-  }
-
-  private def handleUserWhoIsNoLongerLiableForLevy(updatedAnswers: Try[UserAnswers], utr: String)
-                                          (implicit hc: HeaderCarrier, ec: ExecutionContext, request: Request[AnyContent]) = {
-    updateDatabaseWithoutRedirect(updatedAnswers, ImportsPage).flatMap {
-      case true =>
-        connector.returnsPending(utr).value.map {
-          case Right(returns) if returns.nonEmpty =>
-            Redirect(controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad())
-          case Right(_) =>
-            Redirect(routes.SuggestDeregistrationController.onPageLoad())
-          case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
-        }
-      case false => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
-    }
-  }
-
 }

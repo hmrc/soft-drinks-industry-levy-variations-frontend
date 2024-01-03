@@ -20,13 +20,15 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.HowManyLitresFormProvider
 import models.SelectChange.ChangeActivity
+import models.changeActivity.AmountProduced.Small
 import models.{LitresInBands, NormalMode}
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.changeActivity.{ContractPackingPage, HowManyImportsPage}
+import pages.changeActivity._
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -39,18 +41,23 @@ import scala.concurrent.Future
 
 class HowManyImportsControllerSpec extends SpecBase with MockitoSugar {
 
-  def onwardRoute = Call("GET", "/foo")
+  def onwardRoute: Call = Call("GET", "/foo")
 
   val formProvider = new HowManyLitresFormProvider
-  val form = formProvider()
+  val form: Form[LitresInBands] = formProvider()
 
-  lazy val howManyImportsRoute = routes.HowManyImportsController.onPageLoad(NormalMode).url
+  lazy val howManyImportsRoute: String = routes.HowManyImportsController.onPageLoad(NormalMode).url
 
   "HowManyImports Controller" - {
 
-    "must return OK and the correct view for a GET" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+    "must return OK and the correct view for a GET and all previous pages have been answered" in {
+      val completedUserAnswers = emptyUserAnswersForChangeActivity
+        .set(AmountProducedPage, Small).success.value
+        .set(ThirdPartyPackagersPage, false).success.value
+        .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+        .set(ContractPackingPage, false).success.value
+        .set(ImportsPage, true).success.value
+      val application = applicationBuilder(Some(completedUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, howManyImportsRoute)
@@ -66,9 +73,15 @@ class HowManyImportsControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswersForChangeActivity.set(HowManyImportsPage, LitresInBands(100, 200)).success.value
+      val completedUserAnswers = emptyUserAnswersForChangeActivity
+        .set(AmountProducedPage, Small).success.value
+        .set(ThirdPartyPackagersPage, false).success.value
+        .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+        .set(ContractPackingPage, false).success.value
+        .set(ImportsPage, true).success.value
+        .set(HowManyImportsPage, LitresInBands(100, 200)).success.value
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(userAnswers = Some(completedUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, howManyImportsRoute)

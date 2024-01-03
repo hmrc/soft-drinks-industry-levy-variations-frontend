@@ -53,7 +53,6 @@ class OperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with MockitoS
   lazy val operatePackagingSiteOwnBrandsRoute: String = routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
 
   "OperatePackagingSiteOwnBrands Controller" - {
-
     "must return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(operateOwnBrandsJourneyUserAnswers)).build()
@@ -85,6 +84,34 @@ class OperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with MockitoS
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+      }
+    }
+
+    "must redirect before On Page Load if a previous page has not been answered" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
+        .overrides(
+          bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute))
+        )
+        .build()
+
+      running(application) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          val request = FakeRequest(GET, operatePackagingSiteOwnBrandsRoute)
+          val result = route(application, request).value
+
+          await(route(application, request).value)
+
+          status(result) mustEqual 303
+          redirectLocation(result).value mustEqual routes.AmountProducedController.onPageLoad(NormalMode).url
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustBe "WARN"
+              event.getMessage mustEqual
+                s"${emptyUserAnswersForChangeActivity.id} has hit $OperatePackagingSiteOwnBrandsPage and is missing List(RequiredPage(amountProduced,List())), user will be redirected" +
+                  s" to $AmountProducedPage"
+          }.getOrElse(fail("No logging captured"))
+        }
       }
     }
 

@@ -17,13 +17,12 @@
 package controllers.actions
 
 import base.SpecBase
-import controllers.actions
 import models.backend.Site
-import models.changeActivity.AmountProduced.{Large, None, Small}
 import models.changeActivity.AmountProduced
+import models.changeActivity.AmountProduced.{Large, None, Small}
 import models.requests.{DataRequest, RequiredDataRequest}
 import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
-import pages.{QuestionPage, changeActivity}
+import pages.QuestionPage
 import pages.changeActivity._
 import play.api.libs.json.Reads
 import play.api.mvc.Results.Ok
@@ -775,7 +774,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
     }
   }
 
-  s"ContractPackingPageRequiredData" - {
+  "ContractPackingPageRequiredData" - {
     s"should redirect to the appropriate missing page when missing answers required for $ContractPackingPage" - {
       s"when AmountProduced is $Small and $ThirdPartyPackagersPage has not been completed, on page load of $ContractPackingPage should" +
         s" redirect to $ThirdPartyPackagersPage" in {

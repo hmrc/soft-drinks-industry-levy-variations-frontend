@@ -87,6 +87,30 @@ class ThirdPartyPackagersControllerSpec extends SpecBase with MockitoSugar with 
       }
     }
 
+    "must redirect before On Page Load if AmountProduced is not answered" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+
+      running(application) {
+        withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
+          val request = FakeRequest(GET, thirdPartyPackagersRoute)
+
+          val result = route(application, request).value
+
+          await(route(application, request).value)
+
+          status(result) mustEqual 303
+          redirectLocation(result).value mustEqual routes.AmountProducedController.onPageLoad(NormalMode).url
+          events.collectFirst {
+            case event =>
+              event.getLevel.levelStr mustBe "WARN"
+              event.getMessage mustEqual
+                "XKSDIL000000022 has hit thirdPartyPackagers and is missing List(RequiredPage(amountProduced,List())), user will be redirected" +
+                s" to $AmountProducedPage"
+          }.getOrElse(fail("No logging captured"))
+        }
+      }
+    }
+
     "must redirect to the next page when valid data is submitted" in {
 
       val mockSessionService = mock[SessionService]

@@ -1,9 +1,9 @@
 package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
-import models.{NormalMode, UserAnswers}
 import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced
+import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import pages.changeActivity._
@@ -26,7 +26,7 @@ class ThirdPartyPackagersControllerISpec extends ControllerITTestHelper {
   }
 
   "GET " + normalRoutePath - {
-    "when the userAnswers contains no data" - {
+    "when the userAnswers contains no data for the page" - {
       "should return OK and render the ThirdPartyPackagers page with no data populated" in {
         given
           .commonPrecondition
@@ -50,6 +50,25 @@ class ThirdPartyPackagersControllerISpec extends ControllerITTestHelper {
         }
       }
     }
+
+    "when the userAnswers contains no data for the previous page" - {
+      "should redirect to the Amount Produced page" in {
+        given
+          .commonPrecondition
+
+        setAnswers(thirdPartyPackagersJourneyUserAnswers.remove(AmountProducedPage).success.value)
+
+        WsTestClient.withClient { client =>
+          val result1 = createClientRequestGet(client, changeActivityBaseUrl + normalRoutePath)
+
+          whenReady(result1) { res =>
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION) mustBe Some(routes.AmountProducedController.onPageLoad(NormalMode).url)
+          }
+        }
+      }
+    }
+
     userAnswersForChangeActivityThirdPartyPackagersPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {

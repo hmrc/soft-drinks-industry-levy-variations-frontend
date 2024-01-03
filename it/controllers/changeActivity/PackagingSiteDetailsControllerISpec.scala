@@ -6,7 +6,7 @@ import models.{CheckMode, NormalMode, UserAnswers}
 import models.alf.init._
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.changeActivity.PackagingSiteDetailsPage
+import pages.changeActivity.{PackAtBusinessAddressPage, PackagingSiteDetailsPage}
 import play.api.i18n.Messages
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.WsTestClient
@@ -45,7 +45,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
     }
 
     s"when the userAnswers contains an empty packaging site list" - {
-      s"should return OK" in {
+      s"should return 303 and redirect to $PackAtBusinessAddressPage page" in {
         given
           .commonPrecondition
 
@@ -55,13 +55,8 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
           val result1 = createClientRequestGet(client, changeActivityBaseUrl + normalRoutePath)
 
           whenReady(result1) { res =>
-            res.status mustBe 200
-            val page = Jsoup.parse(res.body)
-            page.title must include(Messages("changeActivity.packagingSiteDetails" + ".title"))
-            val radioInputs = page.getElementsByClass("govuk-radios__input")
-            radioInputs.size() mustBe 2
-            radioInputs.get(0).attr("value") mustBe "true"
-            radioInputs.get(1).attr("value") mustBe "false"
+            res.status mustBe 303
+            res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url)
           }
         }
       }
@@ -193,7 +188,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
-                dataStoredForPage.isEmpty mustBe true
+                dataStoredForPage.isEmpty mustBe false
               }
             }
           }
@@ -266,7 +261,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
           requestedVersion = None
         )
         val expectedResultInDB: Some[JsObject] = Some(
-          Json.obj("imports" -> true)
+          Json.obj("imports" -> true, "changeActivity" -> Json.obj("packagingSiteDetails" -> true))
         )
 
         val alfOnRampURL: String = "http://onramp.com"
@@ -338,7 +333,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
               res.status mustBe 303
               res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivityCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
-              dataStoredForPage.isEmpty mustBe true
+              dataStoredForPage.isEmpty mustBe false
             }
           }
         }
@@ -411,7 +406,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         requestedVersion = None
       )
       val expectedResultInDB: Some[JsObject] = Some(
-        Json.obj("imports" -> true)
+        Json.obj("imports" -> true, "changeActivity" -> Json.obj("packagingSiteDetails" -> true))
       )
 
       val alfOnRampURL: String = "http://onramp.com"
