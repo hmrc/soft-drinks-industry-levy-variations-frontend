@@ -266,6 +266,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
             )),
           requestedVersion = None
         )
+
         val expectedResultInDB: Some[JsObject] = Some(
           Json.obj("changeActivity" -> Json.obj("amountProduced" -> "none", "contractPacking" -> true,
             "howManyContractPacking" -> Json.obj("lowBand" -> 1, "highBand" -> 1), "imports" -> true,
