@@ -114,7 +114,6 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
 
   private def navigateFollowingImportsForAmountProducedSmall(userAnswers: UserAnswers, mode: Mode): Call = {
     if (suggestDeregistrationForSmallProducer(userAnswers)) {
-      println(Console.YELLOW + "Hit suggest deregistration true" + Console.WHITE)
       routes.SuggestDeregistrationController.onPageLoad()
     } else if (isVoluntaryReg(userAnswers)) {
       routes.ChangeActivityCYAController.onPageLoad
