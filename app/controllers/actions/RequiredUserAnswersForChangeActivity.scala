@@ -63,7 +63,7 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
       genericLogger.logger.warn(
         s"${request.userAnswers.id} has hit $ThirdPartyPackagersPage and is missing $userAnswersMissing, user will be redirected" +
           s" to ${userAnswersMissing.head.pageRequired}")
-      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(CheckMode)))
+      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(NormalMode)))
     } else {
       action
     }
@@ -172,38 +172,6 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
       pagesRequiredForHowManyContractPackingPage.map(RequiredPage(HowManyContractPackingPage, _)(implicitBands)),
       pagesRequiredForHowManyImportsPage.map(RequiredPage(HowManyImportsPage, _)(implicitBands)),
       pagesRequiredForSecondaryWarehouseDetailsPage.map(RequiredPage(SecondaryWarehouseDetailsPage, _)(implicitBoolean))
-    ).flatten
-  }
-
-  private[controllers] def thirdPartyPackagersPageJourney: List[RequiredPage[_, _, _]] = {
-    List(
-      List(RequiredPage(AmountProducedPage, List(smallProducer))(implicitAmountProduced))
-      ).flatten
-    }
-
-  private[controllers] def operatePackagingSiteOwnBrandsPageJourney: List[RequiredPage[_, _, _]] = {
-    List(
-      List(RequiredPage(AmountProducedPage, List(smallProducer, largeProducer))(implicitAmountProduced)),
-      List(RequiredPage(ThirdPartyPackagersPage, List(PreviousPage(AmountProducedPage, List(smallProducer))(implicitAmountProduced)))(implicitBoolean))
-    ).flatten
- }
-
-  private[controllers] def contractPackagingPageJourney: List[RequiredPage[_, _, _]] = {
-      List(
-        List(RequiredPage(AmountProducedPage, List.empty)(implicitAmountProduced)),
-        List(RequiredPage(ThirdPartyPackagersPage, List(PreviousPage(AmountProducedPage, List(smallProducer))(implicitAmountProduced)))(implicitBoolean)),
-        List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(PreviousPage(AmountProducedPage,
-          List(smallProducer, largeProducer))(implicitAmountProduced)))(implicitBoolean))
-      ).flatten
-  }
-
-  private[controllers] def importsPageJourney: List[RequiredPage[_, _, _]] = {
-    List(
-      List(RequiredPage(AmountProducedPage, List.empty)(implicitAmountProduced)),
-      List(RequiredPage(ThirdPartyPackagersPage, List(PreviousPage(AmountProducedPage, List(smallProducer))(implicitAmountProduced)))(implicitBoolean)),
-      List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(PreviousPage(AmountProducedPage,
-        List(smallProducer, largeProducer))(implicitAmountProduced)))(implicitBoolean)),
-      List(RequiredPage(ContractPackingPage, List.empty)(implicitBoolean))
     ).flatten
   }
 
