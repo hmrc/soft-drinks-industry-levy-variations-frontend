@@ -19,7 +19,9 @@ package controllers.changeActivity
 import base.SpecBase
 import controllers.changeActivity.routes._
 import models.SelectChange.ChangeActivity
+import models.changeActivity.AmountProduced
 import navigation._
+import pages.changeActivity.{AmountProducedPage, ContractPackingPage, ImportsPage}
 import play.api.inject
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -50,10 +52,13 @@ class SuggestDeregistrationControllerSpec extends SpecBase {
     }
 
 
-    "must redirect to the next page when the Cancel your registration button is clicked" in {
-
+    "must redirect to the next page when the Cancel your registration button is clicked and there are returns to be filed" in {
+      val deregistrationUserAnswers = emptyUserAnswersForChangeActivity
+        .set(AmountProducedPage, AmountProduced.None).success.value
+        .set(ContractPackingPage, false).success.value
+        .set(ImportsPage, false).success.value
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
+        applicationBuilder(userAnswers = Some(deregistrationUserAnswers))
           .overrides(
             inject.bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute))
           )
