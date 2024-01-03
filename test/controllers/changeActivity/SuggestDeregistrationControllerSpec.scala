@@ -52,16 +52,14 @@ class SuggestDeregistrationControllerSpec extends SpecBase {
     }
 
 
-    "must redirect to the next page when the Cancel your registration button is clicked and there are returns to be filed" in {
+    "must redirect to the next page when the Cancel your registration button is clicked" in {
       val deregistrationUserAnswers = emptyUserAnswersForChangeActivity
         .set(AmountProducedPage, AmountProduced.None).success.value
         .set(ContractPackingPage, false).success.value
         .set(ImportsPage, false).success.value
+
       val application =
         applicationBuilder(userAnswers = Some(deregistrationUserAnswers))
-          .overrides(
-            inject.bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute))
-          )
           .build()
 
       running(application) {
