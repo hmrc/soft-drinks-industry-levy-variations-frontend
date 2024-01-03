@@ -134,10 +134,23 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
       warehouseListReturnChange
   }
 
+  private[controllers] def finalSectionOfJourney(balanceCheck : List[CorrectReturnRequiredPage[_, _, _]]): List[CorrectReturnRequiredPage[_, _, _]] = {
+    val lastPartOfRestOfJourney = List(
+      CorrectReturnRequiredPage(CorrectionReasonPage, None)(implicitly[Reads[String]])
+    )
+    lastPartOfRestOfJourney++
+    balanceCheck
+  }
+
+  private[controllers] def balanceRepaymentRequired(userAnswers: UserAnswers): List[CorrectReturnRequiredPage[_, _, _]] = {
+    userAnswers.get(BalanceRepaymentRequired) match {
+      case Some(true) =>  List(CorrectReturnRequiredPage(RepaymentMethodPage, None)(implicitly[Reads[RepaymentMethod]]))
+      case _ => List.empty
+    }
+  }
+
   private[controllers] def checkChangesJourney(implicit dataRequest: DataRequest[_]): List[CorrectReturnRequiredPage[_, _, _]] = {
-    val balanceRepaymentRequired = dataRequest.userAnswers.get(BalanceRepaymentRequired).contains(true)
-    List(CorrectReturnRequiredPage(CorrectionReasonPage, None)(implicitly[Reads[String]])) ++
-      (if (balanceRepaymentRequired) List(CorrectReturnRequiredPage(RepaymentMethodPage, None)(implicitly[Reads[RepaymentMethod]])) else List.empty)
+    finalSectionOfJourney(balanceRepaymentRequired(userAnswers = dataRequest.userAnswers))
   }
 
   private[controllers] def addASmallProducerReturnChange: DataRequest[_] => List[CorrectReturnRequiredPage[_, _, _]] = { (request: DataRequest[_]) =>

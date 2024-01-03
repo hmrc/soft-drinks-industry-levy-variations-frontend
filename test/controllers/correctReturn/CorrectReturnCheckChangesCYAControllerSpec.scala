@@ -131,6 +131,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         .set(HowManyClaimCreditsForExportsPage, litres).success.value
         .set(ClaimCreditsForLostDamagedPage, true).success.value
         .set(HowManyCreditsForLostDamagedPage, litres).success.value
+        .set(CorrectionReasonPage, "Changed the amount packaged as a contract packer").success.value
 
       val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockCorrectReturnOrchestrator))
@@ -177,6 +178,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         .set(HowManyClaimCreditsForExportsPage, litres).success.value
         .set(ClaimCreditsForLostDamagedPage, true).success.value
         .set(HowManyCreditsForLostDamagedPage, litres).success.value
+        .set(CorrectionReasonPage, "Changed the amount packaged as a contract packer").success.value
 
       val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockCorrectReturnOrchestrator))
@@ -223,6 +225,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         .set(HowManyClaimCreditsForExportsPage, litres).success.value
         .set(ClaimCreditsForLostDamagedPage, true).success.value
         .set(HowManyCreditsForLostDamagedPage, litres).success.value
+        .set(CorrectionReasonPage, "Changed the amount packaged as a contract packer").success.value
 
       val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockCorrectReturnOrchestrator))
