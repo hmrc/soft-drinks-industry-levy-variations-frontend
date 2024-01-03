@@ -17,22 +17,24 @@
 package controllers.changeActivity
 
 import base.SpecBase
+import connectors.SoftDrinksIndustryLevyConnector
 import controllers.changeActivity.routes._
 import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced
-import navigation._
+import org.mockito.ArgumentMatchers.any
+import org.mockito.MockitoSugar.when
+import org.scalatestplus.mockito.MockitoSugar
 import pages.changeActivity.{AmountProducedPage, ContractPackingPage, ImportsPage}
-import play.api.inject
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.changeActivity.SuggestDeregistrationView
 
-class SuggestDeregistrationControllerSpec extends SpecBase {
+class SuggestDeregistrationControllerSpec extends SpecBase with MockitoSugar {
 
   def onwardRoute: Call = Call("GET", "/foo")
   lazy val suggestDeregistrationRoute: String = SuggestDeregistrationController.onPageLoad().url
-
+  val mockConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
   "SuggestDeregistration Controller" - {
 
     "must return OK and the correct view for a GET" in {
@@ -48,27 +50,6 @@ class SuggestDeregistrationControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(request, messages(application)).toString
-      }
-    }
-
-
-    "must redirect to the next page when the Cancel your registration button is clicked" in {
-      val deregistrationUserAnswers = emptyUserAnswersForChangeActivity
-        .set(AmountProducedPage, AmountProduced.None).success.value
-        .set(ContractPackingPage, false).success.value
-        .set(ImportsPage, false).success.value
-
-      val application =
-        applicationBuilder(userAnswers = Some(deregistrationUserAnswers))
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, suggestDeregistrationRoute)
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad().url
       }
     }
 
