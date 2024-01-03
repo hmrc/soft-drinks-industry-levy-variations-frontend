@@ -19,7 +19,7 @@ package controllers.actions
 import models.backend.RetrievedSubscription
 import models.correctReturn.{AddASmallProducer, RepaymentMethod}
 import models.requests.DataRequest
-import models.{CheckMode, LitresInBands}
+import models.{CheckMode, LitresInBands, UserAnswers}
 import pages.correctReturn._
 import pages.{Page, QuestionPage}
 import play.api.libs.json.Reads
@@ -142,12 +142,15 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
     balanceCheck
   }
 
-  private [controllers] def balanceCheck: DataRequest[_] => List[CorrectReturnRequiredPage[_, _, _]] = { (request: DataRequest[_]) =>
-    if (request.userAnswers.get(BalanceRepaymentRequired).contains(true)) List(CorrectReturnRequiredPage(RepaymentMethodPage, None)(implicitly[Reads[RepaymentMethod]])) else List.empty
+  private[controllers] def balanceRepaymentRequired(userAnswers: UserAnswers): List[CorrectReturnRequiredPage[_, _, _]] = {
+    userAnswers.get(BalanceRepaymentRequired) match {
+      case Some(true) =>  List(CorrectReturnRequiredPage(RepaymentMethodPage, None)(implicitly[Reads[RepaymentMethod]]))
+      case _ => List.empty
+    }
   }
 
   private[controllers] def checkChangesJourney(implicit dataRequest: DataRequest[_]): List[CorrectReturnRequiredPage[_, _, _]] = {
-    finalSectionOfJourney(balanceCheck(dataRequest))
+    finalSectionOfJourney(balanceRepaymentRequired(userAnswers = dataRequest.userAnswers))
   }
 
   private[controllers] def addASmallProducerReturnChange: DataRequest[_] => List[CorrectReturnRequiredPage[_, _, _]] = { (request: DataRequest[_]) =>
