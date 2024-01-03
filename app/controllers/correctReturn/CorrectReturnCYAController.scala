@@ -22,14 +22,12 @@ import controllers.ControllerHelper
 import controllers.actions._
 import handlers.ErrorHandler
 import models.NormalMode
-import models.SelectChange.CorrectReturn
-import navigation.{Navigator, NavigatorForCorrectReturn}
+import navigation.NavigatorForCorrectReturn
 import orchestrators.CorrectReturnOrchestrator
 import pages.correctReturn.{BalanceRepaymentRequired, CorrectReturnBaseCYAPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{ReturnService, SessionService}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import services.SessionService
 import utilities.GenericLogger
 import views.html.correctReturn.CorrectReturnCYAView
 import views.summary.correctReturn.CorrectReturnBaseCYASummary
@@ -42,7 +40,6 @@ class CorrectReturnCYAController @Inject()(override val messagesApi: MessagesApi
                                            controllerActions: ControllerActions,
                                            val controllerComponents: MessagesControllerComponents,
                                            requiredUserAnswers: RequiredUserAnswersForCorrectReturn,
-                                           returnService: ReturnService,
                                            correctReturnOrchestrator: CorrectReturnOrchestrator,
                                            view: CorrectReturnCYAView,
                                            val genericLogger: GenericLogger,

@@ -196,7 +196,7 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
       navigator.nextPage(HowManyPackagedAsContractPackerPage, mode, emptyUserAnswersForCorrectReturn
         .set(HowManyPackagedAsContractPackerPage, LitresInBands(1, 1)).success.value)
 
-    "navigate to navigate to exemptions for small producers page in NormalMode" in {
+    "navigate to exemptions for small producers page in NormalMode" in {
       val result = navigateFromHowManyPackagedAsContractPackerPage(NormalMode)
       result mustBe routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode)
     }
@@ -254,6 +254,16 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
     "select No to navigate to brought into uk page in NormalMode" in {
       val result = navigateFromExemptionsForSmallProducers(value = false, NormalMode)
       result mustBe routes.BroughtIntoUKController.onPageLoad(NormalMode)
+    }
+
+    "select Yes to navigate to Small Producer Details page when small producer list is not  populated in NormalMode" in {
+      val result = navigateFromExemptionsForSmallProducers(value = true, NormalMode)
+      result mustBe routes.AddASmallProducerController.onPageLoad(NormalMode)
+    }
+
+    "select Yes to navigate to Small Producer Details page when small producer list is populated in NormalMode" in {
+      val result = navigateFromExemptionsForSmallProducers(value = true, NormalMode, populateSmallProducerList = true)
+      result mustBe routes.SmallProducerDetailsController.onPageLoad(NormalMode)
     }
 
     "select Yes to navigate to Small Producer Details page when small producer list populated in CheckMode" in {

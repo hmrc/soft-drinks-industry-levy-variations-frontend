@@ -60,8 +60,9 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
 
   private def navigationForExemptionsForSmallProducers(userAnswers: UserAnswers, mode: Mode): Call = {
     if (userAnswers.get(page = ExemptionsForSmallProducersPage).contains(true)) {
-      (mode, userAnswers.smallProducerList.nonEmpty) match {
-        case (CheckMode, true) => routes.SmallProducerDetailsController.onPageLoad(mode)
+      (mode, userAnswers.smallProducerList.nonEmpty, userAnswers.smallProducerList.isEmpty) match {
+        case (CheckMode, true, _) => routes.SmallProducerDetailsController.onPageLoad(mode)
+        case (_,  true, false) => routes.SmallProducerDetailsController.onPageLoad(mode)
         case _ => routes.AddASmallProducerController.onPageLoad(mode)
       }
     } else if (mode == CheckMode) {
