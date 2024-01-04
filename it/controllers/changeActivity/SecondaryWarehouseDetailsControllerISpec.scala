@@ -248,7 +248,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
               res.status mustBe 303
               res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Boolean]](None)(_.get(SecondaryWarehouseDetailsPage))
-              dataStoredForPage.isEmpty mustBe false
+              dataStoredForPage mustBe Some(false)
             }
           }
         }
@@ -395,7 +395,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
               res.status mustBe 303
               res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Boolean]](None)(_.get(SecondaryWarehouseDetailsPage))
-              dataStoredForPage.isEmpty mustBe false
+              dataStoredForPage mustBe Some(false)
             }
           }
         }

@@ -195,7 +195,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
                 val dataStoredForPage = getAnswers(updatedUserAnswersImports.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
-                dataStoredForPage.isEmpty mustBe false
+                dataStoredForPage mustBe Some(false)
               }
             }
           }
@@ -341,7 +341,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
               res.status mustBe 303
               res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivityCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(updatedUserAnswersImports.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
-              dataStoredForPage.isEmpty mustBe false
+              dataStoredForPage mustBe Some(false)
             }
           }
         }
@@ -433,6 +433,8 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         whenReady(result) { res =>
           res.status mustBe 303
           res.header(HeaderNames.LOCATION) mustBe Some(alfOnRampURL)
+          println(Console.YELLOW + "Expected answers " + expectedResultInDB + Console.WHITE)
+          println(Console.BLUE + "User answers " + getAnswers(sdilNumber).map(userAnswers => userAnswers.data) + Console.WHITE)
           getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResultInDB
           ALFTestHelper.requestedBodyMatchesExpected(wireMockServer, journeyConfigToBePosted) mustBe true
         }
