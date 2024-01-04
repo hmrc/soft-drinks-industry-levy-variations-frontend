@@ -433,8 +433,6 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         whenReady(result) { res =>
           res.status mustBe 303
           res.header(HeaderNames.LOCATION) mustBe Some(alfOnRampURL)
-          println(Console.YELLOW + "Expected answers " + expectedResultInDB + Console.WHITE)
-          println(Console.BLUE + "User answers " + getAnswers(sdilNumber).map(userAnswers => userAnswers.data) + Console.WHITE)
           getAnswers(sdilNumber).map(userAnswers => userAnswers.data) mustBe expectedResultInDB
           ALFTestHelper.requestedBodyMatchesExpected(wireMockServer, journeyConfigToBePosted) mustBe true
         }

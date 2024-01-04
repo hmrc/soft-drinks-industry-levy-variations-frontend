@@ -81,8 +81,6 @@ class SecondaryWarehouseDetailsController @Inject()(
         value => {
           val updatedAnswers = request.userAnswers.set(SecondaryWarehouseDetailsPage, value)
           updateDatabaseWithoutRedirect(updatedAnswers, SecondaryWarehouseDetailsPage)
-          println(Console.YELLOW + "warehouse updated answers = " + updatedAnswers + Console.WHITE)
-          println(Console.BLUE + "warehouse UAs - data = " + request.userAnswers.data + Console.WHITE)
           getOnwardUrl(value, mode).map(Redirect(_))
         }
       )
