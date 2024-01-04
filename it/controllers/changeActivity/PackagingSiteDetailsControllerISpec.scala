@@ -19,6 +19,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
   val normalRoutePath = "/packaging-site-details"
   val checkRoutePath = "/change-packaging-site-details"
   val updatedUserAnswersImports: UserAnswers = emptyUserAnswersForChangeActivity
+    .copy(id = sdilNumber)
     .set(AmountProducedPage, AmountProduced.None).success.value
     .set(ContractPackingPage, true).success.value
     .set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value
