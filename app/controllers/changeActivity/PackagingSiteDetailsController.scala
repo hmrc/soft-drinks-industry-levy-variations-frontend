@@ -78,6 +78,9 @@ class PackagingSiteDetailsController @Inject()(
         value => {
           val updatedAnswers = request.userAnswers.set(PackagingSiteDetailsPage, value)
           updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage)
+          println(Console.YELLOW + "packaging site updated answers = " + updatedAnswers + Console.WHITE)
+          Thread.sleep(1000)
+          println(Console.BLUE + "packaging site UAs - data = " + request.userAnswers.data + Console.WHITE)
           getOnwardUrl(value, mode).map(Redirect(_))
         }
       )

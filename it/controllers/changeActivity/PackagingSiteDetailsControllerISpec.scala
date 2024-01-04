@@ -190,7 +190,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
               val result = createClientRequestPOST(
                 client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false")
               )
-
+              Thread.sleep(1000)
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
@@ -284,7 +284,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
           val result = createClientRequestPOST(
             client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "true")
           )
-
+          Thread.sleep(1000)
           whenReady(result) { res =>
             res.status mustBe 303
             res.header(HeaderNames.LOCATION) mustBe Some(alfOnRampURL)
@@ -336,7 +336,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
             val result = createClientRequestPOST(
               client, changeActivityBaseUrl + checkRoutePath, Json.obj("value" -> "false")
             )
-
+            Thread.sleep(1000)
             whenReady(result) { res =>
               res.status mustBe 303
               res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivityCYAController.onPageLoad.url)
@@ -429,7 +429,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         val result = createClientRequestPOST(
           client, changeActivityBaseUrl + checkRoutePath, Json.obj("value" -> "true")
         )
-
+        Thread.sleep(1000)
         whenReady(result) { res =>
           res.status mustBe 303
           res.header(HeaderNames.LOCATION) mustBe Some(alfOnRampURL)
