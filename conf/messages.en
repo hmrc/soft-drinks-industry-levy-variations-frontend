@@ -255,7 +255,7 @@ changeActivitySent.title = Update sent
 changeActivitySent.panel.returnMessage = We have received the update to your Soft Drinks Industry Levy details
 changeActivitySent.returnsDoneMessage = Your update for <span style="white-space: nowrap">{0}</span> was sent at <span style="white-space: nowrap">{1}</span> on the <span style="white-space: nowrap">{2}.</span> Changes can take up to 15 working days to process.
 changeActivitySent.headerOne = What happens next
-changeActivitySent.whatNextBody = You don't need to do anything else. We will update your details with the information you've provided.
+changeActivitySent.whatNextBody = You do not need to do anything else. We will update your details with the information you have provided.
 changeActivitySent.returnHome = Go back to your Soft Drinks Industry Levy details
 changeActivitySent.details = View the details of your update
 

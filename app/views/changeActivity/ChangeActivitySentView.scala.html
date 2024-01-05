@@ -14,56 +14,47 @@
  * limitations under the License.
  *@
 
-@import java.time.{LocalTime,LocalDate,ZoneId}
-@import java.time.format.DateTimeFormatter
-@import uk.gov.hmrc.govukfrontend.views.html.components._
-@import java.time.format.DateTimeFormatter
-@import views.html.helpers._
 @import config.FrontendAppConfig
-
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.helpers.printLinkWithJs
 
 @this(
-    layout: templates.Layout,
-    govukPanel : GovukPanel,
-    govukSummaryList: GovukSummaryList,
-    govukButton: GovukButton,
-    govukTable : GovukTable,
-    govukDetails : GovukDetails
+        layout: templates.Layout,
+        govukPanel : GovukPanel,
+        govukSummaryList: GovukSummaryList,
+        govukButton: GovukButton,
+        govukTable : GovukTable,
+        govukDetails : GovukDetails,
+        printLinkWithJs: printLinkWithJs
 )
 
-
-
 @(orgName: String,
-  formattedDate: String,
-  formattedTime: String,
-  seqSummaryList: Seq[(String, SummaryList)])(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
+        formattedDate: String,
+        formattedTime: String,
+        seqSummaryList: Seq[(String, SummaryList)])(implicit request: Request[_], messages: Messages, config: FrontendAppConfig)
 
 @summary ={
     @for((heading, summaryList) <- seqSummaryList){
-    <h2 class="govuk-heading-m">@messages(heading)</h2>
+        <h2 class="govuk-heading-m">@messages(heading)</h2>
     @govukSummaryList(summaryList)
     }
 }
 
-@layout(pageTitle = titleNoForm(messages("returnSent.title")), showBackLink = false){
-
-
-
+@layout(pageTitle = titleNoForm(messages("changeActivitySent.title")), showBackLink = false){
 
     @govukPanel(Panel(
-    title = Text(messages("changeActivitySent.title")),
-    content = HtmlContent(messages("changeActivitySent.panel.returnMessage"))
+        title = Text(messages("changeActivitySent.title")),
+        content = HtmlContent(messages("changeActivitySent.panel.returnMessage"))
     ))
-    <p class="govuk-body-m" id="printPage" xmlns="http://www.w3.org/1999/html">
-        <a href="javascript:window.print()" class="govuk-link">@messages("site.print")</a>
-    </p>
+
+    <p>@printLinkWithJs(messages("site.print"))</p>
 
     <p class="govuk-body" id="returnDone">
-        @Html(messages("changeActivitySent.returnsDoneMessage",
+    @Html(messages("changeActivitySent.returnsDoneMessage",
         orgName,
         formattedTime,
         formattedDate,
-        ))
+    ))
     </p>
 
     <h2 class="govuk-heading-m" id="whatNextHeader">
@@ -74,13 +65,13 @@
         @messages("changeActivitySent.whatNextBody")
     </p>
 
+    @govukDetails(Details(
+        summary = Text(Messages("changeActivitySent.details")),
+        content = HtmlContent(Html(s"${summary}"))
+    ))
+
     <p class="govuk-body" id="goToDashboard">
         <a class="govuk-link" href=@config.sdilHomeUrl>@messages("changeActivitySent.returnHome")</a>
     </p>
-
-    @govukDetails(Details(
-    summary = Text(Messages("changeActivitySent.details")),
-    content = HtmlContent(Html(s"${summary}"))
-    ))
 
 }
