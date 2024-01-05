@@ -20,7 +20,5 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-uglify" % "2.0.0")
 
 addSbtPlugin("com.typesafe.sbt" % "sbt-digest" % "1.1.4")
 
-//addSbtPlugin("org.scalariform" % "sbt-scalariform" % "1.8.3" exclude("org.scala-lang.modules", "scala-xml_2.12"))
-
 ThisBuild / libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
 addSbtPlugin("org.scoverage"     % "sbt-scoverage"      % "2.0.9")
