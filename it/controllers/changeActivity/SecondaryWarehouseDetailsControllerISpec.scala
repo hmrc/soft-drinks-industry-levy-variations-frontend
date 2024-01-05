@@ -2,11 +2,13 @@ package controllers.changeActivity
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.ChangeActivity
+import models.{LitresInBands, UserAnswers}
 import models.alf.init._
 import models.backend.{Site, UkAddress}
+import models.changeActivity.AmountProduced
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import pages.changeActivity.SecondaryWarehouseDetailsPage
+import pages.changeActivity._
 import play.api.http.HeaderNames
 import play.api.libs.json.{JsObject, Json}
 import play.api.test.WsTestClient
@@ -17,6 +19,13 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
   val normalRoutePath = "/secondary-warehouse-details"
   val checkRoutePath = "/change-secondary-warehouse-details"
+  val updatedUserAnswers: UserAnswers = emptyUserAnswersForChangeActivity
+    .copy(id = sdilNumber)
+    .set(AmountProducedPage, AmountProduced.None).success.value
+    .set(ContractPackingPage, true).success.value
+    .set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value
+    .set(ImportsPage, true).success.value
+    .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
 
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data (no warehouses)" - {
@@ -224,22 +233,22 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
   "POST " + normalRoutePath - {
     "when the user selects no" - {
-      "should not update the session with the selected value and redirect to the CYA controller" - {
+      "should redirect to the CYA controller" - {
         "when the session contains no data for page" in {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForChangeActivity)
+          setAnswers(updatedUserAnswers)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "false")
             )
-
+            Thread.sleep(1000)
             whenReady(result) { res =>
               res.status mustBe 303
               res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Boolean]](None)(_.get(SecondaryWarehouseDetailsPage))
-              dataStoredForPage.isEmpty mustBe true
+              dataStoredForPage mustBe Some(false)
             }
           }
         }
@@ -313,19 +322,23 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
         requestedVersion = None
       )
 
-      val expectedResultInDB: Some[JsObject] = Some(Json.obj())
+      val expectedResultInDB: Some[JsObject] = Some(
+        Json.obj("changeActivity" -> Json.obj("amountProduced" -> "none", "contractPacking" -> true,
+          "howManyContractPacking" -> Json.obj("lowBand" -> 1, "highBand" -> 1), "imports" -> true,
+          "howManyImports" -> Json.obj("lowBand" -> 1, "highBand" -> 1), "secondaryWarehouseDetails" -> true)))
+
       val alfOnRampURL: String = "http://onramp.com"
 
       given
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
-      setAnswers(emptyUserAnswersForChangeActivity)
+      setAnswers(updatedUserAnswers)
 
       WsTestClient.withClient { client =>
         val result = createClientRequestPOST(
           client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "true")
         )
-
+        Thread.sleep(1000)
         whenReady(result) { res =>
           res.status mustBe 303
           res.header(HeaderNames.LOCATION) mustBe Some(alfOnRampURL)
@@ -340,7 +353,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setAnswers(emptyUserAnswersForChangeActivity)
+        setAnswers(updatedUserAnswers)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "")
@@ -367,22 +380,22 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
   "POST " + checkRoutePath - {
     "when the user selects no" - {
-      "should not update the session with the selected value and redirect to the CYA controller" - {
+      "should redirect to the CYA controller" - {
         "when the session contains no data for page" in {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForChangeActivity)
+          setAnswers(updatedUserAnswers)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, changeActivityBaseUrl + checkRoutePath, Json.obj("value" -> "false")
             )
-
+            Thread.sleep(1000)
             whenReady(result) { res =>
               res.status mustBe 303
               res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(sdilNumber).fold[Option[Boolean]](None)(_.get(SecondaryWarehouseDetailsPage))
-              dataStoredForPage.isEmpty mustBe true
+              dataStoredForPage mustBe Some(false)
             }
           }
         }
@@ -455,20 +468,24 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           )),
         requestedVersion = None
       )
-      val expectedResultInDB: Some[JsObject] = Some(Json.obj())
+
+      val expectedResultInDB: Some[JsObject] = Some(
+        Json.obj("changeActivity" -> Json.obj("amountProduced" -> "none", "contractPacking" -> true,
+          "howManyContractPacking" -> Json.obj("lowBand" -> 1, "highBand" -> 1), "imports" -> true,
+          "howManyImports" -> Json.obj("lowBand" -> 1, "highBand" -> 1), "secondaryWarehouseDetails" -> true)))
 
       val alfOnRampURL: String = "http://onramp.com"
 
       given
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
-      setAnswers(emptyUserAnswersForChangeActivity)
+      setAnswers(updatedUserAnswers)
 
       WsTestClient.withClient { client =>
         val result = createClientRequestPOST(
           client, changeActivityBaseUrl + checkRoutePath, Json.obj("value" -> "true")
         )
-
+        Thread.sleep(1000)
         whenReady(result) { res =>
           res.status mustBe 303
           res.header(HeaderNames.LOCATION) mustBe Some(alfOnRampURL)

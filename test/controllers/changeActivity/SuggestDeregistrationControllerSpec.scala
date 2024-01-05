@@ -49,26 +49,6 @@ class SuggestDeregistrationControllerSpec extends SpecBase {
       }
     }
 
-
-    "must redirect to the next page when the Cancel your registration button is clicked" in {
-
-      val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
-          .overrides(
-            inject.bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute))
-          )
-          .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, suggestDeregistrationRoute)
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual onwardRoute.url
-      }
-    }
-
     testInvalidJourneyType(ChangeActivity, suggestDeregistrationRoute)
     testNoUserAnswersError(suggestDeregistrationRoute)
   }

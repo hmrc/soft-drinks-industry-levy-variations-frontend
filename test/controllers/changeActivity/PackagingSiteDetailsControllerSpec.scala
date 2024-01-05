@@ -19,13 +19,15 @@ package controllers.changeActivity
 import base.SpecBase
 import forms.changeActivity.PackagingSiteDetailsFormProvider
 import models.SelectChange.ChangeActivity
-import models.{CheckMode, NormalMode}
+import models.changeActivity.AmountProduced.Small
+import models.{CheckMode, LitresInBands, NormalMode}
 import navigation._
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.{times, verify}
 import org.scalatestplus.mockito.MockitoSugar
+import pages.changeActivity._
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -38,7 +40,7 @@ import views.html.changeActivity.PackagingSiteDetailsView
 
 import scala.concurrent.Future
 
-class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  with SummaryListFluency{
+class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with SummaryListFluency{
 
   def onwardRoute: Call = Call("GET", "/foo")
 
@@ -49,18 +51,24 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
   lazy val packagingSiteDetailsCheckRoute: String = routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
 
   "PackagingSiteDetails Controller" - {
+    val completedUserAnswers = emptyUserAnswersForChangeActivity
+      .copy(packagingSiteList = packingSiteMap)
+      .set(AmountProducedPage, Small).success.value
+      .set(ThirdPartyPackagersPage, false).success.value
+      .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+      .set(ContractPackingPage, true).success.value
+      .set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value
+      .set(ImportsPage, false).success.value
 
-    "must return OK and the correct view for a GET in NormalMode" in {
-
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity)).build()
+    "must return OK and the correct view for a GET in NormalMode and all previous questions have been answered" in {
+      val application = applicationBuilder(userAnswers = Some(completedUserAnswers)).build()
 
       val summary = SummaryListViewModel(
-        rows = PackagingSiteDetailsSummary.row2(Map.empty, NormalMode)
+        rows = PackagingSiteDetailsSummary.row2(completedUserAnswers.packagingSiteList, NormalMode)
       )
 
       running(application) {
         val request = FakeRequest(GET, packagingSiteDetailsRoute)
-
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[PackagingSiteDetailsView]
@@ -73,12 +81,11 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
     "must populate the view correctly on a GET when the question has previously been answered in NormalMode" in {
 
       val summary = SummaryListViewModel(
-        rows = PackagingSiteDetailsSummary.row2(Map.empty, NormalMode)
+        rows = PackagingSiteDetailsSummary.row2(completedUserAnswers.packagingSiteList, NormalMode)
       )
 
-      val userAnswers = emptyUserAnswersForChangeActivity
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val application = applicationBuilder(Some(completedUserAnswers.set(PackagingSiteDetailsPage, false).success.value)).build()
 
       running(application) {
         val request = FakeRequest(GET, packagingSiteDetailsRoute)

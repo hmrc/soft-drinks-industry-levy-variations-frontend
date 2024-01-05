@@ -2,10 +2,11 @@ package controllers.changeActivity
 
 import controllers.LitresISpecHelper
 import models.SelectChange.ChangeActivity
+import models.changeActivity.AmountProduced
 import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import pages.changeActivity.HowManyContractPackingPage
+import pages.changeActivity._
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
@@ -15,13 +16,22 @@ class HowManyContractPackingControllerISpec extends LitresISpecHelper {
   val normalRoutePath = "/how-many-contract-packing-next-12-months"
   val checkRoutePath = "/change-how-many-contract-packing-next-12-months"
 
-  val userAnswers: UserAnswers = emptyUserAnswersForChangeActivity.set(HowManyContractPackingPage, litresInBands).success.value
+  val userAnswers: UserAnswers = emptyUserAnswersForChangeActivity
+    .set(HowManyContractPackingPage, litresInBands).success.value
+    .set(AmountProducedPage, AmountProduced.Small).success.value
+    .set(ThirdPartyPackagersPage, true).success.value
+    .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+    .set(ImportsPage, true).success.value
 
   List(NormalMode, CheckMode).foreach { mode =>
     val (path, redirectLocation) = if(mode == NormalMode) {
       (normalRoutePath, routes.ImportsController.onPageLoad(NormalMode).url)
     } else {
-      (checkRoutePath, routes.ChangeActivityCYAController.onPageLoad.url)
+      if (userAnswers.get(PackagingSiteDetailsPage).isEmpty) {
+        (checkRoutePath, routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
+      } else {
+        (checkRoutePath, routes.ChangeActivityCYAController.onPageLoad.url)
+      }
     }
 
     "GET " + path - {
@@ -30,7 +40,7 @@ class HowManyContractPackingControllerISpec extends LitresISpecHelper {
           given
             .commonPrecondition
 
-          setAnswers(emptyUserAnswersForChangeActivity)
+          setAnswers(userAnswers.remove(HowManyContractPackingPage).success.value)
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, changeActivityBaseUrl + path)
@@ -78,7 +88,7 @@ class HowManyContractPackingControllerISpec extends LitresISpecHelper {
             given
               .commonPrecondition
 
-            setAnswers(emptyUserAnswersForChangeActivity)
+            setAnswers(userAnswers.remove(HowManyContractPackingPage).success.value)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
                 client, changeActivityBaseUrl + path, Json.toJson(litresInBandsObj)
