@@ -17,9 +17,10 @@
 package pages.changeActivity
 
 import controllers.changeActivity.routes
-import models.Mode
+import models.changeActivity.AmountProduced
+import models.{Mode, UserAnswers}
 import play.api.libs.json.JsPath
-import pages.QuestionPage
+import pages.{QuestionPage, RequiredPage}
 
 case object ImportsPage extends QuestionPage[Boolean] {
 
@@ -29,4 +30,16 @@ case object ImportsPage extends QuestionPage[Boolean] {
   override def toString: String = "imports"
 
   override val url: Mode => String = mode => routes.ImportsController.onPageLoad(mode).url
+
+  override val redirectConditions: UserAnswers => List[RequiredPage] = userAnswers => {
+    val isSmallOrLargeProducer: Boolean =
+      userAnswers.get(AmountProducedPage).contains(AmountProduced.Large) || userAnswers.get(AmountProducedPage).contains(AmountProduced.Small)
+
+    List(
+      RequiredPage(AmountProducedPage),
+      RequiredPage(ThirdPartyPackagersPage, additionalPreconditions = List(userAnswers.get(AmountProducedPage).contains(AmountProduced.Small))),
+      RequiredPage(OperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(isSmallOrLargeProducer)),
+      RequiredPage(ContractPackingPage)
+    )
+  }
 }

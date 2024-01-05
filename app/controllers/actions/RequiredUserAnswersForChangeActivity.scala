@@ -16,220 +16,51 @@
 
 package controllers.actions
 
-import models.changeActivity.AmountProduced
 import models.requests.DataRequest
-import models.{CheckMode, LitresInBands, NormalMode}
+import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages.changeActivity._
-import pages.{Page, QuestionPage}
-import play.api.libs.json.Reads
+import pages.{Page, RequiredPage}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import utilities.GenericLogger
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.reflect.ClassTag
 
 class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogger)(implicit val executionContext: ExecutionContext) extends ActionHelpers {
-  def requireData(page: Page)(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
-    page match {
-      case ChangeActivityCYAPage => checkYourAnswersRequiredData(action)
-      case ThirdPartyPackagersPage => thirdPartyPackagersPageRequiredData(action)
-      case OperatePackagingSiteOwnBrandsPage => operatePackagingSiteOwnBrandsPageRequiredData(action)
-      case ContractPackingPage => contractPackagingPageRequiredData(action)
-      case ImportsPage => importsPageRequiredData(action)
-      case HowManyImportsPage => howManyImportsPageRequiredData(action)
-      case _ => action
-    }
+
+  private def getRedirectFromPage(page: Page, mode: Mode = NormalMode): Future[Result] = Future.successful(Redirect(page.url(mode)))
+
+  private def transformRequiredPageIntoBooleanPageList(
+                                                        userAnswers: UserAnswers,
+                                                        requiredPageList: UserAnswers => List[RequiredPage]
+                                                      ): List[(Boolean, Page)] = {
+    val requiredPageListFromUserAnswers = requiredPageList(userAnswers)
+    requiredPageListFromUserAnswers.map(requiredPage => {
+      val isMissing = (requiredPage.additionalPreconditions :+ userAnswers.isEmpty(requiredPage.page)).forall(bool => bool)
+      (isMissing, requiredPage.page)
+    })
   }
 
-  private[controllers] def checkYourAnswersRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
-    val fullJourney = baseJourney ++ packagingSiteChangeActivityJourney(request.userAnswers.packagingSiteList.isEmpty)
-    val userAnswersMissing: List[RequiredPage[_,_,_]] = returnMissingAnswers(fullJourney)
-
-    if (userAnswersMissing.nonEmpty) {
-      genericLogger.logger.warn(
-        s"${request.userAnswers.id} has hit CYA and is missing $userAnswersMissing, user will be redirected to ${userAnswersMissing.head.pageRequired}")
-      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(CheckMode)))
-    } else {
-      action
-    }
+  private[controllers] def getResultFromMissingAnswers(missingAnswers: List[Page], action: => Future[Result], mode: Mode = NormalMode): Future[Result] = {
+    missingAnswers
+      .headOption
+      .map(getRedirectFromPage(_, mode))
+      .getOrElse(action)
   }
 
-  private[controllers] def thirdPartyPackagersPageRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
-    val upToThirdPartyPackagersJourney = thirdPartyPackagersPageJourney
-    val userAnswersMissing: List[RequiredPage[_, _, _]] = returnMissingAnswers(upToThirdPartyPackagersJourney)
-    if (userAnswersMissing.nonEmpty) {
-      genericLogger.logger.warn(
-        s"${request.userAnswers.id} has hit $ThirdPartyPackagersPage and is missing $userAnswersMissing, user will be redirected" +
-          s" to ${userAnswersMissing.head.pageRequired}")
-      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(NormalMode)))
-    } else {
-      action
-    }
+  private[controllers] def returnMissingAnswers(
+                            userAnswers: UserAnswers,
+                            requiredPageList: UserAnswers => List[RequiredPage]
+                          ): List[Page] = {
+    val redirectConditions = transformRequiredPageIntoBooleanPageList(userAnswers, requiredPageList)
+    redirectConditions
+      .filter(_._1)
+      .map(_._2)
   }
-
-  private[controllers] def operatePackagingSiteOwnBrandsPageRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
-    val upToOperatePackagingSiteOwnBrandsJourney = operatePackagingSiteOwnBrandsPageJourney
-    val userAnswersMissing: List[RequiredPage[_, _, _]] = returnMissingAnswers(upToOperatePackagingSiteOwnBrandsJourney)
-    if (userAnswersMissing.nonEmpty) {
-      genericLogger.logger.warn(
-        s"${request.userAnswers.id} has hit $OperatePackagingSiteOwnBrandsPage and is missing $userAnswersMissing," +
-          s" user will be redirected to ${userAnswersMissing.head.pageRequired}")
-      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(NormalMode)))
-    } else {
-      action
-    }
-  }
-
-  private[controllers] def contractPackagingPageRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
-    val upToContractPackagingPageJourney = contractPackagingPageJourney
-    val userAnswersMissing: List[RequiredPage[_, _, _]] = returnMissingAnswers(upToContractPackagingPageJourney)
-    if (userAnswersMissing.nonEmpty) {
-      genericLogger.logger.warn(
-        s"${request.userAnswers.id} has hit $ContractPackingPage and is missing $userAnswersMissing, redirected to ${userAnswersMissing.head.pageRequired}")
-      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(NormalMode)))
-    } else {
-      action
-    }
-  }
-
-  private[controllers] def importsPageRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
-    val upToImportsPageJourney = importsPageJourney
-    val userAnswersMissing: List[RequiredPage[_, _, _]] = returnMissingAnswers(upToImportsPageJourney)
-    if (userAnswersMissing.nonEmpty) {
-      genericLogger.logger.warn(
-        s"${request.userAnswers.id} has hit $ImportsPage and is missing $userAnswersMissing, user redirected to ${userAnswersMissing.head.pageRequired}")
-      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(NormalMode)))
-    } else {
-      action
-    }
-  }
-
-  private[controllers] def howManyImportsPageRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
-    val upToHowManyImportsPageJourney = howManyImportsPageJourney
-    val userAnswersMissing: List[RequiredPage[_, _, _]] = returnMissingAnswers(upToHowManyImportsPageJourney)
-    if (userAnswersMissing.nonEmpty) {
-      genericLogger.logger.warn(
-        s"${request.userAnswers.id} has hit $HowManyImportsPage and is missing $userAnswersMissing, user redirected to ${userAnswersMissing.head.pageRequired}")
-      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(NormalMode)))
-    } else {
-      action
-    }
-  }
-
-  private[controllers] def returnMissingAnswers[A: ClassTag, B: ClassTag](list: List[RequiredPage[_, _, _]])
-                                                                         (implicit request: DataRequest[_]): List[RequiredPage[_, _, _]] = {
-    val missingList = list.filterNot { listItem =>
-      val currentPageFromUserAnswers: Option[A] = request.userAnswers.get(listItem.pageRequired
-        .asInstanceOf[QuestionPage[A]])(listItem.reads.asInstanceOf[Reads[A]])
-      (currentPageFromUserAnswers.isDefined, listItem.basedOnPreviousPages.nonEmpty) match {
-        case (false, true) =>
-          val previousUserAnswersMatchedToResultInCurrentPageRequired: List[Boolean] = listItem.basedOnPreviousPages.map { previousListItem =>
-            val previousPageRequired: PreviousPage[QuestionPage[B], B] = previousListItem.asInstanceOf[PreviousPage[QuestionPage[B], B]]
-            val previousPageAnswer: Option[B] = request.userAnswers.get(previousPageRequired.page)(previousPageRequired.reads)
-            previousPageRequired.previousPageAnswerRequired match {
-              case Nil => previousPageAnswer.isEmpty
-              case _ => !previousPageAnswer.exists(i => previousPageRequired.previousPageAnswerRequired.contains(i))
-            }
-          }
-          if (previousUserAnswersMatchedToResultInCurrentPageRequired.contains(true)) {
-            true
-          } else {
-            false
-          }
-        case (false, _) => false
-        case _ => true
-      }
-    }
-    missingList
-  }
-
-  private val implicitAmountProduced = implicitly[Reads[AmountProduced]]
-  private val implicitBands = implicitly[Reads[LitresInBands]]
-  private val implicitBoolean = implicitly[Reads[Boolean]]
-
-  val largeProducer: AmountProduced = AmountProduced.enumerable.withName("large").get
-  val smallProducer: AmountProduced = AmountProduced.enumerable.withName("small").get
-  private val noneProducer: AmountProduced = AmountProduced.enumerable.withName("none").get
-  private val previousPageSmallOrNonProducer = PreviousPage(AmountProducedPage, List(smallProducer, noneProducer))(implicitly[Reads[AmountProduced]])
-
-  private[controllers] def baseJourney: List[RequiredPage[_,_,_]] = {
-    val pagesRequiredForHowManyContractPackingPage: List[List[PreviousPage[_, _]]] =
-      List(List(PreviousPage(ContractPackingPage, List(true))(implicitBoolean)))
-    val pagesRequiredForHowManyImportsPage: List[List[PreviousPage[_, _]]] =
-      List(List(PreviousPage(ImportsPage, List(true))(implicitBoolean)))
-    val pagesRequiredForHowManyOperatePackagingSiteOwnBrandsPage: List[List[PreviousPage[_, _]]] =
-      List(List(PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitBoolean)))
-    val pagesRequiredForSecondaryWarehouseDetailsPage: List[List[PreviousPage[_, _]]] = List(
-      List(PreviousPage(ImportsPage, List(true))(implicitBoolean)),
-      List(PreviousPage(PackagingSiteDetailsPage, List(true, false))(implicitBoolean))
-    )
-    List(
-      importsPageJourney,
-      List(RequiredPage(ImportsPage, List.empty)(implicitBoolean)),
-      pagesRequiredForHowManyOperatePackagingSiteOwnBrandsPage.map(RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, _)(implicitBands)),
-      pagesRequiredForHowManyContractPackingPage.map(RequiredPage(HowManyContractPackingPage, _)(implicitBands)),
-      pagesRequiredForHowManyImportsPage.map(RequiredPage(HowManyImportsPage, _)(implicitBands)),
-      pagesRequiredForSecondaryWarehouseDetailsPage.map(RequiredPage(SecondaryWarehouseDetailsPage, _)(implicitBoolean))
-    ).flatten
-  }
-
-  private[controllers] def thirdPartyPackagersPageJourney: List[RequiredPage[_, _, _]] = {
-    List(
-      List(RequiredPage(AmountProducedPage, List.empty)(implicitAmountProduced))
-      ).flatten
-  }
-
-  private[controllers] def operatePackagingSiteOwnBrandsPageJourney: List[RequiredPage[_, _, _]] = {
-    List(
-      List(RequiredPage(AmountProducedPage, List.empty)(implicitAmountProduced)),
-      List(RequiredPage(ThirdPartyPackagersPage, List(PreviousPage(AmountProducedPage, List(smallProducer))(implicitAmountProduced)))(implicitBoolean))
-    ).flatten
- }
-
-  private[controllers] def contractPackagingPageJourney: List[RequiredPage[_, _, _]] = {
-      List(
-        List(RequiredPage(AmountProducedPage, List.empty)(implicitAmountProduced)),
-        List(RequiredPage(ThirdPartyPackagersPage, List(PreviousPage(AmountProducedPage, List(smallProducer))(implicitAmountProduced)))(implicitBoolean)),
-        List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(PreviousPage(AmountProducedPage,
-          List(smallProducer, largeProducer))(implicitAmountProduced)))(implicitBoolean))
-      ).flatten
-  }
-
-  private[controllers] def importsPageJourney: List[RequiredPage[_, _, _]] = {
-    List(
-      List(RequiredPage(AmountProducedPage, List.empty)(implicitAmountProduced)),
-      List(RequiredPage(ThirdPartyPackagersPage, List(PreviousPage(AmountProducedPage, List(smallProducer))(implicitAmountProduced)))(implicitBoolean)),
-      List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(PreviousPage(AmountProducedPage,
-        List(smallProducer, largeProducer))(implicitAmountProduced)))(implicitBoolean)),
-      List(RequiredPage(ContractPackingPage, List.empty)(implicitBoolean))
-    ).flatten
-  }
-
-  private[controllers] def howManyImportsPageJourney: List[RequiredPage[_, _, _]] = {
-    List(
-      importsPageJourney,
-      List(RequiredPage(ImportsPage, List.empty)(implicitBoolean))
-    ).flatten
-  }
-
-  def packagingSiteChangeActivityJourney(emptyPackagingSites: Boolean): List[RequiredPage[_, _, _]] = {
-    val pagesRequiredForPackagingSiteDetailsPage: List[List[PreviousPage[_, _]]] = List(
-      List(previousPageSmallOrNonProducer, PreviousPage(ContractPackingPage, List(true))(implicitBoolean)),
-      List(PreviousPage(AmountProducedPage, List(largeProducer))(implicitAmountProduced),
-        PreviousPage(OperatePackagingSiteOwnBrandsPage, List(false))(implicitBoolean), PreviousPage(ContractPackingPage, List(true))(implicitBoolean)),
-      List(PreviousPage(AmountProducedPage, List(largeProducer))(implicitAmountProduced),
-        PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitBoolean), PreviousPage(ContractPackingPage, List(true, false))(implicitBoolean))
-    )
-    if (emptyPackagingSites) {
-      List(pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackAtBusinessAddressPage, _)(implicitBoolean)),
-        pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean))).flatten
-    } else {
-      List(pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean))).flatten
-    }
+  private[controllers] def requireData(page: Page)(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
+    val mode = if (page == ChangeActivityCYAPage) CheckMode else NormalMode
+    val missingAnswers = returnMissingAnswers(request.userAnswers, page.redirectConditions)
+    getResultFromMissingAnswers(missingAnswers, action, mode = mode)
   }
 }
-
-case class RequiredPage[+A >: QuestionPage[C], +B >: PreviousPage[_, _], C](pageRequired: A, basedOnPreviousPages: List[B])(val reads: Reads[C])
-case class PreviousPage[+B >: QuestionPage[C], C](page: B, previousPageAnswerRequired: List[C])(val reads: Reads[C])
