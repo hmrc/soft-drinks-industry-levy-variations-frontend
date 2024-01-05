@@ -30,7 +30,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
 
-class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogger)(implicit val executionContext: ExecutionContext) extends ActionHelpers {
+class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogger)(implicit val executionContext: ExecutionContext) extends ActionHelpers with RequiredUserAnswersForChangeActivityNew {
   def requireData(page: Page)(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
     page match {
       case ChangeActivityCYAPage => checkYourAnswersRequiredData(action)
@@ -44,6 +44,7 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
   }
 
   private[controllers] def checkYourAnswersRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
+    //  TODO: MIGRATE TO NEW FORM
     val fullJourney = baseJourney ++ packagingSiteChangeActivityJourney(request.userAnswers.packagingSiteList.isEmpty)
     val userAnswersMissing: List[RequiredPage[_,_,_]] = returnMissingAnswers(fullJourney)
 
@@ -57,65 +58,70 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
   }
 
   private[controllers] def thirdPartyPackagersPageRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
-    val upToThirdPartyPackagersJourney = thirdPartyPackagersPageJourney
-    val userAnswersMissing: List[RequiredPage[_, _, _]] = returnMissingAnswers(upToThirdPartyPackagersJourney)
-    if (userAnswersMissing.nonEmpty) {
-      genericLogger.logger.warn(
-        s"${request.userAnswers.id} has hit $ThirdPartyPackagersPage and is missing $userAnswersMissing, user will be redirected" +
-          s" to ${userAnswersMissing.head.pageRequired}")
-      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(NormalMode)))
-    } else {
-      action
-    }
+    thirdPartyPackagersPageRequiredDataNew(request.userAnswers, action)
+//    val upToThirdPartyPackagersJourney = thirdPartyPackagersPageJourney
+//    val userAnswersMissing: List[RequiredPage[_, _, _]] = returnMissingAnswers(upToThirdPartyPackagersJourney)
+//    if (userAnswersMissing.nonEmpty) {
+//      genericLogger.logger.warn(
+//        s"${request.userAnswers.id} has hit $ThirdPartyPackagersPage and is missing $userAnswersMissing, user will be redirected" +
+//          s" to ${userAnswersMissing.head.pageRequired}")
+//      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(NormalMode)))
+//    } else {
+//      action
+//    }
   }
 
   private[controllers] def operatePackagingSiteOwnBrandsPageRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
-    val upToOperatePackagingSiteOwnBrandsJourney = operatePackagingSiteOwnBrandsPageJourney
-    val userAnswersMissing: List[RequiredPage[_, _, _]] = returnMissingAnswers(upToOperatePackagingSiteOwnBrandsJourney)
-    if (userAnswersMissing.nonEmpty) {
-      genericLogger.logger.warn(
-        s"${request.userAnswers.id} has hit $OperatePackagingSiteOwnBrandsPage and is missing $userAnswersMissing," +
-          s" user will be redirected to ${userAnswersMissing.head.pageRequired}")
-      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(NormalMode)))
-    } else {
-      action
-    }
+    operatePackagingSiteOwnBrandsPageRequiredDataNew(request.userAnswers, action)
+//    val upToOperatePackagingSiteOwnBrandsJourney = operatePackagingSiteOwnBrandsPageJourney
+//    val userAnswersMissing: List[RequiredPage[_, _, _]] = returnMissingAnswers(upToOperatePackagingSiteOwnBrandsJourney)
+//    if (userAnswersMissing.nonEmpty) {
+//      genericLogger.logger.warn(
+//        s"${request.userAnswers.id} has hit $OperatePackagingSiteOwnBrandsPage and is missing $userAnswersMissing," +
+//          s" user will be redirected to ${userAnswersMissing.head.pageRequired}")
+//      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(NormalMode)))
+//    } else {
+//      action
+//    }
   }
 
   private[controllers] def contractPackagingPageRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
-    val upToContractPackagingPageJourney = contractPackagingPageJourney
-    val userAnswersMissing: List[RequiredPage[_, _, _]] = returnMissingAnswers(upToContractPackagingPageJourney)
-    if (userAnswersMissing.nonEmpty) {
-      genericLogger.logger.warn(
-        s"${request.userAnswers.id} has hit $ContractPackingPage and is missing $userAnswersMissing, redirected to ${userAnswersMissing.head.pageRequired}")
-      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(NormalMode)))
-    } else {
-      action
-    }
+    contractPackagingPageRequiredDataNew(request.userAnswers, action)
+//    val upToContractPackagingPageJourney = contractPackagingPageJourney
+//    val userAnswersMissing: List[RequiredPage[_, _, _]] = returnMissingAnswers(upToContractPackagingPageJourney)
+//    if (userAnswersMissing.nonEmpty) {
+//      genericLogger.logger.warn(
+//        s"${request.userAnswers.id} has hit $ContractPackingPage and is missing $userAnswersMissing, redirected to ${userAnswersMissing.head.pageRequired}")
+//      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(NormalMode)))
+//    } else {
+//      action
+//    }
   }
 
   private[controllers] def importsPageRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
-    val upToImportsPageJourney = importsPageJourney
-    val userAnswersMissing: List[RequiredPage[_, _, _]] = returnMissingAnswers(upToImportsPageJourney)
-    if (userAnswersMissing.nonEmpty) {
-      genericLogger.logger.warn(
-        s"${request.userAnswers.id} has hit $ImportsPage and is missing $userAnswersMissing, user redirected to ${userAnswersMissing.head.pageRequired}")
-      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(NormalMode)))
-    } else {
-      action
-    }
+    importsPageRequiredDataNew(request.userAnswers, action)
+//    val upToImportsPageJourney = importsPageJourney
+//    val userAnswersMissing: List[RequiredPage[_, _, _]] = returnMissingAnswers(upToImportsPageJourney)
+//    if (userAnswersMissing.nonEmpty) {
+//      genericLogger.logger.warn(
+//        s"${request.userAnswers.id} has hit $ImportsPage and is missing $userAnswersMissing, user redirected to ${userAnswersMissing.head.pageRequired}")
+//      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(NormalMode)))
+//    } else {
+//      action
+//    }
   }
 
   private[controllers] def howManyImportsPageRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
-    val upToHowManyImportsPageJourney = howManyImportsPageJourney
-    val userAnswersMissing: List[RequiredPage[_, _, _]] = returnMissingAnswers(upToHowManyImportsPageJourney)
-    if (userAnswersMissing.nonEmpty) {
-      genericLogger.logger.warn(
-        s"${request.userAnswers.id} has hit $HowManyImportsPage and is missing $userAnswersMissing, user redirected to ${userAnswersMissing.head.pageRequired}")
-      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(NormalMode)))
-    } else {
-      action
-    }
+    howManyImportsPageRequiredDataNew(request.userAnswers, action)
+//    val upToHowManyImportsPageJourney = howManyImportsPageJourney
+//    val userAnswersMissing: List[RequiredPage[_, _, _]] = returnMissingAnswers(upToHowManyImportsPageJourney)
+//    if (userAnswersMissing.nonEmpty) {
+//      genericLogger.logger.warn(
+//        s"${request.userAnswers.id} has hit $HowManyImportsPage and is missing $userAnswersMissing, user redirected to ${userAnswersMissing.head.pageRequired}")
+//      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(NormalMode)))
+//    } else {
+//      action
+//    }
   }
 
   private[controllers] def returnMissingAnswers[A: ClassTag, B: ClassTag](list: List[RequiredPage[_, _, _]])
@@ -166,7 +172,14 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
       List(PreviousPage(PackagingSiteDetailsPage, List(true, false))(implicitBoolean))
     )
     List(
-      importsPageJourney,
+//      importsPageJourney,
+      List(
+        List(RequiredPage(AmountProducedPage, List.empty)(implicitAmountProduced)),
+        List(RequiredPage(ThirdPartyPackagersPage, List(PreviousPage(AmountProducedPage, List(smallProducer))(implicitAmountProduced)))(implicitBoolean)),
+        List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(PreviousPage(AmountProducedPage,
+          List(smallProducer, largeProducer))(implicitAmountProduced)))(implicitBoolean)),
+        List(RequiredPage(ContractPackingPage, List.empty)(implicitBoolean))
+      ).flatten,
       List(RequiredPage(ImportsPage, List.empty)(implicitBoolean)),
       pagesRequiredForHowManyOperatePackagingSiteOwnBrandsPage.map(RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, _)(implicitBands)),
       pagesRequiredForHowManyContractPackingPage.map(RequiredPage(HowManyContractPackingPage, _)(implicitBands)),
