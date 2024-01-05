@@ -36,7 +36,7 @@
 @summary ={
     @for((heading, summaryList) <- seqSummaryList){
         <h2 class="govuk-heading-m">@messages(heading)</h2>
-    @govukSummaryList(summaryList)
+        @govukSummaryList(summaryList)
     }
 }
 
@@ -47,7 +47,7 @@
         content = HtmlContent(messages("changeActivitySent.panel.returnMessage"))
     ))
 
-    <p>@printLinkWithJs(messages("site.print"))</p>
+    @printLinkWithJs(messages("site.print"))<
 
     <p class="govuk-body" id="returnDone">
     @Html(messages("changeActivitySent.returnsDoneMessage",
