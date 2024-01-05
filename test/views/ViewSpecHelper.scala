@@ -96,7 +96,7 @@ trait ViewSpecHelper extends SpecBase{
 
   def validateTechnicalHelpLinkPresent(doc: Document): Unit = {
     val technicalHelpLink = doc
-      .getElementsByClass("govuk-link hmrc-report-technical-issue ")
+      .getElementsByClass("hmrc-report-technical-issue")
     "contain a technical help link" - {
       "that has the expected text" in {
         technicalHelpLink
