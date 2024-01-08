@@ -45,16 +45,17 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
 
   private[controllers] def checkYourAnswersRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
     //  TODO: MIGRATE TO NEW FORM
-    val fullJourney = baseJourney ++ packagingSiteChangeActivityJourney(request.userAnswers.packagingSiteList.isEmpty)
-    val userAnswersMissing: List[RequiredPage[_,_,_]] = returnMissingAnswers(fullJourney)
-
-    if (userAnswersMissing.nonEmpty) {
-      genericLogger.logger.warn(
-        s"${request.userAnswers.id} has hit CYA and is missing $userAnswersMissing, user will be redirected to ${userAnswersMissing.head.pageRequired}")
-      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(CheckMode)))
-    } else {
-      action
-    }
+    checkYourAnswersRequiredDataNew(request.userAnswers, action)
+//    val fullJourney = baseJourney ++ packagingSiteChangeActivityJourney(request.userAnswers.packagingSiteList.isEmpty)
+//    val userAnswersMissing: List[RequiredPage[_,_,_]] = returnMissingAnswers(fullJourney)
+//
+//    if (userAnswersMissing.nonEmpty) {
+//      genericLogger.logger.warn(
+//        s"${request.userAnswers.id} has hit CYA and is missing $userAnswersMissing, user will be redirected to ${userAnswersMissing.head.pageRequired}")
+//      Future.successful(Redirect(userAnswersMissing.head.pageRequired.asInstanceOf[Page].url(CheckMode)))
+//    } else {
+//      action
+//    }
   }
 
   private[controllers] def thirdPartyPackagersPageRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
@@ -160,33 +161,33 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
   private val noneProducer: AmountProduced = AmountProduced.enumerable.withName("none").get
   private val previousPageSmallOrNonProducer = PreviousPage(AmountProducedPage, List(smallProducer, noneProducer))(implicitly[Reads[AmountProduced]])
 
-  private[controllers] def baseJourney: List[RequiredPage[_,_,_]] = {
-    val pagesRequiredForHowManyContractPackingPage: List[List[PreviousPage[_, _]]] =
-      List(List(PreviousPage(ContractPackingPage, List(true))(implicitBoolean)))
-    val pagesRequiredForHowManyImportsPage: List[List[PreviousPage[_, _]]] =
-      List(List(PreviousPage(ImportsPage, List(true))(implicitBoolean)))
-    val pagesRequiredForHowManyOperatePackagingSiteOwnBrandsPage: List[List[PreviousPage[_, _]]] =
-      List(List(PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitBoolean)))
-    val pagesRequiredForSecondaryWarehouseDetailsPage: List[List[PreviousPage[_, _]]] = List(
-      List(PreviousPage(ImportsPage, List(true))(implicitBoolean)),
-      List(PreviousPage(PackagingSiteDetailsPage, List(true, false))(implicitBoolean))
-    )
-    List(
-//      importsPageJourney,
-      List(
-        List(RequiredPage(AmountProducedPage, List.empty)(implicitAmountProduced)),
-        List(RequiredPage(ThirdPartyPackagersPage, List(PreviousPage(AmountProducedPage, List(smallProducer))(implicitAmountProduced)))(implicitBoolean)),
-        List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(PreviousPage(AmountProducedPage,
-          List(smallProducer, largeProducer))(implicitAmountProduced)))(implicitBoolean)),
-        List(RequiredPage(ContractPackingPage, List.empty)(implicitBoolean))
-      ).flatten,
-      List(RequiredPage(ImportsPage, List.empty)(implicitBoolean)),
-      pagesRequiredForHowManyOperatePackagingSiteOwnBrandsPage.map(RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, _)(implicitBands)),
-      pagesRequiredForHowManyContractPackingPage.map(RequiredPage(HowManyContractPackingPage, _)(implicitBands)),
-      pagesRequiredForHowManyImportsPage.map(RequiredPage(HowManyImportsPage, _)(implicitBands)),
-      pagesRequiredForSecondaryWarehouseDetailsPage.map(RequiredPage(SecondaryWarehouseDetailsPage, _)(implicitBoolean))
-    ).flatten
-  }
+//  private[controllers] def baseJourney: List[RequiredPage[_,_,_]] = {
+//    val pagesRequiredForHowManyContractPackingPage: List[List[PreviousPage[_, _]]] =
+//      List(List(PreviousPage(ContractPackingPage, List(true))(implicitBoolean)))
+//    val pagesRequiredForHowManyImportsPage: List[List[PreviousPage[_, _]]] =
+//      List(List(PreviousPage(ImportsPage, List(true))(implicitBoolean)))
+//    val pagesRequiredForHowManyOperatePackagingSiteOwnBrandsPage: List[List[PreviousPage[_, _]]] =
+//      List(List(PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitBoolean)))
+//    val pagesRequiredForSecondaryWarehouseDetailsPage: List[List[PreviousPage[_, _]]] = List(
+//      List(PreviousPage(ImportsPage, List(true))(implicitBoolean)),
+//      List(PreviousPage(PackagingSiteDetailsPage, List(true, false))(implicitBoolean))
+//    )
+//    List(
+////      importsPageJourney,
+//      List(
+//        List(RequiredPage(AmountProducedPage, List.empty)(implicitAmountProduced)),
+//        List(RequiredPage(ThirdPartyPackagersPage, List(PreviousPage(AmountProducedPage, List(smallProducer))(implicitAmountProduced)))(implicitBoolean)),
+//        List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(PreviousPage(AmountProducedPage,
+//          List(smallProducer, largeProducer))(implicitAmountProduced)))(implicitBoolean)),
+//        List(RequiredPage(ContractPackingPage, List.empty)(implicitBoolean))
+//      ).flatten,
+//      List(RequiredPage(ImportsPage, List.empty)(implicitBoolean)),
+//      pagesRequiredForHowManyOperatePackagingSiteOwnBrandsPage.map(RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, _)(implicitBands)),
+//      pagesRequiredForHowManyContractPackingPage.map(RequiredPage(HowManyContractPackingPage, _)(implicitBands)),
+//      pagesRequiredForHowManyImportsPage.map(RequiredPage(HowManyImportsPage, _)(implicitBands)),
+//      pagesRequiredForSecondaryWarehouseDetailsPage.map(RequiredPage(SecondaryWarehouseDetailsPage, _)(implicitBoolean))
+//    ).flatten
+//  }
 
   private[controllers] def thirdPartyPackagersPageJourney: List[RequiredPage[_, _, _]] = {
     List(
