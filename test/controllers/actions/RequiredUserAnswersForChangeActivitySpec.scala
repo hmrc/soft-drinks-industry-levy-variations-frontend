@@ -552,143 +552,100 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.redirectConditions)
         res mustBe List(AmountProducedPage, ContractPackingPage, ImportsPage)
       }
-//
-//      s"should return correct missing answer list when producer is $Large, contractPacking is false, OperatePackagingSites " +
-//        s"is true and pack at business address is not answered and packaging site list is ${if (packagingSitesEmpty) "" else "not "}empty" in {
-//        val userAnswers = {
-//          emptyUserAnswersForChangeActivity
-//            .copy(packagingSiteList = packagingSiteList)
-//            .set(AmountProducedPage, Large).success.value
-//            .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-//            .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1, 1)).success.value
-//            .set(ContractPackingPage, false).success.value
-//            .set(ImportsPage, true).success.value
-//            .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
-//            .set(SecondaryWarehouseDetailsPage, true).success.value
-//        }
-//        implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-//
-//        val journey = requiredUserAnswers.baseJourney ++
-//          requiredUserAnswers.packagingSiteChangeActivityJourney(packagingSitesEmpty)
-//        val res = requiredUserAnswers.returnMissingAnswers(journey)
-//        val requiredPages = if (packagingSitesEmpty) {
-//          List(
-//            List(RequiredPage(PackAtBusinessAddressPage, List(
-//              PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]]),
-//              PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitly[Reads[Boolean]]),
-//              PreviousPage(ContractPackingPage, List(true, false))(implicitly[Reads[Boolean]])))(implicitly[Reads[Boolean]])),
-//            List(RequiredPage(PackagingSiteDetailsPage, List(
-//              PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]]),
-//              PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitly[Reads[Boolean]]),
-//              PreviousPage(ContractPackingPage, List(true, false))(implicitly[Reads[Boolean]])))(implicitly[Reads[Boolean]]))
-//          ).flatten
-//        } else {
-//          List(RequiredPage(PackagingSiteDetailsPage, List(
-//            PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]]),
-//            PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitly[Reads[Boolean]]),
-//            PreviousPage(ContractPackingPage, List(true, false))(implicitly[Reads[Boolean]])))(implicitly[Reads[Boolean]]))
-//        }
-//        res mustBe requiredPages
-//      }
-//
-//      s"should return correct missing answer list when producer is $Large, $OperatePackagingSiteOwnBrandsPage " +
-//        s"is true and PackAtBusinessAddress is not answered and packaging site list is ${if (packagingSitesEmpty) "" else "not "}empty" in {
-//        val userAnswers = {
-//          emptyUserAnswersForChangeActivity
-//            .copy(packagingSiteList = packagingSiteList)
-//            .set(AmountProducedPage, Large).success.value
-//            .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-//            .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1, 1)).success.value
-//            .set(ContractPackingPage, true).success.value
-//            .set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value
-//            .set(ImportsPage, true).success.value
-//            .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
-//            .set(SecondaryWarehouseDetailsPage, true).success.value
-//        }
-//        implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-//        val journey = requiredUserAnswers.baseJourney ++
-//          requiredUserAnswers.packagingSiteChangeActivityJourney(packagingSitesEmpty)
-//        val res = requiredUserAnswers.returnMissingAnswers(journey)
-//        val requiredPages = if (packagingSitesEmpty) {
-//          List(
-//            List(RequiredPage(PackAtBusinessAddressPage, List(
-//              PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]]),
-//              PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitly[Reads[Boolean]]),
-//              PreviousPage(ContractPackingPage, List(true, false))(implicitly[Reads[Boolean]])))(implicitly[Reads[Boolean]])),
-//            List(RequiredPage(PackagingSiteDetailsPage, List(
-//              PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]]),
-//              PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitly[Reads[Boolean]]),
-//              PreviousPage(ContractPackingPage, List(true, false))(implicitly[Reads[Boolean]])))(implicitly[Reads[Boolean]]))
-//          ).flatten
-//        } else {
-//          List(RequiredPage(PackagingSiteDetailsPage, List(
-//            PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]]),
-//            PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitly[Reads[Boolean]]),
-//            PreviousPage(ContractPackingPage, List(true, false))(implicitly[Reads[Boolean]])))(implicitly[Reads[Boolean]]))
-//        }
-//        res mustBe requiredPages
-//      }
-//
-//      val requiredPagesSmallorNonProducer = if (packagingSitesEmpty) {
-//        List(
-//          List(RequiredPage(PackAtBusinessAddressPage, List(
-//            PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get,
-//              AmountProduced.enumerable.withName("none").get))(implicitly[Reads[AmountProduced]]),
-//            PreviousPage(ContractPackingPage, List(true))(implicitly[Reads[Boolean]])))(implicitly[Reads[Boolean]])),
-//          List(RequiredPage(PackagingSiteDetailsPage, List(
-//            PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get,
-//              AmountProduced.enumerable.withName("none").get))(implicitly[Reads[AmountProduced]]),
-//            PreviousPage(ContractPackingPage, List(true))(implicitly[Reads[Boolean]])))(implicitly[Reads[Boolean]]))
-//        ).flatten
-//      } else {
-//        List(RequiredPage(PackagingSiteDetailsPage, List(
-//          PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get,
-//            AmountProduced.enumerable.withName("none").get))(implicitly[Reads[AmountProduced]]),
-//          PreviousPage(ContractPackingPage, List(true))(implicitly[Reads[Boolean]])))(implicitly[Reads[Boolean]]))
-//      }
-//
-//      s"should return correct missing answer list when producer is $Small, $ContractPackingPage is true, $OperatePackagingSiteOwnBrandsPage " +
-//        s"is true, and pack at business address is not answered and packaging site list ${if (packagingSitesEmpty) "" else "not "}empty" in {
-//        val userAnswers = {
-//          emptyUserAnswersForChangeActivity
-//            .copy(packagingSiteList = packagingSiteList)
-//            .set(AmountProducedPage, Small).success.value
-//            .set(ThirdPartyPackagersPage, true).success.value
-//            .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-//            .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1, 1)).success.value
-//            .set(ContractPackingPage, true).success.value
-//            .set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value
-//            .set(ImportsPage, true).success.value
-//            .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
-//            .set(SecondaryWarehouseDetailsPage, true).success.value
-//        }
-//        implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-//        val journey = requiredUserAnswers.baseJourney ++
-//          requiredUserAnswers.packagingSiteChangeActivityJourney(packagingSitesEmpty)
-//        val res = requiredUserAnswers.returnMissingAnswers(journey)
-//
-//        res mustBe requiredPagesSmallorNonProducer
-//      }
-//
-//      s"should return correct missing answer list when producer is $None, $ContractPackingPage is true," +
-//        s"and pack at business address is not answered and packaging site list ${if (packagingSitesEmpty) "" else "not "}empty" in {
-//        val userAnswers = {
-//          emptyUserAnswersForChangeActivity
-//            .copy(packagingSiteList = packagingSiteList)
-//            .set(AmountProducedPage, AmountProduced.None).success.value
-//            .set(ContractPackingPage, true).success.value
-//            .set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value
-//            .set(ImportsPage, true).success.value
-//            .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
-//            .set(SecondaryWarehouseDetailsPage, true).success.value
-//        }
-//        implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-//        val journey = requiredUserAnswers.baseJourney ++
-//          requiredUserAnswers.packagingSiteChangeActivityJourney(packagingSitesEmpty)
-//        val res = requiredUserAnswers.returnMissingAnswers(journey)
-//
-//        res mustBe requiredPagesSmallorNonProducer
-//      }
+
+      s"should return correct missing answer list when producer is $Large, contractPacking is false, OperatePackagingSites " +
+        s"is true and pack at business address is not answered and packaging site list is ${if (packagingSitesEmpty) "" else "not "}empty" in {
+        val userAnswers = {
+          emptyUserAnswersForChangeActivity
+            .copy(packagingSiteList = packagingSiteList)
+            .set(AmountProducedPage, Large).success.value
+            .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+            .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1, 1)).success.value
+            .set(ContractPackingPage, false).success.value
+            .set(ImportsPage, true).success.value
+            .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
+            .set(SecondaryWarehouseDetailsPage, true).success.value
+        }
+        implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+
+        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.redirectConditions)
+        val requiredPages = if (packagingSitesEmpty) {
+          List(PackAtBusinessAddressPage, PackagingSiteDetailsPage)
+        } else {
+          List(PackagingSiteDetailsPage)
+        }
+        res mustBe requiredPages
+      }
+
+      s"should return correct missing answer list when producer is $Large, $OperatePackagingSiteOwnBrandsPage " +
+        s"is true and PackAtBusinessAddress is not answered and packaging site list is ${if (packagingSitesEmpty) "" else "not "}empty" in {
+        val userAnswers = {
+          emptyUserAnswersForChangeActivity
+            .copy(packagingSiteList = packagingSiteList)
+            .set(AmountProducedPage, Large).success.value
+            .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+            .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1, 1)).success.value
+            .set(ContractPackingPage, true).success.value
+            .set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value
+            .set(ImportsPage, true).success.value
+            .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
+            .set(SecondaryWarehouseDetailsPage, true).success.value
+        }
+        implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+
+        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.redirectConditions)
+        val requiredPages = if (packagingSitesEmpty) {
+          List(PackAtBusinessAddressPage, PackagingSiteDetailsPage)
+        } else {
+          List(PackagingSiteDetailsPage)
+        }
+        res mustBe requiredPages
+      }
+
+      val requiredPagesSmallorNonProducer = if (packagingSitesEmpty) {
+        List(PackAtBusinessAddressPage, PackagingSiteDetailsPage)
+      } else {
+        List(PackagingSiteDetailsPage)
+      }
+
+      s"should return correct missing answer list when producer is $Small, $ContractPackingPage is true, $OperatePackagingSiteOwnBrandsPage " +
+        s"is true, and pack at business address is not answered and packaging site list ${if (packagingSitesEmpty) "" else "not "}empty" in {
+        val userAnswers = {
+          emptyUserAnswersForChangeActivity
+            .copy(packagingSiteList = packagingSiteList)
+            .set(AmountProducedPage, Small).success.value
+            .set(ThirdPartyPackagersPage, true).success.value
+            .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+            .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1, 1)).success.value
+            .set(ContractPackingPage, true).success.value
+            .set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value
+            .set(ImportsPage, true).success.value
+            .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
+            .set(SecondaryWarehouseDetailsPage, true).success.value
+        }
+        implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+
+        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.redirectConditions)
+        res mustBe requiredPagesSmallorNonProducer
+      }
+
+      s"should return correct missing answer list when producer is $None, $ContractPackingPage is true," +
+        s"and pack at business address is not answered and packaging site list ${if (packagingSitesEmpty) "" else "not "}empty" in {
+        val userAnswers = {
+          emptyUserAnswersForChangeActivity
+            .copy(packagingSiteList = packagingSiteList)
+            .set(AmountProducedPage, AmountProduced.None).success.value
+            .set(ContractPackingPage, true).success.value
+            .set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value
+            .set(ImportsPage, true).success.value
+            .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
+            .set(SecondaryWarehouseDetailsPage, true).success.value
+        }
+        implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+
+        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.redirectConditions)
+        res mustBe requiredPagesSmallorNonProducer
+      }
     })
   }
 //
