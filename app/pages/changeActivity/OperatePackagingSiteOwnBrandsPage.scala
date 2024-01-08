@@ -17,9 +17,10 @@
 package pages.changeActivity
 
 import controllers.changeActivity.routes
-import models.Mode
+import models.changeActivity.AmountProduced
+import models.{Mode, UserAnswers}
 import play.api.libs.json.JsPath
-import pages.QuestionPage
+import pages.{QuestionPage, RequiredPageNew}
 
 case object OperatePackagingSiteOwnBrandsPage extends QuestionPage[Boolean] {
 
@@ -29,4 +30,11 @@ case object OperatePackagingSiteOwnBrandsPage extends QuestionPage[Boolean] {
   override def toString: String = "operatePackagingSiteOwnBrands"
 
   override val url: Mode => String = mode => routes.OperatePackagingSiteOwnBrandsController.onPageLoad(mode).url
+
+  override val redirectConditions: UserAnswers => List[RequiredPageNew] = userAnswers => {
+    List(
+      RequiredPageNew(AmountProducedPage),
+      RequiredPageNew(ThirdPartyPackagersPage, additionalPreconditions = List(userAnswers.get(AmountProducedPage).contains(AmountProduced.Small)))
+    )
+  }
 }

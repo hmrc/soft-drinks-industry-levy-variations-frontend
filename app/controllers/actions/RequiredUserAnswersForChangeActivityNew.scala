@@ -19,7 +19,7 @@ package controllers.actions
 import models.changeActivity.AmountProduced
 import models.{CheckMode, LitresInBands, Mode, NormalMode, UserAnswers}
 import org.checkerframework.checker.units.qual.A
-import pages.{Page, QuestionPage}
+import pages.{Page, QuestionPage, RequiredPageNew}
 import pages.changeActivity._
 import play.api.libs.json.{JsPath, Reads}
 import play.api.mvc.Result
@@ -31,23 +31,6 @@ import scala.concurrent.Future
 trait RequiredUserAnswersForChangeActivityNew {
 
   def getRedirectFromPage(page: Page, mode: Mode = NormalMode): Future[Result] = Future.successful(Redirect(page.url(mode)))
-
-  def getResultFromRedirectConditions(redirectConditions: List[(Boolean, Page)], action: => Future[Result], mode: Mode = NormalMode): Future[Result] = {
-    redirectConditions
-      .filter(_._1)
-      .map(_._2)
-      .headOption
-      .map(getRedirectFromPage(_, mode))
-      .getOrElse(action)
-  }
-
-  case class RequiredPageNew(page: Page with Query, additionalPreconditions: List[Boolean] = List.empty)
-
-  private def isSmallOrLargeProducer(userAnswers: UserAnswers): Boolean =
-    userAnswers.get(AmountProducedPage).contains(AmountProduced.Large) || userAnswers.get(AmountProducedPage).contains(AmountProduced.Small)
-
-  private def isSmallOrNoneProducer(userAnswers: UserAnswers): Boolean =
-    userAnswers.get(AmountProducedPage).contains(AmountProduced.Small) || userAnswers.get(AmountProducedPage).contains(AmountProduced.None)
 
   private def transformRequiredPageIntoBooleanPageList(
                                                         userAnswers: UserAnswers,
@@ -61,22 +44,39 @@ trait RequiredUserAnswersForChangeActivityNew {
     })
   }
 
-  private def thirdPartyPackagersRedirectConditions(userAnswers: UserAnswers): List[RequiredPageNew] = List(
-    RequiredPageNew(AmountProducedPage)
-  )
+  def getResultFromRedirectConditions(redirectConditions: List[(Boolean, Page)], action: => Future[Result], mode: Mode = NormalMode): Future[Result] = {
+    redirectConditions
+      .filter(_._1)
+      .map(_._2)
+      .headOption
+      .map(getRedirectFromPage(_, mode))
+      .getOrElse(action)
+  }
+
+//  case class RequiredPageNew(page: Page with Query, additionalPreconditions: List[Boolean] = List.empty)
+
+  private def isSmallOrLargeProducer(userAnswers: UserAnswers): Boolean =
+    userAnswers.get(AmountProducedPage).contains(AmountProduced.Large) || userAnswers.get(AmountProducedPage).contains(AmountProduced.Small)
+
+  private def isSmallOrNoneProducer(userAnswers: UserAnswers): Boolean =
+    userAnswers.get(AmountProducedPage).contains(AmountProduced.Small) || userAnswers.get(AmountProducedPage).contains(AmountProduced.None)
+
+//  private def thirdPartyPackagersRedirectConditions(userAnswers: UserAnswers): List[RequiredPageNew] = List(
+//    RequiredPageNew(AmountProducedPage)
+//  )
 
   private[controllers] def thirdPartyPackagersPageRequiredDataNew(userAnswers: UserAnswers, action: => Future[Result]): Future[Result] = {
-    val redirectConditions = transformRequiredPageIntoBooleanPageList(userAnswers, thirdPartyPackagersRedirectConditions)
+    val redirectConditions = transformRequiredPageIntoBooleanPageList(userAnswers, ThirdPartyPackagersPage.redirectConditions)
     getResultFromRedirectConditions(redirectConditions, action)
   }
 
-  private def operatePackagingSiteOwnBrandsConditions(userAnswers: UserAnswers): List[RequiredPageNew] = List(
-    RequiredPageNew(AmountProducedPage),
-    RequiredPageNew(ThirdPartyPackagersPage, additionalPreconditions = List(userAnswers.get(AmountProducedPage).contains(AmountProduced.Small)))
-  )
+//  private def operatePackagingSiteOwnBrandsConditions(userAnswers: UserAnswers): List[RequiredPageNew] = List(
+//    RequiredPageNew(AmountProducedPage),
+//    RequiredPageNew(ThirdPartyPackagersPage, additionalPreconditions = List(userAnswers.get(AmountProducedPage).contains(AmountProduced.Small)))
+//  )
 
   private[controllers] def operatePackagingSiteOwnBrandsPageRequiredDataNew(userAnswers: UserAnswers, action: => Future[Result]): Future[Result] = {
-    val redirectConditions = transformRequiredPageIntoBooleanPageList(userAnswers, operatePackagingSiteOwnBrandsConditions)
+    val redirectConditions = transformRequiredPageIntoBooleanPageList(userAnswers, OperatePackagingSiteOwnBrandsPage.redirectConditions)
     getResultFromRedirectConditions(redirectConditions, action)
   }
 
