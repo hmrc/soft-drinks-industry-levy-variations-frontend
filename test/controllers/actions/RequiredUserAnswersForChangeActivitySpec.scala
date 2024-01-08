@@ -22,7 +22,7 @@ import models.changeActivity.AmountProduced
 import models.changeActivity.AmountProduced.{Large, None, Small}
 import models.requests.{DataRequest, RequiredDataRequest}
 import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
-import pages.QuestionPage
+import pages.{QuestionPage, RequiredPage}
 import pages.changeActivity._
 import play.api.libs.json.Reads
 import play.api.mvc.Results.Ok
@@ -971,16 +971,15 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
 //        RequiredPage(ContractPackingPage, List.empty)(implicitly[Reads[Boolean]]))
 //    }
 
-//    s"should return correct missing answer list when producer is $None" in {
-//      val userAnswers = {
-//        emptyUserAnswersForChangeActivity
-//          .set(AmountProducedPage, None).success.value
-//      }
-//      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-//      val journey = requiredUserAnswers.importsPageJourney
-//      val res = requiredUserAnswers.returnMissingAnswers(journey)
-//
-//      res mustBe List(RequiredPage(ContractPackingPage, List.empty)(implicitly[Reads[Boolean]]))
-//    }
+    s"should return correct missing answer list when producer is $None" in {
+      val userAnswers = {
+        emptyUserAnswersForChangeActivity
+          .set(AmountProducedPage, None).success.value
+      }
+      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ImportsPage.redirectConditions)
+
+      res mustBe List(ContractPackingPage)
+    }
   }
 }
