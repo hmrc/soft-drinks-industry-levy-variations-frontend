@@ -46,6 +46,7 @@ case class UserAnswers(
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
     Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)
 
+  
   def getChangeActivityData(implicit rds: Reads[ChangeActivityData]): Option[ChangeActivityData] = {
     val jsPath = JsPath \ "changeActivity"
     Reads.optionNoError(Reads.at(jsPath)).reads(data).getOrElse(None)
