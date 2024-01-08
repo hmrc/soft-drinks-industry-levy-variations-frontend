@@ -45,8 +45,12 @@ trait RequiredUserAnswersForChangeActivityNew {
 
   case class RequiredPageNew(page: Page with Query, additionalPreconditions: List[Boolean] = List.empty)
 
-  private def transformRequiredPageIntoBooleanPageList(userAnswers: UserAnswers, requiredPageList: List[RequiredPageNew]): List[(Boolean, Page)] = {
-    requiredPageList.map(requiredPage => {
+  private def transformRequiredPageIntoBooleanPageList(
+                                                        userAnswers: UserAnswers,
+                                                        requiredPageList: UserAnswers => List[RequiredPageNew]
+                                                      ): List[(Boolean, Page)] = {
+    val requiredPageListFromUserAnswers = requiredPageList(userAnswers)
+    requiredPageListFromUserAnswers.map(requiredPage => {
       val bool = (requiredPage.additionalPreconditions :+ userAnswers.isEmpty(requiredPage.page)).forall(a => a)
       val page = requiredPage.page
       (bool, page)
@@ -58,7 +62,7 @@ trait RequiredUserAnswersForChangeActivityNew {
   )
 
   private[controllers] def thirdPartyPackagersPageRequiredDataNew(userAnswers: UserAnswers, action: => Future[Result]): Future[Result] = {
-    val redirectConditions = transformRequiredPageIntoBooleanPageList(userAnswers, thirdPartyPackagersRedirectConditions(userAnswers))
+    val redirectConditions = transformRequiredPageIntoBooleanPageList(userAnswers, thirdPartyPackagersRedirectConditions)
     getResultFromRedirectConditions(redirectConditions, action)
   }
 
@@ -68,7 +72,7 @@ trait RequiredUserAnswersForChangeActivityNew {
   )
 
   private[controllers] def operatePackagingSiteOwnBrandsPageRequiredDataNew(userAnswers: UserAnswers, action: => Future[Result]): Future[Result] = {
-    val redirectConditions = transformRequiredPageIntoBooleanPageList(userAnswers, operatePackagingSiteOwnBrandsConditions(userAnswers))
+    val redirectConditions = transformRequiredPageIntoBooleanPageList(userAnswers, operatePackagingSiteOwnBrandsConditions)
     getResultFromRedirectConditions(redirectConditions, action)
   }
 
