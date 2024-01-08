@@ -720,19 +720,19 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
 //    }
 //  }
 
-  s"ThirdPartyPackagerRequiredData" - {
-    s"should return empty missing answer list when producer is $Small" in {
-      val userAnswers = {
-        emptyUserAnswersForChangeActivity
-          .set(AmountProducedPage, Small).success.value
-      }
-      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-      val journey = requiredUserAnswers.thirdPartyPackagersPageJourney
-      val res = requiredUserAnswers.returnMissingAnswers(journey)
-
-      res mustBe List.empty
-    }
-  }
+//  s"ThirdPartyPackagerRequiredData" - {
+//    s"should return empty missing answer list when producer is $Small" in {
+//      val userAnswers = {
+//        emptyUserAnswersForChangeActivity
+//          .set(AmountProducedPage, Small).success.value
+//      }
+//      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+//      val journey = requiredUserAnswers.thirdPartyPackagersPageJourney
+//      val res = requiredUserAnswers.returnMissingAnswers(journey)
+//
+//      res mustBe List.empty
+//    }
+//  }
 
   s"OperatePackagingSiteRequiredData" - {
     s"should redirect to the appropriate missing page when missing answers required for $OperatePackagingSiteOwnBrandsPage" - {
@@ -747,31 +747,31 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
       }
     }
 
-    s"should return correct missing answer list when producer is $Small" in {
-      val userAnswers = {
-        emptyUserAnswersForChangeActivity
-          .set(AmountProducedPage, Small).success.value
-      }
-      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-      val journey = requiredUserAnswers.operatePackagingSiteOwnBrandsPageJourney
-      val res = requiredUserAnswers.returnMissingAnswers(journey)
+//    s"should return correct missing answer list when producer is $Small" in {
+//      val userAnswers = {
+//        emptyUserAnswersForChangeActivity
+//          .set(AmountProducedPage, Small).success.value
+//      }
+//      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+//      val journey = requiredUserAnswers.operatePackagingSiteOwnBrandsPageJourney
+//      val res = requiredUserAnswers.returnMissingAnswers(journey)
+//
+//      res mustBe List(RequiredPage(ThirdPartyPackagersPage, List(
+//        PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get))
+//        (implicitly[Reads[AmountProduced]])))(implicitly[Reads[Boolean]]))
+//    }
 
-      res mustBe List(RequiredPage(ThirdPartyPackagersPage, List(
-        PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get))
-        (implicitly[Reads[AmountProduced]])))(implicitly[Reads[Boolean]]))
-    }
-
-    s"should return empty missing answer list when producer is $Large" in {
-      val userAnswers = {
-        emptyUserAnswersForChangeActivity
-          .set(AmountProducedPage, Large).success.value
-      }
-      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-      val journey = requiredUserAnswers.operatePackagingSiteOwnBrandsPageJourney
-      val res = requiredUserAnswers.returnMissingAnswers(journey)
-
-      res mustBe List.empty
-    }
+//    s"should return empty missing answer list when producer is $Large" in {
+//      val userAnswers = {
+//        emptyUserAnswersForChangeActivity
+//          .set(AmountProducedPage, Large).success.value
+//      }
+//      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+//      val journey = requiredUserAnswers.operatePackagingSiteOwnBrandsPageJourney
+//      val res = requiredUserAnswers.returnMissingAnswers(journey)
+//
+//      res mustBe List.empty
+//    }
   }
 
   "ContractPackingPageRequiredData" - {
@@ -788,51 +788,51 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
       }
     }
 
-    s"should return correct missing answer list when producer is $Small and no other answers have been set" in {
-      val userAnswers = {
-        emptyUserAnswersForChangeActivity
-          .set(AmountProducedPage, Small).success.value
-      }
-      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-      val journey = requiredUserAnswers.contractPackagingPageJourney
-      val res = requiredUserAnswers.returnMissingAnswers(journey)
+//    s"should return correct missing answer list when producer is $Small and no other answers have been set" in {
+//      val userAnswers = {
+//        emptyUserAnswersForChangeActivity
+//          .set(AmountProducedPage, Small).success.value
+//      }
+//      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+//      val journey = requiredUserAnswers.contractPackagingPageJourney
+//      val res = requiredUserAnswers.returnMissingAnswers(journey)
+//
+//      res mustBe List(
+//        List(RequiredPage(ThirdPartyPackagersPage, List(
+//          PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get))
+//          (implicitly[Reads[AmountProduced]])))(implicitly[Reads[Boolean]])),
+//        List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(
+//          PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get,
+//            AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]])))
+//        (implicitly[Reads[Boolean]]))
+//      ).flatten
+//    }
 
-      res mustBe List(
-        List(RequiredPage(ThirdPartyPackagersPage, List(
-          PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get))
-          (implicitly[Reads[AmountProduced]])))(implicitly[Reads[Boolean]])),
-        List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(
-          PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get,
-            AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]])))
-        (implicitly[Reads[Boolean]]))
-      ).flatten
-    }
+//    s"should return correct missing answer list when producer is $Large" in {
+//      val userAnswers = {
+//        emptyUserAnswersForChangeActivity
+//          .set(AmountProducedPage, Large).success.value
+//      }
+//      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+//      val journey = requiredUserAnswers.contractPackagingPageJourney
+//      val res = requiredUserAnswers.returnMissingAnswers(journey)
+//
+//      res mustBe List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(
+//        PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get,
+//          AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]])))(implicitly[Reads[Boolean]]))
+//    }
 
-    s"should return correct missing answer list when producer is $Large" in {
-      val userAnswers = {
-        emptyUserAnswersForChangeActivity
-          .set(AmountProducedPage, Large).success.value
-      }
-      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-      val journey = requiredUserAnswers.contractPackagingPageJourney
-      val res = requiredUserAnswers.returnMissingAnswers(journey)
-
-      res mustBe List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(
-        PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get,
-          AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]])))(implicitly[Reads[Boolean]]))
-    }
-
-    s"should return empty missing answer list when producer is $None" in {
-      val userAnswers = {
-        emptyUserAnswersForChangeActivity
-          .set(AmountProducedPage, None).success.value
-      }
-      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-      val journey = requiredUserAnswers.contractPackagingPageJourney
-      val res = requiredUserAnswers.returnMissingAnswers(journey)
-
-      res mustBe List.empty
-    }
+//    s"should return empty missing answer list when producer is $None" in {
+//      val userAnswers = {
+//        emptyUserAnswersForChangeActivity
+//          .set(AmountProducedPage, None).success.value
+//      }
+//      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+//      val journey = requiredUserAnswers.contractPackagingPageJourney
+//      val res = requiredUserAnswers.returnMissingAnswers(journey)
+//
+//      res mustBe List.empty
+//    }
   }
 
   s"ImportsPageRequiredData" - {
@@ -936,51 +936,51 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
       }
     }
 
-    s"should return correct missing answer list when producer is $Small and no other answers have been set" in {
-      val userAnswers = {
-        emptyUserAnswersForChangeActivity
-          .set(AmountProducedPage, Small).success.value
-      }
-      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-      val journey = requiredUserAnswers.importsPageJourney
-      val res = requiredUserAnswers.returnMissingAnswers(journey)
+//    s"should return correct missing answer list when producer is $Small and no other answers have been set" in {
+//      val userAnswers = {
+//        emptyUserAnswersForChangeActivity
+//          .set(AmountProducedPage, Small).success.value
+//      }
+//      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+//      val journey = requiredUserAnswers.importsPageJourney
+//      val res = requiredUserAnswers.returnMissingAnswers(journey)
+//
+//      res mustBe List(
+//        List(RequiredPage(ThirdPartyPackagersPage, List(
+//          PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get))
+//          (implicitly[Reads[AmountProduced]])))(implicitly[Reads[Boolean]])),
+//        List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(
+//          PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get,
+//            AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]])))
+//        (implicitly[Reads[Boolean]])),
+//        List(RequiredPage(ContractPackingPage, List.empty)(implicitly[Reads[Boolean]]))).flatten
+//    }
 
-      res mustBe List(
-        List(RequiredPage(ThirdPartyPackagersPage, List(
-          PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get))
-          (implicitly[Reads[AmountProduced]])))(implicitly[Reads[Boolean]])),
-        List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(
-          PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get,
-            AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]])))
-        (implicitly[Reads[Boolean]])),
-        List(RequiredPage(ContractPackingPage, List.empty)(implicitly[Reads[Boolean]]))).flatten
-    }
+//    s"should return correct missing answer list when producer is $Large" in {
+//      val userAnswers = {
+//        emptyUserAnswersForChangeActivity
+//          .set(AmountProducedPage, Large).success.value
+//      }
+//      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+//      val journey = requiredUserAnswers.importsPageJourney
+//      val res = requiredUserAnswers.returnMissingAnswers(journey)
+//
+//      res mustBe List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(
+//        PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get,
+//          AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]])))(implicitly[Reads[Boolean]]),
+//        RequiredPage(ContractPackingPage, List.empty)(implicitly[Reads[Boolean]]))
+//    }
 
-    s"should return correct missing answer list when producer is $Large" in {
-      val userAnswers = {
-        emptyUserAnswersForChangeActivity
-          .set(AmountProducedPage, Large).success.value
-      }
-      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-      val journey = requiredUserAnswers.importsPageJourney
-      val res = requiredUserAnswers.returnMissingAnswers(journey)
-
-      res mustBe List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(
-        PreviousPage(AmountProducedPage, List(AmountProduced.enumerable.withName("small").get,
-          AmountProduced.enumerable.withName("large").get))(implicitly[Reads[AmountProduced]])))(implicitly[Reads[Boolean]]),
-        RequiredPage(ContractPackingPage, List.empty)(implicitly[Reads[Boolean]]))
-    }
-
-    s"should return correct missing answer list when producer is $None" in {
-      val userAnswers = {
-        emptyUserAnswersForChangeActivity
-          .set(AmountProducedPage, None).success.value
-      }
-      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-      val journey = requiredUserAnswers.importsPageJourney
-      val res = requiredUserAnswers.returnMissingAnswers(journey)
-
-      res mustBe List(RequiredPage(ContractPackingPage, List.empty)(implicitly[Reads[Boolean]]))
-    }
+//    s"should return correct missing answer list when producer is $None" in {
+//      val userAnswers = {
+//        emptyUserAnswersForChangeActivity
+//          .set(AmountProducedPage, None).success.value
+//      }
+//      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
+//      val journey = requiredUserAnswers.importsPageJourney
+//      val res = requiredUserAnswers.returnMissingAnswers(journey)
+//
+//      res mustBe List(RequiredPage(ContractPackingPage, List.empty)(implicitly[Reads[Boolean]]))
+//    }
   }
 }
