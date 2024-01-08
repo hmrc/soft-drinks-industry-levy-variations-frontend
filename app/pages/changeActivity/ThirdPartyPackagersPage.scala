@@ -18,7 +18,7 @@ package pages.changeActivity
 
 import controllers.changeActivity.routes
 import models.{Mode, UserAnswers}
-import pages.{QuestionPage, RequiredPageNew}
+import pages.{QuestionPage, RequiredPage}
 import play.api.libs.json.JsPath
 
 case object ThirdPartyPackagersPage extends QuestionPage[Boolean] {
@@ -30,7 +30,7 @@ case object ThirdPartyPackagersPage extends QuestionPage[Boolean] {
 
   override val url: Mode => String = mode => routes.ThirdPartyPackagersController.onPageLoad(mode).url
 
-  override val redirectConditions: UserAnswers => List[RequiredPageNew] = _ => {
-    List(RequiredPageNew(AmountProducedPage))
+  override val redirectConditions: UserAnswers => List[RequiredPage] = _ => {
+    List(RequiredPage(AmountProducedPage))
   }
 }

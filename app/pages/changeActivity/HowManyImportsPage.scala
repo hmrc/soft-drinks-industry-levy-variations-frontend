@@ -20,7 +20,7 @@ import controllers.changeActivity.routes
 import models.changeActivity.AmountProduced
 import play.api.libs.json.JsPath
 import models.{LitresInBands, Mode, UserAnswers}
-import pages.{QuestionPage, RequiredPageNew}
+import pages.{QuestionPage, RequiredPage}
 
 case object HowManyImportsPage extends QuestionPage[LitresInBands] {
 
@@ -31,16 +31,16 @@ case object HowManyImportsPage extends QuestionPage[LitresInBands] {
 
   override val url: Mode => String = mode => routes.HowManyImportsController.onPageLoad(mode).url
 
-  override val redirectConditions: UserAnswers => List[RequiredPageNew] = userAnswers => {
+  override val redirectConditions: UserAnswers => List[RequiredPage] = userAnswers => {
     def isSmallOrLargeProducer(userAnswers: UserAnswers): Boolean =
       userAnswers.get(AmountProducedPage).contains(AmountProduced.Large) || userAnswers.get(AmountProducedPage).contains(AmountProduced.Small)
 
     List(
-      RequiredPageNew(AmountProducedPage),
-      RequiredPageNew(ThirdPartyPackagersPage, additionalPreconditions = List(userAnswers.get(AmountProducedPage).contains(AmountProduced.Small))),
-      RequiredPageNew(OperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(isSmallOrLargeProducer(userAnswers))),
-      RequiredPageNew(ContractPackingPage),
-      RequiredPageNew(ImportsPage)
+      RequiredPage(AmountProducedPage),
+      RequiredPage(ThirdPartyPackagersPage, additionalPreconditions = List(userAnswers.get(AmountProducedPage).contains(AmountProduced.Small))),
+      RequiredPage(OperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(isSmallOrLargeProducer(userAnswers))),
+      RequiredPage(ContractPackingPage),
+      RequiredPage(ImportsPage)
     )
   }
 }

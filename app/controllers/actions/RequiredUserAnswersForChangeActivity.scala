@@ -16,19 +16,16 @@
 
 package controllers.actions
 
-import models.changeActivity.AmountProduced
 import models.requests.DataRequest
-import models.{CheckMode, LitresInBands, Mode, NormalMode, UserAnswers}
+import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages.changeActivity._
-import pages.{Page, QuestionPage, RequiredPageNew}
-import play.api.libs.json.Reads
+import pages.{Page, RequiredPage}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import utilities.GenericLogger
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import scala.reflect.ClassTag
 
 class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogger)(implicit val executionContext: ExecutionContext) extends ActionHelpers {
 
@@ -36,7 +33,7 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
 
   private def transformRequiredPageIntoBooleanPageList(
                                                         userAnswers: UserAnswers,
-                                                        requiredPageList: UserAnswers => List[RequiredPageNew]
+                                                        requiredPageList: UserAnswers => List[RequiredPage]
                                                       ): List[(Boolean, Page)] = {
     val requiredPageListFromUserAnswers = requiredPageList(userAnswers)
     requiredPageListFromUserAnswers.map(requiredPage => {
@@ -46,16 +43,25 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
     })
   }
 
-  def getResultFromRedirectConditions(redirectConditions: List[(Boolean, Page)], action: => Future[Result], mode: Mode = NormalMode): Future[Result] = {
-    redirectConditions
-      .filter(_._1)
-      .map(_._2)
+  def getResultFromMissingAnswers(missingAnswers: List[Page], action: => Future[Result], mode: Mode = NormalMode): Future[Result] = {
+    missingAnswers
       .headOption
       .map(getRedirectFromPage(_, mode))
       .getOrElse(action)
   }
+
+  def returnMissingAnswers(
+                            userAnswers: UserAnswers,
+                            requiredPageList: UserAnswers => List[RequiredPage]
+                          ): List[Page] = {
+    val redirectConditions = transformRequiredPageIntoBooleanPageList(userAnswers, requiredPageList)
+    redirectConditions
+      .filter(_._1)
+      .map(_._2)
+  }
   def requireData(page: Page)(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
     val mode = if (page == ChangeActivityCYAPage) CheckMode else NormalMode
-    getResultFromRedirectConditions(transformRequiredPageIntoBooleanPageList(request.userAnswers, page.redirectConditions), action, mode = mode)
+    val missingAnswers = returnMissingAnswers(request.userAnswers, page.redirectConditions)
+    getResultFromMissingAnswers(missingAnswers, action, mode = mode)
   }
 }

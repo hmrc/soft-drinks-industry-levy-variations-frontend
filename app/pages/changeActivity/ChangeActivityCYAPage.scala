@@ -19,7 +19,7 @@ package pages.changeActivity
 import controllers.changeActivity.routes
 import models.changeActivity.AmountProduced
 import models.{Mode, UserAnswers}
-import pages.{Page, RequiredPageNew}
+import pages.{Page, RequiredPage}
 
 case object ChangeActivityCYAPage extends Page {
 
@@ -27,7 +27,7 @@ case object ChangeActivityCYAPage extends Page {
 
   override val url: Mode => String = _ => routes.ChangeActivityCYAController.onPageLoad.url
 
-  override val redirectConditions: UserAnswers => List[RequiredPageNew] = userAnswers => {
+  override val redirectConditions: UserAnswers => List[RequiredPage] = userAnswers => {
     def isSmallOrLargeProducer(userAnswers: UserAnswers): Boolean =
       userAnswers.get(AmountProducedPage).contains(AmountProduced.Large) || userAnswers.get(AmountProducedPage).contains(AmountProduced.Small)
 
@@ -40,33 +40,33 @@ case object ChangeActivityCYAPage extends Page {
       })
     }).getOrElse(false)
     List(
-      RequiredPageNew(AmountProducedPage),
-      RequiredPageNew(ThirdPartyPackagersPage, additionalPreconditions = List(userAnswers.get(AmountProducedPage).contains(AmountProduced.Small))),
-      RequiredPageNew(OperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(isSmallOrLargeProducer(userAnswers))),
-      RequiredPageNew(HowManyOperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(userAnswers.get(OperatePackagingSiteOwnBrandsPage).contains(true))),
-      RequiredPageNew(ContractPackingPage),
-      RequiredPageNew(HowManyContractPackingPage, additionalPreconditions = List(userAnswers.get(ContractPackingPage).contains(true))),
-      RequiredPageNew(ImportsPage),
-      RequiredPageNew(HowManyImportsPage, additionalPreconditions = List(userAnswers.get(ImportsPage).contains(true))),
-      RequiredPageNew(PackAtBusinessAddressPage, additionalPreconditions = List(
+      RequiredPage(AmountProducedPage),
+      RequiredPage(ThirdPartyPackagersPage, additionalPreconditions = List(userAnswers.get(AmountProducedPage).contains(AmountProduced.Small))),
+      RequiredPage(OperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(isSmallOrLargeProducer(userAnswers))),
+      RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(userAnswers.get(OperatePackagingSiteOwnBrandsPage).contains(true))),
+      RequiredPage(ContractPackingPage),
+      RequiredPage(HowManyContractPackingPage, additionalPreconditions = List(userAnswers.get(ContractPackingPage).contains(true))),
+      RequiredPage(ImportsPage),
+      RequiredPage(HowManyImportsPage, additionalPreconditions = List(userAnswers.get(ImportsPage).contains(true))),
+      RequiredPage(PackAtBusinessAddressPage, additionalPreconditions = List(
         isSmallOrNoneProducer(userAnswers),
         userAnswers.get(ContractPackingPage).contains(true),
         userAnswers.packagingSiteList.isEmpty
       )),
-      RequiredPageNew(PackAtBusinessAddressPage, additionalPreconditions = List(
+      RequiredPage(PackAtBusinessAddressPage, additionalPreconditions = List(
         userAnswers.get(AmountProducedPage).contains(AmountProduced.Large),
         eitherOperatePackagingSitesOrContractPacking,
         userAnswers.packagingSiteList.isEmpty
       )),
-      RequiredPageNew(PackagingSiteDetailsPage, additionalPreconditions = List(
+      RequiredPage(PackagingSiteDetailsPage, additionalPreconditions = List(
         isSmallOrNoneProducer(userAnswers),
         userAnswers.get(ContractPackingPage).contains(true)
       )),
-      RequiredPageNew(PackagingSiteDetailsPage, additionalPreconditions = List(
+      RequiredPage(PackagingSiteDetailsPage, additionalPreconditions = List(
         userAnswers.get(AmountProducedPage).contains(AmountProduced.Large),
         eitherOperatePackagingSitesOrContractPacking
       )),
-      RequiredPageNew(SecondaryWarehouseDetailsPage, additionalPreconditions = List(
+      RequiredPage(SecondaryWarehouseDetailsPage, additionalPreconditions = List(
         userAnswers.get(ImportsPage).contains(true),
         !userAnswers.isEmpty(PackagingSiteDetailsPage)
       )),

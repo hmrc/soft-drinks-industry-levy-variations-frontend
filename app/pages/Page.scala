@@ -21,12 +21,12 @@ import queries.Query
 
 import scala.language.implicitConversions
 
-case class RequiredPageNew(page: Page with Query, additionalPreconditions: List[Boolean] = List.empty)
+case class RequiredPage(page: Page with Query, additionalPreconditions: List[Boolean] = List.empty)
 
 trait Page {
   val url: Mode => String = mode => controllers.routes.IndexController.onPageLoad.url
 
-  val redirectConditions: UserAnswers => List[RequiredPageNew] = _ => List.empty
+  val redirectConditions: UserAnswers => List[RequiredPage] = _ => List.empty
 }
 
 object Page {
