@@ -32,12 +32,12 @@ trait RequiredUserAnswersForChangeActivityNew {
 
   def getRedirectFromPage(page: Page, mode: Mode = NormalMode): Future[Result] = Future.successful(Redirect(page.url(mode)))
 
-  def getResultFromRedirectConditions(redirectConditions: List[(Boolean, Page)], action: => Future[Result]): Future[Result] = {
+  def getResultFromRedirectConditions(redirectConditions: List[(Boolean, Page)], action: => Future[Result], mode: Mode = NormalMode): Future[Result] = {
     redirectConditions
       .filter(_._1)
       .map(_._2)
       .headOption
-      .map(getRedirectFromPage(_))
+      .map(getRedirectFromPage(_, mode))
       .getOrElse(action)
   }
 
@@ -115,55 +115,48 @@ trait RequiredUserAnswersForChangeActivityNew {
     val redirectConditions = transformRequiredPageIntoBooleanPageList(userAnswers, howManyImportsConditions)
     getResultFromRedirectConditions(redirectConditions, action)
   }
-
-//  private[controllers] def baseJourney: List[RequiredPage[_, _, _]] = {
-//    val pagesRequiredForHowManyContractPackingPage: List[List[PreviousPage[_, _]]] =
-//      List(List(PreviousPage(ContractPackingPage, List(true))(implicitBoolean)))
-//    val pagesRequiredForHowManyImportsPage: List[List[PreviousPage[_, _]]] =
-//      List(List(PreviousPage(ImportsPage, List(true))(implicitBoolean)))
-//    val pagesRequiredForHowManyOperatePackagingSiteOwnBrandsPage: List[List[PreviousPage[_, _]]] =
-//      List(List(PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitBoolean)))
-//    val pagesRequiredForSecondaryWarehouseDetailsPage: List[List[PreviousPage[_, _]]] = List(
-//      List(PreviousPage(ImportsPage, List(true))(implicitBoolean)),
-//      List(PreviousPage(PackagingSiteDetailsPage, List(true, false))(implicitBoolean))
-//    )
-//    List(
-//      //      importsPageJourney,
-//      List(
-//        List(RequiredPage(AmountProducedPage, List.empty)(implicitAmountProduced)),
-//        List(RequiredPage(ThirdPartyPackagersPage, List(PreviousPage(AmountProducedPage, List(smallProducer))(implicitAmountProduced)))(implicitBoolean)),
-//        List(RequiredPage(OperatePackagingSiteOwnBrandsPage, List(PreviousPage(AmountProducedPage,
-//          List(smallProducer, largeProducer))(implicitAmountProduced)))(implicitBoolean)),
-//        List(RequiredPage(ContractPackingPage, List.empty)(implicitBoolean))
-//      ).flatten,
-//      List(RequiredPage(ImportsPage, List.empty)(implicitBoolean)),
-//      pagesRequiredForHowManyOperatePackagingSiteOwnBrandsPage.map(RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, _)(implicitBands)),
-//      pagesRequiredForHowManyContractPackingPage.map(RequiredPage(HowManyContractPackingPage, _)(implicitBands)),
-//      pagesRequiredForHowManyImportsPage.map(RequiredPage(HowManyImportsPage, _)(implicitBands)),
-//      pagesRequiredForSecondaryWarehouseDetailsPage.map(RequiredPage(SecondaryWarehouseDetailsPage, _)(implicitBoolean))
-//    ).flatten
-//  }
-
-//  def packagingSiteChangeActivityJourney(emptyPackagingSites: Boolean): List[RequiredPage[_, _, _]] = {
-//    val pagesRequiredForPackagingSiteDetailsPage: List[List[PreviousPage[_, _]]] = List(
-//      List(previousPageSmallOrNonProducer, PreviousPage(ContractPackingPage, List(true))(implicitBoolean)),
-//      List(PreviousPage(AmountProducedPage, List(largeProducer))(implicitAmountProduced),
-//        PreviousPage(OperatePackagingSiteOwnBrandsPage, List(false))(implicitBoolean), PreviousPage(ContractPackingPage, List(true))(implicitBoolean)),
-//      List(PreviousPage(AmountProducedPage, List(largeProducer))(implicitAmountProduced),
-//        PreviousPage(OperatePackagingSiteOwnBrandsPage, List(true))(implicitBoolean), PreviousPage(ContractPackingPage, List(true, false))(implicitBoolean))
-//    )
-//    if (emptyPackagingSites) {
-//      List(pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackAtBusinessAddressPage, _)(implicitBoolean)),
-//        pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean))).flatten
-//    } else {
-//      List(pagesRequiredForPackagingSiteDetailsPage.map(RequiredPage(PackagingSiteDetailsPage, _)(implicitBoolean))).flatten
-//    }
-//  }
-  private def checkYourAnswersConditions(userAnswers: UserAnswers): List[RequiredPageNew] = List(
-  )
+  private def checkYourAnswersConditions(userAnswers: UserAnswers): List[RequiredPageNew] = {
+    val eitherOperatePackagingSitesOrContractPacking = userAnswers.get(OperatePackagingSiteOwnBrandsPage).flatMap(ops => {
+      userAnswers.get(ContractPackingPage).map(cp => {
+        ops || cp
+      })
+    }).getOrElse(false)
+    List(
+      RequiredPageNew(AmountProducedPage),
+      RequiredPageNew(ThirdPartyPackagersPage, additionalPreconditions = List(userAnswers.get(AmountProducedPage).contains(AmountProduced.Small))),
+      RequiredPageNew(OperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(isSmallOrLargeProducer(userAnswers))),
+      RequiredPageNew(HowManyOperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(userAnswers.get(OperatePackagingSiteOwnBrandsPage).contains(true))),
+      RequiredPageNew(ContractPackingPage),
+      RequiredPageNew(HowManyContractPackingPage, additionalPreconditions = List(userAnswers.get(ContractPackingPage).contains(true))),
+      RequiredPageNew(ImportsPage),
+      RequiredPageNew(HowManyImportsPage, additionalPreconditions = List(userAnswers.get(ImportsPage).contains(true))),
+      RequiredPageNew(PackAtBusinessAddressPage, additionalPreconditions = List(
+        isSmallOrNoneProducer(userAnswers),
+        userAnswers.get(ContractPackingPage).contains(true),
+        userAnswers.packagingSiteList.isEmpty
+      )),
+      RequiredPageNew(PackAtBusinessAddressPage, additionalPreconditions = List(
+        userAnswers.get(AmountProducedPage).contains(AmountProduced.Large),
+        eitherOperatePackagingSitesOrContractPacking,
+        userAnswers.packagingSiteList.isEmpty
+      )),
+      RequiredPageNew(PackagingSiteDetailsPage, additionalPreconditions = List(
+        isSmallOrNoneProducer(userAnswers),
+        userAnswers.get(ContractPackingPage).contains(true)
+      )),
+      RequiredPageNew(PackagingSiteDetailsPage, additionalPreconditions = List(
+        userAnswers.get(AmountProducedPage).contains(AmountProduced.Large),
+        eitherOperatePackagingSitesOrContractPacking
+      )),
+      RequiredPageNew(SecondaryWarehouseDetailsPage, additionalPreconditions = List(
+        userAnswers.get(ImportsPage).contains(true),
+        !userAnswers.isEmpty(PackagingSiteDetailsPage)
+      )),
+    )
+  }
 
   private[controllers] def checkYourAnswersRequiredDataNew(userAnswers: UserAnswers, action: => Future[Result]): Future[Result] = {
     val redirectConditions = transformRequiredPageIntoBooleanPageList(userAnswers, checkYourAnswersConditions)
-    getResultFromRedirectConditions(redirectConditions, action)
+    getResultFromRedirectConditions(redirectConditions, action, mode = CheckMode)
   }
 }
