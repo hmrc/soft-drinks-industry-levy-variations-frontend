@@ -19,9 +19,10 @@ package models
 import models.backend.{Site, UkAddress}
 import models.changeActivity.ChangeActivityData
 import models.correctReturn.CorrectReturnUserAnswersData
+import pages.Page
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json._
-import queries.{Gettable, Settable}
+import queries.{Gettable, Query, Settable}
 import services.Encryption
 import uk.gov.hmrc.crypto.EncryptedValue
 import uk.gov.hmrc.crypto.json.CryptoFormats
@@ -45,6 +46,13 @@ case class UserAnswers(
 
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
     Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)
+
+  def isEmpty(page: Query): Boolean = {
+//    TODO: THIS NEEDS TO BE BETTER
+    val dataForFlow = data.value.get(page.path.path.head.toString.replace("/", ""))
+    val isEmpty = dataForFlow.map(data => !data.asInstanceOf[JsObject].value.contains(page.path.path.last.toString.replace("/", "")))
+    isEmpty.getOrElse(true)
+  }
 
   def getChangeActivityData(implicit rds: Reads[ChangeActivityData]): Option[ChangeActivityData] = {
     val jsPath = JsPath \ "changeActivity"
