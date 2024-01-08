@@ -41,9 +41,10 @@ trait RequiredUserAnswersForChangeActivityNew {
       .getOrElse(action)
   }
 
-//  TODO: CLEAN UP/REFACTOR REDIRECT CONDITIONS REPEATED CODE
-
   case class RequiredPageNew(page: Page with Query, additionalPreconditions: List[Boolean] = List.empty)
+
+  private def isSmallOrLargeProducer(userAnswers: UserAnswers): Boolean =
+    userAnswers.get(AmountProducedPage).contains(AmountProduced.Large) || userAnswers.get(AmountProducedPage).contains(AmountProduced.Small)
 
   private def transformRequiredPageIntoBooleanPageList(
                                                         userAnswers: UserAnswers,
@@ -76,33 +77,39 @@ trait RequiredUserAnswersForChangeActivityNew {
     getResultFromRedirectConditions(redirectConditions, action)
   }
 
-  private def contractPackagingConditions(userAnswers: UserAnswers): List[(Boolean, Page)] = List(
-    (userAnswers.get(AmountProducedPage).isEmpty, AmountProducedPage),
-    (userAnswers.get(AmountProducedPage).contains(AmountProduced.Small) && userAnswers.get(ThirdPartyPackagersPage).isEmpty, ThirdPartyPackagersPage),
-    ((userAnswers.get(AmountProducedPage).contains(AmountProduced.Small) || userAnswers.get(AmountProducedPage).contains(AmountProduced.Small)) && userAnswers.get(OperatePackagingSiteOwnBrandsPage).isEmpty, OperatePackagingSiteOwnBrandsPage)
+  private def contractPackagingConditions(userAnswers: UserAnswers): List[RequiredPageNew] = List(
+    RequiredPageNew(AmountProducedPage),
+    RequiredPageNew(ThirdPartyPackagersPage, additionalPreconditions = List(userAnswers.get(AmountProducedPage).contains(AmountProduced.Small))),
+    RequiredPageNew(OperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(isSmallOrLargeProducer(userAnswers)))
   )
 
-  private[controllers] def contractPackagingPageRequiredDataNew(userAnswers: UserAnswers, action: => Future[Result]): Future[Result] =
-    getResultFromRedirectConditions(contractPackagingConditions(userAnswers), action)
+  private[controllers] def contractPackagingPageRequiredDataNew(userAnswers: UserAnswers, action: => Future[Result]): Future[Result] = {
+    val redirectConditions = transformRequiredPageIntoBooleanPageList(userAnswers, contractPackagingConditions)
+    getResultFromRedirectConditions(redirectConditions, action)
+  }
 
-  private def importsConditions(userAnswers: UserAnswers): List[(Boolean, Page)] = List(
-    (userAnswers.get(AmountProducedPage).isEmpty, AmountProducedPage),
-    (userAnswers.get(AmountProducedPage).contains(AmountProduced.Small) && userAnswers.get(ThirdPartyPackagersPage).isEmpty, ThirdPartyPackagersPage),
-    ((userAnswers.get(AmountProducedPage).contains(AmountProduced.Large) || userAnswers.get(AmountProducedPage).contains(AmountProduced.Small)) && userAnswers.get(OperatePackagingSiteOwnBrandsPage).isEmpty, OperatePackagingSiteOwnBrandsPage),
-    (userAnswers.get(ContractPackingPage).isEmpty, ContractPackingPage)
+  private def importsConditions(userAnswers: UserAnswers): List[RequiredPageNew] = List(
+    RequiredPageNew(AmountProducedPage),
+    RequiredPageNew(ThirdPartyPackagersPage, additionalPreconditions = List(userAnswers.get(AmountProducedPage).contains(AmountProduced.Small))),
+    RequiredPageNew(OperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(isSmallOrLargeProducer(userAnswers))),
+    RequiredPageNew(ContractPackingPage)
   )
 
-  private[controllers] def importsPageRequiredDataNew(userAnswers: UserAnswers, action: => Future[Result]): Future[Result] =
-    getResultFromRedirectConditions(importsConditions(userAnswers), action)
+  private[controllers] def importsPageRequiredDataNew(userAnswers: UserAnswers, action: => Future[Result]): Future[Result] = {
+    val redirectConditions = transformRequiredPageIntoBooleanPageList(userAnswers, importsConditions)
+    getResultFromRedirectConditions(redirectConditions, action)
+  }
 
-  private def howManyImportsConditions(userAnswers: UserAnswers): List[(Boolean, Page)] = List(
-    (userAnswers.get(AmountProducedPage).isEmpty, AmountProducedPage),
-    (userAnswers.get(AmountProducedPage).contains(AmountProduced.Small) && userAnswers.get(ThirdPartyPackagersPage).isEmpty, ThirdPartyPackagersPage),
-    ((userAnswers.get(AmountProducedPage).contains(AmountProduced.Large) || userAnswers.get(AmountProducedPage).contains(AmountProduced.Small)) && userAnswers.get(OperatePackagingSiteOwnBrandsPage).isEmpty, OperatePackagingSiteOwnBrandsPage),
-    (userAnswers.get(ContractPackingPage).isEmpty, ContractPackingPage),
-    (userAnswers.get(ImportsPage).isEmpty, ImportsPage)
+  private def howManyImportsConditions(userAnswers: UserAnswers): List[RequiredPageNew] = List(
+    RequiredPageNew(AmountProducedPage),
+    RequiredPageNew(ThirdPartyPackagersPage, additionalPreconditions = List(userAnswers.get(AmountProducedPage).contains(AmountProduced.Small))),
+    RequiredPageNew(OperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(isSmallOrLargeProducer(userAnswers))),
+    RequiredPageNew(ContractPackingPage),
+    RequiredPageNew(ImportsPage)
   )
 
-  private[controllers] def howManyImportsPageRequiredDataNew(userAnswers: UserAnswers, action: => Future[Result]): Future[Result] =
-    getResultFromRedirectConditions(howManyImportsConditions(userAnswers), action)
+  private[controllers] def howManyImportsPageRequiredDataNew(userAnswers: UserAnswers, action: => Future[Result]): Future[Result] = {
+    val redirectConditions = transformRequiredPageIntoBooleanPageList(userAnswers, howManyImportsConditions)
+    getResultFromRedirectConditions(redirectConditions, action)
+  }
 }
