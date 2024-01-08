@@ -67,7 +67,7 @@ trait RequiredUserAnswersForChangeActivityNew {
 
   private[controllers] def thirdPartyPackagersPageRequiredDataNew(userAnswers: UserAnswers, action: => Future[Result]): Future[Result] = {
     val redirectConditions = transformRequiredPageIntoBooleanPageList(userAnswers, ThirdPartyPackagersPage.redirectConditions)
-    getResultFromRedirectConditions(redirectConditions, action)
+    getResultFromRedirectConditions(transformRequiredPageIntoBooleanPageList(userAnswers, ThirdPartyPackagersPage.redirectConditions), action)
   }
 
 //  private def operatePackagingSiteOwnBrandsConditions(userAnswers: UserAnswers): List[RequiredPageNew] = List(

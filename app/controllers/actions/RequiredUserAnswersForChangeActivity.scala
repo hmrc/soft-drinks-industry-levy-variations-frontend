@@ -18,9 +18,9 @@ package controllers.actions
 
 import models.changeActivity.AmountProduced
 import models.requests.DataRequest
-import models.{CheckMode, LitresInBands, NormalMode}
+import models.{CheckMode, LitresInBands, Mode, NormalMode, UserAnswers}
 import pages.changeActivity._
-import pages.{Page, QuestionPage}
+import pages.{Page, QuestionPage, RequiredPageNew}
 import play.api.libs.json.Reads
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
@@ -31,20 +31,44 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.reflect.ClassTag
 
 class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogger)(implicit val executionContext: ExecutionContext) extends ActionHelpers with RequiredUserAnswersForChangeActivityNew {
+
+  override def getRedirectFromPage(page: Page, mode: Mode = NormalMode): Future[Result] = Future.successful(Redirect(page.url(mode)))
+
+  private def transformRequiredPageIntoBooleanPageList(
+                                                        userAnswers: UserAnswers,
+                                                        requiredPageList: UserAnswers => List[RequiredPageNew]
+                                                      ): List[(Boolean, Page)] = {
+    val requiredPageListFromUserAnswers = requiredPageList(userAnswers)
+    requiredPageListFromUserAnswers.map(requiredPage => {
+      val bool = (requiredPage.additionalPreconditions :+ userAnswers.isEmpty(requiredPage.page)).forall(a => a)
+      val page = requiredPage.page
+      (bool, page)
+    })
+  }
+
+  override def getResultFromRedirectConditions(redirectConditions: List[(Boolean, Page)], action: => Future[Result], mode: Mode = NormalMode): Future[Result] = {
+    redirectConditions
+      .filter(_._1)
+      .map(_._2)
+      .headOption
+      .map(getRedirectFromPage(_, mode))
+      .getOrElse(action)
+  }
   def requireData(page: Page)(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
-    page match {
-      case ChangeActivityCYAPage => checkYourAnswersRequiredData(action)
-      case ThirdPartyPackagersPage => thirdPartyPackagersPageRequiredData(action)
-      case OperatePackagingSiteOwnBrandsPage => operatePackagingSiteOwnBrandsPageRequiredData(action)
-      case ContractPackingPage => contractPackagingPageRequiredData(action)
-      case ImportsPage => importsPageRequiredData(action)
-      case HowManyImportsPage => howManyImportsPageRequiredData(action)
-      case _ => action
-    }
+    val mode = if (page == ChangeActivityCYAPage) CheckMode else NormalMode
+    getResultFromRedirectConditions(transformRequiredPageIntoBooleanPageList(request.userAnswers, page.redirectConditions), action, mode = mode)
+//    page match {
+//      case ChangeActivityCYAPage => checkYourAnswersRequiredData(action)
+//      case ThirdPartyPackagersPage => thirdPartyPackagersPageRequiredData(action)
+//      case OperatePackagingSiteOwnBrandsPage => operatePackagingSiteOwnBrandsPageRequiredData(action)
+//      case ContractPackingPage => contractPackagingPageRequiredData(action)
+//      case ImportsPage => importsPageRequiredData(action)
+//      case HowManyImportsPage => howManyImportsPageRequiredData(action)
+//      case _ => action
+//    }
   }
 
   private[controllers] def checkYourAnswersRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
-    //  TODO: MIGRATE TO NEW FORM
     checkYourAnswersRequiredDataNew(request.userAnswers, action)
 //    val fullJourney = baseJourney ++ packagingSiteChangeActivityJourney(request.userAnswers.packagingSiteList.isEmpty)
 //    val userAnswersMissing: List[RequiredPage[_,_,_]] = returnMissingAnswers(fullJourney)
