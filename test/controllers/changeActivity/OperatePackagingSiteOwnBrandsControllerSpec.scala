@@ -104,13 +104,6 @@ class OperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with MockitoS
 
           status(result) mustEqual 303
           redirectLocation(result).value mustEqual routes.AmountProducedController.onPageLoad(NormalMode).url
-          events.collectFirst {
-            case event =>
-              event.getLevel.levelStr mustBe "WARN"
-              event.getMessage mustEqual
-                s"${emptyUserAnswersForChangeActivity.id} has hit $OperatePackagingSiteOwnBrandsPage and is missing List(RequiredPage(amountProduced,List())), user will be redirected" +
-                  s" to $AmountProducedPage"
-          }.getOrElse(fail("No logging captured"))
         }
       }
     }

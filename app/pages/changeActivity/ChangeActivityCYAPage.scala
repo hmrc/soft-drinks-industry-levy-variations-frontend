@@ -28,28 +28,27 @@ case object ChangeActivityCYAPage extends Page {
   override val url: Mode => String = _ => routes.ChangeActivityCYAController.onPageLoad.url
 
   override val redirectConditions: UserAnswers => List[RequiredPage] = userAnswers => {
-    def isSmallOrLargeProducer(userAnswers: UserAnswers): Boolean =
+    val isSmallOrLargeProducer: Boolean =
       userAnswers.get(AmountProducedPage).contains(AmountProduced.Large) || userAnswers.get(AmountProducedPage).contains(AmountProduced.Small)
-
-    def isSmallOrNoneProducer(userAnswers: UserAnswers): Boolean =
+    val isSmallOrNoneProducer: Boolean =
       userAnswers.get(AmountProducedPage).contains(AmountProduced.Small) || userAnswers.get(AmountProducedPage).contains(AmountProduced.None)
-
     val eitherOperatePackagingSitesOrContractPacking = userAnswers.get(OperatePackagingSiteOwnBrandsPage).flatMap(ops => {
       userAnswers.get(ContractPackingPage).map(cp => {
         ops || cp
       })
     }).getOrElse(false)
+
     List(
       RequiredPage(AmountProducedPage),
       RequiredPage(ThirdPartyPackagersPage, additionalPreconditions = List(userAnswers.get(AmountProducedPage).contains(AmountProduced.Small))),
-      RequiredPage(OperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(isSmallOrLargeProducer(userAnswers))),
+      RequiredPage(OperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(isSmallOrLargeProducer)),
       RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(userAnswers.get(OperatePackagingSiteOwnBrandsPage).contains(true))),
       RequiredPage(ContractPackingPage),
       RequiredPage(HowManyContractPackingPage, additionalPreconditions = List(userAnswers.get(ContractPackingPage).contains(true))),
       RequiredPage(ImportsPage),
       RequiredPage(HowManyImportsPage, additionalPreconditions = List(userAnswers.get(ImportsPage).contains(true))),
       RequiredPage(PackAtBusinessAddressPage, additionalPreconditions = List(
-        isSmallOrNoneProducer(userAnswers),
+        isSmallOrNoneProducer,
         userAnswers.get(ContractPackingPage).contains(true),
         userAnswers.packagingSiteList.isEmpty
       )),
@@ -59,7 +58,7 @@ case object ChangeActivityCYAPage extends Page {
         userAnswers.packagingSiteList.isEmpty
       )),
       RequiredPage(PackagingSiteDetailsPage, additionalPreconditions = List(
-        isSmallOrNoneProducer(userAnswers),
+        isSmallOrNoneProducer,
         userAnswers.get(ContractPackingPage).contains(true)
       )),
       RequiredPage(PackagingSiteDetailsPage, additionalPreconditions = List(

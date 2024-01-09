@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogger)(implicit val executionContext: ExecutionContext) extends ActionHelpers {
 
-  def getRedirectFromPage(page: Page, mode: Mode = NormalMode): Future[Result] = Future.successful(Redirect(page.url(mode)))
+  private def getRedirectFromPage(page: Page, mode: Mode = NormalMode): Future[Result] = Future.successful(Redirect(page.url(mode)))
 
   private def transformRequiredPageIntoBooleanPageList(
                                                         userAnswers: UserAnswers,
@@ -37,20 +37,19 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
                                                       ): List[(Boolean, Page)] = {
     val requiredPageListFromUserAnswers = requiredPageList(userAnswers)
     requiredPageListFromUserAnswers.map(requiredPage => {
-      val bool = (requiredPage.additionalPreconditions :+ userAnswers.isEmpty(requiredPage.page)).forall(a => a)
-      val page = requiredPage.page
-      (bool, page)
+      val isMissing = (requiredPage.additionalPreconditions :+ userAnswers.isEmpty(requiredPage.page)).forall(bool => bool)
+      (isMissing, requiredPage.page)
     })
   }
 
-  def getResultFromMissingAnswers(missingAnswers: List[Page], action: => Future[Result], mode: Mode = NormalMode): Future[Result] = {
+  private[controllers] def getResultFromMissingAnswers(missingAnswers: List[Page], action: => Future[Result], mode: Mode = NormalMode): Future[Result] = {
     missingAnswers
       .headOption
       .map(getRedirectFromPage(_, mode))
       .getOrElse(action)
   }
 
-  def returnMissingAnswers(
+  private[controllers] def returnMissingAnswers(
                             userAnswers: UserAnswers,
                             requiredPageList: UserAnswers => List[RequiredPage]
                           ): List[Page] = {
@@ -59,7 +58,7 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
       .filter(_._1)
       .map(_._2)
   }
-  def requireData(page: Page)(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
+  private[controllers] def requireData(page: Page)(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
     val mode = if (page == ChangeActivityCYAPage) CheckMode else NormalMode
     val missingAnswers = returnMissingAnswers(request.userAnswers, page.redirectConditions)
     getResultFromMissingAnswers(missingAnswers, action, mode = mode)
