@@ -69,7 +69,7 @@ case object ChangeActivityCYAPage extends Page {
       RequiredPage(SecondaryWarehouseDetailsPage, additionalPreconditions = List(
         userAnswers.get(ImportsPage).contains(true),
         !userAnswers.isEmpty(PackagingSiteDetailsPage)
-      )),
+      ))
     )
   }
 }
