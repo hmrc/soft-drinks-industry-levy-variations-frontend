@@ -48,10 +48,12 @@ case class UserAnswers(
     Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)
 
   def isEmpty(page: Query): Boolean = {
-//    TODO: THIS NEEDS TO BE BETTER
-    val dataForFlow = data.value.get(page.path.path.head.toString.replace("/", ""))
-    val isEmpty = dataForFlow.map(data => !data.asInstanceOf[JsObject].value.contains(page.path.path.last.toString.replace("/", "")))
-    isEmpty.getOrElse(true)
+    val pathNodes = page.path.path
+    val initialJsValue = Option(data.asInstanceOf[JsValue])
+    pathNodes.foldLeft(initialJsValue)((jsValueOpt, pathNode) => {
+      val path = pathNode.toString.replace("/", "")
+      jsValueOpt.flatMap(_.asInstanceOf[JsObject].value.get(path))
+    }).isEmpty
   }
 
   def getChangeActivityData(implicit rds: Reads[ChangeActivityData]): Option[ChangeActivityData] = {
