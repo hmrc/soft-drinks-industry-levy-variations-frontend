@@ -80,8 +80,9 @@ class SecondaryWarehouseDetailsController @Inject()(
 
         value => {
           val updatedAnswers = request.userAnswers.set(SecondaryWarehouseDetailsPage, value)
-          updateDatabaseWithoutRedirect(updatedAnswers, SecondaryWarehouseDetailsPage)
-          getOnwardUrl(value, mode).map(Redirect(_))
+          updateDatabaseWithoutRedirect(updatedAnswers, SecondaryWarehouseDetailsPage).flatMap(_ => {
+            getOnwardUrl(value, mode).map(Redirect(_))
+          })
         }
       )
   }
