@@ -230,7 +230,7 @@ changeActivity.packagingSiteDetails.info = You must tell us about all of the UK 
 changeActivity.packagingSiteDetails.detailsLink = I want to remove this UK packaging site
 changeActivity.packagingSiteDetails.detailsInfo = You must add another site first. Once you have added the other site, you will be able to remove one. You must always have at least one packaging site added.
 changeActivity.packagingSiteDetails.checkYourAnswersLabel = UK packaging site details
-changeActivity.packagingSiteDetails.error.required = Select yes if you need to add another packaging site
+changeActivity.packagingSiteDetails.error.required = Select yes if you want to add another UK packaging site
 changeActivity.packagingSiteDetails.change.hidden = {0} site address {1}
 changeActivity.packagingSiteDetails.remove.hidden = {0} site address {1}
 
@@ -589,12 +589,12 @@ updateRegisteredDetails.removeWarehouseDetails.error.required = Select yes if yo
 
 updateRegisteredDetails.packagingSiteDetails.title = Change your UK packaging site details
 updateRegisteredDetails.packagingSiteDetails.heading = Change your UK packaging site details
-updateRegisteredDetails.packagingSiteDetails.subHeading = Do you want to add another packaging site?
+updateRegisteredDetails.packagingSiteDetails.subHeading = Do you want to add another UK packaging site?
 updateRegisteredDetails.packagingSiteDetails.info = You can delay the point you will have to report liable drinks in a return and pay the levy on them if you register the warehouses you use to store them.
 updateRegisteredDetails.packagingSiteDetails.detailsLink = I want to remove this UK packaging site
 updateRegisteredDetails.packagingSiteDetails.detailsInfo = You must add another site first. Once you have added the other site, you will be able to remove one. You must always have at least one packaging site added.
 updateRegisteredDetails.packagingSiteDetails.checkYourAnswersLabel = UK packaging site details
-updateRegisteredDetails.packagingSiteDetails.error.required = Select yes if you need to add another packaging site
+updateRegisteredDetails.packagingSiteDetails.error.required = Select yes if you want to add another UK packaging site
 updateRegisteredDetails.packagingSiteDetails.change.hidden = {0} site address {1}
 updateRegisteredDetails.packagingSiteDetails.remove.hidden = {0} site address {1}
 
