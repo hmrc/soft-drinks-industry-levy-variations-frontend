@@ -230,11 +230,9 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true, largeProducer = false, contractPacker =false, importer = false,voluntaryRegistration = false),
         LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
-      val journey = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
-      val res = requiredUserAnswers.returnMissingAnswers(completedUserAnswers, journey)
-      val expectedResult = basicJourney
 
-      res mustBe expectedResult
+      val res = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
+      res mustBe basicJourney
     }
 
     "should return all correct answers if user is newImporter && NOT newCopacker && small producer true" in {
@@ -245,9 +243,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true,largeProducer = true, contractPacker =true,importer = false,voluntaryRegistration = true),
         LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
-      val journey = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
-      val res = requiredUserAnswers.returnMissingAnswers(completedUserAnswers, journey)
 
+      val res = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
       res mustBe basicJourney
     }
 
@@ -259,9 +256,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = false, importer = true,voluntaryRegistration = true),
         LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
-      val journey = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
-      val res = requiredUserAnswers.returnMissingAnswers(completedUserAnswers, journey)
 
+      val res = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
       res mustBe basicJourney
     }
 
@@ -273,9 +269,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
         LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
-      val journey = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
-      val res = requiredUserAnswers.returnMissingAnswers(completedUserAnswers, journey)
 
+      val res = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
       res mustBe basicJourney
     }
 
@@ -287,9 +282,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = true),
         LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
-      val journey = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
-      val res = requiredUserAnswers.returnMissingAnswers(completedUserAnswers, journey)
 
+      val res = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
       res mustBe smallProducerFalseJourney ++ basicJourney
     }
 
@@ -308,9 +302,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
         LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
-      val journey = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
-      val res = requiredUserAnswers.returnMissingAnswers(completedUserAnswers, journey)
 
+      val res = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
       res mustBe smallProducerFalseJourney ++ basicJourney
     }
   }
