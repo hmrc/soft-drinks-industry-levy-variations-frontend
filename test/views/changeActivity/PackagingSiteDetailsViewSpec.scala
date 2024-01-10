@@ -52,19 +52,19 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
     val html = view(form, NormalMode, SummaryList())(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
-      document.title() must include(Messages("changeActivity.packagingSiteDetails" + ".title"))
+      document.title() mustBe "UK packaging site details - Soft Drinks Industry Levy - GOV.UK"
     }
 
     "should include a heading with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.heading)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("changeActivity.packagingSiteDetails.heading")
+      legend.get(0).getElementsByClass(Selectors.heading).text() mustBe "UK packaging site details"
     }
 
     "should include a legend with the expected sub-heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.legend).text() mustEqual Messages("changeActivity.packagingSiteDetails.subHeading")
+      legend.get(0).getElementsByClass(Selectors.legend).text() mustBe "Do you want to add another UK packaging site?"
     }
 
     "when the form is not preoccupied and has no errors" - {
@@ -216,8 +216,8 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
-        val titleMessage = Messages("changeActivity.packagingSiteDetails.title")
-        documentWithErrors.title must include("Error: " + titleMessage)
+        val titleMessage = "UK packaging site details - Soft Drinks Industry Levy - GOV.UK"
+        documentWithErrors.title mustBe ("Error: " + titleMessage)
       }
 
       "contains a message that links to field with error" in {
@@ -227,7 +227,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
         errorSummary
           .select("a")
           .attr("href") mustBe "#value"
-        errorSummary.text() mustBe Messages("changeActivity.packagingSiteDetails.error.required")
+        errorSummary.text() mustBe "Select yes if you want to add another UK packaging site"
       }
     }
 
@@ -235,9 +235,10 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
       val summaryListWithOneRow = SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("Packaging Site")))))
       val htmlWithOneSummaryListRow = view(form, NormalMode, summaryListWithOneRow)(request, messages(application))
       val documentWithOneSummaryListRow = doc(htmlWithOneSummaryListRow)
-      val expectedDetails = Map(
-        Messages("changeActivity.packagingSiteDetails.detailsLink") -> Messages("changeActivity.packagingSiteDetails.detailsInfo")
-      )
+      val detailsLink = "I want to remove this UK packaging site"
+      val detailsInfo = "You must add another site first. Once you have added the other site, you will be able to remove one. You must always have at least one packaging site added."
+      val expectedDetails = Map(detailsLink -> detailsInfo)
+
       testDetails(documentWithOneSummaryListRow, expectedDetails)
     }
 

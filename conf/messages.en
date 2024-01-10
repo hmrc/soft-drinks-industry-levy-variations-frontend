@@ -230,7 +230,7 @@ changeActivity.packagingSiteDetails.info = You must tell us about all of the UK 
 changeActivity.packagingSiteDetails.detailsLink = I want to remove this UK packaging site
 changeActivity.packagingSiteDetails.detailsInfo = You must add another site first. Once you have added the other site, you will be able to remove one. You must always have at least one packaging site added.
 changeActivity.packagingSiteDetails.checkYourAnswersLabel = UK packaging site details
-changeActivity.packagingSiteDetails.error.required = Select yes if you need to add another packaging site
+changeActivity.packagingSiteDetails.error.required = Select yes if you want to add another packaging site
 changeActivity.packagingSiteDetails.change.hidden = {0} site address {1}
 changeActivity.packagingSiteDetails.remove.hidden = {0} site address {1}
 
