@@ -60,6 +60,7 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
   }
   private[controllers] def requireData(page: Page)(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
     val mode = if (page == ChangeActivityCYAPage) CheckMode else NormalMode
+//    TODO: PASS IN request.subscription, pass in userAnswers and subscription explicitly
     val missingAnswers = returnMissingAnswers(request.userAnswers, page.previousPagesRequired)
     getResultFromMissingAnswers(missingAnswers, action, mode = mode)
   }
