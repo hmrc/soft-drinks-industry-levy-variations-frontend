@@ -19,9 +19,10 @@ package controllers.correctReturn
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import errors.UnexpectedResponseFromSDIL
+import models.correctReturn.RepaymentMethod.BankAccount
 import models.correctReturn.{AddASmallProducer, ChangedPage, RepaymentMethod}
 import models.submission.Litreage
-import models.{Amounts, LitresInBands, SdilReturn, SmallProducer, UserAnswers}
+import models.{Amounts, CheckMode, LitresInBands, SdilReturn, SmallProducer, UserAnswers}
 import navigation.{FakeNavigatorForCorrectReturn, NavigatorForCorrectReturn}
 import orchestrators.CorrectReturnOrchestrator
 import org.jsoup.Jsoup
@@ -205,7 +206,54 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       }
     }
 
-    "must return OK and contain correct net adjusted amount when prior return total is more than new return total" in {
+    "must return OK and contain correct net adjusted amount when prior return total is more than new return total when repayment method answered" in {
+      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", Litreage())
+      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", Litreage())
+      val amounts1 = Amounts(40200.00, 4200.00, -300.00, 4500.00, -35700.00)
+      val litres = LitresInBands(0, 0)
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
+          smallProducerList = List(superCola, sparkyJuice))
+        .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+        .set(HowManyOperatePackagingSiteOwnBrandsPage, litres).success.value
+        .set(PackagedAsContractPackerPage, true).success.value
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(10000, 10000)).success.value
+        .set(ExemptionsForSmallProducersPage, true).success.value
+        .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", litres)).success.value
+        .set(BroughtIntoUKPage, false).success.value
+        .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+        .set(ClaimCreditsForExportsPage, true).success.value
+        .set(HowManyClaimCreditsForExportsPage, litres).success.value
+        .set(ClaimCreditsForLostDamagedPage, true).success.value
+        .set(HowManyCreditsForLostDamagedPage, litres).success.value
+        .set(CorrectionReasonPage, "Changed the amount packaged as a contract packer").success.value
+        .set(RepaymentMethodPage, BankAccount).success.value
+
+      val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockCorrectReturnOrchestrator))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        when(mockCorrectReturnOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+        page.getElementsByTag("h2").text must include("Balance")
+        page.getElementsByTag("dt").text() must include("Original return total")
+        page.getElementsByClass("original-return-total").text() must include("£40,200.00")
+        page.getElementsByTag("dt").text() must include("New return total")
+        page.getElementsByClass("new-return-total").text() must include("£4,200.00")
+        page.getElementsByTag("dt").text() must include("Account balance")
+        page.getElementsByClass("balance-brought-forward").text() mustBe "£300.00"
+        page.getElementsByTag("dt").text() must include("Net adjusted amount")
+        page.getElementsByClass("net-adjusted-amount").text() must include("−£35,700.00")
+      }
+    }
+
+    "must redirect to RepaymentMethod and contain correct net adjusted amount when prior return total is more than new return total when repayment method is not answered" in {
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", Litreage())
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", Litreage())
       val amounts1 = Amounts(40200.00, 4200.00, -300.00, 4500.00, -35700.00)
@@ -236,18 +284,8 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         when(mockCorrectReturnOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
 
         val result = route(application, request).value
-
-        status(result) mustEqual OK
-        val page = Jsoup.parse(contentAsString(result))
-        page.getElementsByTag("h2").text must include("Balance")
-        page.getElementsByTag("dt").text() must include("Original return total")
-        page.getElementsByClass("original-return-total").text() must include("£40,200.00")
-        page.getElementsByTag("dt").text() must include("New return total")
-        page.getElementsByClass("new-return-total").text() must include("£4,200.00")
-        page.getElementsByTag("dt").text() must include("Account balance")
-        page.getElementsByClass("balance-brought-forward").text() mustBe "£300.00"
-        page.getElementsByTag("dt").text() must include("Net adjusted amount")
-        page.getElementsByClass("net-adjusted-amount").text() must include("−£35,700.00")
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.RepaymentMethodController.onPageLoad(CheckMode).url
       }
     }
 
