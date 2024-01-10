@@ -34,16 +34,11 @@ import scala.concurrent.Future
 class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwaitTimeout {
 
   val requiredUserAnswers: RequiredUserAnswersForCorrectReturn = application.injector.instanceOf[RequiredUserAnswersForCorrectReturn]
-  val basicRequestWithEmptyAnswers = CorrectReturnDataRequest(FakeRequest(),
-    "",
-    RetrievedSubscription(
-      "","","", UkAddress(List.empty, "", None),
-      RetrievedActivity(smallProducer = true,largeProducer = true,contractPacker = true,importer = true,voluntaryRegistration = true),
-      LocalDate.now(),List.empty, List.empty,Contact(None,None,"",""),None),
-    emptyUserAnswersForCorrectReturn,
-    ReturnPeriod(2022, 3),
-    emptySdilReturn
-  )
+  val basicUserAnswers= emptyUserAnswersForCorrectReturn
+  val basicSubscription = RetrievedSubscription(
+    "", "", "", UkAddress(List.empty, "", None),
+    RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
+    LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
 
   val basicJourney =
     List(
@@ -81,7 +76,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
   "checkYourAnswersRequiredData" - {
 
     "should return redirect to Packaged as Contract Packer page when user answers is empty and the small producer is true" in {
-      val res = requiredUserAnswers.checkYourAnswersRequiredData(Future.successful(Ok("")))(basicRequestWithEmptyAnswers)
+      val res = requiredUserAnswers.checkYourAnswersRequiredData(basicUserAnswers, basicSubscription, Future.successful(Ok("")))
       redirectLocation(res).get mustBe routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
     }
     "should return Redirect to Own brands page when user answers is empty and the small producer is false" in {
@@ -90,7 +85,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         RetrievedActivity(smallProducer = false,largeProducer = true,contractPacker = true,importer = true,voluntaryRegistration = true),
         LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
 
-      val res = requiredUserAnswers.checkYourAnswersRequiredData(Future.successful(Ok("")))(basicRequestWithEmptyAnswers.copy(subscription = subscription))
+      val res = requiredUserAnswers.checkYourAnswersRequiredData(basicUserAnswers, subscription, Future.successful(Ok("")))
       redirectLocation(res).get mustBe routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
     }
     "should allow user to continue if all user answers are filled in and user is NOT newImporter && NOT co packer && NOT small producer" in {
@@ -104,15 +99,14 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
           .set(ClaimCreditsForExportsPage, false).success.value
           .set(ClaimCreditsForLostDamagedPage, false).success.value
 
-      val res = requiredUserAnswers.checkYourAnswersRequiredData(Future.successful(Ok("")))(basicRequestWithEmptyAnswers
-        .copy(userAnswers = completedUserAnswers))
+      val res = requiredUserAnswers.checkYourAnswersRequiredData(completedUserAnswers, basicSubscription, Future.successful(Ok("")))
       status(res) mustBe OK
     }
   }
 
   "requireData" - {
     "should take a random page and allow user to carry on their action with empty answers" in {
-      val res = requiredUserAnswers.requireData(OperatePackagingSiteOwnBrandsPage)(Future.successful(Ok("")))(basicRequestWithEmptyAnswers)
+      val res = requiredUserAnswers.requireData(OperatePackagingSiteOwnBrandsPage, basicUserAnswers, basicSubscription)(Future.successful(Ok("")))
       status(res) mustBe OK
     }
     s"should check for $CorrectReturnBaseCYAPage and redirect to first missing page when answers incomplete but not a " +
@@ -122,19 +116,16 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
         LocalDate.now(), List.empty, List.empty, Contact(None,None,"",""), None)
 
-      val res = requiredUserAnswers.requireData(CorrectReturnBaseCYAPage)(Future.successful(Ok("")))(basicRequestWithEmptyAnswers.copy(
-        subscription = subscription, userAnswers = emptyUserAnswersForCorrectReturn.copy(data = Json.obj("foo" -> "bar"))))
+      val res = requiredUserAnswers.requireData(CorrectReturnBaseCYAPage, emptyUserAnswersForCorrectReturn.copy(data = Json.obj("foo" -> "bar")), subscription)(Future.successful(Ok("")))
       redirectLocation(res).get mustBe routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
     }
 
     s"should check for $CorrectReturnBaseCYAPage and redirect to missing page when answers incomplete but not a nil return and small producer is true" in {
-      val res = requiredUserAnswers.requireData(CorrectReturnBaseCYAPage)(Future.successful(Ok("")))(basicRequestWithEmptyAnswers.copy(
-        userAnswers = emptyUserAnswersForCorrectReturn
-          .copy(data = Json.obj("foo" -> "bar"))))
+      val res = requiredUserAnswers.requireData(CorrectReturnBaseCYAPage, emptyUserAnswersForCorrectReturn.copy(data = Json.obj("foo" -> "bar")), basicSubscription)(Future.successful(Ok("")))
       redirectLocation(res).get mustBe routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
     }
     s"should check for $CorrectReturnBaseCYAPage and redirect to start page when answers data is empty" in {
-      val res = requiredUserAnswers.requireData(CorrectReturnBaseCYAPage)(Future.successful(Ok("foo")))(basicRequestWithEmptyAnswers)
+      val res = requiredUserAnswers.requireData(CorrectReturnBaseCYAPage, basicUserAnswers, basicSubscription)(Future.successful(Ok("foo")))
       redirectLocation(res).get mustBe routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
     }
 
@@ -150,18 +141,16 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         .set(ClaimCreditsForLostDamagedPage, false).success.value
 
       val res =
-        requiredUserAnswers.requireData(CorrectReturnBaseCYAPage)(Future.successful(Ok("")))(basicRequestWithEmptyAnswers
-          .copy(userAnswers = completedUserAnswers))
+        requiredUserAnswers.requireData(CorrectReturnBaseCYAPage, completedUserAnswers, basicSubscription)(Future.successful(Ok("")))
       status(res) mustBe OK
     }
   }
 
   "checkChangesRequiredData" - {
     "should return Redirect to Correction Reason page when user answers past check your answers is empty and balance repayment required" in {
-      val userAnswers = basicRequestWithEmptyAnswers.userAnswers
+      val userAnswers = basicUserAnswers
         .set(BalanceRepaymentRequired, true).success.value
-      val res = requiredUserAnswers.checkChangesRequiredData(Future.successful(Ok("")))(
-        basicRequestWithEmptyAnswers.copy(userAnswers = userAnswers))
+      val res = requiredUserAnswers.checkChangesRequiredData(userAnswers, basicSubscription, Future.successful(Ok("")))
       redirectLocation(res).get mustBe routes.CorrectionReasonController.onPageLoad(CheckMode).url
     }
 
@@ -170,8 +159,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         .set(BalanceRepaymentRequired, true).success.value
         .set(CorrectionReasonPage, "some info").success.value
 
-      val res = requiredUserAnswers.checkChangesRequiredData(Future.successful(Ok("")))(
-        basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers))
+      val res = requiredUserAnswers.checkChangesRequiredData(completedUserAnswers, basicSubscription, Future.successful(Ok("")))
       redirectLocation(res).get mustBe routes.RepaymentMethodController.onPageLoad(CheckMode).url
     }
 
@@ -181,16 +169,14 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         .set(CorrectionReasonPage, "some info").success.value
         .set(RepaymentMethodPage, RepaymentMethod.BankAccount).success.value
 
-      val res = requiredUserAnswers.checkChangesRequiredData(Future.successful(Ok("")))(
-        basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers))
+      val res = requiredUserAnswers.checkChangesRequiredData(completedUserAnswers, basicSubscription, Future.successful(Ok("")))
       status(res) mustBe OK
     }
 
     "should return Redirect to Correction Reason page when user answers past check your answers is empty and balance repayment not required" in {
-      val userAnswers = basicRequestWithEmptyAnswers.userAnswers
+      val userAnswers = basicUserAnswers
         .set(BalanceRepaymentRequired, false).success.value
-      val res = requiredUserAnswers.checkChangesRequiredData(Future.successful(Ok("")))(
-        basicRequestWithEmptyAnswers.copy(userAnswers = userAnswers))
+      val res = requiredUserAnswers.checkChangesRequiredData(userAnswers, basicSubscription, Future.successful(Ok("")))
       redirectLocation(res).get mustBe routes.CorrectionReasonController.onPageLoad(CheckMode).url
     }
 
@@ -199,8 +185,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         .set(BalanceRepaymentRequired, false).success.value
         .set(CorrectionReasonPage, "some info").success.value
 
-      val res = requiredUserAnswers.checkChangesRequiredData(Future.successful(Ok("")))(
-        basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers))
+      val res = requiredUserAnswers.checkChangesRequiredData(completedUserAnswers, basicSubscription, Future.successful(Ok("")))
       status(res) mustBe OK
     }
   }
@@ -208,8 +193,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
 
   "returnMissingAnswers" - {
     "should return all missing answers in a list when user answers is empty" in {
-      implicit val request = basicRequestWithEmptyAnswers
-      val res = requiredUserAnswers.returnMissingAnswers(requiredUserAnswers.mainRoute)
+      val journey = requiredUserAnswers.mainRoute(basicUserAnswers, basicSubscription)
+      val res = requiredUserAnswers.returnMissingAnswers(basicUserAnswers, journey)
       res mustBe List(CorrectReturnRequiredPage(PackagedAsContractPackerPage, None)(implicitly[Reads[Boolean]]),
         CorrectReturnRequiredPage(ExemptionsForSmallProducersPage, None)(implicitly[Reads[Boolean]]),
         CorrectReturnRequiredPage(BroughtIntoUKPage, None)(implicitly[Reads[Boolean]]),
@@ -227,8 +212,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         .set(BroughtIntoUkFromSmallProducersPage, false).success.value
         .set(ClaimCreditsForLostDamagedPage, false).success.value
 
-      implicit val request = basicRequestWithEmptyAnswers.copy(userAnswers = someAnswersCompleted)
-      val res = requiredUserAnswers.returnMissingAnswers(requiredUserAnswers.mainRoute)
+      val journey = requiredUserAnswers.mainRoute(someAnswersCompleted, basicSubscription)
+      val res = requiredUserAnswers.returnMissingAnswers(someAnswersCompleted, journey)
       res mustBe List(CorrectReturnRequiredPage(PackagedAsContractPackerPage, None)(implicitly[Reads[Boolean]]),
         CorrectReturnRequiredPage(ClaimCreditsForExportsPage, None)(implicitly[Reads[Boolean]]))
     }
@@ -245,7 +230,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true, largeProducer = false, contractPacker =false, importer = false,voluntaryRegistration = false),
         LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
-      val res = requiredUserAnswers.mainRoute(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers,subscription = subscription))
+      val journey = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
+      val res = requiredUserAnswers.returnMissingAnswers(completedUserAnswers, journey)
       val expectedResult = basicJourney
 
       res mustBe expectedResult
@@ -259,8 +245,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true,largeProducer = true, contractPacker =true,importer = false,voluntaryRegistration = true),
         LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
-
-      val res = requiredUserAnswers.mainRoute(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers,subscription = subscription))
+      val journey = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
+      val res = requiredUserAnswers.returnMissingAnswers(completedUserAnswers, journey)
 
       res mustBe basicJourney
     }
@@ -273,8 +259,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = false, importer = true,voluntaryRegistration = true),
         LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
-
-      val res = requiredUserAnswers.mainRoute(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers,subscription = subscription))
+      val journey = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
+      val res = requiredUserAnswers.returnMissingAnswers(completedUserAnswers, journey)
 
       res mustBe basicJourney
     }
@@ -287,8 +273,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
         LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
-
-      val res = requiredUserAnswers.mainRoute(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers, subscription = subscription))
+      val journey = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
+      val res = requiredUserAnswers.returnMissingAnswers(completedUserAnswers, journey)
 
       res mustBe basicJourney
     }
@@ -301,8 +287,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = true),
         LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
-
-      val res = requiredUserAnswers.mainRoute(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers, subscription = subscription))
+      val journey = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
+      val res = requiredUserAnswers.returnMissingAnswers(completedUserAnswers, journey)
 
       res mustBe smallProducerFalseJourney ++ basicJourney
     }
@@ -322,8 +308,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
         LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
-
-      val res = requiredUserAnswers.mainRoute(basicRequestWithEmptyAnswers.copy(userAnswers = completedUserAnswers, subscription = subscription))
+      val journey = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
+      val res = requiredUserAnswers.returnMissingAnswers(completedUserAnswers, journey)
 
       res mustBe smallProducerFalseJourney ++ basicJourney
     }
@@ -335,7 +321,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
         LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
-      val res = requiredUserAnswers.packingListReturnChange(basicRequestWithEmptyAnswers.copy(subscription = subscription))
+      val res = requiredUserAnswers.packingListReturnChange(basicUserAnswers, subscription)
 
       res mustBe List.empty
     }
@@ -355,7 +341,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = false, importer = true, voluntaryRegistration = true),
         LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
-      val res = requiredUserAnswers.packingListReturnChange(basicRequestWithEmptyAnswers.copy(subscription = subscription, userAnswers = completedUserAnswers))
+      val res = requiredUserAnswers.packingListReturnChange(completedUserAnswers, subscription)
       res mustBe coPackerFalseJourney
     }
   }
@@ -366,7 +352,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
         LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
-      val res = requiredUserAnswers.warehouseListReturnChange(basicRequestWithEmptyAnswers.copy(subscription = subscription))
+      val res = requiredUserAnswers.warehouseListReturnChange(basicUserAnswers, subscription)
       res mustBe List.empty
     }
 
@@ -386,8 +372,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = true, importer = false, voluntaryRegistration = true),
         LocalDate.now(),List.empty, List.empty, Contact(None, None, "", ""), None)
-      val res = requiredUserAnswers.warehouseListReturnChange(basicRequestWithEmptyAnswers
-        .copy(subscription = subscription, userAnswers = completedUserAnswers))
+      val res = requiredUserAnswers.warehouseListReturnChange(completedUserAnswers, subscription)
 
       res mustBe importerFalseJourney
     }
