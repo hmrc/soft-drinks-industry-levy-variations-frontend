@@ -48,7 +48,7 @@ class CorrectReturnCYAController @Inject()(override val messagesApi: MessagesApi
 
   def onPageLoad: Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-      requiredUserAnswers.requireData(CorrectReturnBaseCYAPage) {
+      requiredUserAnswers.requireData(CorrectReturnBaseCYAPage, request.userAnswers, request.subscription) {
 
         val calculateAmounts = correctReturnOrchestrator.calculateAmounts(
           request.sdilEnrolment, request.userAnswers, request.returnPeriod, request.originalSdilReturn)
@@ -67,7 +67,7 @@ class CorrectReturnCYAController @Inject()(override val messagesApi: MessagesApi
 
   def onSubmit: Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-      requiredUserAnswers.requireData(CorrectReturnBaseCYAPage) {
+      requiredUserAnswers.requireData(CorrectReturnBaseCYAPage, request.userAnswers, request.subscription) {
 
         val calculateAmounts = correctReturnOrchestrator.calculateAmounts(
           request.sdilEnrolment, request.userAnswers, request.returnPeriod, request.originalSdilReturn)

@@ -18,7 +18,6 @@ package controllers.actions
 
 import models.backend.RetrievedSubscription
 import models.correctReturn.{AddASmallProducer, RepaymentMethod}
-import models.requests.DataRequest
 import models.{CheckMode, LitresInBands, UserAnswers}
 import pages.correctReturn._
 import pages.{Page, QuestionPage}
@@ -33,48 +32,52 @@ import scala.reflect.ClassTag
 
 class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger)(implicit val executionContext: ExecutionContext) extends ActionHelpers {
 
-  def requireData(page: Page)(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
+  def requireData(page: Page, userAnswers: UserAnswers, subscription: RetrievedSubscription)(action: => Future[Result]): Future[Result] = {
     page match {
-      case CorrectReturnBaseCYAPage => checkYourAnswersRequiredData(action)
-      case CorrectReturnCheckChangesPage => checkChangesRequiredData(action)
+      case CorrectReturnBaseCYAPage => checkYourAnswersRequiredData(userAnswers, subscription, action)
+      case CorrectReturnCheckChangesPage => checkChangesRequiredData(userAnswers, subscription, action)
       case _ => action
     }
   }
 
-  private[controllers] def checkYourAnswersRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
-    val userAnswersMissing: List[CorrectReturnRequiredPage[_, _, _]] = returnMissingAnswers(mainRoute)
+  private[controllers] def checkYourAnswersRequiredData(userAnswers: UserAnswers, subscription: RetrievedSubscription, action: => Future[Result]): Future[Result] = {
+    val journey = mainRoute(userAnswers, subscription)
+    val userAnswersMissing: List[CorrectReturnRequiredPage[_, _, _]] = returnMissingAnswers(userAnswers, journey)
     userAnswersMissing.headOption.map(_.pageRequired.asInstanceOf[Page]) match {
       case Some(page) if List(PackAtBusinessAddressPage, PackagingSiteDetailsPage).contains(page) =>
-        genericLogger.logger.info(s"${request.userAnswers.id} now requires packaging sites")
+        genericLogger.logger.info(s"${userAnswers.id} now requires packaging sites")
         Future.successful(Redirect(PackAtBusinessAddressPage.url(CheckMode)))
       case Some(page) if page == SecondaryWarehouseDetailsPage =>
-        genericLogger.logger.info(s"${request.userAnswers.id} now has option to add warehouse")
+        genericLogger.logger.info(s"${userAnswers.id} now has option to add warehouse")
         Future.successful(Redirect(page.url(CheckMode)))
-      case Some(page) => genericLogger.logger.warn(s"${request.userAnswers.id} has hit correct return base CYA and is missing $userAnswersMissing")
+      case Some(page) => genericLogger.logger.warn(s"${userAnswers.id} has hit correct return base CYA and is missing $userAnswersMissing")
         Future.successful(Redirect(page.url(CheckMode)))
       case None => action
     }
   }
 
-  private[controllers] def checkChangesRequiredData(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
-    val userAnswersMissing: List[CorrectReturnRequiredPage[_, _, _]] = returnMissingAnswers(checkChangesJourney)
+  private[controllers] def checkChangesRequiredData(userAnswers: UserAnswers, subscription: RetrievedSubscription, action: => Future[Result]): Future[Result] = {
+    val journey = checkChangesJourney(userAnswers)
+    val userAnswersMissing: List[CorrectReturnRequiredPage[_, _, _]] = returnMissingAnswers(userAnswers, journey)
     userAnswersMissing.headOption.map(_.pageRequired.asInstanceOf[Page]) match {
-      case Some(page) => genericLogger.logger.warn(s"${request.userAnswers.id} has hit check changes CYA and is missing $userAnswersMissing")
+      case Some(page) => genericLogger.logger.warn(s"${userAnswers.id} has hit check changes CYA and is missing $userAnswersMissing")
         Future.successful(Redirect(page.url(CheckMode)))
       case None => action
     }
   }
 
-  private[controllers] def returnMissingAnswers[A: ClassTag, B: ClassTag](list: List[CorrectReturnRequiredPage[_, _, _]])
-                                                                         (implicit request: DataRequest[_]): List[CorrectReturnRequiredPage[_, _, _]] = {
+  private[controllers] def returnMissingAnswers[A: ClassTag, B: ClassTag](
+                                                                           userAnswers: UserAnswers,
+                                                                           list: List[CorrectReturnRequiredPage[_, _, _]]
+                                                                         ): List[CorrectReturnRequiredPage[_, _, _]] = {
     list.filterNot { listItem =>
-      val currentPage: Option[A] = request.userAnswers
+      val currentPage: Option[A] = userAnswers
         .get(listItem.pageRequired.asInstanceOf[QuestionPage[A]])(listItem.reads.asInstanceOf[Reads[A]])
       (currentPage.isDefined, listItem.basedOnCorrectReturnPreviousPage.nonEmpty) match {
         case (false, true) =>
           val CorrectReturnPreviousPage: CorrectReturnPreviousPage[QuestionPage[B], B] = listItem.basedOnCorrectReturnPreviousPage
             .get.asInstanceOf[CorrectReturnPreviousPage[QuestionPage[B], B]]
-          val CorrectReturnPreviousPageAnswer: Option[B] = request.userAnswers
+          val CorrectReturnPreviousPageAnswer: Option[B] = userAnswers
             .get(CorrectReturnPreviousPage.page)(CorrectReturnPreviousPage.reads)
           !CorrectReturnPreviousPageAnswer.contains(CorrectReturnPreviousPage.CorrectReturnPreviousPageAnswerRequired)
         case (false, _) => false
@@ -83,12 +86,12 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
     }
   }
 
-  private[controllers] def mainRoute(implicit dataRequest: DataRequest[_]): List[CorrectReturnRequiredPage[_, _, _]] = {
+  private[controllers] def mainRoute(userAnswers: UserAnswers, subscription: RetrievedSubscription): List[CorrectReturnRequiredPage[_, _, _]] = {
     restOfJourney(
-      smallProducerCheck(dataRequest.subscription),
-      addASmallProducerReturnChange(dataRequest),
-      packingListReturnChange(dataRequest),
-      warehouseListReturnChange(dataRequest)
+      smallProducerCheck(subscription),
+      addASmallProducerReturnChange(userAnswers),
+      packingListReturnChange(userAnswers, subscription),
+      warehouseListReturnChange(userAnswers, subscription)
     )
   }
 
@@ -134,27 +137,16 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
       warehouseListReturnChange
   }
 
-  private[controllers] def finalSectionOfJourney(balanceCheck : List[CorrectReturnRequiredPage[_, _, _]]): List[CorrectReturnRequiredPage[_, _, _]] = {
-    val lastPartOfRestOfJourney = List(
-      CorrectReturnRequiredPage(CorrectionReasonPage, None)(implicitly[Reads[String]])
-    )
-    lastPartOfRestOfJourney++
-    balanceCheck
-  }
-
-  private[controllers] def balanceRepaymentRequired(userAnswers: UserAnswers): List[CorrectReturnRequiredPage[_, _, _]] = {
-    userAnswers.get(BalanceRepaymentRequired) match {
-      case Some(true) =>  List(CorrectReturnRequiredPage(RepaymentMethodPage, None)(implicitly[Reads[RepaymentMethod]]))
+  private[controllers] def checkChangesJourney(userAnswers: UserAnswers): List[CorrectReturnRequiredPage[_, _, _]] = {
+    val balanceRepaymentRequiredJourney = userAnswers.get(BalanceRepaymentRequired) match {
+      case Some(true) => List(CorrectReturnRequiredPage(RepaymentMethodPage, None)(implicitly[Reads[RepaymentMethod]]))
       case _ => List.empty
     }
+    List(CorrectReturnRequiredPage(CorrectionReasonPage, None)(implicitly[Reads[String]])) ++ balanceRepaymentRequiredJourney
   }
 
-  private[controllers] def checkChangesJourney(implicit dataRequest: DataRequest[_]): List[CorrectReturnRequiredPage[_, _, _]] = {
-    finalSectionOfJourney(balanceRepaymentRequired(userAnswers = dataRequest.userAnswers))
-  }
-
-  private[controllers] def addASmallProducerReturnChange: DataRequest[_] => List[CorrectReturnRequiredPage[_, _, _]] = { (request: DataRequest[_]) =>
-    if (request.userAnswers.smallProducerList.isEmpty) {
+  private[controllers] def addASmallProducerReturnChange(userAnswers: UserAnswers): List[CorrectReturnRequiredPage[_, _, _]] = {
+    if (userAnswers.smallProducerList.isEmpty) {
       List(CorrectReturnRequiredPage(AddASmallProducerPage,
         Some(CorrectReturnPreviousPage(ExemptionsForSmallProducersPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[AddASmallProducer]]))
     } else {
@@ -162,16 +154,22 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
     }
   }
 
-  private[controllers] def packingListReturnChange: DataRequest[_] => List[CorrectReturnRequiredPage[_, _, _]] = { (request: DataRequest[_]) =>
-    if (UserTypeCheck.isNewPacker(request.userAnswers, request.subscription) && request.subscription.productionSites.isEmpty) {
+  private[controllers] def packingListReturnChange(
+                                                    userAnswers: UserAnswers,
+                                                    subscription: RetrievedSubscription
+                                                  ): List[CorrectReturnRequiredPage[_, _, _]] = {
+    if (UserTypeCheck.isNewPacker(userAnswers, subscription) && subscription.productionSites.isEmpty) {
       List(CorrectReturnRequiredPage(PackAtBusinessAddressPage, None)(implicitly[Reads[Boolean]]))
     } else {
       List.empty
     }
   }
 
-  private[controllers] def warehouseListReturnChange: DataRequest[_] => List[CorrectReturnRequiredPage[_, _, _]] = { (request: DataRequest[_]) =>
-    if (UserTypeCheck.isNewImporter(request.userAnswers, request.subscription)) {
+  private[controllers] def warehouseListReturnChange(
+                                                      userAnswers: UserAnswers,
+                                                      subscription: RetrievedSubscription
+                                                    ): List[CorrectReturnRequiredPage[_, _, _]] = {
+    if (UserTypeCheck.isNewImporter(userAnswers, subscription)) {
       List(CorrectReturnRequiredPage(AskSecondaryWarehouseInReturnPage, None)(implicitly[Reads[Boolean]]))
     } else {
       List.empty

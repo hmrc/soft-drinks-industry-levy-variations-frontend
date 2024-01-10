@@ -35,6 +35,7 @@ import views.html.correctReturn.CorrectReturnCheckChangesCYAView
 import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.{Failure, Success}
 
 class CorrectReturnCheckChangesCYAController @Inject()(
                                                         override val messagesApi: MessagesApi,
@@ -60,13 +61,19 @@ class CorrectReturnCheckChangesCYAController @Inject()(
           val balanceRepaymentRequired = amounts.newReturnTotal < amounts.originalReturnTotal
           val updatedAnswers = request.userAnswers.set(BalanceRepaymentRequired, balanceRepaymentRequired)
           updateDatabaseWithoutRedirect(updatedAnswers, CorrectReturnCheckChangesPage).flatMap(_ => {
-            requiredUserAnswers.requireData(CorrectReturnCheckChangesPage) {
-              val currentSDILReturn = SdilReturn.generateFromUserAnswers(request.userAnswers)
-              val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(request.originalSdilReturn, currentSDILReturn)
-              val orgName: String = " " + request.subscription.orgName
-              val sections = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(request.userAnswers,
-                request.subscription, changedPages, isCheckAnswers = true, amounts)
-              Future.successful(Ok(view(orgName, sections, routes.CorrectReturnCheckChangesCYAController.onSubmit)))
+            updatedAnswers match {
+              case Failure(_) =>
+                genericLogger.logger.error(s"Failed to resolve user answers while on ${CorrectReturnCheckChangesPage.toString}")
+                Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url))
+              case Success(answers) =>
+                requiredUserAnswers.requireData(CorrectReturnCheckChangesPage, answers, request.subscription) {
+                  val currentSDILReturn = SdilReturn.generateFromUserAnswers(request.userAnswers)
+                  val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(request.originalSdilReturn, currentSDILReturn)
+                  val orgName: String = " " + request.subscription.orgName
+                  val sections = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(request.userAnswers,
+                    request.subscription, changedPages, isCheckAnswers = true, amounts)
+                  Future.successful(Ok(view(orgName, sections, routes.CorrectReturnCheckChangesCYAController.onSubmit)))
+                }
             }
           })
         case Left(_) =>
