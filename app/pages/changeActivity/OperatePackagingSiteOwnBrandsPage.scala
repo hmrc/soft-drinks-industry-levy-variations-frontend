@@ -31,7 +31,7 @@ case object OperatePackagingSiteOwnBrandsPage extends QuestionPage[Boolean] {
 
   override val url: Mode => String = mode => routes.OperatePackagingSiteOwnBrandsController.onPageLoad(mode).url
 
-  override val redirectConditions: UserAnswers => List[RequiredPage] = userAnswers => {
+  override val previousPagesRequired: UserAnswers => List[RequiredPage] = userAnswers => {
     List(
       RequiredPage(AmountProducedPage),
       RequiredPage(ThirdPartyPackagersPage, additionalPreconditions = List(userAnswers.get(AmountProducedPage).contains(AmountProduced.Small)))

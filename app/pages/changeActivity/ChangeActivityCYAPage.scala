@@ -27,7 +27,7 @@ case object ChangeActivityCYAPage extends Page {
 
   override val url: Mode => String = _ => routes.ChangeActivityCYAController.onPageLoad.url
 
-  override val redirectConditions: UserAnswers => List[RequiredPage] = userAnswers => {
+  override val previousPagesRequired: UserAnswers => List[RequiredPage] = userAnswers => {
     val isSmallOrLargeProducer: Boolean =
       userAnswers.get(AmountProducedPage).contains(AmountProduced.Large) || userAnswers.get(AmountProducedPage).contains(AmountProduced.Small)
     val isSmallOrNoneProducer: Boolean =

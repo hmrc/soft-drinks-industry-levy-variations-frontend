@@ -53,14 +53,14 @@ class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogge
                             userAnswers: UserAnswers,
                             requiredPageList: UserAnswers => List[RequiredPage]
                           ): List[Page] = {
-    val redirectConditions = transformRequiredPageIntoBooleanPageList(userAnswers, requiredPageList)
-    redirectConditions
+    val previousPagesRequired = transformRequiredPageIntoBooleanPageList(userAnswers, requiredPageList)
+    previousPagesRequired
       .filter(_._1)
       .map(_._2)
   }
   private[controllers] def requireData(page: Page)(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
     val mode = if (page == ChangeActivityCYAPage) CheckMode else NormalMode
-    val missingAnswers = returnMissingAnswers(request.userAnswers, page.redirectConditions)
+    val missingAnswers = returnMissingAnswers(request.userAnswers, page.previousPagesRequired)
     getResultFromMissingAnswers(missingAnswers, action, mode = mode)
   }
 }

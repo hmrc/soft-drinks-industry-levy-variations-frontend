@@ -549,7 +549,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
       s"should return all missing answers when user answers is empty and packaging site list is ${if (packagingSitesEmpty) "" else "not "}empty" in {
         val userAnswers = emptyUserAnswersForChangeActivity.copy(packagingSiteList = packagingSiteList)
         implicit val dataRequest: DataRequest[AnyContentAsEmpty.type] = RequiredDataRequest(FakeRequest(), "", aSubscription, userAnswers)
-        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.redirectConditions)
+        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.previousPagesRequired)
         res mustBe List(AmountProducedPage, ContractPackingPage, ImportsPage)
       }
 
@@ -568,7 +568,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         }
         implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
 
-        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.redirectConditions)
+        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.previousPagesRequired)
         val requiredPages = if (packagingSitesEmpty) {
           List(PackAtBusinessAddressPage, PackagingSiteDetailsPage)
         } else {
@@ -593,7 +593,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         }
         implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
 
-        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.redirectConditions)
+        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.previousPagesRequired)
         val requiredPages = if (packagingSitesEmpty) {
           List(PackAtBusinessAddressPage, PackagingSiteDetailsPage)
         } else {
@@ -625,7 +625,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         }
         implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
 
-        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.redirectConditions)
+        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.previousPagesRequired)
         res mustBe requiredPagesSmallorNonProducer
       }
 
@@ -643,7 +643,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         }
         implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
 
-        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.redirectConditions)
+        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.previousPagesRequired)
         res mustBe requiredPagesSmallorNonProducer
       }
     })
@@ -677,7 +677,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
           .set(AmountProducedPage, Small).success.value
       }
       implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ThirdPartyPackagersPage.redirectConditions)
+      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ThirdPartyPackagersPage.previousPagesRequired)
 
       res mustBe List.empty
     }
@@ -702,7 +702,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
           .set(AmountProducedPage, Small).success.value
       }
       implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, OperatePackagingSiteOwnBrandsPage.redirectConditions)
+      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, OperatePackagingSiteOwnBrandsPage.previousPagesRequired)
 
       res mustBe List(ThirdPartyPackagersPage)
     }
@@ -713,7 +713,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
           .set(AmountProducedPage, Large).success.value
       }
       implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, OperatePackagingSiteOwnBrandsPage.redirectConditions)
+      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, OperatePackagingSiteOwnBrandsPage.previousPagesRequired)
 
       res mustBe List.empty
     }
@@ -739,7 +739,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
           .set(AmountProducedPage, Small).success.value
       }
       implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ContractPackingPage.redirectConditions)
+      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ContractPackingPage.previousPagesRequired)
 
       res mustBe List(ThirdPartyPackagersPage, OperatePackagingSiteOwnBrandsPage)
     }
@@ -750,7 +750,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
           .set(AmountProducedPage, Large).success.value
       }
       implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ContractPackingPage.redirectConditions)
+      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ContractPackingPage.previousPagesRequired)
 
       res mustBe List(OperatePackagingSiteOwnBrandsPage)
     }
@@ -761,7 +761,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
           .set(AmountProducedPage, None).success.value
       }
       implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ContractPackingPage.redirectConditions)
+      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ContractPackingPage.previousPagesRequired)
 
       res mustBe List.empty
     }
@@ -874,7 +874,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
           .set(AmountProducedPage, Small).success.value
       }
       implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ImportsPage.redirectConditions)
+      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ImportsPage.previousPagesRequired)
 
       res mustBe List(ThirdPartyPackagersPage, OperatePackagingSiteOwnBrandsPage, ContractPackingPage)
     }
@@ -885,7 +885,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
           .set(AmountProducedPage, Large).success.value
       }
       implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ImportsPage.redirectConditions)
+      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ImportsPage.previousPagesRequired)
 
       res mustBe List(OperatePackagingSiteOwnBrandsPage, ContractPackingPage)
     }
@@ -896,7 +896,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
           .set(AmountProducedPage, None).success.value
       }
       implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ImportsPage.redirectConditions)
+      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ImportsPage.previousPagesRequired)
 
       res mustBe List(ContractPackingPage)
     }

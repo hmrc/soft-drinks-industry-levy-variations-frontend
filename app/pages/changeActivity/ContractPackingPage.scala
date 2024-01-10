@@ -31,7 +31,7 @@ case object ContractPackingPage extends QuestionPage[Boolean] {
 
   override val url: Mode => String = mode => routes.ContractPackingController.onPageLoad(mode).url
 
-  override val redirectConditions: UserAnswers => List[RequiredPage] = userAnswers => {
+  override val previousPagesRequired: UserAnswers => List[RequiredPage] = userAnswers => {
     val isSmallOrLargeProducer: Boolean =
       userAnswers.get(AmountProducedPage).contains(AmountProduced.Large) || userAnswers.get(AmountProducedPage).contains(AmountProduced.Small)
 
