@@ -25,13 +25,17 @@ import play.api.test.FakeRequest
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import views.ViewSpecHelper
 import views.html.changeActivity.SecondaryWarehouseDetailsView
+import views.summary.changeActivity.SecondaryWarehouseDetailsSummary
 
 class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
 
   val view: SecondaryWarehouseDetailsView = application.injector.instanceOf[SecondaryWarehouseDetailsView]
   val formProvider = new SecondaryWarehouseDetailsFormProvider
-  val form: Form[Boolean] = formProvider.apply()
+  val formWithWarehouses: Form[Boolean] = formProvider.apply(true)
+  val formWithNoWarehouses: Form[Boolean] = formProvider.apply(false)
   implicit val request: Request[_] = FakeRequest()
+  val warehousesInSummaryList: SummaryList = SummaryList(
+    rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouseAddedToUserAnswersForChangeActivity.warehouseList, NormalMode))
 
   object Selectors {
     val heading = "govuk-fieldset__heading"
@@ -46,8 +50,8 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
     val form = "form"
   }
 
-  "View" - {
-    val html = view(form, Some(SummaryList()), NormalMode)(request, messages(application))
+  "View - when there are warehouses" - {
+    val html = view(formWithWarehouses, Some(warehousesInSummaryList), NormalMode)(request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
       document.title() mustBe "UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
@@ -56,7 +60,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
     "should include a legend with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.legend).text() mustBe "Do you want to add a UK warehouse?"
+      legend.get(0).getElementsByClass(Selectors.legend).text() mustBe "Do you want to add another UK warehouse?"
     }
 
     "when the form is not preoccupied and has no errors" - {
@@ -94,7 +98,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with yes and has no errors" - {
-      val html1 = view(form.fill(true), Some(SummaryList()), NormalMode)(request, messages(application))
+      val html1 = view(formWithWarehouses.fill(true), Some(warehousesInSummaryList), NormalMode)(request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -129,7 +133,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with no and has no errors" - {
-      val html1 = view(form.fill(false), Some(SummaryList()), NormalMode)(request, messages(application))
+      val html1 = view(formWithWarehouses.fill(false), Some(warehousesInSummaryList), NormalMode)(request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -180,10 +184,10 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
 
-      val htmlYesSelected = view(form.fill(true), Some(SummaryList()), NormalMode)(request, messages(application))
+      val htmlYesSelected = view(formWithWarehouses.fill(true), Some(warehousesInSummaryList), NormalMode)(request, messages(application))
       val documentYesSelected = doc(htmlYesSelected)
 
-      val htmlNoSelected = view(form.fill(false), Some(SummaryList()), NormalMode)(request, messages(application))
+      val htmlNoSelected = view(formWithWarehouses.fill(false), Some(warehousesInSummaryList), NormalMode)(request, messages(application))
       val documentNoSelected = doc(htmlNoSelected)
       "and yes is selected" in {
         documentYesSelected.select(Selectors.form)
@@ -197,7 +201,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), Some(SummaryList()), NormalMode)(request, messages(application))
+      val htmlWithErrors = view(formWithWarehouses.bind(Map("value" -> "")), Some(warehousesInSummaryList), NormalMode)(request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
@@ -221,4 +225,54 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
     validateAccessibilityStatementLinkPresent(document)
   }
 
+  "View - when there are no warehouses" - {
+    val html = view(formWithNoWarehouses, None, NormalMode)(request, messages(application))
+
+    val documentNoWarehouses = doc(html)
+    "should contain the expected title" in {
+      documentNoWarehouses.title() mustBe "UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
+    }
+
+    "should include a legend with the expected heading" in {
+      val legend = documentNoWarehouses.getElementsByClass(Selectors.legend)
+      legend.size() mustBe 1
+      legend.get(0).getElementsByClass(Selectors.legend).text() mustBe "Do you want to add a UK warehouse?"
+    }
+
+    "contains a form with the correct action" - {
+
+      val htmlYesSelected = view(formWithNoWarehouses.fill(true), None, NormalMode)(request, messages(application))
+      val documentYesSelected = doc(htmlYesSelected)
+      val htmlNoSelected = view(formWithNoWarehouses.fill(false), None, NormalMode)(request, messages(application))
+      val documentNoSelected = doc(htmlNoSelected)
+      "and yes is selected" in {
+        documentYesSelected.select(Selectors.form)
+          .attr("action") mustEqual routes.SecondaryWarehouseDetailsController.onSubmit(NormalMode).url
+      }
+
+      "and no is selected" in {
+        documentNoSelected.select(Selectors.form)
+          .attr("action") mustEqual routes.SecondaryWarehouseDetailsController.onSubmit(NormalMode).url
+      }
+    }
+
+    "when there are form errors" - {
+      val htmlWithErrors = view(formWithNoWarehouses.bind(Map("value" -> "")), None, NormalMode)(request, messages(application))
+      val documentWithErrors = doc(htmlWithErrors)
+
+      "should have a title containing error" in {
+        documentWithErrors.title mustBe "Error: UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
+      }
+
+      "contains a message that links to field with error" in {
+        val errorSummary = documentWithErrors
+          .getElementsByClass(Selectors.errorSummaryList)
+          .first()
+        errorSummary
+          .select("a")
+          .attr("href") mustBe "#value"
+        errorSummary.text() mustBe "Select yes if you want to add a UK warehouse"
+      }
+    }
+  }
 }

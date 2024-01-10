@@ -19,8 +19,6 @@ package controllers.changeActivity
 import base.SpecBase
 import controllers.changeActivity.routes._
 import models.SelectChange.ChangeActivity
-import navigation._
-import play.api.inject
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
