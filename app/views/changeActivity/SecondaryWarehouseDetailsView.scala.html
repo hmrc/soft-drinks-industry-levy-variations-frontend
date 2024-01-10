@@ -54,7 +54,12 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("changeActivity.secondaryWarehouseDetails.subHeading")).asPageSubHeading(),
+                legend = LegendViewModel(
+                    if (warehouses.isEmpty) {
+                        messages("changeActivity.secondaryWarehouseDetails.subHeading", "a")
+                    } else {
+                        messages("changeActivity.secondaryWarehouseDetails.subHeading", "another")
+                    }).asPageSubHeading(),
                 hint = None
             )
         )

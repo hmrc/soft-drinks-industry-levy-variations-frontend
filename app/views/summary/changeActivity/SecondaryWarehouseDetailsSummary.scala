@@ -46,7 +46,6 @@ object SecondaryWarehouseDetailsSummary {
       rows = Seq(SummaryListRowViewModel(
         key = Key(
           content = key,
-          classes = "govuk-!-width-full"
         ),
         value = Value(),
         actions = if (isCheckAnswers) {
@@ -66,8 +65,8 @@ object SecondaryWarehouseDetailsSummary {
     warehouseList.map {
       warehouse =>
         SummaryListRow(
-          key = Key(HtmlContent(AddressFormattingHelper.addressFormatting(warehouse._2.address, warehouse._2.tradingName))),
-          classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds",
+          key = Key(HtmlContent(AddressFormattingHelper.addressFormatting(warehouse._2.address, warehouse._2.tradingName)))
+            .withCssClass("govuk-!-font-weight-regular govuk-!-width-full"),
           actions = Some(Actions("", Seq(
             ActionItemViewModel("site.remove", routes.RemoveWarehouseDetailsController.onPageLoad(warehouse._1, mode).url)
               .withVisuallyHiddenText(messages("changeActivity.secondaryWarehouseDetails.remove.hidden",

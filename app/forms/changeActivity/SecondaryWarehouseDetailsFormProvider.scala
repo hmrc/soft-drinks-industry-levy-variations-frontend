@@ -23,8 +23,14 @@ import javax.inject.Inject
 
 class SecondaryWarehouseDetailsFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(hasWarehouses: Boolean): Form[Boolean] = {
+    val requiredKey = if (hasWarehouses) {
+      "changeActivity.secondaryWarehouseDetails.error.required"
+    } else {
+      "changeActivity.secondaryWarehouseDetails.error.requiredNoWarehouses"
+    }
     Form(
-      "value" -> boolean("changeActivity.secondaryWarehouseDetails.error.required")
+      "value" -> boolean(requiredKey)
     )
+  }
 }

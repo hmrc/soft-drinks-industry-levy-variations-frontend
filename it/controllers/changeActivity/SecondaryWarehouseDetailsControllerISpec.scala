@@ -368,7 +368,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe "Select yes if you want to add another UK warehouse"
+            errorSummary.text() mustBe "Select yes if you want to add a UK warehouse"
           }
         }
       }
@@ -515,7 +515,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe "Select yes if you want to add another UK warehouse"
+            errorSummary.text() mustBe "Select yes if you want to add a UK warehouse"
           }
         }
       }

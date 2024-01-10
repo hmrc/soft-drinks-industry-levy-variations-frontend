@@ -51,10 +51,11 @@ class SecondaryWarehouseDetailsController @Inject()(
                                        val errorHandler: ErrorHandler
                                      )(implicit val ec: ExecutionContext) extends ControllerHelper with SummaryListFluency {
 
-  val form: Form[Boolean] = formProvider()
+  val form: Form[Boolean] = formProvider(hasWarehouses = true)
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
+      val form: Form[Boolean] = formProvider(hasWarehouses = request.userAnswers.warehouseList.nonEmpty)
       val summaryList: Option[SummaryList] = request.userAnswers.warehouseList match {
         case warehouseList if warehouseList.nonEmpty => Some(SummaryListViewModel(
           rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouseList, mode))
@@ -67,6 +68,7 @@ class SecondaryWarehouseDetailsController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
+      val form: Form[Boolean] = formProvider(hasWarehouses = request.userAnswers.warehouseList.nonEmpty)
       val summaryList: Option[SummaryList] = request.userAnswers.warehouseList match {
         case warehouseList if warehouseList.nonEmpty => Some(SummaryListViewModel(
           rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouseList, mode))

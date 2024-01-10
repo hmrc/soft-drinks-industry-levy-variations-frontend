@@ -21,10 +21,12 @@ import play.api.data.FormError
 
 class SecondaryWarehouseDetailsFormProviderSpec extends BooleanFieldBehaviours {
 
-  val requiredKey = "changeActivity.secondaryWarehouseDetails.error.required"
+  val requiredKey = "changeActivity.secondaryWarehouseDetails.error.requiredNoWarehouses"
+  val requiredKeyForWarehouses = "changeActivity.secondaryWarehouseDetails.error.required"
   val invalidKey = "error.boolean"
 
-  val form = new SecondaryWarehouseDetailsFormProvider()()
+  val form = new SecondaryWarehouseDetailsFormProvider()(false)
+  val formWithWarehouses = new SecondaryWarehouseDetailsFormProvider()(true)
 
   ".value" - {
 
@@ -40,6 +42,23 @@ class SecondaryWarehouseDetailsFormProviderSpec extends BooleanFieldBehaviours {
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
+    )
+  }
+
+  ".value - when there are warehouses in the summary list " - {
+
+    val fieldName = "value"
+
+    behave like booleanField(
+      formWithWarehouses,
+      fieldName,
+      invalidError = FormError(fieldName, invalidKey)
+    )
+
+    behave like mandatoryField(
+      formWithWarehouses,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKeyForWarehouses)
     )
   }
 }
