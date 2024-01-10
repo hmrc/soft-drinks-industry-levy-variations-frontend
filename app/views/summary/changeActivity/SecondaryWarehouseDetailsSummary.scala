@@ -44,9 +44,7 @@ object SecondaryWarehouseDetailsSummary {
 
     SummaryListViewModel(
       rows = Seq(SummaryListRowViewModel(
-        key = Key(
-          content = key,
-        ),
+        key = Key(content = key),
         value = Value(),
         actions = if (isCheckAnswers) {
           Seq(
