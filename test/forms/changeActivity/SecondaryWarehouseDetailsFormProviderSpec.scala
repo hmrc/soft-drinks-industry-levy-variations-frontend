@@ -24,9 +24,10 @@ class SecondaryWarehouseDetailsFormProviderSpec extends BooleanFieldBehaviours {
   val requiredKey = "changeActivity.secondaryWarehouseDetails.error.requiredNoWarehouses"
   val requiredKeyForWarehouses = "changeActivity.secondaryWarehouseDetails.error.required"
   val invalidKey = "error.boolean"
-
-  val form = new SecondaryWarehouseDetailsFormProvider()(false)
-  val formWithWarehouses = new SecondaryWarehouseDetailsFormProvider()(true)
+  val hasWarehouses: Boolean = false
+  val noWarehouses: Boolean = true
+  val form = new SecondaryWarehouseDetailsFormProvider()(noWarehouses)
+  val formWithWarehouses = new SecondaryWarehouseDetailsFormProvider()(hasWarehouses)
 
   ".value" - {
 

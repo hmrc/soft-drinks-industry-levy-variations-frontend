@@ -51,8 +51,6 @@ class SecondaryWarehouseDetailsController @Inject()(
                                        val errorHandler: ErrorHandler
                                      )(implicit val ec: ExecutionContext) extends ControllerHelper with SummaryListFluency {
 
-  val form: Form[Boolean] = formProvider(hasWarehouses = true)
-
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
       val form: Form[Boolean] = formProvider(hasWarehouses = request.userAnswers.warehouseList.nonEmpty)
