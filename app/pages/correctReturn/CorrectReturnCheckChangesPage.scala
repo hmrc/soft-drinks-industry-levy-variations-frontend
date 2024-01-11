@@ -28,10 +28,9 @@ case object CorrectReturnCheckChangesPage extends Page {
   override val url: Mode => String = _ => routes.CorrectReturnCheckChangesCYAController.onPageLoad.url
 
   override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (userAnswers, _) => {
-    val balanceRepaymentRequiredJourney = userAnswers.get(BalanceRepaymentRequired) match {
-      case Some(true) => List(RequiredPage(RepaymentMethodPage))
-      case _ => List.empty
-    }
-    List(RequiredPage(CorrectionReasonPage)) ++ balanceRepaymentRequiredJourney
+    List(
+      RequiredPage(CorrectionReasonPage),
+      RequiredPage(RepaymentMethodPage, additionalPreconditions = List(userAnswers.get(BalanceRepaymentRequired).contains(true)))
+    )
   }
 }
