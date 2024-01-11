@@ -21,6 +21,7 @@ import play.api.libs.json.JsPath
 import models.{Mode, UserAnswers}
 import models.backend.RetrievedSubscription
 import pages.{Page, QuestionPage, RequiredPage}
+import utilities.UserTypeCheck
 
 case object CorrectReturnBaseCYAPage extends QuestionPage[Boolean] {
 
@@ -41,7 +42,10 @@ case object CorrectReturnBaseCYAPage extends QuestionPage[Boolean] {
   //    }
   //  }
   private def smallProducerRequiredPages(userAnswers: UserAnswers, subscription: RetrievedSubscription): List[RequiredPage] = {
-    List.empty
+    List(
+      RequiredPage(OperatePackagingSiteOwnBrandsPage),
+      RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(userAnswers.get(OperatePackagingSiteOwnBrandsPage).contains(true)))
+    )
   }
 
   //    private[controllers] def addASmallProducerReturnChange(userAnswers: UserAnswers): List[CorrectReturnRequiredPage[_, _, _]] = {
@@ -53,7 +57,10 @@ case object CorrectReturnBaseCYAPage extends QuestionPage[Boolean] {
   //    }
   //  }
   private def addASmallProducerRequiredPages(userAnswers: UserAnswers, subscription: RetrievedSubscription): List[RequiredPage] = {
-    List.empty
+    List(RequiredPage(AddASmallProducerPage, additionalPreconditions = List(
+      userAnswers.get(ExemptionsForSmallProducersPage).contains(true),
+      userAnswers.smallProducerList.isEmpty
+    )))
   }
 
   //  private[controllers] def packingListReturnChange(
@@ -67,7 +74,10 @@ case object CorrectReturnBaseCYAPage extends QuestionPage[Boolean] {
   //    }
   //  }
   private def packagingRequiredPages(userAnswers: UserAnswers, subscription: RetrievedSubscription): List[RequiredPage] = {
-    List.empty
+    List(RequiredPage(PackAtBusinessAddressPage, additionalPreconditions = List(
+      UserTypeCheck.isNewImporter(userAnswers, subscription),
+      subscription.productionSites.isEmpty
+    )))
   }
 
   //  private[controllers] def warehouseListReturnChange(
@@ -81,7 +91,7 @@ case object CorrectReturnBaseCYAPage extends QuestionPage[Boolean] {
   //    }
   //  }
   private def warehouseRequiredPages(userAnswers: UserAnswers, subscription: RetrievedSubscription): List[RequiredPage] = {
-    List.empty
+    List(RequiredPage(AskSecondaryWarehouseInReturnPage, additionalPreconditions = List(UserTypeCheck.isNewImporter(userAnswers, subscription))))
   }
 
   //  TODO: IMPLEMENT THIS
