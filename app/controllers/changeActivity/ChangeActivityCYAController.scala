@@ -49,7 +49,7 @@ class ChangeActivityCYAController @Inject()(
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
-      requiredUserAnswers.requireData(ChangeActivityCYAPage) {
+      requiredUserAnswers.requireData(ChangeActivityCYAPage, request.userAnswers, request.subscription) {
         val orgName: String = " " + request.subscription.orgName
         val sections = ChangeActivitySummary.summaryListsAndHeadings(request.userAnswers, isCheckAnswers = true)
         Future.successful(Ok(view(orgName, sections, routes.ChangeActivityCYAController.onSubmit)))

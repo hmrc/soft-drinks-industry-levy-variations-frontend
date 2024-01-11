@@ -51,7 +51,7 @@ class ImportsController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
-      requiredUserAnswers.requireData(ImportsPage) {
+      requiredUserAnswers.requireData(ImportsPage, request.userAnswers, request.subscription) {
         val preparedForm = request.userAnswers.get(ImportsPage) match {
           case None => form
           case Some(value) => form.fill(value)

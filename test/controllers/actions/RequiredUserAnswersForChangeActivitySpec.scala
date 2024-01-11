@@ -38,11 +38,14 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
   val exampleSuccessActionResult: String = "woohoo"
   val exampleSuccessAction: Future[Result] = Future.successful(Ok(exampleSuccessActionResult))
 
-  def dataRequest(userAnswers: UserAnswers): DataRequest[AnyContentAsEmpty.type] = RequiredDataRequest(FakeRequest(), "", aSubscription, userAnswers)
+  val basicUserAnswers = emptyUserAnswersForChangeActivity
+  val basicSubscription = aSubscription
+
   "requireData" - {
     "should return result passed in when not a page matched in function" in {
-      contentAsString(requiredUserAnswers.requireData(AmountProducedPage)(exampleSuccessAction)
-      (dataRequest(emptyUserAnswersForChangeActivity))) mustBe exampleSuccessActionResult
+      contentAsString(
+        requiredUserAnswers.requireData(AmountProducedPage, basicUserAnswers, basicSubscription)(exampleSuccessAction)
+      ) mustBe exampleSuccessActionResult
     }
 
     s"should return result passed in when page is $ChangeActivityCYAPage" - {
@@ -60,8 +63,9 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(PackagingSiteDetailsPage, true).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
-        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+        contentAsString(
+          requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction)
+        ) mustBe exampleSuccessActionResult
       }
     }
 
@@ -76,8 +80,9 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
-        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+        contentAsString(
+          requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction)
+        ) mustBe exampleSuccessActionResult
       }
 
       s"when $AmountProducedPage is $Small, $ThirdPartyPackagersPage is true, contract packing is false and pack at business address is not answered" in {
@@ -92,8 +97,9 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
-        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+        contentAsString(
+          requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction)
+        ) mustBe exampleSuccessActionResult
       }
 
       s"when $AmountProducedPage is $None and all answers are answered" in {
@@ -108,8 +114,9 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(PackagingSiteDetailsPage, true).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
-        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+        contentAsString(
+          requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction)
+        ) mustBe exampleSuccessActionResult
       }
 
       s"when $AmountProducedPage is $None, contract packing is false and pack at business address is not answered" in {
@@ -121,8 +128,9 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
-        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+        contentAsString(
+          requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction)
+        ) mustBe exampleSuccessActionResult
       }
 
       s"when all $LitresInBands are not required" in {
@@ -135,8 +143,9 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(ImportsPage, false).success.value
             .set(SecondaryWarehouseDetailsPage, false).success.value
         }
-        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
-        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+        contentAsString(
+          requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction)
+        ) mustBe exampleSuccessActionResult
       }
 
       s"when AmountProduced is $Small, $ThirdPartyPackagersPage is true, $ContractPackingPage is false, $OperatePackagingSiteOwnBrandsPage " +
@@ -150,8 +159,9 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(ImportsPage, false).success.value
             .set(SecondaryWarehouseDetailsPage, false).success.value
         }
-        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
-        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+        contentAsString(
+          requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction)
+        ) mustBe exampleSuccessActionResult
       }
 
       s"when AmountProduced is $Small, $ThirdPartyPackagersPage is true, $OperatePackagingSiteOwnBrandsPage is true, $ContractPackingPage " +
@@ -166,8 +176,9 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(ImportsPage, false).success.value
             .set(SecondaryWarehouseDetailsPage, false).success.value
         }
-        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
-        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+        contentAsString(
+          requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction)
+        ) mustBe exampleSuccessActionResult
       }
 
       s"when AmountProduced is $Small, $ThirdPartyPackagersPage is false, $OperatePackagingSiteOwnBrandsPage is true, " +
@@ -185,8 +196,9 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(PackagingSiteDetailsPage, false).success.value
             .set(SecondaryWarehouseDetailsPage, false).success.value
         }
-        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
-        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+        contentAsString(
+          requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction)
+        ) mustBe exampleSuccessActionResult
       }
 
       s"when AmountProduced is $Small, $ThirdPartyPackagersPage is false, $OperatePackagingSiteOwnBrandsPage is false, " +
@@ -203,8 +215,9 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(PackagingSiteDetailsPage, false).success.value
             .set(SecondaryWarehouseDetailsPage, false).success.value
         }
-        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
-        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+        contentAsString(
+          requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction)
+        ) mustBe exampleSuccessActionResult
       }
 
       s"when AmountProduced is $Small, $ThirdPartyPackagersPage is false, $OperatePackagingSiteOwnBrandsPage is true, " +
@@ -220,8 +233,9 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, false).success.value
         }
-        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
-        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+        contentAsString(
+          requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction)
+        ) mustBe exampleSuccessActionResult
       }
 
       s"when AmountProduced is $Small, $ThirdPartyPackagersPage is false, $OperatePackagingSiteOwnBrandsPage is false, " +
@@ -236,8 +250,9 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, false).success.value
         }
-        contentAsString(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)
-        (dataRequest(userAnswers))) mustBe exampleSuccessActionResult
+        contentAsString(
+          requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction)
+        ) mustBe exampleSuccessActionResult
       }
     }
 
@@ -254,7 +269,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction))
         res.get mustBe controllers.changeActivity.routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url
       }
 
@@ -269,7 +284,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction))
         res.get mustBe controllers.changeActivity.routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url
       }
 
@@ -287,7 +302,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction))
         res.get mustBe controllers.changeActivity.routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url
       }
 
@@ -301,7 +316,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction))
         res.get mustBe controllers.changeActivity.routes.PackAtBusinessAddressController.onPageLoad(CheckMode).url
       }
 
@@ -317,7 +332,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(PackAtBusinessAddressPage, true).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction))
         res.get mustBe controllers.changeActivity.routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
       }
 
@@ -333,7 +348,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(PackAtBusinessAddressPage, true).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction))
         res.get mustBe controllers.changeActivity.routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
       }
 
@@ -352,7 +367,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(PackAtBusinessAddressPage, true).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction))
         res.get mustBe controllers.changeActivity.routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
       }
 
@@ -367,7 +382,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(PackAtBusinessAddressPage, true).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction))
         res.get mustBe controllers.changeActivity.routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
       }
 
@@ -397,7 +412,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
               .set(PackagingSiteDetailsPage, false).success.value
               .set(SecondaryWarehouseDetailsPage, true).success.value
           }.remove(eachPage).success.value
-          val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+          val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction))
           res.get mustBe eachPage.url(CheckMode)
         }
       }
@@ -420,7 +435,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
               .set(PackAtBusinessAddressPage, false).success.value
               .set(PackagingSiteDetailsPage, false).success.value
           }.remove(eachPage).success.value
-          val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+          val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction))
           res.get mustBe eachPage.url(CheckMode)
         }
       }
@@ -453,7 +468,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
               .set(PackagingSiteDetailsPage, false).success.value
               .set(SecondaryWarehouseDetailsPage, true).success.value
           }.remove(eachPage).success.value
-          val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+          val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction))
           res.get mustBe eachPage.url(CheckMode)
         }
       }
@@ -482,7 +497,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
               .set(PackagingSiteDetailsPage, false).success.value
               .set(SecondaryWarehouseDetailsPage, false).success.value
           }.remove(eachPage).success.value
-          val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+          val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction))
           res.get mustBe eachPage.url(CheckMode)
         }
       }
@@ -509,7 +524,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
               .set(PackagingSiteDetailsPage, false).success.value
               .set(SecondaryWarehouseDetailsPage, true).success.value
           }.remove(eachPage).success.value
-          val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+          val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction))
           res.get mustBe eachPage.url(CheckMode)
         }
       }
@@ -535,7 +550,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
               .set(PackagingSiteDetailsPage, false).success.value
               .set(SecondaryWarehouseDetailsPage, false).success.value
           }.remove(eachPage).success.value
-          val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+          val res = redirectLocation(requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction))
           res.get mustBe eachPage.url(CheckMode)
         }
       }
@@ -548,7 +563,6 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
 
       s"should return all missing answers when user answers is empty and packaging site list is ${if (packagingSitesEmpty) "" else "not "}empty" in {
         val userAnswers = emptyUserAnswersForChangeActivity.copy(packagingSiteList = packagingSiteList)
-        implicit val dataRequest: DataRequest[AnyContentAsEmpty.type] = RequiredDataRequest(FakeRequest(), "", aSubscription, userAnswers)
         val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.previousPagesRequired)
         res mustBe List(AmountProducedPage, ContractPackingPage, ImportsPage)
       }
@@ -566,8 +580,6 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-
         val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.previousPagesRequired)
         val requiredPages = if (packagingSitesEmpty) {
           List(PackAtBusinessAddressPage, PackagingSiteDetailsPage)
@@ -591,8 +603,6 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-
         val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.previousPagesRequired)
         val requiredPages = if (packagingSitesEmpty) {
           List(PackAtBusinessAddressPage, PackagingSiteDetailsPage)
@@ -623,8 +633,6 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-
         val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.previousPagesRequired)
         res mustBe requiredPagesSmallorNonProducer
       }
@@ -641,34 +649,33 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-
         val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.previousPagesRequired)
         res mustBe requiredPagesSmallorNonProducer
       }
     })
   }
-//
-//  "checkYourAnswersRequiredData" - {
-//    "should redirect to action when all answers answered" in {
-//      val userAnswers = {
-//        emptyUserAnswersForChangeActivity
-//          .set(AmountProducedPage, Small).success.value
-//          .set(ThirdPartyPackagersPage, true).success.value
-//          .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-//          .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1,1)).success.value
-//          .set(ContractPackingPage, true).success.value
-//          .set(HowManyContractPackingPage, LitresInBands(1,1)).success.value
-//          .set(ImportsPage, true).success.value
-//          .set(HowManyImportsPage, LitresInBands(1,1)).success.value
-//          .set(PackAtBusinessAddressPage, true).success.value
-//          .set(PackagingSiteDetailsPage, true).success.value
-//          .set(SecondaryWarehouseDetailsPage, false).success.value
-//      }
-//      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
-//      contentAsString(requiredUserAnswers.checkYourAnswersRequiredData(exampleSuccessAction)) mustBe exampleSuccessActionResult
-//    }
-//  }
+
+  "checkYourAnswersRequiredData" - {
+    "should redirect to action when all answers answered" in {
+      val userAnswers = {
+        emptyUserAnswersForChangeActivity
+          .set(AmountProducedPage, Small).success.value
+          .set(ThirdPartyPackagersPage, true).success.value
+          .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+          .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1,1)).success.value
+          .set(ContractPackingPage, true).success.value
+          .set(HowManyContractPackingPage, LitresInBands(1,1)).success.value
+          .set(ImportsPage, true).success.value
+          .set(HowManyImportsPage, LitresInBands(1,1)).success.value
+          .set(PackAtBusinessAddressPage, true).success.value
+          .set(PackagingSiteDetailsPage, true).success.value
+          .set(SecondaryWarehouseDetailsPage, false).success.value
+      }
+      contentAsString(
+        requiredUserAnswers.requireData(ChangeActivityCYAPage, userAnswers, basicSubscription)(exampleSuccessAction)
+      ) mustBe exampleSuccessActionResult
+    }
+  }
 
   s"ThirdPartyPackagerRequiredData" - {
     s"should return empty missing answer list when producer is $Small" in {
@@ -676,9 +683,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         emptyUserAnswersForChangeActivity
           .set(AmountProducedPage, Small).success.value
       }
-      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
       val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ThirdPartyPackagersPage.previousPagesRequired)
-
       res mustBe List.empty
     }
   }
@@ -691,7 +696,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
           emptyUserAnswersForChangeActivity
             .set(AmountProducedPage, Small).success.value
         }
-        val res = redirectLocation(requiredUserAnswers.requireData(OperatePackagingSiteOwnBrandsPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        val res = redirectLocation(requiredUserAnswers.requireData(OperatePackagingSiteOwnBrandsPage, userAnswers, basicSubscription)(exampleSuccessAction))
         res.get mustBe controllers.changeActivity.routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url
       }
     }
@@ -701,9 +706,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         emptyUserAnswersForChangeActivity
           .set(AmountProducedPage, Small).success.value
       }
-      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
       val res = requiredUserAnswers.returnMissingAnswers(userAnswers, OperatePackagingSiteOwnBrandsPage.previousPagesRequired)
-
       res mustBe List(ThirdPartyPackagersPage)
     }
 
@@ -712,9 +715,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         emptyUserAnswersForChangeActivity
           .set(AmountProducedPage, Large).success.value
       }
-      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
       val res = requiredUserAnswers.returnMissingAnswers(userAnswers, OperatePackagingSiteOwnBrandsPage.previousPagesRequired)
-
       res mustBe List.empty
     }
   }
@@ -728,7 +729,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(AmountProducedPage, Small).success.value
             .set(OperatePackagingSiteOwnBrandsPage, false).success.value
         }
-        val res = redirectLocation(requiredUserAnswers.requireData(ContractPackingPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        val res = redirectLocation(requiredUserAnswers.requireData(ContractPackingPage, userAnswers, basicSubscription)(exampleSuccessAction))
         res.get mustBe controllers.changeActivity.routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url
       }
     }
@@ -738,9 +739,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         emptyUserAnswersForChangeActivity
           .set(AmountProducedPage, Small).success.value
       }
-      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
       val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ContractPackingPage.previousPagesRequired)
-
       res mustBe List(ThirdPartyPackagersPage, OperatePackagingSiteOwnBrandsPage)
     }
 
@@ -749,9 +748,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         emptyUserAnswersForChangeActivity
           .set(AmountProducedPage, Large).success.value
       }
-      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
       val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ContractPackingPage.previousPagesRequired)
-
       res mustBe List(OperatePackagingSiteOwnBrandsPage)
     }
 
@@ -760,9 +757,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         emptyUserAnswersForChangeActivity
           .set(AmountProducedPage, None).success.value
       }
-      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
       val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ContractPackingPage.previousPagesRequired)
-
       res mustBe List.empty
     }
   }
@@ -775,7 +770,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
           emptyUserAnswersForChangeActivity
             .set(AmountProducedPage, Small).success.value
         }
-        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage, userAnswers, basicSubscription)(exampleSuccessAction))
         res.get mustBe controllers.changeActivity.routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url
       }
 
@@ -786,7 +781,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(AmountProducedPage, Small).success.value
             .set(ThirdPartyPackagersPage, true).success.value
         }
-        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage, userAnswers, basicSubscription)(exampleSuccessAction))
         res.get mustBe controllers.changeActivity.routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
       }
 
@@ -798,7 +793,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(ThirdPartyPackagersPage, true).success.value
             .set(OperatePackagingSiteOwnBrandsPage, false).success.value
         }
-        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage, userAnswers, basicSubscription)(exampleSuccessAction))
         res.get mustBe controllers.changeActivity.routes.ContractPackingController.onPageLoad(NormalMode).url
       }
 
@@ -809,7 +804,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(AmountProducedPage, Small).success.value
             .set(ContractPackingPage, false).success.value
         }
-        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage, userAnswers, basicSubscription)(exampleSuccessAction))
         res.get mustBe controllers.changeActivity.routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url
       }
 
@@ -821,7 +816,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(ThirdPartyPackagersPage, true).success.value
             .set(ContractPackingPage, false).success.value
         }
-        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage, userAnswers, basicSubscription)(exampleSuccessAction))
         res.get mustBe controllers.changeActivity.routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
       }
 
@@ -831,7 +826,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
           emptyUserAnswersForChangeActivity
             .set(AmountProducedPage, Large).success.value
         }
-        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage, userAnswers, basicSubscription)(exampleSuccessAction))
         res.get mustBe controllers.changeActivity.routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
       }
 
@@ -842,7 +837,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(AmountProducedPage, Large).success.value
             .set(OperatePackagingSiteOwnBrandsPage, false).success.value
         }
-        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage, userAnswers, basicSubscription)(exampleSuccessAction))
         res.get mustBe controllers.changeActivity.routes.ContractPackingController.onPageLoad(NormalMode).url
       }
 
@@ -853,7 +848,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(AmountProducedPage, Large).success.value
             .set(ContractPackingPage, false).success.value
         }
-        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage, userAnswers, basicSubscription)(exampleSuccessAction))
         res.get mustBe controllers.changeActivity.routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
       }
 
@@ -863,7 +858,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
           emptyUserAnswersForChangeActivity
             .set(AmountProducedPage, None).success.value
         }
-        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage)(exampleSuccessAction)(dataRequest(userAnswers)))
+        val res = redirectLocation(requiredUserAnswers.requireData(ImportsPage, userAnswers, basicSubscription)(exampleSuccessAction))
         res.get mustBe controllers.changeActivity.routes.ContractPackingController.onPageLoad(NormalMode).url
       }
     }
@@ -873,9 +868,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         emptyUserAnswersForChangeActivity
           .set(AmountProducedPage, Small).success.value
       }
-      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
       val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ImportsPage.previousPagesRequired)
-
       res mustBe List(ThirdPartyPackagersPage, OperatePackagingSiteOwnBrandsPage, ContractPackingPage)
     }
 
@@ -884,9 +877,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         emptyUserAnswersForChangeActivity
           .set(AmountProducedPage, Large).success.value
       }
-      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
       val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ImportsPage.previousPagesRequired)
-
       res mustBe List(OperatePackagingSiteOwnBrandsPage, ContractPackingPage)
     }
 
@@ -895,9 +886,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         emptyUserAnswersForChangeActivity
           .set(AmountProducedPage, None).success.value
       }
-      implicit val request: DataRequest[AnyContentAsEmpty.type] = dataRequest(userAnswers)
       val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ImportsPage.previousPagesRequired)
-
       res mustBe List(ContractPackingPage)
     }
   }

@@ -16,6 +16,7 @@
 
 package controllers.actions
 
+import models.backend.RetrievedSubscription
 import models.requests.DataRequest
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages.changeActivity._
@@ -59,5 +60,6 @@ abstract class RequiredUserAnswersHelper @Inject() extends ActionHelpers {
       .map(_._2)
   }
 
-  private[controllers] def requireData(page: Page)(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result]
+  private[controllers] def requireData(page: Page, userAnswers: UserAnswers, subscription: RetrievedSubscription)
+                                      (action: => Future[Result]): Future[Result]
 }

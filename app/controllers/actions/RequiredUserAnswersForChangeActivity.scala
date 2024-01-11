@@ -16,6 +16,7 @@
 
 package controllers.actions
 
+import models.backend.RetrievedSubscription
 import models.requests.DataRequest
 import models.{CheckMode, Mode, NormalMode, UserAnswers}
 import pages.changeActivity._
@@ -28,10 +29,11 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RequiredUserAnswersForChangeActivity @Inject() extends RequiredUserAnswersHelper {
-  private[controllers] def requireData(page: Page)(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
+  private[controllers] def requireData(page: Page, userAnswers: UserAnswers, subscription: RetrievedSubscription)
+                                      (action: => Future[Result]): Future[Result] = {
     val mode = if (page == ChangeActivityCYAPage) CheckMode else NormalMode
 //    TODO: PASS IN request.subscription, pass in userAnswers and subscription explicitly
-    val missingAnswers = returnMissingAnswers(request.userAnswers, page.previousPagesRequired)
+    val missingAnswers = returnMissingAnswers(userAnswers, page.previousPagesRequired)
     getResultFromMissingAnswers(missingAnswers, action, mode = mode)
   }
 }
