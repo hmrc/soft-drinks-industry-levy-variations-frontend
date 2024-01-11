@@ -27,19 +27,67 @@ case object CorrectReturnCheckChangesPage extends Page {
   override def toString: String = "checkChanges"
   override val url: Mode => String = _ => routes.CorrectReturnCheckChangesCYAController.onPageLoad.url
 
+  //    private[controllers] def smallProducerCheck(subscription: RetrievedSubscription): List[CorrectReturnRequiredPage[_, _, _]] = {
+  //    if (subscription.activity.smallProducer) {
+  //      List.empty
+  //    } else {
+  //      List(CorrectReturnRequiredPage(OperatePackagingSiteOwnBrandsPage, None)(implicitly[Reads[Boolean]]),
+  //        CorrectReturnRequiredPage(HowManyOperatePackagingSiteOwnBrandsPage,
+  //          Some(CorrectReturnPreviousPage(OperatePackagingSiteOwnBrandsPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]))
+  //    }
+  //  }
+  private def smallProducerRequiredPages(userAnswers: UserAnswers, subscription: RetrievedSubscription): List[RequiredPage] = {
+    List.empty
+  }
+
+  //    private[controllers] def addASmallProducerReturnChange(userAnswers: UserAnswers): List[CorrectReturnRequiredPage[_, _, _]] = {
+  //    if (userAnswers.smallProducerList.isEmpty) {
+  //      List(CorrectReturnRequiredPage(AddASmallProducerPage,
+  //        Some(CorrectReturnPreviousPage(ExemptionsForSmallProducersPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[AddASmallProducer]]))
+  //    } else {
+  //      List.empty
+  //    }
+  //  }
+  private def addASmallProducerRequiredPages(userAnswers: UserAnswers, subscription: RetrievedSubscription): List[RequiredPage] = {
+    List.empty
+  }
+
+  //  private[controllers] def packingListReturnChange(
+  //                                                    userAnswers: UserAnswers,
+  //                                                    subscription: RetrievedSubscription
+  //                                                  ): List[CorrectReturnRequiredPage[_, _, _]] = {
+  //    if (UserTypeCheck.isNewPacker(userAnswers, subscription) && subscription.productionSites.isEmpty) {
+  //      List(CorrectReturnRequiredPage(PackAtBusinessAddressPage, None)(implicitly[Reads[Boolean]]))
+  //    } else {
+  //      List.empty
+  //    }
+  //  }
+  private def packagingRequiredPages(userAnswers: UserAnswers, subscription: RetrievedSubscription): List[RequiredPage] = {
+    List.empty
+  }
+
+  //  private[controllers] def warehouseListReturnChange(
+  //                                                      userAnswers: UserAnswers,
+  //                                                      subscription: RetrievedSubscription
+  //                                                    ): List[CorrectReturnRequiredPage[_, _, _]] = {
+  //    if (UserTypeCheck.isNewImporter(userAnswers, subscription)) {
+  //      List(CorrectReturnRequiredPage(AskSecondaryWarehouseInReturnPage, None)(implicitly[Reads[Boolean]]))
+  //    } else {
+  //      List.empty
+  //    }
+  //  }
+  private def warehouseRequiredPages(userAnswers: UserAnswers, subscription: RetrievedSubscription): List[RequiredPage] = {
+    List.empty
+  }
+
   //  TODO: IMPLEMENT THIS
   override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (userAnswers, subscription) => {
-//    private[controllers] def restOfJourney(
-    //                                          smallProducerCheck: List[CorrectReturnRequiredPage[_, _, _]] = List.empty,
-    //                                          addASmallProducerReturnChange: List[CorrectReturnRequiredPage[_, _, _]] = List.empty,
-    //                                          packingListReturnChange: List[CorrectReturnRequiredPage[_, _, _]] = List.empty,
-    //                                          warehouseListReturnChange: List[CorrectReturnRequiredPage[_, _, _]] = List.empty
-    //                                        ): List[CorrectReturnRequiredPage[_, _, _]] = {
     //    val firstPartOfRestOfJourney = List(CorrectReturnRequiredPage(PackagedAsContractPackerPage, None)(implicitly[Reads[Boolean]]),
     //      CorrectReturnRequiredPage(HowManyPackagedAsContractPackerPage,
     //        Some(CorrectReturnPreviousPage(PackagedAsContractPackerPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
     //      CorrectReturnRequiredPage(ExemptionsForSmallProducersPage, None)(implicitly[Reads[Boolean]])
     //    )
+    val firstPartOfJourney = List.empty
     //    val secondPartOfRestOfJourney = List(CorrectReturnRequiredPage(BroughtIntoUKPage, None)(implicitly[Reads[Boolean]]),
     //      CorrectReturnRequiredPage(HowManyBroughtIntoUKPage,
     //        Some(CorrectReturnPreviousPage(BroughtIntoUKPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
@@ -53,54 +101,12 @@ case object CorrectReturnCheckChangesPage extends Page {
     //      CorrectReturnRequiredPage(HowManyCreditsForLostDamagedPage,
     //        Some(CorrectReturnPreviousPage(ClaimCreditsForLostDamagedPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]])
     //    )
-    //    smallProducerCheck ++
-    //      firstPartOfRestOfJourney ++
-    //      addASmallProducerReturnChange ++
-    //      secondPartOfRestOfJourney ++
-    //      packingListReturnChange ++
-    //      warehouseListReturnChange
-    //  }
-
-//    private[controllers] def smallProducerCheck(subscription: RetrievedSubscription): List[CorrectReturnRequiredPage[_, _, _]] = {
-    //    if (subscription.activity.smallProducer) {
-    //      List.empty
-    //    } else {
-    //      List(CorrectReturnRequiredPage(OperatePackagingSiteOwnBrandsPage, None)(implicitly[Reads[Boolean]]),
-    //        CorrectReturnRequiredPage(HowManyOperatePackagingSiteOwnBrandsPage,
-    //          Some(CorrectReturnPreviousPage(OperatePackagingSiteOwnBrandsPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]))
-    //    }
-    //  }
-
-//    private[controllers] def addASmallProducerReturnChange(userAnswers: UserAnswers): List[CorrectReturnRequiredPage[_, _, _]] = {
-    //    if (userAnswers.smallProducerList.isEmpty) {
-    //      List(CorrectReturnRequiredPage(AddASmallProducerPage,
-    //        Some(CorrectReturnPreviousPage(ExemptionsForSmallProducersPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[AddASmallProducer]]))
-    //    } else {
-    //      List.empty
-    //    }
-    //  }
-    //
-    //  private[controllers] def packingListReturnChange(
-    //                                                    userAnswers: UserAnswers,
-    //                                                    subscription: RetrievedSubscription
-    //                                                  ): List[CorrectReturnRequiredPage[_, _, _]] = {
-    //    if (UserTypeCheck.isNewPacker(userAnswers, subscription) && subscription.productionSites.isEmpty) {
-    //      List(CorrectReturnRequiredPage(PackAtBusinessAddressPage, None)(implicitly[Reads[Boolean]]))
-    //    } else {
-    //      List.empty
-    //    }
-    //  }
-    //
-    //  private[controllers] def warehouseListReturnChange(
-    //                                                      userAnswers: UserAnswers,
-    //                                                      subscription: RetrievedSubscription
-    //                                                    ): List[CorrectReturnRequiredPage[_, _, _]] = {
-    //    if (UserTypeCheck.isNewImporter(userAnswers, subscription)) {
-    //      List(CorrectReturnRequiredPage(AskSecondaryWarehouseInReturnPage, None)(implicitly[Reads[Boolean]]))
-    //    } else {
-    //      List.empty
-    //    }
-    //  }
-    List.empty
+    val secondPartOfJourney = List.empty
+    smallProducerRequiredPages(userAnswers, subscription) ++
+      firstPartOfJourney ++
+      addASmallProducerRequiredPages(userAnswers, subscription) ++
+      secondPartOfJourney ++
+      packagingRequiredPages(userAnswers, subscription) ++
+      warehouseRequiredPages(userAnswers, subscription)
   }
 }
