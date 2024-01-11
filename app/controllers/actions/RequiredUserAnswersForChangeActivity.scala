@@ -33,7 +33,7 @@ class RequiredUserAnswersForChangeActivity @Inject() extends RequiredUserAnswers
                                       (action: => Future[Result]): Future[Result] = {
     val mode = if (page == ChangeActivityCYAPage) CheckMode else NormalMode
 //    TODO: PASS IN request.subscription, pass in userAnswers and subscription explicitly
-    val missingAnswers = returnMissingAnswers(userAnswers, page.previousPagesRequired)
+    val missingAnswers = returnMissingAnswers(userAnswers, subscription, page.previousPagesRequired)
     getResultFromMissingAnswers(missingAnswers, action, mode = mode)
   }
 }

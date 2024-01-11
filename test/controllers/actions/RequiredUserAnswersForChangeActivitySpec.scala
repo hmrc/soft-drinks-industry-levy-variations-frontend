@@ -563,7 +563,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
 
       s"should return all missing answers when user answers is empty and packaging site list is ${if (packagingSitesEmpty) "" else "not "}empty" in {
         val userAnswers = emptyUserAnswersForChangeActivity.copy(packagingSiteList = packagingSiteList)
-        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.previousPagesRequired)
+        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, basicSubscription, ChangeActivityCYAPage.previousPagesRequired)
         res mustBe List(AmountProducedPage, ContractPackingPage, ImportsPage)
       }
 
@@ -580,7 +580,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.previousPagesRequired)
+        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, basicSubscription, ChangeActivityCYAPage.previousPagesRequired)
         val requiredPages = if (packagingSitesEmpty) {
           List(PackAtBusinessAddressPage, PackagingSiteDetailsPage)
         } else {
@@ -603,7 +603,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.previousPagesRequired)
+        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, basicSubscription, ChangeActivityCYAPage.previousPagesRequired)
         val requiredPages = if (packagingSitesEmpty) {
           List(PackAtBusinessAddressPage, PackagingSiteDetailsPage)
         } else {
@@ -633,7 +633,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.previousPagesRequired)
+        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, basicSubscription, ChangeActivityCYAPage.previousPagesRequired)
         res mustBe requiredPagesSmallorNonProducer
       }
 
@@ -649,7 +649,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
         }
-        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ChangeActivityCYAPage.previousPagesRequired)
+        val res = requiredUserAnswers.returnMissingAnswers(userAnswers, basicSubscription, ChangeActivityCYAPage.previousPagesRequired)
         res mustBe requiredPagesSmallorNonProducer
       }
     })
@@ -683,7 +683,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         emptyUserAnswersForChangeActivity
           .set(AmountProducedPage, Small).success.value
       }
-      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ThirdPartyPackagersPage.previousPagesRequired)
+      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, basicSubscription, ThirdPartyPackagersPage.previousPagesRequired)
       res mustBe List.empty
     }
   }
@@ -706,7 +706,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         emptyUserAnswersForChangeActivity
           .set(AmountProducedPage, Small).success.value
       }
-      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, OperatePackagingSiteOwnBrandsPage.previousPagesRequired)
+      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, basicSubscription, OperatePackagingSiteOwnBrandsPage.previousPagesRequired)
       res mustBe List(ThirdPartyPackagersPage)
     }
 
@@ -715,7 +715,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         emptyUserAnswersForChangeActivity
           .set(AmountProducedPage, Large).success.value
       }
-      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, OperatePackagingSiteOwnBrandsPage.previousPagesRequired)
+      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, basicSubscription, OperatePackagingSiteOwnBrandsPage.previousPagesRequired)
       res mustBe List.empty
     }
   }
@@ -739,7 +739,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         emptyUserAnswersForChangeActivity
           .set(AmountProducedPage, Small).success.value
       }
-      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ContractPackingPage.previousPagesRequired)
+      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, basicSubscription, ContractPackingPage.previousPagesRequired)
       res mustBe List(ThirdPartyPackagersPage, OperatePackagingSiteOwnBrandsPage)
     }
 
@@ -748,7 +748,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         emptyUserAnswersForChangeActivity
           .set(AmountProducedPage, Large).success.value
       }
-      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ContractPackingPage.previousPagesRequired)
+      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, basicSubscription, ContractPackingPage.previousPagesRequired)
       res mustBe List(OperatePackagingSiteOwnBrandsPage)
     }
 
@@ -757,7 +757,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         emptyUserAnswersForChangeActivity
           .set(AmountProducedPage, None).success.value
       }
-      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ContractPackingPage.previousPagesRequired)
+      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, basicSubscription, ContractPackingPage.previousPagesRequired)
       res mustBe List.empty
     }
   }
@@ -868,7 +868,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         emptyUserAnswersForChangeActivity
           .set(AmountProducedPage, Small).success.value
       }
-      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ImportsPage.previousPagesRequired)
+      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, basicSubscription, ImportsPage.previousPagesRequired)
       res mustBe List(ThirdPartyPackagersPage, OperatePackagingSiteOwnBrandsPage, ContractPackingPage)
     }
 
@@ -877,7 +877,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         emptyUserAnswersForChangeActivity
           .set(AmountProducedPage, Large).success.value
       }
-      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ImportsPage.previousPagesRequired)
+      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, basicSubscription, ImportsPage.previousPagesRequired)
       res mustBe List(OperatePackagingSiteOwnBrandsPage, ContractPackingPage)
     }
 
@@ -886,7 +886,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
         emptyUserAnswersForChangeActivity
           .set(AmountProducedPage, None).success.value
       }
-      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, ImportsPage.previousPagesRequired)
+      val res = requiredUserAnswers.returnMissingAnswers(userAnswers, basicSubscription, ImportsPage.previousPagesRequired)
       res mustBe List(ContractPackingPage)
     }
   }

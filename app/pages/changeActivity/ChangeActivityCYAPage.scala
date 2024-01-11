@@ -17,6 +17,7 @@
 package pages.changeActivity
 
 import controllers.changeActivity.routes
+import models.backend.RetrievedSubscription
 import models.changeActivity.AmountProduced
 import models.{Mode, UserAnswers}
 import pages.{Page, RequiredPage}
@@ -27,7 +28,7 @@ case object ChangeActivityCYAPage extends Page {
 
   override val url: Mode => String = _ => routes.ChangeActivityCYAController.onPageLoad.url
 
-  override val previousPagesRequired: UserAnswers => List[RequiredPage] = userAnswers => {
+  override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (userAnswers, _) => {
     val isSmallOrLargeProducer: Boolean =
       userAnswers.get(AmountProducedPage).contains(AmountProduced.Large) || userAnswers.get(AmountProducedPage).contains(AmountProduced.Small)
     val isSmallOrNoneProducer: Boolean =

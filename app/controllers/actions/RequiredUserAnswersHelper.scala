@@ -34,9 +34,10 @@ abstract class RequiredUserAnswersHelper @Inject() extends ActionHelpers {
 
   private def transformRequiredPageIntoBooleanPageList(
                                                         userAnswers: UserAnswers,
-                                                        requiredPageList: UserAnswers => List[RequiredPage]
+                                                        subscription: RetrievedSubscription,
+                                                        requiredPageList: (UserAnswers, RetrievedSubscription) => List[RequiredPage]
                                                       ): List[(Boolean, Page)] = {
-    val requiredPageListFromUserAnswers = requiredPageList(userAnswers)
+    val requiredPageListFromUserAnswers = requiredPageList(userAnswers, subscription)
     requiredPageListFromUserAnswers.map(requiredPage => {
       val isMissing = (requiredPage.additionalPreconditions :+ userAnswers.isEmpty(requiredPage.page)).forall(bool => bool)
       (isMissing, requiredPage.page)
@@ -52,9 +53,10 @@ abstract class RequiredUserAnswersHelper @Inject() extends ActionHelpers {
 
   private[controllers] def returnMissingAnswers(
                             userAnswers: UserAnswers,
-                            requiredPageList: UserAnswers => List[RequiredPage]
+                            subscription: RetrievedSubscription,
+                            requiredPageList: (UserAnswers, RetrievedSubscription) => List[RequiredPage]
                           ): List[Page] = {
-    val previousPagesRequired = transformRequiredPageIntoBooleanPageList(userAnswers, requiredPageList)
+    val previousPagesRequired = transformRequiredPageIntoBooleanPageList(userAnswers, subscription, requiredPageList)
     previousPagesRequired
       .filter(_._1)
       .map(_._2)

@@ -16,6 +16,7 @@
 
 package pages
 
+import models.backend.RetrievedSubscription
 import models.{Mode, UserAnswers}
 import queries.Query
 
@@ -26,7 +27,7 @@ case class RequiredPage(page: Page with Query, additionalPreconditions: List[Boo
 trait Page {
   val url: Mode => String = mode => controllers.routes.IndexController.onPageLoad.url
 
-  val previousPagesRequired: UserAnswers => List[RequiredPage] = _ => List.empty
+  val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (_, _) => List.empty
 }
 
 object Page {

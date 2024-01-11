@@ -17,6 +17,7 @@
 package pages.changeActivity
 
 import controllers.changeActivity.routes
+import models.backend.RetrievedSubscription
 import models.changeActivity.AmountProduced
 import models.{Mode, UserAnswers}
 import play.api.libs.json.JsPath
@@ -31,7 +32,7 @@ case object OperatePackagingSiteOwnBrandsPage extends QuestionPage[Boolean] {
 
   override val url: Mode => String = mode => routes.OperatePackagingSiteOwnBrandsController.onPageLoad(mode).url
 
-  override val previousPagesRequired: UserAnswers => List[RequiredPage] = userAnswers => {
+  override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (userAnswers, _) => {
     List(
       RequiredPage(AmountProducedPage),
       RequiredPage(ThirdPartyPackagersPage, additionalPreconditions = List(userAnswers.get(AmountProducedPage).contains(AmountProduced.Small)))
