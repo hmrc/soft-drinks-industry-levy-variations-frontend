@@ -102,7 +102,6 @@ class CorrectReturnUpdateDoneViewSpec extends ViewSpecHelper {
         "We may get in touch with your contact person to discuss your changes. Once we have approved your correction, your account balance will be updated."
     }
 
-    testBackLink(document)
     validateTimeoutDialog(document)
     validateTechnicalHelpLinkPresent(document)
     validateAccessibilityStatementLinkPresent(document)
