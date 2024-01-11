@@ -101,7 +101,11 @@ case object CorrectReturnBaseCYAPage extends QuestionPage[Boolean] {
     //        Some(CorrectReturnPreviousPage(PackagedAsContractPackerPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
     //      CorrectReturnRequiredPage(ExemptionsForSmallProducersPage, None)(implicitly[Reads[Boolean]])
     //    )
-    val firstPartOfJourney = List.empty
+    val firstPartOfJourney = List(
+      RequiredPage(PackagedAsContractPackerPage),
+      RequiredPage(HowManyPackagedAsContractPackerPage, additionalPreconditions = List(userAnswers.get(PackagedAsContractPackerPage).contains(true))),
+      RequiredPage(ExemptionsForSmallProducersPage)
+    )
     //    val secondPartOfRestOfJourney = List(CorrectReturnRequiredPage(BroughtIntoUKPage, None)(implicitly[Reads[Boolean]]),
     //      CorrectReturnRequiredPage(HowManyBroughtIntoUKPage,
     //        Some(CorrectReturnPreviousPage(BroughtIntoUKPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
@@ -115,7 +119,16 @@ case object CorrectReturnBaseCYAPage extends QuestionPage[Boolean] {
     //      CorrectReturnRequiredPage(HowManyCreditsForLostDamagedPage,
     //        Some(CorrectReturnPreviousPage(ClaimCreditsForLostDamagedPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]])
     //    )
-    val secondPartOfJourney = List.empty
+    val secondPartOfJourney = List(
+      RequiredPage(BroughtIntoUKPage),
+      RequiredPage(HowManyBroughtIntoUKPage, additionalPreconditions = List(userAnswers.get(BroughtIntoUKPage).contains(true))),
+      RequiredPage(BroughtIntoUkFromSmallProducersPage),
+      RequiredPage(HowManyBroughtIntoUkFromSmallProducersPage, additionalPreconditions = List(userAnswers.get(BroughtIntoUkFromSmallProducersPage).contains(true))),
+      RequiredPage(ClaimCreditsForExportsPage),
+      RequiredPage(HowManyClaimCreditsForExportsPage, additionalPreconditions = List(userAnswers.get(ClaimCreditsForExportsPage).contains(true))),
+      RequiredPage(ClaimCreditsForLostDamagedPage),
+      RequiredPage(HowManyCreditsForLostDamagedPage, additionalPreconditions = List(userAnswers.get(ClaimCreditsForLostDamagedPage).contains(true))),
+    )
     smallProducerRequiredPages(userAnswers, subscription) ++
       firstPartOfJourney ++
       addASmallProducerRequiredPages(userAnswers, subscription) ++
