@@ -27,37 +27,7 @@ import utilities.GenericLogger
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class RequiredUserAnswersForChangeActivity @Inject()(genericLogger: GenericLogger)(implicit val executionContext: ExecutionContext) extends ActionHelpers {
-
-  private def getRedirectFromPage(page: Page, mode: Mode = NormalMode): Future[Result] = Future.successful(Redirect(page.url(mode)))
-
-  private def transformRequiredPageIntoBooleanPageList(
-                                                        userAnswers: UserAnswers,
-                                                        requiredPageList: UserAnswers => List[RequiredPage]
-                                                      ): List[(Boolean, Page)] = {
-    val requiredPageListFromUserAnswers = requiredPageList(userAnswers)
-    requiredPageListFromUserAnswers.map(requiredPage => {
-      val isMissing = (requiredPage.additionalPreconditions :+ userAnswers.isEmpty(requiredPage.page)).forall(bool => bool)
-      (isMissing, requiredPage.page)
-    })
-  }
-
-  private[controllers] def getResultFromMissingAnswers(missingAnswers: List[Page], action: => Future[Result], mode: Mode = NormalMode): Future[Result] = {
-    missingAnswers
-      .headOption
-      .map(getRedirectFromPage(_, mode))
-      .getOrElse(action)
-  }
-
-  private[controllers] def returnMissingAnswers(
-                            userAnswers: UserAnswers,
-                            requiredPageList: UserAnswers => List[RequiredPage]
-                          ): List[Page] = {
-    val previousPagesRequired = transformRequiredPageIntoBooleanPageList(userAnswers, requiredPageList)
-    previousPagesRequired
-      .filter(_._1)
-      .map(_._2)
-  }
+class RequiredUserAnswersForChangeActivity @Inject() extends RequiredUserAnswersHelper {
   private[controllers] def requireData(page: Page)(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = {
     val mode = if (page == ChangeActivityCYAPage) CheckMode else NormalMode
 //    TODO: PASS IN request.subscription, pass in userAnswers and subscription explicitly
