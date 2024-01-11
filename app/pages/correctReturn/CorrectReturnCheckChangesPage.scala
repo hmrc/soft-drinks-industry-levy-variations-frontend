@@ -17,8 +17,9 @@
 package pages.correctReturn
 
 import controllers.correctReturn.routes
-import models.Mode
-import pages.Page
+import models.{Mode, UserAnswers}
+import models.backend.RetrievedSubscription
+import pages.{Page, RequiredPage}
 
 case object CorrectReturnCheckChangesPage extends Page {
 
@@ -26,4 +27,8 @@ case object CorrectReturnCheckChangesPage extends Page {
   override def toString: String = "checkChanges"
   override val url: Mode => String = _ => routes.CorrectReturnCheckChangesCYAController.onPageLoad.url
 
+  //  TODO: IMPLEMENT THIS
+  override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (_, _) => {
+    List.empty
+  }
 }

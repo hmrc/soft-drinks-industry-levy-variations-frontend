@@ -17,9 +17,10 @@
 package pages.correctReturn
 
 import controllers.correctReturn.routes
-import models.Mode
-import pages.QuestionPage
 import play.api.libs.json.JsPath
+import models.{Mode, UserAnswers}
+import models.backend.RetrievedSubscription
+import pages.{Page, QuestionPage, RequiredPage}
 
 case object CorrectReturnBaseCYAPage extends QuestionPage[Boolean] {
 
@@ -27,6 +28,11 @@ case object CorrectReturnBaseCYAPage extends QuestionPage[Boolean] {
 
   def journeyType: String = "correctReturn"
   override def toString: String = "checkYourAnswers"
-
+  
   override val url: Mode => String = _ => routes.CorrectReturnCYAController.onPageLoad.url
+
+//  TODO: IMPLEMENT THIS
+  override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (_, _) => {
+    List.empty
+  }
 }
