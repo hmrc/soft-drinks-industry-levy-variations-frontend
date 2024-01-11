@@ -29,6 +29,7 @@ case object CorrectReturnCheckChangesPage extends Page {
 
   override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (userAnswers, _) => {
     List(
+      RequiredPage(CorrectReturnBaseCYAPage),
       RequiredPage(CorrectionReasonPage),
       RequiredPage(RepaymentMethodPage, additionalPreconditions = List(userAnswers.get(BalanceRepaymentRequired).contains(true)))
     )
