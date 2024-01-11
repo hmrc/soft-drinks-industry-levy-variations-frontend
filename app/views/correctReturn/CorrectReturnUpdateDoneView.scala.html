@@ -43,8 +43,7 @@
 }
 }
 
-@layout(pageTitle = titleNoForm(messages("correctReturn.updateDone.title"))) {
-
+@layout(pageTitle = titleNoForm(messages("correctReturn.updateDone.title")), showBackLink = false) {
     @govukPanel(Panel(
         title = Text(messages("correctReturn.updateDone.title")),
         content = HtmlContent(messages("correctReturn.updateDone.panel.message")),
