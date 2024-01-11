@@ -17,16 +17,13 @@
 package controllers.actions
 
 import models.backend.RetrievedSubscription
-import models.requests.DataRequest
-import models.{CheckMode, Mode, NormalMode, UserAnswers}
-import pages.changeActivity._
+import models.{Mode, NormalMode, UserAnswers}
 import pages.{Page, RequiredPage}
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
-import utilities.GenericLogger
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 abstract class RequiredUserAnswersHelper @Inject() extends ActionHelpers {
 
