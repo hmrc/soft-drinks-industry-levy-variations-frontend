@@ -31,8 +31,11 @@ case object CorrectReturnBaseCYAPage extends QuestionPage[Boolean] {
   
   override val url: Mode => String = _ => routes.CorrectReturnCYAController.onPageLoad.url
 
-//  TODO: IMPLEMENT THIS
-  override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (_, _) => {
-    List.empty
+  override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (userAnswers, _) => {
+    val balanceRepaymentRequiredJourney = userAnswers.get(BalanceRepaymentRequired) match {
+      case Some(true) => List(RequiredPage(RepaymentMethodPage))
+      case _ => List.empty
+    }
+    List(RequiredPage(CorrectionReasonPage)) ++ balanceRepaymentRequiredJourney
   }
 }
