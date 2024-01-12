@@ -42,10 +42,14 @@ case object CorrectReturnBaseCYAPage extends QuestionPage[Boolean] {
   //    }
   //  }
   private def smallProducerRequiredPages(userAnswers: UserAnswers, subscription: RetrievedSubscription): List[RequiredPage] = {
-    List(
-      RequiredPage(OperatePackagingSiteOwnBrandsPage),
-      RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(userAnswers.get(OperatePackagingSiteOwnBrandsPage).contains(true)))
-    )
+    if (subscription.activity.smallProducer) {
+      List.empty
+    } else {
+      List(
+        RequiredPage(OperatePackagingSiteOwnBrandsPage),
+        RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(userAnswers.get(OperatePackagingSiteOwnBrandsPage).contains(true)))
+      )
+    }
   }
 
   //    private[controllers] def addASmallProducerReturnChange(userAnswers: UserAnswers): List[CorrectReturnRequiredPage[_, _, _]] = {
@@ -74,10 +78,12 @@ case object CorrectReturnBaseCYAPage extends QuestionPage[Boolean] {
   //    }
   //  }
   private def packagingRequiredPages(userAnswers: UserAnswers, subscription: RetrievedSubscription): List[RequiredPage] = {
-    List(RequiredPage(PackAtBusinessAddressPage, additionalPreconditions = List(
-      UserTypeCheck.isNewImporter(userAnswers, subscription),
+
+    val as = List(RequiredPage(PackAtBusinessAddressPage, additionalPreconditions = List(
+      UserTypeCheck.isNewPacker(userAnswers, subscription),
       subscription.productionSites.isEmpty
     )))
+    as
   }
 
   //  private[controllers] def warehouseListReturnChange(
@@ -91,7 +97,8 @@ case object CorrectReturnBaseCYAPage extends QuestionPage[Boolean] {
   //    }
   //  }
   private def warehouseRequiredPages(userAnswers: UserAnswers, subscription: RetrievedSubscription): List[RequiredPage] = {
-    List(RequiredPage(AskSecondaryWarehouseInReturnPage, additionalPreconditions = List(UserTypeCheck.isNewImporter(userAnswers, subscription))))
+    val as = List(RequiredPage(AskSecondaryWarehouseInReturnPage, additionalPreconditions = List(UserTypeCheck.isNewImporter(userAnswers, subscription))))
+    as
   }
 
   //  TODO: IMPLEMENT THIS

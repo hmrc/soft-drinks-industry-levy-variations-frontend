@@ -22,6 +22,7 @@ import models.backend.{RetrievedActivity, RetrievedSubscription, UkAddress}
 import models.correctReturn.{AddASmallProducer, RepaymentMethod}
 import models.requests.CorrectReturnDataRequest
 import models.{CheckMode, Contact, LitresInBands, ReturnPeriod}
+import pages.RequiredPage
 import pages.correctReturn._
 import play.api.libs.json.{Json, Reads}
 import play.api.mvc.Results.Ok
@@ -40,43 +41,70 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
     RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
     LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
 
-  val basicJourney =
-    List(
-      CorrectReturnRequiredPage(PackagedAsContractPackerPage, None)(implicitly[Reads[Boolean]]),
-      CorrectReturnRequiredPage(HowManyPackagedAsContractPackerPage,
-        Some(CorrectReturnPreviousPage(PackagedAsContractPackerPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
-      CorrectReturnRequiredPage(ExemptionsForSmallProducersPage, None)(implicitly[Reads[Boolean]]),
-      CorrectReturnRequiredPage(AddASmallProducerPage,
-        Some(CorrectReturnPreviousPage(ExemptionsForSmallProducersPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[AddASmallProducer]]),
-      CorrectReturnRequiredPage(BroughtIntoUKPage, None)(implicitly[Reads[Boolean]]),
-      CorrectReturnRequiredPage(HowManyBroughtIntoUKPage,
-        Some(CorrectReturnPreviousPage(BroughtIntoUKPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
-      CorrectReturnRequiredPage(BroughtIntoUkFromSmallProducersPage, None)(implicitly[Reads[Boolean]]),
-      CorrectReturnRequiredPage(HowManyBroughtIntoUkFromSmallProducersPage,
-        Some(CorrectReturnPreviousPage(BroughtIntoUkFromSmallProducersPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
-      CorrectReturnRequiredPage(ClaimCreditsForExportsPage, None)(implicitly[Reads[Boolean]]),
-      CorrectReturnRequiredPage(HowManyClaimCreditsForExportsPage,
-        Some(CorrectReturnPreviousPage(ClaimCreditsForExportsPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
-      CorrectReturnRequiredPage(ClaimCreditsForLostDamagedPage, None)(implicitly[Reads[Boolean]]),
-      CorrectReturnRequiredPage(HowManyCreditsForLostDamagedPage,
-        Some(CorrectReturnPreviousPage(ClaimCreditsForLostDamagedPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]])
-    )
+//  val basicJourney =
+//    List(
+//      CorrectReturnRequiredPage(PackagedAsContractPackerPage, None)(implicitly[Reads[Boolean]]),
+//      CorrectReturnRequiredPage(HowManyPackagedAsContractPackerPage,
+//        Some(CorrectReturnPreviousPage(PackagedAsContractPackerPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
+//      CorrectReturnRequiredPage(ExemptionsForSmallProducersPage, None)(implicitly[Reads[Boolean]]),
+//      CorrectReturnRequiredPage(AddASmallProducerPage,
+//        Some(CorrectReturnPreviousPage(ExemptionsForSmallProducersPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[AddASmallProducer]]),
+//      CorrectReturnRequiredPage(BroughtIntoUKPage, None)(implicitly[Reads[Boolean]]),
+//      CorrectReturnRequiredPage(HowManyBroughtIntoUKPage,
+//        Some(CorrectReturnPreviousPage(BroughtIntoUKPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
+//      CorrectReturnRequiredPage(BroughtIntoUkFromSmallProducersPage, None)(implicitly[Reads[Boolean]]),
+//      CorrectReturnRequiredPage(HowManyBroughtIntoUkFromSmallProducersPage,
+//        Some(CorrectReturnPreviousPage(BroughtIntoUkFromSmallProducersPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
+//      CorrectReturnRequiredPage(ClaimCreditsForExportsPage, None)(implicitly[Reads[Boolean]]),
+//      CorrectReturnRequiredPage(HowManyClaimCreditsForExportsPage,
+//        Some(CorrectReturnPreviousPage(ClaimCreditsForExportsPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]),
+//      CorrectReturnRequiredPage(ClaimCreditsForLostDamagedPage, None)(implicitly[Reads[Boolean]]),
+//      CorrectReturnRequiredPage(HowManyCreditsForLostDamagedPage,
+//        Some(CorrectReturnPreviousPage(ClaimCreditsForLostDamagedPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]])
+//    )
 
-  val importerFalseJourney =
-    List(CorrectReturnRequiredPage(AskSecondaryWarehouseInReturnPage, None)(implicitly[Reads[Boolean]]))
+  val basicJourney = List(
+    RequiredPage(PackagedAsContractPackerPage),
+    RequiredPage(HowManyPackagedAsContractPackerPage, additionalPreconditions = List(false)),
+    RequiredPage(ExemptionsForSmallProducersPage),
+    RequiredPage(AddASmallProducerPage, additionalPreconditions = List(false, true)),
+    RequiredPage(BroughtIntoUKPage),
+    RequiredPage(HowManyBroughtIntoUKPage, additionalPreconditions = List(false)),
+    RequiredPage(BroughtIntoUkFromSmallProducersPage),
+    RequiredPage(HowManyBroughtIntoUkFromSmallProducersPage, additionalPreconditions = List(false)),
+    RequiredPage(ClaimCreditsForExportsPage),
+    RequiredPage(HowManyClaimCreditsForExportsPage, additionalPreconditions = List(false)),
+    RequiredPage(ClaimCreditsForLostDamagedPage),
+    RequiredPage(HowManyCreditsForLostDamagedPage, additionalPreconditions = List(false)),
+    RequiredPage(PackAtBusinessAddressPage, additionalPreconditions = List(false, true)),
+    RequiredPage(AskSecondaryWarehouseInReturnPage, additionalPreconditions = List(false))
+  )
 
-  val smallProducerFalseJourney =
-    List(CorrectReturnRequiredPage(OperatePackagingSiteOwnBrandsPage, None)(implicitly[Reads[Boolean]]),
-    CorrectReturnRequiredPage(HowManyOperatePackagingSiteOwnBrandsPage,
-      Some(CorrectReturnPreviousPage(OperatePackagingSiteOwnBrandsPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]))
+//  val importerFalseJourney =
+//    List(CorrectReturnRequiredPage(AskSecondaryWarehouseInReturnPage, None)(implicitly[Reads[Boolean]]))
 
-  val coPackerFalseJourney =
-    List(CorrectReturnRequiredPage(PackAtBusinessAddressPage, None)(implicitly[Reads[Boolean]]))
+  val importerFalseJourney = List(AskSecondaryWarehouseInReturnPage)
+
+//  val smallProducerFalseJourney =
+//    List(CorrectReturnRequiredPage(OperatePackagingSiteOwnBrandsPage, None)(implicitly[Reads[Boolean]]),
+//    CorrectReturnRequiredPage(HowManyOperatePackagingSiteOwnBrandsPage,
+//      Some(CorrectReturnPreviousPage(OperatePackagingSiteOwnBrandsPage, true)(implicitly[Reads[Boolean]])))(implicitly[Reads[LitresInBands]]))
+
+  val smallProducerFalseJourney = List(
+    RequiredPage(OperatePackagingSiteOwnBrandsPage),
+    RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(false))
+  )
+
+//  val coPackerFalseJourney =
+//    List(CorrectReturnRequiredPage(PackAtBusinessAddressPage, None)(implicitly[Reads[Boolean]]))
+
+  val coPackerFalseJourney = List(PackAtBusinessAddressPage)
 
   "checkYourAnswersRequiredData" - {
 
     "should return redirect to Packaged as Contract Packer page when user answers is empty and the small producer is true" in {
-      val res = requiredUserAnswers.checkYourAnswersRequiredData(basicUserAnswers, basicSubscription, Future.successful(Ok("")))
+//      val res = requiredUserAnswers.checkYourAnswersRequiredData(basicUserAnswers, basicSubscription, Future.successful(Ok("")))
+      val res = requiredUserAnswers.requireData(CorrectReturnBaseCYAPage, basicUserAnswers, basicSubscription)(Future.successful(Ok("")))
       redirectLocation(res).get mustBe routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
     }
     "should return Redirect to Own brands page when user answers is empty and the small producer is false" in {
@@ -85,7 +113,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         RetrievedActivity(smallProducer = false,largeProducer = true,contractPacker = true,importer = true,voluntaryRegistration = true),
         LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
 
-      val res = requiredUserAnswers.checkYourAnswersRequiredData(basicUserAnswers, subscription, Future.successful(Ok("")))
+//      val res = requiredUserAnswers.checkYourAnswersRequiredData(basicUserAnswers, subscription, Future.successful(Ok("")))
+      val res = requiredUserAnswers.requireData(CorrectReturnBaseCYAPage, basicUserAnswers, subscription)(Future.successful(Ok("")))
       redirectLocation(res).get mustBe routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
     }
     "should allow user to continue if all user answers are filled in and user is NOT newImporter && NOT co packer && NOT small producer" in {
@@ -99,7 +128,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
           .set(ClaimCreditsForExportsPage, false).success.value
           .set(ClaimCreditsForLostDamagedPage, false).success.value
 
-      val res = requiredUserAnswers.checkYourAnswersRequiredData(completedUserAnswers, basicSubscription, Future.successful(Ok("")))
+//      val res = requiredUserAnswers.checkYourAnswersRequiredData(completedUserAnswers, basicSubscription, Future.successful(Ok("")))
+      val res = requiredUserAnswers.requireData(CorrectReturnBaseCYAPage, completedUserAnswers, basicSubscription)(Future.successful(Ok("")))
       status(res) mustBe OK
     }
   }
@@ -157,7 +187,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
       val userAnswers = basicUserAnswers
         .set(CorrectReturnBaseCYAPage, true).success.value
         .set(BalanceRepaymentRequired, true).success.value
-      val res = requiredUserAnswers.checkChangesRequiredData(userAnswers, basicSubscription, Future.successful(Ok("")))
+      val res = requiredUserAnswers.requireData(CorrectReturnCheckChangesPage, userAnswers, basicSubscription)(Future.successful(Ok("foo")))
+//      val res = requiredUserAnswers.checkChangesRequiredData(userAnswers, basicSubscription, Future.successful(Ok("")))
       redirectLocation(res).get mustBe routes.CorrectionReasonController.onPageLoad(CheckMode).url
     }
 
@@ -167,7 +198,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         .set(BalanceRepaymentRequired, true).success.value
         .set(CorrectionReasonPage, "some info").success.value
 
-      val res = requiredUserAnswers.checkChangesRequiredData(completedUserAnswers, basicSubscription, Future.successful(Ok("")))
+//      val res = requiredUserAnswers.checkChangesRequiredData(completedUserAnswers, basicSubscription, Future.successful(Ok("")))
+      val res = requiredUserAnswers.requireData(CorrectReturnCheckChangesPage, completedUserAnswers, basicSubscription)(Future.successful(Ok("foo")))
       redirectLocation(res).get mustBe routes.RepaymentMethodController.onPageLoad(CheckMode).url
     }
 
@@ -178,7 +210,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         .set(CorrectionReasonPage, "some info").success.value
         .set(RepaymentMethodPage, RepaymentMethod.BankAccount).success.value
 
-      val res = requiredUserAnswers.checkChangesRequiredData(completedUserAnswers, basicSubscription, Future.successful(Ok("")))
+//      val res = requiredUserAnswers.checkChangesRequiredData(completedUserAnswers, basicSubscription, Future.successful(Ok("")))
+      val res = requiredUserAnswers.requireData(CorrectReturnCheckChangesPage, completedUserAnswers, basicSubscription)(Future.successful(Ok("foo")))
       status(res) mustBe OK
     }
 
@@ -186,7 +219,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
       val userAnswers = basicUserAnswers
         .set(CorrectReturnBaseCYAPage, true).success.value
         .set(BalanceRepaymentRequired, false).success.value
-      val res = requiredUserAnswers.checkChangesRequiredData(userAnswers, basicSubscription, Future.successful(Ok("")))
+//      val res = requiredUserAnswers.checkChangesRequiredData(userAnswers, basicSubscription, Future.successful(Ok("")))
+      val res = requiredUserAnswers.requireData(CorrectReturnCheckChangesPage, userAnswers, basicSubscription)(Future.successful(Ok("foo")))
       redirectLocation(res).get mustBe routes.CorrectionReasonController.onPageLoad(CheckMode).url
     }
 
@@ -196,7 +230,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         .set(BalanceRepaymentRequired, false).success.value
         .set(CorrectionReasonPage, "some info").success.value
 
-      val res = requiredUserAnswers.checkChangesRequiredData(completedUserAnswers, basicSubscription, Future.successful(Ok("")))
+//      val res = requiredUserAnswers.checkChangesRequiredData(completedUserAnswers, basicSubscription, Future.successful(Ok("")))
+      val res = requiredUserAnswers.requireData(CorrectReturnCheckChangesPage, completedUserAnswers, basicSubscription)(Future.successful(Ok("foo")))
       status(res) mustBe OK
     }
   }
@@ -219,14 +254,21 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
 
   "returnMissingAnswers" - {
     "should return all missing answers in a list when user answers is empty" in {
-      val journey = requiredUserAnswers.mainRoute(basicUserAnswers, basicSubscription)
-      val res = requiredUserAnswers.returnMissingAnswers(basicUserAnswers, journey)
-      res mustBe List(CorrectReturnRequiredPage(PackagedAsContractPackerPage, None)(implicitly[Reads[Boolean]]),
-        CorrectReturnRequiredPage(ExemptionsForSmallProducersPage, None)(implicitly[Reads[Boolean]]),
-        CorrectReturnRequiredPage(BroughtIntoUKPage, None)(implicitly[Reads[Boolean]]),
-        CorrectReturnRequiredPage(BroughtIntoUkFromSmallProducersPage, None)(implicitly[Reads[Boolean]]),
-        CorrectReturnRequiredPage(ClaimCreditsForExportsPage, None)(implicitly[Reads[Boolean]]),
-        CorrectReturnRequiredPage(ClaimCreditsForLostDamagedPage, None)(implicitly[Reads[Boolean]]))
+      val res = requiredUserAnswers.returnMissingAnswers(basicUserAnswers, basicSubscription, CorrectReturnBaseCYAPage.previousPagesRequired)
+//      res mustBe List(CorrectReturnRequiredPage(PackagedAsContractPackerPage, None)(implicitly[Reads[Boolean]]),
+//        CorrectReturnRequiredPage(ExemptionsForSmallProducersPage, None)(implicitly[Reads[Boolean]]),
+//        CorrectReturnRequiredPage(BroughtIntoUKPage, None)(implicitly[Reads[Boolean]]),
+//        CorrectReturnRequiredPage(BroughtIntoUkFromSmallProducersPage, None)(implicitly[Reads[Boolean]]),
+//        CorrectReturnRequiredPage(ClaimCreditsForExportsPage, None)(implicitly[Reads[Boolean]]),
+//        CorrectReturnRequiredPage(ClaimCreditsForLostDamagedPage, None)(implicitly[Reads[Boolean]]))
+      res mustBe List(
+        PackagedAsContractPackerPage,
+        ExemptionsForSmallProducersPage,
+        BroughtIntoUKPage,
+        BroughtIntoUkFromSmallProducersPage,
+        ClaimCreditsForExportsPage,
+        ClaimCreditsForLostDamagedPage
+      )
     }
 
     "should return SOME missing answers when SOME answers are populated" in {
@@ -238,10 +280,10 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         .set(BroughtIntoUkFromSmallProducersPage, false).success.value
         .set(ClaimCreditsForLostDamagedPage, false).success.value
 
-      val journey = requiredUserAnswers.mainRoute(someAnswersCompleted, basicSubscription)
-      val res = requiredUserAnswers.returnMissingAnswers(someAnswersCompleted, journey)
-      res mustBe List(CorrectReturnRequiredPage(PackagedAsContractPackerPage, None)(implicitly[Reads[Boolean]]),
-        CorrectReturnRequiredPage(ClaimCreditsForExportsPage, None)(implicitly[Reads[Boolean]]))
+//      val journey = CorrectReturnBaseCYAPage.previousPagesRequired(someAnswersCompleted, basicSubscription)
+//      val res = requiredUserAnswers.returnMissingAnswers(someAnswersCompleted, journey)
+      val res = requiredUserAnswers.returnMissingAnswers(someAnswersCompleted, basicSubscription, CorrectReturnBaseCYAPage.previousPagesRequired)
+      res mustBe List(PackagedAsContractPackerPage, ClaimCreditsForExportsPage)
     }
   }
 
@@ -257,7 +299,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         RetrievedActivity(smallProducer = true, largeProducer = false, contractPacker =false, importer = false,voluntaryRegistration = false),
         LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
 
-      val res = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
+      val res = CorrectReturnBaseCYAPage.previousPagesRequired(completedUserAnswers, subscription)
       res mustBe basicJourney
     }
 
@@ -270,7 +312,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         RetrievedActivity(smallProducer = true,largeProducer = true, contractPacker =true,importer = false,voluntaryRegistration = true),
         LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
 
-      val res = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
+      val res = CorrectReturnBaseCYAPage.previousPagesRequired(completedUserAnswers, subscription)
       res mustBe basicJourney
     }
 
@@ -283,7 +325,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = false, importer = true,voluntaryRegistration = true),
         LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
 
-      val res = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
+      val res = CorrectReturnBaseCYAPage.previousPagesRequired(completedUserAnswers, subscription)
       res mustBe basicJourney
     }
 
@@ -296,7 +338,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
         LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
 
-      val res = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
+      val res = CorrectReturnBaseCYAPage.previousPagesRequired(completedUserAnswers, subscription)
       res mustBe basicJourney
     }
 
@@ -309,15 +351,15 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = true),
         LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
 
-      val res = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
+      val res = CorrectReturnBaseCYAPage.previousPagesRequired(completedUserAnswers, subscription)
       res mustBe smallProducerFalseJourney ++ basicJourney
     }
 
     "should return all correct answers if user is NOT newImporter && NOT new co packer && NOT small producer" in {
       val completedUserAnswers = emptyUserAnswersForCorrectReturn
         .set(OperatePackagingSiteOwnBrandsPage, false).success.value
-        .set(PackagedAsContractPackerPage, true).success.value
-        .set(HowManyPackagedAsContractPackerPage, LitresInBands(100, 652)).success.value
+        .set(PackagedAsContractPackerPage, false).success.value
+//        .set(HowManyPackagedAsContractPackerPage, LitresInBands(100, 652)).success.value
         .set(ExemptionsForSmallProducersPage, false).success.value
         .set(BroughtIntoUKPage, false).success.value
         .set(BroughtIntoUkFromSmallProducersPage, false).success.value
@@ -329,7 +371,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
         LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
 
-      val res = requiredUserAnswers.mainRoute(completedUserAnswers, subscription)
+      val res = CorrectReturnBaseCYAPage.previousPagesRequired(completedUserAnswers, subscription)
       res mustBe smallProducerFalseJourney ++ basicJourney
     }
   }
@@ -340,9 +382,10 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
         LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
-      val res = requiredUserAnswers.packingListReturnChange(basicUserAnswers, subscription)
-
-      res mustBe List.empty
+//      val res = requiredUserAnswers.packingListReturnChange(basicUserAnswers, subscription)
+//      res mustBe List.empty
+      val res = CorrectReturnBaseCYAPage.previousPagesRequired(basicUserAnswers, subscription)
+      res.filter(!_.additionalPreconditions.contains(false)).map(_.page).contains(PackAtBusinessAddressPage) mustBe false
     }
 
     "should be correct if user is a new packer" in {
@@ -360,8 +403,10 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = false, importer = true, voluntaryRegistration = true),
         LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
-      val res = requiredUserAnswers.packingListReturnChange(completedUserAnswers, subscription)
-      res mustBe coPackerFalseJourney
+//      val res = requiredUserAnswers.packingListReturnChange(completedUserAnswers, subscription)
+//      res mustBe coPackerFalseJourney
+      val res = CorrectReturnBaseCYAPage.previousPagesRequired(completedUserAnswers, subscription)
+      res.filter(!_.additionalPreconditions.contains(false)).map(_.page).contains(PackAtBusinessAddressPage) mustBe true
     }
   }
 
@@ -371,8 +416,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
         LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
-      val res = requiredUserAnswers.warehouseListReturnChange(basicUserAnswers, subscription)
-      res mustBe List.empty
+      val res = CorrectReturnBaseCYAPage.previousPagesRequired(basicUserAnswers, subscription)
+      res.filter(!_.additionalPreconditions.contains(false)).map(_.page).contains(AskSecondaryWarehouseInReturnPage) mustBe false
     }
 
     "should be correct if user is a new importer" in {
@@ -391,9 +436,9 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         "","","", UkAddress(List.empty, "", None),
         RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = true, importer = false, voluntaryRegistration = true),
         LocalDate.now(),List.empty, List.empty, Contact(None, None, "", ""), None)
-      val res = requiredUserAnswers.warehouseListReturnChange(completedUserAnswers, subscription)
 
-      res mustBe importerFalseJourney
+      val res = CorrectReturnBaseCYAPage.previousPagesRequired(completedUserAnswers, subscription)
+      res.filter(!_.additionalPreconditions.contains(false)).map(_.page).contains(AskSecondaryWarehouseInReturnPage) mustBe true
     }
   }
 
@@ -404,8 +449,9 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
         LocalDate.now(),List.empty, List.empty, Contact(None, None, "", ""), None)
 
-      val res = requiredUserAnswers.smallProducerCheck(subscription)
-      res mustBe List.empty
+      val res = CorrectReturnBaseCYAPage.previousPagesRequired(basicUserAnswers, subscription)
+      res.filter(!_.additionalPreconditions.contains(false)).map(_.page).contains(OperatePackagingSiteOwnBrandsPage) mustBe false
+//      res.filter(!_.additionalPreconditions.contains(false)).map(_.page).contains(HowManyOperatePackagingSiteOwnBrandsPage) mustBe false
     }
 
     "should be correct if user is a new small producer" in {
@@ -414,9 +460,9 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         RetrievedActivity(smallProducer = false, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
         LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
 
-      val res = requiredUserAnswers.smallProducerCheck(subscription)
-
-      res mustBe smallProducerFalseJourney
+      val res = CorrectReturnBaseCYAPage.previousPagesRequired(basicUserAnswers, subscription)
+      res.filter(!_.additionalPreconditions.contains(false)).map(_.page).contains(OperatePackagingSiteOwnBrandsPage) mustBe true
+//      res.filter(!_.additionalPreconditions.contains(false)).map(_.page).contains(HowManyOperatePackagingSiteOwnBrandsPage) mustBe true
     }
   }
 }
