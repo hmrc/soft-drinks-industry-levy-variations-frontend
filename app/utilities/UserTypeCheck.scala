@@ -24,18 +24,15 @@ object UserTypeCheck {
   def isNewImporter(userAnswers: UserAnswers, subscription: RetrievedSubscription): Boolean = {
     val userIsNotAlreadyAnImporter = !subscription.activity.importer
     val totalImported = userAnswers.getCorrectReturnData.map(_.totalImported)
-    val as = totalImported.fold(false)(imported =>
+    totalImported.fold(false)(imported =>
       (imported.lower > 0L && imported.higher > 0L) && userIsNotAlreadyAnImporter
     )
-    as
-
 }
   def isNewPacker(userAnswers: UserAnswers, subscription: RetrievedSubscription): Boolean = {
     val userIsNotAlreadyAPacker = !subscription.activity.contractPacker
     val totalPacked = userAnswers.getCorrectReturnData.map(_.totalPacked(userAnswers.smallProducerList))
-    val as = totalPacked.fold(false)(packed =>
+    totalPacked.fold(false)(packed =>
       (packed.lower > 0L && packed.higher > 0L) && userIsNotAlreadyAPacker
     )
-    as
   }
 }
