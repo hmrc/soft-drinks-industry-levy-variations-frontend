@@ -33,14 +33,15 @@ case object CorrectReturnBaseCYAPage extends QuestionPage[Boolean] {
   override val url: Mode => String = _ => routes.CorrectReturnCYAController.onPageLoad.url
 
   override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (userAnswers, subscription) => {
-    val smallProducerRequiredPages = if (subscription.activity.smallProducer) {
-      List.empty
-    } else {
-      List(
-        RequiredPage(OperatePackagingSiteOwnBrandsPage),
-        RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(userAnswers.get(OperatePackagingSiteOwnBrandsPage).contains(true)))
+    val smallProducerRequiredPages = List(
+      RequiredPage(OperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(
+        !subscription.activity.smallProducer
+      )),
+      RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(
+        !subscription.activity.smallProducer,
+        userAnswers.get(OperatePackagingSiteOwnBrandsPage).contains(true))
       )
-    }
+    )
     val firstPartOfJourney = List(
       RequiredPage(PackagedAsContractPackerPage),
       RequiredPage(HowManyPackagedAsContractPackerPage, additionalPreconditions = List(userAnswers.get(PackagedAsContractPackerPage).contains(true))),

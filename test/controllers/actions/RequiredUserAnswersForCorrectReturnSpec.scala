@@ -42,6 +42,8 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
     LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
 
   val basicJourney = List(
+    RequiredPage(OperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(false)),
+    RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(false, false)),
     RequiredPage(PackagedAsContractPackerPage),
     RequiredPage(HowManyPackagedAsContractPackerPage, additionalPreconditions = List(false)),
     RequiredPage(ExemptionsForSmallProducersPage),
@@ -59,8 +61,22 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
   )
 
   val smallProducerFalseJourney = List(
-    RequiredPage(OperatePackagingSiteOwnBrandsPage),
-    RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(false))
+    RequiredPage(OperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(true)),
+    RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(true, false)),
+    RequiredPage(PackagedAsContractPackerPage),
+    RequiredPage(HowManyPackagedAsContractPackerPage, additionalPreconditions = List(false)),
+    RequiredPage(ExemptionsForSmallProducersPage),
+    RequiredPage(AddASmallProducerPage, additionalPreconditions = List(false, true)),
+    RequiredPage(BroughtIntoUKPage),
+    RequiredPage(HowManyBroughtIntoUKPage, additionalPreconditions = List(false)),
+    RequiredPage(BroughtIntoUkFromSmallProducersPage),
+    RequiredPage(HowManyBroughtIntoUkFromSmallProducersPage, additionalPreconditions = List(false)),
+    RequiredPage(ClaimCreditsForExportsPage),
+    RequiredPage(HowManyClaimCreditsForExportsPage, additionalPreconditions = List(false)),
+    RequiredPage(ClaimCreditsForLostDamagedPage),
+    RequiredPage(HowManyCreditsForLostDamagedPage, additionalPreconditions = List(false)),
+    RequiredPage(PackAtBusinessAddressPage, additionalPreconditions = List(false, true)),
+    RequiredPage(AskSecondaryWarehouseInReturnPage, additionalPreconditions = List(false))
   )
 
   "checkYourAnswersRequiredData" - {
@@ -298,7 +314,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
 
       val res = CorrectReturnBaseCYAPage.previousPagesRequired(completedUserAnswers, subscription)
-      res mustBe smallProducerFalseJourney ++ basicJourney
+      res mustBe smallProducerFalseJourney
     }
 
     "should return all correct answers if user is NOT newImporter && NOT new co packer && NOT small producer" in {
@@ -317,7 +333,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
 
       val res = CorrectReturnBaseCYAPage.previousPagesRequired(completedUserAnswers, subscription)
-      res mustBe smallProducerFalseJourney ++ basicJourney
+      res mustBe smallProducerFalseJourney
     }
   }
 
