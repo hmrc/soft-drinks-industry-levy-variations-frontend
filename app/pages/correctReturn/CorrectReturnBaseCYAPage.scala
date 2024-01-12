@@ -33,25 +33,19 @@ case object CorrectReturnBaseCYAPage extends QuestionPage[Boolean] {
   override val url: Mode => String = _ => routes.CorrectReturnCYAController.onPageLoad.url
 
   override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (userAnswers, subscription) => {
-    val smallProducerRequiredPages = List(
-      RequiredPage(OperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(
-        !subscription.activity.smallProducer
-      )),
+    List(
+      RequiredPage(OperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(!subscription.activity.smallProducer)),
       RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(
         !subscription.activity.smallProducer,
         userAnswers.get(OperatePackagingSiteOwnBrandsPage).contains(true))
-      )
-    )
-    val firstPartOfJourney = List(
+      ),
       RequiredPage(PackagedAsContractPackerPage),
       RequiredPage(HowManyPackagedAsContractPackerPage, additionalPreconditions = List(userAnswers.get(PackagedAsContractPackerPage).contains(true))),
-      RequiredPage(ExemptionsForSmallProducersPage)
-    )
-    val addASmallProducerRequiredPages = List(RequiredPage(AddASmallProducerPage, additionalPreconditions = List(
-      userAnswers.get(ExemptionsForSmallProducersPage).contains(true),
-      userAnswers.smallProducerList.isEmpty
-    )))
-    val secondPartOfJourney = List(
+      RequiredPage(ExemptionsForSmallProducersPage),
+      RequiredPage(AddASmallProducerPage, additionalPreconditions = List(
+        userAnswers.get(ExemptionsForSmallProducersPage).contains(true),
+        userAnswers.smallProducerList.isEmpty
+      )),
       RequiredPage(BroughtIntoUKPage),
       RequiredPage(HowManyBroughtIntoUKPage, additionalPreconditions = List(userAnswers.get(BroughtIntoUKPage).contains(true))),
       RequiredPage(BroughtIntoUkFromSmallProducersPage),
@@ -59,18 +53,12 @@ case object CorrectReturnBaseCYAPage extends QuestionPage[Boolean] {
       RequiredPage(ClaimCreditsForExportsPage),
       RequiredPage(HowManyClaimCreditsForExportsPage, additionalPreconditions = List(userAnswers.get(ClaimCreditsForExportsPage).contains(true))),
       RequiredPage(ClaimCreditsForLostDamagedPage),
-      RequiredPage(HowManyCreditsForLostDamagedPage, additionalPreconditions = List(userAnswers.get(ClaimCreditsForLostDamagedPage).contains(true)))
+      RequiredPage(HowManyCreditsForLostDamagedPage, additionalPreconditions = List(userAnswers.get(ClaimCreditsForLostDamagedPage).contains(true))),
+      RequiredPage(PackAtBusinessAddressPage, additionalPreconditions = List(
+        UserTypeCheck.isNewPacker(userAnswers, subscription),
+        subscription.productionSites.isEmpty
+      )),
+      RequiredPage(AskSecondaryWarehouseInReturnPage, additionalPreconditions = List(UserTypeCheck.isNewImporter(userAnswers, subscription)))
     )
-    val packagingRequiredPages = List(RequiredPage(PackAtBusinessAddressPage, additionalPreconditions = List(
-      UserTypeCheck.isNewPacker(userAnswers, subscription),
-      subscription.productionSites.isEmpty
-    )))
-    val warehouseRequiredPages = List(RequiredPage(AskSecondaryWarehouseInReturnPage, additionalPreconditions = List(UserTypeCheck.isNewImporter(userAnswers, subscription))))
-    smallProducerRequiredPages ++
-      firstPartOfJourney ++
-      addASmallProducerRequiredPages ++
-      secondPartOfJourney ++
-      packagingRequiredPages ++
-      warehouseRequiredPages
   }
 }
