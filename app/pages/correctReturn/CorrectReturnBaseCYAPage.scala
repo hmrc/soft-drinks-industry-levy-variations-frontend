@@ -127,7 +127,7 @@ case object CorrectReturnBaseCYAPage extends QuestionPage[Boolean] {
       RequiredPage(ClaimCreditsForExportsPage),
       RequiredPage(HowManyClaimCreditsForExportsPage, additionalPreconditions = List(userAnswers.get(ClaimCreditsForExportsPage).contains(true))),
       RequiredPage(ClaimCreditsForLostDamagedPage),
-      RequiredPage(HowManyCreditsForLostDamagedPage, additionalPreconditions = List(userAnswers.get(ClaimCreditsForLostDamagedPage).contains(true))),
+      RequiredPage(HowManyCreditsForLostDamagedPage, additionalPreconditions = List(userAnswers.get(ClaimCreditsForLostDamagedPage).contains(true)))
     )
     smallProducerRequiredPages(userAnswers, subscription) ++
       firstPartOfJourney ++
