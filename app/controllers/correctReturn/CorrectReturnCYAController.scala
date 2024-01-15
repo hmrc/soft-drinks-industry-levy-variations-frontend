@@ -33,6 +33,7 @@ import views.html.correctReturn.CorrectReturnCYAView
 import views.summary.correctReturn.CorrectReturnBaseCYASummary
 
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 class CorrectReturnCYAController @Inject()(override val messagesApi: MessagesApi,
                                            val sessionService: SessionService,
@@ -75,9 +76,10 @@ class CorrectReturnCYAController @Inject()(override val messagesApi: MessagesApi
         calculateAmounts.value.flatMap {
           case Right(amounts) =>
             val balanceRepaymentRequired = amounts.newReturnTotal < amounts.originalReturnTotal
-            val updatedAnswers = request.userAnswers.set(BalanceRepaymentRequired, balanceRepaymentRequired)
             for {
-              _ <- updateDatabaseWithoutRedirect(updatedAnswers, CorrectReturnBaseCYAPage)
+              answersWithBalanceRepaymentRequired <- Future.fromTry(request.userAnswers.set(BalanceRepaymentRequired, balanceRepaymentRequired))
+              answersWithCYA <- Future.fromTry(answersWithBalanceRepaymentRequired.set(CorrectReturnBaseCYAPage, true))
+              _ <- updateDatabaseWithoutRedirect(Try(answersWithCYA), CorrectReturnBaseCYAPage)
               redirect <- Future.successful(Redirect(routes.CorrectionReasonController.onPageLoad(NormalMode).url))
             } yield redirect
           case Left(_) =>

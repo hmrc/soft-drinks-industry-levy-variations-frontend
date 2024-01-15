@@ -18,12 +18,15 @@ package pages.correctReturn
 
 import controllers.correctReturn.routes
 import models.Mode
-import pages.Page
+import pages.{Page, QuestionPage}
+import play.api.libs.json.JsPath
 
-case object CorrectReturnBaseCYAPage extends Page {
+case object CorrectReturnBaseCYAPage extends QuestionPage[Boolean] {
+
+  override def path: JsPath = JsPath \ journeyType \ toString
 
   def journeyType: String = "correctReturn"
   override def toString: String = "checkYourAnswers"
-  override val url: Mode => String = _ => routes.CorrectReturnCYAController.onPageLoad.url
 
+  override val url: Mode => String = _ => routes.CorrectReturnCYAController.onPageLoad.url
 }
