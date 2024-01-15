@@ -76,6 +76,7 @@ class CorrectReturnCYAController @Inject()(override val messagesApi: MessagesApi
         calculateAmounts.value.flatMap {
           case Right(amounts) =>
             val balanceRepaymentRequired = amounts.newReturnTotal < amounts.originalReturnTotal
+//            TODO: TIDY THIS UP
             for {
               answersWithBalanceRepaymentRequired <- Future.fromTry(request.userAnswers.set(BalanceRepaymentRequired, balanceRepaymentRequired))
               answersWithCYA <- Future.fromTry(answersWithBalanceRepaymentRequired.set(CorrectReturnBaseCYAPage, true))

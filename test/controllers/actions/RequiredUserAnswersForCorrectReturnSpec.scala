@@ -33,6 +33,10 @@ import scala.concurrent.Future
 
 class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwaitTimeout {
 
+//  TODO: TEST REQUIRED FOR CHECK CHANGE
+
+//  TODO: TEST CORRECTION REASON AND REPAYMENT METHOD
+
   val requiredUserAnswers: RequiredUserAnswersForCorrectReturn = application.injector.instanceOf[RequiredUserAnswersForCorrectReturn]
   val basicUserAnswers= emptyUserAnswersForCorrectReturn
   val basicSubscription = RetrievedSubscription(
