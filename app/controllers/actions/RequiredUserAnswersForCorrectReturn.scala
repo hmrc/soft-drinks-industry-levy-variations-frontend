@@ -59,7 +59,7 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
   }
 
   private[controllers] def correctionReasonRequiredData(userAnswers: UserAnswers, subscription: RetrievedSubscription, action: => Future[Result]): Future[Result] = {
-    val journey = correctionReasonJourney(userAnswers)
+    val journey = correctionReasonJourney()
     val userAnswersMissing: List[CorrectReturnRequiredPage[_, _, _]] = returnMissingAnswers(userAnswers, journey)
     userAnswersMissing.headOption.map(_.pageRequired.asInstanceOf[Page]) match {
       case Some(page) => genericLogger.logger.warn(s"${userAnswers.id} has hit check changes CYA and is missing $userAnswersMissing")
@@ -69,7 +69,7 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
   }
 
   private[controllers] def repaymentMethodRequiredData(userAnswers: UserAnswers, subscription: RetrievedSubscription, action: => Future[Result]): Future[Result] = {
-    val journey = repaymentMethodJourney(userAnswers)
+    val journey = repaymentMethodJourney()
     val userAnswersMissing: List[CorrectReturnRequiredPage[_, _, _]] = returnMissingAnswers(userAnswers, journey)
     userAnswersMissing.headOption.map(_.pageRequired.asInstanceOf[Page]) match {
       case Some(page) => genericLogger.logger.warn(s"${userAnswers.id} has hit repayment method and is missing $userAnswersMissing")
@@ -159,23 +159,23 @@ class RequiredUserAnswersForCorrectReturn @Inject()(genericLogger: GenericLogger
       warehouseListReturnChange
   }
 
-  private[controllers] def correctionReasonJourney(userAnswers: UserAnswers): List[CorrectReturnRequiredPage[_, _, _]] = {
-    //    TODO: ADD IN CYA PAGE
-    List()
+  private[controllers] def correctionReasonJourney(): List[CorrectReturnRequiredPage[_, _, _]] = {
+    List(CorrectReturnRequiredPage(CorrectReturnBaseCYAPage, None)(implicitly[Reads[Boolean]]))
   }
 
-  private[controllers] def repaymentMethodJourney(userAnswers: UserAnswers): List[CorrectReturnRequiredPage[_, _, _]] = {
-    //    TODO: ADD IN CYA PAGE
-    List()
+  private[controllers] def repaymentMethodJourney(): List[CorrectReturnRequiredPage[_, _, _]] = {
+    List(CorrectReturnRequiredPage(CorrectReturnBaseCYAPage, None)(implicitly[Reads[Boolean]]))
   }
 
   private[controllers] def checkChangesJourney(userAnswers: UserAnswers): List[CorrectReturnRequiredPage[_, _, _]] = {
-//    TODO: ADD IN CYA PAGE
     val balanceRepaymentRequiredJourney = userAnswers.get(BalanceRepaymentRequired) match {
       case Some(true) => List(CorrectReturnRequiredPage(RepaymentMethodPage, None)(implicitly[Reads[RepaymentMethod]]))
       case _ => List.empty
     }
-    List(CorrectReturnRequiredPage(CorrectionReasonPage, None)(implicitly[Reads[String]])) ++ balanceRepaymentRequiredJourney
+    List(
+      CorrectReturnRequiredPage(CorrectReturnBaseCYAPage, None)(implicitly[Reads[Boolean]]),
+      CorrectReturnRequiredPage(CorrectionReasonPage, None)(implicitly[Reads[String]])
+    ) ++ balanceRepaymentRequiredJourney
   }
 
   private[controllers] def addASmallProducerReturnChange(userAnswers: UserAnswers): List[CorrectReturnRequiredPage[_, _, _]] = {
