@@ -32,28 +32,24 @@ class UserAnswersIsEmptySpec extends AnyFreeSpec with Matchers with ScalaCheckPr
   "UserAnswers" - {
     "isEmpty" - {
       "must return true or false correctly depending on whether data is empty at that path" in {
-//        TODO: FINISH THIS TEST
         val gen = for {
           keys <- Gen.nonEmptyListOf(nonEmptyAlphaStr)
           value <- nonEmptyAlphaStr
-        } yield (keys, value)
+          wrongPath <- nonEmptyAlphaStr
+        } yield (keys, value, wrongPath)
 
         forAll(gen) {
-          case (keys: List[String], value: String) =>
+          case (keys: List[String], value: String, wrongPath: String) =>
             val change = SelectChange.CancelRegistration
             val pathNodes = (List(change.toString) ++ keys).map(KeyPathNode)
-            val jsPath = JsPath(pathNodes)
-            val data = Json.obj().set(jsPath, JsString(value)).asOpt.value.asInstanceOf[JsObject]
+            val data = Json.obj().set(JsPath(pathNodes), JsString(value)).asOpt.value.asInstanceOf[JsObject]
             val userAnswers = UserAnswers("sdilId", change, contactAddress = contactAddress, data = data)
-            val emptyJsPaths = keys.init.foldLeft(List(JsPath(List(KeyPathNode(change.toString)))))((acc, d) => {
-              val last = acc.last
-              val newPath = acc.last.path :+ KeyPathNode(d)
-              acc :+ JsPath(newPath)
+            val nonEmptyJsPaths = keys.foldLeft(List(JsPath(List(KeyPathNode(change.toString)))))((acc, d) => {
+              acc :+ JsPath(acc.last.path :+ KeyPathNode(d))
             })
-            emptyJsPaths.foreach(path => {
-              userAnswers.isEmpty(path) mustEqual true
-            })
-            userAnswers.isEmpty(jsPath) mustEqual false
+            nonEmptyJsPaths.foreach(userAnswers.isEmptyAtPath(_) mustEqual false)
+            val emptyJsPaths = nonEmptyJsPaths.map(path => JsPath(path.path :+ KeyPathNode(wrongPath)))
+            emptyJsPaths.foreach(userAnswers.isEmptyAtPath(_) mustEqual true)
         }
       }
     }
