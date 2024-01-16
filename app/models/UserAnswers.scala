@@ -47,15 +47,16 @@ case class UserAnswers(
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
     Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)
 
-//  TODO: Add unit tests
-  def isEmpty(page: Query): Boolean = {
-    val pathNodes = page.path.path
+  private[models] def isEmpty(path: JsPath): Boolean = {
+    val pathNodes = path.path
     val initialJsValue = Option(data.asInstanceOf[JsValue])
     pathNodes.foldLeft(initialJsValue)((jsValueOpt, pathNode) => {
       val path = pathNode.toString.replace("/", "")
       jsValueOpt.flatMap(_.asInstanceOf[JsObject].value.get(path))
     }).isEmpty
   }
+
+  def isEmpty(page: Query): Boolean = isEmpty(page.path)
 
   def getChangeActivityData(implicit rds: Reads[ChangeActivityData]): Option[ChangeActivityData] = {
     val jsPath = JsPath \ "changeActivity"
