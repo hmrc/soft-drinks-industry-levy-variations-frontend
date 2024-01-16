@@ -33,10 +33,6 @@ import scala.concurrent.Future
 
 class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwaitTimeout {
 
-//  TODO: TEST REQUIRED FOR CHECK CHANGE
-
-//  TODO: TEST CORRECTION REASON AND REPAYMENT METHOD
-
   val requiredUserAnswers: RequiredUserAnswersForCorrectReturn = application.injector.instanceOf[RequiredUserAnswersForCorrectReturn]
   val basicUserAnswers= emptyUserAnswersForCorrectReturn
   val basicSubscription = RetrievedSubscription(
@@ -151,6 +147,12 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
   }
 
   "checkChangesRequiredData" - {
+    "should return Redirect to CYA page when user answers past check your answers not submitted" in {
+      val userAnswers = basicUserAnswers
+      val res = requiredUserAnswers.checkChangesRequiredData(userAnswers, basicSubscription, Future.successful(Ok("")))
+      redirectLocation(res).get mustBe routes.CorrectReturnCYAController.onPageLoad.url
+    }
+
     "should return Redirect to Correction Reason page when user answers past check your answers is empty and balance repayment required" in {
       val userAnswers = basicUserAnswers
         .set(CorrectReturnBaseCYAPage, true).success.value
@@ -199,6 +201,21 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
     }
   }
 
+  "correctionReasonRequiredData" - {
+    "should return Redirect to CYA page when user answers past check your answers not submitted" in {
+      val userAnswers = basicUserAnswers
+      val res = requiredUserAnswers.correctionReasonRequiredData(userAnswers, basicSubscription, Future.successful(Ok("")))
+      redirectLocation(res).get mustBe routes.CorrectReturnCYAController.onPageLoad.url
+    }
+  }
+
+  "repaymentMethodRequiredData" - {
+    "should return Redirect to CYA page when user answers past check your answers not submitted" in {
+      val userAnswers = basicUserAnswers
+      val res = requiredUserAnswers.repaymentMethodRequiredData(userAnswers, basicSubscription, Future.successful(Ok("")))
+      redirectLocation(res).get mustBe routes.CorrectReturnCYAController.onPageLoad.url
+    }
+  }
 
   "returnMissingAnswers" - {
     "should return all missing answers in a list when user answers is empty" in {
