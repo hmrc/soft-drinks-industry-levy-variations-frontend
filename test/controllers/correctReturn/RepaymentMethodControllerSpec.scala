@@ -61,7 +61,21 @@ class RepaymentMethodControllerSpec extends SpecBase with MockitoSugar {
   val userAnswers = emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value
   
   "RepaymentMethod Controller" - {
-//TODO: ADD TEST FOR REDIRECT WHEN CYA NOT SUBMITTED
+
+    "must redirect to CYA when that page has not been submitted" in {
+      val application = correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, repaymentMethodRoute)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[RepaymentMethodView]
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.CorrectReturnCYAController.onPageLoad.url
+      }
+    }
 
     "must return OK and the correct view for a GET" in {
       val application = correctReturnAction(userAnswers = Some(userAnswers)).build()

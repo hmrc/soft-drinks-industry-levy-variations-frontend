@@ -5,7 +5,7 @@ import models.SelectChange.CorrectReturn
 import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import pages.correctReturn.{BalanceRepaymentRequired, CorrectionReasonPage}
+import pages.correctReturn.{BalanceRepaymentRequired, CorrectReturnBaseCYAPage, CorrectionReasonPage}
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
@@ -13,8 +13,6 @@ import play.api.test.WsTestClient
 import scala.util.Random
 
 class CorrectionReasonControllerISpec extends ControllerITTestHelper {
-//  TODO: ADD CYA true to user answers
-
   val normalRoutePath = "/correction-reason"
   val checkRoutePath = "/change-correction-reason"
 
@@ -31,7 +29,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
@@ -52,7 +50,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setUpForCorrectReturn(userAnswers)
+        setUpForCorrectReturn(userAnswers.set(CorrectReturnBaseCYAPage, true).success.value)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
@@ -80,7 +78,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath)
@@ -102,7 +100,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setUpForCorrectReturn(userAnswers)
+        setUpForCorrectReturn(userAnswers.set(CorrectReturnBaseCYAPage, true).success.value)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath)
@@ -134,6 +132,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
               .commonPrecondition
 
             val userAnswers = emptyUserAnswersForCorrectReturn
+              .set(CorrectReturnBaseCYAPage, true).success.value
               .set(BalanceRepaymentRequired, balanceRepaymentRequired).success.value
             setUpForCorrectReturn(userAnswers)
             WsTestClient.withClient { client =>
@@ -161,6 +160,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
               .commonPrecondition
 
             val userAnswersWithData = userAnswers
+              .set(CorrectReturnBaseCYAPage, true).success.value
               .set(BalanceRepaymentRequired, balanceRepaymentRequired).success.value
             setUpForCorrectReturn(userAnswersWithData)
             WsTestClient.withClient { client =>
@@ -191,7 +191,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> randomStringExceedingMaxLength)
@@ -227,7 +227,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
+          setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> correctionReasonDiff)
@@ -247,7 +247,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          setUpForCorrectReturn(userAnswers)
+          setUpForCorrectReturn(userAnswers.set(CorrectReturnBaseCYAPage, true).success.value)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
               client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> correctionReasonDiff)
@@ -270,7 +270,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> randomStringExceedingMaxLength)
