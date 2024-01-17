@@ -20,6 +20,7 @@ import com.google.inject.Inject
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.routes
 import handlers.ErrorHandler
+import models.SelectChange._
 import models.requests.{CorrectReturnDataRequest, DataRequest, OptionalDataRequest, RequiredDataRequest}
 import models.{ReturnPeriod, SelectChange, UserAnswers}
 import orchestrators.SelectChangeOrchestrator
@@ -80,20 +81,32 @@ class ControllerActions @Inject()(identify: IdentifierAction,
   private def journeyDataRequiredAction(journeyType: SelectChange): ActionRefiner[OptionalDataRequest, DataRequest] =
     new ActionRefiner[OptionalDataRequest, DataRequest] {
       override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
-        request.userAnswers match {
-          case Some(userAnswers) if userAnswers.journeyType == journeyType =>
-            Future.successful(Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers)))
-          case Some(userAnswers) if journeyType == SelectChange.CancelRegistration && userAnswers.journeyType == SelectChange.ChangeActivity =>
-            Future.successful(Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers)))
-          case None if request.subscription.deregDate.nonEmpty =>
-            selectChangeOrchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(request.subscription).value.map{
-              case Right(userAnswers) => Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers))
-              case Left(_) => Left(InternalServerError(errorHandler.internalServerErrorTemplate(request)))
-            }
-          case _ => Future.successful(Left(Redirect(routes.SelectChangeController.onPageLoad)))
+        if (request.userAnswers.get.submitted) {
+          request.userAnswers.get.journeyType match {
+            case CancelRegistration =>
+              Future(Left(Redirect(controllers.cancelRegistration.routes.CancellationRequestDoneController.onPageLoad())))
+            case UpdateRegisteredDetails =>
+              Future(Left(Redirect(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad())))
+            case CorrectReturn =>
+              Future(Left(Redirect(controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad)))
+            case ChangeActivity =>
+              Future(Left(Redirect(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad)))
+          }
+        } else {
+          request.userAnswers match {
+            case Some(userAnswers) if userAnswers.journeyType == journeyType =>
+              Future.successful(Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers)))
+            case Some(userAnswers) if journeyType == SelectChange.CancelRegistration && userAnswers.journeyType == SelectChange.ChangeActivity =>
+              Future.successful(Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers)))
+            case None if request.subscription.deregDate.nonEmpty =>
+              selectChangeOrchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(request.subscription).value.map {
+                case Right(userAnswers) => Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers))
+                case Left(_) => Left(InternalServerError(errorHandler.internalServerErrorTemplate(request)))
+              }
+            case _ => Future.successful(Left(Redirect(routes.SelectChangeController.onPageLoad)))
+          }
         }
       }
-
       override protected def executionContext: ExecutionContext = ec
     }
 

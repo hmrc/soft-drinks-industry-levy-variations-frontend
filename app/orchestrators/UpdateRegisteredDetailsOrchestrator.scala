@@ -59,7 +59,7 @@ class UpdateRegisteredDetailsOrchestrator @Inject()(sdilConnector: SoftDrinksInd
     val variationSubmission = getVariationToBeSubmitted(subscription, userAnswers)
     for {
       variationSubmitted <- sdilConnector.submitVariation(variationSubmission, subscription.sdilRef)
-        _ <- EitherT(sessionService.set(userAnswers.copy(submittedOn = Some(Instant.now))))
+        _ <- EitherT(sessionService.set(userAnswers.copy(submitted = true, submittedOn = Some(Instant.now))))
     } yield variationSubmitted
 
   }

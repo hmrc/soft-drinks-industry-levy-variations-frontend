@@ -17,7 +17,7 @@
 package controllers.cancelRegistration
 
 import com.google.inject.Inject
-import controllers.actions.ControllerActions
+import controllers.actions.{CheckingSubmissionAction, ControllerActions}
 import handlers.ErrorHandler
 import models.SelectChange.CancelRegistration
 import models.backend.RetrievedSubscription

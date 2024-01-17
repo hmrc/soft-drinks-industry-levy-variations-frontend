@@ -55,7 +55,7 @@ class UpdateRegisteredDetailsCYAController @Inject()(
     val subscription = request.subscription
     val userAnswers = request.userAnswers
     updateRegisteredDetailsOrchestrator.submitVariation(subscription, userAnswers).value.map {
-      case Right(_) => Redirect(routes.UpdateDoneController.onPageLoad.url)
+      case Right(_) => Redirect(routes.UpdateDoneController.onPageLoad().url)
       case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to update registered details")
         InternalServerError(errorHandler.internalServerErrorTemplate)
     }
