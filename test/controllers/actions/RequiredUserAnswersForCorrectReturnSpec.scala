@@ -79,7 +79,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
     RequiredPage(AskSecondaryWarehouseInReturnPage, additionalPreconditions = List(false))
   )
 
-  "checkYourAnswersRequiredData" - {
+  "requireData - CYA" - {
 
     "should return redirect to Packaged as Contract Packer page when user answers is empty and the small producer is true" in {
       val res = requiredUserAnswers.requireData(CorrectReturnBaseCYAPage, basicUserAnswers, basicSubscription)(Future.successful(Ok("")))
@@ -154,10 +154,10 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
     }
   }
 
-  "checkChangesRequiredData" - {
+  "requireData - CheckChanges" - {
     "should return Redirect to CYA page when user answers past check your answers not submitted" in {
       val userAnswers = basicUserAnswers
-      val res = requiredUserAnswers.checkChangesRequiredData(userAnswers, basicSubscription, Future.successful(Ok("")))
+      val res = requiredUserAnswers.requireData(CorrectReturnCheckChangesPage, userAnswers, basicSubscription)(Future.successful(Ok("foo")))
       redirectLocation(res).get mustBe routes.CorrectReturnCYAController.onPageLoad.url
     }
 
@@ -206,18 +206,18 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
     }
   }
 
-  "correctionReasonRequiredData" - {
+  "requireData - CorrectionReason" - {
     "should return Redirect to CYA page when user answers past check your answers not submitted" in {
       val userAnswers = basicUserAnswers
-      val res = requiredUserAnswers.correctionReasonRequiredData(userAnswers, basicSubscription, Future.successful(Ok("")))
+      val res = requiredUserAnswers.requireData(CorrectionReasonPage, userAnswers, basicSubscription)(Future.successful(Ok("foo")))
       redirectLocation(res).get mustBe routes.CorrectReturnCYAController.onPageLoad.url
     }
   }
 
-  "repaymentMethodRequiredData" - {
+  "requireData - RepaymentMethod" - {
     "should return Redirect to CYA page when user answers past check your answers not submitted" in {
       val userAnswers = basicUserAnswers
-      val res = requiredUserAnswers.repaymentMethodRequiredData(userAnswers, basicSubscription, Future.successful(Ok("")))
+      val res = requiredUserAnswers.requireData(RepaymentMethodPage, userAnswers, basicSubscription)(Future.successful(Ok("foo")))
       redirectLocation(res).get mustBe routes.CorrectReturnCYAController.onPageLoad.url
     }
   }
