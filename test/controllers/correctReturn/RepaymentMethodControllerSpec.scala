@@ -28,7 +28,7 @@ import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.correctReturn.RepaymentMethodPage
+import pages.correctReturn.{CorrectReturnBaseCYAPage, RepaymentMethodPage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -57,10 +57,28 @@ class RepaymentMethodControllerSpec extends SpecBase with MockitoSugar {
       .overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
   }
+
+  val userAnswers = emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value
+  
   "RepaymentMethod Controller" - {
 
-    "must return OK and the correct view for a GET" in {
+    "must redirect to CYA when that page has not been submitted" in {
       val application = correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, repaymentMethodRoute)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[RepaymentMethodView]
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.CorrectReturnCYAController.onPageLoad.url
+      }
+    }
+
+    "must return OK and the correct view for a GET" in {
+      val application = correctReturnAction(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, repaymentMethodRoute)
@@ -76,7 +94,7 @@ class RepaymentMethodControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val userAnswersWithRepaymentMethod = emptyUserAnswersForCorrectReturn
+      val userAnswersWithRepaymentMethod = userAnswers
       .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
 
       val application = correctReturnAction(userAnswers = Some(userAnswersWithRepaymentMethod)).build()
@@ -100,7 +118,7 @@ class RepaymentMethodControllerSpec extends SpecBase with MockitoSugar {
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+        correctReturnAction(userAnswers = Some(userAnswers))
       .overrides(
         bind[NavigatorForCorrectReturn
       ].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
@@ -123,7 +141,7 @@ class RepaymentMethodControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
+      val application = correctReturnAction(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request =
@@ -167,7 +185,7 @@ class RepaymentMethodControllerSpec extends SpecBase with MockitoSugar {
       when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
       val application =
-        correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+        correctReturnAction(userAnswers = Some(userAnswers))
           .overrides(
             bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)

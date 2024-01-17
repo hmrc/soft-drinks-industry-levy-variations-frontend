@@ -52,29 +52,32 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
   }
 
+  val litresInBands = LitresInBands(2000, 4000)
+  val filledUserAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+    .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
+      smallProducerList = List(SmallProducer("", "XZSDIL000000234", Litreage(2000, 4000))))
+    .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+    .set(HowManyOperatePackagingSiteOwnBrandsPage, litresInBands).success.value
+    .set(PackagedAsContractPackerPage, true).success.value
+    .set(HowManyPackagedAsContractPackerPage, litresInBands).success.value
+    .set(ExemptionsForSmallProducersPage, true).success.value
+    .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", litresInBands)).success.value
+    .set(BroughtIntoUKPage, true).success.value
+    .set(HowManyBroughtIntoUKPage, litresInBands).success.value
+    .set(BroughtIntoUkFromSmallProducersPage, true).success.value
+    .set(HowManyBroughtIntoUkFromSmallProducersPage, litresInBands).success.value
+    .set(ClaimCreditsForExportsPage, true).success.value
+    .set(HowManyClaimCreditsForExportsPage, litresInBands).success.value
+    .set(ClaimCreditsForLostDamagedPage, true).success.value
+    .set(HowManyCreditsForLostDamagedPage, litresInBands).success.value
+
   def onwardRoute: Call = Call("GET", "/foo")
 
   "Check Changes Controller" - {
 
     "must return OK and the correct view for a GET" in {
-      val litres = LitresInBands(2000, 4000)
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
-        .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
-          smallProducerList = List(SmallProducer("", "XZSDIL000000234", Litreage(2000, 4000))))
-        .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-        .set(HowManyOperatePackagingSiteOwnBrandsPage, litres).success.value
-        .set(PackagedAsContractPackerPage, true).success.value
-        .set(HowManyPackagedAsContractPackerPage, litres).success.value
-        .set(ExemptionsForSmallProducersPage, true).success.value
-        .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", litres)).success.value
-        .set(BroughtIntoUKPage, true).success.value
-        .set(HowManyBroughtIntoUKPage, litres).success.value
-        .set(BroughtIntoUkFromSmallProducersPage, true).success.value
-        .set(HowManyBroughtIntoUkFromSmallProducersPage, litres).success.value
-        .set(ClaimCreditsForExportsPage, true).success.value
-        .set(HowManyClaimCreditsForExportsPage, litres).success.value
-        .set(ClaimCreditsForLostDamagedPage, true).success.value
-        .set(HowManyCreditsForLostDamagedPage, litres).success.value
+      val userAnswers = filledUserAnswers
+        .set(CorrectReturnBaseCYAPage, true).success.value
         .set(CorrectionReasonPage, "foo").success.value
         .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
 
@@ -112,26 +115,30 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       }
     }
 
+    "must redirect to CYA when that page has not been submitted" in {
+      val amounts1 = Amounts(40200.00, 4200.00, -300.00, 4500.00, -35700.00)
+      val userAnswers = filledUserAnswers
+
+      val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockCorrectReturnOrchestrator))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        when(mockCorrectReturnOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
+
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.CorrectReturnCYAController.onPageLoad.url
+      }
+    }
+
     "must return OK and contain correct net adjusted amount when prior return total was £0" in {
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", Litreage())
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", Litreage())
       val amounts1 = Amounts(0.00, 4200.00, -300.00, 4500.00, 4500.00)
-      val litres = LitresInBands(0, 0)
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
-        .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
-          smallProducerList = List(superCola, sparkyJuice))
-        .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-        .set(HowManyOperatePackagingSiteOwnBrandsPage, litres).success.value
-        .set(PackagedAsContractPackerPage, true).success.value
-        .set(HowManyPackagedAsContractPackerPage, LitresInBands(10000, 10000)).success.value
-        .set(ExemptionsForSmallProducersPage, true).success.value
-        .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", litres)).success.value
-        .set(BroughtIntoUKPage, false).success.value
-        .set(BroughtIntoUkFromSmallProducersPage, false).success.value
-        .set(ClaimCreditsForExportsPage, true).success.value
-        .set(HowManyClaimCreditsForExportsPage, litres).success.value
-        .set(ClaimCreditsForLostDamagedPage, true).success.value
-        .set(HowManyCreditsForLostDamagedPage, litres).success.value
+      val userAnswers = filledUserAnswers
+        .set(CorrectReturnBaseCYAPage, true).success.value
         .set(CorrectionReasonPage, "Changed the amount packaged as a contract packer").success.value
 
       val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(
@@ -163,22 +170,8 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", Litreage())
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", Litreage())
       val amounts1 = Amounts(4000.00, 4200.00, -300.00, 4500.00, 500.00)
-      val litres = LitresInBands(0, 0)
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
-        .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
-          smallProducerList = List(superCola, sparkyJuice))
-        .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-        .set(HowManyOperatePackagingSiteOwnBrandsPage, litres).success.value
-        .set(PackagedAsContractPackerPage, true).success.value
-        .set(HowManyPackagedAsContractPackerPage, LitresInBands(10000, 10000)).success.value
-        .set(ExemptionsForSmallProducersPage, true).success.value
-        .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", litres)).success.value
-        .set(BroughtIntoUKPage, false).success.value
-        .set(BroughtIntoUkFromSmallProducersPage, false).success.value
-        .set(ClaimCreditsForExportsPage, true).success.value
-        .set(HowManyClaimCreditsForExportsPage, litres).success.value
-        .set(ClaimCreditsForLostDamagedPage, true).success.value
-        .set(HowManyCreditsForLostDamagedPage, litres).success.value
+      val userAnswers = filledUserAnswers
+        .set(CorrectReturnBaseCYAPage, true).success.value
         .set(CorrectionReasonPage, "Changed the amount packaged as a contract packer").success.value
 
       val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(
@@ -210,22 +203,8 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", Litreage())
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", Litreage())
       val amounts1 = Amounts(40200.00, 4200.00, -300.00, 4500.00, -35700.00)
-      val litres = LitresInBands(0, 0)
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
-        .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
-          smallProducerList = List(superCola, sparkyJuice))
-        .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-        .set(HowManyOperatePackagingSiteOwnBrandsPage, litres).success.value
-        .set(PackagedAsContractPackerPage, true).success.value
-        .set(HowManyPackagedAsContractPackerPage, LitresInBands(10000, 10000)).success.value
-        .set(ExemptionsForSmallProducersPage, true).success.value
-        .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", litres)).success.value
-        .set(BroughtIntoUKPage, false).success.value
-        .set(BroughtIntoUkFromSmallProducersPage, false).success.value
-        .set(ClaimCreditsForExportsPage, true).success.value
-        .set(HowManyClaimCreditsForExportsPage, litres).success.value
-        .set(ClaimCreditsForLostDamagedPage, true).success.value
-        .set(HowManyCreditsForLostDamagedPage, litres).success.value
+      val userAnswers = filledUserAnswers
+        .set(CorrectReturnBaseCYAPage, true).success.value
         .set(CorrectionReasonPage, "Changed the amount packaged as a contract packer").success.value
         .set(RepaymentMethodPage, BankAccount).success.value
 
@@ -257,22 +236,8 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", Litreage())
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", Litreage())
       val amounts1 = Amounts(40200.00, 4200.00, -300.00, 4500.00, -35700.00)
-      val litres = LitresInBands(0, 0)
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
-        .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
-          smallProducerList = List(superCola, sparkyJuice))
-        .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-        .set(HowManyOperatePackagingSiteOwnBrandsPage, litres).success.value
-        .set(PackagedAsContractPackerPage, true).success.value
-        .set(HowManyPackagedAsContractPackerPage, LitresInBands(10000, 10000)).success.value
-        .set(ExemptionsForSmallProducersPage, true).success.value
-        .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", litres)).success.value
-        .set(BroughtIntoUKPage, false).success.value
-        .set(BroughtIntoUkFromSmallProducersPage, false).success.value
-        .set(ClaimCreditsForExportsPage, true).success.value
-        .set(HowManyClaimCreditsForExportsPage, litres).success.value
-        .set(ClaimCreditsForLostDamagedPage, true).success.value
-        .set(HowManyCreditsForLostDamagedPage, litres).success.value
+      val userAnswers = filledUserAnswers
+        .set(CorrectReturnBaseCYAPage, true).success.value
         .set(CorrectionReasonPage, "Changed the amount packaged as a contract packer").success.value
 
       val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(

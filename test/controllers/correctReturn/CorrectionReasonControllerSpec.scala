@@ -25,7 +25,7 @@ import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.correctReturn.CorrectionReasonPage
+import pages.correctReturn.{CorrectReturnBaseCYAPage, CorrectionReasonPage}
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -55,12 +55,29 @@ class CorrectionReasonControllerSpec extends SpecBase with MockitoSugar {
       .overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
   }
+  
+  val userAnswers = emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value
 
   "CorrectionReason Controller" - {
 
+    "must redirect to CYA when that page has not been submitted" in {
+      val application = correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, correctionReasonRoute)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[CorrectionReasonView]
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.CorrectReturnCYAController.onPageLoad.url
+      }
+    }
+
     "must return OK and the correct view for a GET" in {
 
-      val application = correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
+      val application = correctReturnAction(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, correctionReasonRoute)
@@ -76,9 +93,9 @@ class CorrectionReasonControllerSpec extends SpecBase with MockitoSugar {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswersForCorrectReturn.set(CorrectionReasonPage, "answer").success.value
+      val filledUserAnswers = userAnswers.set(CorrectionReasonPage, "answer").success.value
 
-      val application = correctReturnAction(userAnswers = Some(userAnswers)).build()
+      val application = correctReturnAction(userAnswers = Some(filledUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, correctionReasonRoute)
@@ -99,7 +116,7 @@ class CorrectionReasonControllerSpec extends SpecBase with MockitoSugar {
       when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
 
       val application =
-        correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+        correctReturnAction(userAnswers = Some(userAnswers))
       .overrides(
         bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
       bind[SessionService].toInstance(mockSessionService)
@@ -120,7 +137,7 @@ class CorrectionReasonControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
 
-      val application = correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn)).build()
+      val application = correctReturnAction(userAnswers = Some(userAnswers)).build()
 
       running(application) {
         val request =
@@ -166,7 +183,7 @@ class CorrectionReasonControllerSpec extends SpecBase with MockitoSugar {
       when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
 
       val application =
-        correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+        correctReturnAction(userAnswers = Some(userAnswers))
           .overrides(
             bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn (onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)

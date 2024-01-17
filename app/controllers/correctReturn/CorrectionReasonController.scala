@@ -40,6 +40,7 @@ class CorrectionReasonController @Inject()(
                                         controllerActions: ControllerActions,
                                        formProvider: CorrectionReasonFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
+                                       val requiredUserAnswers: RequiredUserAnswersForCorrectReturn,
                                        view: CorrectionReasonView,
                                        val genericLogger: GenericLogger,
                                        val errorHandler: ErrorHandler
@@ -47,15 +48,15 @@ class CorrectionReasonController @Inject()(
 
   val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-
-      val preparedForm = request.userAnswers.get(CorrectionReasonPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      requiredUserAnswers.requireData(CorrectionReasonPage, request.userAnswers, request.subscription) {
+        val preparedForm = request.userAnswers.get(CorrectionReasonPage) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+        Future.successful(Ok(view(preparedForm, mode)))
       }
-
-      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {

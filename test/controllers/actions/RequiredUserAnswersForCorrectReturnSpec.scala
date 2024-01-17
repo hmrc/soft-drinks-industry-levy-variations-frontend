@@ -147,8 +147,15 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
   }
 
   "checkChangesRequiredData" - {
+    "should return Redirect to CYA page when user answers past check your answers not submitted" in {
+      val userAnswers = basicUserAnswers
+      val res = requiredUserAnswers.checkChangesRequiredData(userAnswers, basicSubscription, Future.successful(Ok("")))
+      redirectLocation(res).get mustBe routes.CorrectReturnCYAController.onPageLoad.url
+    }
+
     "should return Redirect to Correction Reason page when user answers past check your answers is empty and balance repayment required" in {
       val userAnswers = basicUserAnswers
+        .set(CorrectReturnBaseCYAPage, true).success.value
         .set(BalanceRepaymentRequired, true).success.value
       val res = requiredUserAnswers.checkChangesRequiredData(userAnswers, basicSubscription, Future.successful(Ok("")))
       redirectLocation(res).get mustBe routes.CorrectionReasonController.onPageLoad(CheckMode).url
@@ -156,6 +163,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
 
     "should return Redirect to Repayment reason page if it is not filled in and balance repayment required" in {
       val completedUserAnswers = emptyUserAnswersForCorrectReturn
+        .set(CorrectReturnBaseCYAPage, true).success.value
         .set(BalanceRepaymentRequired, true).success.value
         .set(CorrectionReasonPage, "some info").success.value
 
@@ -165,6 +173,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
 
     "should allow user to continue if Correction Reason and Repayment Method filled in and balance repayment required" in {
       val completedUserAnswers = emptyUserAnswersForCorrectReturn
+        .set(CorrectReturnBaseCYAPage, true).success.value
         .set(BalanceRepaymentRequired, true).success.value
         .set(CorrectionReasonPage, "some info").success.value
         .set(RepaymentMethodPage, RepaymentMethod.BankAccount).success.value
@@ -175,6 +184,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
 
     "should return Redirect to Correction Reason page when user answers past check your answers is empty and balance repayment not required" in {
       val userAnswers = basicUserAnswers
+        .set(CorrectReturnBaseCYAPage, true).success.value
         .set(BalanceRepaymentRequired, false).success.value
       val res = requiredUserAnswers.checkChangesRequiredData(userAnswers, basicSubscription, Future.successful(Ok("")))
       redirectLocation(res).get mustBe routes.CorrectionReasonController.onPageLoad(CheckMode).url
@@ -182,6 +192,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
 
     "should allow user to continue if Correction Reason filled in and balance repayment not required" in {
       val completedUserAnswers = emptyUserAnswersForCorrectReturn
+        .set(CorrectReturnBaseCYAPage, true).success.value
         .set(BalanceRepaymentRequired, false).success.value
         .set(CorrectionReasonPage, "some info").success.value
 
@@ -190,6 +201,21 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
     }
   }
 
+  "correctionReasonRequiredData" - {
+    "should return Redirect to CYA page when user answers past check your answers not submitted" in {
+      val userAnswers = basicUserAnswers
+      val res = requiredUserAnswers.correctionReasonRequiredData(userAnswers, basicSubscription, Future.successful(Ok("")))
+      redirectLocation(res).get mustBe routes.CorrectReturnCYAController.onPageLoad.url
+    }
+  }
+
+  "repaymentMethodRequiredData" - {
+    "should return Redirect to CYA page when user answers past check your answers not submitted" in {
+      val userAnswers = basicUserAnswers
+      val res = requiredUserAnswers.repaymentMethodRequiredData(userAnswers, basicSubscription, Future.successful(Ok("")))
+      redirectLocation(res).get mustBe routes.CorrectReturnCYAController.onPageLoad.url
+    }
+  }
 
   "returnMissingAnswers" - {
     "should return all missing answers in a list when user answers is empty" in {

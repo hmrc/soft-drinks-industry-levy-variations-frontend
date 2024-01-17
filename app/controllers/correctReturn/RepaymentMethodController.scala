@@ -41,6 +41,7 @@ class RepaymentMethodController @Inject()(
                                        controllerActions: ControllerActions,
                                        formProvider: RepaymentMethodFormProvider,
                                        val controllerComponents: MessagesControllerComponents,
+                                       val requiredUserAnswers: RequiredUserAnswersForCorrectReturn,
                                        view: RepaymentMethodView,
                                        val genericLogger: GenericLogger,
                                        val errorHandler: ErrorHandler
@@ -48,13 +49,15 @@ class RepaymentMethodController @Inject()(
 
   val form: Form[RepaymentMethod] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-      val preparedForm = request.userAnswers.get(RepaymentMethodPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
+      requiredUserAnswers.requireData(RepaymentMethodPage, request.userAnswers, request.subscription) {
+        val preparedForm = request.userAnswers.get(RepaymentMethodPage) match {
+          case None => form
+          case Some(value) => form.fill(value)
+        }
+        Future.successful(Ok(view(preparedForm, mode)))
       }
-      Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {

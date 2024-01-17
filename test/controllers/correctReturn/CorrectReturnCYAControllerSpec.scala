@@ -174,7 +174,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
       }
     }
 
-    testInvalidJourneyType(CorrectReturn, CorrectReturnCYAController.onPageLoad.url, hasPostMethod = false)
-    testNoUserAnswersError(CorrectReturnCYAController.onPageLoad.url, hasPostMethod = false)
+    testInvalidJourneyType(CorrectReturn, CorrectReturnCYAController.onPageLoad.url)
+    testNoUserAnswersError(CorrectReturnCYAController.onPageLoad.url)
   }
 }

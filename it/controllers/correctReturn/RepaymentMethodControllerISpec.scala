@@ -5,14 +5,13 @@ import models.SelectChange.CorrectReturn
 import models.correctReturn.RepaymentMethod
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.correctReturn.RepaymentMethodPage
+import pages.correctReturn.{CorrectReturnBaseCYAPage, RepaymentMethodPage}
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
 
 class RepaymentMethodControllerISpec extends ControllerITTestHelper {
-
   val normalRoutePath = "/repayment-method"
   val checkRoutePath = "/change-repayment-method"
 
@@ -22,7 +21,7 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
@@ -49,7 +48,9 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          val userAnswers = emptyUserAnswersForCorrectReturn.set(RepaymentMethodPage, radio).success.value
+          val userAnswers = emptyUserAnswersForCorrectReturn
+            .set(CorrectReturnBaseCYAPage, true).success.value
+            .set(RepaymentMethodPage, radio).success.value
 
           setUpForCorrectReturn(userAnswers)
 
@@ -84,7 +85,7 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + checkRoutePath)
@@ -111,7 +112,9 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
           given
             .commonPrecondition
 
-          val userAnswers = emptyUserAnswersForCorrectReturn.set(RepaymentMethodPage, radio).success.value
+          val userAnswers = emptyUserAnswersForCorrectReturn
+            .set(CorrectReturnBaseCYAPage, true).success.value
+            .set(RepaymentMethodPage, radio).success.value
 
 
           setUpForCorrectReturn(userAnswers)
@@ -149,7 +152,7 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
+            setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
                 client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> radio)
@@ -169,7 +172,9 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            val userAnswers = emptyUserAnswersForCorrectReturn.set(RepaymentMethodPage, radio).success.value
+            val userAnswers = emptyUserAnswersForCorrectReturn
+              .set(CorrectReturnBaseCYAPage, true).success.value
+              .set(RepaymentMethodPage, radio).success.value
 
             setUpForCorrectReturn(userAnswers)
             WsTestClient.withClient { client =>
@@ -195,7 +200,7 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> "")
@@ -228,7 +233,7 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
+            setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
                 client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> Json.toJson(radio))
@@ -248,7 +253,9 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
             given
               .commonPrecondition
 
-            val userAnswers = emptyUserAnswersForCorrectReturn.set(RepaymentMethodPage, radio).success.value
+            val userAnswers = emptyUserAnswersForCorrectReturn
+              .set(CorrectReturnBaseCYAPage, true).success.value
+              .set(RepaymentMethodPage, radio).success.value
 
             setUpForCorrectReturn(userAnswers)
             WsTestClient.withClient { client =>
@@ -274,7 +281,7 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
         given
           .commonPrecondition
 
-        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
+        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
             client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> "")
