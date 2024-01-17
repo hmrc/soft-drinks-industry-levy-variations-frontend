@@ -17,7 +17,7 @@
 package controllers.actions
 
 import models.backend.RetrievedSubscription
-import models.{CheckMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import pages.Page
 import pages.correctReturn._
 import play.api.mvc.Result
@@ -28,19 +28,12 @@ import scala.concurrent.Future
 class RequiredUserAnswersForCorrectReturn @Inject() extends RequiredUserAnswersHelper {
   private[controllers] def requireData(page: Page, userAnswers: UserAnswers, subscription: RetrievedSubscription)
                                       (action: => Future[Result]): Future[Result] = {
-    page match {
-      case CorrectionReasonPage => {
-        val missingAnswers = returnMissingAnswers(userAnswers, subscription, page.previousPagesRequired)
-        getResultFromMissingAnswers(missingAnswers, action)
-      }
-      case RepaymentMethodPage => {
-        val missingAnswers = returnMissingAnswers(userAnswers, subscription, page.previousPagesRequired)
-        getResultFromMissingAnswers(missingAnswers, action)
-      }
-      case _ => {
-        val missingAnswers = returnMissingAnswers(userAnswers, subscription, page.previousPagesRequired)
-        getResultFromMissingAnswers(missingAnswers, action, mode = CheckMode)
-      }
+    val mode = if (List(CorrectReturnBaseCYAPage, CorrectReturnCheckChangesPage).contains(page)) {
+      CheckMode
+    } else {
+      NormalMode
     }
+    val missingAnswers = returnMissingAnswers(userAnswers, subscription, page.previousPagesRequired)
+    getResultFromMissingAnswers(missingAnswers, action, mode = mode)
   }
 }
