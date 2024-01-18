@@ -22,7 +22,7 @@ import models.backend.{RetrievedActivity, RetrievedSubscription, UkAddress}
 import models.correctReturn.{AddASmallProducer, RepaymentMethod}
 import models.requests.CorrectReturnDataRequest
 import models.{CheckMode, Contact, LitresInBands, ReturnPeriod}
-import pages.RequiredPage
+import pages.{Page, RequiredPage}
 import pages.correctReturn._
 import play.api.libs.json.{Json, Reads}
 import play.api.mvc.Results.Ok
@@ -78,6 +78,9 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
     RequiredPage(PackAtBusinessAddressPage, additionalPreconditions = List(false, true)),
     RequiredPage(AskSecondaryWarehouseInReturnPage, additionalPreconditions = List(false))
   )
+
+  def requiredPagesWithEmptyOrAllTruePreconditions(requiredPages: List[RequiredPage]): List[Page] =
+    requiredPages.filter(!_.additionalPreconditions.contains(false)).map(_.page)
 
   "requireData - CYA" - {
 
@@ -344,7 +347,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
         LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
       val res = CorrectReturnBaseCYAPage.previousPagesRequired(basicUserAnswers, subscription)
-      res.filter(!_.additionalPreconditions.contains(false)).map(_.page).contains(PackAtBusinessAddressPage) mustBe false
+      requiredPagesWithEmptyOrAllTruePreconditions(res).contains(PackAtBusinessAddressPage) mustBe false
     }
 
     "should be correct if user is a new packer" in {
@@ -363,7 +366,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = false, importer = true, voluntaryRegistration = true),
         LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
       val res = CorrectReturnBaseCYAPage.previousPagesRequired(completedUserAnswers, subscription)
-      res.filter(!_.additionalPreconditions.contains(false)).map(_.page).contains(PackAtBusinessAddressPage) mustBe true
+      requiredPagesWithEmptyOrAllTruePreconditions(res).contains(PackAtBusinessAddressPage) mustBe true
     }
   }
 
@@ -374,7 +377,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         RetrievedActivity(smallProducer = true, largeProducer = true, contractPacker = true, importer = true, voluntaryRegistration = true),
         LocalDate.now(),List.empty,List.empty,Contact(None,None,"",""),None)
       val res = CorrectReturnBaseCYAPage.previousPagesRequired(basicUserAnswers, subscription)
-      res.filter(!_.additionalPreconditions.contains(false)).map(_.page).contains(AskSecondaryWarehouseInReturnPage) mustBe false
+      requiredPagesWithEmptyOrAllTruePreconditions(res).contains(AskSecondaryWarehouseInReturnPage) mustBe false
     }
 
     "should be correct if user is a new importer" in {
@@ -395,7 +398,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         LocalDate.now(),List.empty, List.empty, Contact(None, None, "", ""), None)
 
       val res = CorrectReturnBaseCYAPage.previousPagesRequired(completedUserAnswers, subscription)
-      res.filter(!_.additionalPreconditions.contains(false)).map(_.page).contains(AskSecondaryWarehouseInReturnPage) mustBe true
+      requiredPagesWithEmptyOrAllTruePreconditions(res).contains(AskSecondaryWarehouseInReturnPage) mustBe true
     }
   }
 
@@ -407,7 +410,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         LocalDate.now(),List.empty, List.empty, Contact(None, None, "", ""), None)
 
       val res = CorrectReturnBaseCYAPage.previousPagesRequired(basicUserAnswers, subscription)
-      res.filter(!_.additionalPreconditions.contains(false)).map(_.page).contains(OperatePackagingSiteOwnBrandsPage) mustBe false
+      requiredPagesWithEmptyOrAllTruePreconditions(res).contains(OperatePackagingSiteOwnBrandsPage) mustBe false
     }
 
     "should be correct if user is a new small producer" in {
@@ -417,7 +420,7 @@ class RequiredUserAnswersForCorrectReturnSpec extends SpecBase with DefaultAwait
         LocalDate.now(), List.empty, List.empty, Contact(None, None, "", ""), None)
 
       val res = CorrectReturnBaseCYAPage.previousPagesRequired(basicUserAnswers, subscription)
-      res.filter(!_.additionalPreconditions.contains(false)).map(_.page).contains(OperatePackagingSiteOwnBrandsPage) mustBe true
+      requiredPagesWithEmptyOrAllTruePreconditions(res).contains(OperatePackagingSiteOwnBrandsPage) mustBe true
     }
   }
 }

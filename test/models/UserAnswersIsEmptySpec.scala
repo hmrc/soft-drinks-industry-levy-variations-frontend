@@ -18,7 +18,7 @@ package models
 
 import generators.ChangeActivityCYAGenerators.contactAddress
 import generators.ModelGenerators
-import org.scalacheck.{Gen, Shrink}
+import org.scalacheck.Gen
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -29,9 +29,15 @@ class UserAnswersIsEmptySpec extends AnyFreeSpec with Matchers with ScalaCheckPr
 
   val nonEmptyAlphaStr: Gen[String] = Gen.alphaStr.suchThat(_.nonEmpty)
 
+  def nonEmptyJsPaths(keys: List[String], change: String): List[JsPath] = {
+    keys.foldLeft(List(JsPath(List(KeyPathNode(change)))))((acc, d) => {
+      acc :+ JsPath(acc.last.path :+ KeyPathNode(d))
+    })
+  }
+
   "UserAnswers" - {
     "isEmpty" - {
-      "must return true or false correctly depending on whether data is empty at that path" in {
+      "must return true when there is no data on user answers at that path" in {
         val gen = for {
           keys <- Gen.nonEmptyListOf(nonEmptyAlphaStr)
           value <- nonEmptyAlphaStr
@@ -40,16 +46,30 @@ class UserAnswersIsEmptySpec extends AnyFreeSpec with Matchers with ScalaCheckPr
 
         forAll(gen) {
           case (keys: List[String], value: String, wrongPath: String) =>
-            val change = SelectChange.CancelRegistration
-            val pathNodes = (List(change.toString) ++ keys).map(KeyPathNode)
-            val data = Json.obj().set(JsPath(pathNodes), JsString(value)).asOpt.value.asInstanceOf[JsObject]
-            val userAnswers = UserAnswers("sdilId", change, contactAddress = contactAddress, data = data)
-            val nonEmptyJsPaths = keys.foldLeft(List(JsPath(List(KeyPathNode(change.toString)))))((acc, d) => {
-              acc :+ JsPath(acc.last.path :+ KeyPathNode(d))
+            SelectChange.values.foreach(change => {
+              val pathNodes = (List(change.toString) ++ keys).map(KeyPathNode)
+              val data = Json.obj().set(JsPath(pathNodes), JsString(value)).asOpt.value.asInstanceOf[JsObject]
+              val userAnswers = UserAnswers("sdilId", change, contactAddress = contactAddress, data = data)
+              val emptyJsPaths = nonEmptyJsPaths(keys, change.toString).map(path => JsPath(path.path :+ KeyPathNode(wrongPath)))
+              emptyJsPaths.foreach(userAnswers.isEmptyAtPath(_) mustEqual true)
             })
-            nonEmptyJsPaths.foreach(userAnswers.isEmptyAtPath(_) mustEqual false)
-            val emptyJsPaths = nonEmptyJsPaths.map(path => JsPath(path.path :+ KeyPathNode(wrongPath)))
-            emptyJsPaths.foreach(userAnswers.isEmptyAtPath(_) mustEqual true)
+        }
+      }
+
+      "must return false when there is data on user answers at that path" in {
+        val gen = for {
+          keys <- Gen.nonEmptyListOf(nonEmptyAlphaStr)
+          value <- nonEmptyAlphaStr
+        } yield (keys, value)
+
+        forAll(gen) {
+          case (keys: List[String], value: String) =>
+            SelectChange.values.foreach(change => {
+              val pathNodes = (List(change.toString) ++ keys).map(KeyPathNode)
+              val data = Json.obj().set(JsPath(pathNodes), JsString(value)).asOpt.value.asInstanceOf[JsObject]
+              val userAnswers = UserAnswers("sdilId", change, contactAddress = contactAddress, data = data)
+              nonEmptyJsPaths(keys, change.toString).foreach(userAnswers.isEmptyAtPath(_) mustEqual false)
+            })
         }
       }
     }
