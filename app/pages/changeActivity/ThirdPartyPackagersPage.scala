@@ -31,7 +31,6 @@ case object ThirdPartyPackagersPage extends QuestionPage[Boolean] {
 
   override val url: Mode => String = mode => routes.ThirdPartyPackagersController.onPageLoad(mode).url
 
-  override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (_, _) => {
+  override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (_, _) =>
     List(RequiredPage(AmountProducedPage))
-  }
 }

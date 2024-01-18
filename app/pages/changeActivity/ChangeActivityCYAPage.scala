@@ -28,48 +28,37 @@ case object ChangeActivityCYAPage extends Page {
 
   override val url: Mode => String = _ => routes.ChangeActivityCYAController.onPageLoad.url
 
-  override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (userAnswers, _) => {
-    val isSmallOrLargeProducer: Boolean =
-      userAnswers.get(AmountProducedPage).contains(AmountProduced.Large) || userAnswers.get(AmountProducedPage).contains(AmountProduced.Small)
-    val isSmallOrNoneProducer: Boolean =
-      userAnswers.get(AmountProducedPage).contains(AmountProduced.Small) || userAnswers.get(AmountProducedPage).contains(AmountProduced.None)
-    val eitherOperatePackagingSitesOrContractPacking = userAnswers.get(OperatePackagingSiteOwnBrandsPage).flatMap(ops => {
-      userAnswers.get(ContractPackingPage).map(cp => {
-        ops || cp
-      })
-    }).getOrElse(false)
-
+  override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (userAnswers, _) =>
     List(
       RequiredPage(AmountProducedPage),
-      RequiredPage(ThirdPartyPackagersPage, additionalPreconditions = List(userAnswers.get(AmountProducedPage).contains(AmountProduced.Small))),
-      RequiredPage(OperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(isSmallOrLargeProducer)),
+      RequiredPage(ThirdPartyPackagersPage, additionalPreconditions = List(userAnswers.getChangeActivityData.exists(_.isSmall))),
+      RequiredPage(OperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(userAnswers.getChangeActivityData.exists(_.isLargeOrSmall))),
       RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(userAnswers.get(OperatePackagingSiteOwnBrandsPage).contains(true))),
       RequiredPage(ContractPackingPage),
       RequiredPage(HowManyContractPackingPage, additionalPreconditions = List(userAnswers.get(ContractPackingPage).contains(true))),
       RequiredPage(ImportsPage),
       RequiredPage(HowManyImportsPage, additionalPreconditions = List(userAnswers.get(ImportsPage).contains(true))),
       RequiredPage(PackAtBusinessAddressPage, additionalPreconditions = List(
-        isSmallOrNoneProducer,
+        !userAnswers.getChangeActivityData.exists(_.isLarge),
         userAnswers.get(ContractPackingPage).contains(true),
         userAnswers.packagingSiteList.isEmpty
       )),
       RequiredPage(PackAtBusinessAddressPage, additionalPreconditions = List(
-        userAnswers.get(AmountProducedPage).contains(AmountProduced.Large),
-        eitherOperatePackagingSitesOrContractPacking,
+        userAnswers.getChangeActivityData.exists(_.isLarge),
+        userAnswers.getChangeActivityData.exists(_.operatePackagingSitesOrContractPacking),
         userAnswers.packagingSiteList.isEmpty
       )),
       RequiredPage(PackagingSiteDetailsPage, additionalPreconditions = List(
-        isSmallOrNoneProducer,
+        !userAnswers.getChangeActivityData.exists(_.isLarge),
         userAnswers.get(ContractPackingPage).contains(true)
       )),
       RequiredPage(PackagingSiteDetailsPage, additionalPreconditions = List(
-        userAnswers.get(AmountProducedPage).contains(AmountProduced.Large),
-        eitherOperatePackagingSitesOrContractPacking
+        userAnswers.getChangeActivityData.exists(_.isLarge),
+        userAnswers.getChangeActivityData.exists(_.operatePackagingSitesOrContractPacking)
       )),
       RequiredPage(SecondaryWarehouseDetailsPage, additionalPreconditions = List(
         userAnswers.get(ImportsPage).contains(true),
         !userAnswers.isEmpty(PackagingSiteDetailsPage)
       ))
     )
-  }
 }

@@ -31,16 +31,28 @@ case class ChangeActivityData(
                              ) {
   def isLarge: Boolean = amountProduced == AmountProduced.Large
   def isSmall: Boolean = amountProduced == AmountProduced.Small
+
+  def isLargeOrSmall: Boolean = isLarge || isSmall
+
   def hasImported: Boolean = imported.fold(false)(_.total > 0)
   def copackForOthers: Boolean = copackerAll.fold(false)(_.total > 0)
 
   def isCopackee: Boolean = isSmall && thirdPartyPackagers.contains(true)
 
-  def ownBrandsProduced: Option[LitresInBands] = if (isLarge || isSmall) {
+  def ownBrandsProduced: Option[LitresInBands] = if (isLargeOrSmall) {
     getOptLitres(operatePackagingSiteOwnBrands, howManyOperatePackagingSiteOwnBrands)
   } else {
     None
   }
+
+  def operatePackagingSitesOrContractPacking: Boolean = {
+    (operatePackagingSiteOwnBrands, contractPacking) match {
+      case (Some(true), _) => true
+      case (_, Some(true)) => true
+      case _ => false
+    }
+  }
+
   def imported: Option[LitresInBands] = getOptLitres(imports, howManyImports)
   def copackerAll: Option[LitresInBands] = getOptLitres(contractPacking, howManyContractPacking)
 
