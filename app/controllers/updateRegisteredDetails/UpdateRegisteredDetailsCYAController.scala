@@ -17,7 +17,7 @@
 package controllers.updateRegisteredDetails
 
 import com.google.inject.Inject
-import controllers.actions.ControllerActions
+import controllers.actions.{CheckingSubmissionAction, ControllerActions, DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import handlers.ErrorHandler
 import models.SelectChange.UpdateRegisteredDetails
 import orchestrators.UpdateRegisteredDetailsOrchestrator
@@ -29,11 +29,14 @@ import utilities.GenericLogger
 import views.html.updateRegisteredDetails.UpdateRegisteredDetailsCYAView
 import views.summary.updateRegisteredDetails.{BusinessAddressSummary, UKSitesSummary, UpdateContactDetailsSummary}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class UpdateRegisteredDetailsCYAController @Inject()(
                                                       override val messagesApi: MessagesApi,
-                                                      controllerActions: ControllerActions,
+                                                      identify: IdentifierAction,
+                                                      getData: DataRetrievalAction,
+                                                      requireData: DataRequiredAction,
+                                                      checkUpdateDetailsSubmission: CheckingSubmissionAction,
                                                       updateRegisteredDetailsOrchestrator: UpdateRegisteredDetailsOrchestrator,
                                                       val controllerComponents: MessagesControllerComponents,
                                                       genericLogger: GenericLogger,
@@ -41,17 +44,17 @@ class UpdateRegisteredDetailsCYAController @Inject()(
                                                       errorHandler: ErrorHandler
                                           )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen checkUpdateDetailsSubmission).async {
     implicit request =>
-      val ukSiteDetailsSummary: Option[(String, SummaryList)] = UKSitesSummary.getHeadingAndSummary(request.userAnswers, true)
+      val ukSiteDetailsSummary: Option[(String, SummaryList)] = UKSitesSummary.getHeadingAndSummary(request.userAnswers, isCheckAnswers = true)
       val updateContactDetailsSummary: Option[(String, SummaryList)] = UpdateContactDetailsSummary.rows(request.userAnswers)
       val businessAddressSummary: Option[(String, SummaryList)] = BusinessAddressSummary.rows(request.userAnswers)
       val summaryList = Seq(ukSiteDetailsSummary, updateContactDetailsSummary, businessAddressSummary).flatten
       val orgName: String = " " + request.subscription.orgName
 
-      Ok(view(orgName, summaryList, routes.UpdateRegisteredDetailsCYAController.onSubmit))
+      Future.successful(Ok(view(orgName, summaryList, routes.UpdateRegisteredDetailsCYAController.onSubmit)))
   }
-  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails).async {implicit request =>
+  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData andThen checkUpdateDetailsSubmission).async { implicit request =>
     val subscription = request.subscription
     val userAnswers = request.userAnswers
     updateRegisteredDetailsOrchestrator.submitVariation(subscription, userAnswers).value.map {

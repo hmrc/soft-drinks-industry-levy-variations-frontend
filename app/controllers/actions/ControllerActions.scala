@@ -81,18 +81,18 @@ class ControllerActions @Inject()(identify: IdentifierAction,
   private def journeyDataRequiredAction(journeyType: SelectChange): ActionRefiner[OptionalDataRequest, DataRequest] =
     new ActionRefiner[OptionalDataRequest, DataRequest] {
       override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
-        if (request.userAnswers.get.submitted) {
-          request.userAnswers.get.journeyType match {
-            case CancelRegistration =>
-              Future(Left(Redirect(controllers.cancelRegistration.routes.CancellationRequestDoneController.onPageLoad())))
-            case UpdateRegisteredDetails =>
-              Future(Left(Redirect(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad())))
-            case CorrectReturn =>
-              Future(Left(Redirect(controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad)))
-            case ChangeActivity =>
-              Future(Left(Redirect(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad)))
-          }
-        } else {
+//        if (request.userAnswers.get.submitted) {
+//          request.userAnswers.get.journeyType match {
+//            case CancelRegistration =>
+//              Future(Left(Redirect(controllers.cancelRegistration.routes.CancellationRequestDoneController.onPageLoad())))
+//            case UpdateRegisteredDetails =>
+//              Future(Left(Redirect(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad())))
+//            case CorrectReturn =>
+//              Future(Left(Redirect(controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad)))
+//            case ChangeActivity =>
+//              Future(Left(Redirect(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad)))
+//          }
+//        } else {
           request.userAnswers match {
             case Some(userAnswers) if userAnswers.journeyType == journeyType =>
               Future.successful(Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers)))
@@ -106,7 +106,7 @@ class ControllerActions @Inject()(identify: IdentifierAction,
             case _ => Future.successful(Left(Redirect(routes.SelectChangeController.onPageLoad)))
           }
         }
-      }
+
       override protected def executionContext: ExecutionContext = ec
     }
 
