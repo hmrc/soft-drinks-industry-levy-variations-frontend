@@ -259,7 +259,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
             continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/secondary-warehouses/$sdilNumber",
             homeNavHref = None,
             signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
-                      accessibilityFooterUrl = Some(s"http://localhost:9250/soft-drinks-industry-levy-variations-frontend/accessibility-statement?pageUri=%2Fsoft-drinks-industry-levy-variations-frontend%2F"),
+            accessibilityFooterUrl = Some("http://localhost:12346"),
             phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fchange-registered-details%2Fwarehouse-details"),
             deskProServiceName = None,
             showPhaseBanner = Some(false),
