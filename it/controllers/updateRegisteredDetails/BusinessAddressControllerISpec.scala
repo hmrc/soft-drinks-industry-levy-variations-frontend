@@ -24,7 +24,7 @@ class BusinessAddressControllerISpec extends ControllerITTestHelper {
           continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/business-address/$sdilNumber",
           homeNavHref = None,
           signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
-          accessibilityFooterUrl = None,
+          accessibilityFooterUrl = Some("http://localhost:12346"),
           phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fchange-registered-details%2Fchange-business-address"),
           deskProServiceName = None,
           showPhaseBanner = Some(false),
