@@ -55,7 +55,7 @@ class CorrectReturnOrchestrator @Inject()(returnService: ReturnService,
     for {
       _ <- returnService.submitSdilReturnsVary(subscription, userAnswers, originalReturn, returnPeriod, revisedReturn)
       variation <- returnService.submitReturnVariation(subscription, revisedReturn, userAnswers, correctReturnData)
-      _ <- EitherT(sessionService.set(userAnswers.copy(submittedOn = Some(instantNow))))
+      _ <- EitherT(sessionService.set(userAnswers.copy(submitted = true, submittedOn = Some(instantNow))))
     } yield variation
   }
 

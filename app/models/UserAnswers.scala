@@ -38,7 +38,7 @@ case class UserAnswers(
                         warehouseList: Map[String, Site] = Map.empty,
                         contactAddress: UkAddress,
                         correctReturnPeriod: Option[ReturnPeriod] = None,
-                        submitted:Boolean = false,
+                        submitted: Boolean = false,
                         submittedOn: Option[Instant] = None,
                         lastUpdated: Instant = Instant.now
                             ) {

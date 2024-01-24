@@ -49,7 +49,7 @@ class CancelRegistrationOrchestrator @Inject()(sdilConnector: SoftDrinksIndustry
     val cancelRegistrationVariation = getVariationToBeSubmitted(subscription, userAnswers)
     for {
       variation <- sdilConnector.submitVariation(cancelRegistrationVariation, subscription.sdilRef)
-      _ <- EitherT(sessionService.set(userAnswers.copy(submittedOn = Some(Instant.now))))
+      _ <- EitherT(sessionService.set(userAnswers.copy(submitted = true, submittedOn = Some(Instant.now))))
     } yield variation
   }
 }
