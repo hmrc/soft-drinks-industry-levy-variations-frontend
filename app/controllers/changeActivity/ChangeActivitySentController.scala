@@ -40,7 +40,7 @@ class ChangeActivitySentController @Inject()(
                                      genericLogger: GenericLogger
                                    ) extends FrontendBaseController with I18nSupport {
 
- def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
+ def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity, ignoreSubmitted = true) {
   implicit request =>
     request.userAnswers.submittedOn match {
       case Some(submittedOnDate) =>
