@@ -42,41 +42,32 @@ class ControllerActions @Inject()(identify: IdentifierAction,
   }
 
   def withRequiredJourneyData[A](journeyType: SelectChange): ActionBuilder[DataRequest, AnyContent] = {
-    identify andThen getData andThen journeyDataRequiredAction(journeyType, onPostSubmissionPageLoad = false)
+    identify andThen getData andThen journeyDataRequiredAction(journeyType) andThen checkSubmission(onPostSubmissionPageLoad = false)
   }
 
   def withRequiredJourneyDataPostSubmission[A](journeyType: SelectChange): ActionBuilder[DataRequest, AnyContent] = {
-    identify andThen getData andThen journeyDataRequiredAction(journeyType, onPostSubmissionPageLoad = true)
+    identify andThen getData andThen journeyDataRequiredAction(journeyType) andThen checkSubmission(onPostSubmissionPageLoad = true)
   }
 
   def withCorrectReturnJourneyData[A]: ActionBuilder[CorrectReturnDataRequest, AnyContent] = {
-    identify andThen getData andThen correctReturnDataRequiredAction(onPostSubmissionPageLoad = false)
+    identify andThen getData andThen correctReturnDataRequiredAction andThen checkReturnSubmission(onPostSubmissionPageLoad = false)
   }
 
   def withCorrectReturnJourneyDataPostSubmission[A]: ActionBuilder[CorrectReturnDataRequest, AnyContent] = {
-    identify andThen getData andThen correctReturnDataRequiredAction(onPostSubmissionPageLoad = true)
+    identify andThen getData andThen correctReturnDataRequiredAction andThen checkReturnSubmission(onPostSubmissionPageLoad = true)
   }
 
-//TODO: CLEAN UP THIS ONE
-  private def correctReturnDataRequiredAction(onPostSubmissionPageLoad: Boolean): ActionRefiner[OptionalDataRequest, CorrectReturnDataRequest] =
+  private def correctReturnDataRequiredAction: ActionRefiner[OptionalDataRequest, CorrectReturnDataRequest] =
     new ActionRefiner[OptionalDataRequest, CorrectReturnDataRequest] {
       override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, CorrectReturnDataRequest[A]]] = {
         implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-        if (request.userAnswers.get.submitted && !onPostSubmissionPageLoad) {
-//          UPDATE DONE PAGES
-          Future(Left(Redirect(controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad)))
-        } else if (!request.userAnswers.get.submitted && onPostSubmissionPageLoad) {
-//          ACCESSING UPDATE DONE PAGES INCORRECTLY
-          Future(Left(Redirect(controllers.correctReturn.routes.SelectController.onPageLoad)))
-        } else {
-          request.userAnswers match {
-            case Some(userAnswers) if userAnswers.journeyType == SelectChange.CorrectReturn =>
-              userAnswers.correctReturnPeriod match {
-                case Some(returnPeriod) => getOriginalReturnAndCreateDataRequest(userAnswers, returnPeriod, request)
-                case None => Future.successful(Left(Redirect(controllers.correctReturn.routes.SelectController.onPageLoad)))
-              }
-            case _ => Future.successful(Left(Redirect(routes.SelectChangeController.onPageLoad)))
-          }
+        request.userAnswers match {
+          case Some(userAnswers) if userAnswers.journeyType == SelectChange.CorrectReturn =>
+            userAnswers.correctReturnPeriod match {
+              case Some(returnPeriod) => getOriginalReturnAndCreateDataRequest(userAnswers, returnPeriod, request)
+              case None => Future.successful(Left(Redirect(controllers.correctReturn.routes.SelectController.onPageLoad)))
+            }
+          case _ => Future.successful(Left(Redirect(routes.SelectChangeController.onPageLoad)))
         }
       }
 
@@ -95,13 +86,53 @@ class ControllerActions @Inject()(identify: IdentifierAction,
       }
     }
 
-//  TODO: BRING OUT DIFFERENT OPTIONS AS SEPARATE FUNCTION
-  private def journeyDataRequiredAction(journeyType: SelectChange, onPostSubmissionPageLoad: Boolean): ActionRefiner[OptionalDataRequest, DataRequest] =
+  private def checkReturnSubmission(onPostSubmissionPageLoad: Boolean): ActionRefiner[CorrectReturnDataRequest, CorrectReturnDataRequest] =
+    new ActionRefiner[CorrectReturnDataRequest, CorrectReturnDataRequest] {
+      override protected def refine[A](request: CorrectReturnDataRequest[A]): Future[Either[Result, CorrectReturnDataRequest[A]]] = {
+        implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+//        TODO: TIDY UP
+        if (request.userAnswers.submitted && !onPostSubmissionPageLoad) {
+          //          UPDATE DONE PAGES
+          Future(Left(Redirect(controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad)))
+        } else if (!request.userAnswers.submitted && onPostSubmissionPageLoad) {
+          //          ACCESSING UPDATE DONE PAGES INCORRECTLY
+          Future(Left(Redirect(controllers.correctReturn.routes.SelectController.onPageLoad)))
+        } else {
+          Future.successful(Right(request))
+        }
+      }
+
+      override protected def executionContext: ExecutionContext = ec
+    }
+
+//  TODO: REDUCE CYCLOMATIC COMPLEXITY
+  private def journeyDataRequiredAction(journeyType: SelectChange): ActionRefiner[OptionalDataRequest, DataRequest] =
     new ActionRefiner[OptionalDataRequest, DataRequest] {
       override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
-        if (request.userAnswers.get.submitted && !onPostSubmissionPageLoad) {
-//          UPDATE DONE PAGES
-          request.userAnswers.get.journeyType match {
+        request.userAnswers match {
+          case Some(userAnswers) if userAnswers.journeyType == journeyType =>
+            Future.successful(Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers)))
+          case Some(userAnswers) if journeyType == SelectChange.CancelRegistration && userAnswers.journeyType == SelectChange.ChangeActivity =>
+            Future.successful(Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers)))
+          case None if request.subscription.deregDate.nonEmpty =>
+            selectChangeOrchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(request.subscription).value.map{
+              case Right(userAnswers) => Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers))
+              case Left(_) => Left(InternalServerError(errorHandler.internalServerErrorTemplate(request)))
+            }
+          case _ => Future.successful(Left(Redirect(routes.SelectChangeController.onPageLoad)))
+        }
+      }
+
+      override protected def executionContext: ExecutionContext = ec
+    }
+
+  //  TODO: REDUCE CYCLOMATIC COMPLEXITY
+  private def checkSubmission(onPostSubmissionPageLoad: Boolean): ActionRefiner[DataRequest, DataRequest] =
+    new ActionRefiner[DataRequest, DataRequest] {
+      override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
+        if (request.userAnswers.submitted && !onPostSubmissionPageLoad) {
+          //          UPDATE DONE PAGES
+          request.userAnswers.journeyType match {
             case CancelRegistration =>
               Future(Left(Redirect(controllers.cancelRegistration.routes.CancellationRequestDoneController.onPageLoad())))
             case UpdateRegisteredDetails =>
@@ -111,9 +142,9 @@ class ControllerActions @Inject()(identify: IdentifierAction,
             case ChangeActivity =>
               Future(Left(Redirect(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad)))
           }
-        } else if (!request.userAnswers.get.submitted && onPostSubmissionPageLoad) {
-//          ACCESSING UPDATE DONE PAGES INCORRECTLY
-          request.userAnswers.get.journeyType match {
+        } else if (!request.userAnswers.submitted && onPostSubmissionPageLoad) {
+          //          ACCESSING UPDATE DONE PAGES INCORRECTLY
+          request.userAnswers.journeyType match {
             case CancelRegistration =>
               Future(Left(Redirect(controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode))))
             case UpdateRegisteredDetails =>
@@ -124,18 +155,7 @@ class ControllerActions @Inject()(identify: IdentifierAction,
               Future(Left(Redirect(controllers.changeActivity.routes.AmountProducedController.onPageLoad(NormalMode))))
           }
         } else {
-          request.userAnswers match {
-            case Some(userAnswers) if userAnswers.journeyType == journeyType =>
-              Future.successful(Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers)))
-            case Some(userAnswers) if journeyType == SelectChange.CancelRegistration && userAnswers.journeyType == SelectChange.ChangeActivity =>
-              Future.successful(Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers)))
-            case None if request.subscription.deregDate.nonEmpty =>
-              selectChangeOrchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(request.subscription).value.map{
-                case Right(userAnswers) => Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers))
-                case Left(_) => Left(InternalServerError(errorHandler.internalServerErrorTemplate(request)))
-              }
-            case _ => Future.successful(Left(Redirect(routes.SelectChangeController.onPageLoad)))
-          }
+          Future.successful(Right(request))
         }
       }
 
