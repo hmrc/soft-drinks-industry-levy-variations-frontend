@@ -40,7 +40,7 @@ class ControllerActions @Inject()(identify: IdentifierAction,
   def withRequiredData[A]: ActionBuilder[DataRequest, AnyContent] = {
     identify andThen getData andThen dataRequiredAction
   }
-  
+
   def withRequiredJourneyData[A](journeyType: SelectChange): ActionBuilder[DataRequest, AnyContent] = {
     identify andThen getData andThen journeyDataRequiredAction(journeyType, ignoreSubmitted = false)
   }

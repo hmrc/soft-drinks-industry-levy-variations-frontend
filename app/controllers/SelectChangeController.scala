@@ -46,10 +46,9 @@ class SelectChangeController @Inject()(
   val form = formProvider()
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData).async {
-//        TODO: CLEAR USER ANSWERS ON PAGE LOAD HERE
     implicit request =>
       val preparedForm = request.userAnswers match {
-        case Some(userAnswers) => form.fill(userAnswers.journeyType)
+        case Some(userAnswers) if !userAnswers.submitted => form.fill(userAnswers.journeyType)
         case None => form
       }
       selectChangeOrchestrator.hasReturnsToCorrect(request.subscription).value.map {
