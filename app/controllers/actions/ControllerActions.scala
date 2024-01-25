@@ -86,26 +86,6 @@ class ControllerActions @Inject()(identify: IdentifierAction,
       }
     }
 
-  private def checkReturnSubmission(onPostSubmissionPageLoad: Boolean): ActionRefiner[CorrectReturnDataRequest, CorrectReturnDataRequest] =
-    new ActionRefiner[CorrectReturnDataRequest, CorrectReturnDataRequest] {
-      override protected def refine[A](request: CorrectReturnDataRequest[A]): Future[Either[Result, CorrectReturnDataRequest[A]]] = {
-        implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-//        TODO: TIDY UP
-        if (request.userAnswers.submitted && !onPostSubmissionPageLoad) {
-          //          UPDATE DONE PAGES
-          Future(Left(Redirect(controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad)))
-        } else if (!request.userAnswers.submitted && onPostSubmissionPageLoad) {
-          //          ACCESSING UPDATE DONE PAGES INCORRECTLY
-          Future(Left(Redirect(controllers.correctReturn.routes.SelectController.onPageLoad)))
-        } else {
-          Future.successful(Right(request))
-        }
-      }
-
-      override protected def executionContext: ExecutionContext = ec
-    }
-
-//  TODO: REDUCE CYCLOMATIC COMPLEXITY
   private def journeyDataRequiredAction(journeyType: SelectChange): ActionRefiner[OptionalDataRequest, DataRequest] =
     new ActionRefiner[OptionalDataRequest, DataRequest] {
       override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
@@ -126,36 +106,43 @@ class ControllerActions @Inject()(identify: IdentifierAction,
       override protected def executionContext: ExecutionContext = ec
     }
 
-  //  TODO: REDUCE CYCLOMATIC COMPLEXITY
+
+  private val postSubmissionResultFromJourneyType: Map[SelectChange, Result] = Map(
+    CancelRegistration -> Redirect(controllers.cancelRegistration.routes.CancellationRequestDoneController.onPageLoad()),
+    UpdateRegisteredDetails -> Redirect(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad()),
+    CorrectReturn -> Redirect(controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad),
+    ChangeActivity -> Redirect(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad)
+  )
+
+  private val preSubmissionResultFromJourneyType: Map[SelectChange, Result] = Map(
+    CancelRegistration -> Redirect(controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode)),
+    UpdateRegisteredDetails -> Redirect(controllers.updateRegisteredDetails.routes.ChangeRegisteredDetailsController.onPageLoad()),
+    CorrectReturn -> Redirect(controllers.correctReturn.routes.SelectController.onPageLoad),
+    ChangeActivity -> Redirect(controllers.changeActivity.routes.AmountProducedController.onPageLoad(NormalMode))
+  )
+
+//  TODO: CAN I COMBINE THESE TWO? OR JUST REPLACE JOURNEY TYPE WITH CORRECT RETURN
+  private def checkReturnSubmission(onPostSubmissionPageLoad: Boolean): ActionRefiner[CorrectReturnDataRequest, CorrectReturnDataRequest] =
+    new ActionRefiner[CorrectReturnDataRequest, CorrectReturnDataRequest] {
+      override protected def refine[A](request: CorrectReturnDataRequest[A]): Future[Either[Result, CorrectReturnDataRequest[A]]] = {
+        implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+        (request.userAnswers.submitted, onPostSubmissionPageLoad) match {
+          case (true, false) => Future(Left(postSubmissionResultFromJourneyType(request.userAnswers.journeyType)))
+          case (false, true) => Future(Left(preSubmissionResultFromJourneyType(request.userAnswers.journeyType)))
+          case _ => Future.successful(Right(request))
+        }
+      }
+
+      override protected def executionContext: ExecutionContext = ec
+    }
+
   private def checkSubmission(onPostSubmissionPageLoad: Boolean): ActionRefiner[DataRequest, DataRequest] =
     new ActionRefiner[DataRequest, DataRequest] {
       override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
-        if (request.userAnswers.submitted && !onPostSubmissionPageLoad) {
-          //          UPDATE DONE PAGES
-          request.userAnswers.journeyType match {
-            case CancelRegistration =>
-              Future(Left(Redirect(controllers.cancelRegistration.routes.CancellationRequestDoneController.onPageLoad())))
-            case UpdateRegisteredDetails =>
-              Future(Left(Redirect(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad())))
-            case CorrectReturn =>
-              Future(Left(Redirect(controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad)))
-            case ChangeActivity =>
-              Future(Left(Redirect(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad)))
-          }
-        } else if (!request.userAnswers.submitted && onPostSubmissionPageLoad) {
-          //          ACCESSING UPDATE DONE PAGES INCORRECTLY
-          request.userAnswers.journeyType match {
-            case CancelRegistration =>
-              Future(Left(Redirect(controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode))))
-            case UpdateRegisteredDetails =>
-              Future(Left(Redirect(controllers.updateRegisteredDetails.routes.ChangeRegisteredDetailsController.onPageLoad())))
-            case CorrectReturn =>
-              Future(Left(Redirect(controllers.correctReturn.routes.SelectController.onPageLoad)))
-            case ChangeActivity =>
-              Future(Left(Redirect(controllers.changeActivity.routes.AmountProducedController.onPageLoad(NormalMode))))
-          }
-        } else {
-          Future.successful(Right(request))
+        (request.userAnswers.submitted, onPostSubmissionPageLoad) match {
+          case (true, false) => Future(Left(postSubmissionResultFromJourneyType(request.userAnswers.journeyType)))
+          case (false, true) => Future(Left(preSubmissionResultFromJourneyType(request.userAnswers.journeyType)))
+          case _ => Future.successful(Right(request))
         }
       }
 
