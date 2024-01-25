@@ -42,50 +42,32 @@ class ControllerActions @Inject()(identify: IdentifierAction,
   }
 
   def withRequiredJourneyData[A](journeyType: SelectChange): ActionBuilder[DataRequest, AnyContent] = {
-    identify andThen getData andThen journeyDataRequiredAction(journeyType, ignoreSubmitted = false)
+    identify andThen getData andThen journeyDataRequiredAction(journeyType, onPostSubmissionPageLoad = false)
   }
 
   def withRequiredJourneyDataPostSubmission[A](journeyType: SelectChange): ActionBuilder[DataRequest, AnyContent] = {
-    identify andThen getData andThen journeyDataRequiredAction(journeyType, ignoreSubmitted = true)
+    identify andThen getData andThen journeyDataRequiredAction(journeyType, onPostSubmissionPageLoad = true)
   }
 
   def withCorrectReturnJourneyData[A]: ActionBuilder[CorrectReturnDataRequest, AnyContent] = {
-    identify andThen getData andThen correctReturnDataRequiredAction(ignoreSubmitted = false)
+    identify andThen getData andThen correctReturnDataRequiredAction(onPostSubmissionPageLoad = false)
   }
 
   def withCorrectReturnJourneyDataPostSubmission[A]: ActionBuilder[CorrectReturnDataRequest, AnyContent] = {
-    identify andThen getData andThen correctReturnDataRequiredAction(ignoreSubmitted = true)
+    identify andThen getData andThen correctReturnDataRequiredAction(onPostSubmissionPageLoad = true)
   }
 
 //TODO: CLEAN UP THIS ONE
-  private def correctReturnDataRequiredAction(ignoreSubmitted: Boolean): ActionRefiner[OptionalDataRequest, CorrectReturnDataRequest] =
+  private def correctReturnDataRequiredAction(onPostSubmissionPageLoad: Boolean): ActionRefiner[OptionalDataRequest, CorrectReturnDataRequest] =
     new ActionRefiner[OptionalDataRequest, CorrectReturnDataRequest] {
       override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, CorrectReturnDataRequest[A]]] = {
         implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-        if (request.userAnswers.get.submitted && !ignoreSubmitted) {
+        if (request.userAnswers.get.submitted && !onPostSubmissionPageLoad) {
 //          UPDATE DONE PAGES
-          request.userAnswers.get.journeyType match {
-            case CancelRegistration =>
-              Future(Left(Redirect(controllers.cancelRegistration.routes.CancellationRequestDoneController.onPageLoad())))
-            case UpdateRegisteredDetails =>
-              Future(Left(Redirect(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad())))
-            case CorrectReturn =>
-              Future(Left(Redirect(controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad)))
-            case ChangeActivity =>
-              Future(Left(Redirect(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad)))
-          }
-        } else if (!request.userAnswers.get.submitted && ignoreSubmitted) {
+          Future(Left(Redirect(controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad)))
+        } else if (!request.userAnswers.get.submitted && onPostSubmissionPageLoad) {
 //          ACCESSING UPDATE DONE PAGES INCORRECTLY
-          request.userAnswers.get.journeyType match {
-            case CancelRegistration =>
-              Future(Left(Redirect(controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode))))
-            case UpdateRegisteredDetails =>
-              Future(Left(Redirect(controllers.updateRegisteredDetails.routes.ChangeRegisteredDetailsController.onPageLoad())))
-            case CorrectReturn =>
-              Future(Left(Redirect(controllers.correctReturn.routes.SelectController.onPageLoad)))
-            case ChangeActivity =>
-              Future(Left(Redirect(controllers.changeActivity.routes.AmountProducedController.onPageLoad(NormalMode))))
-          }
+          Future(Left(Redirect(controllers.correctReturn.routes.SelectController.onPageLoad)))
         } else {
           request.userAnswers match {
             case Some(userAnswers) if userAnswers.journeyType == SelectChange.CorrectReturn =>
@@ -114,10 +96,10 @@ class ControllerActions @Inject()(identify: IdentifierAction,
     }
 
 //  TODO: BRING OUT DIFFERENT OPTIONS AS SEPARATE FUNCTION
-  private def journeyDataRequiredAction(journeyType: SelectChange, ignoreSubmitted: Boolean): ActionRefiner[OptionalDataRequest, DataRequest] =
+  private def journeyDataRequiredAction(journeyType: SelectChange, onPostSubmissionPageLoad: Boolean): ActionRefiner[OptionalDataRequest, DataRequest] =
     new ActionRefiner[OptionalDataRequest, DataRequest] {
       override protected def refine[A](request: OptionalDataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
-        if (request.userAnswers.get.submitted && !ignoreSubmitted) {
+        if (request.userAnswers.get.submitted && !onPostSubmissionPageLoad) {
 //          UPDATE DONE PAGES
           request.userAnswers.get.journeyType match {
             case CancelRegistration =>
@@ -129,7 +111,7 @@ class ControllerActions @Inject()(identify: IdentifierAction,
             case ChangeActivity =>
               Future(Left(Redirect(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad)))
           }
-        } else if (!request.userAnswers.get.submitted && ignoreSubmitted) {
+        } else if (!request.userAnswers.get.submitted && onPostSubmissionPageLoad) {
 //          ACCESSING UPDATE DONE PAGES INCORRECTLY
           request.userAnswers.get.journeyType match {
             case CancelRegistration =>
@@ -141,7 +123,7 @@ class ControllerActions @Inject()(identify: IdentifierAction,
             case ChangeActivity =>
               Future(Left(Redirect(controllers.changeActivity.routes.AmountProducedController.onPageLoad(NormalMode))))
           }
-        }else {
+        } else {
           request.userAnswers match {
             case Some(userAnswers) if userAnswers.journeyType == journeyType =>
               Future.successful(Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers)))
