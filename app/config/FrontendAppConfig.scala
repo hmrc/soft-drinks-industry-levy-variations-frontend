@@ -54,7 +54,8 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
   private val exitSurveyBaseUrl: String = servicesConfig.baseUrl("feedback-frontend")
   val exitSurveyUrl: String             = s"$exitSurveyBaseUrl/feedback/soft-drinks-industry-levy-variations-frontend"
 
-  val accessibilityStatementUrl: String = servicesConfig.getString("accessibility-statement.host")
+  private val accessibilityHost: String = servicesConfig.getConfString("accessibility-statement.host", throw new Exception("missing config accessibility-statement.host"))
+  def accessibilityFooterUrl = s"$accessibilityHost/accessibility-statement/soft-drinks-industry-levy-variations-frontend"
 
   val timeout: Int   = servicesConfig.getInt("timeout-dialog.timeout")
   val countdown: Int = servicesConfig.getInt("timeout-dialog.countdown")
