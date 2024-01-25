@@ -44,7 +44,7 @@ class CorrectReturnUpdateDoneController @Inject()(
                                                    view: CorrectReturnUpdateDoneView
                                                  )(implicit config: FrontendAppConfig, ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyDataNew(ignoreSubmitted = true).async {
+  def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyDataPostSubmission.async {
     implicit request =>
       val calculateAmounts = correctReturnOrchestrator.calculateAmounts(request.sdilEnrolment, request.userAnswers, request.returnPeriod, request.originalSdilReturn)
       calculateAmounts.value.map {

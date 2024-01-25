@@ -41,7 +41,7 @@ class UpdateDoneController @Inject()(
                                        genericLogger: GenericLogger
                                      )(implicit config: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails) {
+  def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyDataPostSubmission(UpdateRegisteredDetails) {
 
     implicit request =>
       request.userAnswers.submittedOn match {

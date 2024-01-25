@@ -40,18 +40,21 @@ class ControllerActions @Inject()(identify: IdentifierAction,
   def withRequiredData[A]: ActionBuilder[DataRequest, AnyContent] = {
     identify andThen getData andThen dataRequiredAction
   }
+  
+  def withRequiredJourneyData[A](journeyType: SelectChange): ActionBuilder[DataRequest, AnyContent] = {
+    identify andThen getData andThen journeyDataRequiredAction(journeyType, ignoreSubmitted = false)
+  }
 
-//   TODO: RENAME ignoreSubmitted
-  def withRequiredJourneyData[A](journeyType: SelectChange, ignoreSubmitted: Boolean = false): ActionBuilder[DataRequest, AnyContent] = {
-    identify andThen getData andThen journeyDataRequiredAction(journeyType, ignoreSubmitted)
+  def withRequiredJourneyDataPostSubmission[A](journeyType: SelectChange): ActionBuilder[DataRequest, AnyContent] = {
+    identify andThen getData andThen journeyDataRequiredAction(journeyType, ignoreSubmitted = true)
   }
 
   def withCorrectReturnJourneyData[A]: ActionBuilder[CorrectReturnDataRequest, AnyContent] = {
     identify andThen getData andThen correctReturnDataRequiredAction(ignoreSubmitted = false)
   }
 
-  def withCorrectReturnJourneyDataNew[A](ignoreSubmitted: Boolean = false): ActionBuilder[CorrectReturnDataRequest, AnyContent] = {
-    identify andThen getData andThen correctReturnDataRequiredAction(ignoreSubmitted)
+  def withCorrectReturnJourneyDataPostSubmission[A]: ActionBuilder[CorrectReturnDataRequest, AnyContent] = {
+    identify andThen getData andThen correctReturnDataRequiredAction(ignoreSubmitted = true)
   }
 
 //TODO: CLEAN UP THIS ONE
