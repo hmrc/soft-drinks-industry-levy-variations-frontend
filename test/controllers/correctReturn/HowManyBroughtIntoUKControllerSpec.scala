@@ -139,6 +139,7 @@ class HowManyBroughtIntoUKControllerSpec extends SpecBase with MockitoSugar {
     }
 
     testInvalidJourneyType(CorrectReturn, howManyBroughtIntoUKRoute)
+    testRedirectToPostSubmissionIfRequired(CorrectReturn, howManyBroughtIntoUKRoute)
     testNoUserAnswersError(howManyBroughtIntoUKRoute)
 
     "must fail if the setting of userAnswers fails" in {

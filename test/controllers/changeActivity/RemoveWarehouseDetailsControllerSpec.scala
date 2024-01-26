@@ -125,6 +125,7 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
     }
 
     testInvalidJourneyType(ChangeActivity, warehouseDetailsRemoveRoute)
+    testRedirectToPostSubmissionIfRequired(ChangeActivity, warehouseDetailsRemoveRoute)
     testNoUserAnswersError(warehouseDetailsRemoveRoute)
 
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {

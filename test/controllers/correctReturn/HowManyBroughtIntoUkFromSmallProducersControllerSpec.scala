@@ -139,6 +139,7 @@ class HowManyBroughtIntoUkFromSmallProducersControllerSpec extends SpecBase with
     }
 
     testInvalidJourneyType(CorrectReturn, howManyBroughtIntoUkFromSmallProducersRoute)
+    testRedirectToPostSubmissionIfRequired(CorrectReturn, howManyBroughtIntoUkFromSmallProducersRoute)
     testNoUserAnswersError(howManyBroughtIntoUkFromSmallProducersRoute)
 
     "must fail if the setting of userAnswers fails" in {

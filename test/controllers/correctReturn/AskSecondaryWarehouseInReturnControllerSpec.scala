@@ -138,6 +138,7 @@ class AskSecondaryWarehouseInReturnControllerSpec extends SpecBase with MockitoS
     }
 
     testInvalidJourneyType(CorrectReturn, askSecondaryWarehouseInReturnRoute)
+    testRedirectToPostSubmissionIfRequired(CorrectReturn, askSecondaryWarehouseInReturnRoute)
     testNoUserAnswersError(askSecondaryWarehouseInReturnRoute)
 
     "must fail if the setting of userAnswers fails" in {

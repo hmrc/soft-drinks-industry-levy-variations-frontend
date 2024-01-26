@@ -139,6 +139,7 @@ class HowManyClaimCreditsForExportsControllerSpec extends SpecBase with MockitoS
     }
 
     testInvalidJourneyType(CorrectReturn, howManyClaimCreditsForExportsRoute)
+    testRedirectToPostSubmissionIfRequired(CorrectReturn, howManyClaimCreditsForExportsRoute)
     testNoUserAnswersError(howManyClaimCreditsForExportsRoute)
 
     "must fail if the setting of userAnswers fails" in {

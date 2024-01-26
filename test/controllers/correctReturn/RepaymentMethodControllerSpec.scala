@@ -161,6 +161,7 @@ class RepaymentMethodControllerSpec extends SpecBase with MockitoSugar {
     }
 
     testInvalidJourneyType(CorrectReturn, repaymentMethodRoute)
+    testRedirectToPostSubmissionIfRequired(CorrectReturn, repaymentMethodRoute)
     testNoUserAnswersError(repaymentMethodRoute)
 
     "must fail if the setting of userAnswers fails" in {

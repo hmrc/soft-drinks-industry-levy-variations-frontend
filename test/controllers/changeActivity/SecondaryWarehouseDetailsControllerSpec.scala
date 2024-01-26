@@ -195,6 +195,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
     }
 
     testInvalidJourneyType(ChangeActivity, warehouseDetailsRoute)
+    testRedirectToPostSubmissionIfRequired(ChangeActivity, warehouseDetailsRoute)
     testNoUserAnswersError(warehouseDetailsRoute)
   }
 }

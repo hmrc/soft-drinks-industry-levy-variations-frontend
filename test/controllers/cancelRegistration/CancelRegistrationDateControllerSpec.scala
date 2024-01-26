@@ -137,6 +137,7 @@ class CancelRegistrationDateControllerSpec extends SpecBase with MockitoSugar {
     }
 
     testInvalidJourneyType(CancelRegistration, cancelRegistrationDateRoute)
+    testRedirectToPostSubmissionIfRequired(CancelRegistration, cancelRegistrationDateRoute)
     testNoUserAnswersError(cancelRegistrationDateRoute)
 
 

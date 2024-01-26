@@ -139,6 +139,7 @@ class BroughtIntoUKControllerSpec extends SpecBase with MockitoSugar {
     }
 
     testInvalidJourneyType(CorrectReturn, broughtIntoUKRoute)
+    testRedirectToPostSubmissionIfRequired(CorrectReturn, broughtIntoUKRoute)
     testNoUserAnswersError(broughtIntoUKRoute)
 
     "must fail if the setting of userAnswers fails" in {

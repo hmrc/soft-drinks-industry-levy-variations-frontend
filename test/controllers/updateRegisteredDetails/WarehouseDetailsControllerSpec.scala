@@ -200,6 +200,7 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
     }
 
     testInvalidJourneyType(UpdateRegisteredDetails, warehouseDetailsRoute)
+    testRedirectToPostSubmissionIfRequired(UpdateRegisteredDetails, warehouseDetailsRoute)
     testNoUserAnswersError(warehouseDetailsRoute)
 
     List(NormalMode, CheckMode).foreach(mode => {

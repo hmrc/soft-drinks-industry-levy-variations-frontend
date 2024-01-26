@@ -130,6 +130,7 @@ class ReasonControllerSpec extends SpecBase with MockitoSugar {
     }
 
     testInvalidJourneyType(CancelRegistration, reasonRoute)
+    testRedirectToPostSubmissionIfRequired(CancelRegistration, reasonRoute)
     testNoUserAnswersError(reasonRoute)
 
 

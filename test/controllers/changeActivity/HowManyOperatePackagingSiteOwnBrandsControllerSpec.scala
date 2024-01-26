@@ -129,6 +129,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
     }
 
     testInvalidJourneyType(ChangeActivity, howManyOperatePackagingSiteOwnBrandsRoute)
+    testRedirectToPostSubmissionIfRequired(ChangeActivity, howManyOperatePackagingSiteOwnBrandsRoute)
     testNoUserAnswersError(howManyOperatePackagingSiteOwnBrandsRoute)
 
     "must fail if the setting of userAnswers fails" in {

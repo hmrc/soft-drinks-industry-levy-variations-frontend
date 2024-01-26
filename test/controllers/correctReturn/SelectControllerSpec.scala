@@ -420,6 +420,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
     }
 
     testInvalidJourneyType(CorrectReturn, selectRoute)
+    testRedirectToPostSubmissionIfRequired(CorrectReturn, selectRoute)
     testNoUserAnswersError(selectRoute)
   }
 }

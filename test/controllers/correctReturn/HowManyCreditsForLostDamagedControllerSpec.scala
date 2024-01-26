@@ -140,6 +140,7 @@ class HowManyCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSu
     }
 
     testInvalidJourneyType(CorrectReturn, howManyCreditsForLostDamagedRoute)
+    testRedirectToPostSubmissionIfRequired(CorrectReturn, howManyCreditsForLostDamagedRoute)
     testNoUserAnswersError(howManyCreditsForLostDamagedRoute)
 
     "must fail if the setting of userAnswers fails" in {

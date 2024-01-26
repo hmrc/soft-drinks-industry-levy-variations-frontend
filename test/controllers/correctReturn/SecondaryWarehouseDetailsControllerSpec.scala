@@ -183,6 +183,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
     }
 
     testInvalidJourneyType(CorrectReturn, secondaryWarehouseDetailsRoute)
+    testRedirectToPostSubmissionIfRequired(CorrectReturn, secondaryWarehouseDetailsRoute)
     testNoUserAnswersError(secondaryWarehouseDetailsRoute)
   }
 }

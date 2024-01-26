@@ -232,6 +232,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
       }
     }
     testInvalidJourneyType(CorrectReturn, removeSmallProducerConfirmRoute)
+    testRedirectToPostSubmissionIfRequired(CorrectReturn, removeSmallProducerConfirmRoute)
     testNoUserAnswersError(removeSmallProducerConfirmRoute)
   }
 }

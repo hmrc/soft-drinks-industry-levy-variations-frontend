@@ -139,6 +139,7 @@ class ClaimCreditsForLostDamagedControllerSpec extends SpecBase with MockitoSuga
     }
 
     testInvalidJourneyType(CorrectReturn, claimCreditsForLostDamagedRoute)
+    testRedirectToPostSubmissionIfRequired(CorrectReturn, claimCreditsForLostDamagedRoute)
     testNoUserAnswersError(claimCreditsForLostDamagedRoute)
 
     "must fail if the setting of userAnswers fails" in {

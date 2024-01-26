@@ -120,6 +120,7 @@ class BusinessAddressControllerSpec extends SpecBase {
 
     "test invalid scenarios for main business address route" - {
       testInvalidJourneyType(UpdateRegisteredDetails, businessAddressRoute)
+      testRedirectToPostSubmissionIfRequired(UpdateRegisteredDetails, businessAddressRoute)
       testNoUserAnswersError(businessAddressRoute)
     }
   }

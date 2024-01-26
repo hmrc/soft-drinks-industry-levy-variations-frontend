@@ -140,6 +140,7 @@ class HowManyPackagedAsContractPackerControllerSpec extends SpecBase with Mockit
     }
 
     testInvalidJourneyType(CorrectReturn, howManyPackagedAsContractPackerRoute)
+    testRedirectToPostSubmissionIfRequired(CorrectReturn, howManyPackagedAsContractPackerRoute)
     testNoUserAnswersError(howManyPackagedAsContractPackerRoute)
 
     "must fail if the setting of userAnswers fails" in {

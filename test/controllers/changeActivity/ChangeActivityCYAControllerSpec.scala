@@ -98,6 +98,7 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency w
     }
 
     testInvalidJourneyType(ChangeActivity, ChangeActivityCYAController.onPageLoad.url, false)
+    testRedirectToPostSubmissionIfRequired(ChangeActivity, ChangeActivityCYAController.onPageLoad.url)
     testNoUserAnswersError(ChangeActivityCYAController.onPageLoad.url, false)
   }
 }
