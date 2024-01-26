@@ -101,10 +101,10 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
       val currentReturnPeriod = ReturnPeriod(2023, 1)
       val testTime = Instant.now()
-      val application = correctReturnAction(userAnswers = Some(userAnswers.copy(correctReturnPeriod = Option(currentReturnPeriod),
-        submittedOn = Some(testTime))))
-        .overrides(bind[CorrectReturnOrchestrator].toInstance(mockReturnOrchestrator))
-        .build()
+      val application = correctReturnAction(
+        userAnswers = Some(userAnswers
+          .copy(correctReturnPeriod = Option(currentReturnPeriod), submittedOn = Some(testTime)))
+      ).overrides(bind[CorrectReturnOrchestrator].toInstance(mockReturnOrchestrator)).build()
 
       running(application) {
         val request = FakeRequest(GET, CorrectReturnUpdateDoneController.onPageLoad.url)
@@ -128,7 +128,10 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must redirect to SelectController if submitted is false" in {
-      val application = applicationBuilder(userAnswers = Some(userAnswers.copy(submitted = false))).build()
+      val application = correctReturnAction(
+        userAnswers = Some(userAnswers
+          .copy(correctReturnPeriod = Option(currentReturnPeriod), submitted = false))
+      ).overrides(bind[CorrectReturnOrchestrator].toInstance(mockReturnOrchestrator)).build()
 
       running(application) {
         val request = FakeRequest(GET, CorrectReturnUpdateDoneController.onPageLoad.url)
