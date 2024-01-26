@@ -28,6 +28,7 @@ class $className$ControllerSpec extends SpecBase {
     }
 
     testInvalidJourneyType($packageName;format="cap"$, $className;format="decap"$Route)
+    testRedirectToPostSubmissionIfRequired($packageName;format="cap"$, $className;format="decap"$Route)
     testNoUserAnswersError($className;format="decap"$Route)
   }
 }
