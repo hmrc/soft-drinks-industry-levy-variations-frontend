@@ -23,6 +23,7 @@ import controllers.actions._
 import controllers.routes
 import errors.VariationsErrors
 import helpers.LoggerHelper
+import models.SelectChange._
 import models._
 import models.backend.{RetrievedActivity, RetrievedSubscription, Site, UkAddress}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
@@ -203,6 +204,28 @@ trait SpecBase
             redirectLocation(result).value mustEqual selectChangeCall.url
           }
         }
+      }
+    }
+  }
+
+  def testRedirectToPostSubmissionIfRequired(selectChange: SelectChange, url: String): Unit = {
+    val userAnswers = UserAnswers(sdilNumber, journeyType = selectChange, contactAddress = contactAddress, submitted = true)
+    val expectedLocation = selectChange match {
+      case CancelRegistration => controllers.cancelRegistration.routes.CancellationRequestDoneController.onPageLoad()
+      case UpdateRegisteredDetails => controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad()
+      case CorrectReturn => controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad
+      case ChangeActivity => controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad
+    }
+    s"must redirect to post submission for a GET if user answers submitted for $selectChange" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual expectedLocation.url
       }
     }
   }
