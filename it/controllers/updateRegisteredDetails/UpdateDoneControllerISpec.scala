@@ -20,7 +20,7 @@ class UpdateDoneControllerISpec extends ControllerITTestHelper {
         .commonPrecondition
 
       val testTime = Instant.now()
-      setAnswers(emptyUserAnswersForUpdateRegisteredDetails.copy(submittedOn = Some(testTime)))
+      setAnswers(emptyUserAnswersForUpdateRegisteredDetails.copy(submitted = true, submittedOn = Some(testTime)))
 
       WsTestClient.withClient { client =>
         val result1 = createClientRequestGet(client, updateRegisteredDetailsBaseUrl + normalRoutePath)

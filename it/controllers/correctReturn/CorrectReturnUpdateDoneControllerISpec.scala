@@ -25,7 +25,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
         given
           .commonPrecondition
         val testTime = Instant.now()
-        setUpForCorrectReturn(emptyUserAnswersForSelectChange(CorrectReturn).copy(submittedOn = Some(testTime),
+        setUpForCorrectReturn(emptyUserAnswersForSelectChange(CorrectReturn).copy(submitted = true, submittedOn = Some(testTime),
           correctReturnPeriod = None))
 
         WsTestClient.withClient { client =>
@@ -47,7 +47,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
         val userAnswers = userAnswerWithLitresForAllPagesNilSdilReturn
           .set(CorrectionReasonPage, "I forgot something").success.value
           .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-        setUpForCorrectReturn(userAnswers.copy(submittedOn = Some(testTime)))
+        setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
 
         given
           .commonPrecondition
@@ -115,7 +115,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
           val userAnswers = userAnswerWithAllNosWithOriginalSdilReturn
             .set(CorrectionReasonPage, "I forgot something").success.value
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-          setUpForCorrectReturn(userAnswers.copy(submittedOn = Some(testTime)), Some(populatedReturn))
+          setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)), Some(populatedReturn))
 
           given
             .commonPrecondition
@@ -178,7 +178,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
             val testTime = Instant.now()
             val correctReturnData = nilCorrectReturnUAData.copy(operatePackagingSiteOwnBrands = true, howManyOperatePackagingSiteOwnBrands = Some(operatePackagingSiteLitres))
             val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
-              .copy(submittedOn = Some(testTime))
+              .copy(submitted = true, submittedOn = Some(testTime))
               .set(CorrectionReasonPage, "I forgot something").success.value
               .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
             given
@@ -214,7 +214,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
             val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
               .set(CorrectionReasonPage, "I forgot something").success.value
               .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-            setUpForCorrectReturn(userAnswers.copy(submittedOn = Some(testTime)))
+            setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
 
             given
               .commonPrecondition
@@ -247,7 +247,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
             val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
               .set(CorrectionReasonPage, "I forgot something").success.value
               .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-            setUpForCorrectReturn(userAnswers.copy(submittedOn = Some(testTime)))
+            setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
             given
               .commonPreconditionChangeSubscription(diffSubscriptionWithWarehouses)
               .sdilBackend.balance(userAnswers.id, false)
@@ -281,7 +281,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
             val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
               .set(CorrectionReasonPage, "I forgot something").success.value
               .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-            setUpForCorrectReturn(userAnswers.copy(submittedOn = Some(testTime)))
+            setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
             given
               .commonPreconditionChangeSubscription(diffSubscriptionWithWarehouses)
               .sdilBackend.balance(userAnswers.id, false)
@@ -313,7 +313,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
             val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
               .set(CorrectionReasonPage, "I forgot something").success.value
               .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-            setUpForCorrectReturn(userAnswers.copy(submittedOn = Some(testTime)))
+            setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
             given
               .commonPrecondition
               .sdilBackend.balance(userAnswers.id, false)
@@ -350,7 +350,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
               .commonPrecondition
               .sdilBackend.balance(userAnswers.id, false)
 
-            setUpForCorrectReturn(userAnswers.copy(submittedOn = Some(testTime)))
+            setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
 
             WsTestClient.withClient { client =>
               val result = createClientRequestGet(client, baseUrl + route)
@@ -382,7 +382,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
               .commonPrecondition
               .sdilBackend.balance(userAnswers.id, false)
 
-            setUpForCorrectReturn(userAnswers.copy(submittedOn = Some(testTime)))
+            setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
 
             WsTestClient.withClient { client =>
               val result = createClientRequestGet(client, baseUrl + route)
@@ -416,7 +416,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
               .commonPrecondition
               .sdilBackend.balance(userAnswers.id, false)
 
-            setUpForCorrectReturn(userAnswers.copy(submittedOn = Some(testTime)))
+            setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
 
             WsTestClient.withClient { client =>
               val result = createClientRequestGet(client, baseUrl + route)
