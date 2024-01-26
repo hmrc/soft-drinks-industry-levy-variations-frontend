@@ -121,14 +121,13 @@ class ControllerActions @Inject()(identify: IdentifierAction,
     ChangeActivity -> Redirect(controllers.changeActivity.routes.AmountProducedController.onPageLoad(NormalMode))
   )
 
-//  TODO: CAN I COMBINE THESE TWO? OR JUST REPLACE JOURNEY TYPE WITH CORRECT RETURN
   private def checkReturnSubmission(onPostSubmissionPageLoad: Boolean): ActionRefiner[CorrectReturnDataRequest, CorrectReturnDataRequest] =
     new ActionRefiner[CorrectReturnDataRequest, CorrectReturnDataRequest] {
       override protected def refine[A](request: CorrectReturnDataRequest[A]): Future[Either[Result, CorrectReturnDataRequest[A]]] = {
         implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
         (request.userAnswers.submitted, onPostSubmissionPageLoad) match {
-          case (true, false) => Future(Left(postSubmissionResultFromJourneyType(request.userAnswers.journeyType)))
-          case (false, true) => Future(Left(preSubmissionResultFromJourneyType(request.userAnswers.journeyType)))
+          case (true, false) => Future(Left(postSubmissionResultFromJourneyType(SelectChange.CorrectReturn)))
+          case (false, true) => Future(Left(preSubmissionResultFromJourneyType(SelectChange.CorrectReturn)))
           case _ => Future.successful(Right(request))
         }
       }
