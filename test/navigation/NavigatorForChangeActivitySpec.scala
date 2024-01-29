@@ -47,26 +47,44 @@ class NavigatorForChangeActivitySpec extends SpecBase {
     }
 
     "Amount produced" - {
-      "In normal mode" - {
-        def navigateFromAmountProducedInNormalMode(amountProduced: AmountProduced) =
-          navigator.nextPage(AmountProducedPage, NormalMode,
-            emptyUserAnswersForChangeActivity.set(AmountProducedPage, amountProduced).success.value)
+      def navigateFromAmountProduced(amountProduced: AmountProduced, mode: Mode, previousAmountProduced: AmountProduced) =
+        navigator.nextPage(AmountProducedPage, mode,
+          emptyUserAnswersForChangeActivity.set(AmountProducedPage, amountProduced).success.value,
+          amountProduced = Option(previousAmountProduced))
 
-        "select Large to navigate to Operate Packaging Site Own Brands" in {
-          val result = navigateFromAmountProducedInNormalMode(AmountProduced.Large)
-          result mustBe routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode)
-        }
-
-        "select Small to navigate to Third Party Packagers" in {
-          val result = navigateFromAmountProducedInNormalMode(AmountProduced.Small)
-          result mustBe routes.ThirdPartyPackagersController.onPageLoad(NormalMode)
-        }
-
-        "select None to navigate to Contract Packing" in {
-          val result = navigateFromAmountProducedInNormalMode(AmountProduced.None)
-          result mustBe routes.ContractPackingController.onPageLoad(NormalMode)
-        }
-      }
+      List(NormalMode, CheckMode).foreach(mode => {
+        AmountProduced.values.foreach(previousAmountProduced => {
+          AmountProduced.values.foreach(newAmountProduced => {
+            if (newAmountProduced == previousAmountProduced && mode == CheckMode) {
+              s"select $newAmountProduced when $previousAmountProduced previously selected to navigate to CYA in CheckMode" in {
+                val result = navigateFromAmountProduced(newAmountProduced, mode, previousAmountProduced)
+                result mustBe routes.ChangeActivityCYAController.onPageLoad
+              }
+            } else {
+              newAmountProduced match {
+                case AmountProduced.Large =>
+                  s"select $newAmountProduced when $previousAmountProduced previously selected in $mode " +
+                    s"to navigate to Operate Packaging Site Own Brands in NormalMode" in {
+                    val result = navigateFromAmountProduced(AmountProduced.Large, mode, previousAmountProduced)
+                    result mustBe routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode)
+                  }
+                case AmountProduced.Small =>
+                  s"select $newAmountProduced when $previousAmountProduced previously selected in $mode " +
+                    s"to navigate to Third Party Packagers in NormalMode" in {
+                    val result = navigateFromAmountProduced(AmountProduced.Small, mode, previousAmountProduced)
+                    result mustBe routes.ThirdPartyPackagersController.onPageLoad(NormalMode)
+                  }
+                case AmountProduced.None =>
+                  s"select $newAmountProduced when $previousAmountProduced previously selected in $mode " +
+                    s"to navigate to Contract Packing in NormalMode" in {
+                    val result = navigateFromAmountProduced(AmountProduced.None, mode, previousAmountProduced)
+                    result mustBe routes.ContractPackingController.onPageLoad(NormalMode)
+                  }
+              }
+            }
+          })
+        })
+      })
     }
 
     "Third party packagers" - {
@@ -125,12 +143,10 @@ class NavigatorForChangeActivitySpec extends SpecBase {
     }
 
     "Contract packing" - {
+//      TODO: ADD TESTS FOR SUGGEST DEREGISTRATION
       def navigateFromContractPackingPage(value: Boolean, mode: Mode) =
         navigator.nextPage(ContractPackingPage, mode,
-          emptyUserAnswersForChangeActivity
-            .set(AmountProducedPage, AmountProduced.None).success.value
-            .set(ContractPackingPage, value).success.value
-            .set(ImportsPage, true).success.value
+          emptyUserAnswersForChangeActivity.set(ContractPackingPage, value).success.value
         )
 
       List(NormalMode, CheckMode).foreach(mode => {
@@ -145,9 +161,28 @@ class NavigatorForChangeActivitySpec extends SpecBase {
         result mustBe routes.ImportsController.onPageLoad(NormalMode)
       }
 
-      "Should navigate to Check Your Answers page when no is selected in CheckMode" in {
+      "Should navigate to Check Your Answers page when no is selected in CheckMode and deregistration not suggested" in {
         val result = navigateFromContractPackingPage(value = false, CheckMode)
         result mustBe routes.ChangeActivityCYAController.onPageLoad
+      }
+
+      "should navigate to suggest registration in CheckMode when Amount Produced Small, not TPP, not Contract Packing, not Importing" in {
+        val result = navigator.nextPage(ContractPackingPage, CheckMode, emptyUserAnswersForChangeActivity
+          .set(AmountProducedPage, AmountProduced.Small).success.value
+          .set(ThirdPartyPackagersPage, false).success.value
+          .set(ContractPackingPage, false).success.value
+          .set(ImportsPage, false).success.value
+        )
+        result mustBe routes.SuggestDeregistrationController.onPageLoad
+      }
+
+      "should navigate to suggest registration in CheckMode when Amount Produced None, not Contract Packing, not Importing" in {
+        val result = navigator.nextPage(ContractPackingPage, CheckMode, emptyUserAnswersForChangeActivity
+          .set(AmountProducedPage, AmountProduced.None).success.value
+          .set(ContractPackingPage, false).success.value
+          .set(ImportsPage, false).success.value
+        )
+        result mustBe routes.SuggestDeregistrationController.onPageLoad
       }
     }
 
