@@ -143,7 +143,6 @@ class NavigatorForChangeActivitySpec extends SpecBase {
     }
 
     "Contract packing" - {
-//      TODO: ADD TESTS FOR SUGGEST DEREGISTRATION
       def navigateFromContractPackingPage(value: Boolean, mode: Mode) =
         navigator.nextPage(ContractPackingPage, mode,
           emptyUserAnswersForChangeActivity.set(ContractPackingPage, value).success.value
