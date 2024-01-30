@@ -50,7 +50,6 @@ trait Mappings extends Formatters with Constraints {
                               args: Seq[String] = Seq.empty): Mapping[String] = {
     def checkSDILReference(): Constraint[String] = {
 
-
       val validFormatPattern = "^[A-Z]{6}[0-9]{9}$"
       val validSDILRefPattern = "^X[A-Z]SDIL000[0-9]{6}$"
 
