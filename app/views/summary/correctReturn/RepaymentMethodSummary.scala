@@ -27,6 +27,7 @@ import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object RepaymentMethodSummary  {
+//  TODO: ADD UNIT TESTS
 
   def row(answers: UserAnswers, isCheckAnswers: Boolean = true)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(RepaymentMethodPage).map {

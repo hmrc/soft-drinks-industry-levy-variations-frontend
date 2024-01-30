@@ -114,6 +114,7 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector)(im
     sdilConnector.submitReturnVariation(subscription.sdilRef, returnVariation)
   }
 
+//  TODO: IS THIS NEEDED?
   def instantNow: Instant = Instant.now()
 
   private def getAmounts(userAnswers: UserAnswers, originalReturn: SdilReturn, balanceBroughtForward: BigDecimal, isSmallProducer: Boolean): Amounts = {
