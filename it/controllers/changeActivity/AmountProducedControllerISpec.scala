@@ -157,11 +157,11 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                if(radio == Large){
+                if (radio == Large) {
                   res.header(HeaderNames.LOCATION) mustBe Some(routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url)
-                }else if (radio == Small) {
+                } else if (radio == Small) {
                   res.header(HeaderNames.LOCATION) mustBe Some(routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url)
-                }else {
+                } else {
                   res.header(HeaderNames.LOCATION) mustBe Some(routes.ContractPackingController.onPageLoad(NormalMode).url)
                 }
                 val dataStoredForPage = getAnswers(sdilNumber).fold[Option[AmountProduced]](None)(_.get(AmountProducedPage))
@@ -185,11 +185,11 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                if(radio == Large){
+                if (radio == Large) {
                   res.header(HeaderNames.LOCATION) mustBe Some(routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url)
-                }else if (radio == Small) {
+                } else if (radio == Small) {
                   res.header(HeaderNames.LOCATION) mustBe Some(routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url)
-                }else {
+                } else {
                   res.header(HeaderNames.LOCATION) mustBe Some(routes.ContractPackingController.onPageLoad(NormalMode).url)
                 }
 

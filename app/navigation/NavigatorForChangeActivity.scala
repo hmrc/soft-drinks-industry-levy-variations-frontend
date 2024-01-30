@@ -154,6 +154,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
   }
 
   override val normalRoutes: Page => UserAnswers => Call = {
+    case AmountProducedPage => userAnswers =>  navigationForAmountProduced(userAnswers)
     case ThirdPartyPackagersPage => _ => routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.ContractPackingController.onPageLoad(NormalMode)

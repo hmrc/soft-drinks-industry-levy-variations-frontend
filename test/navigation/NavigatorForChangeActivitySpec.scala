@@ -47,6 +47,24 @@ class NavigatorForChangeActivitySpec extends SpecBase {
     }
 
     "Amount produced" - {
+      "select Large to navigate to Operate Packaging Site Own Brands in NormalMode" in {
+        val result = navigator.nextPage(AmountProducedPage, NormalMode,
+          emptyUserAnswersForChangeActivity.set(AmountProducedPage, AmountProduced.Large).success.value)
+        result mustBe routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode)
+      }
+
+      "select Small to navigate to Third Party Packagers in NormalMode" in {
+        val result = navigator.nextPage(AmountProducedPage, NormalMode,
+          emptyUserAnswersForChangeActivity.set(AmountProducedPage, AmountProduced.Small).success.value)
+        result mustBe routes.ThirdPartyPackagersController.onPageLoad(NormalMode)
+      }
+
+      "select None to navigate to Contract Packing in NormalMode" in {
+        val result = navigator.nextPage(AmountProducedPage, NormalMode,
+          emptyUserAnswersForChangeActivity.set(AmountProducedPage, AmountProduced.None).success.value)
+        result mustBe routes.ContractPackingController.onPageLoad(NormalMode)
+      }
+
       def navigateFromAmountProduced(amountProduced: AmountProduced, mode: Mode, previousAmountProduced: AmountProduced) =
         navigator.nextPage(AmountProducedPage, mode,
           emptyUserAnswersForChangeActivity.set(AmountProducedPage, amountProduced).success.value,

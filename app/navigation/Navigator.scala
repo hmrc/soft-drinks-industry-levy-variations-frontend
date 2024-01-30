@@ -41,30 +41,32 @@ trait Navigator {
 
   val editRouteMap: Page => UserAnswers => Call
 
-  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers, amountProduced:Option[AmountProduced] = None,
-               subscription: Option[RetrievedSubscription] = None): Call = (mode, subscription, amountProduced) match {
-    case (NormalMode, None, None) =>
-      normalRoutes(page)(userAnswers)
+  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers,
+               amountProduced: Option[AmountProduced] = None,
+               subscription: Option[RetrievedSubscription] = None): Call =
+    (mode, subscription, amountProduced) match {
+      case (NormalMode, None, None) =>
+        normalRoutes(page)(userAnswers)
 
-    case (NormalMode, Some(subscription), None) =>
-      normalRoutesWithSubscription(page)(userAnswers, subscription)
+      case (NormalMode, Some(subscription), None) =>
+        normalRoutesWithSubscription(page)(userAnswers, subscription)
 
-    case (NormalMode, None, Some(amountProduced)) =>
-      normalRoutesWithAmountProduced(page)(userAnswers, amountProduced)
+      case (NormalMode, None, Some(amountProduced)) =>
+        normalRoutesWithAmountProduced(page)(userAnswers, amountProduced)
 
-    case (CheckMode, None, None) =>
-      checkRouteMap(page)(userAnswers)
+      case (CheckMode, None, None) =>
+        checkRouteMap(page)(userAnswers)
 
-    case (CheckMode, None, Some(amountProduced)) =>
-      checkRouteMapWithAmountProduced(page)(userAnswers, amountProduced)
+      case (CheckMode, None, Some(amountProduced)) =>
+        checkRouteMapWithAmountProduced(page)(userAnswers, amountProduced)
 
-    case (CheckMode, Some(subscription), None) =>
-      checkRouteMapWithSubscription(page)(userAnswers, subscription)
+      case (CheckMode, Some(subscription), None) =>
+        checkRouteMapWithSubscription(page)(userAnswers, subscription)
 
-    case (EditMode, _, _) =>
-      editRouteMap(page)(userAnswers)
+      case (EditMode, _, _) =>
+        editRouteMap(page)(userAnswers)
 
-    case _ => sys.error("Mode should be Normal, Check or Edit")
+      case _ => sys.error("Mode should be Normal, Check or Edit")
   }
 
 }
