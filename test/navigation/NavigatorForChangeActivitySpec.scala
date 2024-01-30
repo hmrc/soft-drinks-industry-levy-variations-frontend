@@ -391,7 +391,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
               }
             }
 
-            s"navigate to $SuggestDeregistrationPage when $ThirdPartyPackagersPage is false, $ContractPackingPage is false, and $ImportsPage is false" +
+            s"navigate to SuggestDeregistrationPage when $ThirdPartyPackagersPage is false, $ContractPackingPage is false, and $ImportsPage is false" +
               s" and $OperatePackagingSiteOwnBrandsPage is either true or false" - {
               "and there are returns pending to be filed" in {
                 val userAnswers = initialUserAnswersWithAmountProducedSmall
@@ -427,7 +427,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
               result mustBe routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
             }
 
-            s"navigate to $SuggestDeregistrationPage when $ContractPackingPage is false, and $ImportsPage is false" in {
+            s"navigate to SuggestDeregistrationPage when $ContractPackingPage is false, and $ImportsPage is false" in {
               val userAnswers = initialUserAnswersWithAmountProducedNone
                 .set(ContractPackingPage, false).success.value
                 .set(ImportsPage, false).success.value
