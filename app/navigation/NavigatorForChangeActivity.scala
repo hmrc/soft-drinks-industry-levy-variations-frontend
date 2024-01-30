@@ -136,6 +136,8 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
       (userAnswers.get(ContractPackingPage), userAnswers.get(ImportsPage), mode) match {
         case (Some(true), Some(_), NormalMode) => routeToPackagingSiteJourney(userAnswers, NormalMode)
         case (Some(false), Some(true), NormalMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+        case (Some(_), Some(true), CheckMode) if userAnswers.get(SecondaryWarehouseDetailsPage).isEmpty =>
+          routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
         case _ => routes.ChangeActivityCYAController.onPageLoad
       }
     }
@@ -148,6 +150,8 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
       (userAnswers.get(ContractPackingPage), userAnswers.get(ImportsPage), mode) match {
         case (Some(true), Some(_), NormalMode) => routeToPackagingSiteJourney(userAnswers, NormalMode)
         case (Some(false), Some(true), NormalMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+        case (Some(_), Some(true), CheckMode) if userAnswers.get(SecondaryWarehouseDetailsPage).isEmpty =>
+          routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
         case _ => routes.ChangeActivityCYAController.onPageLoad
       }
     }
