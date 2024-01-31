@@ -28,7 +28,6 @@ import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object SecondaryWarehouseDetailsSummary {
-  //  TODO: ADD UNIT TESTS
 
   def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)
                  (implicit messages: Messages): SummaryList = {

@@ -29,23 +29,6 @@ import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object SecondaryWarehouseDetailsSummary  {
-  //  TODO: ADD UNIT TESTS
-
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SecondaryWarehouseDetailsPage).map {
-      answer =>
-
-        val value = if (answer) "site.yes" else "site.no"
-
-        SummaryListRowViewModel(
-          key     = "correctReturn.secondaryWarehouseDetails.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("correctReturn.secondaryWarehouseDetails.change.hidden"))
-          )
-        )
-    }
 
   def row2(warehouseList: Map[String, Site], mode: Mode)(implicit messages: Messages): List[SummaryListRow] = {
     warehouseList.map {

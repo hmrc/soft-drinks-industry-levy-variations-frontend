@@ -27,23 +27,6 @@ import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object PackagingSiteDetailsSummary  {
-  //  TODO: ADD UNIT TESTS
-
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(PackagingSiteDetailsPage).map {
-      answer =>
-
-        val value = if (answer) "site.yes" else "site.no"
-
-        SummaryListRowViewModel(
-          key = "correctReturn.packagingSiteDetails.checkYourAnswersLabel",
-          value = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.correctReturn.routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("correctReturn.packagingSiteDetails.change.hidden"))
-          )
-        )
-    }
 
   def summaryList(packagingSiteList: Map[String, Site], mode: Mode)(implicit messages: Messages): SummaryList = {
     SummaryListViewModel(

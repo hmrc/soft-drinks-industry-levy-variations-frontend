@@ -39,12 +39,6 @@ class PackagingSiteDetailsSummarySpec extends SpecBase {
 
   "row" - {
 
-    "should return nothing when the list is empty" in {
-      val packagingSiteDetailsSummaryRow = PackagingSiteDetailsSummary.row(emptyUserAnswersForCorrectReturn)
-
-      packagingSiteDetailsSummaryRow mustBe None
-    }
-
     "should return a summary list row with the correct information and action links" in {
 
       val packagingSiteDetailsSummaryRow = PackagingSiteDetailsSummary.row2(packagingSites2, NormalMode)
