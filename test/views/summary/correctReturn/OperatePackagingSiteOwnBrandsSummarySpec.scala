@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package views.correctReturn.summary
+package views.summary.correctReturn
 
 import base.SpecBase
 import models.LitresInBands
 import pages.correctReturn.{HowManyOperatePackagingSiteOwnBrandsPage, OperatePackagingSiteOwnBrandsPage}
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
-import views.summary.correctReturn.OperatePackagingSiteOwnBrandsSummary
 
 class OperatePackagingSiteOwnBrandsSummarySpec extends SpecBase {
 
