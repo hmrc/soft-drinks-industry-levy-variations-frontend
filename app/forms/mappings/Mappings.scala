@@ -50,11 +50,14 @@ trait Mappings extends Formatters with Constraints {
                               args: Seq[String] = Seq.empty): Mapping[String] = {
     def checkSDILReference(): Constraint[String] = {
 
-      val validFormatPattern = "^X[A-Z]SDIL000[0-9]{6}$"
+      val validFormatPattern = "^[A-Z]{6}[0-9]{9}$"
+      val validSDILRefPattern = "^X[A-Z]SDIL000[0-9]{6}$"
 
       Constraint {
         case sdilReference if !sdilReference.matches(validFormatPattern) =>
-          Invalid("correctReturn.addASmallProducer.error.referenceNumber.invalid")
+          Invalid("correctReturn.addASmallProducer.error.referenceNumber.invalidFormat")
+        case sdilReference if !sdilReference.matches(validSDILRefPattern) =>
+          Invalid("correctReturn.addASmallProducer.error.referenceNumber.invalidSDILRef")
         case sdilReference if sdilReference == userAnswersId =>
           Invalid("correctReturn.addASmallProducer.error.referenceNumber.same")
         case _ =>
