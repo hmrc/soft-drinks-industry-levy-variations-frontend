@@ -106,28 +106,27 @@ class ControllerActions @Inject()(identify: IdentifierAction,
       override protected def executionContext: ExecutionContext = ec
     }
 
+  private def postSubmissionResultFromJourneyType(selectChange: SelectChange): String = selectChange match {
+    case CancelRegistration => controllers.cancelRegistration.routes.CancellationRequestDoneController.onPageLoad().url
+    case UpdateRegisteredDetails => controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad().url
+    case CorrectReturn => controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url
+    case ChangeActivity => controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url
+  }
 
-  private val postSubmissionResultFromJourneyType: Map[SelectChange, Result] = Map(
-    CancelRegistration -> Redirect(controllers.cancelRegistration.routes.CancellationRequestDoneController.onPageLoad()),
-    UpdateRegisteredDetails -> Redirect(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad()),
-    CorrectReturn -> Redirect(controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad),
-    ChangeActivity -> Redirect(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad)
-  )
-
-  private val preSubmissionResultFromJourneyType: Map[SelectChange, Result] = Map(
-    CancelRegistration -> Redirect(controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode)),
-    UpdateRegisteredDetails -> Redirect(controllers.updateRegisteredDetails.routes.ChangeRegisteredDetailsController.onPageLoad()),
-    CorrectReturn -> Redirect(controllers.correctReturn.routes.SelectController.onPageLoad),
-    ChangeActivity -> Redirect(controllers.changeActivity.routes.AmountProducedController.onPageLoad(NormalMode))
-  )
+  private def preSubmissionResultFromJourneyType(selectChange: SelectChange): String = selectChange match {
+    case CancelRegistration => controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode).url
+    case UpdateRegisteredDetails => controllers.updateRegisteredDetails.routes.ChangeRegisteredDetailsController.onPageLoad().url
+    case CorrectReturn => controllers.correctReturn.routes.SelectController.onPageLoad.url
+    case ChangeActivity => controllers.changeActivity.routes.AmountProducedController.onPageLoad(NormalMode).url
+  }
 
   private def checkReturnSubmission(onPostSubmissionPageLoad: Boolean): ActionRefiner[CorrectReturnDataRequest, CorrectReturnDataRequest] =
     new ActionRefiner[CorrectReturnDataRequest, CorrectReturnDataRequest] {
       override protected def refine[A](request: CorrectReturnDataRequest[A]): Future[Either[Result, CorrectReturnDataRequest[A]]] = {
         implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
         (request.userAnswers.submitted, onPostSubmissionPageLoad) match {
-          case (true, false) => Future(Left(postSubmissionResultFromJourneyType(SelectChange.CorrectReturn)))
-          case (false, true) => Future(Left(preSubmissionResultFromJourneyType(SelectChange.CorrectReturn)))
+          case (true, false) => Future(Left(Redirect(postSubmissionResultFromJourneyType(SelectChange.CorrectReturn))))
+          case (false, true) => Future(Left(Redirect(preSubmissionResultFromJourneyType(SelectChange.CorrectReturn))))
           case _ => Future.successful(Right(request))
         }
       }
@@ -139,8 +138,8 @@ class ControllerActions @Inject()(identify: IdentifierAction,
     new ActionRefiner[DataRequest, DataRequest] {
       override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
         (request.userAnswers.submitted, onPostSubmissionPageLoad) match {
-          case (true, false) => Future(Left(postSubmissionResultFromJourneyType(request.userAnswers.journeyType)))
-          case (false, true) => Future(Left(preSubmissionResultFromJourneyType(request.userAnswers.journeyType)))
+          case (true, false) => Future(Left(Redirect(postSubmissionResultFromJourneyType(request.userAnswers.journeyType))))
+          case (false, true) => Future(Left(Redirect(preSubmissionResultFromJourneyType(request.userAnswers.journeyType))))
           case _ => Future.successful(Right(request))
         }
       }

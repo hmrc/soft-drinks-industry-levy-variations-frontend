@@ -18,7 +18,7 @@ package pages.correctReturn
 
 import controllers.correctReturn.routes
 import models.Mode
-import pages.{Page, QuestionPage}
+import pages.QuestionPage
 import play.api.libs.json.JsPath
 
 case object CorrectReturnBaseCYAPage extends QuestionPage[Boolean] {
