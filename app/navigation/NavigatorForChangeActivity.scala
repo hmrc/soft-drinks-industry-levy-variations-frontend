@@ -28,6 +28,17 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class NavigatorForChangeActivity @Inject() extends Navigator {
 
+  private def suggestDeregistration(userAnswers: UserAnswers) = {
+    val notThirdPartyPackagers = userAnswers.get(ThirdPartyPackagersPage).contains(false)
+    val notContractPacking = userAnswers.get(ContractPackingPage).contains(false)
+    val notImporter = userAnswers.get(ImportsPage).contains(false)
+    userAnswers.get(AmountProducedPage) match {
+      case Some(AmountProduced.Small) => notThirdPartyPackagers && notContractPacking && notImporter
+      case Some(AmountProduced.None) => notContractPacking && notImporter
+      case _ => false
+    }
+  }
+
   private def navigationForAmountProducedCheckMode(userAnswers: UserAnswers, previousAnswer: AmountProduced) = {
     if (userAnswers.get(page = AmountProducedPage).contains(previousAnswer)) {
       routes.ChangeActivityCYAController.onPageLoad
@@ -37,16 +48,15 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
   }
 
   private def navigationForAmountProduced(userAnswers: UserAnswers): Call = {
-
-    val pageAnswers = userAnswers.get(page = AmountProducedPage)
-
-    pageAnswers match {
-      case pageAnswers if pageAnswers.contains(AmountProduced.Large) =>
+    userAnswers.get(page = AmountProducedPage) match {
+      case Some(AmountProduced.Large) =>
         routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode)
-      case pageAnswers if pageAnswers.contains(AmountProduced.Small) =>
+      case Some(AmountProduced.Small) =>
         routes.ThirdPartyPackagersController.onPageLoad(NormalMode)
-      case _ =>
+      case Some(AmountProduced.None) =>
         routes.ContractPackingController.onPageLoad(NormalMode)
+      case _ =>
+        routes.AmountProducedController.onPageLoad(NormalMode)
     }
   }
 
@@ -64,7 +74,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     if (userAnswers.get(page = ContractPackingPage).contains(true)) {
       routes.HowManyContractPackingController.onPageLoad(mode)
     } else if (mode == CheckMode) {
-      if (suggestDeregistrationForSmallProducer(userAnswers) || suggestDeregistrationForNonProducer(userAnswers)) {
+      if (suggestDeregistration(userAnswers)) {
         routes.SuggestDeregistrationController.onPageLoad()
       } else {
         routes.ChangeActivityCYAController.onPageLoad
@@ -91,67 +101,15 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
   }
 
   private def navigationFollowingImports(userAnswers: UserAnswers, mode: Mode): Call = {
-    (userAnswers.get(AmountProducedPage), mode) match {
-      case (Some(AmountProduced.Large), _) => navigateFollowingImportsForAmountProducedLarge(userAnswers, mode)
-      case (Some(AmountProduced.Small), _) => navigateFollowingImportsForAmountProducedSmall(userAnswers, mode)
-      case (Some(AmountProduced.None), _) => navigateFollowingImportsForAmountProducedNone(userAnswers, mode)
+    userAnswers.get(AmountProducedPage) match {
+      case Some(AmountProduced.Large) => navigateFollowingImportsForAmountProducedLarge(userAnswers, mode)
+      case Some(AmountProduced.Small) => navigateFollowingImportsForAmountProducedSmall(userAnswers, mode)
+      case Some(AmountProduced.None) => navigateFollowingImportsForAmountProducedNone(userAnswers, mode)
       case _ => routes.AmountProducedController.onPageLoad(NormalMode)
     }
   }
 
-  private def navigateFollowingImportsForAmountProducedLarge(userAnswers: UserAnswers, mode: Mode): Call = {
-    val operateOwnBrands = userAnswers.get(OperatePackagingSiteOwnBrandsPage)
-    val coPacker = userAnswers.get(ContractPackingPage)
-    (operateOwnBrands, coPacker, mode) match {
-      case (None, _, NormalMode) => routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode)
-      case (_, None, NormalMode) => routes.ContractPackingController.onPageLoad(NormalMode)
-      case (Some(false), Some(false), NormalMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
-      case (Some(_), Some(_), NormalMode) if userAnswers.packagingSiteList.isEmpty => routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
-      case (Some(_), Some(_), NormalMode) => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
-      case _ => routes.ChangeActivityCYAController.onPageLoad
-    }
-  }
-
-  private def navigateFollowingImportsForAmountProducedSmall(userAnswers: UserAnswers, mode: Mode): Call = {
-    if (suggestDeregistrationForSmallProducer(userAnswers)) {
-      routes.SuggestDeregistrationController.onPageLoad()
-    } else if (isVoluntaryReg(userAnswers)) {
-      routes.ChangeActivityCYAController.onPageLoad
-    } else {
-      val coPacker = userAnswers.get(ContractPackingPage)
-      val importer = userAnswers.get(ImportsPage)
-      (coPacker, importer, mode) match {
-        case (Some(true), Some(_), NormalMode) =>
-          if (userAnswers.packagingSiteList.isEmpty) {
-            routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
-          } else {
-            routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
-          }
-        case (Some(false), Some(true), NormalMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
-        case (Some(_), Some(true), CheckMode) =>
-          if (userAnswers.get(SecondaryWarehouseDetailsPage).isEmpty) {
-            routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
-          } else {
-            routes.ChangeActivityCYAController.onPageLoad
-          }
-        case _ => routes.ChangeActivityCYAController.onPageLoad
-      }
-    }
-  }
-
-  private def suggestDeregistrationForSmallProducer(userAnswers: UserAnswers): Boolean = {
-    val notThirdPartyPackagers = userAnswers.get(ThirdPartyPackagersPage).contains(false)
-    val notContractPacking = userAnswers.get(ContractPackingPage).contains(false)
-    val notImporter = userAnswers.get(ImportsPage).contains(false)
-
-    notThirdPartyPackagers && notContractPacking && notImporter
-  }
-
-  private def isVoluntaryReg(answers: UserAnswers): Boolean = {
-    answers.getChangeActivityData.exists(_.isVoluntary)
-  }
-
-  private def navigationFollowingRemovePackagingSite(userAnswers: UserAnswers, mode: Mode): Call = {
+  private def routeToPackagingSiteJourney(userAnswers: UserAnswers, mode: Mode): Call = {
     if (userAnswers.packagingSiteList.isEmpty) {
       routes.PackAtBusinessAddressController.onPageLoad(mode)
     } else {
@@ -159,39 +117,48 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     }
   }
 
-  private def navigateFollowingImportsForAmountProducedNone(userAnswers: UserAnswers, mode: Mode): Call = {
-    if (suggestDeregistrationForNonProducer(userAnswers)) {
+  private def navigateFollowingImportsForAmountProducedLarge(userAnswers: UserAnswers, mode: Mode): Call = {
+    val operateOwnBrands = userAnswers.get(OperatePackagingSiteOwnBrandsPage)
+    val coPacker = userAnswers.get(ContractPackingPage)
+    (operateOwnBrands, coPacker, mode) match {
+      case (Some(false), Some(false), NormalMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+      case (Some(_), Some(_), NormalMode) => routeToPackagingSiteJourney(userAnswers, NormalMode)
+      case _ => routes.ChangeActivityCYAController.onPageLoad
+    }
+  }
+
+  private def navigateFollowingImportsForAmountProducedSmall(userAnswers: UserAnswers, mode: Mode): Call = {
+    if (suggestDeregistration(userAnswers)) {
       routes.SuggestDeregistrationController.onPageLoad()
+    } else if (userAnswers.getChangeActivityData.exists(_.isVoluntary)) {
+      routes.ChangeActivityCYAController.onPageLoad
     } else {
-      val coPacker = userAnswers.get(ContractPackingPage)
-      val importer = userAnswers.get(ImportsPage)
-      (coPacker, importer, mode) match {
-        case (Some(true), Some(_), NormalMode) =>
-          if (userAnswers.packagingSiteList.isEmpty) {
-          routes.PackAtBusinessAddressController.onPageLoad(NormalMode)
-        } else {
-          routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
-        }
+      (userAnswers.get(ContractPackingPage), userAnswers.get(ImportsPage), mode) match {
+        case (Some(true), Some(_), NormalMode) => routeToPackagingSiteJourney(userAnswers, NormalMode)
         case (Some(false), Some(true), NormalMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
-        case (Some(_), Some(true), CheckMode) =>
-          if (userAnswers.get(SecondaryWarehouseDetailsPage).isEmpty) {
-            routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
-          } else {
-            routes.ChangeActivityCYAController.onPageLoad
-          }
+        case (Some(_), Some(true), CheckMode) if userAnswers.get(SecondaryWarehouseDetailsPage).isEmpty =>
+          routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
         case _ => routes.ChangeActivityCYAController.onPageLoad
       }
     }
   }
 
-  private def suggestDeregistrationForNonProducer(userAnswers: UserAnswers): Boolean = {
-    val notContractPacking = userAnswers.get(ContractPackingPage).contains(false)
-    val notImporter = userAnswers.get(ImportsPage).contains(false)
-    notContractPacking && notImporter
+  private def navigateFollowingImportsForAmountProducedNone(userAnswers: UserAnswers, mode: Mode): Call = {
+    if (suggestDeregistration(userAnswers)) {
+      routes.SuggestDeregistrationController.onPageLoad()
+    } else {
+      (userAnswers.get(ContractPackingPage), userAnswers.get(ImportsPage), mode) match {
+        case (Some(true), Some(_), NormalMode) => routeToPackagingSiteJourney(userAnswers, NormalMode)
+        case (Some(false), Some(true), NormalMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
+        case (Some(_), Some(true), CheckMode) if userAnswers.get(SecondaryWarehouseDetailsPage).isEmpty =>
+          routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
+        case _ => routes.ChangeActivityCYAController.onPageLoad
+      }
+    }
   }
 
   override val normalRoutes: Page => UserAnswers => Call = {
-    case AmountProducedPage => userAnswers => navigationForAmountProduced(userAnswers)
+    case AmountProducedPage => userAnswers =>  navigationForAmountProduced(userAnswers)
     case ThirdPartyPackagersPage => _ => routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode)
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, NormalMode)
     case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.ContractPackingController.onPageLoad(NormalMode)
@@ -199,7 +166,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     case HowManyContractPackingPage => _ => routes.ImportsController.onPageLoad(NormalMode)
     case ImportsPage => userAnswers => navigationForImports(userAnswers, NormalMode)
     case HowManyImportsPage => userAnswers => navigationFollowingImports(userAnswers, NormalMode)
-    case RemovePackagingSiteDetailsPage => userAnswers => navigationFollowingRemovePackagingSite(userAnswers, NormalMode)
+    case RemovePackagingSiteDetailsPage => userAnswers => routeToPackagingSiteJourney(userAnswers, NormalMode)
     case RemoveWarehouseDetailsPage => _ => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
     case _ => _ => defaultCall
   }
@@ -212,7 +179,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     case HowManyContractPackingPage => userAnswers => navigationForHowManyContractPacking(userAnswers, CheckMode)
     case ImportsPage => userAnswers => navigationForImports(userAnswers, CheckMode)
     case HowManyImportsPage => userAnswers => navigationFollowingImports(userAnswers, CheckMode)
-    case RemovePackagingSiteDetailsPage => userAnswers => navigationFollowingRemovePackagingSite(userAnswers, CheckMode)
+    case RemovePackagingSiteDetailsPage => userAnswers => routeToPackagingSiteJourney(userAnswers, CheckMode)
     case RemoveWarehouseDetailsPage => _ => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
     case _ => _ => routes.ChangeActivityCYAController.onPageLoad
   }
