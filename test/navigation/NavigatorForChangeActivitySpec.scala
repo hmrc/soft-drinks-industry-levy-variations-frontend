@@ -183,7 +183,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
         result mustBe routes.ChangeActivityCYAController.onPageLoad
       }
 
-      "should navigate to suggest registration in CheckMode when Amount Produced Small, not TPP, not Contract Packing, not Importing" in {
+      "should navigate to suggest deregistration in CheckMode when Amount Produced Small, not TPP, not Contract Packing, not Importing" in {
         val result = navigator.nextPage(ContractPackingPage, CheckMode, emptyUserAnswersForChangeActivity
           .set(AmountProducedPage, AmountProduced.Small).success.value
           .set(ThirdPartyPackagersPage, false).success.value
@@ -193,7 +193,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
         result mustBe routes.SuggestDeregistrationController.onPageLoad
       }
 
-      "should navigate to suggest registration in CheckMode when Amount Produced None, not Contract Packing, not Importing" in {
+      "should navigate to suggest deregistration in CheckMode when Amount Produced None, not Contract Packing, not Importing" in {
         val result = navigator.nextPage(ContractPackingPage, CheckMode, emptyUserAnswersForChangeActivity
           .set(AmountProducedPage, AmountProduced.None).success.value
           .set(ContractPackingPage, false).success.value
