@@ -22,7 +22,6 @@ import models.correctReturn.ChangedPage
 import models.{Amounts, UserAnswers}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewmodels.summary.correctReturn.ExemptionsForSmallProducersSummary
 
 object CorrectReturnBaseCYASummary {
 

@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package viewmodels.summary.correctReturn
+package views.summary.correctReturn
 
 import controllers.correctReturn.routes
 import models.backend.Site
-import models.{CheckMode, Mode, UserAnswers}
-import pages.correctReturn.SecondaryWarehouseDetailsPage
+import models.Mode
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -37,7 +36,7 @@ object SecondaryWarehouseDetailsSummary  {
           key     = Key(HtmlContent(AddressFormattingHelper.addressFormatting(warehouse._2.address, warehouse._2.tradingName))),
           classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds",
           actions = Some(Actions("",Seq(
-            ActionItemViewModel("site.remove", controllers.correctReturn.routes.RemoveWarehouseDetailsController.onPageLoad(mode, warehouse._1).url)
+            ActionItemViewModel("site.remove", routes.RemoveWarehouseDetailsController.onPageLoad(mode, warehouse._1).url)
               .withVisuallyHiddenText(messages("correctReturn.secondaryWarehouseDetails.remove.hidden", warehouse._2.tradingName.getOrElse(""), warehouse._2.address.lines.head))
           )))
         )

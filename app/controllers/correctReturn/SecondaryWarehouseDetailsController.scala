@@ -29,8 +29,8 @@ import services.{AddressLookupService, SessionService, WarehouseDetails}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utilities.GenericLogger
 import viewmodels.govuk.summarylist._
-import viewmodels.summary.correctReturn.SecondaryWarehouseDetailsSummary
 import views.html.correctReturn.SecondaryWarehouseDetailsView
+import views.summary.correctReturn.SecondaryWarehouseDetailsSummary
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

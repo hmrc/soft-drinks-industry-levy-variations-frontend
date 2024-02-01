@@ -38,8 +38,8 @@ import repositories.SessionRepository
 import services.{AddressLookupService, WarehouseDetails}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import viewmodels.govuk.SummaryListFluency
-import viewmodels.summary.correctReturn.SecondaryWarehouseDetailsSummary
 import views.html.correctReturn.SecondaryWarehouseDetailsView
+import views.summary.correctReturn.SecondaryWarehouseDetailsSummary
 
 import scala.concurrent.Future
 

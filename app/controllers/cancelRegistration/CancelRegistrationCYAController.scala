@@ -32,8 +32,8 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
-import viewmodels.summary.cancelRegistration.{CancelRegistrationDateSummary, ReasonSummary}
 import views.html.cancelRegistration.CancelRegistrationCYAView
+import views.summary.cancelRegistration.{CancelRegistrationDateSummary, ReasonSummary}
 
 import scala.concurrent.{ExecutionContext, Future}
 

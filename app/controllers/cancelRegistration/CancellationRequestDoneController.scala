@@ -28,8 +28,8 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
-import viewmodels.summary.cancelRegistration.{CancelRegistrationDateSummary, ReasonSummary}
 import views.html.cancelRegistration.CancellationRequestDoneView
+import views.summary.cancelRegistration.{CancelRegistrationDateSummary, ReasonSummary}
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDateTime, ZoneId}
