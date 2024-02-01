@@ -121,6 +121,7 @@ class PackingSiteDetailsRemoveControllerSpec extends SpecBase with MockitoSugar 
     }
 
     testInvalidJourneyType(UpdateRegisteredDetails, packingSiteDetailsRemoveRoute)
+    testRedirectToPostSubmissionIfRequired(UpdateRegisteredDetails, packingSiteDetailsRemoveRoute)
     testNoUserAnswersError(packingSiteDetailsRemoveRoute)
 
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {

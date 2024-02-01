@@ -178,6 +178,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
     }
 
     testInvalidJourneyType(ChangeActivity, packagingSiteDetailsRoute)
+    testRedirectToPostSubmissionIfRequired(ChangeActivity, packagingSiteDetailsRoute)
     testNoUserAnswersError(packagingSiteDetailsRoute)
 
   }

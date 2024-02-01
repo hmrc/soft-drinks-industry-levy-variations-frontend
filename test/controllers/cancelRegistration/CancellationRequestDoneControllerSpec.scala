@@ -18,7 +18,7 @@ package controllers.cancelRegistration
 
 import base.SpecBase
 import config.FrontendAppConfig
-import models.ReturnPeriod
+import models.{NormalMode, ReturnPeriod}
 import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -53,13 +53,13 @@ class CancellationRequestDoneControllerSpec extends SpecBase with SummaryListFlu
   val orgName: String = aSubscription.orgName
   val config: FrontendAppConfig = frontendAppConfig
 
+  val userAnswers = emptyUserAnswersForCancelRegistration.copy(submitted = true)
+    .set(ReasonPage, "No longer sell drinks").success.value
+    .set(CancelRegistrationDatePage, LocalDate.now()).success.value
+
   "CancellationRequestDone Controller" - {
 
     "must return OK and the correct view for a GET" in {
-
-      val userAnswers = emptyUserAnswersForCancelRegistration
-        .set(ReasonPage, "No longer sell drinks").success.value
-        .set(CancelRegistrationDatePage, LocalDate.now()).success.value
       val testTime = Instant.now()
       val application = applicationBuilder(userAnswers = Some(userAnswers.copy(submittedOn = Some(testTime)))).build()
 
@@ -81,6 +81,31 @@ class CancellationRequestDoneControllerSpec extends SpecBase with SummaryListFlu
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formattedDate, LocalDateTime.ofInstant(testTime, ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")), returnPeriodStart, returnPeriodEnd, deadlineStart, deadlineEnd, orgName, list)(request, messages(application), config).toString
+      }
+    }
+
+    "must redirect to Reason if submitted is false" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswers.copy(submitted = false))).build()
+
+      running(application) {
+        val request = FakeRequest(GET, cancellationRequestDoneRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.ReasonController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect if there is no submission date" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswers.copy(submittedOn = None))).build()
+
+      running(application) {
+        val request = FakeRequest(GET, cancellationRequestDoneRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
       }
     }
   }

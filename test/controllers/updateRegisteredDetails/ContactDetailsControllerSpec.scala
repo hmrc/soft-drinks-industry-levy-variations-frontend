@@ -63,6 +63,7 @@ class ContactDetailsControllerSpec extends SpecBase {
     }
 
     testInvalidJourneyType(UpdateRegisteredDetails, contactDetailsRoute, false)
+    testRedirectToPostSubmissionIfRequired(UpdateRegisteredDetails, contactDetailsRoute)
     testNoUserAnswersError(contactDetailsRoute, false)
   }
 }

@@ -156,6 +156,7 @@ class CorrectionReasonControllerSpec extends SpecBase with MockitoSugar {
     }
 
     testInvalidJourneyType(CorrectReturn, correctionReasonRoute)
+    testRedirectToPostSubmissionIfRequired(CorrectReturn, correctionReasonRoute)
     testNoUserAnswersError(correctionReasonRoute)
 
     "must fail if the setting of userAnswers fails" in {

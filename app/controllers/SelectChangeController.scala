@@ -48,8 +48,8 @@ class SelectChangeController @Inject()(
   def onPageLoad: Action[AnyContent] = (identify andThen getData).async {
     implicit request =>
       val preparedForm = request.userAnswers match {
-        case Some(userAnswers) => form.fill(userAnswers.journeyType)
-        case None => form
+        case Some(userAnswers) if !userAnswers.submitted => form.fill(userAnswers.journeyType)
+        case _ => form
       }
       selectChangeOrchestrator.hasReturnsToCorrect(request.subscription).value.map {
         case Right(hasVariableReturns) =>

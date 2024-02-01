@@ -45,7 +45,7 @@ class CancellationRequestDoneController @Inject()(
                                                    val errorHandler: ErrorHandler
                                                  )(implicit config: FrontendAppConfig) extends FrontendBaseController with I18nSupport with SummaryListFluency {
 
-  def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(CancelRegistration) {
+  def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyDataPostSubmission(CancelRegistration) {
 
     implicit request =>
 

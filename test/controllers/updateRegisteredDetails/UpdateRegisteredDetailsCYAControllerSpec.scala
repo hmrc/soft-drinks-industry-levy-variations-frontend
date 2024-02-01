@@ -86,6 +86,7 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
       }
     }
     testInvalidJourneyType(UpdateRegisteredDetails, UpdateRegisteredDetailsCYAController.onPageLoad.url)
+    testRedirectToPostSubmissionIfRequired(UpdateRegisteredDetails, UpdateRegisteredDetailsCYAController.onPageLoad.url)
     testNoUserAnswersError(UpdateRegisteredDetailsCYAController.onPageLoad.url)
   }
 }

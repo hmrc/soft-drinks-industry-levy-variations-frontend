@@ -54,6 +54,27 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
   val mockReturnOrchestrator: CorrectReturnOrchestrator = mock[CorrectReturnOrchestrator]
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
+  val litresInBands = LitresInBands(2000, 4000)
+  val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(submitted = true, submittedOn = Some(Instant.now()))
+    .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
+      smallProducerList = List(SmallProducer("", "XZSDIL000000234", Litreage(2000, 4000))))
+    .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+    .set(HowManyOperatePackagingSiteOwnBrandsPage, litresInBands).success.value
+    .set(PackagedAsContractPackerPage, true).success.value
+    .set(HowManyPackagedAsContractPackerPage, litresInBands).success.value
+    .set(ExemptionsForSmallProducersPage, true).success.value
+    .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", litresInBands)).success.value
+    .set(BroughtIntoUKPage, true).success.value
+    .set(HowManyBroughtIntoUKPage, litresInBands).success.value
+    .set(BroughtIntoUkFromSmallProducersPage, true).success.value
+    .set(HowManyBroughtIntoUkFromSmallProducersPage, litresInBands).success.value
+    .set(ClaimCreditsForExportsPage, true).success.value
+    .set(HowManyClaimCreditsForExportsPage, litresInBands).success.value
+    .set(ClaimCreditsForLostDamagedPage, true).success.value
+    .set(HowManyCreditsForLostDamagedPage, litresInBands).success.value
+    .set(CorrectionReasonPage, "foo").success.value
+    .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+
   def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
     when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers)
@@ -63,27 +84,6 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
   "Update Done Controller" - {
 
     "must return OK and the correct view for a GET" in {
-      val litres = LitresInBands(2000, 4000)
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
-        .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
-          smallProducerList = List(SmallProducer("", "XZSDIL000000234", Litreage(2000, 4000))))
-        .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-        .set(HowManyOperatePackagingSiteOwnBrandsPage, litres).success.value
-        .set(PackagedAsContractPackerPage, true).success.value
-        .set(HowManyPackagedAsContractPackerPage, litres).success.value
-        .set(ExemptionsForSmallProducersPage, true).success.value
-        .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", litres)).success.value
-        .set(BroughtIntoUKPage, true).success.value
-        .set(HowManyBroughtIntoUKPage, litres).success.value
-        .set(BroughtIntoUkFromSmallProducersPage, true).success.value
-        .set(HowManyBroughtIntoUkFromSmallProducersPage, litres).success.value
-        .set(ClaimCreditsForExportsPage, true).success.value
-        .set(HowManyClaimCreditsForExportsPage, litres).success.value
-        .set(ClaimCreditsForLostDamagedPage, true).success.value
-        .set(HowManyCreditsForLostDamagedPage, litres).success.value
-        .set(CorrectionReasonPage, "foo").success.value
-        .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-
       val changedPages = List(
         ChangedPage(OperatePackagingSiteOwnBrandsPage, answerChanged = true),
         ChangedPage(HowManyOperatePackagingSiteOwnBrandsPage, answerChanged = true),
@@ -101,10 +101,10 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
       val currentReturnPeriod = ReturnPeriod(2023, 1)
       val testTime = Instant.now()
-      val application = correctReturnAction(userAnswers = Some(userAnswers.copy(correctReturnPeriod = Option(currentReturnPeriod),
-        submittedOn = Some(testTime))))
-        .overrides(bind[CorrectReturnOrchestrator].toInstance(mockReturnOrchestrator))
-        .build()
+      val application = correctReturnAction(
+        userAnswers = Some(userAnswers
+          .copy(correctReturnPeriod = Option(currentReturnPeriod), submittedOn = Some(testTime)))
+      ).overrides(bind[CorrectReturnOrchestrator].toInstance(mockReturnOrchestrator)).build()
 
       running(application) {
         val request = FakeRequest(GET, CorrectReturnUpdateDoneController.onPageLoad.url)
@@ -124,6 +124,22 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(orgName, section, formattedDate, LocalDateTime.ofInstant(testTime, ZoneId.of("Europe/London"))
           .format(DateTimeFormatter.ofPattern("h:mma")), returnPeriodStart, returnPeriodEnd)(request, messages(application), frontendAppConfig).toString
+      }
+    }
+
+    "must redirect to SelectController if submitted is false" in {
+      val application = correctReturnAction(
+        userAnswers = Some(userAnswers
+          .copy(correctReturnPeriod = Option(currentReturnPeriod), submitted = false))
+      ).overrides(bind[CorrectReturnOrchestrator].toInstance(mockReturnOrchestrator)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, CorrectReturnUpdateDoneController.onPageLoad.url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.SelectController.onPageLoad.url
       }
     }
   }

@@ -321,6 +321,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
     })
 
     testInvalidJourneyType(CorrectReturn, addASmallProducerRoute)
+    testRedirectToPostSubmissionIfRequired(CorrectReturn, addASmallProducerRoute)
     testNoUserAnswersError(addASmallProducerRoute)
 
   }

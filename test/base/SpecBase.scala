@@ -19,12 +19,17 @@ package base
 import cats.data.EitherT
 import cats.implicits._
 import config.FrontendAppConfig
+import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions._
 import controllers.routes
 import errors.VariationsErrors
 import helpers.LoggerHelper
+import models.SelectChange._
 import models._
 import models.backend.{RetrievedActivity, RetrievedSubscription, Site, UkAddress}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.mockito.MockitoSugar.mock
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
@@ -203,6 +208,37 @@ trait SpecBase
             redirectLocation(result).value mustEqual selectChangeCall.url
           }
         }
+      }
+    }
+  }
+
+  def testRedirectToPostSubmissionIfRequired(selectChange: SelectChange, url: String): Unit = {
+    val userAnswers = selectChange match {
+      case CorrectReturn => userAnswersForCorrectReturnWithEmptySdilReturn.copy(submitted = true)
+      case _ => UserAnswers(sdilNumber, journeyType = selectChange, contactAddress = contactAddress, submitted = true)
+    }
+    val expectedLocation = selectChange match {
+      case CancelRegistration => controllers.cancelRegistration.routes.CancellationRequestDoneController.onPageLoad()
+      case UpdateRegisteredDetails => controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad()
+      case CorrectReturn => controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad
+      case ChangeActivity => controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad
+    }
+    val application = selectChange match {
+      case CorrectReturn =>
+        val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+        when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(Some(emptySdilReturn)))
+        applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()
+      case _ => applicationBuilder(userAnswers = Some(userAnswers)).build()
+    }
+    s"must redirect to post submission for a GET if user answers submitted for $selectChange" in {
+      running(application) {
+        val request = FakeRequest(GET, url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual expectedLocation.url
       }
     }
   }

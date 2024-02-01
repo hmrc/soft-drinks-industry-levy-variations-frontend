@@ -121,6 +121,7 @@ class $className$ControllerSpec extends SpecBase with MockitoSugar {
     }
 
     testInvalidJourneyType($packageName;format="cap"$, $className;format="decap"$Route)
+    testRedirectToPostSubmissionIfRequired($packageName;format="cap"$, $className;format="decap"$Route)
     testNoUserAnswersError($className;format="decap"$Route)
 
     "must fail if the setting of userAnswers fails" in {

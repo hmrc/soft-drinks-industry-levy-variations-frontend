@@ -162,6 +162,7 @@ class OperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with MockitoS
     }
 
     testInvalidJourneyType(ChangeActivity, operatePackagingSiteOwnBrandsRoute)
+    testRedirectToPostSubmissionIfRequired(ChangeActivity, operatePackagingSiteOwnBrandsRoute)
     testNoUserAnswersError(operatePackagingSiteOwnBrandsRoute)
 
     "must fail if the setting of userAnswers fails" in {

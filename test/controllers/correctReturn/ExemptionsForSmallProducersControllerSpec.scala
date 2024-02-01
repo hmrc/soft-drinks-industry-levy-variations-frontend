@@ -149,6 +149,7 @@ class ExemptionsForSmallProducersControllerSpec extends SpecBase with MockitoSug
     }
 
     testInvalidJourneyType(CorrectReturn, exemptionsForSmallProducersRoute)
+    testRedirectToPostSubmissionIfRequired(CorrectReturn, exemptionsForSmallProducersRoute)
     testNoUserAnswersError(exemptionsForSmallProducersRoute)
 
     "must fail if the setting of userAnswers fails" in {

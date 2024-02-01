@@ -38,8 +38,8 @@ class UpdateDoneControllerSpec extends SpecBase {
   val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("H:MMa")
   val formattedDate: String = getSentDateTime.format(dateFormatter)
   val formattedTime: String = getSentDateTime.format(timeFormatter)
-  val userAnswers: UserAnswers = emptyUserAnswersForUpdateRegisteredDetails.
-    set(UpdateContactDetailsPage, ContactDetails("Full Name", "job position", "012345678901", "email@test.com")).success.value
+  val userAnswers: UserAnswers = emptyUserAnswersForUpdateRegisteredDetails.copy(submitted = true)
+    .set(UpdateContactDetailsPage, ContactDetails("Full Name", "job position", "012345678901", "email@test.com")).success.value
   val summaryList: Seq[(String, SummaryList)] = Seq(
     UKSitesSummary.getHeadingAndSummary(userAnswers, isCheckAnswers = false),
     UpdateContactDetailsSummary.rows(userAnswers, isCheckAnswers = false),
@@ -64,6 +64,19 @@ class UpdateDoneControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(summaryList, formattedDate, LocalDateTime.ofInstant(testTime, ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")), orgName)(request, messages(application), config).toString
+      }
+    }
+
+    "must redirect to ChangeRegisteredDetails if submitted is false" in {
+      val application = applicationBuilder(userAnswers = Some(userAnswers.copy(submitted = false))).build()
+
+      running(application) {
+        val request = FakeRequest(GET, updateDoneRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.ChangeRegisteredDetailsController.onPageLoad().url
       }
     }
 

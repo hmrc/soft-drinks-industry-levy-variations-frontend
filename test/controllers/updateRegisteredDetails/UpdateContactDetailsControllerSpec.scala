@@ -146,6 +146,7 @@ class UpdateContactDetailsControllerSpec extends SpecBase with MockitoSugar {
     }
 
     testInvalidJourneyType(UpdateRegisteredDetails, updateContactDetailsRoute)
+    testRedirectToPostSubmissionIfRequired(UpdateRegisteredDetails, updateContactDetailsRoute)
     testNoUserAnswersError(updateContactDetailsRoute)
 
     "must fail if the setting of userAnswers fails" in {

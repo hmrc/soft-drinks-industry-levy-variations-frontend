@@ -146,6 +146,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
     }
 
     testInvalidJourneyType(ChangeActivity, packAtBusinessAddressRoute)
+    testRedirectToPostSubmissionIfRequired(ChangeActivity, packAtBusinessAddressRoute)
     testNoUserAnswersError(packAtBusinessAddressRoute)
 
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {

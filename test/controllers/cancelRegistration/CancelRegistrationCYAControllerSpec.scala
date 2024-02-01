@@ -177,6 +177,7 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
     }
 
     testInvalidJourneyType(CancelRegistration, CancelRegistrationCYAController.onPageLoad.url, false)
+    testRedirectToPostSubmissionIfRequired(CancelRegistration, CancelRegistrationCYAController.onPageLoad.url)
     testNoUserAnswersError(CancelRegistrationCYAController.onPageLoad.url, false)
   }
 }

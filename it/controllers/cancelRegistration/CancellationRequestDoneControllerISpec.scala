@@ -24,7 +24,7 @@ class CancellationRequestDoneControllerISpec extends ControllerITTestHelper {
       val userAnswers = emptyUserAnswersForCancelRegistration
         .set(ReasonPage, "No longer sell drinks").success.value
         .set(CancelRegistrationDatePage, LocalDate.now()).success.value
-      setAnswers(userAnswers.copy(submittedOn = Some(testTime)))
+      setAnswers(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
 
       WsTestClient.withClient { client =>
         val result1 = createClientRequestGet(client, cancelRegistrationBaseUrl + normalRoutePath)

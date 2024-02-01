@@ -54,7 +54,7 @@ class ChangeActivityOrchestrator @Inject()(sdilConnector: SoftDrinksIndustryLevy
 
     for {
       variationSubmitted <- sdilConnector.submitVariation(changeActivityVariation, subscription.sdilRef)
-        _ <- EitherT(sessionService.set(userAnswers.copy(submittedOn = Some(Instant.now()))))
+        _ <- EitherT(sessionService.set(userAnswers.copy(submitted = true, submittedOn = Some(Instant.now()))))
     } yield variationSubmitted
   }
 }

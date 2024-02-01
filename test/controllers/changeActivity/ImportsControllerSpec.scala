@@ -145,6 +145,7 @@ class ImportsControllerSpec extends SpecBase with MockitoSugar {
     }
 
     testInvalidJourneyType(ChangeActivity, importsRoute)
+    testRedirectToPostSubmissionIfRequired(ChangeActivity, importsRoute)
     testNoUserAnswersError(importsRoute)
 
     "must fail if the setting of userAnswers fails" in {

@@ -48,6 +48,7 @@ class SuggestDeregistrationControllerSpec extends SpecBase {
     }
 
     testInvalidJourneyType(ChangeActivity, suggestDeregistrationRoute)
+    testRedirectToPostSubmissionIfRequired(ChangeActivity, suggestDeregistrationRoute)
     testNoUserAnswersError(suggestDeregistrationRoute)
   }
 }

@@ -90,12 +90,11 @@ class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
             status(result) mustEqual OK
             contentAsString(result) mustEqual view(form.fill(SelectChange.values.head), hasVariableReturns, isDeregistered = true)(request, messages(application)).toString
           }
-
         }
 
-        "must populate the view correctly on a GET when the question has previously been answered" in {
+        "must populate the view correctly on a GET when the question has previously been answered and submitted is false" in {
 
-          val userAnswers = UserAnswers(sdilNumber, SelectChange.values.head, contactAddress = contactAddress)
+          val userAnswers = UserAnswers(sdilNumber, SelectChange.values.head, contactAddress = contactAddress, submitted = false)
 
           val application = applicationBuilder(userAnswers = Some(userAnswers))
             .overrides(bind[SelectChangeOrchestrator].toInstance(mockOrchestrator))
@@ -111,6 +110,28 @@ class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
 
             status(result) mustEqual OK
             contentAsString(result) mustEqual view(form.fill(SelectChange.values.head), hasVariableReturns)(request, messages(application)).toString
+          }
+        }
+
+        "must return OK and the correct view for a GET when the question has previously been answered and submitted is true" in {
+
+          val userAnswers = UserAnswers(sdilNumber, SelectChange.values.head, contactAddress = contactAddress, submitted = true)
+
+          val application = applicationBuilder(userAnswers = Some(userAnswers))
+            .overrides(bind[SelectChangeOrchestrator].toInstance(mockOrchestrator))
+            .build()
+
+          running(application) {
+            when(mockOrchestrator.hasReturnsToCorrect(any())(any(), any())) thenReturn createSuccessVariationResult(hasVariableReturns)
+            val request = FakeRequest(GET, selectChangeRoute)
+
+            val view = application.injector.instanceOf[SelectChangeView]
+
+            val result = route(application, request).value
+
+            status(result) mustEqual OK
+
+            contentAsString(result) mustEqual view(form, hasVariableReturns)(request, messages(application)).toString
           }
         }
       }

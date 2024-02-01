@@ -109,6 +109,7 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
       }
     }
     testInvalidJourneyType(CancelRegistration, fileReturnBeforDeregRoute, false)
+    testRedirectToPostSubmissionIfRequired(CancelRegistration, fileReturnBeforDeregRoute)
     testNoUserAnswersError(fileReturnBeforDeregRoute, false)
 
     "must redirect to the next page when valid data is submitted" in {

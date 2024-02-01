@@ -140,6 +140,7 @@ class ClaimCreditsForExportsControllerSpec extends SpecBase with MockitoSugar {
     }
 
     testInvalidJourneyType(CorrectReturn, claimCreditsForExportsRoute)
+    testRedirectToPostSubmissionIfRequired(CorrectReturn, claimCreditsForExportsRoute)
     testNoUserAnswersError(claimCreditsForExportsRoute)
 
     "must fail if the setting of userAnswers fails" in {

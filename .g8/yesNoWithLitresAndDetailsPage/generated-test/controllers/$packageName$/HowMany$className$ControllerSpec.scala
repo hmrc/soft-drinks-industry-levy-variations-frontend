@@ -112,6 +112,7 @@ class HowMany$className$ControllerSpec extends SpecBase with MockitoSugar {
     }
 
     testInvalidJourneyType($packageName;format="cap"$, howMany$className$Route)
+    testRedirectToPostSubmissionIfRequired($packageName;format="cap"$, howMany$className$Route)
     testNoUserAnswersError(howMany$className$Route)
 
     "must fail if the setting of userAnswers fails" in {

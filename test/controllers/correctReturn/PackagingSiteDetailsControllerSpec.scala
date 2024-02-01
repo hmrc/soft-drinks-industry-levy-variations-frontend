@@ -111,6 +111,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
     })
 
     testInvalidJourneyType(CorrectReturn, packagingSiteDetailsRoute)
+    testRedirectToPostSubmissionIfRequired(CorrectReturn, packagingSiteDetailsRoute)
     testNoUserAnswersError(packagingSiteDetailsRoute)
 
     List(NormalMode, CheckMode).foreach(mode => {

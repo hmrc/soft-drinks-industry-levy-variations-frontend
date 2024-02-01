@@ -121,6 +121,7 @@ class RemovePackagingSiteDetailsControllerSpec extends SpecBase with MockitoSuga
     }
 
     testInvalidJourneyType(ChangeActivity, packingSiteDetailsRemoveRoute)
+    testRedirectToPostSubmissionIfRequired(ChangeActivity, packingSiteDetailsRemoveRoute)
     testNoUserAnswersError(packingSiteDetailsRemoveRoute)
 
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {

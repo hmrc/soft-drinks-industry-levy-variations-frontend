@@ -33,7 +33,6 @@ import views.html.correctReturn.CorrectReturnCYAView
 import views.summary.correctReturn.CorrectReturnBaseCYASummary
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 class CorrectReturnCYAController @Inject()(override val messagesApi: MessagesApi,
                                            val sessionService: SessionService,

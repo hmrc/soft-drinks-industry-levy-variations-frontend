@@ -142,6 +142,7 @@ class HowManyImportsControllerSpec extends SpecBase with MockitoSugar {
     }
 
     testInvalidJourneyType(ChangeActivity, howManyImportsRoute)
+    testRedirectToPostSubmissionIfRequired(ChangeActivity, howManyImportsRoute)
     testNoUserAnswersError(howManyImportsRoute)
 
     "must fail if the setting of userAnswers fails" in {

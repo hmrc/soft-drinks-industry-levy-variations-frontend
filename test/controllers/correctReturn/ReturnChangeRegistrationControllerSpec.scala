@@ -79,6 +79,7 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase with MockitoSugar 
     }
 
     testInvalidJourneyType(CorrectReturn, returnChangeRegistrationRoute)
+    testRedirectToPostSubmissionIfRequired(CorrectReturn, returnChangeRegistrationRoute)
     testNoUserAnswersError(returnChangeRegistrationRoute)
   }
 }

@@ -138,6 +138,7 @@ class BroughtIntoUkFromSmallProducersControllerSpec extends SpecBase with Mockit
     }
 
     testInvalidJourneyType(CorrectReturn, broughtIntoUkFromSmallProducersRoute)
+    testRedirectToPostSubmissionIfRequired(CorrectReturn, broughtIntoUkFromSmallProducersRoute)
     testNoUserAnswersError(broughtIntoUkFromSmallProducersRoute)
 
     "must fail if the setting of userAnswers fails" in {

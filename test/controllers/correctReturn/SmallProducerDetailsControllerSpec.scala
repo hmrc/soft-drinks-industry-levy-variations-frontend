@@ -142,6 +142,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar {
     }
 
     testInvalidJourneyType(CorrectReturn, smallProducerDetailsRoute)
+    testRedirectToPostSubmissionIfRequired(CorrectReturn, smallProducerDetailsRoute)
     testNoUserAnswersError(smallProducerDetailsRoute)
 
     "must fail if the setting of userAnswers fails" in {

@@ -134,6 +134,7 @@ class AmountProducedControllerSpec extends SpecBase with MockitoSugar {
     }
 
     testInvalidJourneyType(ChangeActivity, amountProducedRoute)
+    testRedirectToPostSubmissionIfRequired(ChangeActivity, amountProducedRoute)
     testNoUserAnswersError(amountProducedRoute)
 
     "must fail if the setting of userAnswers fails" in {

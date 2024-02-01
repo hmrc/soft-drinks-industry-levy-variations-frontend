@@ -158,6 +158,7 @@ class ThirdPartyPackagersControllerSpec extends SpecBase with MockitoSugar with 
     }
 
     testInvalidJourneyType(ChangeActivity, thirdPartyPackagersRoute)
+    testRedirectToPostSubmissionIfRequired(ChangeActivity, thirdPartyPackagersRoute)
     testNoUserAnswersError(thirdPartyPackagersRoute)
 
     "must fail if the setting of userAnswers fails" in {

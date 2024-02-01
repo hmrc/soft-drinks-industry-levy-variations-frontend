@@ -19,7 +19,7 @@ package controllers.changeActivity
 import base.SpecBase
 import config.FrontendAppConfig
 import models.changeActivity.AmountProduced
-import models.{LitresInBands, UserAnswers}
+import models.{LitresInBands, NormalMode, UserAnswers}
 import pages.changeActivity._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -39,13 +39,12 @@ class ChangeActivitySentControllerSpec extends SpecBase {
   val formattedDate: String = getSentDateTime.format(dateFormatter)
   val formattedTime: String = getSentDateTime.format(timeFormatter)
   val completedUserAnswers: UserAnswers = emptyUserAnswersForChangeActivity
-    .copy(warehouseList = twoWarehouses)
+    .copy(submitted = true, warehouseList = twoWarehouses)
     .set(AmountProducedPage, AmountProduced.None).success.value
     .set(ContractPackingPage, false).success.value
     .set(ImportsPage, true).success.value
     .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
     .set(SecondaryWarehouseDetailsPage, false).success.value
-    .copy(submittedOn = Some(Instant.now()))
 
   val sections: Seq[(String, SummaryList)] = ChangeActivitySummary.summaryListsAndHeadings(completedUserAnswers, isCheckAnswers = false)
   val alias: String = aSubscription.orgName
@@ -68,6 +67,31 @@ class ChangeActivitySentControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(alias, formattedDate, LocalDateTime.ofInstant(testTime, ZoneId.of("Europe/London"))
           .format(DateTimeFormatter.ofPattern("h:mma")), sections)(request, messages(application), config).toString
+      }
+    }
+
+    "must redirect to AmountProduced if submitted is false" in {
+      val application = applicationBuilder(userAnswers = Some(completedUserAnswers.copy(submitted = false))).build()
+
+      running(application) {
+        val request = FakeRequest(GET, updateSentRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.AmountProducedController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "must redirect if there is no submission date" in {
+      val application = applicationBuilder(userAnswers = Some(completedUserAnswers.copy(submittedOn = None))).build()
+
+      running(application) {
+        val request = FakeRequest(GET, updateSentRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
       }
     }
   }

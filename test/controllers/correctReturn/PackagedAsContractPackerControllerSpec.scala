@@ -138,6 +138,7 @@ class PackagedAsContractPackerControllerSpec extends SpecBase with MockitoSugar 
     }
 
     testInvalidJourneyType(CorrectReturn, packagedAsContractPackerRoute)
+    testRedirectToPostSubmissionIfRequired(CorrectReturn, packagedAsContractPackerRoute)
     testNoUserAnswersError(packagedAsContractPackerRoute)
 
     "must fail if the setting of userAnswers fails" in {

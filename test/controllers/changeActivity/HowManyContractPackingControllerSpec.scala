@@ -129,6 +129,7 @@ class HowManyContractPackingControllerSpec extends SpecBase with MockitoSugar {
     }
 
     testInvalidJourneyType(ChangeActivity, howManyContractPackingRoute)
+    testRedirectToPostSubmissionIfRequired(ChangeActivity, howManyContractPackingRoute)
     testNoUserAnswersError(howManyContractPackingRoute)
 
     "must fail if the setting of userAnswers fails" in {
