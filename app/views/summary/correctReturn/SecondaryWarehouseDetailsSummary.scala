@@ -37,7 +37,8 @@ object SecondaryWarehouseDetailsSummary  {
           classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds",
           actions = Some(Actions("",Seq(
             ActionItemViewModel("site.remove", routes.RemoveWarehouseDetailsController.onPageLoad(mode, warehouse._1).url)
-              .withVisuallyHiddenText(messages("correctReturn.secondaryWarehouseDetails.remove.hidden", warehouse._2.tradingName.getOrElse(""), warehouse._2.address.lines.head))
+              .withVisuallyHiddenText(messages("correctReturn.secondaryWarehouseDetails.remove.hidden",
+                warehouse._2.tradingName.getOrElse(""), warehouse._2.address.lines.head))
           )))
         )
     }
