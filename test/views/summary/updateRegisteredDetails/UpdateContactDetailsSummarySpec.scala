@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.updateRegisteredDetails.summary
+package views.summary.updateRegisteredDetails
 
 import base.SpecBase
 import controllers.updateRegisteredDetails.routes
@@ -25,7 +25,6 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist._
 import viewmodels.govuk.all.FluentActionItem
 import viewmodels.implicits._
-import views.summary.updateRegisteredDetails.UpdateContactDetailsSummary
 
 class UpdateContactDetailsSummarySpec extends SpecBase {
 

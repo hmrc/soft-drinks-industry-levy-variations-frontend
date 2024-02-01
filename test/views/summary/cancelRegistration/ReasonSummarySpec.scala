@@ -17,7 +17,6 @@
 package views.summary.cancelRegistration
 
 import models.{SelectChange, UserAnswers}
-import viewmodels.summary.cancelRegistration.ReasonSummary
 import base.SpecBase
 import play.api.libs.json.Json
 

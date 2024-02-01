@@ -16,12 +16,9 @@
 
 package pages.correctReturn
 
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import pages.Page
 
-object ReturnChangeRegistrationPage extends QuestionPage[String] {
-
-  override def path: JsPath = JsPath \ journeyType \ toString
+object ReturnChangeRegistrationPage extends Page {
 
   def journeyType: String = "correctReturn"
 

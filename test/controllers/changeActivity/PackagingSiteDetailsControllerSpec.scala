@@ -35,8 +35,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{status, _}
 import services.{AddressLookupService, PackingDetails, SessionService}
 import viewmodels.govuk.SummaryListFluency
-import viewmodels.summary.changeActivity.PackagingSiteDetailsSummary
 import views.html.changeActivity.PackagingSiteDetailsView
+import views.summary.changeActivity.PackagingSiteDetailsSummary
 
 import scala.concurrent.Future
 

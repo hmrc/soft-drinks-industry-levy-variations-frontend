@@ -26,9 +26,9 @@ import play.api.mvc.Request
 import play.api.test.FakeRequest
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
 import viewmodels.govuk.SummaryListFluency
-import viewmodels.summary.correctReturn.SecondaryWarehouseDetailsSummary
 import views.ViewSpecHelper
 import views.html.correctReturn.SecondaryWarehouseDetailsView
+import views.summary.correctReturn.SecondaryWarehouseDetailsSummary
 
 class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListFluency {
 

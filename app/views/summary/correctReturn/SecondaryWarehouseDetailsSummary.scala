@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package viewmodels.summary.correctReturn
+package views.summary.correctReturn
 
 import controllers.correctReturn.routes
 import models.backend.Site
-import models.{CheckMode, Mode, UserAnswers}
-import pages.correctReturn.SecondaryWarehouseDetailsPage
+import models.Mode
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -30,22 +29,6 @@ import viewmodels.implicits._
 
 object SecondaryWarehouseDetailsSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SecondaryWarehouseDetailsPage).map {
-      answer =>
-
-        val value = if (answer) "site.yes" else "site.no"
-
-        SummaryListRowViewModel(
-          key     = "correctReturn.secondaryWarehouseDetails.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("correctReturn.secondaryWarehouseDetails.change.hidden"))
-          )
-        )
-    }
-
   def row2(warehouseList: Map[String, Site], mode: Mode)(implicit messages: Messages): List[SummaryListRow] = {
     warehouseList.map {
       warehouse =>
@@ -53,8 +36,9 @@ object SecondaryWarehouseDetailsSummary  {
           key     = Key(HtmlContent(AddressFormattingHelper.addressFormatting(warehouse._2.address, warehouse._2.tradingName))),
           classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds",
           actions = Some(Actions("",Seq(
-            ActionItemViewModel("site.remove", controllers.correctReturn.routes.RemoveWarehouseDetailsController.onPageLoad(mode, warehouse._1).url)
-              .withVisuallyHiddenText(messages("correctReturn.secondaryWarehouseDetails.remove.hidden", warehouse._2.tradingName.getOrElse(""), warehouse._2.address.lines.head))
+            ActionItemViewModel("site.remove", routes.RemoveWarehouseDetailsController.onPageLoad(mode, warehouse._1).url)
+              .withVisuallyHiddenText(messages("correctReturn.secondaryWarehouseDetails.remove.hidden",
+                warehouse._2.tradingName.getOrElse(""), warehouse._2.address.lines.head))
           )))
         )
     }

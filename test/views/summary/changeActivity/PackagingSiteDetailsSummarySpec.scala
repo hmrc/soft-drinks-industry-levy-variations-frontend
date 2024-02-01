@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.summary.correctReturn
+package views.summary.changeActivity
 
 import base.SpecBase
 import models.NormalMode

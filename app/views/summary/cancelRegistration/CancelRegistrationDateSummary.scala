@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewmodels.summary.cancelRegistration
+package views.summary.cancelRegistration
 
 import java.time.format.DateTimeFormatter
 

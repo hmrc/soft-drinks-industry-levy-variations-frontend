@@ -31,26 +31,37 @@ class RepaymentMethodSummarySpec extends SpecBase {
       repaymentMethodSummaryRow mustBe None
     }
 
-    "should return a summary list row with credit to SDIL acct repayment method if this answer has been added" in {
-      val userAnswersWithRepaymentMethod = UserAnswers(sdilNumber, SelectChange.CorrectReturn,
-        Json.obj("correctReturn" -> Json.obj("repaymentMethod" -> "sdilAccount")), contactAddress = contactAddress)
+    List(true, false).foreach(isCheckAnswers => {
+      s"should return a summary list row with credit to SDIL acct repayment method if this answer has been added and isCheckAnswers $isCheckAnswers" in {
+        val userAnswersWithRepaymentMethod = UserAnswers(sdilNumber, SelectChange.CorrectReturn,
+          Json.obj("correctReturn" -> Json.obj("repaymentMethod" -> "sdilAccount")), contactAddress = contactAddress)
 
-      val repaymentMethodSummaryRow = RepaymentMethodSummary.row(userAnswersWithRepaymentMethod)
+        val repaymentMethodSummaryRow = RepaymentMethodSummary.row(userAnswersWithRepaymentMethod, isCheckAnswers)
 
-      repaymentMethodSummaryRow.head.key.content.asHtml.toString mustBe "Repayment method"
-      repaymentMethodSummaryRow.head.value.content.asHtml.toString mustBe "Credited to your Soft Drinks Industry Levy account"
-      repaymentMethodSummaryRow.head.actions.toList.head.items.head.content.asHtml.toString() must include("Change")
-    }
+        repaymentMethodSummaryRow.head.key.content.asHtml.toString mustBe "Repayment method"
+        repaymentMethodSummaryRow.head.value.content.asHtml.toString mustBe "Credited to your Soft Drinks Industry Levy account"
+        if (isCheckAnswers) {
+          repaymentMethodSummaryRow.head.actions.toList.head.items.head.content.asHtml.toString() must include("Change")
+        } else {
+          repaymentMethodSummaryRow.head.actions.head.items.length mustEqual 0
+        }
+      }
 
-    "should return a summary list row with deposit to bank acct repayment method if this answer has been added" in {
-      val userAnswersWithRepaymentMethod = UserAnswers(sdilNumber, SelectChange.CorrectReturn,
-        Json.obj("correctReturn" -> Json.obj("repaymentMethod" -> "bankAccount")), contactAddress = contactAddress)
+      s"should return a summary list row with deposit to bank acct repayment method if this answer has been added and isCheckAnswers $isCheckAnswers" in {
+        val userAnswersWithRepaymentMethod = UserAnswers(sdilNumber, SelectChange.CorrectReturn,
+          Json.obj("correctReturn" -> Json.obj("repaymentMethod" -> "bankAccount")), contactAddress = contactAddress)
 
-      val repaymentMethodSummaryRow = RepaymentMethodSummary.row(userAnswersWithRepaymentMethod)
+        val repaymentMethodSummaryRow = RepaymentMethodSummary.row(userAnswersWithRepaymentMethod, isCheckAnswers)
 
-      repaymentMethodSummaryRow.head.key.content.asHtml.toString mustBe "Repayment method"
-      repaymentMethodSummaryRow.head.value.content.asHtml.toString mustBe "Paid into the bank account for this business"
-      repaymentMethodSummaryRow.head.actions.toList.head.items.head.content.asHtml.toString() must include("Change")
-    }
+        repaymentMethodSummaryRow.head.key.content.asHtml.toString mustBe "Repayment method"
+        repaymentMethodSummaryRow.head.value.content.asHtml.toString mustBe "Paid into the bank account for this business"
+        if (isCheckAnswers) {
+          repaymentMethodSummaryRow.head.actions.toList.head.items.head.content.asHtml.toString() must include("Change")
+        } else {
+          repaymentMethodSummaryRow.head.actions.head.items.length mustEqual 0
+        }
+      }
+    })
+
   }
 }

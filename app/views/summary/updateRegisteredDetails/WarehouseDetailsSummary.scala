@@ -30,22 +30,6 @@ import viewmodels.implicits._
 
 object WarehouseDetailsSummary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(WarehouseDetailsPage).map {
-      answer =>
-
-        val value = if (answer) "site.yes" else "site.no"
-
-        SummaryListRowViewModel(
-          key     = "updateRegisteredDetails.warehouseDetails.checkYourAnswersLabel",
-          value   = ValueViewModel(value),
-          actions = Seq(
-            ActionItemViewModel("site.change", routes.WarehouseDetailsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("updateRegisteredDetails.warehouseDetails.change.hidden"))
-          )
-        )
-    }
-
   def row2(warehouseList: Map[String, Site], mode: Mode)(implicit messages: Messages): List[SummaryListRow] = {
     warehouseList.map {
           warehouse =>

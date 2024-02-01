@@ -30,11 +30,9 @@ class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
 
   override val normalRoutes: Page => UserAnswers => Call = {
     case ChangeRegisteredDetailsPage => userAnswers => changeRegisteredDetailNavigation(userAnswers)
-    case WarehouseDetailsPage => userAnswers => defaultCall
     case RemoveWarehouseDetailsPage => _ => routes.WarehouseDetailsController.onPageLoad(NormalMode)
-    case PackagingSiteDetailsPage => userAnswers => PackagingSiteDetailsNavigation(userAnswers)
     case PackingSiteDetailsRemovePage => _ => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
-    case UpdateContactDetailsPage => userAnswers => UpdateContactDetailsNavigation(userAnswers)
+    case UpdateContactDetailsPage => userAnswers => updateContactDetailsNavigation(userAnswers)
     case _ => _ => defaultCall
   }
 
@@ -48,16 +46,7 @@ class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
     case _ => _ => defaultCall
   }
 
-  def PackagingSiteDetailsNavigation(userAnswers: UserAnswers): Call = {
-    val changeRegisteredDetailsPageAnswers = userAnswers.get(ChangeRegisteredDetailsPage).head
-    if (changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.ContactDetails)) {
-      routes.UpdateContactDetailsController.onPageLoad(NormalMode)
-    } else {
-      routes.UpdateRegisteredDetailsCYAController.onPageLoad
-    }
-  }
-
-  def UpdateContactDetailsNavigation(userAnswers: UserAnswers): Call = {
+  private def updateContactDetailsNavigation(userAnswers: UserAnswers): Call = {
     val changeRegisteredDetailsPageAnswers = userAnswers.get(ChangeRegisteredDetailsPage).head
     if (changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.BusinessAddress)) {
       routes.BusinessAddressController.onPageLoad()
@@ -66,14 +55,13 @@ class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
     }
   }
 
-  def changeRegisteredDetailNavigation(userAnswers: UserAnswers) = {
+  private def changeRegisteredDetailNavigation(userAnswers: UserAnswers) = {
     val changeRegisteredDetailsPageAnswers = userAnswers.get(ChangeRegisteredDetailsPage).head
     if (changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.Sites)) {
-      userAnswers match {
-        case userAnswers if userAnswers.packagingSiteList.nonEmpty =>
-          routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
-        case _ =>
-          routes.WarehouseDetailsController.onPageLoad(NormalMode)
+      if (userAnswers.packagingSiteList.nonEmpty) {
+        routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
+      } else {
+        routes.WarehouseDetailsController.onPageLoad(NormalMode)
       }
     } else if (changeRegisteredDetailsPageAnswers.contains(ChangeRegisteredDetails.ContactDetails)) {
       routes.UpdateContactDetailsController.onPageLoad(NormalMode)

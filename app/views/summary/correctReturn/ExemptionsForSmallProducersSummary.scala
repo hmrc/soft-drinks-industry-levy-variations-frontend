@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewmodels.summary.correctReturn
+package views.summary.correctReturn
 
 import controllers.correctReturn.routes
 import models.{CheckMode, LitresInBands}

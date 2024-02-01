@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package views.updateRegisteredDetails.summary
+package views.summary.updateRegisteredDetails
 
 import base.SpecBase
 import models.backend.UkAddress
-import views.summary.updateRegisteredDetails.BusinessAddressSummary
 
 class BusinessAddressSummarySpec extends SpecBase {
   lazy val businessAddress: UkAddress = UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")

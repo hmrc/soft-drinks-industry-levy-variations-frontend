@@ -32,8 +32,8 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.http.HeaderCarrier
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
-import viewmodels.summary.changeActivity.PackagingSiteDetailsSummary
 import views.html.changeActivity.PackagingSiteDetailsView
+import views.summary.changeActivity.PackagingSiteDetailsSummary
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}

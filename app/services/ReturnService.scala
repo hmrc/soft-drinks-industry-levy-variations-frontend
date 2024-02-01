@@ -114,8 +114,6 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector)(im
     sdilConnector.submitReturnVariation(subscription.sdilRef, returnVariation)
   }
 
-  def instantNow: Instant = Instant.now()
-
   private def getAmounts(userAnswers: UserAnswers, originalReturn: SdilReturn, balanceBroughtForward: BigDecimal, isSmallProducer: Boolean): Amounts = {
     val originalReturnTotal: BigDecimal = originalReturn.total
     val totalForQuarter = SdilReturn.generateFromUserAnswers(userAnswers).total

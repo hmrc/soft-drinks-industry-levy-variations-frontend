@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package viewmodels.summary.cancelRegistration
+package views.summary.cancelRegistration
 
 import controllers.cancelRegistration.routes
 import models.{CheckMode, UserAnswers}
