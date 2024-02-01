@@ -20,7 +20,7 @@ import controllers.correctReturn.routes
 import play.api.libs.json.JsPath
 import models.{Mode, UserAnswers}
 import models.backend.RetrievedSubscription
-import pages.{Page, QuestionPage, RequiredPage}
+import pages.{QuestionPage, RequiredPage}
 import utilities.UserTypeCheck
 
 case object CorrectReturnBaseCYAPage extends QuestionPage[Boolean] {
