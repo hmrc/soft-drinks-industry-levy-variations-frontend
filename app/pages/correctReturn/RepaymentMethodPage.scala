@@ -17,9 +17,10 @@
 package pages.correctReturn
 
 import controllers.correctReturn.routes
-import models.Mode
+import models.backend.RetrievedSubscription
+import models.{Mode, UserAnswers}
 import models.correctReturn.RepaymentMethod
-import pages.QuestionPage
+import pages.{QuestionPage, RequiredPage}
 import play.api.libs.json.JsPath
 
 case object RepaymentMethodPage extends QuestionPage[RepaymentMethod] {
@@ -30,4 +31,7 @@ case object RepaymentMethodPage extends QuestionPage[RepaymentMethod] {
   override def toString: String = "repaymentMethod"
 
   override val url: Mode => String = mode => routes.RepaymentMethodController.onPageLoad(mode).url
+
+  override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (_, _) =>
+    List(RequiredPage(CorrectReturnBaseCYAPage))
 }

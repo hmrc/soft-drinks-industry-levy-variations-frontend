@@ -17,9 +17,10 @@
 package pages.correctReturn
 
 import controllers.correctReturn.routes
-import models.Mode
+import models.backend.RetrievedSubscription
+import models.{Mode, UserAnswers}
 import play.api.libs.json.JsPath
-import pages.QuestionPage
+import pages.{QuestionPage, RequiredPage}
 
 case object CorrectionReasonPage extends QuestionPage[String] {
 
@@ -29,4 +30,7 @@ case object CorrectionReasonPage extends QuestionPage[String] {
   override def toString: String = "correctionReason"
 
   override val url: Mode => String = mode => routes.CorrectionReasonController.onPageLoad(mode).url
+
+  override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (_, _) =>
+    List(RequiredPage(CorrectReturnBaseCYAPage))
 }

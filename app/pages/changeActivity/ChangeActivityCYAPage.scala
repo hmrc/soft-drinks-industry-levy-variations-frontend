@@ -17,12 +17,48 @@
 package pages.changeActivity
 
 import controllers.changeActivity.routes
-import models.Mode
-import pages.Page
+import models.backend.RetrievedSubscription
+import models.changeActivity.AmountProduced
+import models.{Mode, UserAnswers}
+import pages.{Page, RequiredPage}
 
 case object ChangeActivityCYAPage extends Page {
 
   override def toString: String = "checkYourAnswers"
 
   override val url: Mode => String = _ => routes.ChangeActivityCYAController.onPageLoad.url
+
+  override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (userAnswers, _) =>
+    List(
+      RequiredPage(AmountProducedPage),
+      RequiredPage(ThirdPartyPackagersPage, additionalPreconditions = List(userAnswers.getChangeActivityData.exists(_.isSmall))),
+      RequiredPage(OperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(userAnswers.getChangeActivityData.exists(_.isLargeOrSmall))),
+      RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(userAnswers.get(OperatePackagingSiteOwnBrandsPage).contains(true))),
+      RequiredPage(ContractPackingPage),
+      RequiredPage(HowManyContractPackingPage, additionalPreconditions = List(userAnswers.get(ContractPackingPage).contains(true))),
+      RequiredPage(ImportsPage),
+      RequiredPage(HowManyImportsPage, additionalPreconditions = List(userAnswers.get(ImportsPage).contains(true))),
+      RequiredPage(PackAtBusinessAddressPage, additionalPreconditions = List(
+        !userAnswers.getChangeActivityData.exists(_.isLarge),
+        userAnswers.get(ContractPackingPage).contains(true),
+        userAnswers.packagingSiteList.isEmpty
+      )),
+      RequiredPage(PackAtBusinessAddressPage, additionalPreconditions = List(
+        userAnswers.getChangeActivityData.exists(_.isLarge),
+        userAnswers.getChangeActivityData.exists(_.operatePackagingSitesOrContractPacking),
+        userAnswers.packagingSiteList.isEmpty
+      )),
+      RequiredPage(PackagingSiteDetailsPage, additionalPreconditions = List(
+        !userAnswers.getChangeActivityData.exists(_.isLarge),
+        userAnswers.get(ContractPackingPage).contains(true)
+      )),
+      RequiredPage(PackagingSiteDetailsPage, additionalPreconditions = List(
+        userAnswers.getChangeActivityData.exists(_.isLarge),
+        userAnswers.getChangeActivityData.exists(_.operatePackagingSitesOrContractPacking)
+      )),
+      RequiredPage(SecondaryWarehouseDetailsPage, additionalPreconditions = List(
+        userAnswers.get(ImportsPage).contains(true),
+        !userAnswers.isEmpty(PackagingSiteDetailsPage)
+      ))
+    )
 }

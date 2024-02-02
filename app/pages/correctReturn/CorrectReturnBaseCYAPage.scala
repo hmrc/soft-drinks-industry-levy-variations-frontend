@@ -17,9 +17,11 @@
 package pages.correctReturn
 
 import controllers.correctReturn.routes
-import models.Mode
-import pages.QuestionPage
 import play.api.libs.json.JsPath
+import models.{Mode, UserAnswers}
+import models.backend.RetrievedSubscription
+import pages.{QuestionPage, RequiredPage}
+import utilities.UserTypeCheck
 
 case object CorrectReturnBaseCYAPage extends QuestionPage[Boolean] {
 
@@ -27,6 +29,36 @@ case object CorrectReturnBaseCYAPage extends QuestionPage[Boolean] {
 
   def journeyType: String = "correctReturn"
   override def toString: String = "checkYourAnswers"
-
+  
   override val url: Mode => String = _ => routes.CorrectReturnCYAController.onPageLoad.url
+
+  override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (userAnswers, subscription) => {
+    List(
+      RequiredPage(OperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(!subscription.activity.smallProducer)),
+      RequiredPage(HowManyOperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(
+        !subscription.activity.smallProducer,
+        userAnswers.get(OperatePackagingSiteOwnBrandsPage).contains(true))
+      ),
+      RequiredPage(PackagedAsContractPackerPage),
+      RequiredPage(HowManyPackagedAsContractPackerPage, additionalPreconditions = List(userAnswers.get(PackagedAsContractPackerPage).contains(true))),
+      RequiredPage(ExemptionsForSmallProducersPage),
+      RequiredPage(AddASmallProducerPage, additionalPreconditions = List(
+        userAnswers.get(ExemptionsForSmallProducersPage).contains(true),
+        userAnswers.smallProducerList.isEmpty
+      )),
+      RequiredPage(BroughtIntoUKPage),
+      RequiredPage(HowManyBroughtIntoUKPage, additionalPreconditions = List(userAnswers.get(BroughtIntoUKPage).contains(true))),
+      RequiredPage(BroughtIntoUkFromSmallProducersPage),
+      RequiredPage(HowManyBroughtIntoUkFromSmallProducersPage, additionalPreconditions = List(userAnswers.get(BroughtIntoUkFromSmallProducersPage).contains(true))),
+      RequiredPage(ClaimCreditsForExportsPage),
+      RequiredPage(HowManyClaimCreditsForExportsPage, additionalPreconditions = List(userAnswers.get(ClaimCreditsForExportsPage).contains(true))),
+      RequiredPage(ClaimCreditsForLostDamagedPage),
+      RequiredPage(HowManyCreditsForLostDamagedPage, additionalPreconditions = List(userAnswers.get(ClaimCreditsForLostDamagedPage).contains(true))),
+      RequiredPage(PackAtBusinessAddressPage, additionalPreconditions = List(
+        UserTypeCheck.isNewPacker(userAnswers, subscription),
+        subscription.productionSites.isEmpty
+      )),
+      RequiredPage(AskSecondaryWarehouseInReturnPage, additionalPreconditions = List(UserTypeCheck.isNewImporter(userAnswers, subscription)))
+    )
+  }
 }

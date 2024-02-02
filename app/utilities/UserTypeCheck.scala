@@ -27,7 +27,6 @@ object UserTypeCheck {
     totalImported.fold(false)(imported =>
       (imported.lower > 0L && imported.higher > 0L) && userIsNotAlreadyAnImporter
     )
-
 }
   def isNewPacker(userAnswers: UserAnswers, subscription: RetrievedSubscription): Boolean = {
     val userIsNotAlreadyAPacker = !subscription.activity.contractPacker

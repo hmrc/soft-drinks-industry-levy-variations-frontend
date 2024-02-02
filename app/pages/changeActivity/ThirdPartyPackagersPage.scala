@@ -17,8 +17,9 @@
 package pages.changeActivity
 
 import controllers.changeActivity.routes
-import models.Mode
-import pages.QuestionPage
+import models.backend.RetrievedSubscription
+import models.{Mode, UserAnswers}
+import pages.{QuestionPage, RequiredPage}
 import play.api.libs.json.JsPath
 
 case object ThirdPartyPackagersPage extends QuestionPage[Boolean] {
@@ -29,4 +30,7 @@ case object ThirdPartyPackagersPage extends QuestionPage[Boolean] {
   override def toString: String = "thirdPartyPackagers"
 
   override val url: Mode => String = mode => routes.ThirdPartyPackagersController.onPageLoad(mode).url
+
+  override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (_, _) =>
+    List(RequiredPage(AmountProducedPage))
 }
