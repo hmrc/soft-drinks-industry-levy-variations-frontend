@@ -34,7 +34,7 @@ class SelectViewSpec extends ViewSpecHelper {
   implicit val request: Request[_] = FakeRequest()
 
   object Selectors {
-    val heading = "govuk-fieldset__heading"
+    val heading = "govuk-heading-m"
     val legend = "govuk-fieldset__legend  govuk-fieldset__legend--l"
     val radios = "govuk-radios"
     val radioDivider = "govuk-radios__divider"
@@ -59,7 +59,7 @@ class SelectViewSpec extends ViewSpecHelper {
     "should include a legend with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("correctReturn.select.heading")
+      legend.get(0).text() mustEqual Messages("correctReturn.select.heading")
     }
 
     "should include radios" - {
