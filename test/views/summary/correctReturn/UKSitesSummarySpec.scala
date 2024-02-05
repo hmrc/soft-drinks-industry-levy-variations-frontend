@@ -145,6 +145,7 @@ class UKSitesSummarySpec extends SpecBase {
         })
       }
 
+      
       s"should return nothing when isCheckAnswers $isCheckAnswers and is not new importer and is not new packer" - {
         packagingSitesValues.foreach(packagingSites => {
           warehousesValues.foreach(warehouses => {
