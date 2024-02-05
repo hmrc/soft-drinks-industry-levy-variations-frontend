@@ -17,8 +17,7 @@
 package views.summary.correctReturn
 
 import models.backend.Site
-import models.{CheckMode, Mode, UserAnswers}
-import pages.correctReturn.PackagingSiteDetailsPage
+import models.Mode
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, HtmlContent, Key}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}

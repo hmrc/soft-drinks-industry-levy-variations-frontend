@@ -18,7 +18,6 @@ package pages.changeActivity
 
 import controllers.changeActivity.routes
 import models.backend.RetrievedSubscription
-import models.changeActivity.AmountProduced
 import models.{Mode, UserAnswers}
 import play.api.libs.json.JsPath
 import pages.{QuestionPage, RequiredPage}

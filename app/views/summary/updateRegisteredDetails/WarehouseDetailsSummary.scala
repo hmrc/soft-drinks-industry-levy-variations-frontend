@@ -18,8 +18,7 @@ package views.summary.updateRegisteredDetails
 
 import controllers.updateRegisteredDetails.routes
 import models.backend.Site
-import models.{CheckMode, Mode, UserAnswers}
-import pages.updateRegisteredDetails.WarehouseDetailsPage
+import models.Mode
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -39,8 +38,7 @@ object WarehouseDetailsSummary  {
                 classes = "govuk-!-font-weight-regular govuk-!-width-full"
               ),
               actions = Some(Actions("",Seq(
-                ActionItemViewModel("site.remove",
-                  controllers.updateRegisteredDetails.routes.RemoveWarehouseDetailsController.onPageLoad(mode, warehouse._1).url )
+                ActionItemViewModel("site.remove", routes.RemoveWarehouseDetailsController.onPageLoad(mode, warehouse._1).url)
                   .withVisuallyHiddenText(messages("updateRegisteredDetails.warehouseDetails.remove.hidden",
                     warehouse._2.tradingName.getOrElse(""), warehouse._2.address.lines.head))
               )))
