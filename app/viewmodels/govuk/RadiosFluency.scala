@@ -46,14 +46,41 @@ trait RadiosFluency {
     def apply(
                field: Field,
                items: Seq[RadioItem],
+               noErrorRequired: Boolean
+             )(implicit messages: Messages): Radios =
+      apply(
+        field = field,
+        items = items,
+        fieldset = None,
+        noError = noErrorRequired
+      )
+
+    def apply(
+               field: Field,
+               items: Seq[RadioItem],
                fieldset: Fieldset,
                noError: Boolean
              )(implicit messages: Messages): Radios =
+      apply(
+        field = field,
+        items = items,
+        fieldset = Some(fieldset),
+        noError = noError
+      )
+
+    def apply(
+               field: Field,
+               items: Seq[RadioItem],
+               fieldset: Option[Fieldset],
+               noError: Boolean
+             )(implicit messages: Messages): Radios =
       Radios(
-        fieldset     = Some(fieldset),
-        name         = field.name,
-        items        = items map (item => item copy (checked = field.value.isDefined && field.value == item.value)),
-        errorMessage = if(noError) None else {errorMessage(field)}
+        fieldset = fieldset,
+        name = field.name,
+        items = items map (item => item copy (checked = field.value.isDefined && field.value == item.value)),
+        errorMessage = if (noError) None else {
+          errorMessage(field)
+        }
       )
 
     def yesNo(

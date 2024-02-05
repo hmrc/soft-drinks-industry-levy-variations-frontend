@@ -42,12 +42,10 @@
     }
 
     @for((returnPeriodsForYear, index) <- returnPeriodsForYears.zipWithIndex) {
+        <h2 class="govuk-heading-m">@{returnPeriodsForYear.head.year.toString}</h2>
         @govukRadios(
             RadiosViewModel(
                 field = form("value"),
-                legend = LegendViewModel(
-                    HtmlContent(s"<h2 class=\"govuk-fieldset__heading\">${returnPeriodsForYear.head.year.toString}</h2>")
-                ).withCssClass("govuk-fieldset__legend--m"),
                 items = ReturnPeriodsRadios.getRadioItemsForYear(returnPeriodsForYear, index),
                 noErrorRequired = true
             )
