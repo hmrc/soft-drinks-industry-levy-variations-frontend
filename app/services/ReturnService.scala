@@ -27,7 +27,6 @@ import service.VariationResult
 import uk.gov.hmrc.http.HeaderCarrier
 import utilities.UserTypeCheck
 
-import java.time.Instant
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.ExecutionContext
 

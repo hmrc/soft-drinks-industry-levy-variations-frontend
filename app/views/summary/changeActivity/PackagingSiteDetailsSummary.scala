@@ -19,7 +19,6 @@ package views.summary.changeActivity
 import controllers.changeActivity.routes
 import models.backend.Site
 import models.{CheckMode, Mode, UserAnswers}
-import pages.changeActivity.PackagingSiteDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Value}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent

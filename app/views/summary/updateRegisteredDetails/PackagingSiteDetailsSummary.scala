@@ -18,8 +18,7 @@ package views.summary.updateRegisteredDetails
 
 import controllers.updateRegisteredDetails.routes
 import models.backend.Site
-import models.{CheckMode, Mode, UserAnswers}
-import pages.updateRegisteredDetails.PackagingSiteDetailsPage
+import models.Mode
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
