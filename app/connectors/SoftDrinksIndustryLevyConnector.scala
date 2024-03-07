@@ -178,7 +178,6 @@ class SoftDrinksIndustryLevyConnector @Inject()(
   }
 
   def submitVariation(variation: VariationsSubmission, sdilNumber: String)(implicit hc: HeaderCarrier): VariationResult[Unit] = EitherT {
-    genericLogger.logger.info(s"[SoftDrinksIndustryLevyConnector][submitVariation] - variation data we are submitting: ${Json.toJson(variation)}")
     http.POST[VariationsSubmission, HttpResponse](s"$sdilUrl/submit-variations/sdil/$sdilNumber", variation)
       .map { resp =>
         resp.status match {
@@ -195,7 +194,6 @@ class SoftDrinksIndustryLevyConnector @Inject()(
   }
 
   def submitSdilReturnsVary(sdilNumber: String, variation: ReturnVariationData)(implicit hc: HeaderCarrier): VariationResult[Unit] = EitherT {
-    genericLogger.logger.info(s"[SoftDrinksIndustryLevyConnector][submitVariation] - variation data we are submitting: ${Json.toJson(variation)}")
     http.POST[ReturnVariationData, HttpResponse](s"$sdilUrl/returns/vary/$sdilNumber", variation).map { resp =>
       resp.status match {
         case NO_CONTENT => Right((): Unit)
