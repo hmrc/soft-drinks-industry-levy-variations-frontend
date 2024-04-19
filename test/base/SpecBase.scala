@@ -287,7 +287,7 @@ trait SpecBase
     Try[UserAnswers] = Failure[UserAnswers](new Exception(""))
   }
 
-  def defaultCall: Call = routes.IndexController.onPageLoad
+  def defaultCall: Call = routes.SelectChangeController.onPageLoad
   def recoveryCall: Call = routes.JourneyRecoveryController.onPageLoad()
 
   def selectChangeCall: Call = routes.SelectChangeController.onPageLoad

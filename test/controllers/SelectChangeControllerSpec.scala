@@ -176,8 +176,7 @@ class SelectChangeControllerSpec extends SpecBase with MockitoSugar {
             case SelectChange.UpdateRegisteredDetails => updateRegisteredDetails.routes.ChangeRegisteredDetailsController.onPageLoad()
             case SelectChange.ChangeActivity => changeActivity.routes.AmountProducedController.onPageLoad(NormalMode)
             case SelectChange.CorrectReturn => correctReturn.routes.SelectController.onPageLoad
-            case SelectChange.CancelRegistration => cancelRegistration.routes.ReasonController.onPageLoad(NormalMode)
-            case _ => routes.IndexController.onPageLoad
+            case _ => cancelRegistration.routes.ReasonController.onPageLoad(NormalMode)
           }
           redirectLocation(result).value mustEqual expectedNextPage.url
         }
