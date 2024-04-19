@@ -211,7 +211,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
             timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
             timeoutKeepAliveUrl = Some(controllers.routes.KeepAliveController.keepAlive.url)
           )),
-          serviceHref = Some(controllers.routes.IndexController.onPageLoad.url),
+         serviceHref = Some("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"),
           pageHeadingStyle = Some("govuk-heading-l")
         ),
         labels = Some(
@@ -377,7 +377,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
             timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
             timeoutKeepAliveUrl = Some(controllers.routes.KeepAliveController.keepAlive.url)
           )),
-          serviceHref = Some(controllers.routes.IndexController.onPageLoad.url),
+         serviceHref = Some("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"),
           pageHeadingStyle = Some("govuk-heading-l")
         ),
         labels = Some(

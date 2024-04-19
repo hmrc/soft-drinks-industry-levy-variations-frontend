@@ -44,7 +44,7 @@ trait ITCoreTestData
 
   implicit val duration = 5.seconds
 
-  val defaultCall = routes.IndexController.onPageLoad
+  val defaultCall = routes.SelectChangeController.onPageLoad
 
   val diffSubscription = RetrievedSubscription(
     utr = "0000001611",

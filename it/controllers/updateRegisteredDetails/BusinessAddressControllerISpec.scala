@@ -49,7 +49,7 @@ class BusinessAddressControllerISpec extends ControllerITTestHelper {
             timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
             timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
           )),
-          serviceHref = Some(routes.IndexController.onPageLoad.url),
+          serviceHref = Some("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"),
           pageHeadingStyle = Some("govuk-heading-l")
         ),
         labels = Some(
