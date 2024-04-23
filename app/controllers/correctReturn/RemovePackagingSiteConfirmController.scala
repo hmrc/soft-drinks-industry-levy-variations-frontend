@@ -57,7 +57,7 @@ class RemovePackagingSiteConfirmController @Inject()(
           Ok(view(form, mode, formattedAddress, index))
         case _ => genericLogger.logger.warn(s"Packing Site index $index doesn't exist ${request.userAnswers.id} packing site list length:" +
           s"${request.userAnswers.packagingSiteList.size}")
-          Redirect(controllers.routes.IndexController.onPageLoad)
+          indexNotFoundRedirect(index, request, routes.PackagingSiteDetailsController.onPageLoad(mode))
       }
   }
 
@@ -68,7 +68,7 @@ class RemovePackagingSiteConfirmController @Inject()(
         case None =>
           genericLogger.logger.warn(s"Packing Site index $index doesn't exist ${request.userAnswers.id} packing site list length:" +
             s"${request.userAnswers.packagingSiteList.size}")
-          Future.successful(Redirect(controllers.routes.IndexController.onPageLoad))
+          Future.successful(indexNotFoundRedirect(index, request, routes.PackagingSiteDetailsController.onPageLoad(mode)))
         case Some(site) =>
           val formattedAddress: Html = AddressFormattingHelper.addressFormatting(site.address, site.tradingName)
           form.bindFromRequest().fold(
