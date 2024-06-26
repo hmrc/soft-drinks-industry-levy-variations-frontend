@@ -18,7 +18,7 @@ package models.backend
 
 import models.Contact
 import models.submission.SdilActivity
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 
@@ -44,5 +44,5 @@ case class RetrievedSubscription(
 }
 
 object RetrievedSubscription {
-  implicit val format = Json.format[RetrievedSubscription]
+  implicit val format: OFormat[RetrievedSubscription] = Json.format[RetrievedSubscription]
 }

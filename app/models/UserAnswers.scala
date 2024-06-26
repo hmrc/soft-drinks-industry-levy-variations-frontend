@@ -19,7 +19,6 @@ package models
 import models.backend.{Site, UkAddress}
 import models.changeActivity.ChangeActivityData
 import models.correctReturn.CorrectReturnUserAnswersData
-import pages.Page
 import play.api.libs.functional.syntax.toFunctionalBuilderOps
 import play.api.libs.json._
 import queries.{Gettable, Query, Settable}

@@ -123,7 +123,6 @@ class ControllerActions @Inject()(identify: IdentifierAction,
   private def checkReturnSubmission(onPostSubmissionPageLoad: Boolean): ActionRefiner[CorrectReturnDataRequest, CorrectReturnDataRequest] =
     new ActionRefiner[CorrectReturnDataRequest, CorrectReturnDataRequest] {
       override protected def refine[A](request: CorrectReturnDataRequest[A]): Future[Either[Result, CorrectReturnDataRequest[A]]] = {
-        implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
         (request.userAnswers.submitted, onPostSubmissionPageLoad) match {
           case (true, false) => Future(Left(Redirect(postSubmissionResultFromJourneyType(SelectChange.CorrectReturn))))
           case (false, true) => Future(Left(Redirect(preSubmissionResultFromJourneyType(SelectChange.CorrectReturn))))

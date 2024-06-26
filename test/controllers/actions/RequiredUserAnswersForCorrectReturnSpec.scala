@@ -19,15 +19,14 @@ package controllers.actions
 import base.SpecBase
 import controllers.correctReturn.routes
 import models.backend.{RetrievedActivity, RetrievedSubscription, UkAddress}
-import models.correctReturn.{AddASmallProducer, RepaymentMethod}
-import models.requests.CorrectReturnDataRequest
-import models.{CheckMode, Contact, LitresInBands, ReturnPeriod}
+import models.correctReturn.RepaymentMethod
+import models.{CheckMode, Contact, LitresInBands}
 import pages.{Page, RequiredPage}
 import pages.correctReturn._
-import play.api.libs.json.{Json, Reads}
+import play.api.libs.json.Json
 import play.api.mvc.Results.Ok
 import play.api.test.Helpers._
-import play.api.test.{DefaultAwaitTimeout, FakeRequest}
+import play.api.test.DefaultAwaitTimeout
 
 import java.time.LocalDate
 import scala.concurrent.Future

@@ -22,7 +22,7 @@ import play.api.libs.json._
 case class ContactDetails(fullName: String, position: String, phoneNumber: String, email: String)
 
 object ContactDetails {
-  implicit val format = Json.format[ContactDetails]
+  implicit val format: OFormat[ContactDetails] = Json.format[ContactDetails]
 
   def fromContact(contact: Contact): ContactDetails = {
     ContactDetails(

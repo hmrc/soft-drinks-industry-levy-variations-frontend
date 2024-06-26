@@ -20,15 +20,13 @@ import base.SpecBase
 import models.backend.Site
 import models.changeActivity.AmountProduced
 import models.changeActivity.AmountProduced.{Large, None, Small}
-import models.requests.{DataRequest, RequiredDataRequest}
-import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
-import pages.{QuestionPage, RequiredPage}
+import models.{CheckMode, LitresInBands, NormalMode}
+import pages.QuestionPage
 import pages.changeActivity._
-import play.api.libs.json.Reads
 import play.api.mvc.Results.Ok
-import play.api.mvc.{AnyContentAsEmpty, Result}
+import play.api.mvc.Result
 import play.api.test.Helpers.{contentAsString, redirectLocation}
-import play.api.test.{DefaultAwaitTimeout, FakeRequest}
+import play.api.test.DefaultAwaitTimeout
 
 import scala.concurrent.Future
 

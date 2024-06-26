@@ -92,5 +92,5 @@ object SdilReturn {
 
   implicit val smallProducerJson: OFormat[SmallProducer] = Json.format[SmallProducer]
 
-  implicit val format = Json.format[SdilReturn]
+  implicit val format: OFormat[SdilReturn] = Json.format[SdilReturn]
 }

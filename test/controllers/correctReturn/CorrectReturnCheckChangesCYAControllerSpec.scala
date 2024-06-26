@@ -134,8 +134,6 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must return OK and contain correct net adjusted amount when prior return total was £0" in {
-      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", Litreage())
-      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", Litreage())
       val amounts1 = Amounts(0.00, 4200.00, -300.00, 4500.00, 4500.00)
       val userAnswers = filledUserAnswers
         .set(CorrectReturnBaseCYAPage, true).success.value
@@ -167,8 +165,6 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must return OK and contain correct net adjusted amount when prior return total is less than new return total" in {
-      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", Litreage())
-      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", Litreage())
       val amounts1 = Amounts(4000.00, 4200.00, -300.00, 4500.00, 500.00)
       val userAnswers = filledUserAnswers
         .set(CorrectReturnBaseCYAPage, true).success.value
@@ -200,8 +196,6 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must return OK and contain correct net adjusted amount when prior return total is more than new return total when repayment method answered" in {
-      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", Litreage())
-      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", Litreage())
       val amounts1 = Amounts(40200.00, 4200.00, -300.00, 4500.00, -35700.00)
       val userAnswers = filledUserAnswers
         .set(CorrectReturnBaseCYAPage, true).success.value
@@ -233,8 +227,6 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must redirect to RepaymentMethod and contain correct net adjusted amount when prior return total is more than new return total when repayment method is not answered" in {
-      val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", Litreage())
-      val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", Litreage())
       val amounts1 = Amounts(40200.00, 4200.00, -300.00, 4500.00, -35700.00)
       val userAnswers = filledUserAnswers
         .set(CorrectReturnBaseCYAPage, true).success.value

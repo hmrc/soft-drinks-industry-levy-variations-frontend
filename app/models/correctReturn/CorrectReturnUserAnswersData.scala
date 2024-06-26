@@ -18,7 +18,7 @@ package models.correctReturn
 
 import models.submission.Litreage
 import models.{LitresInBands, SdilReturn, SmallProducer}
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 
 case class CorrectReturnUserAnswersData(
                                          operatePackagingSiteOwnBrands: Boolean,
@@ -56,7 +56,7 @@ case class CorrectReturnUserAnswersData(
 
 object CorrectReturnUserAnswersData {
 
-  implicit val format = Json.format[CorrectReturnUserAnswersData]
+  implicit val format: OFormat[CorrectReturnUserAnswersData] = Json.format[CorrectReturnUserAnswersData]
 
   def fromSdilReturn(sdilReturn: SdilReturn): CorrectReturnUserAnswersData = {
     val (ownBrands, howManyOwnBrands) = getBooleanAndLitresInBands(sdilReturn.ownBrand)
