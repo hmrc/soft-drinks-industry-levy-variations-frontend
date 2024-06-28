@@ -27,7 +27,7 @@ import scala.concurrent.Future
 
 abstract class RequiredUserAnswersHelper @Inject() extends ActionHelpers {
 
-  private def getRedirectFromPage(page: Page, mode: Mode = NormalMode): Future[Result] = Future.successful(Redirect(page.url(mode)))
+  private def getRedirectFromPage(page: Page, mode: Mode): Future[Result] = Future.successful(Redirect(page.url(mode)))
 
   private def transformRequiredPageIntoBooleanPageList(
                                                         userAnswers: UserAnswers,

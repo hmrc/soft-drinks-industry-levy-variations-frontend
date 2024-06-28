@@ -17,7 +17,6 @@
 package views.summary.updateRegisteredDetails
 
 import base.SpecBase
-import models.NormalMode
 import models.backend.{Site, UkAddress}
 
 import java.time.LocalDate

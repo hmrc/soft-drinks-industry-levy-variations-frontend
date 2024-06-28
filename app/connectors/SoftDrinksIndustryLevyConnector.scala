@@ -24,7 +24,6 @@ import models.correctReturn.ReturnsVariation
 import models.submission.{ReturnVariationData, VariationsSubmission}
 import models.{ReturnPeriod, SdilReturn}
 import play.api.http.Status.NO_CONTENT
-import play.api.libs.json.Json
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import service.VariationResult
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
