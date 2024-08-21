@@ -20,12 +20,10 @@ object AppDependencies {
     "org.jsoup"              %  "jsoup"                       % "1.18.1",
     "org.mockito"            %% "mockito-scala-scalatest"     % "1.17.30",
     "org.scalatestplus"      %% "scalacheck-1-17"             % "3.2.17.0",
-//    "org.scalatestplus.play" %% "scalatestplus-play"          % "7.0.0",
     "uk.gov.hmrc"            %% s"bootstrap-test-$playVersion"  % bootstrapVersion,
     "uk.gov.hmrc.mongo"      %% s"hmrc-mongo-test-$playVersion" % hmrcMongoVersion,
     "io.github.wolfendale"   %% "scalacheck-gen-regexp"       % "1.1.0"
   ).map(_ % "test, it")
 
-//  def apply(): Seq[ModuleID] = compile ++ test
 val all: Seq[ModuleID] = compile ++ test
 }
