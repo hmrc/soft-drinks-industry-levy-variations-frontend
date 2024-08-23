@@ -77,11 +77,14 @@ class ControllerActions @Inject()(identify: IdentifierAction,
                                                            returnPeriod: ReturnPeriod,
                                                            request: OptionalDataRequest[T])
                                    (implicit hc: HeaderCarrier): Future[Either[Result, CorrectReturnDataRequest[T]]] = {
-        sdilConnector.getReturn(request.subscription.utr, returnPeriod).value.map{
-          case Right(Some(sdilReturn)) => Right(CorrectReturnDataRequest(request.request, request.sdilEnrolment,
-            request.subscription, userAnswers, returnPeriod, sdilReturn))
-          case Right(_) => Left(Redirect(controllers.correctReturn.routes.SelectController.onPageLoad))
-          case _ => Left(InternalServerError(errorHandler.internalServerErrorTemplate(request)))
+        sdilConnector.getReturn(request.subscription.utr, returnPeriod).value.flatMap {
+          case Right(Some(sdilReturn)) => Future.successful(
+            Right(CorrectReturnDataRequest(request.request, request.sdilEnrolment,
+            request.subscription, userAnswers, returnPeriod, sdilReturn)))
+          case Right(_) => Future.successful(
+            Left(Redirect(controllers.correctReturn.routes.SelectController.onPageLoad)))
+          case _ =>
+            errorHandler.internalServerErrorTemplate(request).map(errorView => Left(InternalServerError(errorView)))
         }
       }
     }
@@ -95,9 +98,11 @@ class ControllerActions @Inject()(identify: IdentifierAction,
           case Some(userAnswers) if journeyType == SelectChange.CancelRegistration && userAnswers.journeyType == SelectChange.ChangeActivity =>
             Future.successful(Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers)))
           case None if request.subscription.deregDate.nonEmpty =>
-            selectChangeOrchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(request.subscription).value.map{
-              case Right(userAnswers) => Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers))
-              case Left(_) => Left(InternalServerError(errorHandler.internalServerErrorTemplate(request)))
+            selectChangeOrchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(request.subscription).value.flatMap {
+              case Right(userAnswers) => Future.successful(
+                Right(RequiredDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnswers)))
+              case Left(_) =>
+                errorHandler.internalServerErrorTemplate(request).map(errorView => Left(InternalServerError(errorView)))
             }
           case _ => Future.successful(Left(Redirect(routes.SelectChangeController.onPageLoad)))
         }

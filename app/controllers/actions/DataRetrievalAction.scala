@@ -31,9 +31,11 @@ class DataRetrievalActionImpl @Inject()(val sessionService: SessionService,
 
   override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, OptionalDataRequest[A]]] = {
 
-    sessionService.get(request.sdilEnrolment).map {
-      case Right(userAnsOps) => Right(OptionalDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnsOps))
-      case Left(_) => Left(InternalServerError(errorHandler.internalServerErrorTemplate(request)))
+    sessionService.get(request.sdilEnrolment).flatMap {
+      case Right(userAnsOps) => Future.successful(
+        Right(OptionalDataRequest(request.request, request.sdilEnrolment, request.subscription, userAnsOps)))
+      case Left(_) =>
+        errorHandler.internalServerErrorTemplate(request).map(errorView => Left(InternalServerError(errorView)))
     }
   }
 }

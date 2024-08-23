@@ -28,7 +28,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.changeActivity.SuggestDeregistrationView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class SuggestDeregistrationController @Inject()(
                                        override val messagesApi: MessagesApi,
@@ -47,13 +47,13 @@ class SuggestDeregistrationController @Inject()(
 
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
     implicit request =>
-      connector.returnsPending(request.subscription.utr).value.map {
-        case Right(returns) if returns.nonEmpty =>
-          Redirect(controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad())
-        case Right(_) =>
-          Redirect(controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode))
+      connector.returnsPending(request.subscription.utr).value.flatMap {
+        case Right(returns) if returns.nonEmpty => Future.successful(
+            Redirect(controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad()))
+        case Right(_) => Future.successful(
+          Redirect(controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode)))
         case _ =>
-          InternalServerError(errorHandler.internalServerErrorTemplate)
+          errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
       }
   }
 }

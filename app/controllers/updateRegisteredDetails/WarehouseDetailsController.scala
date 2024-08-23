@@ -76,7 +76,7 @@ class WarehouseDetailsController @Inject()(
       val desiredRegisteredDetailsToChangeList = request.userAnswers.get(ChangeRegisteredDetailsPage) match {
         case None => genericLogger.logger.error(
           s"Failed to obtain which registered details to change from user answers while on ${WarehouseDetailsPage.toString}")
-          Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+          errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
         case Some(values) => values.toList
       }
 

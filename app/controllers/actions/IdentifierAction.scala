@@ -73,7 +73,8 @@ class AuthenticatedIdentifierAction @Inject()(
       case Right(Some(sub)) => block(IdentifierRequest(request, EnrolmentIdentifier("sdil", sub.sdilRef).value, sub))
       case Right(None) =>
         Future.successful(Redirect(config.sdilHomeUrl))
-      case Left(_) => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate(request)))
+      case Left(_) =>
+        errorHandler.internalServerErrorTemplate(request).map(errorView => InternalServerError(errorView))
     }
   }
 }

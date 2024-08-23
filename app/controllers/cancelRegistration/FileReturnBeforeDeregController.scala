@@ -29,7 +29,7 @@ import views.html.cancelRegistration.FileReturnBeforeDeregView
 import views.summary.cancelRegistration.FileReturnBeforeDeregSummary
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class FileReturnBeforeDeregController @Inject()(
                                                  override val messagesApi: MessagesApi,
@@ -42,10 +42,12 @@ class FileReturnBeforeDeregController @Inject()(
 
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration).async {
     implicit request =>
-    connector.getPendingReturnsFromCache(request.subscription.utr).value.map {
-      case Right(returns) if returns.nonEmpty => Ok(view(FileReturnBeforeDeregSummary.displayMessage(returns)))
-      case Right(_) => Redirect(routes.SelectChangeController.onPageLoad)
-      case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
+    connector.getPendingReturnsFromCache(request.subscription.utr).value.flatMap {
+      case Right(returns) if returns.nonEmpty => Future.successful(
+        Ok(view(FileReturnBeforeDeregSummary.displayMessage(returns))))
+      case Right(_) => Future.successful(Redirect(routes.SelectChangeController.onPageLoad))
+      case Left(_) =>
+        errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
     }
   }
 
