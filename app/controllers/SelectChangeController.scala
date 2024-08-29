@@ -29,7 +29,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.SelectChangeView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class SelectChangeController @Inject()(
                                         override val messagesApi: MessagesApi,
@@ -51,14 +51,17 @@ class SelectChangeController @Inject()(
         case Some(userAnswers) if !userAnswers.submitted => form.fill(userAnswers.journeyType)
         case _ => form
       }
-      selectChangeOrchestrator.hasReturnsToCorrect(request.subscription).value.map {
+      selectChangeOrchestrator.hasReturnsToCorrect(request.subscription).value.flatMap {
         case Right(hasVariableReturns) =>
-          request.subscription.deregDate match {
+          Future.successful(
+            request.subscription.deregDate match {
             case None => Ok(view(preparedForm, hasVariableReturns))
             case _ => Ok(view(preparedForm, hasVariableReturns,isDeregistered = true))
           }
+          )
+        case Left(_) =>
+          errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
 
-        case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
       }
   }
 
@@ -66,15 +69,23 @@ class SelectChangeController @Inject()(
     implicit request =>
       form.bindFromRequest().fold(
         formWithErrors => selectChangeOrchestrator.hasReturnsToCorrect(request.subscription).value
-          .map{
-            case Right(hasVariableReturns) => BadRequest(view(formWithErrors, hasVariableReturns))
-            case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
+          .flatMap {
+            case Right(hasVariableReturns) => Future.successful(
+              BadRequest(view(formWithErrors, hasVariableReturns))
+            )
+            case Left(_) =>
+              errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
           },
         value => {
-          selectChangeOrchestrator.createUserAnswersAndSaveToDatabase(value, request.subscription).value.map{
-            case Right(_) => Redirect(getRedirectUrl(value))
-            case Left(ReturnsStillPending) => Redirect(cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad())
-            case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
+          selectChangeOrchestrator.createUserAnswersAndSaveToDatabase(value, request.subscription).value.flatMap {
+            case Right(_) => Future.successful(
+              Redirect(getRedirectUrl(value))
+            )
+            case Left(ReturnsStillPending) => Future.successful(
+              Redirect(cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad())
+            )
+            case Left(_) =>
+              errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
           }
         }
       )

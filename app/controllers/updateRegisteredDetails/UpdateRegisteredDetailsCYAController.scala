@@ -29,7 +29,7 @@ import utilities.GenericLogger
 import views.html.updateRegisteredDetails.UpdateRegisteredDetailsCYAView
 import views.summary.updateRegisteredDetails.{BusinessAddressSummary, UKSitesSummary, UpdateContactDetailsSummary}
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class UpdateRegisteredDetailsCYAController @Inject()(
                                                       override val messagesApi: MessagesApi,
@@ -54,10 +54,12 @@ class UpdateRegisteredDetailsCYAController @Inject()(
   def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails).async {implicit request =>
     val subscription = request.subscription
     val userAnswers = request.userAnswers
-    updateRegisteredDetailsOrchestrator.submitVariation(subscription, userAnswers).value.map {
-      case Right(_) => Redirect(routes.UpdateDoneController.onPageLoad.url)
+    updateRegisteredDetailsOrchestrator.submitVariation(subscription, userAnswers).value.flatMap {
+      case Right(_) => Future.successful(
+        Redirect(routes.UpdateDoneController.onPageLoad.url)
+      )
       case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to update registered details")
-        InternalServerError(errorHandler.internalServerErrorTemplate)
+        errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
     }
   }
 

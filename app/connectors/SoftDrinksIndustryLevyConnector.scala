@@ -24,16 +24,18 @@ import models.correctReturn.ReturnsVariation
 import models.submission.{ReturnVariationData, VariationsSubmission}
 import models.{ReturnPeriod, SdilReturn}
 import play.api.http.Status.NO_CONTENT
+import play.api.libs.json.Json
 import repositories.{SDILSessionCache, SDILSessionKeys}
 import service.VariationResult
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import utilities.GenericLogger
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SoftDrinksIndustryLevyConnector @Inject()(
-                                                 val http: HttpClient,
+                                                 val http: HttpClientV2,
                                                  frontendAppConfig: FrontendAppConfig,
                                                  sdilSessionCache: SDILSessionCache,
                                                  genericLogger: GenericLogger
@@ -48,7 +50,8 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     sdilSessionCache.fetchEntry[OptRetrievedSubscription](identifierValue, SDILSessionKeys.SUBSCRIPTION).flatMap {
       case Some(optSubscription) => Future.successful(Right(optSubscription.optRetrievedSubscription))
       case None =>
-        http.GET[Option[RetrievedSubscription]](getSubscriptionUrl(identifierValue: String, identifierType)).flatMap {
+        http.get(url"${getSubscriptionUrl(identifierValue: String, identifierType)}")
+          .execute[Option[RetrievedSubscription]].flatMap {
           optRetrievedSubscription =>
             sdilSessionCache.save(identifierValue, SDILSessionKeys.SUBSCRIPTION, OptRetrievedSubscription(optRetrievedSubscription))
               .map { _ =>
@@ -71,7 +74,8 @@ class SoftDrinksIndustryLevyConnector @Inject()(
       case Some(optSP) =>
         Future.successful(Right(optSP.optSmallProducer))
       case None =>
-        http.GET[Option[Boolean]](smallProducerUrl(sdilRef, period)).flatMap {
+        http.get(url"${smallProducerUrl(sdilRef, period)}")
+          .execute[Option[Boolean]].flatMap {
           optSP =>
             sdilSessionCache.save(sdilRef, SDILSessionKeys.smallProducerForPeriod(period), OptSmallProducer(optSP))
               .map { _ => Right(optSP)
@@ -90,7 +94,9 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     sdilSessionCache.fetchEntry[BigDecimal](sdilRef, SDILSessionKeys.balance(withAssessment)).flatMap {
       case Some(b) => Future.successful(Right(b))
       case None =>
-        http.GET[BigDecimal](s"$sdilUrl/balance/$sdilRef/$withAssessment")
+        val balanceUrl = s"$sdilUrl/balance/$sdilRef/$withAssessment"
+        http.get(url"$balanceUrl")
+          .execute[BigDecimal]
           .flatMap { b =>
             sdilSessionCache.save[BigDecimal](sdilRef, SDILSessionKeys.balance(withAssessment), b)
               .map(_ => Right(b))
@@ -109,7 +115,9 @@ class SoftDrinksIndustryLevyConnector @Inject()(
     sdilSessionCache.fetchEntry[List[FinancialLineItem]](sdilRef, SDILSessionKeys.balanceHistory(withAssessment)).flatMap {
       case Some(fli) => Future.successful(Right(fli))
       case None =>
-        http.GET[List[FinancialLineItem]](s"$sdilUrl/balance/$sdilRef/history/all/$withAssessment")
+        val balanceHistoryUrl = s"$sdilUrl/balance/$sdilRef/history/all/$withAssessment"
+        http.get(url"$balanceHistoryUrl")
+          .execute[List[FinancialLineItem]]
           .flatMap{ fli => sdilSessionCache.save[List[FinancialLineItem]](sdilRef, SDILSessionKeys.balanceHistory(withAssessment), fli)
             .map(_ => Right(fli))
           }.recover {
@@ -127,8 +135,9 @@ class SoftDrinksIndustryLevyConnector @Inject()(
       case Some(optPreviousReturn) =>
         Future.successful(Right(optPreviousReturn.optReturn))
       case None =>
-        val uri = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
-        http.GET[Option[SdilReturn]](uri)
+        val returnUrl = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
+        http.get(url"$returnUrl")
+          .execute[Option[SdilReturn]]
           .flatMap { optReturn =>
             sdilSessionCache.save[OptPreviousSubmittedReturn](utr,
               SDILSessionKeys.previousSubmittedReturn(utr, period), OptPreviousSubmittedReturn(optReturn))
@@ -149,7 +158,9 @@ class SoftDrinksIndustryLevyConnector @Inject()(
   }
 
   def returnsVariable(utr: String)(implicit hc: HeaderCarrier): VariationResult[List[ReturnPeriod]] = EitherT {
-    http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/variable").flatMap { variableReturns =>
+    val variableUrl = s"$sdilUrl/returns/$utr/variable"
+    http.get(url"$variableUrl")
+      .execute[List[ReturnPeriod]].flatMap { variableReturns =>
         sdilSessionCache.save(utr, SDILSessionKeys.VARIABLE_RETURNS, variableReturns)
           .map { _ => Right(variableReturns)
         }
@@ -167,7 +178,9 @@ class SoftDrinksIndustryLevyConnector @Inject()(
   }
 
   def returnsPending(utr: String)(implicit hc: HeaderCarrier): VariationResult[List[ReturnPeriod]] = EitherT {
-    http.GET[List[ReturnPeriod]](s"$sdilUrl/returns/$utr/pending").flatMap { variableReturns =>
+    val pendingUrl = s"$sdilUrl/returns/$utr/pending"
+    http.get(url"$pendingUrl")
+      .execute[List[ReturnPeriod]].flatMap { variableReturns =>
       sdilSessionCache.save(utr, SDILSessionKeys.RETURNS_PENDING, variableReturns)
         .map { _ => Right(variableReturns)
         }
@@ -177,7 +190,10 @@ class SoftDrinksIndustryLevyConnector @Inject()(
   }
 
   def submitVariation(variation: VariationsSubmission, sdilNumber: String)(implicit hc: HeaderCarrier): VariationResult[Unit] = EitherT {
-    http.POST[VariationsSubmission, HttpResponse](s"$sdilUrl/submit-variations/sdil/$sdilNumber", variation)
+    val variationUrl = s"$sdilUrl/submit-variations/sdil/$sdilNumber"
+    http.post(url"$variationUrl")
+      .withBody(Json.toJson(variation))
+      .execute[HttpResponse]
       .map { resp =>
         resp.status match {
           case NO_CONTENT => Right((): Unit)
@@ -193,7 +209,10 @@ class SoftDrinksIndustryLevyConnector @Inject()(
   }
 
   def submitSdilReturnsVary(sdilNumber: String, variation: ReturnVariationData)(implicit hc: HeaderCarrier): VariationResult[Unit] = EitherT {
-    http.POST[ReturnVariationData, HttpResponse](s"$sdilUrl/returns/vary/$sdilNumber", variation).map { resp =>
+    val varyUrl = s"$sdilUrl/returns/vary/$sdilNumber"
+    http.post(url"$varyUrl")
+      .withBody(Json.toJson(variation))
+      .execute[HttpResponse].map { resp =>
       resp.status match {
         case NO_CONTENT => Right((): Unit)
         case status =>
@@ -208,7 +227,10 @@ class SoftDrinksIndustryLevyConnector @Inject()(
   }
 
   def submitReturnVariation(sdilRef: String, variation: ReturnsVariation)(implicit hc: HeaderCarrier): VariationResult[Unit] = EitherT {
-    http.POST[ReturnsVariation, HttpResponse](s"$sdilUrl/returns/variation/sdil/$sdilRef", variation).map { resp =>
+    val variationUrl = s"$sdilUrl/returns/variation/sdil/$sdilRef"
+    http.post(url"$variationUrl")
+      .withBody(Json.toJson(variation))
+      .execute[HttpResponse].map { resp =>
       resp.status match {
         case NO_CONTENT => Right((): Unit)
         case status =>

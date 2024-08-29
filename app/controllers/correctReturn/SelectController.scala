@@ -57,14 +57,17 @@ class SelectController @Inject()(
 
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(CorrectReturn).async {
     implicit request =>
-      correctReturnOrchestrator.getReturnPeriods(request.subscription).value.map {
+      correctReturnOrchestrator.getReturnPeriods(request.subscription).value.flatMap {
         case Right(returnPeriods) =>
           val returnPeriodsForYears = correctReturnOrchestrator.separateReturnPeriodsByYear(returnPeriods)
           val preparedForm = request.userAnswers.correctReturnPeriod.fold(form)(value => form.fill(value.radioValue))
-          Ok(view(preparedForm, returnPeriodsForYears))
-        case Left(NoVariableReturns) if request.subscription.deregDate.isEmpty => Redirect(controllers.routes.SelectChangeController.onPageLoad)
-        case Left(NoVariableReturns) => Redirect(config.sdilHomeUrl)
-        case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
+          Future.successful(Ok(view(preparedForm, returnPeriodsForYears)))
+        case Left(NoVariableReturns) if request.subscription.deregDate.isEmpty =>
+          Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad))
+        case Left(NoVariableReturns) =>
+          Future.successful(Redirect(config.sdilHomeUrl))
+        case Left(_) =>
+          errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
       }
   }
 
@@ -79,18 +82,21 @@ class SelectController @Inject()(
         _ <- correctReturnOrchestrator.setupUserAnswersForCorrectReturn(subscription, userAnswers, selectedReturnPeriod)
       } yield returnPeriods
 
-      res.value.map{
+      res.value.flatMap {
         case Right(_) if subscription.activity.smallProducer =>
-          Redirect(routes.PackagedAsContractPackerController.onPageLoad(NormalMode))
+          Future.successful(Redirect(routes.PackagedAsContractPackerController.onPageLoad(NormalMode)))
         case Right(_) =>
-          Redirect(routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode))
-        case Left(NoVariableReturns) if request.subscription.deregDate.nonEmpty => Redirect(config.sdilHomeUrl)
+          Future.successful(
+            Redirect(routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode)))
+        case Left(NoVariableReturns) if request.subscription.deregDate.nonEmpty =>
+          Future.successful(Redirect(config.sdilHomeUrl))
         case Left(NoVariableReturns) =>
-          Redirect(controllers.routes.SelectChangeController.onPageLoad)
+          Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad))
         case Left(SelectReturnFormError(formWithError, returnPeriods)) =>
           val returnPeriodsForYears = correctReturnOrchestrator.separateReturnPeriodsByYear(returnPeriods)
-          BadRequest(view(formWithError, returnPeriodsForYears))
-        case Left(_) => InternalServerError(errorHandler.internalServerErrorTemplate)
+          Future.successful(BadRequest(view(formWithError, returnPeriodsForYears)))
+        case Left(_) =>
+          errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
       }
   }
 

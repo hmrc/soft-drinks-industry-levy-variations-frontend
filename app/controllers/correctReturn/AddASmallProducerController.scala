@@ -82,7 +82,8 @@ class AddASmallProducerController @Inject()(
                 BadRequest(view(preparedForm.withError(
                   FormError("referenceNumber", "correctReturn.addASmallProducer.error.referenceNumber.notASmallProducer")), mode))
               )
-            case Left(_) => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+            case Left(_) =>
+              errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
             case Right(_) =>
               val updatedAnswers: UserAnswers = request.userAnswers
                 .copy(smallProducerList = AddASmallProducer.toSmallProducer(value) :: request.userAnswers.smallProducerList)
@@ -134,7 +135,8 @@ class AddASmallProducerController @Inject()(
                   BadRequest(view(preparedForm.withError(
                     FormError("referenceNumber", "correctReturn.addASmallProducer.error.referenceNumber.notASmallProducer")), mode, Some(sdilReference)))
                 )
-              case Left(_) => Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
+              case Left(_) =>
+                errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
               case Right(_) =>
                 val newListWithOldSPRemoved = request.userAnswers.smallProducerList.filterNot(_.sdilRef == sdilReference)
                 val updatedAnswers: UserAnswers = request.userAnswers

@@ -49,22 +49,26 @@ trait ControllerHelper extends FrontendBaseController with I18nSupport {
     updatedAnswers match {
       case Failure(_) =>
         genericLogger.logger.error(s"Failed to resolve user answers while on ${page.toString}")
-        Future.successful(InternalServerError(errorHandler.internalServerErrorTemplate))
-      case Success(answers) => sessionService.set(answers).map {
-        case Right(_) => Redirect(navigator.nextPage(page, mode, answers, amountProduced = amountProduced, subscription = subscription))
+        errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
+      case Success(answers) => sessionService.set(answers).flatMap {
+        case Right(_) => Future.successful(
+          Redirect(navigator.nextPage(page, mode, answers, amountProduced = amountProduced, subscription = subscription))
+        )
         case Left(_) => genericLogger.logger.error(sessionRepo500ErrorMessage(page))
-          InternalServerError(errorHandler.internalServerErrorTemplate)
+          errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
       }
     }
   }
 
   def updateDatabaseAndRedirect(updatedAnswers: UserAnswers, page: Page, mode: Mode)
                                (implicit request: Request[AnyContent]): Future[Result] = {
-    sessionService.set(updatedAnswers).map {
-      case Right(_) => Redirect(navigator.nextPage(page, mode, updatedAnswers))
+    sessionService.set(updatedAnswers).flatMap {
+      case Right(_) => Future.successful(
+        Redirect(navigator.nextPage(page, mode, updatedAnswers))
+      )
       case Left(_) =>
         genericLogger.logger.error(sessionRepo500ErrorMessage(page))
-        InternalServerError(errorHandler.internalServerErrorTemplate)
+        errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
     }
   }
 

@@ -63,10 +63,11 @@ class ChangeActivityCYAController @Inject()(
   }
 
   private def submitUserAnswers(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit request: DataRequest[AnyContent]):Future[Result]  = {
-    changeActivityOrchestrator.submitVariation(subscription, userAnswers).value.map {
-      case Right(_) => Redirect(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad)
+    changeActivityOrchestrator.submitVariation(subscription, userAnswers).value.flatMap {
+      case Right(_) => Future.successful(
+        Redirect(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad))
       case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${userAnswers.id} - failed to submit change activity variation")
-        InternalServerError(errorHandler.internalServerErrorTemplate)
+        errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
     }
   }
 }

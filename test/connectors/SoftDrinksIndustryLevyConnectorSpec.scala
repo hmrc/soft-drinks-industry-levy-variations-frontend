@@ -16,28 +16,24 @@
 
 package connectors
 
-import base.SpecBase
 import models.backend.{FinancialLineItem, OptRetrievedSubscription, RetrievedSubscription}
 import models.correctReturn.ReturnsVariation
 import models.submission.{Litreage, ReturnVariationData}
 import models.{DataHelper, ReturnPeriod, VariationsSubmissionDataHelper}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.http.Status.NO_CONTENT
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.Json
 import repositories.{CacheMap, SDILSessionCache}
-import uk.gov.hmrc.http.{HttpClient, HttpResponse}
+import uk.gov.hmrc.http.HttpResponse
 import utilities.GenericLogger
 
 import scala.concurrent.Future
 
-class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar with ScalaFutures with DataHelper with VariationsSubmissionDataHelper {
+class SoftDrinksIndustryLevyConnectorSpec extends HttpClientV2Helper with DataHelper with VariationsSubmissionDataHelper {
 
   val (host, localPort) = ("host", "123")
 
-  val mockHttp = mock[HttpClient]
   val mockSDILSessionCache = mock[SDILSessionCache]
   val logger = application.injector.instanceOf[GenericLogger]
   val softDrinksIndustryLevyConnector = new SoftDrinksIndustryLevyConnector(http =mockHttp, frontendAppConfig, mockSDILSessionCache, logger)
@@ -65,7 +61,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
       val identifierType: String = "sdil"
       val sdilNumber: String = "XKSDIL000000022"
       when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(),any())(any())).thenReturn(Future.successful(None))
-      when(mockHttp.GET[Option[RetrievedSubscription]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(aSubscription)))
+      when(requestBuilderExecute[Option[RetrievedSubscription]]).thenReturn(Future.successful(Some(aSubscription)))
       when(mockSDILSessionCache.save[OptRetrievedSubscription](any(), any(),any())(any())).thenReturn(Future.successful(CacheMap("foo", Map("bar" -> Json.obj("wizz" -> "bang2")))))
       val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
 
@@ -81,7 +77,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
         val identifierType: String = "sdil"
         val sdilNumber: String = "XKSDIL000000022"
         when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(),any())(any())).thenReturn(Future.successful(None))
-        when(mockHttp.GET[Option[RetrievedSubscription]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
+        when(requestBuilderExecute[Option[RetrievedSubscription]]).thenReturn(Future.successful(None))
         when(mockSDILSessionCache.save[OptRetrievedSubscription](any,any,any)(any())).thenReturn(Future.successful(CacheMap("foo", Map("bar" -> Json.obj("wizz" -> "bang2")))))
         val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
 
@@ -96,7 +92,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
       "return a small producer status successfully" in {
         val sdilNumber: String = "XKSDIL000000022"
         val period = ReturnPeriod(year = 2022, quarter = 3)
-        when(mockHttp.GET[Option[Boolean]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(Some(false)))
+        when(requestBuilderExecute[Option[Boolean]]).thenReturn(Future.successful(Some(false)))
         val res = softDrinksIndustryLevyConnector.checkSmallProducerStatus(sdilNumber, period)
 
         whenReady(
@@ -111,7 +107,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
       "return none if no small producer status" in {
         val sdilNumber: String = "XKSDIL000000022"
         val period = ReturnPeriod(year = 2022, quarter = 3)
-        when(mockHttp.GET[Option[Boolean]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(None))
+        when(requestBuilderExecute[Option[Boolean]]).thenReturn(Future.successful(None))
         val res = softDrinksIndustryLevyConnector.checkSmallProducerStatus(sdilNumber, period)
 
         whenReady(
@@ -124,7 +120,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
       }
 
       "return balance successfully" in {
-        when(mockHttp.GET[BigDecimal](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(BigDecimal(1000)))
+        when(requestBuilderExecute[BigDecimal]).thenReturn(Future.successful(BigDecimal(1000)))
         val res = softDrinksIndustryLevyConnector.balance(sdilNumber, false)
 
         whenReady(
@@ -136,8 +132,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
       }
 
     "return balance history successfully" in {
-
-      when(mockHttp.GET[List[FinancialLineItem]](any(), any(), any())(any(), any(), any())).thenReturn(Future.successful(financialItemList))
+      when(requestBuilderExecute[List[FinancialLineItem]]).thenReturn(Future.successful(financialItemList))
 
       val res = softDrinksIndustryLevyConnector.balanceHistory(sdilNumber, false)
 
@@ -152,7 +147,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
     "POST submitSdilReturnsVary successfully when valid data is given" - {
       "for no change" in{
 
-        when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+        when(requestBuilderExecute[HttpResponse])
           .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
         val res = softDrinksIndustryLevyConnector.submitSdilReturnsVary(
@@ -175,7 +170,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
       }
 
       "for a single change" in{
-        when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+        when(requestBuilderExecute[HttpResponse])
           .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
         val res = softDrinksIndustryLevyConnector.submitSdilReturnsVary(
@@ -198,7 +193,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
       }
 
       "for multiple changes" in {
-        when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+        when(requestBuilderExecute[HttpResponse])
           .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
         val res = softDrinksIndustryLevyConnector.submitSdilReturnsVary(
@@ -222,8 +217,8 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
     }
 
     "POST submitReturnVariation successfully when valid data is given" in {
-        when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
-          .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
+      when(requestBuilderExecute[HttpResponse])
+        .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
         val res = softDrinksIndustryLevyConnector.submitReturnVariation(
           aSubscription.sdilRef,
@@ -255,7 +250,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
           closeSites = List(CLOSED_SITE)
         )
 
-        when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+        when(requestBuilderExecute[HttpResponse])
           .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
         val res = softDrinksIndustryLevyConnector.submitVariation(variationsSubmission, aSubscription.sdilRef)
@@ -275,7 +270,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
           closeSites = List(CLOSED_SITE)
         )
 
-        when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+        when(requestBuilderExecute[HttpResponse])
           .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
         val res = softDrinksIndustryLevyConnector.submitVariation(variationsSubmission, aSubscription.sdilRef)
@@ -294,7 +289,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends SpecBase with MockitoSugar wit
           isDeregistered = true
         )
 
-        when(mockHttp.POST[JsValue, HttpResponse](any(), any(), any())(any(), any(), any(), any()))
+        when(requestBuilderExecute[HttpResponse])
           .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
         val res = softDrinksIndustryLevyConnector.submitVariation(variationsSubmission, aSubscription.sdilRef)

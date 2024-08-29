@@ -38,6 +38,7 @@ lazy val root = (project in file("."))
     ScoverageKeys.coverageMinimumStmtTotal := 91,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
+    scalacOptions += "-deprecation",
     scalacOptions ++= Seq(
       "-feature",
       "-rootdir",

@@ -53,9 +53,6 @@ trait TextAreaFluency {
     def withHint(hint: Hint): Textarea =
       textArea copy (hint = Some(hint))
 
-    def withFormGroupClasses(classes: String): Textarea =
-      textArea copy (formGroupClasses = classes)
-
     def withCssClass(newClass: String): Textarea =
       textArea copy (classes = s"${textArea.classes} $newClass")
 
