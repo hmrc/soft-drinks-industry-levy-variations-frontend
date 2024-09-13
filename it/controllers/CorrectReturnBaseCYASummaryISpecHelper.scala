@@ -29,8 +29,6 @@ import play.api.libs.json.Json
 import testSupport.SDILBackendTestData.{smallProducerList, submittedDateTime}
 import utilities.UserTypeCheck
 
-import java.time.ZoneOffset
-
 trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
 
   object Selectors {

@@ -13,9 +13,6 @@ import play.api.libs.json.Json
 import play.api.test.WsTestClient
 import testSupport.SDILBackendTestData._
 
-import java.time.ZoneOffset
-
-
 class SelectControllerISpec extends ControllerITTestHelper {
 
   val routePath = "/select"

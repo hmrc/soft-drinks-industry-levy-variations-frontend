@@ -4,7 +4,7 @@ import models._
 import models.backend.{CentralAssessment, CentralAsstInterest, OfficerAssessment, OfficerAsstInterest, PaymentOnAccount, RetrievedActivity, RetrievedSubscription, ReturnCharge, ReturnChargeInterest, Site, UkAddress, Unknown}
 import models.submission.Litreage
 
-import java.time.{LocalDate, LocalDateTime, ZoneOffset}
+import java.time.{LocalDate, LocalDateTime}
 
 object SDILBackendTestData {
   val localDate = LocalDate.now()
