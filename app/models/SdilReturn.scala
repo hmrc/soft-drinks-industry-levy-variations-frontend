@@ -21,7 +21,7 @@ import models.submission.Litreage
 import pages.correctReturn.ExemptionsForSmallProducersPage
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.Instant
+import java.time.{Instant, LocalDateTime, ZoneId}
 
 case class SdilReturn(
                        ownBrand: Litreage,
@@ -31,7 +31,7 @@ case class SdilReturn(
                        importSmall: Litreage,
                        export: Litreage,
                        wastage: Litreage,
-                       submittedOn: Option[Instant]
+                       submittedOn: Option[LocalDateTime] = None
                      ) {
   def total(implicit config: FrontendAppConfig): BigDecimal = {
     val litresToAdd = Litreage.sum(List(ownBrand, packLarge, importLarge))
@@ -74,7 +74,7 @@ object SdilReturn {
         importSmall = correctReturnData.broughtIntoUkFromSmallProducerLitreage,
         export = correctReturnData.exportsLitreage,
         wastage = correctReturnData.lostDamagedLitreage,
-        submittedOn = submitted
+        submittedOn = submitted.map(instant => LocalDateTime.ofInstant(instant, ZoneId.of("Europe/London")))
       )
     }).getOrElse(emptySdilReturn(userAnswers))
   }
