@@ -48,10 +48,10 @@ trait CorrectReturnBaseCYASummaryISpecHelper extends ControllerITTestHelper {
   val importsSmallProducerLitres: LitresInBands = LitresInBands(5000, 6000)
   val smallProducerLitres: LitresInBands = LitresInBands(2000, 4000)
   val emptyReturn: SdilReturn = SdilReturn(Litreage(0, 0), Litreage(0, 0), List.empty, Litreage(0, 0), Litreage(0, 0), Litreage(0, 0), Litreage(0, 0), submittedOn =
-    Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
+    Some(submittedDateTime))
   val populatedReturn: SdilReturn = SdilReturn(Litreage(100, 200), Litreage(200, 100),
     smallProducerList, Litreage(300, 400), Litreage(400, 300), Litreage(50, 60), Litreage(60, 50),
-    submittedOn = Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
+    submittedOn = Some(submittedDateTime))
 
   def userAnswerWithLitresForAllPagesNilSdilReturn: UserAnswers = emptyUserAnswersForCorrectReturn
     .copy(data = Json.obj("originalSDILReturn" -> Json.toJson(emptyReturn)))

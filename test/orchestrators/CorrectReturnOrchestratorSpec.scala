@@ -29,7 +29,7 @@ import pages.correctReturn._
 import play.api.libs.json.{JsString, Json, Writes}
 import services.{ReturnService, SessionService}
 
-import java.time.{Instant, ZoneOffset}
+import java.time.{Instant, LocalDateTime, ZoneId, ZoneOffset}
 import scala.concurrent.Future
 import scala.util.{Failure, Try}
 
@@ -40,10 +40,10 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
   val mockSessionService: SessionService = mock[SessionService]
 
   val emptyReturn: SdilReturn = SdilReturn(Litreage(), Litreage(), List.empty, Litreage(), Litreage(), Litreage(), Litreage(),
-    submittedOn = Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
+    submittedOn = Some(submittedDateTime))
   val populatedReturn: SdilReturn = SdilReturn(Litreage(100, 200), Litreage(200, 100),
     smallProducerList, Litreage(300, 400), Litreage(400, 300), Litreage(50, 60), Litreage(60, 50),
-    submittedOn = Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
+    submittedOn = Some(submittedDateTime))
   val sdilReturnsExamples: Map[String, SdilReturn] = Map("a nilReturn" -> emptyReturn, "not a nilReturn" -> populatedReturn)
   val requestReturnPeriod: ReturnPeriod = ReturnPeriod(submittedDateTime.getYear, 1)
   def getExpectedUserAnswersCorrectReturnData(key: String): CorrectReturnUserAnswersData = if (key == "a nilReturn") {
@@ -223,7 +223,8 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
                 .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
 
               val expectedRevisedReturn = SdilReturn(
-                litreage, litreage, packSmall, litreage, litreage, litreage, litreage, submittedOn = Some(submittedInstant))
+                litreage, litreage, packSmall, litreage, litreage, litreage, litreage,
+                submittedOn = Some(LocalDateTime.ofInstant(submittedInstant, ZoneId.of("Europe/London"))))
 
               when(mockReturnsService.submitSdilReturnsVary(aSubscription,
                 userAnswers, emptySdilReturn, returnPeriod, expectedRevisedReturn)(hc)).thenReturn(createSuccessVariationResult(Right(): Unit))

@@ -30,7 +30,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
   }
 
   val populatedReturn = SdilReturn(Litreage(100, 200), Litreage(200, 100), smallProducerList, Litreage(300, 400),
-    Litreage(400, 300), Litreage(50, 60), Litreage(60, 50), submittedOn = Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
+    Litreage(400, 300), Litreage(50, 60), Litreage(60, 50), submittedOn = Some(submittedDateTime))
 
   val expectedCorrectReturnDataForNilReturn = CorrectReturnUserAnswersData(false, None, false, None, false, false, None, false, None, false, None, false, None)
   val expectedCorrectReturnDataForPopulatedReturn = CorrectReturnUserAnswersData(

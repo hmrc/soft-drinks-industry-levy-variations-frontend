@@ -173,8 +173,7 @@ trait TestData {
   }
 
   val emptySdilReturn: SdilReturn = SdilReturn(Litreage(), Litreage(), List.empty,
-    Litreage(), Litreage(), Litreage(), Litreage(), submittedOn =
-    Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
+    Litreage(), Litreage(), Litreage(), Litreage(), submittedOn = Some(submittedDateTime))
 
   val userAnswersForCorrectReturnWithEmptySdilReturn:
     UserAnswers = userAnswersForCorrectReturn(true)

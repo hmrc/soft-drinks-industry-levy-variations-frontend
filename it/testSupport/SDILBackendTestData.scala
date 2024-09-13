@@ -73,7 +73,7 @@ object SDILBackendTestData {
     Litreage(0, 0),
     Litreage(0, 0),
     Litreage(0, 0),
-    submittedOn = Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
+    submittedOn = Some(submittedDateTime))
 
   val literage = Litreage(200L, 100L)
   val smallProducer1 = SmallProducer("test 1", "XKSDIL000000024", literage)
