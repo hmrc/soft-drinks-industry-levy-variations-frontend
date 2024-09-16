@@ -24,7 +24,7 @@ import org.scalatest.TryValues.convertTryToSuccessOrFailure
 import pages.correctReturn._
 import play.api.libs.json.{JsValue, Json}
 
-import java.time.{LocalDate, LocalDateTime, ZoneOffset}
+import java.time.{LocalDate, LocalDateTime}
 
 trait TestData {
 
@@ -173,8 +173,7 @@ trait TestData {
   }
 
   val emptySdilReturn: SdilReturn = SdilReturn(Litreage(), Litreage(), List.empty,
-    Litreage(), Litreage(), Litreage(), Litreage(), submittedOn =
-    Some(submittedDateTime.toInstant(ZoneOffset.UTC)))
+    Litreage(), Litreage(), Litreage(), Litreage(), submittedOn = Some(submittedDateTime))
 
   val userAnswersForCorrectReturnWithEmptySdilReturn:
     UserAnswers = userAnswersForCorrectReturn(true)
