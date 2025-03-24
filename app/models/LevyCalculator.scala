@@ -65,9 +65,9 @@ object LevyCalculator {
     )
 
   def getLevyCalculation(lowLitres: Long, highLitres: Long, returnPeriod: ReturnPeriod)(implicit frontendAppConfig: FrontendAppConfig): LevyCalculation = {
-    if (lowLitres < 0 || highLitres < 0) {
-      throw new IllegalArgumentException("Litres cannot be negative")
-    }
+//    if (lowLitres < 0 || highLitres < 0) {
+//      throw new IllegalArgumentException("Litres cannot be negative")
+//    }
 
     val taxYear: TaxYear = getTaxYear(returnPeriod)
     val bandRates: BandRates = getBandRates(taxYear)
