@@ -88,6 +88,94 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
       }
     }
 
+    "must not show own brands packaged when user is a small producer" in {
+
+    }
+
+    "must show own brands packaged at own site row when present and answer is no" in {
+
+    }
+
+    "must show own brands packaged at own site row containing calculation when yes is selected - pre April 2025 rates" in {
+
+    }
+
+    "must show own brands packaged at own site row containing calculation when yes is selected - 2025 tax year rates" in {
+
+    }
+
+    "must show packaged as contract packer row when present and answer is no" in {
+
+    }
+
+    "must show packaged as contract packer row containing calculation when yes is selected - pre April 2025 rates" in {
+
+    }
+
+    "must show packaged as contract packer row containing calculation when yes is selected - 2025 tax year rates" in {
+
+    }
+
+    "must show exemptions for small producers row when present and answer is no" in {
+
+    }
+
+    "must show exemptions for small producers row containing calculation when yes is selected - pre April 2025 rates" in {
+
+    }
+
+    "must show exemptions for small producers row containing calculation when yes is selected - 2025 tax year rates" in {
+
+    }
+
+    "must show brought into UK row when present and answer is no" in {
+
+    }
+
+    "must show brought into UK row containing calculation when yes is selected - pre April 2025 rates" in {
+
+    }
+
+    "must show brought into UK row containing calculation when yes is selected - 2025 tax year rates" in {
+
+    }
+
+    "must show brought into UK from small producers row when present and answer is no" in {
+
+    }
+
+    "must show brought into UK from small producers row containing calculation when yes is selected - pre April 2025 rates" in {
+
+    }
+
+    "must show brought into UK from small producers row containing calculation when yes is selected - 2025 tax year rates" in {
+
+    }
+
+    "must show claim credits for exports row when present and answer is no" in {
+
+    }
+
+    "must show claim credits for exports row containing calculation when yes is selected - pre April 2025 rates" in {
+
+    }
+
+    "must show claim credits for exports row containing calculation when yes is selected - 2025 tax year rates" in {
+
+    }
+
+    "must show claim credits for lost or damaged row when present and answer is no" in {
+
+    }
+
+    "must show claim credits for lost or damaged row containing calculation when yes is selected - pre April 2025 rates" in {
+
+    }
+
+    "must show claim credits for lost or damaged row containing calculation when yes is selected - 2025 tax year rates" in {
+
+    }
+
     "must return OK and contain amount owed header when balance and return amount is positive (i.e. there is an amount to pay)" in {
       val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", Litreage())
       val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", Litreage())
