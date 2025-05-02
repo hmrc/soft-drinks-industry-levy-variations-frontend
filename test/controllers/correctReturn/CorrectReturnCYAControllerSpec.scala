@@ -20,15 +20,17 @@ import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.correctReturn.routes._
 import models.SelectChange.CorrectReturn
+import models.backend.RetrievedSubscription
 import models.correctReturn.AddASmallProducer
 import models.submission.Litreage
-import models.{Amounts, LitresInBands, SdilReturn, SmallProducer, UserAnswers}
+import models.{Amounts, LitresInBands, ReturnPeriod, SdilReturn, SmallProducer, UserAnswers}
 import orchestrators.CorrectReturnOrchestrator
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
 import pages.correctReturn._
+import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
@@ -42,12 +44,17 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
   val mockOrchestrator: CorrectReturnOrchestrator = mock[CorrectReturnOrchestrator]
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
-  def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
+  def correctReturnAction(userAnswers: Option[UserAnswers],
+                          optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn),
+                          subscription: Option[RetrievedSubscription] = None): GuiceApplicationBuilder = {
     when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
-    applicationBuilder(userAnswers = userAnswers)
+    applicationBuilder(userAnswers = userAnswers, subscription = subscription)
       .overrides(
         bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
   }
+
+  private val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
+  private val taxYear2025ReturnPeriod = ReturnPeriod(2026, 0)
 
   "Check Your Answers Controller" - {
 
@@ -89,7 +96,22 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must not show own brands packaged when user is a small producer" in {
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
 
+      val application = correctReturnAction(Some(userAnswers), subscription = Some(subscriptionSmallProducer)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("h2").text() mustNot include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersLabel"))
+      }
     }
 
     "must show own brands packaged at own site row when present and answer is no" in {
