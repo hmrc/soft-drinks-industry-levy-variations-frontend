@@ -247,11 +247,83 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show packaged as contract packer row containing calculation when yes is selected - pre April 2025 rates" in {
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
 
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(PackagedAsContractPackerPage, true).success.value
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(10000, 20000)).success.value
+
+      val application = correctReturnAction(Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("h2").text() must include(Messages("correctReturn.packagedAsContractPacker.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("dt").text() must include(Messages("correctReturn.packagedAsContractPacker.checkYourAnswersLabel"))
+        page.getElementById("change-packagedAsContractPacker").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
+        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementById("change-lowband-litreage-packagedAsContractPacker").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyPackagedAsContractPackerController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
+        page.getElementsByTag("dd").text() must include("£1,800.00")
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
+        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementById("change-highband-litreage-packagedAsContractPacker").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyPackagedAsContractPackerController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
+        page.getElementsByTag("dd").text() must include("£4,800.00")
+      }
     }
 
     "must show packaged as contract packer row containing calculation when yes is selected - 2025 tax year rates" in {
+      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
+      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
+        .set(PackagedAsContractPackerPage, true).success.value
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(10000, 20000)).success.value
+
+      val application = correctReturnAction(Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("h2").text() must include(Messages("correctReturn.packagedAsContractPacker.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("dt").text() must include(Messages("correctReturn.packagedAsContractPacker.checkYourAnswersLabel"))
+        page.getElementById("change-packagedAsContractPacker").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
+        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementById("change-lowband-litreage-packagedAsContractPacker").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyPackagedAsContractPackerController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
+        page.getElementsByTag("dd").text() must include("£1,940.19")
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
+        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementById("change-highband-litreage-packagedAsContractPacker").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyPackagedAsContractPackerController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
+        page.getElementsByTag("dd").text() must include("£5,180.52")
+      }
     }
 
     "must show exemptions for small producers row when present and answer is no" in {
@@ -280,11 +352,11 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show exemptions for small producers row containing calculation when yes is selected - pre April 2025 rates" in {
-
+      // TODO: Figure out how to implement
     }
 
     "must show exemptions for small producers row containing calculation when yes is selected - 2025 tax year rates" in {
-
+      // TODO: Figure out how to implement
     }
 
     "must show brought into UK row when present and answer is no" in {
@@ -313,11 +385,83 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show brought into UK row containing calculation when yes is selected - pre April 2025 rates" in {
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
 
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(BroughtIntoUKPage, true).success.value
+        .set(HowManyBroughtIntoUKPage, LitresInBands(10000, 20000)).success.value
+
+      val application = correctReturnAction(Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("h2").text() must include(Messages("correctReturn.broughtIntoUK.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("dt").text() must include(Messages("correctReturn.broughtIntoUK.checkYourAnswersLabel"))
+        page.getElementById("change-broughtIntoUK").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.BroughtIntoUKController.onPageLoad(CheckMode).url
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
+        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementById("change-lowband-litreage-broughtIntoUK").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyBroughtIntoUKController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
+        page.getElementsByTag("dd").text() must include("£1,800.00")
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
+        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementById("change-highband-litreage-broughtIntoUK").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyBroughtIntoUKController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
+        page.getElementsByTag("dd").text() must include("£4,800.00")
+      }
     }
 
     "must show brought into UK row containing calculation when yes is selected - 2025 tax year rates" in {
+      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
+      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
+        .set(BroughtIntoUKPage, true).success.value
+        .set(HowManyBroughtIntoUKPage, LitresInBands(10000, 20000)).success.value
+
+      val application = correctReturnAction(Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("h2").text() must include(Messages("correctReturn.broughtIntoUK.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("dt").text() must include(Messages("correctReturn.broughtIntoUK.checkYourAnswersLabel"))
+        page.getElementById("change-broughtIntoUK").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.BroughtIntoUKController.onPageLoad(CheckMode).url
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
+        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementById("change-lowband-litreage-broughtIntoUK").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyBroughtIntoUKController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
+        page.getElementsByTag("dd").text() must include("£1,940.19")
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
+        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementById("change-highband-litreage-broughtIntoUK").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyBroughtIntoUKController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
+        page.getElementsByTag("dd").text() must include("£5,180.52")
+      }
     }
 
     "must show brought into UK from small producers row when present and answer is no" in {
@@ -346,11 +490,83 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show brought into UK from small producers row containing calculation when yes is selected - pre April 2025 rates" in {
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
 
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(BroughtIntoUkFromSmallProducersPage, true).success.value
+        .set(HowManyBroughtIntoUkFromSmallProducersPage, LitresInBands(10000, 20000)).success.value
+
+      val application = correctReturnAction(Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("h2").text() must include(Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("dt").text() must include(Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersLabel"))
+        page.getElementById("change-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
+        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementById("change-lowband-litreage-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
+        page.getElementsByTag("dd").text() must include("£1,800.00")
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
+        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementById("change-highband-litreage-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
+        page.getElementsByTag("dd").text() must include("£4,800.00")
+      }
     }
 
     "must show brought into UK from small producers row containing calculation when yes is selected - 2025 tax year rates" in {
+      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
+      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
+        .set(BroughtIntoUKPage, true).success.value
+        .set(HowManyBroughtIntoUKPage, LitresInBands(10000, 20000)).success.value
+
+      val application = correctReturnAction(Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("h2").text() must include(Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("dt").text() must include(Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersLabel"))
+        page.getElementById("change-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
+        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementById("change-lowband-litreage-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
+        page.getElementsByTag("dd").text() must include("£1,940.19")
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
+        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementById("change-highband-litreage-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
+        page.getElementsByTag("dd").text() must include("£5,180.52")
+      }
     }
 
     "must show claim credits for exports row when present and answer is no" in {
@@ -379,11 +595,83 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show claim credits for exports row containing calculation when yes is selected - pre April 2025 rates" in {
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
 
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(ClaimCreditsForExportsPage, true).success.value
+        .set(HowManyClaimCreditsForExportsPage, LitresInBands(10000, 20000)).success.value
+
+      val application = correctReturnAction(Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("h2").text() must include(Messages("correctReturn.claimCreditsForExports.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("dt").text() must include(Messages("correctReturn.claimCreditsForExports.checkYourAnswersLabel"))
+        page.getElementById("change-claimCreditsForExports").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
+        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementById("change-lowband-litreage-claimCreditsForExports").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
+        page.getElementsByTag("dd").text() must include("-£1,800.00")
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
+        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementById("change-highband-litreage-claimCreditsForExports").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
+        page.getElementsByTag("dd").text() must include("-£4,800.00")
+      }
     }
 
     "must show claim credits for exports row containing calculation when yes is selected - 2025 tax year rates" in {
+      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
+      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
+        .set(ClaimCreditsForExportsPage, true).success.value
+        .set(HowManyClaimCreditsForExportsPage, LitresInBands(10000, 20000)).success.value
+
+      val application = correctReturnAction(Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("h2").text() must include(Messages("correctReturn.claimCreditsForExports.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("dt").text() must include(Messages("correctReturn.claimCreditsForExports.checkYourAnswersLabel"))
+        page.getElementById("change-claimCreditsForExports").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
+        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementById("change-lowband-litreage-claimCreditsForExports").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
+        page.getElementsByTag("dd").text() must include("£1,940.19")
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
+        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementById("change-highband-litreage-claimCreditsForExports").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
+        page.getElementsByTag("dd").text() must include("£5,180.52")
+      }
     }
 
     "must show claim credits for lost or damaged row when present and answer is no" in {
@@ -412,11 +700,83 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show claim credits for lost or damaged row containing calculation when yes is selected - pre April 2025 rates" in {
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
 
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(ClaimCreditsForLostDamagedPage, true).success.value
+        .set(HowManyCreditsForLostDamagedPage, LitresInBands(10000, 20000)).success.value
+
+      val application = correctReturnAction(Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("h2").text() must include(Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("dt").text() must include(Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersLabel"))
+        page.getElementById("change-claimCreditsForLostDamaged").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
+        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementById("change-lowband-litreage-claimCreditsForLostDamaged").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
+        page.getElementsByTag("dd").text() must include("-£1,800.00")
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
+        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementById("change-highband-litreage-claimCreditsForLostDamaged").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
+        page.getElementsByTag("dd").text() must include("-£4,800.00")
+      }
     }
 
     "must show claim credits for lost or damaged row containing calculation when yes is selected - 2025 tax year rates" in {
+      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
+      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
+        .set(ClaimCreditsForLostDamagedPage, true).success.value
+        .set(HowManyCreditsForLostDamagedPage, LitresInBands(10000, 20000)).success.value
+
+      val application = correctReturnAction(Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("h2").text() must include(Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("dt").text() must include(Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersLabel"))
+        page.getElementById("change-claimCreditsForLostDamaged").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
+        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementById("change-lowband-litreage-claimCreditsForLostDamaged").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
+        page.getElementsByTag("dd").text() must include("£1,940.19")
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
+        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementById("change-highband-litreage-claimCreditsForLostDamaged").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
+        page.getElementsByTag("dd").text() must include("£5,180.52")
+      }
     }
 
     "must return OK and contain amount owed header when balance and return amount is positive (i.e. there is an amount to pay)" in {
