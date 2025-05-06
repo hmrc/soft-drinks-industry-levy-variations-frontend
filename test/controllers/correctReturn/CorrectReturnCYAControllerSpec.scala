@@ -115,7 +115,27 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show own brands packaged at own site row when present and answer is no" in {
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(OperatePackagingSiteOwnBrandsPage, false).success.value
 
+      val application = correctReturnAction(Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("h2").text() must include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("dt").text() must include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersLabel"))
+        page.getElementById("change-operatePackagingSiteOwnBrands").attributes().get("href") must include("/change-own-brands-packaged-at-own-sites")
+
+        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheLowBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheHighBand"))
+      }
     }
 
     "must show own brands packaged at own site row containing calculation when yes is selected - pre April 2025 rates" in {
