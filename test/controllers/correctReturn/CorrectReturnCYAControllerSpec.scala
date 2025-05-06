@@ -385,6 +385,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show brought into UK row containing calculation when yes is selected - pre April 2025 rates" in {
+//      TODO: UNEXPECTED FAILURE
       when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
 
@@ -425,6 +426,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show brought into UK row containing calculation when yes is selected - 2025 tax year rates" in {
+      //      TODO: UNEXPECTED FAILURE, ALTHOUGH WILL FAIL AFTERWARDS ON LEVY VALUES
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
@@ -490,6 +492,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show brought into UK from small producers row containing calculation when yes is selected - pre April 2025 rates" in {
+      //      TODO: UNEXPECTED FAILURE
       when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
 
@@ -530,6 +533,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show brought into UK from small producers row containing calculation when yes is selected - 2025 tax year rates" in {
+      //      TODO: UNEXPECTED FAILURE, ALTHOUGH WILL FAIL AFTERWARDS ON LEVY VALUES
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
@@ -595,6 +599,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show claim credits for exports row containing calculation when yes is selected - pre April 2025 rates" in {
+      //      TODO: UNEXPECTED FAILURE
       when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
 
@@ -635,6 +640,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show claim credits for exports row containing calculation when yes is selected - 2025 tax year rates" in {
+      //      TODO: UNEXPECTED FAILURE, ALTHOUGH WILL FAIL AFTERWARDS ON LEVY VALUES
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
@@ -700,6 +706,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show claim credits for lost or damaged row containing calculation when yes is selected - pre April 2025 rates" in {
+      //      TODO: UNEXPECTED FAILURE
       when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
 
@@ -740,6 +747,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show claim credits for lost or damaged row containing calculation when yes is selected - 2025 tax year rates" in {
+      //      TODO: UNEXPECTED FAILURE, ALTHOUGH WILL FAIL AFTERWARDS ON LEVY VALUES
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
