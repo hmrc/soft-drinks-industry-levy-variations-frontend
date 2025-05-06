@@ -19,6 +19,7 @@ package controllers.correctReturn
 import base.SpecBase
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
+import controllers.actions.RequiredUserAnswersForCorrectReturn
 import controllers.correctReturn.routes._
 import models.SelectChange.CorrectReturn
 import models.backend.RetrievedSubscription
@@ -30,15 +31,19 @@ import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.mockito.MockitoSugar.mock
+import pages.Page
 import pages.correctReturn._
 import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
 import views.html.correctReturn.CorrectReturnCYAView
 import views.summary.correctReturn.CorrectReturnBaseCYASummary
+
+import scala.concurrent.Future
 
 class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
@@ -49,10 +54,18 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
   def correctReturnAction(userAnswers: Option[UserAnswers],
                           optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn),
                           subscription: Option[RetrievedSubscription] = None): GuiceApplicationBuilder = {
+    lazy val requiredAnswers: RequiredUserAnswersForCorrectReturn = new RequiredUserAnswersForCorrectReturn() {
+//      override def requireData(page: Page)(action: => Future[Result])(implicit request: DataRequest[_]): Future[Result] = action
+      override def requireData(page: Page, userAnswers: UserAnswers, subscription: RetrievedSubscription)
+                              (action: => Future[Result]): Future[Result] = action
+    }
+//    guiceApplicationBuilder.overrides(bind[RequiredUserAnswersForCorrectReturn].to(requiredAnswers))
+    val amounts1 = Amounts(0.00, 4200.00, -300.00, 4500.00, 4500.00)
+    when(mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
     when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers, subscription = subscription)
-      .overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+      .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+      .overrides(bind[RequiredUserAnswersForCorrectReturn].to(requiredAnswers))
   }
 
   private val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
@@ -621,14 +634,15 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,000")
-        page.getElementById("change-lowband-litreage-claimCreditsForExports").attributes().get("href") mustEqual
+        page.getElementById("change-lowband-litreage-correctReturn.claimCreditsForExports").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("-£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
-        page.getElementById("change-highband-litreage-claimCreditsForExports").attributes().get("href") mustEqual
+        //      TODO: UNEXPECTED FAILURE HERE
+        page.getElementById("change-highband-litreage-correctReturn.claimCreditsForExports").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("-£4,800.00")
@@ -662,14 +676,14 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,000")
-        page.getElementById("change-lowband-litreage-claimCreditsForExports").attributes().get("href") mustEqual
+        page.getElementById("change-lowband-litreage-correctReturn.claimCreditsForExports").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
-        page.getElementById("change-highband-litreage-claimCreditsForExports").attributes().get("href") mustEqual
+        page.getElementById("change-highband-litreage-correctReturn.claimCreditsForExports").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£5,180.52")
@@ -728,14 +742,14 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,000")
-        page.getElementById("change-lowband-litreage-claimCreditsForLostDamaged").attributes().get("href") mustEqual
+        page.getElementById("change-lowband-litreage-correctReturn.claimCreditsForLostDamaged").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("-£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
-        page.getElementById("change-highband-litreage-claimCreditsForLostDamaged").attributes().get("href") mustEqual
+        page.getElementById("change-highband-litreage-correctReturn.claimCreditsForLostDamaged").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("-£4,800.00")
@@ -769,14 +783,14 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,000")
-        page.getElementById("change-lowband-litreage-claimCreditsForLostDamaged").attributes().get("href") mustEqual
+        page.getElementById("change-lowband-litreage-correctReturn.claimCreditsForLostDamaged").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
-        page.getElementById("change-highband-litreage-claimCreditsForLostDamaged").attributes().get("href") mustEqual
+        page.getElementById("change-highband-litreage-correctReturn.claimCreditsForLostDamaged").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£5,180.52")
