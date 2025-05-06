@@ -182,7 +182,43 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show own brands packaged at own site row containing calculation when yes is selected - 2025 tax year rates" in {
+      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
+      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
+        .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+        .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(10000, 20000)).success.value
+
+      val application = correctReturnAction(Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("h2").text() must include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("dt").text() must include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersLabel"))
+        page.getElementById("change-operatePackagingSiteOwnBrands").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
+        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementById("change-lowband-litreage-operatePackagingSiteOwnBrands").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
+        page.getElementsByTag("dd").text() must include("£1,940.19")
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
+        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementById("change-highband-litreage-operatePackagingSiteOwnBrands").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
+        page.getElementsByTag("dd").text() must include("£5,180.52")
+      }
     }
 
     "must show packaged as contract packer row when present and answer is no" in {
