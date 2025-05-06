@@ -147,7 +147,27 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show packaged as contract packer row when present and answer is no" in {
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(PackagedAsContractPackerPage, false).success.value
 
+      val application = correctReturnAction(Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("h2").text() must include(Messages("correctReturn.packagedAsContractPacker.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("dt").text() must include(Messages("correctReturn.packagedAsContractPacker.checkYourAnswersLabel"))
+        page.getElementById("change-packagedAsContractPacker").attributes().get("href") must include("/change-packaged-as-contract-packer")
+
+        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheLowBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheHighBand"))
+      }
     }
 
     "must show packaged as contract packer row containing calculation when yes is selected - pre April 2025 rates" in {
@@ -159,7 +179,27 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show exemptions for small producers row when present and answer is no" in {
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(ExemptionsForSmallProducersPage, false).success.value
 
+      val application = correctReturnAction(Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("h2").text() must include(Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("dt").text() must include(Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersLabel"))
+        page.getElementById("change-exemptionsForSmallProducers").attributes().get("href") must include("/change-exemptions-for-small-producers")
+
+        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheLowBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheHighBand"))
+      }
     }
 
     "must show exemptions for small producers row containing calculation when yes is selected - pre April 2025 rates" in {
@@ -171,7 +211,27 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show brought into UK row when present and answer is no" in {
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(BroughtIntoUKPage, false).success.value
 
+      val application = correctReturnAction(Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("h2").text() must include(Messages("correctReturn.broughtIntoUK.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("dt").text() must include(Messages("correctReturn.broughtIntoUK.checkYourAnswersLabel"))
+        page.getElementById("change-broughtIntoUK").attributes().get("href") must include("/change-brought-into-uk")
+
+        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheLowBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheHighBand"))
+      }
     }
 
     "must show brought into UK row containing calculation when yes is selected - pre April 2025 rates" in {
@@ -183,7 +243,27 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show brought into UK from small producers row when present and answer is no" in {
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(BroughtIntoUkFromSmallProducersPage, false).success.value
 
+      val application = correctReturnAction(Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("h2").text() must include(Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("dt").text() must include(Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersLabel"))
+        page.getElementById("change-broughtIntoUkFromSmallProducers").attributes().get("href") must include("/change-brought-into-uk-from-small-producers")
+
+        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheLowBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheHighBand"))
+      }
     }
 
     "must show brought into UK from small producers row containing calculation when yes is selected - pre April 2025 rates" in {
@@ -195,7 +275,27 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show claim credits for exports row when present and answer is no" in {
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(ClaimCreditsForExportsPage, false).success.value
 
+      val application = correctReturnAction(Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("h2").text() must include(Messages("correctReturn.claimCreditsForExports.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("dt").text() must include(Messages("correctReturn.claimCreditsForExports.checkYourAnswersLabel"))
+        page.getElementById("change-claimCreditsForExports").attributes().get("href") must include("/change-claim-credits-for-exports")
+
+        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheLowBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheHighBand"))
+      }
     }
 
     "must show claim credits for exports row containing calculation when yes is selected - pre April 2025 rates" in {
@@ -207,7 +307,27 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show claim credits for lost or damaged row when present and answer is no" in {
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(ClaimCreditsForLostDamagedPage, false).success.value
 
+      val application = correctReturnAction(Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("h2").text() must include(Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("dt").text() must include(Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersLabel"))
+        page.getElementById("change-claimCreditsForLostDamaged").attributes().get("href") must include("/change-claim-credits-for-lost-damaged")
+
+        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheLowBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheHighBand"))
+      }
     }
 
     "must show claim credits for lost or damaged row containing calculation when yes is selected - pre April 2025 rates" in {
