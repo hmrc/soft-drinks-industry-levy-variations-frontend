@@ -53,7 +53,9 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
   def correctReturnAction(userAnswers: Option[UserAnswers],
                           optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn),
-                          subscription: Option[RetrievedSubscription] = None): GuiceApplicationBuilder = {
+//                         TODO: Remove this from unit tests as no longer needed
+                          subscription: Option[RetrievedSubscription] = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)
+                         ): GuiceApplicationBuilder = {
     lazy val requiredAnswers: RequiredUserAnswersForCorrectReturn = new RequiredUserAnswersForCorrectReturn() {
       override def requireData(page: Page, userAnswers: UserAnswers, subscription: RetrievedSubscription)
                               (action: => Future[Result]): Future[Result] = action
