@@ -133,11 +133,11 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersLabel"))
-        page.getElementById("change-operatePackagingSiteOwnBrands").attributes().get("href") must
-          include(controllers.correctReturn.routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url)
+        page.getElementById("change-operatePackagingSiteOwnBrands").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
 
-        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheHighBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litres.lowBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litres.highBand"))
       }
     }
 
@@ -159,8 +159,6 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
-
-//        TODO: Correct other unit tests relating to not include and also include/equal
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersLabel"))
@@ -204,11 +202,11 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.packagedAsContractPacker.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.packagedAsContractPacker.checkYourAnswersLabel"))
-        page.getElementById("change-packagedAsContractPacker").attributes().get("href") must
-          include(controllers.correctReturn.routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url)
+        page.getElementById("change-packagedAsContractPacker").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
 
-        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheHighBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litres.lowBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litres.highBand"))
       }
     }
 
@@ -237,11 +235,11 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersLabel"))
-        page.getElementById("change-exemptionsForSmallProducers").attributes().get("href") must
-          include(controllers.correctReturn.routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url)
+        page.getElementById("change-exemptionsForSmallProducers").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
 
-        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheHighBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litres.lowBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litres.highBand"))
       }
     }
 
@@ -270,11 +268,11 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.broughtIntoUK.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.broughtIntoUK.checkYourAnswersLabel"))
-        page.getElementById("change-broughtIntoUK").attributes().get("href") must
-          include(controllers.correctReturn.routes.BroughtIntoUKController.onPageLoad(CheckMode).url)
+        page.getElementById("change-broughtIntoUK").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.BroughtIntoUKController.onPageLoad(CheckMode).url
 
-        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheHighBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litres.lowBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litres.highBand"))
       }
     }
 
@@ -303,11 +301,11 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersLabel"))
-        page.getElementById("change-broughtIntoUkFromSmallProducers").attributes().get("href") must
-          include(controllers.correctReturn.routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url)
+        page.getElementById("change-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
 
-        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheHighBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litres.lowBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litres.highBand"))
       }
     }
 
@@ -336,11 +334,11 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.claimCreditsForExports.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.claimCreditsForExports.checkYourAnswersLabel"))
-        page.getElementById("change-claimCreditsForExports").attributes().get("href") must
-          include(controllers.correctReturn.routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url)
+        page.getElementById("change-claimCreditsForExports").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url
 
-        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheHighBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litres.lowBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litres.highBand"))
       }
     }
 
@@ -369,11 +367,11 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersLabel"))
-        page.getElementById("change-claimCreditsForLostDamaged").attributes().get("href") must
-          include(controllers.correctReturn.routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url)
+        page.getElementById("change-claimCreditsForLostDamaged").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url
 
-        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheLowBand"))
-        page.getElementsByTag("dt").text() mustNot include(Messages("litresInTheHighBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litres.lowBand"))
+        page.getElementsByTag("dt").text() mustNot include(Messages("litres.highBand"))
       }
     }
 
