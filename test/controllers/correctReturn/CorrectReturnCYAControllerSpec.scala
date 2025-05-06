@@ -53,7 +53,6 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
   def correctReturnAction(userAnswers: Option[UserAnswers],
                           optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn),
-//                         TODO: Remove this from unit tests as no longer needed
                           subscription: Option[RetrievedSubscription] = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)
                          ): GuiceApplicationBuilder = {
     lazy val requiredAnswers: RequiredUserAnswersForCorrectReturn = new RequiredUserAnswersForCorrectReturn() {
@@ -133,7 +132,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(OperatePackagingSiteOwnBrandsPage, false).success.value
 
-      val application = correctReturnAction(Some(userAnswers), subscription = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)).overrides(
+      val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -162,7 +161,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
         .set(OperatePackagingSiteOwnBrandsPage, true).success.value
         .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(10000, 20000)).success.value
 
-      val application = correctReturnAction(Some(userAnswers), subscription = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)).overrides(
+      val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -202,7 +201,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
         .set(OperatePackagingSiteOwnBrandsPage, true).success.value
         .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(10000, 20000)).success.value
 
-      val application = correctReturnAction(Some(userAnswers), subscription = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)).overrides(
+      val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -238,7 +237,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(PackagedAsContractPackerPage, false).success.value
 
-      val application = correctReturnAction(Some(userAnswers), subscription = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)).overrides(
+      val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -267,7 +266,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
         .set(PackagedAsContractPackerPage, true).success.value
         .set(HowManyPackagedAsContractPackerPage, LitresInBands(10000, 20000)).success.value
 
-      val application = correctReturnAction(Some(userAnswers), subscription = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)).overrides(
+      val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -307,7 +306,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
         .set(PackagedAsContractPackerPage, true).success.value
         .set(HowManyPackagedAsContractPackerPage, LitresInBands(10000, 20000)).success.value
 
-      val application = correctReturnAction(Some(userAnswers), subscription = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)).overrides(
+      val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -343,7 +342,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(ExemptionsForSmallProducersPage, false).success.value
 
-      val application = correctReturnAction(Some(userAnswers), subscription = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)).overrides(
+      val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -375,7 +374,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
           SmallProducer("", "XZSDIL000001234", Litreage(5000, 10000)),
         ))
 
-      val application = correctReturnAction(Some(userAnswers), subscription = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)).overrides(
+      val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -418,7 +417,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
           SmallProducer("", "XZSDIL000001234", Litreage(5000, 10000)),
         ))
 
-      val application = correctReturnAction(Some(userAnswers), subscription = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)).overrides(
+      val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -454,7 +453,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(BroughtIntoUKPage, false).success.value
 
-      val application = correctReturnAction(Some(userAnswers), subscription = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)).overrides(
+      val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -483,7 +482,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
         .set(BroughtIntoUKPage, true).success.value
         .set(HowManyBroughtIntoUKPage, LitresInBands(10000, 20000)).success.value
 
-      val application = correctReturnAction(Some(userAnswers), subscription = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)).overrides(
+      val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -523,7 +522,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
         .set(BroughtIntoUKPage, true).success.value
         .set(HowManyBroughtIntoUKPage, LitresInBands(10000, 20000)).success.value
 
-      val application = correctReturnAction(Some(userAnswers), subscription = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)).overrides(
+      val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -559,7 +558,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(BroughtIntoUkFromSmallProducersPage, false).success.value
 
-      val application = correctReturnAction(Some(userAnswers), subscription = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)).overrides(
+      val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -588,7 +587,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
         .set(BroughtIntoUkFromSmallProducersPage, true).success.value
         .set(HowManyBroughtIntoUkFromSmallProducersPage, LitresInBands(10000, 20000)).success.value
 
-      val application = correctReturnAction(Some(userAnswers), subscription = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)).overrides(
+      val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -628,7 +627,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
         .set(BroughtIntoUKPage, true).success.value
         .set(HowManyBroughtIntoUKPage, LitresInBands(10000, 20000)).success.value
 
-      val application = correctReturnAction(Some(userAnswers), subscription = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)).overrides(
+      val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -664,7 +663,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(ClaimCreditsForExportsPage, false).success.value
 
-      val application = correctReturnAction(Some(userAnswers), subscription = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)).overrides(
+      val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -693,7 +692,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
         .set(ClaimCreditsForExportsPage, true).success.value
         .set(HowManyClaimCreditsForExportsPage, LitresInBands(10000, 20000)).success.value
 
-      val application = correctReturnAction(Some(userAnswers), subscription = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)).overrides(
+      val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -733,7 +732,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
         .set(ClaimCreditsForExportsPage, true).success.value
         .set(HowManyClaimCreditsForExportsPage, LitresInBands(10000, 20000)).success.value
 
-      val application = correctReturnAction(Some(userAnswers), subscription = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)).overrides(
+      val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -769,7 +768,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(ClaimCreditsForLostDamagedPage, false).success.value
 
-      val application = correctReturnAction(Some(userAnswers), subscription = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)).overrides(
+      val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -798,7 +797,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
         .set(ClaimCreditsForLostDamagedPage, true).success.value
         .set(HowManyCreditsForLostDamagedPage, LitresInBands(10000, 20000)).success.value
 
-      val application = correctReturnAction(Some(userAnswers), subscription = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)).overrides(
+      val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -838,7 +837,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
         .set(ClaimCreditsForLostDamagedPage, true).success.value
         .set(HowManyCreditsForLostDamagedPage, LitresInBands(10000, 20000)).success.value
 
-      val application = correctReturnAction(Some(userAnswers), subscription = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)).overrides(
+      val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
