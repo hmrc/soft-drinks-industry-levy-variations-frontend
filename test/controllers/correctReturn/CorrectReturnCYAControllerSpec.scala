@@ -363,7 +363,47 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show exemptions for small producers row containing calculation when yes is selected - pre April 2025 rates" in {
-      // TODO: Figure out how to implement
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
+
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(ExemptionsForSmallProducersPage, true).success.value
+        .copy(smallProducerList = List(
+          SmallProducer("", "XZSDIL000000234", Litreage(5000, 10000)),
+          SmallProducer("", "XZSDIL000001234", Litreage(5000, 10000)),
+        ))
+
+      val application = correctReturnAction(Some(userAnswers), subscription = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+        page.getElementsByTag("h2").text() must include(Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("dt").text() must include(Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersLabel"))
+        page.getElementById("change-exemptionsForSmallProducers").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
+
+        // TODO: Fix failing conditions
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
+        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementById("change-lowband-litreage-exemptionsForSmallProducers").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
+        page.getElementsByTag("dd").text() must include("£1,800.00")
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
+        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementById("change-highband-litreage-exemptionsForSmallProducers").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
+        page.getElementsByTag("dd").text() must include("£4,800.00")
+      }
     }
 
     "must show exemptions for small producers row containing calculation when yes is selected - 2025 tax year rates" in {
