@@ -17,6 +17,7 @@
 package controllers.correctReturn
 
 import base.SpecBase
+import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.correctReturn.routes._
 import models.SelectChange.CorrectReturn
@@ -43,6 +44,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
   val mockOrchestrator: CorrectReturnOrchestrator = mock[CorrectReturnOrchestrator]
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+  val mockConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
   def correctReturnAction(userAnswers: Option[UserAnswers],
                           optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn),
@@ -140,7 +142,45 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show own brands packaged at own site row containing calculation when yes is selected - pre April 2025 rates" in {
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
+      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
 
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+        .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(10000, 20000)).success.value
+
+      val application = correctReturnAction(Some(userAnswers)).overrides(
+        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+      ).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val page = Jsoup.parse(contentAsString(result))
+
+//        TODO: Correct other unit tests relating to not include and also include/equal
+
+        page.getElementsByTag("h2").text() must include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("dt").text() must include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersLabel"))
+        page.getElementById("change-operatePackagingSiteOwnBrands").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
+        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementById("change-lowband-litreage-operatePackagingSiteOwnBrands").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
+        page.getElementsByTag("dd").text() must include("£1,800.00")
+
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
+        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementById("change-highband-litreage-operatePackagingSiteOwnBrands").attributes().get("href") mustEqual
+          controllers.correctReturn.routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
+        page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
+        page.getElementsByTag("dd").text() must include("£4,800.00")
+      }
     }
 
     "must show own brands packaged at own site row containing calculation when yes is selected - 2025 tax year rates" in {
