@@ -51,16 +51,6 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
 
 //  TODO: FIX UNEXPECTEDLY FAILING TESTS IN HERE
 
-//  val mockOrchestrator: CorrectReturnOrchestrator = mock[CorrectReturnOrchestrator]
-//  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-//
-//  def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
-//    when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
-//    applicationBuilder(userAnswers = userAnswers)
-//      .overrides(
-//        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
-//  }
-
   val mockOrchestrator: CorrectReturnOrchestrator = mock[CorrectReturnOrchestrator]
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
   val mockConfig: FrontendAppConfig = mock[FrontendAppConfig]
@@ -73,8 +63,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       override def requireData(page: Page, userAnswers: UserAnswers, subscription: RetrievedSubscription)
                               (action: => Future[Result]): Future[Result] = action
     }
-    val amounts1 = Amounts(0.00, 4200.00, -300.00, 4500.00, 4500.00)
-    when(mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
+    when(mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts)
     when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers, subscription = subscription)
       .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
@@ -128,7 +117,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         ChangedPage(HowManyCreditsForLostDamagedPage, answerChanged = true),
         ChangedPage(ExemptionsForSmallProducersPage, answerChanged = true))
 
-      val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(
+      val application = correctReturnAction(userAnswers = Some(userAnswers), subscription = Some(aSubscription)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator))
         .build()
 
@@ -149,10 +138,12 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
 
     "must redirect to CYA when that page has not been submitted" in {
       val amounts1 = Amounts(40200.00, 4200.00, -300.00, 4500.00, -35700.00)
-      val userAnswers = filledUserAnswers
+      val userAnswers = filledUserAnswers.remove(CorrectReturnBaseCYAPage).success.value
 
-      val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator))
+      when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(Some(emptySdilReturn)))
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+          bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector),
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator))
         .build()
 
       running(application) {
@@ -161,7 +152,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
 
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.CorrectReturnCheckChangesCYAController.onPageLoad.url
+        redirectLocation(result).value mustEqual routes.CorrectReturnCYAController.onPageLoad.url
       }
     }
 
@@ -185,6 +176,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show own brands packaged at own site row when present and answer is no" in {
+//      TODO: FAILING BECAUSE NOT CHANGED
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(OperatePackagingSiteOwnBrandsPage, false).success.value
 
@@ -290,6 +282,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show packaged as contract packer row when present and answer is no" in {
+      //      TODO: FAILING BECAUSE NOT CHANGED
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(PackagedAsContractPackerPage, false).success.value
 
@@ -395,6 +388,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show exemptions for small producers row when present and answer is no" in {
+      //      TODO: FAILING BECAUSE NOT CHANGED
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(ExemptionsForSmallProducersPage, false).success.value
 
@@ -506,6 +500,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show brought into UK row when present and answer is no" in {
+      //      TODO: FAILING BECAUSE NOT CHANGED
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(BroughtIntoUKPage, false).success.value
 
@@ -611,6 +606,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show brought into UK from small producers row when present and answer is no" in {
+      //      TODO: FAILING BECAUSE NOT CHANGED
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(BroughtIntoUkFromSmallProducersPage, false).success.value
 
@@ -716,6 +712,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show claim credits for exports row when present and answer is no" in {
+      //      TODO: FAILING BECAUSE NOT CHANGED
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(ClaimCreditsForExportsPage, false).success.value
 
@@ -821,6 +818,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show claim credits for lost or damaged row when present and answer is no" in {
+      //      TODO: FAILING BECAUSE NOT CHANGED
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(ClaimCreditsForLostDamagedPage, false).success.value
 
@@ -1024,7 +1022,9 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         .set(CorrectReturnBaseCYAPage, true).success.value
         .set(CorrectionReasonPage, "Changed the amount packaged as a contract packer").success.value
 
-      val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(
+      when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(Some(emptySdilReturn)))
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector),
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator))
         .build()
 
