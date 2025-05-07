@@ -281,11 +281,10 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show packaged as contract packer row when present and answer is no" in {
-      //      TODO: FAILING BECAUSE NOT CHANGED
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(PackagedAsContractPackerPage, false).success.value
 
-      val application = correctReturnAction(Some(userAnswers)).overrides(
+      val application = correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(packLarge = basicLitreage))).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -387,11 +386,10 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show exemptions for small producers row when present and answer is no" in {
-      //      TODO: FAILING BECAUSE NOT CHANGED
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(ExemptionsForSmallProducersPage, false).success.value
 
-      val application = correctReturnAction(Some(userAnswers)).overrides(
+      val application = correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(packSmall = smallProducerList))).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -499,11 +497,10 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show brought into UK row when present and answer is no" in {
-      //      TODO: FAILING BECAUSE NOT CHANGED
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(BroughtIntoUKPage, false).success.value
 
-      val application = correctReturnAction(Some(userAnswers)).overrides(
+      val application = correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(importLarge = basicLitreage))).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -605,11 +602,10 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show brought into UK from small producers row when present and answer is no" in {
-      //      TODO: FAILING BECAUSE NOT CHANGED
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(BroughtIntoUkFromSmallProducersPage, false).success.value
 
-      val application = correctReturnAction(Some(userAnswers)).overrides(
+      val application = correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(importSmall = basicLitreage))).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -711,11 +707,10 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show claim credits for exports row when present and answer is no" in {
-      //      TODO: FAILING BECAUSE NOT CHANGED
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(ClaimCreditsForExportsPage, false).success.value
 
-      val application = correctReturnAction(Some(userAnswers)).overrides(
+      val application = correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(`export` = basicLitreage))).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
@@ -817,11 +812,10 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show claim credits for lost or damaged row when present and answer is no" in {
-      //      TODO: FAILING BECAUSE NOT CHANGED
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(ClaimCreditsForLostDamagedPage, false).success.value
 
-      val application = correctReturnAction(Some(userAnswers)).overrides(
+      val application = correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(wastage = basicLitreage))).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
