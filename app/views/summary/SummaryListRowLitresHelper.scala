@@ -17,7 +17,8 @@
 package views.summary
 
 import config.FrontendAppConfig
-import models.{LitresInBands, ReturnPeriod}
+import models.LevyCalculator.getLevyCalculation
+import models.{LevyCalculation, LitresInBands, ReturnPeriod}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -40,11 +41,14 @@ trait SummaryListRowLitresHelper {
 
   def rows(litresInBands: LitresInBands, isCheckAnswers: Boolean, correctReturnPeriod: Option[ReturnPeriod] = None, includeLevyRows: Boolean = true)
           (implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
+    val levyCalculation: Option[LevyCalculation] = correctReturnPeriod.map(getLevyCalculation(litresInBands.lowBand, litresInBands.highBand, _))
+    val lowBandLevyRow: Option[SummaryListRow] = if (includeLevyRows) Option(bandLevyRow(litresInBands.lowBand, config.lowerBandCostPerLitre, lowBand)) else None
+    val highBandLevyRow: Option[SummaryListRow] = if (includeLevyRows) Option(bandLevyRow(litresInBands.highBand, config.higherBandCostPerLitre, highBand)) else None
     Seq(
       Option(bandRow(litresInBands.lowBand, lowBand, isCheckAnswers, includeLevyRows)),
-      if (includeLevyRows) Option(bandLevyRow(litresInBands.lowBand, config.lowerBandCostPerLitre, lowBand)) else None,
+      lowBandLevyRow,
       Option(bandRow(litresInBands.highBand, highBand, isCheckAnswers, includeLevyRows)),
-      if (includeLevyRows) Option(bandLevyRow(litresInBands.highBand, config.higherBandCostPerLitre, highBand)) else None
+      highBandLevyRow
     ).flatten
   }
 
