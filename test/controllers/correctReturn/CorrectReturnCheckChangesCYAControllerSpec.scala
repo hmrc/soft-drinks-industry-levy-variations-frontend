@@ -49,8 +49,6 @@ import scala.concurrent.Future
 
 class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryListFluency {
 
-//  TODO: FIX UNEXPECTEDLY FAILING TESTS IN HERE
-
   val mockOrchestrator: CorrectReturnOrchestrator = mock[CorrectReturnOrchestrator]
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
   val mockConfig: FrontendAppConfig = mock[FrontendAppConfig]
@@ -72,6 +70,8 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
 
   private val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
   private val taxYear2025ReturnPeriod = ReturnPeriod(2026, 0)
+
+  private val basicLitreage = Litreage(1, 1)
 
   val litresInBands = LitresInBands(2000, 4000)
   val filledUserAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
@@ -176,11 +176,10 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show own brands packaged at own site row when present and answer is no" in {
-//      TODO: FAILING BECAUSE NOT CHANGED
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(OperatePackagingSiteOwnBrandsPage, false).success.value
 
-      val application = correctReturnAction(Some(userAnswers)).overrides(
+      val application = correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(ownBrand = basicLitreage))).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
