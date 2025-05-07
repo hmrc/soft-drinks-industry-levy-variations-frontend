@@ -17,7 +17,7 @@
 package views.summary
 
 import config.FrontendAppConfig
-import models.LitresInBands
+import models.{LitresInBands, ReturnPeriod}
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -38,7 +38,7 @@ trait SummaryListRowLitresHelper {
   val lowBand = "lowband"
   val highBand = "highband"
 
-  def rows(litresInBands: LitresInBands, isCheckAnswers: Boolean, includeLevyRows: Boolean = true)
+  def rows(litresInBands: LitresInBands, isCheckAnswers: Boolean, correctReturnPeriod: Option[ReturnPeriod] = None, includeLevyRows: Boolean = true)
           (implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
     Seq(
       Option(bandRow(litresInBands.lowBand, lowBand, isCheckAnswers, includeLevyRows)),
