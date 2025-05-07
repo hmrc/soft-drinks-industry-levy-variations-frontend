@@ -24,6 +24,8 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
 
 class OperatePackagingSiteOwnBrandsSummarySpec extends SpecBase {
 
+//  TODO: Split unit tests into "pre April 2025 rates" and "2025 tax year rates" in this file
+
   "summaryList" - {
     val lowLitres = 1000
     val highLitres = 2000
