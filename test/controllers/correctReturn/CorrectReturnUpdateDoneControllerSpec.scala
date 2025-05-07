@@ -106,12 +106,6 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
   private val testTime = Instant.now()
 
-//  def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
-//    when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
-//    applicationBuilder(userAnswers = userAnswers)
-//      .overrides(
-//        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
-//  }
   "Update Done Controller" - {
 
     "must return OK and the correct view for a GET" in {
@@ -188,7 +182,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must not show own brands packaged when user is a small producer" in {
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
 
       val application = correctReturnAction(Some(userAnswers), subscription = Some(subscriptionSmallProducer)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
@@ -207,7 +202,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must show own brands packaged at own site row when present and answer is no" in {
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(OperatePackagingSiteOwnBrandsPage, false).success.value
 
       val application = correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(ownBrand = basicLitreage))).overrides(
@@ -234,7 +230,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(OperatePackagingSiteOwnBrandsPage, true).success.value
         .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(10000, 20000)).success.value
 
@@ -271,7 +268,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(OperatePackagingSiteOwnBrandsPage, true).success.value
         .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(10000, 20000)).success.value
 
@@ -305,7 +303,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must show packaged as contract packer row when present and answer is no" in {
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(PackagedAsContractPackerPage, false).success.value
 
       val application = correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(packLarge = basicLitreage))).overrides(
@@ -332,7 +331,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(PackagedAsContractPackerPage, true).success.value
         .set(HowManyPackagedAsContractPackerPage, LitresInBands(10000, 20000)).success.value
 
@@ -369,7 +369,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(PackagedAsContractPackerPage, true).success.value
         .set(HowManyPackagedAsContractPackerPage, LitresInBands(10000, 20000)).success.value
 
@@ -403,7 +404,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must show exemptions for small producers row when present and answer is no" in {
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(ExemptionsForSmallProducersPage, false).success.value
 
       val application = correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(packSmall = smallProducerList))).overrides(
@@ -430,7 +432,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(ExemptionsForSmallProducersPage, true).success.value
         .copy(smallProducerList = List(
           SmallProducer("", "XZSDIL000000234", Litreage(5000, 10000)),
@@ -470,7 +473,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(ExemptionsForSmallProducersPage, true).success.value
         .copy(smallProducerList = List(
           SmallProducer("", "XZSDIL000000234", Litreage(5000, 10000)),
@@ -507,7 +511,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must show brought into UK row when present and answer is no" in {
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(BroughtIntoUKPage, false).success.value
 
       val application = correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(importLarge = basicLitreage))).overrides(
@@ -534,7 +539,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(BroughtIntoUKPage, true).success.value
         .set(HowManyBroughtIntoUKPage, LitresInBands(10000, 20000)).success.value
 
@@ -571,7 +577,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(BroughtIntoUKPage, true).success.value
         .set(HowManyBroughtIntoUKPage, LitresInBands(10000, 20000)).success.value
 
@@ -605,7 +612,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must show brought into UK from small producers row when present and answer is no" in {
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(BroughtIntoUkFromSmallProducersPage, false).success.value
 
       val application = correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(importSmall = basicLitreage))).overrides(
@@ -632,7 +640,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(BroughtIntoUkFromSmallProducersPage, true).success.value
         .set(HowManyBroughtIntoUkFromSmallProducersPage, LitresInBands(10000, 20000)).success.value
 
@@ -669,7 +678,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(BroughtIntoUKPage, true).success.value
         .set(HowManyBroughtIntoUKPage, LitresInBands(10000, 20000)).success.value
 
@@ -703,7 +713,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must show claim credits for exports row when present and answer is no" in {
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(ClaimCreditsForExportsPage, false).success.value
 
       val application = correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(`export` = basicLitreage))).overrides(
@@ -730,7 +741,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(ClaimCreditsForExportsPage, true).success.value
         .set(HowManyClaimCreditsForExportsPage, LitresInBands(10000, 20000)).success.value
 
@@ -767,7 +779,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(ClaimCreditsForExportsPage, true).success.value
         .set(HowManyClaimCreditsForExportsPage, LitresInBands(10000, 20000)).success.value
 
@@ -801,7 +814,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must show claim credits for lost or damaged row when present and answer is no" in {
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(ClaimCreditsForLostDamagedPage, false).success.value
 
       val application = correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(wastage = basicLitreage))).overrides(
@@ -828,7 +842,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
       when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(ClaimCreditsForLostDamagedPage, true).success.value
         .set(HowManyCreditsForLostDamagedPage, LitresInBands(10000, 20000)).success.value
 
@@ -865,7 +880,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(ClaimCreditsForLostDamagedPage, true).success.value
         .set(HowManyCreditsForLostDamagedPage, LitresInBands(10000, 20000)).success.value
 
