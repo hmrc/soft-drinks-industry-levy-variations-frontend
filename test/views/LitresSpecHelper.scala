@@ -17,7 +17,7 @@
 package views
 
 import forms.HowManyLitresFormProvider
-import models.{LitresInBands, ReturnPeriod}
+import models.LitresInBands
 import org.jsoup.nodes.Document
 import play.api.data.Form
 import play.api.i18n.Messages
