@@ -35,6 +35,7 @@ trait ReturnDetailsSummaryListWithLitres extends ReturnDetailsSummaryRowHelper {
   val hiddenText: String
   val isSmallProducerLitres: Boolean = false
 
+//  TODO: Separate into changeActivity and correctReturn with and without bandLevyRows - and alter unit tests using these
   def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean, includeLevyRows: Boolean = true)
                  (implicit messages: Messages, config: FrontendAppConfig): SummaryList = {
     val litresDetails: Seq[SummaryListRow] = optLitresPage match {
