@@ -22,6 +22,7 @@ import org.jsoup.nodes.Document
 import play.api.data.Form
 import play.api.i18n.Messages
 
+// TODO: Add tests for levy £ values
 trait LitresSpecHelper extends ViewSpecHelper {
 
 
