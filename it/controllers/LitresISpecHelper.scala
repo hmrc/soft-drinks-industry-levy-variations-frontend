@@ -16,7 +16,7 @@
 
 package controllers
 
-import models.{LitresInBands, ReturnPeriod}
+import models.LitresInBands
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
 import play.api.i18n.Messages
