@@ -222,9 +222,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersLabel"))
-//        page.getElementById("change-operatePackagingSiteOwnBrands").
-
-        val dfg = page.getElementById("change-operatePackagingSiteOwnBrands") mustEqual null
+        page.getElementById("change-operatePackagingSiteOwnBrands") mustEqual null
 
         page.getElementsByTag("dt").text() mustNot include(Messages("litres.lowBand"))
         page.getElementsByTag("dt").text() mustNot include(Messages("litres.highBand"))
@@ -253,20 +251,16 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersLabel"))
         page.getElementById("change-operatePackagingSiteOwnBrands") mustEqual null
-//        page.getElementById("change-operatePackagingSiteOwnBrands").attributes().get("href") mustEqual
-//          controllers.correctReturn.routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,000")
-//        page.getElementById("change-lowband-litreage-operatePackagingSiteOwnBrands").attributes().get("href") mustEqual
-//          controllers.correctReturn.routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
+        page.getElementById("change-lowband-litreage-operatePackagingSiteOwnBrands") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
-//        page.getElementById("change-highband-litreage-operatePackagingSiteOwnBrands").attributes().get("href") mustEqual
-//          controllers.correctReturn.routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
+        page.getElementById("change-highband-litreage-operatePackagingSiteOwnBrands") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£4,800.00")
       }
@@ -293,20 +287,17 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersLabel"))
-        page.getElementById("change-operatePackagingSiteOwnBrands").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
+        page.getElementById("change-operatePackagingSiteOwnBrands") mustEqual null
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,000")
-        page.getElementById("change-lowband-litreage-operatePackagingSiteOwnBrands").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
+        page.getElementById("change-lowband-litreage-operatePackagingSiteOwnBrands") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
-        page.getElementById("change-highband-litreage-operatePackagingSiteOwnBrands").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
+        page.getElementById("change-highband-litreage-operatePackagingSiteOwnBrands") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£5,180.52")
       }
@@ -330,8 +321,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.packagedAsContractPacker.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.packagedAsContractPacker.checkYourAnswersLabel"))
-        page.getElementById("change-packagedAsContractPacker").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
+        page.getElementById("change-packagedAsContractPacker") mustEqual null
 
         page.getElementsByTag("dt").text() mustNot include(Messages("litres.lowBand"))
         page.getElementsByTag("dt").text() mustNot include(Messages("litres.highBand"))
@@ -359,20 +349,17 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.packagedAsContractPacker.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.packagedAsContractPacker.checkYourAnswersLabel"))
-        page.getElementById("change-packagedAsContractPacker").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
+        page.getElementById("change-packagedAsContractPacker") mustEqual null
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,000")
-        page.getElementById("change-lowband-litreage-packagedAsContractPacker").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.HowManyPackagedAsContractPackerController.onPageLoad(CheckMode).url
+        page.getElementById("change-lowband-litreage-packagedAsContractPacker") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
-        page.getElementById("change-highband-litreage-packagedAsContractPacker").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.HowManyPackagedAsContractPackerController.onPageLoad(CheckMode).url
+        page.getElementById("change-highband-litreage-packagedAsContractPacker") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£4,800.00")
       }
@@ -399,20 +386,17 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.packagedAsContractPacker.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.packagedAsContractPacker.checkYourAnswersLabel"))
-        page.getElementById("change-packagedAsContractPacker").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
+        page.getElementById("change-packagedAsContractPacker") mustEqual null
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,000")
-        page.getElementById("change-lowband-litreage-packagedAsContractPacker").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.HowManyPackagedAsContractPackerController.onPageLoad(CheckMode).url
+        page.getElementById("change-lowband-litreage-packagedAsContractPacker") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
-        page.getElementById("change-highband-litreage-packagedAsContractPacker").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.HowManyPackagedAsContractPackerController.onPageLoad(CheckMode).url
+        page.getElementById("change-highband-litreage-packagedAsContractPacker") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£5,180.52")
       }
@@ -436,8 +420,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersLabel"))
-        page.getElementById("change-exemptionsForSmallProducers").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
+        page.getElementById("change-exemptionsForSmallProducers") mustEqual null
 
         page.getElementsByTag("dt").text() mustNot include(Messages("litres.lowBand"))
         page.getElementsByTag("dt").text() mustNot include(Messages("litres.highBand"))
@@ -468,20 +451,17 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersLabel"))
-        page.getElementById("change-exemptionsForSmallProducers").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
+        page.getElementById("change-exemptionsForSmallProducers") mustEqual null
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,000")
-        page.getElementById("change-lowband-litreage-small-producers").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(CheckMode).url
+        page.getElementById("change-lowband-litreage-small-producers") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£0.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
-        page.getElementById("change-highband-litreage-small-producers").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(CheckMode).url
+        page.getElementById("change-highband-litreage-small-producers") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£0.00")
       }
@@ -511,20 +491,17 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersLabel"))
-        page.getElementById("change-exemptionsForSmallProducers").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
+        page.getElementById("change-exemptionsForSmallProducers") mustEqual null
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,000")
-        page.getElementById("change-lowband-litreage-small-producers").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(CheckMode).url
+        page.getElementById("change-lowband-litreage-small-producers") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£0.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
-        page.getElementById("change-highband-litreage-small-producers").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(CheckMode).url
+        page.getElementById("change-highband-litreage-small-producers") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£0.00")
       }
@@ -548,8 +525,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.broughtIntoUK.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.broughtIntoUK.checkYourAnswersLabel"))
-        page.getElementById("change-broughtIntoUK").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.BroughtIntoUKController.onPageLoad(CheckMode).url
+        page.getElementById("change-broughtIntoUK") mustEqual null
 
         page.getElementsByTag("dt").text() mustNot include(Messages("litres.lowBand"))
         page.getElementsByTag("dt").text() mustNot include(Messages("litres.highBand"))
@@ -577,20 +553,17 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.broughtIntoUK.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.broughtIntoUK.checkYourAnswersLabel"))
-        page.getElementById("change-broughtIntoUK").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.BroughtIntoUKController.onPageLoad(CheckMode).url
+        page.getElementById("change-broughtIntoUK") mustEqual null
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,000")
-        page.getElementById("change-lowband-litreage-broughtIntoUK").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.HowManyBroughtIntoUKController.onPageLoad(CheckMode).url
+        page.getElementById("change-lowband-litreage-broughtIntoUK") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
-        page.getElementById("change-highband-litreage-broughtIntoUK").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.HowManyBroughtIntoUKController.onPageLoad(CheckMode).url
+        page.getElementById("change-highband-litreage-broughtIntoUK") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£4,800.00")
       }
@@ -617,20 +590,17 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.broughtIntoUK.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.broughtIntoUK.checkYourAnswersLabel"))
-        page.getElementById("change-broughtIntoUK").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.BroughtIntoUKController.onPageLoad(CheckMode).url
+        page.getElementById("change-broughtIntoUK") mustEqual null
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,000")
-        page.getElementById("change-lowband-litreage-broughtIntoUK").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.HowManyBroughtIntoUKController.onPageLoad(CheckMode).url
+        page.getElementById("change-lowband-litreage-broughtIntoUK") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
-        page.getElementById("change-highband-litreage-broughtIntoUK").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.HowManyBroughtIntoUKController.onPageLoad(CheckMode).url
+        page.getElementById("change-highband-litreage-broughtIntoUK") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£5,180.52")
       }
@@ -654,8 +624,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersLabel"))
-        page.getElementById("change-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
+        page.getElementById("change-broughtIntoUkFromSmallProducers") mustEqual null
 
         page.getElementsByTag("dt").text() mustNot include(Messages("litres.lowBand"))
         page.getElementsByTag("dt").text() mustNot include(Messages("litres.highBand"))
@@ -683,20 +652,17 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersLabel"))
-        page.getElementById("change-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
+        page.getElementById("change-broughtIntoUkFromSmallProducers") mustEqual null
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,000")
-        page.getElementById("change-lowband-litreage-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
+        page.getElementById("change-lowband-litreage-broughtIntoUkFromSmallProducers") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
-        page.getElementById("change-highband-litreage-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
+        page.getElementById("change-highband-litreage-broughtIntoUkFromSmallProducers") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£4,800.00")
       }
@@ -723,20 +689,17 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersLabel"))
-        page.getElementById("change-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
+        page.getElementById("change-broughtIntoUkFromSmallProducers") mustEqual null
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,000")
-        page.getElementById("change-lowband-litreage-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
+        page.getElementById("change-lowband-litreage-broughtIntoUkFromSmallProducers") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
-        page.getElementById("change-highband-litreage-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
+        page.getElementById("change-highband-litreage-broughtIntoUkFromSmallProducers") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£5,180.52")
       }
@@ -760,8 +723,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.claimCreditsForExports.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.claimCreditsForExports.checkYourAnswersLabel"))
-        page.getElementById("change-claimCreditsForExports").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url
+        page.getElementById("change-claimCreditsForExports") mustEqual null
 
         page.getElementsByTag("dt").text() mustNot include(Messages("litres.lowBand"))
         page.getElementsByTag("dt").text() mustNot include(Messages("litres.highBand"))
@@ -789,20 +751,17 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.claimCreditsForExports.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.claimCreditsForExports.checkYourAnswersLabel"))
-        page.getElementById("change-claimCreditsForExports").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url
+        page.getElementById("change-claimCreditsForExports") mustEqual null
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,000")
-        page.getElementById("change-lowband-litreage-correctReturn.claimCreditsForExports").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
+        page.getElementById("change-lowband-litreage-correctReturn.claimCreditsForExports") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
-        page.getElementById("change-highband-litreage-correctReturn.claimCreditsForExports").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
+        page.getElementById("change-highband-litreage-correctReturn.claimCreditsForExports") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£4,800.00")
       }
@@ -829,20 +788,17 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.claimCreditsForExports.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.claimCreditsForExports.checkYourAnswersLabel"))
-        page.getElementById("change-claimCreditsForExports").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url
+        page.getElementById("change-claimCreditsForExports") mustEqual null
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,000")
-        page.getElementById("change-lowband-litreage-correctReturn.claimCreditsForExports").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
+        page.getElementById("change-lowband-litreage-correctReturn.claimCreditsForExports") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
-        page.getElementById("change-highband-litreage-correctReturn.claimCreditsForExports").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
+        page.getElementById("change-highband-litreage-correctReturn.claimCreditsForExports") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£5,180.52")
       }
@@ -866,8 +822,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersLabel"))
-        page.getElementById("change-claimCreditsForLostDamaged").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url
+        page.getElementById("change-claimCreditsForLostDamaged") mustEqual null
 
         page.getElementsByTag("dt").text() mustNot include(Messages("litres.lowBand"))
         page.getElementsByTag("dt").text() mustNot include(Messages("litres.highBand"))
@@ -895,20 +850,17 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersLabel"))
-        page.getElementById("change-claimCreditsForLostDamaged").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url
+        page.getElementById("change-claimCreditsForLostDamaged") mustEqual null
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,000")
-        page.getElementById("change-lowband-litreage-correctReturn.claimCreditsForLostDamaged").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
+        page.getElementById("change-lowband-litreage-correctReturn.claimCreditsForLostDamaged") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
-        page.getElementById("change-highband-litreage-correctReturn.claimCreditsForLostDamaged").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
+        page.getElementById("change-highband-litreage-correctReturn.claimCreditsForLostDamaged") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£4,800.00")
       }
@@ -935,20 +887,17 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
         page.getElementsByTag("h2").text() must include(Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersSectionHeader"))
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersLabel"))
-        page.getElementById("change-claimCreditsForLostDamaged").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url
+        page.getElementById("change-claimCreditsForLostDamaged") mustEqual null
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,000")
-        page.getElementById("change-lowband-litreage-correctReturn.claimCreditsForLostDamaged").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
+        page.getElementById("change-lowband-litreage-correctReturn.claimCreditsForLostDamaged") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
-        page.getElementById("change-highband-litreage-correctReturn.claimCreditsForLostDamaged").attributes().get("href") mustEqual
-          controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
+        page.getElementById("change-highband-litreage-correctReturn.claimCreditsForLostDamaged") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£5,180.52")
       }
