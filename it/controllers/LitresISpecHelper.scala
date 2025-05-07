@@ -68,8 +68,8 @@ trait LitresISpecHelper extends ControllerITTestHelper {
     highBandGroup.getElementById("litres.highBand").attr("value") mustBe highBandValue.toString
   }
 
-  // TODO: Migrate ITs to use this test for levy £ values
-  def testLitresInBandsWithPrepopulatedData(document: Document, returnPeriod: ReturnPeriod): Unit = {
+  // TODO: Add to Correct Return ITs to use this test for levy £ values
+  def testLitresInBandsAndLevyValuesWithPrepopulatedData(document: Document, returnPeriod: ReturnPeriod): Unit = {
     val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
     val taxYear2025ReturnPeriod = ReturnPeriod(2026, 0)
 
