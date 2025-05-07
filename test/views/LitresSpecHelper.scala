@@ -51,7 +51,6 @@ trait LitresSpecHelper extends ViewSpecHelper {
     val form = "form"
   }
 
-
   def testLitresInBandsWithPrepopulatedData(document: Document): Unit = {
     "should include form groups for litres" - {
       "when the form is not prepopulated and has no errors" - {
@@ -72,47 +71,6 @@ trait LitresSpecHelper extends ViewSpecHelper {
           highBandGroup.getElementById("litres.highBand-hint").text() mustBe Messages("litres.highBandHint")
           highBandGroup.getElementById("litres.highBand").hasAttr("value") mustBe true
           highBandGroup.getElementById("litres.highBand").attr("value") mustBe highBandValue.toString
-        }
-      }
-    }
-  }
-
-  // TODO: Add to Correct Return unit tests to use this test for levy £ values
-  def testLitresInBandsAndLevyValuesWithPrepopulatedData(document: Document, returnPeriod: ReturnPeriod): Unit = {
-    val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
-    val taxYear2025ReturnPeriod = ReturnPeriod(2026, 0)
-
-    def lowBandLevyValue(returnPeriod: ReturnPeriod) = returnPeriod match {
-      case preApril2025ReturnPeriod => "£1800.00"
-      case taxYear2025ReturnPeriod => "£1940.00"
-    }
-
-    def highBandLevyValue(returnPeriod: ReturnPeriod) = returnPeriod match {
-      case preApril2025ReturnPeriod => "£2400.00"
-      case taxYear2025ReturnPeriod => "£2590.00"
-    }
-
-    "should include form groups for litres" - {
-      "when the form is not prepopulated and has no errors" - {
-        val formGroups = document.getElementsByClass(Selectors.govukFormGroup)
-        "that includes 2 input fields" in {
-          formGroups.size() mustEqual 2
-        }
-        "that includes a field for low band that is populated" in {
-          val lowBandGroup = formGroups.get(0)
-          lowBandGroup.getElementsByClass(Selectors.label).text() mustBe Messages("litres.lowBand")
-          lowBandGroup.getElementById("litres.lowBand-hint").text() mustBe Messages("litres.lowBandHint")
-          lowBandGroup.getElementById("litres.lowBand").hasAttr("value") mustBe true
-          lowBandGroup.getElementById("litres.lowBand").attr("value") mustBe lowBandValue.toString
-          lowBandGroup.getElementById("litres.lowBandLevy").attr("value") mustBe lowBandLevyValue(returnPeriod)
-        }
-        "that includes a field for high band that is populated" in {
-          val highBandGroup = formGroups.get(1)
-          highBandGroup.getElementsByClass(Selectors.label).text() mustBe Messages("litres.highBand")
-          highBandGroup.getElementById("litres.highBand-hint").text() mustBe Messages("litres.highBandHint")
-          highBandGroup.getElementById("litres.highBand").hasAttr("value") mustBe true
-          highBandGroup.getElementById("litres.highBand").attr("value") mustBe highBandValue.toString
-          highBandGroup.getElementById("litres.highBandLevy").attr("value") mustBe highBandLevyValue(returnPeriod)
         }
       }
     }
