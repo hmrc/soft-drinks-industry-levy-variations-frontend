@@ -40,7 +40,30 @@ trait ReturnDetailsSummaryListWithLitres extends ReturnDetailsSummaryRowHelper {
                  (implicit messages: Messages, config: FrontendAppConfig): SummaryList = {
     val litresDetails: Seq[SummaryListRow] = optLitresPage match {
       case Some(litresPage) => getLitresDetails(userAnswers, isCheckAnswers, litresPage, includeLevyRows)
-      case None if isSmallProducerLitres => getLitresForSmallProducer(userAnswers, isCheckAnswers)
+      case None if isSmallProducerLitres => getLitresForSmallProducerWithBandLevyRows(userAnswers, isCheckAnswers)
+      case None => Seq.empty
+    }
+    SummaryListViewModel(rows =
+      row(userAnswers, isCheckAnswers) ++ litresDetails
+    )
+  }
+
+  def summaryListWithBandLevyRows(userAnswers: UserAnswers, isCheckAnswers: Boolean)
+                 (implicit messages: Messages, config: FrontendAppConfig): SummaryList = {
+    val litresDetails: Seq[SummaryListRow] = optLitresPage match {
+      case Some(litresPage) => getLitresDetails(userAnswers, isCheckAnswers, litresPage, includeLevyRows = true)
+      case None if isSmallProducerLitres => getLitresForSmallProducerWithBandLevyRows(userAnswers, isCheckAnswers)
+      case None => Seq.empty
+    }
+    SummaryListViewModel(rows =
+      row(userAnswers, isCheckAnswers) ++ litresDetails
+    )
+  }
+
+  def summaryListWithoutBandLevyRows(userAnswers: UserAnswers, isCheckAnswers: Boolean)
+                                 (implicit messages: Messages, config: FrontendAppConfig): SummaryList = {
+    val litresDetails: Seq[SummaryListRow] = optLitresPage match {
+      case Some(litresPage) => getLitresDetails(userAnswers, isCheckAnswers, litresPage, includeLevyRows = false)
       case None => Seq.empty
     }
     SummaryListViewModel(rows =
@@ -56,14 +79,14 @@ trait ReturnDetailsSummaryListWithLitres extends ReturnDetailsSummaryRowHelper {
     }
   }
 
-  private def getLitresForSmallProducer(userAnswers: UserAnswers, isCheckAnswers: Boolean, includeLevyRows: Boolean = true)
+  private def getLitresForSmallProducerWithBandLevyRows(userAnswers: UserAnswers, isCheckAnswers: Boolean)
                                        (implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
     val smallProducerList = userAnswers.smallProducerList
-    if(userAnswers.get(page).getOrElse(false) && smallProducerList.nonEmpty) {
+    if (userAnswers.get(page).getOrElse(false) && smallProducerList.nonEmpty) {
       val lowBandLitres = smallProducerList.map(_.litreage.lower).sum
       val highBandLitres = smallProducerList.map(_.litreage.higher).sum
       val litresInBands = LitresInBands(lowBandLitres, highBandLitres)
-      summaryLitres.rows(litresInBands, isCheckAnswers, userAnswers.correctReturnPeriod, includeLevyRows)
+      summaryLitres.rows(litresInBands, isCheckAnswers, userAnswers.correctReturnPeriod, includeLevyRows = true)
     } else {
       Seq.empty
     }
