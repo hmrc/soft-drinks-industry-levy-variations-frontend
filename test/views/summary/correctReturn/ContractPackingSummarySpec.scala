@@ -23,7 +23,7 @@ import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
 import views.summary.changeActivity.ContractPackingSummary
 
-class CorrectReturnBaseCYASummarySpec extends SpecBase {
+class ContractPackingSummarySpec extends SpecBase {
 
   "summaryList" - {
     val lowLitres = 1000
