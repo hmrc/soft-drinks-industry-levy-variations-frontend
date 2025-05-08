@@ -36,17 +36,17 @@ trait ReturnDetailsSummaryListWithLitres extends ReturnDetailsSummaryRowHelper {
   val isSmallProducerLitres: Boolean = false
 
 //  TODO: Separate into changeActivity and correctReturn with and without bandLevyRows - and alter unit tests using these
-  def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean, includeLevyRows: Boolean = true)
-                 (implicit messages: Messages, config: FrontendAppConfig): SummaryList = {
-    val litresDetails: Seq[SummaryListRow] = optLitresPage match {
-      case Some(litresPage) => getLitresDetails(userAnswers, isCheckAnswers, litresPage, includeLevyRows)
-      case None if isSmallProducerLitres => getLitresForSmallProducerWithBandLevyRows(userAnswers, isCheckAnswers)
-      case None => Seq.empty
-    }
-    SummaryListViewModel(rows =
-      row(userAnswers, isCheckAnswers) ++ litresDetails
-    )
-  }
+//  def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean, includeLevyRows: Boolean = true)
+//                 (implicit messages: Messages, config: FrontendAppConfig): SummaryList = {
+//    val litresDetails: Seq[SummaryListRow] = optLitresPage match {
+//      case Some(litresPage) => getLitresDetails(userAnswers, isCheckAnswers, litresPage, includeLevyRows)
+//      case None if isSmallProducerLitres => getLitresForSmallProducerWithBandLevyRows(userAnswers, isCheckAnswers)
+//      case None => Seq.empty
+//    }
+//    SummaryListViewModel(rows =
+//      row(userAnswers, isCheckAnswers) ++ litresDetails
+//    )
+//  }
 
   def summaryListWithBandLevyRows(userAnswers: UserAnswers, isCheckAnswers: Boolean)
                  (implicit messages: Messages, config: FrontendAppConfig): SummaryList = {
