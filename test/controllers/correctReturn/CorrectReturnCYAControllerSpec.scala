@@ -199,7 +199,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
         .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-        .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(10000, 20000)).success.value
+        .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(10001, 20002)).success.value
 
       val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
@@ -218,14 +218,14 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
           controllers.correctReturn.routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
-        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementsByTag("dd").text() must include("10,001")
         page.getElementById("change-lowband-litreage-operatePackagingSiteOwnBrands").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
-        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementsByTag("dd").text() must include("20,002")
         page.getElementById("change-highband-litreage-operatePackagingSiteOwnBrands").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
@@ -304,7 +304,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
         .set(PackagedAsContractPackerPage, true).success.value
-        .set(HowManyPackagedAsContractPackerPage, LitresInBands(10000, 20000)).success.value
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(10001, 20002)).success.value
 
       val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
@@ -323,14 +323,14 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
           controllers.correctReturn.routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
-        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementsByTag("dd").text() must include("10,001")
         page.getElementById("change-lowband-litreage-packagedAsContractPacker").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyPackagedAsContractPackerController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
-        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementsByTag("dd").text() must include("20,002")
         page.getElementById("change-highband-litreage-packagedAsContractPacker").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyPackagedAsContractPackerController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
@@ -413,8 +413,8 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
         .set(ExemptionsForSmallProducersPage, true).success.value
         .copy(smallProducerList = List(
-          SmallProducer("", "XZSDIL000000234", Litreage(5000, 10000)),
-          SmallProducer("", "XZSDIL000001234", Litreage(5000, 10000)),
+          SmallProducer("", "XZSDIL000000234", Litreage(5001, 10001)),
+          SmallProducer("", "XZSDIL000001234", Litreage(5000, 10001)),
         ))
 
       val application = correctReturnAction(Some(userAnswers)).overrides(
@@ -434,14 +434,14 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
           controllers.correctReturn.routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
-        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementsByTag("dd").text() must include("10,001")
         page.getElementById("change-lowband-litreage-small-producers").attributes().get("href") mustEqual
           controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£0.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
-        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementsByTag("dd").text() must include("20,002")
         page.getElementById("change-highband-litreage-small-producers").attributes().get("href") mustEqual
           controllers.correctReturn.routes.SmallProducerDetailsController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
@@ -520,7 +520,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
         .set(BroughtIntoUKPage, true).success.value
-        .set(HowManyBroughtIntoUKPage, LitresInBands(10000, 20000)).success.value
+        .set(HowManyBroughtIntoUKPage, LitresInBands(10001, 20002)).success.value
 
       val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
@@ -539,14 +539,14 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
           controllers.correctReturn.routes.BroughtIntoUKController.onPageLoad(CheckMode).url
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
-        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementsByTag("dd").text() must include("10,001")
         page.getElementById("change-lowband-litreage-broughtIntoUK").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyBroughtIntoUKController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
-        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementsByTag("dd").text() must include("20,002")
         page.getElementById("change-highband-litreage-broughtIntoUK").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyBroughtIntoUKController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
@@ -625,7 +625,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
         .set(BroughtIntoUKPage, true).success.value
-        .set(HowManyBroughtIntoUKPage, LitresInBands(10000, 20000)).success.value
+        .set(HowManyBroughtIntoUKPage, LitresInBands(10001, 20002)).success.value
 
       val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
@@ -644,14 +644,14 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
           controllers.correctReturn.routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
-        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementsByTag("dd").text() must include("10,001")
         page.getElementById("change-lowband-litreage-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
-        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementsByTag("dd").text() must include("20,002")
         page.getElementById("change-highband-litreage-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
@@ -730,7 +730,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
         .set(ClaimCreditsForExportsPage, true).success.value
-        .set(HowManyClaimCreditsForExportsPage, LitresInBands(10000, 20000)).success.value
+        .set(HowManyClaimCreditsForExportsPage, LitresInBands(10001, 20002)).success.value
 
       val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
@@ -749,14 +749,14 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
           controllers.correctReturn.routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
-        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementsByTag("dd").text() must include("10,001")
         page.getElementById("change-lowband-litreage-correctReturn.claimCreditsForExports").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
-        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementsByTag("dd").text() must include("20,002")
         page.getElementById("change-highband-litreage-correctReturn.claimCreditsForExports").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
@@ -835,7 +835,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
         .set(ClaimCreditsForLostDamagedPage, true).success.value
-        .set(HowManyCreditsForLostDamagedPage, LitresInBands(10000, 20000)).success.value
+        .set(HowManyCreditsForLostDamagedPage, LitresInBands(10001, 20002)).success.value
 
       val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
@@ -854,14 +854,14 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
           controllers.correctReturn.routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
-        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementsByTag("dd").text() must include("10,001")
         page.getElementById("change-lowband-litreage-correctReturn.claimCreditsForLostDamaged").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
-        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementsByTag("dd").text() must include("20,002")
         page.getElementById("change-highband-litreage-correctReturn.claimCreditsForLostDamaged").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))

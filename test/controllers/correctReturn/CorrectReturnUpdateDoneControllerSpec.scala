@@ -271,7 +271,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-        .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(10000, 20000)).success.value
+        .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(10001, 20002)).success.value
 
       val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
@@ -289,13 +289,13 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
         page.getElementById("change-operatePackagingSiteOwnBrands") mustEqual null
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
-        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementsByTag("dd").text() must include("10,001")
         page.getElementById("change-lowband-litreage-operatePackagingSiteOwnBrands") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
-        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementsByTag("dd").text() must include("20,002")
         page.getElementById("change-highband-litreage-operatePackagingSiteOwnBrands") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£5,180.52")
@@ -372,7 +372,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(PackagedAsContractPackerPage, true).success.value
-        .set(HowManyPackagedAsContractPackerPage, LitresInBands(10000, 20000)).success.value
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(10001, 20002)).success.value
 
       val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
@@ -390,13 +390,13 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
         page.getElementById("change-packagedAsContractPacker") mustEqual null
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
-        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementsByTag("dd").text() must include("10,001")
         page.getElementById("change-lowband-litreage-packagedAsContractPacker") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
-        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementsByTag("dd").text() must include("20,002")
         page.getElementById("change-highband-litreage-packagedAsContractPacker") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£5,180.52")
@@ -477,8 +477,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
         .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(ExemptionsForSmallProducersPage, true).success.value
         .copy(smallProducerList = List(
-          SmallProducer("", "XZSDIL000000234", Litreage(5000, 10000)),
-          SmallProducer("", "XZSDIL000001234", Litreage(5000, 10000)),
+          SmallProducer("", "XZSDIL000000234", Litreage(5001, 10001)),
+          SmallProducer("", "XZSDIL000001234", Litreage(5000, 10001)),
         ))
 
       val application = correctReturnAction(Some(userAnswers)).overrides(
@@ -497,13 +497,13 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
         page.getElementById("change-exemptionsForSmallProducers") mustEqual null
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
-        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementsByTag("dd").text() must include("10,001")
         page.getElementById("change-lowband-litreage-small-producers") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£0.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
-        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementsByTag("dd").text() must include("20,002")
         page.getElementById("change-highband-litreage-small-producers") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£0.00")
@@ -580,7 +580,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(BroughtIntoUKPage, true).success.value
-        .set(HowManyBroughtIntoUKPage, LitresInBands(10000, 20000)).success.value
+        .set(HowManyBroughtIntoUKPage, LitresInBands(10001, 20002)).success.value
 
       val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
@@ -598,13 +598,13 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
         page.getElementById("change-broughtIntoUK") mustEqual null
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
-        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementsByTag("dd").text() must include("10,001")
         page.getElementById("change-lowband-litreage-broughtIntoUK") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
-        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementsByTag("dd").text() must include("20,002")
         page.getElementById("change-highband-litreage-broughtIntoUK") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£5,180.52")
@@ -681,7 +681,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(BroughtIntoUKPage, true).success.value
-        .set(HowManyBroughtIntoUKPage, LitresInBands(10000, 20000)).success.value
+        .set(HowManyBroughtIntoUKPage, LitresInBands(10001, 20002)).success.value
 
       val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
@@ -699,13 +699,13 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
         page.getElementById("change-broughtIntoUkFromSmallProducers") mustEqual null
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
-        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementsByTag("dd").text() must include("10,001")
         page.getElementById("change-lowband-litreage-broughtIntoUkFromSmallProducers") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
-        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementsByTag("dd").text() must include("20,002")
         page.getElementById("change-highband-litreage-broughtIntoUkFromSmallProducers") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£5,180.52")
@@ -782,7 +782,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(ClaimCreditsForExportsPage, true).success.value
-        .set(HowManyClaimCreditsForExportsPage, LitresInBands(10000, 20000)).success.value
+        .set(HowManyClaimCreditsForExportsPage, LitresInBands(10001, 20002)).success.value
 
       val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
@@ -800,13 +800,13 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
         page.getElementById("change-claimCreditsForExports") mustEqual null
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
-        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementsByTag("dd").text() must include("10,001")
         page.getElementById("change-lowband-litreage-correctReturn.claimCreditsForExports") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
-        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementsByTag("dd").text() must include("20,002")
         page.getElementById("change-highband-litreage-correctReturn.claimCreditsForExports") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£5,180.52")
@@ -883,7 +883,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
         .set(ClaimCreditsForLostDamagedPage, true).success.value
-        .set(HowManyCreditsForLostDamagedPage, LitresInBands(10000, 20000)).success.value
+        .set(HowManyCreditsForLostDamagedPage, LitresInBands(10001, 20002)).success.value
 
       val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
@@ -901,13 +901,13 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
         page.getElementById("change-claimCreditsForLostDamaged") mustEqual null
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
-        page.getElementsByTag("dd").text() must include("10,000")
+        page.getElementsByTag("dd").text() must include("10,001")
         page.getElementById("change-lowband-litreage-correctReturn.claimCreditsForLostDamaged") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
-        page.getElementsByTag("dd").text() must include("20,000")
+        page.getElementsByTag("dd").text() must include("20,002")
         page.getElementById("change-highband-litreage-correctReturn.claimCreditsForLostDamaged") mustEqual null
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£5,180.52")
