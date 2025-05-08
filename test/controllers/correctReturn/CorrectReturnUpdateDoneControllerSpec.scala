@@ -680,8 +680,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
-        .set(BroughtIntoUKPage, true).success.value
-        .set(HowManyBroughtIntoUKPage, LitresInBands(10001, 20002)).success.value
+        .set(BroughtIntoUkFromSmallProducersPage, true).success.value
+        .set(HowManyBroughtIntoUkFromSmallProducersPage, LitresInBands(10001, 20002)).success.value
 
       val application = correctReturnAction(Some(userAnswers)).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
