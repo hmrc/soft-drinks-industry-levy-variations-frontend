@@ -42,8 +42,6 @@ trait SummaryListRowLitresHelper {
   def rows(litresInBands: LitresInBands, isCheckAnswers: Boolean, correctReturnPeriod: Option[ReturnPeriod] = None, includeLevyRows: Boolean = true)
           (implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
     val levyCalculation: Option[LevyCalculation] = correctReturnPeriod.map(getLevyCalculation(litresInBands.lowBand, litresInBands.highBand, _))
-//    val lowBandLevyRow: Option[SummaryListRow] = if (includeLevyRows) Option(bandLevyRow(litresInBands.lowBand, config.lowerBandCostPerLitre, lowBand)) else None
-//    val highBandLevyRow: Option[SummaryListRow] = if (includeLevyRows) Option(bandLevyRow(litresInBands.highBand, config.higherBandCostPerLitre, highBand)) else None
     val lowBandLevyRow: Option[SummaryListRow] = if (includeLevyRows) levyCalculation.map(calc => bandLevyRow(calc.lowLevy, lowBand)) else None
     val highBandLevyRow: Option[SummaryListRow] = if (includeLevyRows) levyCalculation.map(calc => bandLevyRow(calc.highLevy, highBand)) else None
     Seq(
@@ -94,32 +92,6 @@ trait SummaryListRowLitresHelper {
       levyAmount.toDouble
     }
   }
-
-//  private def bandLevyRow(litres: Long, bandCostPerLitre: BigDecimal, band: String)(implicit messages: Messages): SummaryListRow = {
-//    val key = if (band == lowBand) {
-//      "litres.lowBandLevy"
-//    } else {
-//      "litres.highBandLevy"
-//    }
-//
-//    val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy(litres, bandCostPerLitre))).toString
-//
-//    SummaryListRowViewModel(
-//      key = key,
-//      value = ValueViewModel(HtmlContent(value)).withCssClass("sdil-right-align--desktop"),
-//      actions = Seq()
-//    ).withCssClass("govuk-summary-list__row--no-actions")
-//  }
-//
-//  private def levy(litres: BigDecimal, bandCostPerLitre: BigDecimal): BigDecimal = {
-//    if (hasZeroLevy) {
-//      0
-//    } else if (isNegativeLevy) {
-//      litres * bandCostPerLitre.toDouble * -1
-//    } else {
-//      litres * bandCostPerLitre.toDouble
-//    }
-//  }
 
   def action(isCheckAnswers: Boolean, band: String)(implicit messages: Messages): Option[Actions] = if (isCheckAnswers) {
     Some(Actions("",
