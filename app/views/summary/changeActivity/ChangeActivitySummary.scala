@@ -29,9 +29,9 @@ object ChangeActivitySummary  {
                              (implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
     val amountProducedSummary: Option[SummaryListRow] = AmountProducedSummary.row(userAnswers, isCheckAnswers)
     val thirdPartyPackagersSummary: Option[SummaryListRow] = ThirdPartyPackagersSummary.row(userAnswers, isCheckAnswers)
-    val ownBrandsSummary: SummaryList = OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
-    val contractSummary: SummaryList = ContractPackingSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
-    val importsSummary: SummaryList = ImportsSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
+    val ownBrandsSummary: SummaryList = OperatePackagingSiteOwnBrandsSummary.summaryListWithoutBandLevyRows(userAnswers, isCheckAnswers)
+    val contractSummary: SummaryList = ContractPackingSummary.summaryListWithoutBandLevyRows(userAnswers, isCheckAnswers)
+    val importsSummary: SummaryList = ImportsSummary.summaryListWithoutBandLevyRows(userAnswers, isCheckAnswers)
     val packingSummary: SummaryList = PackagingSiteDetailsSummary.summaryList(userAnswers, isCheckAnswers)
     val warehouseSummary: SummaryList = SecondaryWarehouseDetailsSummary.summaryList(userAnswers, isCheckAnswers)
     val amountProducedSection: Option[(String, SummaryList)] = amountProducedSummary.map(summary => {
@@ -48,19 +48,19 @@ object ChangeActivitySummary  {
     val ownBrandsSection: Option[(String, SummaryList)] = if (ownBrandsSummary.rows.isEmpty) None else {
       Option(
         "changeActivity.checkYourAnswers.operatePackingSiteOwnBrandsSection" ->
-          OperatePackagingSiteOwnBrandsSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
+          OperatePackagingSiteOwnBrandsSummary.summaryListWithoutBandLevyRows(userAnswers, isCheckAnswers)
       )
     }
     val contractSection: Option[(String, SummaryList)] = if (contractSummary.rows.isEmpty) None else {
       Option(
         "changeActivity.checkYourAnswers.contractPackingSection" ->
-          ContractPackingSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
+          ContractPackingSummary.summaryListWithoutBandLevyRows(userAnswers, isCheckAnswers)
       )
     }
     val importsSection: Option[(String, SummaryList)] = if (importsSummary.rows.isEmpty) None else {
       Option(
         "changeActivity.checkYourAnswers.importsSection" ->
-          ImportsSummary.summaryList(userAnswers, isCheckAnswers, includeLevyRows = false)
+          ImportsSummary.summaryListWithoutBandLevyRows(userAnswers, isCheckAnswers)
       )
     }
     val sitesSection: Option[(String, SummaryList)] = if (userAnswers.getChangeActivityData.exists(_.isVoluntary)) None else {
