@@ -25,5 +25,6 @@ object HowManyBroughtIntoUkFromSmallProducersSummary extends SummaryListRowLitre
   override val actionUrl: String = routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
   override val bandActionIdKey: String = "broughtIntoUkFromSmallProducers"
   override val bandHiddenKey: String = "correctReturn.broughtIntoUkFromSmallProducers"
+  override val hasZeroLevy: Boolean = true
 
 }
