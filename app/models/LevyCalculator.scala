@@ -26,7 +26,7 @@ object Year2026 extends TaxYear
 
 object TaxYear {
   def fromYear(year: Int): TaxYear = year match {
-    case y if y < 2025 => Pre2025
+    case y if y < 2025 => Year2025
     case 2025          => Year2025
     case 2026          => Year2026
     case _             => throw new IllegalArgumentException(s"Unsupported tax year: $year")
