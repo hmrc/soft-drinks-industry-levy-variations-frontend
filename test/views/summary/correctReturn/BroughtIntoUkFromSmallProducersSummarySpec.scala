@@ -43,7 +43,7 @@ class BroughtIntoUkFromSmallProducersSummarySpec extends SpecBase {
           .set(HowManyBroughtIntoUkFromSmallProducersPage, LitresInBands(lowLitres, highLitres)).success.value
 
         val res = BroughtIntoUkFromSmallProducersSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)
-        res.rows.head.key.content.asHtml mustBe Html("Brought into UK from small producers?")
+        res.rows.head.key.content.asHtml mustBe Html("Reporting liable drinks brought into the UK from small producers?")
         res.rows.head.key.classes mustBe ""
         res.rows.head.value.content.asHtml mustBe Html("Yes")
         res.rows.head.value.classes.trim mustBe "sdil-right-align--desktop"
@@ -87,7 +87,7 @@ class BroughtIntoUkFromSmallProducersSummarySpec extends SpecBase {
           .set(HowManyBroughtIntoUkFromSmallProducersPage, LitresInBands(lowLitres, highLitres)).success.value
 
         val res = BroughtIntoUkFromSmallProducersSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = false)
-        res.rows.head.key.content.asHtml mustBe Html("Brought into UK from small producers?")
+        res.rows.head.key.content.asHtml mustBe Html("Reporting liable drinks brought into the UK from small producers?")
         res.rows.head.key.classes mustBe ""
         res.rows.head.value.content.asHtml mustBe Html("Yes")
         res.rows.head.value.classes.trim mustBe "sdil-right-align--desktop"
@@ -124,7 +124,7 @@ class BroughtIntoUkFromSmallProducersSummarySpec extends SpecBase {
           .set(BroughtIntoUkFromSmallProducersPage, false).success.value
 
         val res = BroughtIntoUkFromSmallProducersSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)
-        res.rows.head.key.content.asHtml mustBe Html("Brought into UK from small producers?")
+        res.rows.head.key.content.asHtml mustBe Html("Reporting liable drinks brought into the UK from small producers?")
         res.rows.head.key.classes mustBe ""
         res.rows.head.value.content.asHtml mustBe Html("No")
         res.rows.head.value.classes.trim mustBe "sdil-right-align--desktop"
