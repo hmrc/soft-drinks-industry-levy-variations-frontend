@@ -17,8 +17,8 @@
 package views.summary.correctReturn
 
 import base.SpecBase
-import models.{LitresInBands, ReturnPeriod}
-import pages.correctReturn.{HowManyBroughtIntoUkFromSmallProducersPage, BroughtIntoUkFromSmallProducersPage}
+import models.{CheckMode, LitresInBands, ReturnPeriod}
+import pages.correctReturn.{BroughtIntoUkFromSmallProducersPage, HowManyBroughtIntoUkFromSmallProducersPage}
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
 
@@ -47,7 +47,7 @@ class BroughtIntoUkFromSmallProducersSummarySpec extends SpecBase {
         res.rows.head.key.classes mustBe ""
         res.rows.head.value.content.asHtml mustBe Html("Yes")
         res.rows.head.value.classes.trim mustBe "sdil-right-align--desktop"
-        res.rows.head.actions.head.items.head.href mustBe "/soft-drinks-industry-levy-variations-frontend/correct-return/change-brought-into-uk-from-small-producers"
+        res.rows.head.actions.head.items.head.href mustBe controllers.correctReturn.routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
         res.rows.head.actions.head.items.head.attributes mustBe Map("id" -> "change-broughtIntoUkFromSmallProducers")
         res.rows.head.actions.head.items.head.content.asHtml mustBe Html("Change")
 
@@ -55,7 +55,7 @@ class BroughtIntoUkFromSmallProducersSummarySpec extends SpecBase {
         res.rows(1).key.classes mustBe ""
         res.rows(1).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(lowLitres))
         res.rows(1).value.classes.trim mustBe "sdil-right-align--desktop"
-        res.rows(1).actions.head.items.head.href mustBe "/soft-drinks-industry-levy-variations-frontend/correct-return/change-how-many-brought-into-uk-from-small-producers"
+        res.rows(1).actions.head.items.head.href mustBe controllers.correctReturn.routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
         res.rows(1).actions.head.items.head.attributes mustBe Map("id" -> "change-lowband-litreage-broughtIntoUkFromSmallProducers")
         res.rows(1).actions.head.items.head.content.asHtml mustBe Html("Change")
 
@@ -65,7 +65,7 @@ class BroughtIntoUkFromSmallProducersSummarySpec extends SpecBase {
         res.rows(highLitresRowIndex).key.classes mustBe ""
         res.rows(highLitresRowIndex).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(highLitres))
         res.rows(highLitresRowIndex).value.classes.trim mustBe "sdil-right-align--desktop"
-        res.rows(highLitresRowIndex).actions.head.items.head.href mustBe "/soft-drinks-industry-levy-variations-frontend/correct-return/change-how-many-brought-into-uk-from-small-producers"
+        res.rows(highLitresRowIndex).actions.head.items.head.href mustBe controllers.correctReturn.routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
         res.rows(highLitresRowIndex).actions.head.items.head.attributes mustBe Map("id" -> "change-highband-litreage-broughtIntoUkFromSmallProducers")
         res.rows(highLitresRowIndex).actions.head.items.head.content.asHtml mustBe Html("Change")
 
@@ -128,7 +128,7 @@ class BroughtIntoUkFromSmallProducersSummarySpec extends SpecBase {
         res.rows.head.key.classes mustBe ""
         res.rows.head.value.content.asHtml mustBe Html("No")
         res.rows.head.value.classes.trim mustBe "sdil-right-align--desktop"
-        res.rows.head.actions.head.items.head.href mustBe "/soft-drinks-industry-levy-variations-frontend/correct-return/change-brought-into-uk-from-small-producers"
+        res.rows.head.actions.head.items.head.href mustBe controllers.correctReturn.routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
         res.rows.head.actions.head.items.head.attributes mustBe Map("id" -> "change-broughtIntoUkFromSmallProducers")
         res.rows.head.actions.head.items.head.content.asHtml mustBe Html("Change")
 
