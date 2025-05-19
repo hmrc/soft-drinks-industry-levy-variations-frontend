@@ -33,6 +33,7 @@ case class SdilReturn(
                        wastage: Litreage,
                        submittedOn: Option[LocalDateTime] = None
                      ) {
+//  TODO: total, taxEstimation, and calculateLevy will be updated - can change visibility on calculateLevy
   def total(implicit config: FrontendAppConfig): BigDecimal = {
     val litresToAdd = Litreage.sum(List(ownBrand, packLarge, importLarge))
     val litresToSubtract = Litreage.sum(List(export, wastage))
