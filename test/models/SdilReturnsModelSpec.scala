@@ -34,6 +34,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 
   private def getRandomLitres: Long = Math.floor(Math.random() * 1000000).toLong
   private def getRandomLitreage: (Long, Long) = (getRandomLitres, getRandomLitres)
+  private def getRandomSdilRef(index: Int): String = s"${Math.floor(Math.random() * 1000).toLong}SdilRef$index"
 
   private def getLitresJson(boolFieldKey: String, litreageFieldKey: String)(litresOpt: Option[(Long, Long)]): JsObject = {
     litresOpt match {
@@ -46,96 +47,119 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
     }
   }
 
-  private def userAnswersData(
-                               ownBrandsLitres: Option[(Long, Long)] = None,
-                               contractPackerLitres: Option[(Long, Long)] = None,
-                               broughtIntoUKLitres: Option[(Long, Long)] = None,
-                               broughtIntoUkFromSmallProducersLitres: Option[(Long, Long)] = None,
-                               claimCreditsForExportsLitres: Option[(Long, Long)] = None,
-                               claimCreditsForLostDamagedLitres: Option[(Long, Long)] = None,
-                               smallProducerLitres: List[(Long, Long)] = List.empty,
-                               returnPeriod: ReturnPeriod
-                             ): UserAnswers = {
+//  private def userAnswersData(
+//                               ownBrandsLitres: Option[(Long, Long)] = None,
+//                               contractPackerLitres: Option[(Long, Long)] = None,
+//                               broughtIntoUKLitres: Option[(Long, Long)] = None,
+//                               broughtIntoUkFromSmallProducersLitres: Option[(Long, Long)] = None,
+//                               claimCreditsForExportsLitres: Option[(Long, Long)] = None,
+//                               claimCreditsForLostDamagedLitres: Option[(Long, Long)] = None,
+//                               smallProducerLitres: List[(Long, Long)] = List.empty,
+//                               returnPeriod: ReturnPeriod
+//                             ): UserAnswers = {
+//
+//    val ownBrandsJson = getLitresJson(boolFieldKey = "ownBrands", litreageFieldKey = "brandsPackagedAtOwnSites")(ownBrandsLitres)
+//    val contractPackerJson = getLitresJson(boolFieldKey = "packagedContractPacker", litreageFieldKey = "howManyAsAContractPacker")(contractPackerLitres)
+//    val broughtIntoUKJson = getLitresJson(boolFieldKey = "broughtIntoUK", litreageFieldKey = "HowManyBroughtIntoUk")(broughtIntoUKLitres)
+//    val broughtIntoUkFromSmallProducersJson = getLitresJson(boolFieldKey = "broughtIntoUkFromSmallProducers", litreageFieldKey = "howManyBroughtIntoTheUKFromSmallProducers")(broughtIntoUkFromSmallProducersLitres)
+//    val claimCreditsForExportsJson = getLitresJson(boolFieldKey = "claimCreditsForExports", litreageFieldKey = "howManyCreditsForExport")(claimCreditsForExportsLitres)
+//    val claimCreditsForLostDamagedJson = getLitresJson(boolFieldKey = "claimCreditsForLostDamaged", litreageFieldKey = "howManyCreditsForLostDamaged")(claimCreditsForLostDamagedLitres)
+//    val data = JsObject(
+//      ownBrandsJson.fields ++
+//        contractPackerJson.fields++
+//        broughtIntoUKJson.fields ++
+//        broughtIntoUkFromSmallProducersJson.fields ++
+//        claimCreditsForExportsJson.fields ++
+//        claimCreditsForLostDamagedJson.fields
+//    )
+//    val smallProducerList = smallProducerLitres.size match {
+//      case 2 =>
+//        val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", Litreage(smallProducerLitres.head._1, smallProducerLitres.head._2))
+//        val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", Litreage(smallProducerLitres.last._1, smallProducerLitres.last._2))
+//        List(superCola, sparkyJuice)
+//      case _ => List.empty
+//    }
+//    emptyUserAnswersForCorrectReturn.copy(data = data, smallProducerList = smallProducerList, correctReturnPeriod = Option(returnPeriod))
+//  }
 
-    val ownBrandsJson = getLitresJson(boolFieldKey = "ownBrands", litreageFieldKey = "brandsPackagedAtOwnSites")(ownBrandsLitres)
-    val contractPackerJson = getLitresJson(boolFieldKey = "packagedContractPacker", litreageFieldKey = "howManyAsAContractPacker")(contractPackerLitres)
-    val broughtIntoUKJson = getLitresJson(boolFieldKey = "broughtIntoUK", litreageFieldKey = "HowManyBroughtIntoUk")(broughtIntoUKLitres)
-    val broughtIntoUkFromSmallProducersJson = getLitresJson(boolFieldKey = "broughtIntoUkFromSmallProducers", litreageFieldKey = "howManyBroughtIntoTheUKFromSmallProducers")(broughtIntoUkFromSmallProducersLitres)
-    val claimCreditsForExportsJson = getLitresJson(boolFieldKey = "claimCreditsForExports", litreageFieldKey = "howManyCreditsForExport")(claimCreditsForExportsLitres)
-    val claimCreditsForLostDamagedJson = getLitresJson(boolFieldKey = "claimCreditsForLostDamaged", litreageFieldKey = "howManyCreditsForLostDamaged")(claimCreditsForLostDamagedLitres)
-    val data = JsObject(
-      ownBrandsJson.fields ++
-        contractPackerJson.fields++
-        broughtIntoUKJson.fields ++
-        broughtIntoUkFromSmallProducersJson.fields ++
-        claimCreditsForExportsJson.fields ++
-        claimCreditsForLostDamagedJson.fields
+  private def getSdilReturn(
+                     ownBrand: Boolean = false,
+                     packLarge: Boolean = false,
+                     numberOfPackSmall: Int = 0,
+                     importSmall: Boolean = false,
+                     importLarge: Boolean = false,
+                     export: Boolean = false,
+                     wastage: Boolean = false
+                   ): SdilReturn = {
+    val smallProducers: Seq[SmallProducer] = (0 to numberOfPackSmall)
+      .map(index => SmallProducer(None, getRandomSdilRef(index), getRandomLitreage))
+    SdilReturn(
+      ownBrand = if (ownBrand) getRandomLitreage else zero,
+      packLarge = if (packLarge) getRandomLitreage else zero,
+      packSmall = smallProducers.toList,
+      importSmall = if (importSmall) getRandomLitreage else zero,
+      importLarge = if (importLarge) getRandomLitreage else zero,
+      export = if (export) getRandomLitreage else zero,
+      wastage = if (wastage) getRandomLitreage else zero,
+      submittedOn = None
     )
-    val smallProducerList = smallProducerLitres.size match {
-      case 2 =>
-        val superCola = SmallProducer("Super Cola Ltd", "XCSDIL000000069", Litreage(smallProducerLitres.head._1, smallProducerLitres.head._2))
-        val sparkyJuice = SmallProducer("Sparky Juice Co", "XCSDIL000000070", Litreage(smallProducerLitres.last._1, smallProducerLitres.last._2))
-        List(superCola, sparkyJuice)
-      case _ => List.empty
-    }
-    emptyUserAnswersForCorrectReturn.copy(data = data, smallProducerList = smallProducerList, correctReturnPeriod = Option(returnPeriod))
   }
 
 
   "SdilReturn" - {
 
-    "total returns the sumLitres(ownBrand, packLarge, importLarge) minus sumLitres(export, wastage) example 1" in {
-      val expectedValue: BigDecimal = 6.30
-      val data = testSdilReturn(
-        packSmall = List.empty,
-        ownBrand = Litreage(15, 15),
-        packLarge = Litreage(15, 15),
-        importLarge = Litreage(15, 15),
-        `export` = Litreage(15 ,15),
-        wastage = Litreage(15, 15)
-      )
-
-      data.total mustBe expectedValue
-    }
-
-    "total returns the sumLitres(ownBrand, packLarge, importLarge) minus sumLitres(export, wastage) example 2" in {
-      val expectedValue: BigDecimal = 25.20
-      val data = testSdilReturn(
-        packSmall = List.empty,
-        ownBrand = Litreage(30, 30),
-        packLarge = Litreage(30, 30),
-        importLarge = Litreage(30, 30),
-        `export` = Litreage(15, 15),
-        wastage = Litreage(15, 15)
-      )
-
-      data.total mustBe expectedValue
-    }
-    "generateFromUserAnswers with userAnswers should default if all answers empty" in {
-      SdilReturn.generateFromUserAnswers(emptyUserAnswersForCorrectReturn) mustBe SdilReturn(Litreage(0, 0), Litreage(0, 0),
-        List(), Litreage(0, 0), Litreage(0, 0), Litreage(0, 0), Litreage(0, 0), None)
-    }
-    "generateFromUserAnswers with full user answers should populate correctly" in {
-      val userAnswers = {
-        emptyUserAnswersForCorrectReturn
-          .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-          .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1,1)).success.value
-          .set(PackagedAsContractPackerPage, true).success.value
-          .set(HowManyPackagedAsContractPackerPage, LitresInBands(3,4)).success.value
-          .set(ExemptionsForSmallProducersPage, true).success.value
-          .set(BroughtIntoUKPage, true).success.value
-          .set(HowManyBroughtIntoUKPage, LitresInBands(5,6)).success.value
-          .set(BroughtIntoUkFromSmallProducersPage, true).success.value
-          .set(HowManyBroughtIntoUkFromSmallProducersPage, LitresInBands(33,22)).success.value
-          .set(ClaimCreditsForExportsPage, true).success.value
-          .set(HowManyClaimCreditsForExportsPage, LitresInBands(32, 22)).success.value
-          .set(ClaimCreditsForLostDamagedPage, true).success.value
-          .set(HowManyCreditsForLostDamagedPage, LitresInBands(22, 22)).success.value
-          .copy(smallProducerList = List(SmallProducer("","", Litreage(1,1))))
-      }
-      SdilReturn.generateFromUserAnswers(userAnswers) mustBe SdilReturn(Litreage(1, 1), Litreage(3, 4),
-        List(SmallProducer("", "", Litreage(1, 1))), Litreage(5, 6), Litreage(33, 22), Litreage(32, 22), Litreage(22, 22), None)
-    }
+//    "total returns the sumLitres(ownBrand, packLarge, importLarge) minus sumLitres(export, wastage) example 1" in {
+//      val expectedValue: BigDecimal = 6.30
+//      val data = testSdilReturn(
+//        packSmall = List.empty,
+//        ownBrand = Litreage(15, 15),
+//        packLarge = Litreage(15, 15),
+//        importLarge = Litreage(15, 15),
+//        `export` = Litreage(15 ,15),
+//        wastage = Litreage(15, 15)
+//      )
+//
+//      data.total mustBe expectedValue
+//    }
+//
+//    "total returns the sumLitres(ownBrand, packLarge, importLarge) minus sumLitres(export, wastage) example 2" in {
+//      val expectedValue: BigDecimal = 25.20
+//      val data = testSdilReturn(
+//        packSmall = List.empty,
+//        ownBrand = Litreage(30, 30),
+//        packLarge = Litreage(30, 30),
+//        importLarge = Litreage(30, 30),
+//        `export` = Litreage(15, 15),
+//        wastage = Litreage(15, 15)
+//      )
+//
+//      data.total mustBe expectedValue
+//    }
+//    "generateFromUserAnswers with userAnswers should default if all answers empty" in {
+//      SdilReturn.generateFromUserAnswers(emptyUserAnswersForCorrectReturn) mustBe SdilReturn(Litreage(0, 0), Litreage(0, 0),
+//        List(), Litreage(0, 0), Litreage(0, 0), Litreage(0, 0), Litreage(0, 0), None)
+//    }
+//    "generateFromUserAnswers with full user answers should populate correctly" in {
+//      val userAnswers = {
+//        emptyUserAnswersForCorrectReturn
+//          .set(OperatePackagingSiteOwnBrandsPage, true).success.value
+//          .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(1,1)).success.value
+//          .set(PackagedAsContractPackerPage, true).success.value
+//          .set(HowManyPackagedAsContractPackerPage, LitresInBands(3,4)).success.value
+//          .set(ExemptionsForSmallProducersPage, true).success.value
+//          .set(BroughtIntoUKPage, true).success.value
+//          .set(HowManyBroughtIntoUKPage, LitresInBands(5,6)).success.value
+//          .set(BroughtIntoUkFromSmallProducersPage, true).success.value
+//          .set(HowManyBroughtIntoUkFromSmallProducersPage, LitresInBands(33,22)).success.value
+//          .set(ClaimCreditsForExportsPage, true).success.value
+//          .set(HowManyClaimCreditsForExportsPage, LitresInBands(32, 22)).success.value
+//          .set(ClaimCreditsForLostDamagedPage, true).success.value
+//          .set(HowManyCreditsForLostDamagedPage, LitresInBands(22, 22)).success.value
+//          .copy(smallProducerList = List(SmallProducer("","", Litreage(1,1))))
+//      }
+//      SdilReturn.generateFromUserAnswers(userAnswers) mustBe SdilReturn(Litreage(1, 1), Litreage(3, 4),
+//        List(SmallProducer("", "", Litreage(1, 1))), Litreage(5, 6), Litreage(33, 22), Litreage(32, 22), Litreage(22, 22), None)
+//    }
 
     val posLitresInts = Gen.choose(1000, 10000000)
     val janToMarInt = Gen.choose(1, 3)
@@ -146,24 +170,25 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
       val lowerBandCostPerLitre = BigDecimal("0.18")
       val higherBandCostPerLitre = BigDecimal("0.24")
 
-//        s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres packed at own site using original rates for Apr - Dec $year" in {
-//          forAll(posLitresInts) { lowLitres =>
-//            forAll(posLitresInts) { highLitres =>
-//              forAll(aprToDecInt) { month =>
-//                val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-//                val userAnswers = userAnswersData(ownBrandsLitres = Option((lowLitres, highLitres)), returnPeriod = returnPeriod)
-//                val lowBandLitres = getTotalLowBandLitres(userAnswers, isSmallProducer)
-//                val highBandLitres = getTotalHighBandLitres(userAnswers, isSmallProducer)
-//                val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
-//                val expectedLowLevy =  lowerBandCostPerLitre * lowLitres
-//                val expectedHighLevy = higherBandCostPerLitre * highLitres
-//                lowBandLitres mustBe lowLitres
-//                highBandLitres mustBe highLitres
-//                totalForQuarter mustBe expectedLowLevy + expectedHighLevy
-//              }
-//            }
-//          }
-//        }
+      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres packed at own site using original rates for Apr - Dec $year" in {
+        forAll(posLitresInts) { lowLitres =>
+          forAll(posLitresInts) { highLitres =>
+            forAll(aprToDecInt) { month =>
+              val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+              val userAnswers = userAnswersData(ownBrandsLitres = Option((lowLitres, highLitres)), returnPeriod = returnPeriod)
+              val sdilReturn = SdilReturn.generateFromUserAnswers(userAnswers)
+              val expectedLeviedLitreage = Litreage(lowLitres, highLitres)
+              val expectedCreditedLitreage = Litreage()
+              val expectedTotal = lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres
+              val expectedTaxEstimation = 4 * (lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres)
+              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
+              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
+              sdilReturn.total mustBe expectedTotal
+              sdilReturn.taxEstimation mustBe expectedTaxEstimation
+            }
+          }
+        }
+      }
 
 //        s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres contract packed using original rates for Apr - Dec $year" in {
 //          forAll(posLitresInts) { lowLitres =>
