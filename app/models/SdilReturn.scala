@@ -48,7 +48,34 @@ case class SdilReturn(
     val t = Litreage.sum(List(packLarge, importLarge, ownBrand))
     calculatelevy(t.combineN(4))
   }
-  def calculatelevy(litreage: Litreage)
+
+//  private[models] def getTotalLowBandLitres(userAnswers: UserAnswers, smallProducer: Boolean): Long = {
+//    val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.lowBand)
+//    val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).fold(0L)(_.lowBand)
+//    val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).fold(0L)(_.lowBand)
+//    val litresExported = userAnswers.get(HowManyCreditsForExportPage).fold(0L)(_.lowBand)
+//    val litresLostOrDamaged = userAnswers.get(HowManyCreditsForLostDamagedPage).fold(0L)(_.lowBand)
+//
+//    val total = litresBroughtIntoTheUk + litresAsContractPacker
+//    val totalCredits = litresExported + litresLostOrDamaged
+//
+//    total - totalCredits + (if (smallProducer) 0 else litresPackedAtOwnSite)
+//  }
+
+//  private[models] def getTotalHighBandLitres(userAnswers: UserAnswers, smallProducer: Boolean): Long = {
+//    val litresPackedAtOwnSite = userAnswers.get(BrandsPackagedAtOwnSitesPage).fold(0L)(_.highBand)
+//    val litresAsContractPacker = userAnswers.get(HowManyAsAContractPackerPage).fold(0L)(_.highBand)
+//    val litresBroughtIntoTheUk = userAnswers.get(HowManyBroughtIntoUkPage).fold(0L)(_.highBand)
+//    val litresExported = userAnswers.get(HowManyCreditsForExportPage).fold(0L)(_.highBand)
+//    val litresLostOrDamaged = userAnswers.get(HowManyCreditsForLostDamagedPage).fold(0L)(_.highBand)
+//
+//    val total = litresBroughtIntoTheUk + litresAsContractPacker
+//    val totalCredits = litresExported + litresLostOrDamaged
+//
+//    total - totalCredits + (if (smallProducer) 0 else litresPackedAtOwnSite)
+//  }
+
+  private [models] def calculatelevy(litreage: Litreage)
                    (implicit config: FrontendAppConfig): BigDecimal = {
     val costLower = config.lowerBandCostPerLitre
     val costHigher = config.higherBandCostPerLitre
