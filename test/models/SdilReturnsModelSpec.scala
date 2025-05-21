@@ -146,9 +146,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
       val lowerBandCostPerLitre = BigDecimal("0.18")
       val higherBandCostPerLitre = BigDecimal("0.24")
 
-      List(true, false).foreach(isSmallProducer => {
-
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres packed at own site using original rates for Apr - Dec $year" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres packed at own site using original rates for Apr - Dec $year" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(aprToDecInt) { month =>
@@ -167,7 +165,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres contract packed using original rates for Apr - Dec $year" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres contract packed using original rates for Apr - Dec $year" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(aprToDecInt) { month =>
@@ -186,7 +184,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with exemptions for small producers using original rates for Apr - Dec $year" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with exemptions for small producers using original rates for Apr - Dec $year" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(aprToDecInt) { month =>
@@ -207,7 +205,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk using original rates for Apr - Dec $year" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres brought into the uk using original rates for Apr - Dec $year" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(aprToDecInt) { month =>
@@ -226,7 +224,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk from small producers using original rates for Apr - Dec $year" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres brought into the uk from small producers using original rates for Apr - Dec $year" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(aprToDecInt) { month =>
@@ -245,7 +243,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres exported using original rates for Apr - Dec $year" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with credits for litres exported using original rates for Apr - Dec $year" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(aprToDecInt) { month =>
@@ -264,7 +262,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres lost or damaged using original rates for Apr - Dec $year" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with credits for litres lost or damaged using original rates for Apr - Dec $year" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(aprToDecInt) { month =>
@@ -283,7 +281,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using original rates for Apr - Dec $year" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount is 0 using original rates for Apr - Dec $year" in {
 //          forAll(aprToDecInt) { month =>
 //            val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) Option(getRandomLitreage) else None
 //            val contractPackerLitres: Option[(Long, Long)] = None
@@ -305,7 +303,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using original rates for Apr - Dec $year" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount to pay using original rates for Apr - Dec $year" in {
 //          forAll(aprToDecInt) { month =>
 //            val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) None else Option(getRandomLitreage)
 //            val contractPackerLitres: Option[(Long, Long)] = Option(getRandomLitreage)
@@ -320,12 +318,12 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //            val highBandLitres = getTotalHighBandLitres(userAnswers, isSmallProducer)
 //            val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
 //            val expectedLowLevy: Option[BigDecimal] = for {
-//              ownBrandLowLitres <- if (isSmallProducer) Some(0L) else ownBrandsLitres.map(_._1)
+//              ownBrandLowLitres <- else ownBrandsLitres.map(_._1)
 //              contractPackerLowLitres <- contractPackerLitres.map(_._1)
 //              broughtIntoUKLowLitres <- broughtIntoUKLitres.map(_._1)
 //            } yield (ownBrandLowLitres + contractPackerLowLitres + broughtIntoUKLowLitres) * lowerBandCostPerLitre
 //            val expectedHighLevy: Option[BigDecimal] = for {
-//              ownBrandHighLitres <- if (isSmallProducer) Some(0L) else ownBrandsLitres.map(_._2)
+//              ownBrandHighLitres <- else ownBrandsLitres.map(_._2)
 //              contractPackerHighLitres <- contractPackerLitres.map(_._2)
 //              broughtIntoUKHighLitres <- broughtIntoUKLitres.map(_._2)
 //            } yield (ownBrandHighLitres + contractPackerHighLitres + broughtIntoUKHighLitres) * higherBandCostPerLitre
@@ -335,7 +333,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is negative using original rates for Apr - Dec $year" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount is negative using original rates for Apr - Dec $year" in {
 //          forAll(aprToDecInt) { month =>
 //            val ownBrandsLitres: Option[(Long, Long)] = None
 //            val contractPackerLitres: Option[(Long, Long)] = None
@@ -363,7 +361,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres packed at own site using original rates for Jan - Mar ${year + 1}" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres packed at own site using original rates for Jan - Mar ${year + 1}" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(janToMarInt) { month =>
@@ -382,7 +380,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres contract packed using original rates for Jan - Mar ${year + 1}" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres contract packed using original rates for Jan - Mar ${year + 1}" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(janToMarInt) { month =>
@@ -401,7 +399,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with exemptions for small producers using original rates for Jan - Mar ${year + 1}" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with exemptions for small producers using original rates for Jan - Mar ${year + 1}" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(janToMarInt) { month =>
@@ -422,7 +420,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk using original rates for Jan - Mar ${year + 1}" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres brought into the uk using original rates for Jan - Mar ${year + 1}" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(janToMarInt) { month =>
@@ -441,7 +439,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk from small producers using original rates for Jan - Mar ${year + 1}" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres brought into the uk from small producers using original rates for Jan - Mar ${year + 1}" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(janToMarInt) { month =>
@@ -460,7 +458,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres exported using original rates for Jan - Mar ${year + 1}" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with credits for litres exported using original rates for Jan - Mar ${year + 1}" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(janToMarInt) { month =>
@@ -479,7 +477,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres lost or damaged using original rates for Jan - Mar ${year + 1}" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with credits for litres lost or damaged using original rates for Jan - Mar ${year + 1}" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(janToMarInt) { month =>
@@ -498,7 +496,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using original rates for Jan - Mar ${year + 1}" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount is 0 using original rates for Jan - Mar ${year + 1}" in {
 //          forAll(janToMarInt) { month =>
 //            val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) Option(getRandomLitreage) else None
 //            val contractPackerLitres: Option[(Long, Long)] = None
@@ -520,7 +518,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using original rates for Jan - Mar ${year + 1}" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount to pay using original rates for Jan - Mar ${year + 1}" in {
 //          forAll(janToMarInt) { month =>
 //            val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) None else Option(getRandomLitreage)
 //            val contractPackerLitres: Option[(Long, Long)] = Option(getRandomLitreage)
@@ -535,12 +533,12 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //            val highBandLitres = getTotalHighBandLitres(userAnswers, isSmallProducer)
 //            val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
 //            val expectedLowLevy: Option[BigDecimal] = for {
-//              ownBrandLowLitres <- if (isSmallProducer) Some(0L) else ownBrandsLitres.map(_._1)
+//              ownBrandLowLitres <- else ownBrandsLitres.map(_._1)
 //              contractPackerLowLitres <- contractPackerLitres.map(_._1)
 //              broughtIntoUKLowLitres <- broughtIntoUKLitres.map(_._1)
 //            } yield (ownBrandLowLitres + contractPackerLowLitres + broughtIntoUKLowLitres) * lowerBandCostPerLitre
 //            val expectedHighLevy: Option[BigDecimal] = for {
-//              ownBrandHighLitres <- if (isSmallProducer) Some(0L) else ownBrandsLitres.map(_._2)
+//              ownBrandHighLitres <- else ownBrandsLitres.map(_._2)
 //              contractPackerHighLitres <- contractPackerLitres.map(_._2)
 //              broughtIntoUKHighLitres <- broughtIntoUKLitres.map(_._2)
 //            } yield (ownBrandHighLitres + contractPackerHighLitres + broughtIntoUKHighLitres) * higherBandCostPerLitre
@@ -550,7 +548,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is negative using original rates for Jan - Mar ${year + 1}" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount is negative using original rates for Jan - Mar ${year + 1}" in {
 //          forAll(janToMarInt) { month =>
 //            val ownBrandsLitres: Option[(Long, Long)] = None
 //            val contractPackerLitres: Option[(Long, Long)] = None
@@ -577,7 +575,6 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //            totalForQuarter mustBe expectedLowLevy.get + expectedHighLevy.get
 //          }
 //        }
-      })
     })
 
     (2025 to 2025).foreach(year => {
@@ -585,9 +582,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
       val lowerBandCostPerLitreMap: Map[Int, BigDecimal] = Map(2025 -> BigDecimal("0.194"))
       val higherBandCostPerLitreMap: Map[Int, BigDecimal] = Map(2025 -> BigDecimal("0.259"))
 
-      List(true, false).foreach(isSmallProducer => {
-
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres packed at own site using $year rates for Apr - Dec $year" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres packed at own site using $year rates for Apr - Dec $year" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(aprToDecInt) { month =>
@@ -606,7 +601,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres contract packed using $year rates for Apr - Dec $year" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres contract packed using $year rates for Apr - Dec $year" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(aprToDecInt) { month =>
@@ -625,7 +620,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with exemptions for small producers using $year rates for Apr - Dec $year" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with exemptions for small producers using $year rates for Apr - Dec $year" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(aprToDecInt) { month =>
@@ -646,7 +641,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk using $year rates for Apr - Dec $year" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres brought into the uk using $year rates for Apr - Dec $year" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(aprToDecInt) { month =>
@@ -665,7 +660,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk from small producers using $year rates for Apr - Dec $year" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres brought into the uk from small producers using $year rates for Apr - Dec $year" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(aprToDecInt) { month =>
@@ -684,7 +679,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres exported using $year rates for Apr - Dec $year" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with credits for litres exported using $year rates for Apr - Dec $year" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(aprToDecInt) { month =>
@@ -703,7 +698,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres lost or damaged using $year rates for Apr - Dec $year" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with credits for litres lost or damaged using $year rates for Apr - Dec $year" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(aprToDecInt) { month =>
@@ -722,7 +717,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using $year rates for Apr - Dec $year" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount is 0 using $year rates for Apr - Dec $year" in {
 //          forAll(aprToDecInt) { month =>
 //            val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) Option(getRandomLitreage) else None
 //            val contractPackerLitres: Option[(Long, Long)] = None
@@ -744,7 +739,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using $year rates for Apr - Dec $year" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount to pay using $year rates for Apr - Dec $year" in {
 //          forAll(aprToDecInt) { month =>
 //            val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) None else Option(getRandomLitreage)
 //            val contractPackerLitres: Option[(Long, Long)] = Option(getRandomLitreage)
@@ -759,12 +754,12 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //            val highBandLitres = getTotalHighBandLitres(userAnswers, isSmallProducer)
 //            val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
 //            val expectedLowLevy: Option[BigDecimal] = for {
-//              ownBrandLowLitres <- if (isSmallProducer) Some(0L) else ownBrandsLitres.map(_._1)
+//              ownBrandLowLitres <- else ownBrandsLitres.map(_._1)
 //              contractPackerLowLitres <- contractPackerLitres.map(_._1)
 //              broughtIntoUKLowLitres <- broughtIntoUKLitres.map(_._1)
 //            } yield (ownBrandLowLitres + contractPackerLowLitres + broughtIntoUKLowLitres) * lowerBandCostPerLitreMap(year)
 //            val expectedHighLevy: Option[BigDecimal] = for {
-//              ownBrandHighLitres <- if (isSmallProducer) Some(0L) else ownBrandsLitres.map(_._2)
+//              ownBrandHighLitres <- else ownBrandsLitres.map(_._2)
 //              contractPackerHighLitres <- contractPackerLitres.map(_._2)
 //              broughtIntoUKHighLitres <- broughtIntoUKLitres.map(_._2)
 //            } yield (ownBrandHighLitres + contractPackerHighLitres + broughtIntoUKHighLitres) * higherBandCostPerLitreMap(year)
@@ -774,7 +769,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is negative using $year rates for Apr - Dec $year" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount is negative using $year rates for Apr - Dec $year" in {
 //          forAll(aprToDecInt) { month =>
 //            val ownBrandsLitres: Option[(Long, Long)] = None
 //            val contractPackerLitres: Option[(Long, Long)] = None
@@ -802,7 +797,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres packed at own site using $year rates for Jan - Mar ${year + 1}" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres packed at own site using $year rates for Jan - Mar ${year + 1}" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(aprToDecInt) { month =>
@@ -821,7 +816,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres contract packed using $year rates for Jan - Mar ${year + 1}" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres contract packed using $year rates for Jan - Mar ${year + 1}" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(aprToDecInt) { month =>
@@ -840,7 +835,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with exemptions for small producers using $year rates for Jan - Mar ${year + 1}" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with exemptions for small producers using $year rates for Jan - Mar ${year + 1}" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(aprToDecInt) { month =>
@@ -861,7 +856,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk using $year rates for Jan - Mar ${year + 1}" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres brought into the uk using $year rates for Jan - Mar ${year + 1}" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(aprToDecInt) { month =>
@@ -880,7 +875,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with litres brought into the uk from small producers using $year rates for Jan - Mar ${year + 1}" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres brought into the uk from small producers using $year rates for Jan - Mar ${year + 1}" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(aprToDecInt) { month =>
@@ -899,7 +894,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres exported using $year rates for Jan - Mar ${year + 1}" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with credits for litres exported using $year rates for Jan - Mar ${year + 1}" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(aprToDecInt) { month =>
@@ -918,7 +913,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }with credits for litres lost or damaged using $year rates for Jan - Mar ${year + 1}" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals with credits for litres lost or damaged using $year rates for Jan - Mar ${year + 1}" in {
 //          forAll(posLitresInts) { lowLitres =>
 //            forAll(posLitresInts) { highLitres =>
 //              forAll(aprToDecInt) { month =>
@@ -937,7 +932,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is 0 using $year rates for Jan - Mar ${year + 1}" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount is 0 using $year rates for Jan - Mar ${year + 1}" in {
 //          forAll(janToMarInt) { month =>
 //            val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) Option(getRandomLitreage) else None
 //            val contractPackerLitres: Option[(Long, Long)] = None
@@ -959,7 +954,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount to pay using $year rates for Jan - Mar ${year + 1}" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount to pay using $year rates for Jan - Mar ${year + 1}" in {
 //          forAll(aprToDecInt) { month =>
 //            val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) None else Option(getRandomLitreage)
 //            val contractPackerLitres: Option[(Long, Long)] = Option(getRandomLitreage)
@@ -974,12 +969,12 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //            val highBandLitres = getTotalHighBandLitres(userAnswers, isSmallProducer)
 //            val totalForQuarter = calculateTotal(userAnswers, isSmallProducer)(frontendAppConfig)
 //            val expectedLowLevy: Option[BigDecimal] = for {
-//              ownBrandLowLitres <- if (isSmallProducer) Some(0L) else ownBrandsLitres.map(_._1)
+//              ownBrandLowLitres <- else ownBrandsLitres.map(_._1)
 //              contractPackerLowLitres <- contractPackerLitres.map(_._1)
 //              broughtIntoUKLowLitres <- broughtIntoUKLitres.map(_._1)
 //            } yield (ownBrandLowLitres + contractPackerLowLitres + broughtIntoUKLowLitres) * lowerBandCostPerLitreMap(year)
 //            val expectedHighLevy: Option[BigDecimal] = for {
-//              ownBrandHighLitres <- if (isSmallProducer) Some(0L) else ownBrandsLitres.map(_._2)
+//              ownBrandHighLitres <- else ownBrandsLitres.map(_._2)
 //              contractPackerHighLitres <- contractPackerLitres.map(_._2)
 //              broughtIntoUKHighLitres <- broughtIntoUKLitres.map(_._2)
 //            } yield (ownBrandHighLitres + contractPackerHighLitres + broughtIntoUKHighLitres) * higherBandCostPerLitreMap(year)
@@ -989,7 +984,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //          }
 //        }
 
-//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals ${ if(isSmallProducer) "for small producer " else "" }when return amount is negative using $year rates for Jan - Mar ${year + 1}" in {
+//        s"calculate low litres total, high litres total, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount is negative using $year rates for Jan - Mar ${year + 1}" in {
 //          forAll(janToMarInt) { month =>
 //            val ownBrandsLitres: Option[(Long, Long)] = None
 //            val contractPackerLitres: Option[(Long, Long)] = None
@@ -1016,7 +1011,6 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //            totalForQuarter mustBe (expectedLowLevy.get + expectedHighLevy.get).setScale(2, BigDecimal.RoundingMode.HALF_UP)
 //          }
 //        }
-      })
     })
 
   }
