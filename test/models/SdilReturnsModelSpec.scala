@@ -362,8 +362,8 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
         }
       }
 
-//        s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount is 0 using original rates for Apr - Dec $year" in {
-//          forAll(aprToDecInt) { month =>
+      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount is 0 using original rates for Apr - Dec $year" in {
+        forAll(aprToDecInt) { month =>
 //            val ownBrandsLitres: Option[(Long, Long)] = if (isSmallProducer) Option(getRandomLitreage) else None
 //            val contractPackerLitres: Option[(Long, Long)] = None
 //            val broughtIntoUKLitres: Option[(Long, Long)] = None
@@ -381,8 +381,19 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //            lowBandLitres mustBe 0L
 //            highBandLitres mustBe 0L
 //            totalForQuarter mustBe expectedLowLevy + expectedHighLevy
-//          }
-//        }
+
+          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+          val sdilReturn = getSdilReturn()
+          val expectedLeviedLitreage = Litreage()
+          val expectedCreditedLitreage = Litreage()
+          val expectedTotal = BigDecimal("0.00")
+          val expectedTaxEstimation = BigDecimal("0.00")
+          sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
+          sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
+          sdilReturn.total mustBe expectedTotal
+          sdilReturn.taxEstimation mustBe expectedTaxEstimation
+        }
+      }
 
 //        s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount to pay using original rates for Apr - Dec $year" in {
 //          forAll(aprToDecInt) { month =>
