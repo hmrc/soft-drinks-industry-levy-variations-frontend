@@ -71,8 +71,7 @@ object SdilReturn {
   }
 
   def generateFromUserAnswers(userAnswers: UserAnswers, submitted: Option[Instant] = None): SdilReturn = {
-    val dfdf = userAnswers.getCorrectReturnData
-    dfdf.map(correctReturnData => {
+    userAnswers.getCorrectReturnData.map(correctReturnData => {
       SdilReturn(
         ownBrand = correctReturnData.ownBrandsLitreage,
         packLarge = correctReturnData.contractPackerLitreage,
