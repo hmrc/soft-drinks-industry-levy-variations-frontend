@@ -36,16 +36,16 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
   private def getRandomLitreage: Litreage = Litreage(getRandomLitres, getRandomLitres)
   private def getRandomSdilRef(index: Int): String = s"${Math.floor(Math.random() * 1000).toLong}SdilRef$index"
 
-  private def getLitresJson(boolFieldKey: String, litreageFieldKey: String)(litresOpt: Option[(Long, Long)]): JsObject = {
-    litresOpt match {
-      case Some((low, high)) =>
-        JsObject(Seq(
-          boolFieldKey -> JsBoolean(true),
-          litreageFieldKey -> Json.obj("lowBand" -> low, "highBand" -> high))
-        )
-      case None => JsObject(Seq(boolFieldKey -> JsBoolean(false)))
-    }
-  }
+//  private def getLitresJson(boolFieldKey: String, litreageFieldKey: String)(litresOpt: Option[(Long, Long)]): JsObject = {
+//    litresOpt match {
+//      case Some((low, high)) =>
+//        JsObject(Seq(
+//          boolFieldKey -> JsBoolean(true),
+//          litreageFieldKey -> Json.obj("lowBand" -> low, "highBand" -> high))
+//        )
+//      case None => JsObject(Seq(boolFieldKey -> JsBoolean(false)))
+//    }
+//  }
 
 //  private def userAnswersData(
 //                               ownBrandsLitres: Option[(Long, Long)] = None,
