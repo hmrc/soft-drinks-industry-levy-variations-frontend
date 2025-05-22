@@ -33,7 +33,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
   override implicit val frontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
   private def getRandomLitres: Long = Math.floor(Math.random() * 1000000).toLong
-  private def getRandomLitreage: (Long, Long) = (getRandomLitres, getRandomLitres)
+  private def getRandomLitreage: Litreage = Litreage(getRandomLitres, getRandomLitres)
   private def getRandomSdilRef(index: Int): String = s"${Math.floor(Math.random() * 1000).toLong}SdilRef$index"
 
   private def getLitresJson(boolFieldKey: String, litreageFieldKey: String)(litresOpt: Option[(Long, Long)]): JsObject = {
@@ -83,26 +83,17 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 //  }
 
   private def getSdilReturn(
-                     ownBrand: Boolean = false,
-                     packLarge: Boolean = false,
+                     ownBrand: Litreage = Litreage(),
+                     packLarge: Litreage = Litreage(),
                      numberOfPackSmall: Int = 0,
-                     importSmall: Boolean = false,
-                     importLarge: Boolean = false,
-                     export: Boolean = false,
-                     wastage: Boolean = false
+                     importSmall: Litreage = Litreage(),
+                     importLarge: Litreage = Litreage(),
+                     export: Litreage = Litreage(),
+                     wastage: Litreage = Litreage()
                    ): SdilReturn = {
     val smallProducers: Seq[SmallProducer] = (0 to numberOfPackSmall)
-      .map(index => SmallProducer(None, getRandomSdilRef(index), getRandomLitreage))
-    SdilReturn(
-      ownBrand = if (ownBrand) getRandomLitreage else zero,
-      packLarge = if (packLarge) getRandomLitreage else zero,
-      packSmall = smallProducers.toList,
-      importSmall = if (importSmall) getRandomLitreage else zero,
-      importLarge = if (importLarge) getRandomLitreage else zero,
-      export = if (export) getRandomLitreage else zero,
-      wastage = if (wastage) getRandomLitreage else zero,
-      submittedOn = None
-    )
+      .map(index => SmallProducer(getRandomSdilRef(index), getRandomSdilRef(index), getRandomLitreage))
+    SdilReturn(ownBrand, packLarge, packSmall = smallProducers.toList, importSmall, importLarge, export, wastage, submittedOn = None)
   }
 
 
@@ -174,9 +165,8 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
         forAll(posLitresInts) { lowLitres =>
           forAll(posLitresInts) { highLitres =>
             forAll(aprToDecInt) { month =>
-              val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val userAnswers = userAnswersData(ownBrandsLitres = Option((lowLitres, highLitres)), returnPeriod = returnPeriod)
-              val sdilReturn = SdilReturn.generateFromUserAnswers(userAnswers)
+              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+              val sdilReturn = getSdilReturn(ownBrand = Litreage(lowLitres, highLitres))
               val expectedLeviedLitreage = Litreage(lowLitres, highLitres)
               val expectedCreditedLitreage = Litreage()
               val expectedTotal = lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres
