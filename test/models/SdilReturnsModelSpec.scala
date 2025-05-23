@@ -42,7 +42,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
                      importSmall: Litreage = Litreage(),
                      export: Litreage = Litreage(),
                      wastage: Litreage = Litreage()
-                   ): SdilReturn = {
+                   )(implicit returnPeriod: ReturnPeriod): SdilReturn = {
     val smallProducers: Seq[SmallProducer] = (0 to numberOfPackSmall)
       .map(index => SmallProducer(getRandomSdilRef(index), getRandomSdilRef(index), getRandomLitreage))
     SdilReturn(ownBrand, packLarge, packSmall = smallProducers.toList, importLarge, importSmall, export, wastage, submittedOn = None)
@@ -50,34 +50,6 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 
 
   "SdilReturn" - {
-
-    "total returns the sumLitres(ownBrand, packLarge, importLarge) minus sumLitres(export, wastage) example 1" in {
-      val expectedValue: BigDecimal = 6.30
-      val data = testSdilReturn(
-        packSmall = List.empty,
-        ownBrand = Litreage(15, 15),
-        packLarge = Litreage(15, 15),
-        importLarge = Litreage(15, 15),
-        `export` = Litreage(15 ,15),
-        wastage = Litreage(15, 15)
-      )
-
-      data.total mustBe expectedValue
-    }
-
-    "total returns the sumLitres(ownBrand, packLarge, importLarge) minus sumLitres(export, wastage) example 2" in {
-      val expectedValue: BigDecimal = 25.20
-      val data = testSdilReturn(
-        packSmall = List.empty,
-        ownBrand = Litreage(30, 30),
-        packLarge = Litreage(30, 30),
-        importLarge = Litreage(30, 30),
-        `export` = Litreage(15, 15),
-        wastage = Litreage(15, 15)
-      )
-
-      data.total mustBe expectedValue
-    }
     "generateFromUserAnswers with userAnswers should default if all answers empty" in {
       SdilReturn.generateFromUserAnswers(emptyUserAnswersForCorrectReturn) mustBe SdilReturn(Litreage(0, 0), Litreage(0, 0),
         List(), Litreage(0, 0), Litreage(0, 0), Litreage(0, 0), Litreage(0, 0), None)
@@ -672,7 +644,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
         forAll(posLitresInts) { lowLitres =>
           forAll(posLitresInts) { highLitres =>
             forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
               val sdilReturn = getSdilReturn(ownBrand = Litreage(lowLitres, highLitres))
               val expectedLeviedLitreage = Litreage(lowLitres, highLitres)
               val expectedCreditedLitreage = Litreage()
@@ -691,7 +663,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
         forAll(posLitresInts) { lowLitres =>
           forAll(posLitresInts) { highLitres =>
             forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
               val sdilReturn = getSdilReturn(packLarge = Litreage(lowLitres, highLitres))
               val expectedLeviedLitreage = Litreage(lowLitres, highLitres)
               val expectedCreditedLitreage = Litreage()
@@ -710,7 +682,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
         forAll(posLitresInts) { lowLitres =>
           forAll(posLitresInts) { highLitres =>
             forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
               val sdilReturn = getSdilReturn(numberOfPackSmall = 2)
               val expectedLeviedLitreage = Litreage()
               val expectedCreditedLitreage = Litreage()
@@ -729,7 +701,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
         forAll(posLitresInts) { lowLitres =>
           forAll(posLitresInts) { highLitres =>
             forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
               val sdilReturn = getSdilReturn(importLarge = Litreage(lowLitres, highLitres))
               val expectedLeviedLitreage = Litreage(lowLitres, highLitres)
               val expectedCreditedLitreage = Litreage()
@@ -748,7 +720,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
         forAll(posLitresInts) { lowLitres =>
           forAll(posLitresInts) { highLitres =>
             forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
               val sdilReturn = getSdilReturn(importSmall = Litreage(lowLitres, highLitres))
               val expectedLeviedLitreage = Litreage()
               val expectedCreditedLitreage = Litreage()
@@ -767,7 +739,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
         forAll(posLitresInts) { lowLitres =>
           forAll(posLitresInts) { highLitres =>
             forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
               val sdilReturn = getSdilReturn(`export` = Litreage(lowLitres, highLitres))
               val expectedLeviedLitreage = Litreage()
               val expectedCreditedLitreage = Litreage(lowLitres, highLitres)
@@ -786,7 +758,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
         forAll(posLitresInts) { lowLitres =>
           forAll(posLitresInts) { highLitres =>
             forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
               val sdilReturn = getSdilReturn(wastage = Litreage(lowLitres, highLitres))
               val expectedLeviedLitreage = Litreage()
               val expectedCreditedLitreage = Litreage(lowLitres, highLitres)
@@ -803,7 +775,7 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 
       s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount is 0 using $year rates for Jan - Mar ${year + 1}" in {
         forAll(janToMarInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
+          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
           val sdilReturn = getSdilReturn()
           val expectedLeviedLitreage = Litreage()
           val expectedCreditedLitreage = Litreage()

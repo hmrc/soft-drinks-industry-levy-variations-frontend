@@ -17,11 +17,12 @@
 package models
 
 import config.FrontendAppConfig
+import models.LevyCalculator.getLevyCalculation
 import models.submission.Litreage
 import pages.correctReturn.ExemptionsForSmallProducersPage
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.{Instant, LocalDateTime, ZoneId}
+import java.time.{Instant, LocalDate, LocalDateTime, ZoneId}
 
 case class SdilReturn(
                        ownBrand: Litreage,
@@ -39,13 +40,17 @@ case class SdilReturn(
   private[models] val creditedLitreage: Litreage = Litreage.sum(List(export, wastage))
 
   private [models] def calculatelevy(litreage: Litreage)
-                                    (implicit config: FrontendAppConfig): BigDecimal = {
-    val costLower = config.lowerBandCostPerLitre
-    val costHigher = config.higherBandCostPerLitre
-    (litreage.lower * costLower) + (litreage.higher * costHigher)
+                                    (implicit config: FrontendAppConfig, returnPeriod: ReturnPeriod): BigDecimal = {
+//    val costLower = config.lowerBandCostPerLitre
+//    val costHigher = config.higherBandCostPerLitre
+//    (litreage.lower * costLower) + (litreage.higher * costHigher)
+//    val totalLowBandLitres = getTotalLowBandLitres(userAnswers, smallProducer)
+//    val totalHighBandLitres = getTotalHighBandLitres(userAnswers, smallProducer)
+    val levyCalculation: LevyCalculation = getLevyCalculation(litreage.lower, litreage.higher, returnPeriod)(config)
+    levyCalculation.total
   }
 
-  def total(implicit config: FrontendAppConfig): BigDecimal = {
+  def total(implicit config: FrontendAppConfig, returnPeriod: ReturnPeriod): BigDecimal = {
     val totalLiterage = Litreage(
       leviedLitreage.lower - creditedLitreage.lower,
       leviedLitreage.higher - creditedLitreage.higher
@@ -53,7 +58,7 @@ case class SdilReturn(
     calculatelevy(totalLiterage)
   }
 
-  def taxEstimation(implicit config: FrontendAppConfig): BigDecimal = calculatelevy(leviedLitreage.combineN(4))
+  def taxEstimation(implicit config: FrontendAppConfig, returnPeriod: ReturnPeriod): BigDecimal = calculatelevy(leviedLitreage.combineN(4))
 }
 
 object SdilReturn {
