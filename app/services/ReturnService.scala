@@ -57,7 +57,7 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector)(im
     for {
       isSmallProducer <- sdilConnector.checkSmallProducerStatus(sdilRef, returnPeriod)
       balanceBroughtForward <- getBalanceBroughtForward(sdilRef)
-    } yield getAmounts(userAnswers, originalReturn, balanceBroughtForward, isSmallProducer.getOrElse(false))
+    } yield getAmounts(userAnswers, originalReturn, balanceBroughtForward, isSmallProducer.getOrElse(false))(returnPeriod)
   }
 
   def submitSdilReturnsVary(subscription: RetrievedSubscription,
@@ -86,12 +86,12 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector)(im
   def submitReturnVariation(subscription: RetrievedSubscription,
                             sdilReturn: SdilReturn,
                             userAnswers: UserAnswers,
-                            correctReturnData: CorrectReturnUserAnswersData)
+                            correctReturnData: CorrectReturnUserAnswersData,
+                            returnPeriod: ReturnPeriod)
                            (implicit hc: HeaderCarrier): VariationResult[Unit] = {
+    implicit val rp: ReturnPeriod = returnPeriod
     val isNewImporter = UserTypeCheck.isNewImporter(userAnswers, subscription)
     val isNewPacker = UserTypeCheck.isNewPacker(userAnswers, subscription)
-//    TODO: Can I avoid .get here?
-    implicit val returnPeriod = userAnswers.correctReturnPeriod.get
     val returnVariation = ReturnsVariation(
       orgName = subscription.orgName,
       ppobAddress = subscription.address,
@@ -115,9 +115,8 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector)(im
     sdilConnector.submitReturnVariation(subscription.sdilRef, returnVariation)
   }
 
-  private def getAmounts(userAnswers: UserAnswers, originalReturn: SdilReturn, balanceBroughtForward: BigDecimal, isSmallProducer: Boolean): Amounts = {
-    //    TODO: Can I avoid .get here?
-    implicit val returnPeriod = userAnswers.correctReturnPeriod.get
+  private def getAmounts(userAnswers: UserAnswers, originalReturn: SdilReturn, balanceBroughtForward: BigDecimal, isSmallProducer: Boolean)
+                        (implicit returnPeriod: ReturnPeriod): Amounts = {
     val originalReturnTotal: BigDecimal = originalReturn.total
     val totalForQuarter = SdilReturn.generateFromUserAnswers(userAnswers).total
     val totalForQuarterLessForwardBalance = totalForQuarter - balanceBroughtForward
