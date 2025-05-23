@@ -90,6 +90,8 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector)(im
                            (implicit hc: HeaderCarrier): VariationResult[Unit] = {
     val isNewImporter = UserTypeCheck.isNewImporter(userAnswers, subscription)
     val isNewPacker = UserTypeCheck.isNewPacker(userAnswers, subscription)
+//    TODO: Can I avoid .get here?
+    implicit val returnPeriod = userAnswers.correctReturnPeriod.get
     val returnVariation = ReturnsVariation(
       orgName = subscription.orgName,
       ppobAddress = subscription.address,
@@ -114,6 +116,8 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector)(im
   }
 
   private def getAmounts(userAnswers: UserAnswers, originalReturn: SdilReturn, balanceBroughtForward: BigDecimal, isSmallProducer: Boolean): Amounts = {
+    //    TODO: Can I avoid .get here?
+    implicit val returnPeriod = userAnswers.correctReturnPeriod.get
     val originalReturnTotal: BigDecimal = originalReturn.total
     val totalForQuarter = SdilReturn.generateFromUserAnswers(userAnswers).total
     val totalForQuarterLessForwardBalance = totalForQuarter - balanceBroughtForward
