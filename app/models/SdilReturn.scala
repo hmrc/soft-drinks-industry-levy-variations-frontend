@@ -34,18 +34,12 @@ case class SdilReturn(
                        wastage: Litreage,
                        submittedOn: Option[LocalDateTime] = None
                      ) {
-//  TODO: total, taxEstimation, and calculateLevy will be updated - can change visibility on calculateLevy
   private[models] val leviedLitreage: Litreage = Litreage.sum(List(ownBrand, packLarge, importLarge))
 
   private[models] val creditedLitreage: Litreage = Litreage.sum(List(export, wastage))
 
   private [models] def calculatelevy(litreage: Litreage)
                                     (implicit config: FrontendAppConfig, returnPeriod: ReturnPeriod): BigDecimal = {
-//    val costLower = config.lowerBandCostPerLitre
-//    val costHigher = config.higherBandCostPerLitre
-//    (litreage.lower * costLower) + (litreage.higher * costHigher)
-//    val totalLowBandLitres = getTotalLowBandLitres(userAnswers, smallProducer)
-//    val totalHighBandLitres = getTotalHighBandLitres(userAnswers, smallProducer)
     val levyCalculation: LevyCalculation = getLevyCalculation(litreage.lower, litreage.higher, returnPeriod)(config)
     levyCalculation.total
   }
