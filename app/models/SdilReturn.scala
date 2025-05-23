@@ -46,19 +46,14 @@ case class SdilReturn(
   }
 
   def total(implicit config: FrontendAppConfig): BigDecimal = {
-    val litresToAdd = Litreage.sum(List(ownBrand, packLarge, importLarge))
-    val litresToSubtract = Litreage.sum(List(export, wastage))
     val totalLiterage = Litreage(
-      litresToAdd.lower - litresToSubtract.lower,
-      litresToAdd.higher - litresToSubtract.higher
+      leviedLitreage.lower - creditedLitreage.lower,
+      leviedLitreage.higher - creditedLitreage.higher
     )
     calculatelevy(totalLiterage)
   }
 
-  def taxEstimation(implicit config: FrontendAppConfig): BigDecimal = {
-    val t = Litreage.sum(List(packLarge, importLarge, ownBrand))
-    calculatelevy(t.combineN(4))
-  }
+  def taxEstimation(implicit config: FrontendAppConfig): BigDecimal = calculatelevy(leviedLitreage.combineN(4))
 }
 
 object SdilReturn {
