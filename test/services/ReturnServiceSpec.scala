@@ -22,7 +22,7 @@ import connectors.SoftDrinksIndustryLevyConnector
 import models.backend.CentralAssessment
 import models.correctReturn.{CorrectReturnUserAnswersData, RepaymentMethod, ReturnsVariation}
 import models.submission.{Litreage, ReturnVariationData}
-import models.{LitresInBands, SdilReturn}
+import models.{LitresInBands, ReturnPeriod, SdilReturn}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -148,9 +148,12 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
           true, Some(LitresInBands(100, 100)), true, Some(LitresInBands(100, 100))
         )
 
+        val returnPeriod = ReturnPeriod(2025, 0)
+
         val userAnswers = emptyUserAnswersForCorrectReturn
           .copy(packagingSiteList = packingSiteMap,
             warehouseList = twoWarehouses,
+            correctReturnPeriod = Option(returnPeriod),
             data = Json.obj(("correctReturn", Json.toJson(correctReturnData)))
           )
 
@@ -172,7 +175,7 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
         when(mockSdilConnector.submitReturnVariation(aSubscription.sdilRef, expectedReturnsVariation)(hc))
           .thenReturn(createSuccessVariationResult((): Unit))
 
-        val res = returnService.submitReturnVariation(aSubscription, sdilReturn, userAnswers, correctReturnData)
+        val res = returnService.submitReturnVariation(aSubscription, sdilReturn, userAnswers, correctReturnData, returnPeriod)
 
         whenReady(res.value) { result =>
           result mustBe Right((): Unit)
@@ -186,9 +189,12 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
           true, Some(LitresInBands(100, 100)), true, Some(LitresInBands(100, 100))
         )
 
+        val returnPeriod = ReturnPeriod(2025, 0)
+
         val userAnswers = emptyUserAnswersForCorrectReturn
           .copy(
             warehouseList = twoWarehouses,
+            correctReturnPeriod = Option(returnPeriod),
             data = Json.obj(("correctReturn", Json.toJson(correctReturnData)))
           )
 
@@ -210,7 +216,7 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
         when(mockSdilConnector.submitReturnVariation(aSubscription.sdilRef, expectedReturnsVariation)(hc))
           .thenReturn(createSuccessVariationResult((): Unit))
 
-        val res = returnService.submitReturnVariation(aSubscription, sdilReturn, userAnswers, correctReturnData)
+        val res = returnService.submitReturnVariation(aSubscription, sdilReturn, userAnswers, correctReturnData, returnPeriod)
 
         whenReady(res.value) { result =>
           result mustBe Right((): Unit)
@@ -224,8 +230,11 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
           true, Some(LitresInBands(100, 100)), true, Some(LitresInBands(100, 100))
         )
 
+        val returnPeriod = ReturnPeriod(2025, 0)
+
         val userAnswers = emptyUserAnswersForCorrectReturn
           .copy(packagingSiteList = packingSiteMap,
+            correctReturnPeriod = Option(returnPeriod),
             data = Json.obj(("correctReturn", Json.toJson(correctReturnData)))
           )
 
@@ -247,7 +256,7 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
         when(mockSdilConnector.submitReturnVariation(aSubscription.sdilRef, expectedReturnsVariation)(hc))
           .thenReturn(createSuccessVariationResult((): Unit))
 
-        val res = returnService.submitReturnVariation(aSubscription, sdilReturn, userAnswers, correctReturnData)
+        val res = returnService.submitReturnVariation(aSubscription, sdilReturn, userAnswers, correctReturnData, returnPeriod)
 
         whenReady(res.value) { result =>
           result mustBe Right((): Unit)

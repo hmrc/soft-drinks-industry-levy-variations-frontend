@@ -54,7 +54,7 @@ class CorrectReturnOrchestrator @Inject()(returnService: ReturnService,
     val revisedReturn = SdilReturn.generateFromUserAnswers(userAnswers, Some(instantNow))
     for {
       _ <- returnService.submitSdilReturnsVary(subscription, userAnswers, originalReturn, returnPeriod, revisedReturn)
-      variation <- returnService.submitReturnVariation(subscription, revisedReturn, userAnswers, correctReturnData)
+      variation <- returnService.submitReturnVariation(subscription, revisedReturn, userAnswers, correctReturnData, returnPeriod)
       _ <- EitherT(sessionService.set(userAnswers.copy(submitted = true, submittedOn = Some(instantNow))))
     } yield variation
   }
