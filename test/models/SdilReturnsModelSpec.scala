@@ -42,8 +42,8 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
                      importSmall: Litreage = Litreage(),
                      export: Litreage = Litreage(),
                      wastage: Litreage = Litreage()
-                   )(implicit returnPeriod: ReturnPeriod): SdilReturn = {
-    val smallProducers: Seq[SmallProducer] = (0 to numberOfPackSmall)
+                   ): SdilReturn = {
+    val smallProducers: Seq[SmallProducer] = (0 until numberOfPackSmall)
       .map(index => SmallProducer(getRandomSdilRef(index), getRandomSdilRef(index), getRandomLitreage))
     SdilReturn(ownBrand, packLarge, packSmall = smallProducers.toList, importLarge, importSmall, export, wastage, submittedOn = None)
   }
