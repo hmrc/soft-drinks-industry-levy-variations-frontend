@@ -74,8 +74,7 @@ trait SummaryListRowLitresHelper {
       "litres.highBandLevy"
     }
 
-    val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy(levyAmount))).toString
-
+    val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy(levyAmount))).toString.replace("-", "&minus;")
     SummaryListRowViewModel(
       key = key,
       value = ValueViewModel(HtmlContent(value)).withCssClass("sdil-right-align--desktop"),

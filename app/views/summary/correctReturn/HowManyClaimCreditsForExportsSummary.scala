@@ -25,5 +25,6 @@ object HowManyClaimCreditsForExportsSummary extends SummaryListRowLitresHelper {
   override val actionUrl: String = routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
   override val bandActionIdKey: String = "correctReturn.claimCreditsForExports"
   override val bandHiddenKey: String = "correctReturn.claimCreditsForExports"
+  override val isNegativeLevy: Boolean = true
 
 }
