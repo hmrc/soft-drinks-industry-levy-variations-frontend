@@ -753,7 +753,6 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("\u2212£1,940.19")
 
-
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,002")
         page.getElementById("change-highband-litreage-correctReturn.claimCreditsForExports").attributes().get("href") mustEqual
@@ -858,7 +857,6 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
           controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("\u2212£1,940.19")
-
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,002")
