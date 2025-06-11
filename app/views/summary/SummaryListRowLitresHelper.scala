@@ -70,6 +70,7 @@ private def bandLevyRow(litres: Long, bandCostPerLitre: BigDecimal, band: String
       "litres.highBandLevy"
     }
 
+
     val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy(litres, bandCostPerLitre))).toString
 
     SummaryListRowViewModel(
