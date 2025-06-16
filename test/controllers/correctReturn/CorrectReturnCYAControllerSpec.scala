@@ -816,14 +816,14 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
         page.getElementById("change-lowband-litreage-correctReturn.claimCreditsForLostDamaged").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("\u2212£1,800.00")
+        page.getElementsByTag("dd").text() must include("−£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
         page.getElementById("change-highband-litreage-correctReturn.claimCreditsForLostDamaged").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
-        page.getElementsByTag("dd").text() must include("\u2212£4,800.00")
+        page.getElementsByTag("dd").text() must include("−£4,800.00")
       }
     }
 
@@ -856,14 +856,14 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
         page.getElementById("change-lowband-litreage-correctReturn.claimCreditsForLostDamaged").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("\u2212£1,940.19")
+        page.getElementsByTag("dd").text() must include("−£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,002")
         page.getElementById("change-highband-litreage-correctReturn.claimCreditsForLostDamaged").attributes().get("href") mustEqual
           controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
-        page.getElementsByTag("dd").text() must include("\u2212£5,180.52")
+        page.getElementsByTag("dd").text() must include("−£5,180.52")
       }
     }
 
