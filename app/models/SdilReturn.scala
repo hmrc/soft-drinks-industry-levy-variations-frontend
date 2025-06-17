@@ -41,7 +41,7 @@ case class SdilReturn(
   private [models] def calculatelevy(litreage: Litreage)
                                     (implicit config: FrontendAppConfig, returnPeriod: ReturnPeriod): BigDecimal = {
     val levyCalculation: LevyCalculation = getLevyCalculation(litreage.lower, litreage.higher, returnPeriod)(config)
-    levyCalculation.total
+    levyCalculation.totalRoundedDown
   }
 
   def total(implicit config: FrontendAppConfig, returnPeriod: ReturnPeriod): BigDecimal = {
