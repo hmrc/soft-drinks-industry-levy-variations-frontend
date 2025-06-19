@@ -105,7 +105,7 @@ class CorrectReturnUpdateDoneViewSpec extends ViewSpecHelper {
 
     "contain a section before the submit action that contains the correct text" in {
       document.getElementsByClass(Selectors.body).get(1).text() mustBe
-      "We may get in touch with your contact person to discuss your changes. Once we have approved your correction, your account balance will be updated."
+        "We may get in touch with your contact person to discuss your changes. Once we have approved your correction, your account balance will be updated."
     }
 
     validateTimeoutDialog(document)
