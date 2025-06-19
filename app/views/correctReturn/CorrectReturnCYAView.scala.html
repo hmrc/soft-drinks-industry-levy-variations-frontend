@@ -47,6 +47,13 @@
         <h2 class="govuk-heading-m">@messages(heading)</h2>
         @govukSummaryList(summaryList)
     }
+
+    @govukInsetText(InsetText(
+        id = Some("rounding-inset-sub-header"),
+        content = messages("checkYourAnswers.roundingHelpText"),
+        classes = "govuk-!-margin-top-0"
+    ))
+
     @formHelper(action = submitCall, Symbol("autoComplete") -> "off") {
         @govukButton(ButtonViewModel(messages("site.saveContinue")))
     }
