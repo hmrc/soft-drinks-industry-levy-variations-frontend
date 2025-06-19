@@ -18,6 +18,7 @@ package views.correctReturn
 
 import models.Amounts
 import org.jsoup.nodes.Document
+import play.api.i18n.Messages
 import play.api.mvc.{Call, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
@@ -87,6 +88,10 @@ class CorrectReturnCYAViewSpec extends ViewSpecHelper {
         .getElementsByClass(Selectors.summaryRow)
         .first()
         .getElementsByClass(Selectors.summaryValue).first().text() mustBe "bang"
+    }
+
+    "should have the expected inset rounding help text" in {
+      document.getElementsByClass(Selectors.insetText).get(1).text() mustEqual Messages("checkYourAnswers.roundingHelpText")
     }
 
     "contains a form with the correct action" in {
