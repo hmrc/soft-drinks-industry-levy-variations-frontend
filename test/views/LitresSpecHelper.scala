@@ -51,7 +51,6 @@ trait LitresSpecHelper extends ViewSpecHelper {
     val form = "form"
   }
 
-
   def testLitresInBandsWithPrepopulatedData(document: Document): Unit = {
     "should include form groups for litres" - {
       "when the form is not prepopulated and has no errors" - {

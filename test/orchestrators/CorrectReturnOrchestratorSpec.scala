@@ -230,7 +230,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
                 userAnswers, emptySdilReturn, returnPeriod, expectedRevisedReturn)(hc)).thenReturn(createSuccessVariationResult(Right(): Unit))
 
               when(mockReturnsService.submitReturnVariation(aSubscription,
-                expectedRevisedReturn, userAnswers, correctReturnUserAnswersData)(hc)).thenReturn(createSuccessVariationResult(Right(): Unit))
+                expectedRevisedReturn, userAnswers, correctReturnUserAnswersData, returnPeriod)(hc)).thenReturn(createSuccessVariationResult(Right(): Unit))
 
               when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
               val res = orchestrator.submitReturn(userAnswers, aSubscription, returnPeriod, emptySdilReturn)(hc, ec)

@@ -25,5 +25,6 @@ object HowManyClaimCreditsForLostDestroyedSummary extends SummaryListRowLitresHe
   override val actionUrl: String = routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
   override val bandActionIdKey: String = "correctReturn.claimCreditsForLostDamaged"
   override val bandHiddenKey: String = "correctReturn.claimCreditsForLostDamaged"
+  override val isNegativeLevy: Boolean = true
 
 }

@@ -20,6 +20,7 @@
 @this(
         layout: templates.Layout,
         govukWarningText: GovukWarningText,
+        govukInsetText: GovukInsetText,
         govukSummaryList: GovukSummaryList,
         govukPanel : GovukPanel,
         formHelper: FormWithCSRF,
@@ -62,10 +63,15 @@
     ))
 
     <h2 class="govuk-heading-m" id="whatNextHeader">
-    @messages("site.whatNext")
+        @messages("site.whatNext")
     </h2>
 
     <p class="govuk-body" id="whatNextTextP1">@messages("correctReturn.updateDone.whatNextText")</p>
+
+    @govukInsetText(InsetText(
+        content = messages("checkYourAnswers.roundingHelpText"),
+        classes = "govuk-!-margin-top-0"
+    ))
 
     <p class="govuk-body-m">
         <a class="govuk-link" href="@config.sdilHomeUrl">@messages("correctReturn.updateDone.accountHomeLink")</a>

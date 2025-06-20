@@ -26,12 +26,12 @@ import views.summary.{ReturnDetailsSummaryListWithLitres, SummaryListRowLitresHe
 object ExemptionsForSmallProducersSummary extends ReturnDetailsSummaryListWithLitres {
 
   override val page: QuestionPage[Boolean] = ExemptionsForSmallProducersPage
+  override val optLitresPage: Option[QuestionPage[LitresInBands]] = None
+  override val summaryLitres: SummaryListRowLitresHelper = SmallProducerDetailsSummary
   override val key: String = "correctReturn.exemptionsForSmallProducers.checkYourAnswersLabel"
   override val action: String = routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
   override val actionId: String = "change-exemptionsForSmallProducers"
   override val hiddenText: String = "correctReturn.exemptionsForSmallProducers"
-  override val optLitresPage: Option[QuestionPage[LitresInBands]] = None
-  override val summaryLitres: SummaryListRowLitresHelper = SmallProducerDetailsSummary
   override val isSmallProducerLitres: Boolean = true
 
 }

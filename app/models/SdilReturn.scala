@@ -17,11 +17,12 @@
 package models
 
 import config.FrontendAppConfig
+import models.LevyCalculator.getLevyCalculation
 import models.submission.Litreage
 import pages.correctReturn.ExemptionsForSmallProducersPage
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.{Instant, LocalDateTime, ZoneId}
+import java.time.{Instant, LocalDate, LocalDateTime, ZoneId}
 
 case class SdilReturn(
                        ownBrand: Litreage,
@@ -33,26 +34,25 @@ case class SdilReturn(
                        wastage: Litreage,
                        submittedOn: Option[LocalDateTime] = None
                      ) {
-  def total(implicit config: FrontendAppConfig): BigDecimal = {
-    val litresToAdd = Litreage.sum(List(ownBrand, packLarge, importLarge))
-    val litresToSubtract = Litreage.sum(List(export, wastage))
+  private[models] val leviedLitreage: Litreage = Litreage.sum(List(ownBrand, packLarge, importLarge))
+
+  private[models] val creditedLitreage: Litreage = Litreage.sum(List(export, wastage))
+
+  private [models] def calculatelevy(litreage: Litreage)
+                                    (implicit config: FrontendAppConfig, returnPeriod: ReturnPeriod): BigDecimal = {
+    val levyCalculation: LevyCalculation = getLevyCalculation(litreage.lower, litreage.higher, returnPeriod)(config)
+    levyCalculation.totalRoundedDown
+  }
+
+  def total(implicit config: FrontendAppConfig, returnPeriod: ReturnPeriod): BigDecimal = {
     val totalLiterage = Litreage(
-      litresToAdd.lower - litresToSubtract.lower,
-      litresToAdd.higher - litresToSubtract.higher
+      leviedLitreage.lower - creditedLitreage.lower,
+      leviedLitreage.higher - creditedLitreage.higher
     )
     calculatelevy(totalLiterage)
   }
 
-  def taxEstimation(implicit config: FrontendAppConfig): BigDecimal = {
-    val t = Litreage.sum(List(packLarge, importLarge, ownBrand))
-    calculatelevy(t.combineN(4))
-  }
-  def calculatelevy(litreage: Litreage)
-                   (implicit config: FrontendAppConfig): BigDecimal = {
-    val costLower = config.lowerBandCostPerLitre
-    val costHigher = config.higherBandCostPerLitre
-    (litreage.lower * costLower) + (litreage.higher * costHigher)
-  }
+  def taxEstimation(implicit config: FrontendAppConfig, returnPeriod: ReturnPeriod): BigDecimal = calculatelevy(leviedLitreage.combineN(4))
 }
 
 object SdilReturn {

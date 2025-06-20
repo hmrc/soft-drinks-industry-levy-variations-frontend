@@ -17,6 +17,7 @@
 package views.correctReturn
 
 import org.jsoup.nodes.Document
+import play.api.i18n.Messages
 import play.api.mvc.{Call, Request}
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
@@ -34,6 +35,7 @@ class CorrectReturnCheckChangesCYAViewSpec extends ViewSpecHelper {
   object Selectors {
     val body = "govuk-body"
     val heading = "govuk-heading-l"
+    val insetText = "govuk-inset-text"
     val summaryListHeading = "govuk-heading-m"
     val button = "govuk-button"
     val summaryList = "govuk-summary-list"
@@ -86,9 +88,13 @@ class CorrectReturnCheckChangesCYAViewSpec extends ViewSpecHelper {
       document.getElementsByClass(Selectors.summaryListHeading).get(2).text() mustBe "Balance"
     }
 
+    "should have the expected inset rounding help text" in {
+      document.getElementsByClass(Selectors.insetText).get(0).text() mustEqual Messages("checkYourAnswers.roundingHelpText")
+    }
+
     "contain a section before the submit action that contains the correct text" in {
       document.getElementsByClass(Selectors.body).get(1).text() mustBe
-        "By sending this correction you are confirming that, to the best of your knowledge, the details you are providing are correct."
+      "By sending this correction you are confirming that, to the best of your knowledge, the details you are providing are correct."
     }
 
     "contains a form with the correct action" in {
