@@ -662,5 +662,7 @@ checkYourAnswers.warehouse.checkYourAnswersLabel.one = You have {0} warehouse
 checkYourAnswers.sites.warehouse.change.hidden.one = the UK warehouse you use to store liable drinks
 checkYourAnswers.sites.warehouse.change.hidden.multiple = the UK warehouses you use to store liable drinks
 
+checkYourAnswers.roundingHelpText = Some values in the line items are rounded to the nearest penny. This may cause a slight difference in the overall total. This is expected and won’t affect your calculated return.
+
 litres.lowBandLevy = Low band levy
 litres.highBandLevy = High band levy

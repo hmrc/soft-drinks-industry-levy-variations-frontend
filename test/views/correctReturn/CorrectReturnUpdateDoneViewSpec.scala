@@ -18,6 +18,7 @@ package views.correctReturn
 
 import models.ReturnPeriod
 import org.jsoup.nodes.Document
+import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
@@ -49,6 +50,7 @@ class CorrectReturnUpdateDoneViewSpec extends ViewSpecHelper {
   object Selectors {
     val body = "govuk-body"
     val heading = "govuk-heading-l"
+    val insetText = "govuk-inset-text"
     val summaryListHeading = "govuk-heading-m"
     val button = "govuk-button"
     val summaryList = "govuk-summary-list"
@@ -95,6 +97,10 @@ class CorrectReturnUpdateDoneViewSpec extends ViewSpecHelper {
         .getElementsByClass(Selectors.summaryRow)
         .first()
         .getElementsByClass(Selectors.summaryValue).first().text() mustBe "bang"
+    }
+
+    "should have the expected inset rounding help text" in {
+      document.getElementsByClass(Selectors.insetText).get(0).text() mustEqual Messages("checkYourAnswers.roundingHelpText")
     }
 
     "contain a section before the submit action that contains the correct text" in {

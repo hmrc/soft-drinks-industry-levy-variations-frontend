@@ -20,6 +20,7 @@
     layout: templates.Layout,
     govukSummaryList: GovukSummaryList,
     formHelper: FormWithCSRF,
+    govukInsetText: GovukInsetText,
     govukButton: GovukButton,
     printLinkWithJs: printLinkWithJs
 )
@@ -36,6 +37,11 @@
     <h2 class="govuk-heading-m">@messages(heading)</h2>
     @govukSummaryList(summaryList)
     }
+
+    @govukInsetText(InsetText(
+        content = messages("checkYourAnswers.roundingHelpText"),
+        classes = "govuk-!-margin-top-0"
+    ))
 
     <p class="govuk-body">@messages("correctReturn.checkChanges.confirmationStatement")</p>
 
