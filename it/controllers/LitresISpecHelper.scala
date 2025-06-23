@@ -53,7 +53,6 @@ trait LitresISpecHelper extends ControllerITTestHelper {
     val form = "form"
   }
 
-
   def testLitresInBandsWithPrepopulatedData(document: Document): Unit = {
     val formGroups = document.getElementsByClass(Selectors.govukFormGroup)
     formGroups.size() mustEqual 2
