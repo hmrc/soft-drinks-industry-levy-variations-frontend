@@ -49,7 +49,7 @@ class ClaimCreditsForExportSummarySpec extends SpecBase {
     )
 
     returnPeriodsWithLabels.foreach(returnPeriod => {
-      s"must show correct rows when claiming exports is TRUE, litres provided, and checkAnswers is true ${returnPeriod._2}" in {
+      s"must show correct rows when business has exports is true, litres provided, and checkAnswers is true ${returnPeriod._2}" in {
         val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
           .set(ClaimCreditsForExportsPage, true).success.value
           .set(HowManyClaimCreditsForExportsPage, LitresInBands(lowLitres, highLitres)).success.value
@@ -94,7 +94,7 @@ class ClaimCreditsForExportSummarySpec extends SpecBase {
         res.rows.size mustBe 5
       }
 
-      s"must show correct rows when claiming Exports is TRUE, litres provided, and checkAnswers is false ${returnPeriod._2}" in {
+      s"must show correct rows when business has exports is true, litres provided, and checkAnswers is false ${returnPeriod._2}" in {
         val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
           .set(ClaimCreditsForExportsPage, true).success.value
           .set(HowManyClaimCreditsForExportsPage, LitresInBands(lowLitres, highLitres)).success.value
@@ -131,7 +131,7 @@ class ClaimCreditsForExportSummarySpec extends SpecBase {
         res.rows.size mustBe 5
       }
 
-      s"should return correct elements when passed in with FALSE and NO litres provided  ${returnPeriod._2}" in {
+      s"should return correct elements when business has exports is false and NO litres provided  ${returnPeriod._2}" in {
         val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
           .set(ClaimCreditsForExportsPage, false).success.value
 

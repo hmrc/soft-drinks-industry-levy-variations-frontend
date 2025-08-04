@@ -36,7 +36,7 @@ class ExemptionsForSmallProducersSummarySpec extends SpecBase {
     )
 
     returnPeriodsWithLabels.foreach(returnPeriod => {
-      s"must show correct row when Exemptions For Small Producers is TRUE for ${returnPeriod._2}" in {
+      s"must show correct row when Exemptions For Small Producers is true for ${returnPeriod._2}" in {
         val userAnswers =
           emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
             .set(ExemptionsForSmallProducersPage, true).success.value
@@ -53,7 +53,7 @@ class ExemptionsForSmallProducersSummarySpec extends SpecBase {
         row.actions.head.items.head.content.asHtml mustBe Html("Change")
       }
 
-      s"must show correct row when Exemptions For Small Producers is FALSE for ${returnPeriod._2}" in {
+      s"must show correct row when Exemptions For Small Producers is false for ${returnPeriod._2}" in {
         val userAnswers =
           emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
             .set(ExemptionsForSmallProducersPage, false).success.value

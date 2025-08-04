@@ -49,7 +49,7 @@ class BroughtIntoUKSummarySpec extends SpecBase {
     )
 
     returnPeriodsWithLabels.foreach(returnPeriod => {
-      s"must show correct rows when brought into UK is TRUE, litres provided, and checkAnswers is true ${returnPeriod._2}" in {
+      s"must show correct rows when brought into UK is true, litres provided, and checkAnswers is true ${returnPeriod._2}" in {
         val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
           .set(BroughtIntoUKPage, true).success.value
           .set(HowManyBroughtIntoUKPage, LitresInBands(lowLitres, highLitres)).success.value
@@ -92,7 +92,7 @@ class BroughtIntoUKSummarySpec extends SpecBase {
         res.rows.size mustBe 5
       }
 
-    s"must show correct rows when brought into UK is TRUE, litres provided, and checkAnswers is false ${returnPeriod._2}" in {
+    s"must show correct rows when brought into UK is true, litres provided, and checkAnswers is false ${returnPeriod._2}" in {
       val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
         .set(BroughtIntoUKPage, true).success.value
         .set(HowManyBroughtIntoUKPage, LitresInBands(lowLitres, highLitres)).success.value
@@ -130,7 +130,7 @@ class BroughtIntoUKSummarySpec extends SpecBase {
       res.rows.size mustBe 5
     }
 
-    s"should return correct elements when passed in with FALSE and NO litres provided  ${returnPeriod._2}" in {
+    s"should return correct elements when passed in with false and NO litres provided  ${returnPeriod._2}" in {
       val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
         .set(BroughtIntoUKPage, false).success.value
 
