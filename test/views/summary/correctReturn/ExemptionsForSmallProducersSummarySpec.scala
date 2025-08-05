@@ -36,7 +36,7 @@ class ExemptionsForSmallProducersSummarySpec extends SpecBase {
     )
 
     returnPeriodsWithLabels.foreach(returnPeriod => {
-      s"must show correct row when Exemptions For Small Producers is true for ${returnPeriod._2}" in {
+      s"must show correct row when Exemptions For Small Producers is true and checkAnswers is true for ${returnPeriod._2}" in {
         val userAnswers =
           emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
             .set(ExemptionsForSmallProducersPage, true).success.value
@@ -48,6 +48,23 @@ class ExemptionsForSmallProducersSummarySpec extends SpecBase {
         val row = res.rows.head
         row.key.content.asHtml mustBe Html("Exemptions for registered small producers?")
         row.value.content.asHtml mustBe Html("Yes")
+        res.rows.head.actions.head.items.head.href mustBe routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
+        row.actions.head.items.head.attributes mustBe Map("id" -> "change-exemptionsForSmallProducers")
+        row.actions.head.items.head.content.asHtml mustBe Html("Change")
+      }
+
+      s"must show correct row when Exemptions For Small Producers is true and checkAnswers is false for ${returnPeriod._2}" in {
+        val userAnswers =
+          emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
+            .set(ExemptionsForSmallProducersPage, false).success.value
+
+        val res = ExemptionsForSmallProducersSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)
+
+        res.rows.size mustBe 1
+
+        val row = res.rows.head
+        row.key.content.asHtml mustBe Html("Exemptions for registered small producers?")
+        row.value.content.asHtml mustBe Html("No")
         res.rows.head.actions.head.items.head.href mustBe routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
         row.actions.head.items.head.attributes mustBe Map("id" -> "change-exemptionsForSmallProducers")
         row.actions.head.items.head.content.asHtml mustBe Html("Change")
@@ -70,6 +87,12 @@ class ExemptionsForSmallProducersSummarySpec extends SpecBase {
         row.actions.head.items.head.content.asHtml mustBe Html("Change")
       }
 
+      s"must return empty when no answer given ${returnPeriod._2}" in {
+        val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
+
+        val res = ExemptionsForSmallProducersSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)
+        res.rows.size mustBe 0
+      }
 
     })
   }
