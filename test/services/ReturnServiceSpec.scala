@@ -19,6 +19,7 @@ package services
 import base.SpecBase
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
+import models.TaxRateUtil._
 import models.backend.CentralAssessment
 import models.correctReturn.{CorrectReturnUserAnswersData, RepaymentMethod, ReturnsVariation}
 import models.submission.{Litreage, ReturnVariationData}
@@ -169,8 +170,8 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
           aSubscription.contact.email,
           504.00
         )
-        when(mockAppConfig.lowerBandCostPerLitre).thenReturn(0.18)
-        when(mockAppConfig.higherBandCostPerLitre).thenReturn(0.24)
+        when(mockAppConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
+        when(mockAppConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
 
         when(mockSdilConnector.submitReturnVariation(aSubscription.sdilRef, expectedReturnsVariation)(hc))
           .thenReturn(createSuccessVariationResult((): Unit))
@@ -210,8 +211,8 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
           aSubscription.contact.email,
           336.00
         )
-        when(mockAppConfig.lowerBandCostPerLitre).thenReturn(0.18)
-        when(mockAppConfig.higherBandCostPerLitre).thenReturn(0.24)
+        when(mockAppConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
+        when(mockAppConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
 
         when(mockSdilConnector.submitReturnVariation(aSubscription.sdilRef, expectedReturnsVariation)(hc))
           .thenReturn(createSuccessVariationResult((): Unit))
@@ -250,8 +251,8 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
           aSubscription.contact.email,
           336.00
         )
-        when(mockAppConfig.lowerBandCostPerLitre).thenReturn(0.18)
-        when(mockAppConfig.higherBandCostPerLitre).thenReturn(0.24)
+        when(mockAppConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
+        when(mockAppConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
 
         when(mockSdilConnector.submitReturnVariation(aSubscription.sdilRef, expectedReturnsVariation)(hc))
           .thenReturn(createSuccessVariationResult((): Unit))

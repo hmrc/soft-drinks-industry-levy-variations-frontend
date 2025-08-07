@@ -48,8 +48,9 @@ Run other services required for running this service via the service manager. (*
 7. Add `Year2026 -> BandRates(lowerBandCostPerLitrePostApril2026, higherBandCostPerLitrePostApril2026)` to `LevyCalculator.bandRatesByTaxYear` function in `LevyCalculator.scala`
 8. Add `2026 -> BigDecimal(NEW_LOWER_BAND_VALUE)` to `lowerBandCostPerLitreMap` function in `TaxRateUtil.scala`
 9. Add `2026 -> BigDecimal(NEW_HIGHER_BAND_VALUE)` to `higherBandCostPerLitreMap` function in `TaxRateUtil.scala`
-10. Test the behaviour out and make sure it works!
-11. When happy with the changes, update these instructions for 'Adding 2027 rates'
+10. Add `taxYear2026ReturnPeriod` to the `returnPeriods` list in all view tests where it's required
+11. Test the behaviour out and make sure it works!
+12. When happy with the changes, update these instructions for 'Adding 2027 rates'
 
 ### License
 

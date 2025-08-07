@@ -80,11 +80,11 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
       val bandRates: BandRates = getBandRates(TaxYear.fromYear(taxYear))(frontendAppConfig)
 
       s"return 0.18 for lower band when tax year is $taxYear" in {
-        bandRates.lowerBandCostPerLitre mustBe BigDecimal("0.18")
+        bandRates.lowerBandCostPerLitre mustBe lowerBandCostPerLitre
       }
 
       s"return 0.24 for higher band when tax year is $taxYear" in {
-        bandRates.higherBandCostPerLitre mustBe BigDecimal("0.24")
+        bandRates.higherBandCostPerLitre mustBe higherBandCostPerLitre
       }
     })
 
