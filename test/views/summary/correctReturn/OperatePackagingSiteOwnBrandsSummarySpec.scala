@@ -17,6 +17,7 @@
 package views.summary.correctReturn
 
 import base.SpecBase
+import models.TaxRateUtil.levyValues
 import models.{CheckMode, LitresInBands, ReturnPeriod}
 import pages.correctReturn.{HowManyOperatePackagingSiteOwnBrandsPage, OperatePackagingSiteOwnBrandsPage}
 import play.twirl.api.Html
@@ -30,16 +31,6 @@ class OperatePackagingSiteOwnBrandsSummarySpec extends SpecBase {
 
     val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
     val taxYear2025ReturnPeriod = ReturnPeriod(2026, 0)
-
-    def lowBandLevyValue(returnPeriod: ReturnPeriod) = returnPeriod match {
-      case ReturnPeriod(2025, 0) => "£180.00"
-      case ReturnPeriod(2026, 0) => "£194.00"
-    }
-
-    def highBandLevyValue(returnPeriod: ReturnPeriod) = returnPeriod match {
-      case ReturnPeriod(2025, 0) => "£480.00"
-      case ReturnPeriod(2026, 0) => "£518.00"
-    }
 
     val returnPeriods = List(
       (preApril2025ReturnPeriod, "- pre April 2025 rates"),
@@ -81,12 +72,12 @@ class OperatePackagingSiteOwnBrandsSummarySpec extends SpecBase {
 
         res.rows(2).key.content.asHtml mustBe Html("Low band levy")
         res.rows(2).key.classes mustBe ""
-        res.rows(2).value.content.asHtml mustBe Html(lowBandLevyValue(returnPeriod._1))
+        res.rows(2).value.content.asHtml mustBe Html(levyValues(returnPeriod._1).low)
         res.rows(2).value.classes.trim mustBe "sdil-right-align--desktop"
 
         res.rows(4).key.content.asHtml mustBe Html("High band levy")
         res.rows(4).key.classes mustBe ""
-        res.rows(4).value.content.asHtml mustBe Html(highBandLevyValue(returnPeriod._1))
+        res.rows(4).value.content.asHtml mustBe Html(levyValues(returnPeriod._1).high)
         res.rows(4).value.classes.trim mustBe "sdil-right-align--desktop"
 
         res.rows.size mustBe 5
@@ -119,12 +110,12 @@ class OperatePackagingSiteOwnBrandsSummarySpec extends SpecBase {
 
         res.rows(2).key.content.asHtml mustBe Html("Low band levy")
         res.rows(2).key.classes mustBe ""
-        res.rows(2).value.content.asHtml mustBe Html(lowBandLevyValue(returnPeriod._1))
+        res.rows(2).value.content.asHtml mustBe Html(levyValues(returnPeriod._1).low)
         res.rows(2).value.classes.trim mustBe "sdil-right-align--desktop"
 
         res.rows(4).key.content.asHtml mustBe Html("High band levy")
         res.rows(4).key.classes mustBe ""
-        res.rows(4).value.content.asHtml mustBe Html(highBandLevyValue(returnPeriod._1))
+        res.rows(4).value.content.asHtml mustBe Html(levyValues(returnPeriod._1).high)
         res.rows(4).value.classes.trim mustBe "sdil-right-align--desktop"
 
         res.rows.size mustBe 5

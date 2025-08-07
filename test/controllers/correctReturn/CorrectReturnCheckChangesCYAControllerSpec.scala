@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.RequiredUserAnswersForCorrectReturn
 import errors.UnexpectedResponseFromSDIL
+import models.TaxRateUtil._
 import models.backend.RetrievedSubscription
 import models.correctReturn.RepaymentMethod.BankAccount
 import models.correctReturn.{AddASmallProducer, ChangedPage, RepaymentMethod}
@@ -201,8 +202,8 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show own brands packaged at own site row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
+      when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(OperatePackagingSiteOwnBrandsPage, true).success.value
@@ -306,8 +307,8 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show packaged as contract packer row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
+      when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(PackagedAsContractPackerPage, true).success.value
@@ -411,8 +412,8 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show exemptions for small producers row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
+      when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(ExemptionsForSmallProducersPage, true).success.value
@@ -522,8 +523,8 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show brought into UK row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
+      when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(BroughtIntoUKPage, true).success.value
@@ -627,8 +628,8 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show brought into UK from small producers row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
+      when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(BroughtIntoUkFromSmallProducersPage, true).success.value
@@ -732,8 +733,8 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show claim credits for exports row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
+      when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(ClaimCreditsForExportsPage, true).success.value
@@ -837,8 +838,8 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show claim credits for lost or damaged row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(BigDecimal("0.18"))
-      when(mockConfig.higherBandCostPerLitre).thenReturn(BigDecimal("0.24"))
+      when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
+      when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(ClaimCreditsForLostDamagedPage, true).success.value

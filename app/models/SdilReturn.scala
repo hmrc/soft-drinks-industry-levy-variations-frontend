@@ -22,7 +22,7 @@ import models.submission.Litreage
 import pages.correctReturn.ExemptionsForSmallProducersPage
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.{Instant, LocalDate, LocalDateTime, ZoneId}
+import java.time.{Instant, LocalDateTime, ZoneId}
 
 case class SdilReturn(
                        ownBrand: Litreage,
