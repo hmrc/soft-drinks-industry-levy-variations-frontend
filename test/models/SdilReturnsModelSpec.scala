@@ -18,6 +18,7 @@ package models
 
 import base.SpecBase
 import config.FrontendAppConfig
+import models.TaxRateUtil._
 import models.submission.Litreage
 import org.scalacheck.Gen
 import org.scalatestplus.mockito.MockitoSugar
@@ -76,14 +77,8 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
     }
 
     val posLitresInts = Gen.choose(1000, 10000000)
-    val janToMarInt = Gen.choose(1, 3)
-    val aprToDecInt = Gen.choose(4, 12)
 
     (2018 to 2024).foreach(year => {
-
-      val lowerBandCostPerLitre = BigDecimal("0.18")
-      val higherBandCostPerLitre = BigDecimal("0.24")
-
       s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres packed at own site using original rates for Apr - Dec $year" in {
         forAll(posLitresInts) { lowLitres =>
           forAll(posLitresInts) { highLitres =>
