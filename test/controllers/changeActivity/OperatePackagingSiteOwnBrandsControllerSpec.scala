@@ -172,7 +172,7 @@ class OperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with MockitoS
 
         status(result) mustEqual INTERNAL_SERVER_ERROR
         val page = Jsoup.parse(contentAsString(result))
-        page.title() mustBe "Sorry, there is a problem with the service - 500 - Soft Drinks Industry Levy - GOV.UK"
+        page.title() mustBe "Sorry, there is a problem with the service - Soft Drinks Industry Levy - GOV.UK"
       }
     }
 
