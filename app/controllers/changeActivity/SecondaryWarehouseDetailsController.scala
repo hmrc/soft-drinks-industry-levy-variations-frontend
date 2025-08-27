@@ -92,7 +92,7 @@ class SecondaryWarehouseDetailsController @Inject()(
     if (value) {
       addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = mode)(hc, ec, messages, requestHeader)
     } else {
-      Future.successful(routes.ChangeActivityCYAController.onPageLoad.url)
+      Future.successful(routes.ChangeActivityCYAController.onPageLoad().url)
     }
   }
 

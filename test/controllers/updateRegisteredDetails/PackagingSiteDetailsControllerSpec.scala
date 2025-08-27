@@ -24,8 +24,7 @@ import models.{CheckMode, Mode, NormalMode}
 import navigation._
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.{times, verify}
+import org.mockito.Mockito.{when, times, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.updateRegisteredDetails.ChangeRegisteredDetailsPage
 import play.api.data.Form

@@ -1,7 +1,7 @@
 package controllers
 
 import models.{SelectChange, UserAnswers}
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.matchers.must.Matchers._
 import play.api.http.HeaderNames
 import play.api.libs.json.JsValue
 import play.api.libs.ws.{DefaultWSCookie, WSClient, WSResponse}
@@ -9,6 +9,8 @@ import play.api.test.WsTestClient
 import testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 
 import scala.concurrent.Future
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
+import play.api.libs.ws.DefaultBodyWritables.writeableOf_String
 
 trait ControllerITTestHelper extends Specifications with TestConfiguration with ITCoreTestData {
   def createClientRequestGet(client: WSClient, url: String): Future[WSResponse] = {
@@ -48,7 +50,7 @@ trait ControllerITTestHelper extends Specifications with TestConfiguration with 
     "should redirect to select return page" - {
       "when the user is authenticated" - {
         "but the returnPeriod is missing from userAnswers" in {
-          given.commonPrecondition
+          build.commonPrecondition
 
           setAnswers(emptyUserAnswersForCorrectReturn)
 
@@ -66,7 +68,7 @@ trait ControllerITTestHelper extends Specifications with TestConfiguration with 
         }
 
         "but there is no sdilReturn for correctReturnPeriod" in {
-          given.commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn, None)
           WsTestClient.withClient { client =>
@@ -89,7 +91,7 @@ trait ControllerITTestHelper extends Specifications with TestConfiguration with 
   def testUnauthorisedUser(url: String, optJson: Option[JsValue] = None): Unit = {
     "the user is unauthenticated" - {
       "redirect to gg-signin" in {
-        given.unauthorisedPrecondition
+        build.unauthorisedPrecondition
 
         WsTestClient.withClient { client =>
           val result1 = optJson match {
@@ -107,7 +109,7 @@ trait ControllerITTestHelper extends Specifications with TestConfiguration with 
 
     "the user is authenticated but has no enrolments" - {
       "redirect to unauthorised controller" in {
-        given.authorisedButNoEnrolmentsPrecondition
+        build.authorisedButNoEnrolmentsPrecondition
 
         WsTestClient.withClient { client =>
           val result1 = optJson match {
@@ -124,7 +126,7 @@ trait ControllerITTestHelper extends Specifications with TestConfiguration with 
     }
     "the user is authenticated but has no sdil subscription" - {
       "redirect to sdil home" in {
-        given.authorisedButNoSdilSubscriptionPrecondition
+        build.authorisedButNoSdilSubscriptionPrecondition
 
         WsTestClient.withClient { client =>
           val result1 = optJson match {
@@ -144,7 +146,7 @@ trait ControllerITTestHelper extends Specifications with TestConfiguration with 
   def testAuthenticatedUserButNoUserAnswers(url: String, optJson: Option[JsValue] = None): Unit = {
     "the user is authenticated but has no sdil subscription" - {
       "redirect to select change controller" in {
-        given.commonPrecondition
+        build.commonPrecondition
 
         remove(sdilNumber)
 
@@ -174,7 +176,7 @@ trait ControllerITTestHelper extends Specifications with TestConfiguration with 
       journeyTypesNotSupported.foreach { unsupportedJourney =>
         s"and has user answers for $unsupportedJourney" - {
           "should redirect to select change controller" in {
-            given.commonPrecondition
+            build.commonPrecondition
 
             setAnswers(emptyUserAnswersForSelectChange(unsupportedJourney))
 

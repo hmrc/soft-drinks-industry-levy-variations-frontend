@@ -4,7 +4,7 @@ import controllers.ControllerITTestHelper
 import models.SelectChange.CorrectReturn
 import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import pages.correctReturn.ClaimCreditsForLostDamagedPage
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
@@ -18,7 +18,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the ClaimCreditsForLostDamaged page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -44,7 +44,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
     userAnswersForCorrectReturnClaimCreditsForLostDamagedPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
@@ -76,7 +76,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
   s"GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the ClaimCreditsForLostDamaged page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -102,7 +102,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
     userAnswersForCorrectReturnClaimCreditsForLostDamagedPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
@@ -137,7 +137,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
       "when the user selects " + key - {
         "should update the session with the new value and redirect to the index controller" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -163,7 +163,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(userAnswers)
@@ -193,7 +193,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -228,7 +228,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
         val yesSelected = key == "yes"
         "should update the session with the new value and redirect to the checkAnswers controller" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -253,7 +253,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(userAnswers)
@@ -283,7 +283,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -314,7 +314,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
 
   "Post - when user is a new importer or new packer " - {
     "and selects No, should redirect to Change Registration in Returns controller" in {
-      given
+      build
         .commonPreconditionChangeSubscription(diffSubscription)
 
       setUpForCorrectReturn(completedUserAnswersForCorrectReturnNewPackerOrImporter)

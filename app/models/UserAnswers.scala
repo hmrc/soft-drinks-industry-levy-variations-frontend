@@ -194,6 +194,6 @@ object UserAnswers {
       }
     }
 
-    def format(implicit encryption: Encryption): OFormat[UserAnswers] = OFormat(reads, writes)
+    def format(implicit encryption: Encryption): OFormat[UserAnswers] = OFormat(reads(), writes)
   }
 }

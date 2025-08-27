@@ -4,7 +4,7 @@ import controllers.CorrectReturnBaseCYASummaryISpecHelper
 import models.NormalMode
 import models.SelectChange.CorrectReturn
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import pages.correctReturn.PackAtBusinessAddressPage
 import play.api.http.HeaderNames
 import play.api.http.Status.OK
@@ -23,7 +23,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
   "GET " + routes.CorrectReturnCYAController.onPageLoad.url - {
     "when the userAnswers contains no data for return to correct" - {
       "should redirect to Select Return controller" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForSelectChange(CorrectReturn).copy(correctReturnPeriod = None))
@@ -44,12 +44,12 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
         val userAnswers = userAnswerWithLitresForAllPagesNilSdilReturn
           .copy(packagingSiteList = packagingSitesFromSubscription, warehouseList = warehousesFromSubscription)
           .set(PackAtBusinessAddressPage, true).success.value
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(userAnswers)
 
-        given.sdilBackend.balance(userAnswers.id, withAssessment = false)
+        build.sdilBackend.balance(userAnswers.id, withAssessment = false)
 
         WsTestClient.withClient { client =>
           val result = createClientRequestGet(client, baseUrl + route)
@@ -109,12 +109,12 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
       "and they have only populated the required pages and have no litres" - {
         "should render the check your answers page with expected summary items" in {
           val userAnswers = userAnswerWithAllNosWithOriginalSdilReturn
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers, Some(populatedReturn))
 
-          given.sdilBackend.balance(userAnswers.id, withAssessment = false, 500)
+          build.sdilBackend.balance(userAnswers.id, withAssessment = false, 500)
 
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
@@ -181,12 +181,12 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
   "POST " + routes.CorrectReturnCYAController.onPageLoad.url - {
     "should redirect to Correction Reason controller" in {
       val userAnswers = userAnswerWithAllNosWithOriginalSdilReturn
-      given
+      build
         .commonPrecondition
 
       setUpForCorrectReturn(userAnswers, Some(populatedReturn))
 
-      given.sdilBackend.balance(userAnswers.id, withAssessment = false)
+      build.sdilBackend.balance(userAnswers.id, withAssessment = false)
 
       WsTestClient.withClient { client =>
         val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
@@ -203,12 +203,12 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
         val correctReturnData = nilCorrectReturnUAData
           .copy(broughtIntoUK = true, howManyBroughtIntoUK = Some(operatePackagingSiteLitres))
         val userAnswers = userAnswerWithAllNosWithOriginalSdilReturn
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(userAnswers)
 
-        given.sdilBackend.balance("", false)
+        build.sdilBackend.balance("", false)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 

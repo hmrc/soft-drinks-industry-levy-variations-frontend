@@ -4,7 +4,7 @@ import controllers.ControllerITTestHelper
 import models.SelectChange.CorrectReturn
 import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import pages.correctReturn.OperatePackagingSiteOwnBrandsPage
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
@@ -18,7 +18,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the OperatePackagingSiteOwnBrands page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -44,7 +44,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
     userAnswersForCorrectReturnOperatePackagingSiteOwnBrandsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
@@ -76,7 +76,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
   s"GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the OperatePackagingSiteOwnBrands page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -102,7 +102,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
     userAnswersForCorrectReturnOperatePackagingSiteOwnBrandsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
@@ -137,7 +137,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
       "when the user selects " + key - {
         "should update the session with the new value and redirect to the index controller" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -163,7 +163,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(userAnswers)
@@ -193,7 +193,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -228,7 +228,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
         val yesSelected = key == "yes"
         "should update the session with the new value and redirect to the checkAnswers controller" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -253,7 +253,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(userAnswers)
@@ -283,7 +283,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)

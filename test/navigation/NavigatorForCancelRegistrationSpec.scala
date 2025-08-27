@@ -46,13 +46,13 @@ class NavigatorForCancelRegistrationSpec extends SpecBase {
       s"must go from $CancelRegistrationDatePage to CancelRegistrationCYA in NormalMode" in {
         val result = navigator.nextPage(CancelRegistrationDatePage, NormalMode,
           UserAnswers("id", SelectChange.CancelRegistration, Json.obj(ReasonPage.toString -> "I don't want to anymore"), contactAddress = contactAddress))
-        result mustBe routes.CancelRegistrationCYAController.onPageLoad
+        result mustBe routes.CancelRegistrationCYAController.onPageLoad()
       }
 
       s"must go from $CancelRegistrationDatePage to CancelRegistrationCYA in CheckMode" in {
         val result = navigator.nextPage(CancelRegistrationDatePage, CheckMode,
           UserAnswers("id", SelectChange.CancelRegistration, Json.obj(ReasonPage.toString -> "I don't want to anymore"), contactAddress = contactAddress))
-        result mustBe routes.CancelRegistrationCYAController.onPageLoad
+        result mustBe routes.CancelRegistrationCYAController.onPageLoad()
       }
     }
 
@@ -62,13 +62,13 @@ class NavigatorForCancelRegistrationSpec extends SpecBase {
 
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", SelectChange.CancelRegistration,
-          contactAddress = contactAddress)) mustBe routes.CancelRegistrationCYAController.onPageLoad
+          contactAddress = contactAddress)) mustBe routes.CancelRegistrationCYAController.onPageLoad()
       }
 
       s"must go from $ReasonPage to CYA page" in {
         val result = navigator.nextPage(ReasonPage, CheckMode,
           UserAnswers("id", SelectChange.CancelRegistration, Json.obj(ReasonPage.toString -> "I don't want to anymore"), contactAddress = contactAddress))
-        result mustBe routes.CancelRegistrationCYAController.onPageLoad
+        result mustBe routes.CancelRegistrationCYAController.onPageLoad()
       }
     }
   }

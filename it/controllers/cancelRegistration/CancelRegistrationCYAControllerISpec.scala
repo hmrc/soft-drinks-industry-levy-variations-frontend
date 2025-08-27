@@ -3,7 +3,7 @@ package controllers.cancelRegistration
 import controllers.ControllerITTestHelper
 import models.SelectChange.CancelRegistration
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
 import play.api.http.HeaderNames
 import play.api.http.Status.OK
@@ -18,10 +18,10 @@ class CancelRegistrationCYAControllerISpec extends ControllerITTestHelper with S
 
   val route = "/cancel-registration/check-your-answers"
 
-  "GET " + routes.CancelRegistrationCYAController.onPageLoad.url - {
+  "GET " + routes.CancelRegistrationCYAController.onPageLoad().url - {
     "when the userAnswers contains no data" - {
       "should redirect to Select Change controller" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForSelectChange(CancelRegistration))
@@ -43,7 +43,7 @@ class CancelRegistrationCYAControllerISpec extends ControllerITTestHelper with S
         val userAnswers = emptyUserAnswersForCancelRegistration
           .set(ReasonPage, "No longer sell drinks").success.value
           .set(CancelRegistrationDatePage, validCancellationDate).success.value
-        given
+        build
           .commonPrecondition
 
         setAnswers(userAnswers)
@@ -78,7 +78,7 @@ class CancelRegistrationCYAControllerISpec extends ControllerITTestHelper with S
     "should send the expected variation submission" - {
       "and redirect to Cancellation Request done controller" in {
 
-        given
+        build
           .commonPrecondition
           .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -91,7 +91,7 @@ class CancelRegistrationCYAControllerISpec extends ControllerITTestHelper with S
 
           whenReady(result) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some(routes.CancellationRequestDoneController.onPageLoad.url)
+            res.header(HeaderNames.LOCATION) mustBe Some(routes.CancellationRequestDoneController.onPageLoad().url)
             requestBodyMatchesDeregistration(wireMockServer)
           }
         }

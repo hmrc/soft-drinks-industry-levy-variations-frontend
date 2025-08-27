@@ -33,6 +33,7 @@ import utilities.GenericLogger
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class SoftDrinksIndustryLevyConnector @Inject()(
                                                  val http: HttpClientV2,

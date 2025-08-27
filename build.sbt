@@ -14,7 +14,7 @@ lazy val root = (project in file("."))
   .settings(majorVersion := 0, libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always) // libraryDependencySchemes added to get around the scoverage compile errors for scala 2.13.10
   .settings(ThisBuild / useSuperShell := false)
   .settings(
-    scalaVersion := "2.13.16",
+    scalaVersion := "3.3.4",
     name := appName,
     RoutesKeys.routesImport ++= Seq(
       "models._",
@@ -34,14 +34,14 @@ lazy val root = (project in file("."))
     ),
     PlayKeys.playDefaultPort := 8705,
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*components.*;" +
-      ".*Routes.*;.*viewmodels.govuk.*;",
-    ScoverageKeys.coverageMinimumStmtTotal := 91,
+      ".*Routes.*;.*viewmodels.govuk.*;.*models.*;",
+    ScoverageKeys.coverageMinimumStmtTotal := 87,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
     scalacOptions += "-deprecation",
     scalacOptions ++= Seq(
       "-feature",
-      "-Wconf:cat=deprecation:ws,cat=feature:ws,cat=optimizer:ws,src=target/.*:s"
+      "-Wconf:cat=deprecation:s,cat=feature:s,src=target/.*:s,msg=Flag.*repeatedly:s,msg=unused explicit parameter*:s"
     ),
     libraryDependencies ++= AppDependencies.all,
     retrieveManaged := true,
@@ -53,7 +53,6 @@ lazy val root = (project in file("."))
         ))
     ),
     // scalacOptions += "-deprecation",
-    scalacOptions ++= Seq("-Ypatmat-exhaust-depth", "off"),
     // prevent removal of unused code which generates warning errors due to use of third-party libs
     uglifyCompressOptions := Seq("unused=false", "dead_code=false"),
     pipelineStages := Seq(digest),

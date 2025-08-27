@@ -29,7 +29,7 @@ trait DataHelper {
                      packSmall: List[SmallProducer],
                      importLarge: Litreage = Litreage(15, 12),
                      importSmall: Litreage = Litreage(15, 12),
-                     export: Litreage = Litreage(15, 12),
+                     `export`: Litreage = Litreage(15, 12),
                      wastage: Litreage = Litreage(15, 12)): SdilReturn = {
     SdilReturn(
       ownBrand = ownBrand,
@@ -37,7 +37,7 @@ trait DataHelper {
       packSmall = packSmall,
       importLarge = importLarge,
       importSmall = importSmall,
-      export = export,
+      `export` = `export`,
       wastage = wastage,
       submittedOn = None
     )

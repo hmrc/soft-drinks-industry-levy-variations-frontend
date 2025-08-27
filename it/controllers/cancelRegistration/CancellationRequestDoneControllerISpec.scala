@@ -3,7 +3,7 @@ package controllers.cancelRegistration
 import controllers.ControllerITTestHelper
 import models.SelectChange.CancelRegistration
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
 import play.api.http.Status.SEE_OTHER
 import play.api.test.WsTestClient
@@ -18,7 +18,7 @@ class CancellationRequestDoneControllerISpec extends ControllerITTestHelper {
 
   "GET " + normalRoutePath - {
     "should return OK and render the CancellationRequestDone page" in {
-      given
+      build
         .commonPrecondition
       val testTime = Instant.now()
       val userAnswers = emptyUserAnswersForCancelRegistration
@@ -38,7 +38,7 @@ class CancellationRequestDoneControllerISpec extends ControllerITTestHelper {
     }
 
     "must redirect if there is no submission date" in {
-      given
+      build
         .commonPrecondition
       val userAnswers = emptyUserAnswersForCancelRegistration
         .set(ReasonPage, "No longer sell drinks").success.value

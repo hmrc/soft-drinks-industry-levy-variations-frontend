@@ -4,23 +4,26 @@ import controllers.ControllerITTestHelper
 import models.{CheckMode, NormalMode}
 import models.SelectChange.CorrectReturn
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.matchers.must.Matchers._
 import pages.correctReturn.ExemptionsForSmallProducersPage
 import play.api.http.HeaderNames
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.test.WsTestClient
+import play.api.test.{WsTestClient, FakeRequest}
 
 class ExemptionsForSmallProducersControllerISpec extends ControllerITTestHelper {
 
   val normalRoutePath = "/exemptions-for-small-producers"
   val checkRoutePath = "/change-exemptions-for-small-producers"
 
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
+  
   List(normalRoutePath, checkRoutePath).foreach { route =>
     "GET " + route - {
       "when the userAnswers contains no data" - {
         "should return OK and render the ExemptionsForSmallProducers page with no data populated" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -31,7 +34,7 @@ class ExemptionsForSmallProducersControllerISpec extends ControllerITTestHelper 
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("correctReturn.exemptionsForSmallProducers" + ".title"))
+              page.title must include(messages("correctReturn.exemptionsForSmallProducers" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -46,7 +49,7 @@ class ExemptionsForSmallProducersControllerISpec extends ControllerITTestHelper 
       userAnswersForExceptionsForSmallProducersPage.foreach { case (key, userAnswers) =>
         s"when the userAnswers contains data for the page with " + key + " selected" - {
           s"should return OK and render the page with " + key + " radio checked" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(userAnswers)
@@ -57,7 +60,7 @@ class ExemptionsForSmallProducersControllerISpec extends ControllerITTestHelper 
               whenReady(result1) { res =>
                 res.status mustBe 200
                 val page = Jsoup.parse(res.body)
-                page.title must include(Messages("correctReturn.exemptionsForSmallProducers" + ".title"))
+                page.title must include(messages("correctReturn.exemptionsForSmallProducers" + ".title"))
                 val radioInputs = page.getElementsByClass("govuk-radios__input")
                 radioInputs.size() mustBe 2
                 radioInputs.get(0).attr("value") mustBe "true"
@@ -81,7 +84,7 @@ class ExemptionsForSmallProducersControllerISpec extends ControllerITTestHelper 
           s"when the user selects $key and small producers are ${if (smallProducersAdded) "" else "not "}already added" - {
             "should update the session with the new value and redirect to the expected controller" - {
               s"when the session contains no data for page" in {
-                given
+                build
                   .commonPrecondition
 
                 val smallProducers = if (smallProducersAdded) smallProducersAddedList else List.empty
@@ -116,7 +119,7 @@ class ExemptionsForSmallProducersControllerISpec extends ControllerITTestHelper 
               }
 
               "when the session already contains data for page" in {
-                given
+                build
                   .commonPrecondition
 
                 val smallProducers = if (smallProducersAdded) smallProducersAddedList else List.empty
@@ -156,7 +159,7 @@ class ExemptionsForSmallProducersControllerISpec extends ControllerITTestHelper 
 
       "when the user does not select an option" - {
         "should return 400 with required error" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -168,13 +171,13 @@ class ExemptionsForSmallProducersControllerISpec extends ControllerITTestHelper 
             whenReady(result) { res =>
               res.status mustBe 400
               val page = Jsoup.parse(res.body)
-              page.title must include("Error: " + Messages("correctReturn.exemptionsForSmallProducers" + ".title"))
+              page.title must include("Error: " + messages("correctReturn.exemptionsForSmallProducers" + ".title"))
               val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
                 .first()
               errorSummary
                 .select("a")
                 .attr("href") mustBe "#value"
-              errorSummary.text() mustBe Messages("correctReturn.exemptionsForSmallProducers" + ".error.required")
+              errorSummary.text() mustBe messages("correctReturn.exemptionsForSmallProducers" + ".error.required")
             }
           }
         }

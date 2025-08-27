@@ -5,7 +5,7 @@ import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced
 import models.{CheckMode, NormalMode, UserAnswers}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import pages.changeActivity._
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
@@ -30,7 +30,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data for the page" - {
       "should return OK and render the OperatePackagingSiteOwnBrands page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(operateOwnBrandsJourneyUserAnswers)
@@ -55,7 +55,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
 
     "When a previous page has not been answered" - {
       s"should redirect to the $AmountProducedPage page " in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(operateOwnBrandsJourneyUserAnswers.remove(AmountProducedPage).success.value)
@@ -71,7 +71,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
       }
 
       s"should redirect to the $ThirdPartyPackagersPage page " in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(operateOwnBrandsJourneyUserAnswers.remove(ThirdPartyPackagersPage).success.value)
@@ -90,7 +90,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
     userAnswersForChangeActivityOwnBrandsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswers)
@@ -121,7 +121,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
   s"GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the OperatePackagingSiteOwnBrands page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(operateOwnBrandsJourneyUserAnswers)
@@ -147,7 +147,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
     userAnswersForChangeActivityOwnBrandsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswers)
@@ -181,7 +181,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
       "when the user selects " + key - {
         "should update the session with the new value and redirect to the index controller" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(operateOwnBrandsJourneyUserAnswers)
@@ -207,7 +207,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(userAnswers)
@@ -237,7 +237,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(operateOwnBrandsJourneyUserAnswers)
@@ -272,7 +272,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
         val yesSelected = key == "yes"
         "should update the session with the new value and redirect to the checkAnswers controller" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(emptyUserAnswersForChangeActivity)
@@ -286,7 +286,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
                 val expectedLocation = if(yesSelected) {
                   routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
                 } else {
-                  routes.ChangeActivityCYAController.onPageLoad.url
+                  routes.ChangeActivityCYAController.onPageLoad().url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(OperatePackagingSiteOwnBrandsPage))
@@ -297,7 +297,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(userAnswers)
@@ -312,7 +312,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
                 val expectedLocation = if (yesSelected) {
                   routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
                 } else {
-                  routes.ChangeActivityCYAController.onPageLoad.url
+                  routes.ChangeActivityCYAController.onPageLoad().url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(OperatePackagingSiteOwnBrandsPage))
@@ -327,7 +327,7 @@ class OperatePackagingSiteOwnBrandsControllerISpec extends ControllerITTestHelpe
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)

@@ -5,12 +5,12 @@ import models.SelectChange.CorrectReturn
 import models.submission.Litreage
 import models.{CheckMode, NormalMode, SmallProducer}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.matchers.must.Matchers._
 import pages.correctReturn.RemoveSmallProducerConfirmPage
 import play.api.http.HeaderNames
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.test.WsTestClient
+import play.api.test.{WsTestClient, FakeRequest}
 
 class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
 
@@ -26,10 +26,13 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
   val normalRoutePath = s"/remove-small-producer-confirm/$sdilRefPartyDrinks"
   val checkRoutePath = s"/change-remove-small-producer-confirm/$sdilRefPartyDrinks"
 
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
+  
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the RemoveSmallProducerConfirm page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
@@ -40,7 +43,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("correctReturn.removeSmallProducerConfirm" + ".title"))
+            page.title must include(messages("correctReturn.removeSmallProducerConfirm" + ".title"))
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -55,7 +58,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
     userAnswersForCorrectReturnRemoveSmallProducerConfirmPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         "should return OK and render the page without radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
@@ -66,7 +69,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("correctReturn.removeSmallProducerConfirm" + ".title"))
+              page.title must include(messages("correctReturn.removeSmallProducerConfirm" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -94,7 +97,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
       "when the user selects " + key + "and initially has more than one small producer" - {
         "should update the session with the new value and redirect to the small producer details" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(userAnswersWithTwoSmallProducers)
@@ -115,7 +118,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(userAnswersWithTwoSmallProducers)
@@ -140,7 +143,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
       "when the user selects " + key + "and initially has one small producer" - {
         "should update the session with the new value and redirect to the small producer details page for false and exemptions for small producers for true" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(userAnswersWithOneSmallProducer)
@@ -166,7 +169,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(userAnswersWithOneSmallProducer)
@@ -196,7 +199,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
@@ -208,13 +211,13 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("correctReturn.removeSmallProducerConfirm" + ".title"))
+            page.title must include("Error: " + messages("correctReturn.removeSmallProducerConfirm" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("correctReturn.removeSmallProducerConfirm" + ".error.required")
+            errorSummary.text() mustBe messages("correctReturn.removeSmallProducerConfirm" + ".error.required")
           }
         }
       }
@@ -227,7 +230,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
   "GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the RemoveSmallProducerConfirm page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
@@ -238,7 +241,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("correctReturn.removeSmallProducerConfirm" + ".title"))
+            page.title must include(messages("correctReturn.removeSmallProducerConfirm" + ".title"))
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -253,7 +256,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
     userAnswersForCorrectReturnRemoveSmallProducerConfirmPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         "should return OK and render the page without radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
@@ -264,7 +267,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("correctReturn.removeSmallProducerConfirm" + ".title"))
+              page.title must include(messages("correctReturn.removeSmallProducerConfirm" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -292,7 +295,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
       "when the user selects " + key + "and initially has more than one small producer" - {
         "should update the session with the new value and redirect to the small producer details" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(userAnswersWithTwoSmallProducers)
@@ -313,7 +316,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(userAnswersWithTwoSmallProducers)
@@ -338,7 +341,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
       "when the user selects " + key + "and initially has one small producer" - {
         "should update the session with the new value and redirect to the small producer details page for false and exemptions for small producers for true" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(userAnswersWithOneSmallProducer)
@@ -364,7 +367,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(userAnswersWithOneSmallProducer)
@@ -394,7 +397,7 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer(aliasPartyDrinks, sdilRefPartyDrinks, Litreage(smallLitre, largeLitre)))))
@@ -406,13 +409,13 @@ class RemoveSmallProducerConfirmControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("correctReturn.removeSmallProducerConfirm" + ".title"))
+            page.title must include("Error: " + messages("correctReturn.removeSmallProducerConfirm" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("correctReturn.removeSmallProducerConfirm" + ".error.required")
+            errorSummary.text() mustBe messages("correctReturn.removeSmallProducerConfirm" + ".error.required")
           }
         }
       }

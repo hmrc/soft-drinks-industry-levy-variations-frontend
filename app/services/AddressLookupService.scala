@@ -96,7 +96,7 @@ class AddressLookupService @Inject()(
       options = JourneyOptions(
         continueUrl = returnContinueUrl(state, sdilId, mode),
         homeNavHref = None,
-        signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+        signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
         accessibilityFooterUrl = Some(frontendAppConfig.accessibilityFooterUrl),
         phaseFeedbackLink = Some(frontendAppConfig.feedbackUrl(requestHeader)),
         deskProServiceName = None,
@@ -119,7 +119,7 @@ class AddressLookupService @Inject()(
         )),
         timeoutConfig = Some(TimeoutConfig(
           timeoutAmount = frontendAppConfig.timeout,
-          timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+          timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
           timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
         )),
         serviceHref = Some(frontendAppConfig.sdilHomeUrl),
@@ -130,7 +130,7 @@ class AddressLookupService @Inject()(
     )
   }
 
- private def returnJourneyLabels(state: AddressLookupState)(implicit messages: Messages): Option[JourneyLabels] = {
+  private def returnJourneyLabels(state: AddressLookupState)(implicit messages: Messages): Option[JourneyLabels] = {
    state match {
      case PackingDetails => Some(
        JourneyLabels(

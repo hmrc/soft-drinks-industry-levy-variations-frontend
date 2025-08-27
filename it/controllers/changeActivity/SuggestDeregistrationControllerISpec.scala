@@ -5,7 +5,7 @@ import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced
 import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import pages.changeActivity.{AmountProducedPage, ContractPackingPage, ImportsPage}
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
@@ -21,7 +21,7 @@ class SuggestDeregistrationControllerISpec extends ControllerITTestHelper {
 
   "GET " + normalRoutePath - {
     "should return OK and render the SuggestDeregistration page" in {
-      given
+      build
         .commonPrecondition
 
       setAnswers(completedUserAnswers)
@@ -43,7 +43,7 @@ class SuggestDeregistrationControllerISpec extends ControllerITTestHelper {
 
   s"POST " + normalRoutePath - {
     "should redirect to Cancel Registration - File return before deregistration" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(completedUserAnswers)
@@ -59,7 +59,7 @@ class SuggestDeregistrationControllerISpec extends ControllerITTestHelper {
       }
 
     "should redirect to Cancel Registration - Reason Controller, when no returns are pending" in {
-      given
+      build
         .returnPendingNotFoundPreCondition
 
       setAnswers(completedUserAnswers)
@@ -75,7 +75,7 @@ class SuggestDeregistrationControllerISpec extends ControllerITTestHelper {
     }
 
     "should return an internal server error if it fails while trying to get missing returns list" in {
-      given
+      build
         .commonPrecondition
         .sdilBackend.returns_pending_error("0000001611")
 

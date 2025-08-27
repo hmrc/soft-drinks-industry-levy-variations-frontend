@@ -32,7 +32,7 @@ import java.time.{Instant, LocalDateTime, ZoneId}
 
 class ChangeActivitySentControllerSpec extends SpecBase {
 
-  lazy val updateSentRoute: String = routes.ChangeActivitySentController.onPageLoad.url
+  lazy val updateSentRoute: String = routes.ChangeActivitySentController.onPageLoad().url
   val getSentDateTime: LocalDateTime = LocalDateTime.now(ZoneId.of("UTC"))
   val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
   val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("H:MMa")

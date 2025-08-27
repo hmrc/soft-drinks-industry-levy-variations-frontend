@@ -1,11 +1,13 @@
 package test
 
 import controllers.ControllerITTestHelper
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
 import play.api.test.Helpers.{CONTENT_TYPE, JSON, LOCATION}
 import play.api.test.WsTestClient
+import play.api.libs.ws.writeableOf_JsValue
+import play.api.libs.ws.DefaultBodyReadables.readableAsString
 
 class AddressFrontendStubControllerIntegrationSpec extends ControllerITTestHelper {
 

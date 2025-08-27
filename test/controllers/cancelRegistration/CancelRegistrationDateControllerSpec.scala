@@ -69,12 +69,12 @@ class CancelRegistrationDateControllerSpec extends SpecBase with MockitoSugar {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCancelRegistration)).build()
 
       running(application) {
-        val result = route(application, getRequest).value
+        val result = route(application, getRequest()).value
 
         val view = application.injector.instanceOf[CancelRegistrationDateView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(getRequest, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(getRequest(), messages(application)).toString
       }
     }
 
@@ -87,10 +87,10 @@ class CancelRegistrationDateControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val view = application.injector.instanceOf[CancelRegistrationDateView]
 
-        val result = route(application, getRequest).value
+        val result = route(application, getRequest()).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(getRequest, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(getRequest(), messages(application)).toString
       }
     }
 
@@ -109,7 +109,7 @@ class CancelRegistrationDateControllerSpec extends SpecBase with MockitoSugar {
           .build()
 
       running(application) {
-        val result = route(application, postRequest).value
+        val result = route(application, postRequest()).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardRoute.url
@@ -155,7 +155,7 @@ class CancelRegistrationDateControllerSpec extends SpecBase with MockitoSugar {
             .build()
 
         running(application) {
-          val result = route(application, postRequest).value
+          val result = route(application, postRequest()).value
 
         status(result) mustEqual INTERNAL_SERVER_ERROR
         val page = Jsoup.parse(contentAsString(result))
@@ -179,7 +179,7 @@ class CancelRegistrationDateControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
 
-          await(route(application, postRequest).value)
+          await(route(application, postRequest()).value)
           events.collectFirst {
             case event =>
               event.getLevel.levelStr mustBe "ERROR"

@@ -4,7 +4,7 @@ import controllers.ControllerITTestHelper
 import models.SelectChange.{ChangeActivity, UpdateRegisteredDetails}
 import models.{CheckMode, NormalMode}
 import models.backend.{Site, UkAddress}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import play.api.http.Status.{INTERNAL_SERVER_ERROR, SEE_OTHER}
 import play.api.test.WsTestClient
 import play.mvc.Http.HeaderNames
@@ -22,7 +22,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
           "no address exists in DB currently for SDILID provided" in {
             val sdilId: String = "foo"
             val alfId: String = "bar"
-            given
+            build
               .commonPrecondition
               .alf.getAddress(alfId)
             setAnswers(userAnswers)
@@ -41,11 +41,12 @@ class RampOffControllerISpec extends ControllerITTestHelper {
                   UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), Some("soft drinks ltd")))
 
                 res.status mustBe SEE_OTHER
-                val expectedLocation = if (changeSelected == ChangeActivity) {
-                  controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(mode).url
-                } else if (changeSelected == UpdateRegisteredDetails) {
-                  controllers.updateRegisteredDetails.routes.WarehouseDetailsController.onPageLoad(mode).url
-                }
+                val expectedLocation =
+                  if (changeSelected == ChangeActivity)
+                    controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(mode).url
+                  else
+                    controllers.updateRegisteredDetails.routes.WarehouseDetailsController.onPageLoad(mode).url
+
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
               }
 
@@ -56,7 +57,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
             val alfId: String = "bar"
             val userAnswersBefore = userAnswers.copy(
               warehouseList = Map(sdilId -> Site(UkAddress(List.empty, "foo", Some("wizz")))))
-            given
+            build
               .commonPrecondition
               .alf.getAddress(alfId)
             setAnswers(userAnswersBefore)
@@ -75,11 +76,11 @@ class RampOffControllerISpec extends ControllerITTestHelper {
                   UkAddress(List("line 1", "line 2", "line 3", "line 4"), "aa1 1aa", alfId = Some(alfId)), Some("soft drinks ltd")))
 
                 res.status mustBe SEE_OTHER
-                val expectedLocation = if (changeSelected == ChangeActivity) {
-                  controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(mode).url
-                } else if (changeSelected == UpdateRegisteredDetails) {
-                  controllers.updateRegisteredDetails.routes.WarehouseDetailsController.onPageLoad(mode).url
-                }
+                val expectedLocation =
+                  if (changeSelected == ChangeActivity)
+                    controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(mode).url
+                  else
+                    controllers.updateRegisteredDetails.routes.WarehouseDetailsController.onPageLoad(mode).url
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
               }
             }
@@ -89,7 +90,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
           "alf returns error" in {
             val sdilId: String = "foo"
             val alfId: String = "bar"
-            given
+            build
               .commonPrecondition
               .alf.getBadAddress(alfId)
             setAnswers(userAnswers)
@@ -118,7 +119,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
           "no address exists in DB currently for SDILID provided" in {
             val sdilId: String = "foo"
             val alfId: String = "bar"
-            given
+            build
               .commonPrecondition
               .alf.getAddress(alfId)
             setAnswers(userAnswers.copy(packagingSiteList = Map.empty))
@@ -137,11 +138,12 @@ class RampOffControllerISpec extends ControllerITTestHelper {
                 updatedUserAnswers.warehouseList mustBe userAnswers.warehouseList
 
                 res.status mustBe SEE_OTHER
-                val expectedLocation = if (changeSelected == ChangeActivity) {
-                  controllers.changeActivity.routes.PackagingSiteDetailsController.onPageLoad(mode).url
-                } else if (changeSelected == UpdateRegisteredDetails) {
-                  controllers.updateRegisteredDetails.routes.PackagingSiteDetailsController.onPageLoad(mode).url
-                }
+                val expectedLocation =
+                  if (changeSelected == ChangeActivity)
+                    controllers.changeActivity.routes.PackagingSiteDetailsController.onPageLoad(mode).url
+                  else
+                    controllers.updateRegisteredDetails.routes.PackagingSiteDetailsController.onPageLoad(mode).url
+
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
               }
             }
@@ -152,7 +154,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
           "alf returns error" in {
             val sdilId: String = "foo"
             val alfId: String = "bar"
-            given
+            build
               .commonPrecondition
               .alf.getBadAddress(alfId)
             setAnswers(userAnswers)
@@ -182,7 +184,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
         "no address exists in DB currently for SDILID provided" in {
           val sdilId: String = "foo"
           val alfId: String = "bar"
-          given
+          build
             .commonPrecondition
             .alf.getAddress(alfId)
           setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -210,7 +212,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
           val alfId: String = "bar"
           val userAnswersBefore = emptyUserAnswersForUpdateRegisteredDetails.copy(
             contactAddress = UkAddress(List.empty, "foo", Some("wizz")))
-          given
+          build
             .commonPrecondition
             .alf.getAddress(alfId)
           setAnswers(userAnswersBefore)
@@ -238,7 +240,7 @@ class RampOffControllerISpec extends ControllerITTestHelper {
         "alf returns error" in {
           val sdilId: String = "foo"
           val alfId: String = "bar"
-          given
+          build
             .commonPrecondition
             .alf.getBadAddress(alfId)
           setAnswers(emptyUserAnswersForUpdateRegisteredDetails)

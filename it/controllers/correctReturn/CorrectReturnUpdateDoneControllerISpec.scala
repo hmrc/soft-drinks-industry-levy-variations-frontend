@@ -5,7 +5,7 @@ import models.LitresInBands
 import models.SelectChange.CorrectReturn
 import models.correctReturn.RepaymentMethod
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import pages.correctReturn._
 import play.api.http.Status.OK
 import play.api.test.WsTestClient
@@ -18,11 +18,11 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
 
   val route = "/correct-return/update-done"
 
-  "GET " + routes.CorrectReturnUpdateDoneController.onPageLoad.url - {
+  "GET " + routes.CorrectReturnUpdateDoneController.onPageLoad().url - {
 
     "when the userAnswers contains no data for correct return " - {
       "should redirect to select return controller" in {
-        given
+        build
           .commonPrecondition
         val testTime = Instant.now()
         setUpForCorrectReturn(emptyUserAnswersForSelectChange(CorrectReturn).copy(submitted = true, submittedOn = Some(testTime),
@@ -49,7 +49,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
           .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
         setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
 
-        given
+        build
           .commonPrecondition
           .sdilBackend.balance(userAnswers.id, false)
 
@@ -117,7 +117,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
           setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)), Some(populatedReturn))
 
-          given
+          build
             .commonPrecondition
             .sdilBackend.balance(userAnswers.id, false)
 
@@ -181,7 +181,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
               .copy(submitted = true, submittedOn = Some(testTime))
               .set(CorrectionReasonPage, "I forgot something").success.value
               .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-            given
+            build
               .commonPrecondition
               .sdilBackend.balance(userAnswers.id, false)
 
@@ -216,7 +216,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
               .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
             setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
 
-            given
+            build
               .commonPrecondition
               .sdilBackend.balance(userAnswers.id, false)
 
@@ -248,7 +248,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
               .set(CorrectionReasonPage, "I forgot something").success.value
               .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
             setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
-            given
+            build
               .commonPreconditionChangeSubscription(diffSubscriptionWithWarehouses)
               .sdilBackend.balance(userAnswers.id, false)
 
@@ -282,7 +282,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
               .set(CorrectionReasonPage, "I forgot something").success.value
               .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
             setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
-            given
+            build
               .commonPreconditionChangeSubscription(diffSubscriptionWithWarehouses)
               .sdilBackend.balance(userAnswers.id, false)
 
@@ -314,7 +314,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
               .set(CorrectionReasonPage, "I forgot something").success.value
               .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
             setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
-            given
+            build
               .commonPrecondition
               .sdilBackend.balance(userAnswers.id, false)
 
@@ -346,7 +346,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
             val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
               .set(CorrectionReasonPage, "I forgot something").success.value
               .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-            given
+            build
               .commonPrecondition
               .sdilBackend.balance(userAnswers.id, false)
 
@@ -378,7 +378,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
             val userAnswers = userAnswerWithExemptionSmallProducerPageUpdatedAndNilSdilReturn
               .set(CorrectionReasonPage, "I forgot something").success.value
               .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-            given
+            build
               .commonPrecondition
               .sdilBackend.balance(userAnswers.id, false)
 
@@ -412,7 +412,7 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
               .copy(warehouseList = warehousesFromSubscription)
               .set(CorrectionReasonPage, "I forgot something").success.value
               .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-            given
+            build
               .commonPrecondition
               .sdilBackend.balance(userAnswers.id, false)
 

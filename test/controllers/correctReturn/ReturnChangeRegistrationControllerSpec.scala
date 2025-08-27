@@ -21,7 +21,7 @@ import connectors.SoftDrinksIndustryLevyConnector
 import models.SelectChange.CorrectReturn
 import models.{LitresInBands, NormalMode, SdilReturn, UserAnswers}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
+import org.mockito.Mockito.{when, mock}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.correctReturn.{BroughtIntoUKPage, HowManyBroughtIntoUKPage, PackagedAsContractPackerPage}
 import play.api.inject

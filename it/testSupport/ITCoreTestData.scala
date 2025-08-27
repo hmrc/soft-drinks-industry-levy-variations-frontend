@@ -7,7 +7,7 @@ import org.scalatest.TryValues
 import play.api.libs.json.Json
 
 import java.time.LocalDate
-import scala.concurrent.duration.DurationInt
+import scala.concurrent.duration.{DurationInt, FiniteDuration}
 
 trait ITCoreTestData
   extends TryValues
@@ -42,7 +42,7 @@ trait ITCoreTestData
       "siteDOS" -> Site(UkAddress(List("64 Clifton Roundabout", "Worcester"), "WR53 7CX", None), Some("Super Lemonade Plc"), None, None)
     )
 
-  implicit val duration = 5.seconds
+  implicit val duration: FiniteDuration = 5.seconds
 
   val defaultCall = routes.SelectChangeController.onPageLoad
 

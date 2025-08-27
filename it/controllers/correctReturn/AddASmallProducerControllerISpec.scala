@@ -5,12 +5,13 @@ import models.SelectChange.CorrectReturn
 import models.submission.Litreage
 import models.{CheckMode, NormalMode, ReturnPeriod, SmallProducer}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import play.api.i18n.Messages
+import org.scalatest.matchers.must.Matchers._
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
-import play.api.test.WsTestClient
+import play.api.test.{WsTestClient, FakeRequest}
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
@@ -28,11 +29,14 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
   private def userAnswersWithSmallProducersSet = emptyUserAnswersForCorrectReturn
     .copy(smallProducerList = List(SmallProducer(aliasSuperCola, sdilRefSuperCola, Litreage(100, 200))))
 
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
+
   "GET " + normalRoutePath - {
     "Ask user to input a registered small producer's details" in {
       val userAnswers = emptyUserAnswersForCorrectReturn
       setUpForCorrectReturn(userAnswers)
-      given.commonPreconditionChangeSubscription(diffSubscription)
+      build.commonPreconditionChangeSubscription(diffSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(correctReturnBaseUrl + normalRoutePath)
@@ -55,7 +59,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
     "Ask user to input a registered small producer's details" in {
       val userAnswers = emptyUserAnswersForCorrectReturn
       setUpForCorrectReturn(userAnswers)
-      given.commonPreconditionChangeSubscription(diffSubscription)
+      build.commonPreconditionChangeSubscription(diffSubscription)
 
       WsTestClient.withClient { client =>
         val result1 = client.url(correctReturnBaseUrl + checkRoutePath)
@@ -76,7 +80,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
   }
   "POST " + normalRoutePath - {
     "Post the new form data and return form with error if SDIL reference number already exists as a small producer" in {
-      given
+      build
         .commonPreconditionChangeSubscription(diffSubscription)
 
       val userAnswers = userAnswersWithSmallProducersSet
@@ -94,13 +98,13 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         whenReady(result) { res =>
           res.status mustBe 400
           val page = Jsoup.parse(res.body)
-          page.title must include("Error: " + Messages("correctReturn.addASmallProducer.title"))
+          page.title must include("Error: " + messages("correctReturn.addASmallProducer.title"))
           val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
             .first()
           errorSummary
             .select("a")
             .attr("href") mustBe "#referenceNumber"
-          errorSummary.text() mustBe Messages("correctReturn.addASmallProducer.error.referenceNumber.exists")
+          errorSummary.text() mustBe messages("correctReturn.addASmallProducer.error.referenceNumber.exists")
         }
 
       }
@@ -108,7 +112,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
     }
 
     "Redirect to Select controller if return period has not been set" in {
-      given
+      build
         .commonPreconditionChangeSubscription(diffSubscription)
 
       val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None)
@@ -134,7 +138,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
     }
 
     "Post the new form data and return form with error if SDIL reference number is not a valid small producer" in {
-      given
+      build
         .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = false)
 
@@ -153,13 +157,13 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         whenReady(result) { res =>
           res.status mustBe 400
           val page = Jsoup.parse(res.body)
-          page.title must include("Error: " + Messages("correctReturn.addASmallProducer.title"))
+          page.title must include("Error: " + messages("correctReturn.addASmallProducer.title"))
           val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
             .first()
           errorSummary
             .select("a")
             .attr("href") mustBe "#referenceNumber"
-          errorSummary.text() mustBe Messages("correctReturn.addASmallProducer.error.referenceNumber.notASmallProducer")
+          errorSummary.text() mustBe messages("correctReturn.addASmallProducer.error.referenceNumber.notASmallProducer")
         }
 
       }
@@ -171,7 +175,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
       val expectedResult: Some[List[SmallProducer]] = Some(List(SmallProducer(alias = aliasSuperCola,
         sdilRef = sdilRefSuperCola, litreage = Litreage(litres, litres))))
 
-      given
+      build
         .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = true)
 
@@ -203,7 +207,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
   }
   "POST " + checkRoutePath - {
     "Post the new form data and return form with error if SDIL reference number already exists as a small producer" in {
-      given
+      build
         .commonPreconditionChangeSubscription(diffSubscription)
 
       val userAnswers = userAnswersWithSmallProducersSet
@@ -221,13 +225,13 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         whenReady(result) { res =>
           res.status mustBe 400
           val page = Jsoup.parse(res.body)
-          page.title must include("Error: " + Messages("correctReturn.addASmallProducer.title"))
+          page.title must include("Error: " + messages("correctReturn.addASmallProducer.title"))
           val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
             .first()
           errorSummary
             .select("a")
             .attr("href") mustBe "#referenceNumber"
-          errorSummary.text() mustBe Messages("correctReturn.addASmallProducer.error.referenceNumber.exists")
+          errorSummary.text() mustBe messages("correctReturn.addASmallProducer.error.referenceNumber.exists")
         }
 
       }
@@ -235,7 +239,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
     }
 
     "Redirect to select controller if return period has not been set" in {
-      given
+      build
         .commonPreconditionChangeSubscription(diffSubscription)
 
       val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None)
@@ -261,7 +265,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
     }
 
     "Post the new form data and return form with error if SDIL reference number is not a valid small producer" in {
-      given
+      build
         .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = false)
 
@@ -280,13 +284,13 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
         whenReady(result) { res =>
           res.status mustBe 400
           val page = Jsoup.parse(res.body)
-          page.title must include("Error: " + Messages("correctReturn.addASmallProducer.title"))
+          page.title must include("Error: " + messages("correctReturn.addASmallProducer.title"))
           val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
             .first()
           errorSummary
             .select("a")
             .attr("href") mustBe "#referenceNumber"
-          errorSummary.text() mustBe Messages("correctReturn.addASmallProducer.error.referenceNumber.notASmallProducer")
+          errorSummary.text() mustBe messages("correctReturn.addASmallProducer.error.referenceNumber.notASmallProducer")
         }
 
       }
@@ -298,7 +302,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
       val expectedResult: Some[List[SmallProducer]] = Some(List(SmallProducer(alias = aliasSuperCola,
         sdilRef = sdilRefSuperCola, litreage = Litreage(litres, litres))))
 
-      given
+      build
         .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = true)
 
@@ -324,7 +328,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
     "render the error page when the call to get small producer status fails" in {
 
-      given
+      build
         .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatusError(sdilRefSuperCola, returnPeriod)
 

@@ -2,10 +2,10 @@
 GET        /check-your-answers                                  controllers.correctReturn.CorrectReturnCYAController.onPageLoad
 POST       /check-your-answers                                  controllers.correctReturn.CorrectReturnCYAController.onSubmit
 
-GET        /check-changes                                       controllers.correctReturn.CorrectReturnCheckChangesCYAController.onPageLoad
+GET        /check-changes                                       controllers.correctReturn.CorrectReturnCheckChangesCYAController.onPageLoad()
 POST       /check-changes                                       controllers.correctReturn.CorrectReturnCheckChangesCYAController.onSubmit
 
-GET        /update-done                                         controllers.correctReturn.CorrectReturnUpdateDoneController.onPageLoad
+GET        /update-done                                         controllers.correctReturn.CorrectReturnUpdateDoneController.onPageLoad()
 
 GET        /select                                              controllers.correctReturn.SelectController.onPageLoad
 POST       /select                                              controllers.correctReturn.SelectController.onSubmit

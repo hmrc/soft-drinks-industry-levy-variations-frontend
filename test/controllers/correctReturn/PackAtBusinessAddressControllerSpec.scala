@@ -151,9 +151,13 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         contentAsString(result) mustEqual view(boundForm, NormalMode, address)(request, messages(application)).toString
 
         //noinspection ComparingUnrelatedTypes
-        page.getElementsContainingText(usersRetrievedSubscription.orgName).toString == true
+        page.getElementsContainingText(usersRetrievedSubscription.orgName).isEmpty mustBe false
         //noinspection ComparingUnrelatedTypes
-        page.getElementsContainingText(usersRetrievedSubscription.address.toString).`val`() == true
+        usersRetrievedSubscription.address.lines.foreach { line =>
+          page.getElementsContainingText(line).isEmpty mustBe false
+        }
+        page.getElementsContainingText(usersRetrievedSubscription.address.postCode).isEmpty mustBe false
+
         page.getElementsByTag("a").text() must include(Messages("correctReturn.packAtBusinessAddress.error.required"))
       }
     }

@@ -5,12 +5,12 @@ import models.{CheckMode, NormalMode}
 import models.SelectChange.ChangeActivity
 import models.backend.Site
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.matchers.must.Matchers._
 import pages.changeActivity.RemovePackagingSiteDetailsPage
 import play.api.http.HeaderNames
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.test.WsTestClient
+import play.api.test.{WsTestClient, FakeRequest}
 
 class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
@@ -18,11 +18,13 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
   def checkRoutePath(index: String) = s"/change-packaging-site-details/remove/$index"
   val indexOfPackingSiteToBeRemoved: String = "siteUNO"
 
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
 
   "GET " + normalRoutePath("indexDoesntExist") - {
     "when the userAnswers contains no data" - {
       "should redirect away when no data exists" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -41,7 +43,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
     userAnswersForChangeActivityRemovePackagingSiteDetailsPage(indexOfPackingSiteToBeRemoved).foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page without the " + key + " radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswers)
@@ -52,7 +54,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("changeActivity.removePackagingSiteDetails" + ".title"))
+              page.title must include(messages("changeActivity.removePackagingSiteDetails" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -73,7 +75,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
   s"GET " + checkRoutePath(indexOfPackingSiteToBeRemoved) - {
     "when the userAnswers contains no data" - {
       "should redirect away when no data exists" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -92,7 +94,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
     userAnswersForChangeActivityRemovePackagingSiteDetailsPage(indexOfPackingSiteToBeRemoved).foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page without the " + key + " radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswers)
@@ -103,7 +105,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("changeActivity.removePackagingSiteDetails" + ".title"))
+              page.title must include(messages("changeActivity.removePackagingSiteDetails" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -127,7 +129,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
       "when the user selects " + key - {
         "should update the session with the new value and redirect to the index controller" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(emptyUserAnswersForChangeActivity)
@@ -145,7 +147,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(userAnswers)
@@ -179,7 +181,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(
@@ -194,13 +196,13 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("changeActivity.removePackagingSiteDetails" + ".title"))
+            page.title must include("Error: " + messages("changeActivity.removePackagingSiteDetails" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("changeActivity.removePackagingSiteDetails" + ".error.required")
+            errorSummary.text() mustBe messages("changeActivity.removePackagingSiteDetails" + ".error.required")
             page.getElementById("value-hint").text() mustBe s"${ukAddress.lines.mkString(", ")} ${ukAddress.postCode}"
             getAnswers(emptyUserAnswersForChangeActivity.id).get.packagingSiteList.size mustBe 1
           }
@@ -218,7 +220,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
       "when the user selects " + key - {
         "should update the session with the new value and redirect to the site details controller" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(emptyUserAnswersForChangeActivity)
@@ -236,7 +238,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page with one packing site" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(userAnswers)
@@ -264,7 +266,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
             }
           }
           "when the session already contains data for page with two packing sites" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(userAnswers.copy(packagingSiteList = packAtBusinessAddressSites))
@@ -297,7 +299,7 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(
@@ -313,13 +315,13 @@ class RemovePackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
             res.status mustBe 400
             getAnswers(emptyUserAnswersForChangeActivity.id).get.packagingSiteList.size mustBe 1
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("changeActivity.removePackagingSiteDetails" + ".title"))
+            page.title must include("Error: " + messages("changeActivity.removePackagingSiteDetails" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("changeActivity.removePackagingSiteDetails" + ".error.required")
+            errorSummary.text() mustBe messages("changeActivity.removePackagingSiteDetails" + ".error.required")
             page.getElementById("value-hint").text() mustBe s"${ukAddress.lines.mkString(", ")} ${ukAddress.postCode}"
           }
         }

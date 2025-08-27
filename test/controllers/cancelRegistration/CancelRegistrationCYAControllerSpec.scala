@@ -21,8 +21,7 @@ import controllers.cancelRegistration.routes._
 import models.SelectChange.CancelRegistration
 import orchestrators.CancelRegistrationOrchestrator
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.mock
+import org.mockito.Mockito.{when, mock}
 import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -36,7 +35,7 @@ import java.time.LocalDate
 
 class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluency {
 
-  val cyaRoute: String = CancelRegistrationCYAController.onPageLoad.url
+  val cyaRoute: String = CancelRegistrationCYAController.onPageLoad().url
 
   "Cancel Registration Check Your Answers Controller" - {
 
@@ -153,7 +152,7 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
 
 
     "must redirect to cancel registration done when data is correct for POST" in {
-      val mockOrchestrator: CancelRegistrationOrchestrator = mock[CancelRegistrationOrchestrator]
+      val mockOrchestrator: CancelRegistrationOrchestrator = mock(classOf[CancelRegistrationOrchestrator])
       val userAnswers = emptyUserAnswersForCancelRegistration
         .set(ReasonPage, "No longer sell drinks").success.value
         .set(CancelRegistrationDatePage, LocalDate.now()).success.value
@@ -166,18 +165,18 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
         .build()
 
       running(application) {
-        val request = FakeRequest(POST, CancelRegistrationCYAController.onPageLoad.url).withFormUrlEncodedBody()
+        val request = FakeRequest(POST, CancelRegistrationCYAController.onPageLoad().url).withFormUrlEncodedBody()
         when(mockOrchestrator.submitVariationAndUpdateSession(any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual CancellationRequestDoneController.onPageLoad.url
+        redirectLocation(result).value mustEqual CancellationRequestDoneController.onPageLoad().url
       }
     }
 
-    testInvalidJourneyType(CancelRegistration, CancelRegistrationCYAController.onPageLoad.url, false)
-    testRedirectToPostSubmissionIfRequired(CancelRegistration, CancelRegistrationCYAController.onPageLoad.url)
-    testNoUserAnswersError(CancelRegistrationCYAController.onPageLoad.url, false)
+    testInvalidJourneyType(CancelRegistration, CancelRegistrationCYAController.onPageLoad().url, false)
+    testRedirectToPostSubmissionIfRequired(CancelRegistration, CancelRegistrationCYAController.onPageLoad().url)
+    testNoUserAnswersError(CancelRegistrationCYAController.onPageLoad().url, false)
   }
 }

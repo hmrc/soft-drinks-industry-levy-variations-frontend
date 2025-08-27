@@ -30,8 +30,7 @@ import models.{Amounts, CheckMode, LitresInBands, ReturnPeriod, SdilReturn, Smal
 import orchestrators.CorrectReturnOrchestrator
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.mock
+import org.mockito.Mockito.{when, mock}
 import pages.Page
 import pages.correctReturn._
 import play.api.i18n.Messages
@@ -48,9 +47,9 @@ import scala.concurrent.Future
 
 class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
-  val mockOrchestrator: CorrectReturnOrchestrator = mock[CorrectReturnOrchestrator]
-  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-  val mockConfig: FrontendAppConfig = mock[FrontendAppConfig]
+  val mockOrchestrator: CorrectReturnOrchestrator = mock(classOf[CorrectReturnOrchestrator])
+  val mockSdilConnector = mock(classOf[SoftDrinksIndustryLevyConnector])
+  val mockConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
 
   def correctReturnAction(userAnswers: Option[UserAnswers],
                           optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn),

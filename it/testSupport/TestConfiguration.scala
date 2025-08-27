@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext}
 import scala.jdk.CollectionConverters._
+import org.mongodb.scala.{ObservableFuture, SingleObservableFuture}
 
 trait TestConfiguration
   extends GuiceOneServerPerSuite
@@ -145,8 +146,8 @@ trait TestConfiguration
     }
   }
 
-  implicit lazy val messagesAPI = app.injector.instanceOf[MessagesApi]
-  implicit lazy val messagesProvider = MessagesImpl(Lang("en"), messagesAPI)
+  lazy val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
+  lazy val messagesProvider: MessagesImpl = MessagesImpl(Lang("en"), messagesAPI)
   lazy val mcc = app.injector.instanceOf[MessagesControllerComponents]
   implicit val ec: ExecutionContext = app.injector.instanceOf[ExecutionContext]
 }

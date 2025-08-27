@@ -3,17 +3,20 @@ package controllers.cancelRegistration
 import controllers.ControllerITTestHelper
 import models.SelectChange.CancelRegistration
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import play.api.i18n.Messages
-import play.api.test.WsTestClient
+import org.scalatest.matchers.must.Matchers.*
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.test.{FakeRequest, WsTestClient}
 
 class FileReturnBeforeDeregControllerISpec extends ControllerITTestHelper {
 
   val normalRoutePath = "/file-return-before-deregistration"
 
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
+  
   "GET " + normalRoutePath - {
     "should return OK and render the FileReturnBeforeDereg page" in {
-      given
+      build
         .commonPrecondition
 
       setAnswers(emptyUserAnswersForCancelRegistration)
@@ -30,7 +33,7 @@ class FileReturnBeforeDeregControllerISpec extends ControllerITTestHelper {
     }
 
     "should redirect when no returns pending are found" in {
-      given
+      build
         .commonPrecondition
         .sdilBackend.no_returns_pending("0000001611")
 

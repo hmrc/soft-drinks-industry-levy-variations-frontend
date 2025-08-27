@@ -30,13 +30,13 @@ case class SdilReturn(
                        packSmall: List[SmallProducer],
                        importLarge: Litreage,
                        importSmall: Litreage,
-                       export: Litreage,
+                       `export`: Litreage,
                        wastage: Litreage,
                        submittedOn: Option[LocalDateTime] = None
                      ) {
   private[models] val leviedLitreage: Litreage = Litreage.sum(List(ownBrand, packLarge, importLarge))
 
-  private[models] val creditedLitreage: Litreage = Litreage.sum(List(export, wastage))
+  private[models] val creditedLitreage: Litreage = Litreage.sum(List(`export`, wastage))
 
   private [models] def calculatelevy(litreage: Litreage)
                                     (implicit config: FrontendAppConfig, returnPeriod: ReturnPeriod): BigDecimal = {
@@ -72,7 +72,7 @@ object SdilReturn {
         packSmall = packSmallValueFromUserAnswers(userAnswers),
         importLarge = correctReturnData.broughtIntoUkLitreage,
         importSmall = correctReturnData.broughtIntoUkFromSmallProducerLitreage,
-        export = correctReturnData.exportsLitreage,
+        `export` = correctReturnData.exportsLitreage,
         wastage = correctReturnData.lostDamagedLitreage,
         submittedOn = submitted.map(instant => LocalDateTime.ofInstant(instant, ZoneId.of("Europe/London")))
       )
@@ -85,7 +85,7 @@ object SdilReturn {
     packSmall = packSmallValueFromUserAnswers(userAnswers),
     importLarge = Litreage(0L, 0L),
     importSmall = Litreage(0L, 0L),
-    export = Litreage(0L, 0L),
+    `export` = Litreage(0L, 0L),
     wastage = Litreage(0L, 0L),
     submittedOn = None
   )

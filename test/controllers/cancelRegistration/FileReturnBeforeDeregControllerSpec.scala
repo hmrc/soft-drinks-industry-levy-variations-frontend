@@ -23,8 +23,7 @@ import forms.cancelRegistration.CancelRegistrationDateFormProvider
 import models.SelectChange.CancelRegistration
 import navigation.{FakeNavigatorForCancelRegistration, NavigatorForCancelRegistration}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.mock
+import org.mockito.Mockito.{when, mock}
 import play.api.inject
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -37,7 +36,7 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
 
   lazy val fileReturnBeforDeregRoute: String = routes.FileReturnBeforeDeregController.onPageLoad().url
 
-  val mockConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
+  val mockConnector: SoftDrinksIndustryLevyConnector = mock(classOf[SoftDrinksIndustryLevyConnector])
 
   val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
   val formProvider = new CancelRegistrationDateFormProvider(appConfig)
@@ -114,7 +113,7 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionService = mock[SessionService]
+      val mockSessionService = mock(classOf[SessionService])
 
       when(mockConnector.getPendingReturnsFromCache(any())(any())).thenReturn(createSuccessVariationResult(returnPeriods))
 

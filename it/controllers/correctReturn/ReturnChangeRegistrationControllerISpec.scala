@@ -4,10 +4,10 @@ import controllers.ControllerITTestHelper
 import models.SelectChange.CorrectReturn
 import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.matchers.must.Matchers._
 import pages.correctReturn.PackagedAsContractPackerPage
-import play.api.i18n.Messages
-import play.api.test.WsTestClient
+import play.api.i18n.{Messages, MessagesApi}
+import play.api.test.{WsTestClient, FakeRequest}
 import play.mvc.Http.HeaderNames
 
 class ReturnChangeRegistrationControllerISpec extends ControllerITTestHelper {
@@ -17,9 +17,12 @@ class ReturnChangeRegistrationControllerISpec extends ControllerITTestHelper {
 
   val normalRoutePath = "/return-change-registration"
 
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
+  
   "GET " + normalRoutePath - {
     "should return OK and render the ReturnChangeRegistration page" in {
-      given
+      build
         .commonPrecondition
 
       setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -30,7 +33,7 @@ class ReturnChangeRegistrationControllerISpec extends ControllerITTestHelper {
         whenReady(result1) { res =>
           res.status mustBe 200
           val page = Jsoup.parse(res.body)
-          page.title must include(Messages("You changed your soft drinks business activity - Soft Drinks Industry Levy - GOV.UK"))
+          page.title must include(messages("You changed your soft drinks business activity - Soft Drinks Industry Levy - GOV.UK"))
         }
       }
     }
@@ -42,7 +45,7 @@ class ReturnChangeRegistrationControllerISpec extends ControllerITTestHelper {
 
   s"POST " - {
     "when user is a new packer should redirect to the Pack At Business Address Controller" in {
-      given
+      build
         .commonPrecondition
 
       setUpForCorrectReturn(completedUserAnswersForCorrectReturnNewPackerOrImporter)
@@ -57,7 +60,7 @@ class ReturnChangeRegistrationControllerISpec extends ControllerITTestHelper {
     }
 
     "when user is only a new importer should redirect to the Ask Secondary Warehouse Controller" in {
-      given
+      build
         .commonPrecondition
 
       setUpForCorrectReturn(completedUserAnswersForCorrectReturnNewPackerOrImporter.set(PackagedAsContractPackerPage, false).success.value)

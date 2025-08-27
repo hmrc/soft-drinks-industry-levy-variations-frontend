@@ -87,7 +87,7 @@ class ExemptionsForSmallProducersSummarySpec extends SpecBase {
         row.actions.head.items.head.content.asHtml mustBe Html("Change")
       }
 
-      s"must return empty when no answer given ${returnPeriod._2}" in {
+      s"must return empty when no answer build ${returnPeriod._2}" in {
         val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
 
         val res = ExemptionsForSmallProducersSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)

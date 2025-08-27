@@ -3,12 +3,12 @@ package controllers.cancelRegistration
 import controllers.ControllerITTestHelper
 import models.SelectChange.CancelRegistration
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.matchers.must.Matchers.*
 import pages.cancelRegistration.CancelRegistrationDatePage
 import play.api.http.HeaderNames
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
-import play.api.test.WsTestClient
+import play.api.test.{FakeRequest, WsTestClient}
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -28,10 +28,13 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
     "cancelRegistrationDate.year" -> validCancellationDate.getYear.toString
   )
 
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
+
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the CancelRegistrationDate page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForCancelRegistration)
@@ -42,7 +45,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("cancelRegistration.cancelRegistrationDate" + ".title"))
+            page.title must include(messages("cancelRegistration.cancelRegistrationDate" + ".title"))
             val dateInputs = page.getElementsByClass("govuk-date-input__item")
             dateInputs.size() mustBe 3
             dateInputs.get(0).getElementById("cancelRegistrationDate.day").hasAttr("cancelRegistrationDate") mustBe false
@@ -55,7 +58,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
 
     s"when the userAnswers contains a date for the page" - {
       s"should return OK and render the page with the date populated" in {
-        given
+        build
           .commonPrecondition
 
         val userAnswers = emptyUserAnswersForCancelRegistration.set(CancelRegistrationDatePage, date).success.value
@@ -68,7 +71,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("cancelRegistration.cancelRegistrationDate" + ".title"))
+            page.title must include(messages("cancelRegistration.cancelRegistrationDate" + ".title"))
             val dateInputs = page.getElementsByClass("govuk-date-input__item")
             dateInputs.size() mustBe 3
             dateInputs.get(0).getElementById("cancelRegistrationDate.day").hasAttr("value") mustBe true
@@ -90,7 +93,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
   "GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the CancelRegistrationDate page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForCancelRegistration)
@@ -101,7 +104,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("cancelRegistration.cancelRegistrationDate" + ".title"))
+            page.title must include(messages("cancelRegistration.cancelRegistrationDate" + ".title"))
             val dateInputs = page.getElementsByClass("govuk-date-input__item")
             dateInputs.size() mustBe 3
             dateInputs.get(0).getElementById("cancelRegistrationDate.day").hasAttr("value") mustBe false
@@ -114,7 +117,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
 
     s"when the userAnswers contains a date for the page" - {
       s"should return OK and render the page with the date populated" in {
-        given
+        build
           .commonPrecondition
 
         val userAnswers = emptyUserAnswersForCancelRegistration.set(CancelRegistrationDatePage, date).success.value
@@ -127,7 +130,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("cancelRegistration.cancelRegistrationDate" + ".title"))
+            page.title must include(messages("cancelRegistration.cancelRegistrationDate" + ".title"))
             val dateInputs = page.getElementsByClass("govuk-date-input__item")
             dateInputs.size() mustBe 3
             dateInputs.get(0).getElementById("cancelRegistrationDate.day").hasAttr("value") mustBe true
@@ -150,7 +153,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
     "when the user inserts a valid day, month and year" - {
       "should update the session with the new value and redirect to the CYA controller" - {
         "when the session contains no data for page" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForCancelRegistration)
@@ -162,7 +165,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(routes.CancelRegistrationCYAController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.CancelRegistrationCYAController.onPageLoad().url)
               val dataStoredForPage = getAnswers(sdilNumber).fold[Option[LocalDate]](None)(_.get(CancelRegistrationDatePage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe validCancellationDate
@@ -171,7 +174,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
         }
 
         "when the session already contains data for page" in {
-          given
+          build
             .commonPrecondition
 
           val userAnswers = emptyUserAnswersForCancelRegistration.set(CancelRegistrationDatePage, date).success.value
@@ -184,7 +187,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(routes.CancelRegistrationCYAController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.CancelRegistrationCYAController.onPageLoad().url)
               val dataStoredForPage = getAnswers(sdilNumber).fold[Option[LocalDate]](None)(_.get(CancelRegistrationDatePage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe validCancellationDate
@@ -200,7 +203,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
         val otherFields = dateMapExcludingField.keys.toArray
 
         "when only the " + field + " is populated" in {
-          given
+          build
             .commonPrecondition
 
           val invalidJson = Json.obj("cancelRegistrationDate." + field -> value.toString)
@@ -214,20 +217,20 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
             whenReady(result) { res =>
               res.status mustBe 400
               val page = Jsoup.parse(res.body)
-              page.title must include("Error: " + Messages("cancelRegistration.cancelRegistrationDate" + ".title"))
+              page.title must include("Error: " + messages("cancelRegistration.cancelRegistrationDate" + ".title"))
               val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
                 .first()
               errorSummary
                 .select("a")
                 .attr("href") mustBe "#cancelRegistrationDate.day"
-              errorSummary.text() mustBe Messages("cancelRegistrationDate" + ".error.required.two", otherFields(0), otherFields(1)
+              errorSummary.text() mustBe messages("cancelRegistrationDate" + ".error.required.two", otherFields(0), otherFields(1)
               )
             }
           }
         }
 
         "when " + field + "is missing" in {
-          given
+          build
             .commonPrecondition
 
           val invalidJson = dateMapExcludingField.foldLeft(Json.obj()) { (a, b) =>
@@ -243,13 +246,13 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
             whenReady(result) { res =>
               res.status mustBe 400
               val page = Jsoup.parse(res.body)
-              page.title must include("Error: " + Messages("cancelRegistration.cancelRegistrationDate" + ".title"))
+              page.title must include("Error: " + messages("cancelRegistration.cancelRegistrationDate" + ".title"))
               val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
                 .first()
               errorSummary
                 .select("a")
                 .attr("href") mustBe "#cancelRegistrationDate.day"
-              errorSummary.text() mustBe Messages("cancelRegistrationDate" + ".error.required", field
+              errorSummary.text() mustBe messages("cancelRegistrationDate" + ".error.required", field
               )
             }
           }
@@ -257,7 +260,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
       }
 
       "when all fields are missing" in {
-        given
+        build
           .commonPrecondition
 
         val invalidJson = dateMap.foldLeft(Json.obj()) { (a, b) =>
@@ -273,20 +276,20 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("cancelRegistration.cancelRegistrationDate" + ".title"))
+            page.title must include("Error: " + messages("cancelRegistration.cancelRegistrationDate" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#cancelRegistrationDate.day"
-            errorSummary.text() mustBe Messages("cancelRegistrationDate" + ".error.required.all"
+            errorSummary.text() mustBe messages("cancelRegistrationDate" + ".error.required.all"
             )
           }
         }
       }
 
       "when all fields are present but not a valid date" in {
-        given
+        build
           .commonPrecondition
 
         val invalidJson = dateMap.foldLeft(Json.obj()) { (a, b) =>
@@ -302,7 +305,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("cancelRegistration.cancelRegistrationDate" + ".title"))
+            page.title must include("Error: " + messages("cancelRegistration.cancelRegistrationDate" + ".title"))
 
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
@@ -324,7 +327,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
     "when the user inserts a valid day, month and year" - {
       "should update the session with the new value and redirect to the CYA controller" - {
         "when the session contains no data for page" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForCancelRegistration)
@@ -336,7 +339,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(routes.CancelRegistrationCYAController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.CancelRegistrationCYAController.onPageLoad().url)
               val dataStoredForPage = getAnswers(sdilNumber).fold[Option[LocalDate]](None)(_.get(CancelRegistrationDatePage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe validCancellationDate
@@ -345,7 +348,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
         }
 
         "when the session already contains data for page" in {
-          given
+          build
             .commonPrecondition
 
           val userAnswers = emptyUserAnswersForCancelRegistration.set(CancelRegistrationDatePage, date).success.value
@@ -358,7 +361,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(routes.CancelRegistrationCYAController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.CancelRegistrationCYAController.onPageLoad().url)
               val dataStoredForPage = getAnswers(sdilNumber).fold[Option[LocalDate]](None)(_.get(CancelRegistrationDatePage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe validCancellationDate
@@ -374,7 +377,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
         val otherFields = dateMapExcludingField.keys.toArray
 
         "when only the " + field + "is populated" in {
-          given
+          build
             .commonPrecondition
 
           val invalidJson = Json.obj("cancelRegistrationDate." + field -> value.toString)
@@ -388,20 +391,20 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
             whenReady(result) { res =>
               res.status mustBe 400
               val page = Jsoup.parse(res.body)
-              page.title must include("Error: " + Messages("cancelRegistration.cancelRegistrationDate" + ".title"))
+              page.title must include("Error: " + messages("cancelRegistration.cancelRegistrationDate" + ".title"))
               val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
                 .first()
               errorSummary
                 .select("a")
                 .attr("href") mustBe "#cancelRegistrationDate.day"
-              errorSummary.text() mustBe Messages("cancelRegistrationDate" + ".error.required.two", otherFields(0), otherFields(1)
+              errorSummary.text() mustBe messages("cancelRegistrationDate" + ".error.required.two", otherFields(0), otherFields(1)
               )
             }
           }
         }
 
         "when " + field + "is missing" in {
-          given
+          build
             .commonPrecondition
 
           val invalidJson = dateMapExcludingField.foldLeft(Json.obj()) { (a, b) =>
@@ -417,13 +420,13 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
             whenReady(result) { res =>
               res.status mustBe 400
               val page = Jsoup.parse(res.body)
-              page.title must include("Error: " + Messages("cancelRegistration.cancelRegistrationDate" + ".title"))
+              page.title must include("Error: " + messages("cancelRegistration.cancelRegistrationDate" + ".title"))
               val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
                 .first()
               errorSummary
                 .select("a")
                 .attr("href") mustBe "#cancelRegistrationDate.day"
-              errorSummary.text() mustBe Messages("cancelRegistrationDate" + ".error.required", field
+              errorSummary.text() mustBe messages("cancelRegistrationDate" + ".error.required", field
               )
             }
           }
@@ -431,7 +434,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
       }
 
       "when all fields are missing" in {
-        given
+        build
           .commonPrecondition
 
         val invalidJson = dateMap.foldLeft(Json.obj()) { (a, b) =>
@@ -447,20 +450,20 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("cancelRegistration.cancelRegistrationDate" + ".title"))
+            page.title must include("Error: " + messages("cancelRegistration.cancelRegistrationDate" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#cancelRegistrationDate.day"
-            errorSummary.text() mustBe Messages("cancelRegistrationDate" + ".error.required.all"
+            errorSummary.text() mustBe messages("cancelRegistrationDate" + ".error.required.all"
             )
           }
         }
       }
 
       "when all fields are present but not a valid date" in {
-        given
+        build
           .commonPrecondition
 
         val invalidJson = dateMap.foldLeft(Json.obj()) { (a, b) =>
@@ -476,7 +479,7 @@ class CancelRegistrationDateControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("cancelRegistration.cancelRegistrationDate" + ".title"))
+            page.title must include("Error: " + messages("cancelRegistration.cancelRegistrationDate" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary

@@ -25,7 +25,7 @@ case object ChangeActivityCYAPage extends Page {
 
   override def toString: String = "checkYourAnswers"
 
-  override val url: Mode => String = _ => routes.ChangeActivityCYAController.onPageLoad.url
+  override val url: Mode => String = _ => routes.ChangeActivityCYAController.onPageLoad().url
 
   override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (userAnswers, _) =>
     List(

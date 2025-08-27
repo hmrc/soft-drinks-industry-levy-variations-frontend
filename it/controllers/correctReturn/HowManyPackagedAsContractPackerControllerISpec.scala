@@ -4,7 +4,7 @@ import controllers.LitresISpecHelper
 import models.SelectChange.CorrectReturn
 import models.{CheckMode, LitresInBands, NormalMode}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import pages.correctReturn.HowManyPackagedAsContractPackerPage
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
@@ -27,7 +27,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
     "GET " + path - {
       "when the userAnswers contains no data" - {
         "should return OK and render the litres page for PackagedAsContractPacker with no data populated" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -47,7 +47,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
 
       s"when the userAnswers contains data for the page" - {
         s"should return OK and render the page with fields populated" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
@@ -74,7 +74,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
       "when the user populates all litres fields" - {
         "should update the session with the new values and redirect to " + redirectLocation - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -94,7 +94,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(userAnswers)
@@ -119,7 +119,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
         val errorTitle = "Error: " + "How many litres of liable drinks have you packaged as a third party or contract packer at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
 
         "when no questions are answered" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -137,7 +137,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
         }
 
         "when the user answers with no numeric answers" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -155,7 +155,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
         }
 
         "when the user answers with negative numbers" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -173,7 +173,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
         }
 
         "when the user answers with decimal numbers" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -191,7 +191,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
         }
 
         "when the user answers with out of max range numbers" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -209,7 +209,7 @@ class HowManyPackagedAsContractPackerControllerISpec extends LitresISpecHelper {
         }
 
         "when the user answers with 0" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)

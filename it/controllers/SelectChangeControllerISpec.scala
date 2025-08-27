@@ -2,7 +2,7 @@ package controllers
 
 import models.{NormalMode, SelectChange}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, defined, include}
+import org.scalatest.matchers.must.Matchers._
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
@@ -15,7 +15,7 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
     "should render the select change page" - {
       "that includes the option to correct a return" - {
         "when the user has variable returns" in {
-          given
+          build
             .commonPrecondition
             .sdilBackend.returns_variable("0000001611")
 
@@ -38,7 +38,7 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
 
       "that does not include the option to correct a return" - {
         "when the user has no variable returns" in {
-          given
+          build
             .commonPrecondition
             .sdilBackend.no_returns_variable("0000001611")
 
@@ -62,7 +62,7 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
 
     "should render the error page" - {
       "when the call to get variable returns fails" in {
-        given
+        build
           .commonPrecondition
           .sdilBackend.returns_variable_error("0000001611")
 
@@ -84,7 +84,7 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
     "should generate and save the expected user answers" - {
       "then redirect to the index controller" - {
         "when the user selects to update the registered details" in {
-          given
+          build
             .commonPrecondition
 
           WsTestClient.withClient { client =>
@@ -104,7 +104,7 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
 
       "then redirect to correct return select" - {
         "when the user selects to correct return select" in {
-          given
+          build
             .commonPrecondition
 
           WsTestClient.withClient { client =>
@@ -124,7 +124,7 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
 
       "then redirect to cancel registration reason" - {
         "when the user selects to cancel registration and has no returns pending" in {
-          given
+          build
             .commonPrecondition
             .sdilBackend.no_returns_pending("0000001611")
 
@@ -145,7 +145,7 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
 
       "then redirect to cancel registration file returns before deregistering" - {
         "when the user selects to cancel registration and has returns pending" in {
-          given
+          build
             .commonPrecondition
             .sdilBackend.returns_pending("0000001611")
 
@@ -166,7 +166,7 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
 
       "then redirect to change activity producer type" - {
         "when the user selects to change activity" in {
-          given
+          build
             .commonPrecondition
 
           WsTestClient.withClient { client =>
@@ -187,7 +187,7 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select an option" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
           .sdilBackend.no_returns_variable("0000001611")
 

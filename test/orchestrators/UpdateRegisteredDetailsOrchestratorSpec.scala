@@ -24,7 +24,7 @@ import models.enums.SiteTypes
 import models.submission.{ClosedSite, VariationsContact, VariationsPersonalDetails, VariationsSite}
 import models.updateRegisteredDetails.ContactDetails
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import services.SessionService

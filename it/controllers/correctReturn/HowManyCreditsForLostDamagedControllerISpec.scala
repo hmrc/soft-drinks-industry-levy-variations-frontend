@@ -4,7 +4,7 @@ import controllers.LitresISpecHelper
 import models.SelectChange.CorrectReturn
 import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import pages.correctReturn.{ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage}
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
@@ -27,7 +27,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
     "GET " + path - {
       "when the userAnswers contains no data" - {
         "should return OK and render the litres page for CreditsForLostDamaged with no data populated" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -47,7 +47,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
 
       s"when the userAnswers contains data for the page" - {
         s"should return OK and render the page with fields populated" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
@@ -74,7 +74,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
       "when the user populates all litres fields" - {
         "should update the session with the new values and redirect to " + redirectLocation - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -94,7 +94,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(userAnswers)
@@ -120,7 +120,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
           "Error: How many credits do you want to claim for liable drinks which have been lost or destroyed? - Soft Drinks Industry Levy - GOV.UK"
 
         "when no questions are answered" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -138,7 +138,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
         }
 
         "when the user answers with no numeric answers" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -156,7 +156,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
         }
 
         "when the user answers with negative numbers" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -174,7 +174,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
         }
 
         "when the user answers with decimal numbers" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -192,7 +192,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
         }
 
         "when the user answers with out of max range numbers" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -210,7 +210,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
         }
 
         "when the user answers with 0" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -234,7 +234,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
 
 
       "should redirect to Change Registration in Returns controller when user is a new packer or importer" in {
-        given
+        build
           .commonPreconditionChangeSubscription(diffSubscription)
 
 

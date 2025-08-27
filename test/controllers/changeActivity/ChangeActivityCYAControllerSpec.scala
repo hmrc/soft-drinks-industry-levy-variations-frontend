@@ -24,8 +24,7 @@ import models.changeActivity.AmountProduced.Large
 import models.{DataHelper, LitresInBands}
 import orchestrators.ChangeActivityOrchestrator
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.mock
+import org.mockito.Mockito.{when, mock}
 import pages.changeActivity._
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -50,7 +49,7 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency w
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
         running(application) {
-          val request = FakeRequest(GET, ChangeActivityCYAController.onPageLoad.url)
+          val request = FakeRequest(GET, ChangeActivityCYAController.onPageLoad().url)
 
           val result = route(application, request).value
           val view = application.injector.instanceOf[ChangeActivityCYAView]
@@ -75,7 +74,7 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency w
         .copy(packagingSiteList = Map.empty,
               warehouseList = Map.empty)
 
-      val mockOrchestrator: ChangeActivityOrchestrator = mock[ChangeActivityOrchestrator]
+      val mockOrchestrator: ChangeActivityOrchestrator = mock(classOf[ChangeActivityOrchestrator])
 
       when(mockOrchestrator.submitVariation(any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
 
@@ -88,7 +87,7 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency w
 
       running(application) {
         val request =
-        FakeRequest(POST, ChangeActivityCYAController.onPageLoad.url)
+        FakeRequest(POST, ChangeActivityCYAController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -97,8 +96,8 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency w
       }
     }
 
-    testInvalidJourneyType(ChangeActivity, ChangeActivityCYAController.onPageLoad.url, false)
-    testRedirectToPostSubmissionIfRequired(ChangeActivity, ChangeActivityCYAController.onPageLoad.url)
-    testNoUserAnswersError(ChangeActivityCYAController.onPageLoad.url, false)
+    testInvalidJourneyType(ChangeActivity, ChangeActivityCYAController.onPageLoad().url, false)
+    testRedirectToPostSubmissionIfRequired(ChangeActivity, ChangeActivityCYAController.onPageLoad().url)
+    testNoUserAnswersError(ChangeActivityCYAController.onPageLoad().url, false)
   }
 }

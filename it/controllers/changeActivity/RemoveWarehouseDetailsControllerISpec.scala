@@ -5,7 +5,7 @@ import models.{CheckMode, NormalMode}
 import models.SelectChange.ChangeActivity
 import models.backend.Site
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import pages.changeActivity._
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
@@ -20,7 +20,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
   "GET " + normalRoutePath("indexDoesntExist") - {
     "when the userAnswers contains no data" - {
       "should redirect away when no data exists" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -39,7 +39,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
     userAnswersForChangeActivityRemoveWarehouseDetailsPage(indexOfWarehouseToBeRemoved).foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page without the " + key + " radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswers)
@@ -71,7 +71,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
   "GET " + checkRoutePath("indexDoesntExist") - {
     "when the userAnswers contains no data" - {
       "should redirect away when no data exists" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -90,7 +90,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
     userAnswersForChangeActivityRemoveWarehouseDetailsPage(indexOfWarehouseToBeRemoved).foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page without the " + key + " radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswers)
@@ -125,7 +125,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
       "when the user selects " + key - {
         s"should update the session with the new value and redirect to the $SecondaryWarehouseDetailsPage controller" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(emptyUserAnswersForChangeActivity)
@@ -143,7 +143,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(userAnswers)
@@ -174,7 +174,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(
@@ -214,7 +214,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
       "when the user selects " + key - {
         s"should update the session with the new value and redirect to the $SecondaryWarehouseDetailsPage controller" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(emptyUserAnswersForChangeActivity)
@@ -232,7 +232,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(userAnswers)
@@ -263,7 +263,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(

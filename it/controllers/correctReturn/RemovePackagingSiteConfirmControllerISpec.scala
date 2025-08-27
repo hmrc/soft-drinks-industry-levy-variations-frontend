@@ -5,12 +5,12 @@ import models.{CheckMode, NormalMode}
 import models.SelectChange.CorrectReturn
 import models.backend.Site
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.matchers.must.Matchers._
 import pages.correctReturn.RemovePackagingSiteConfirmPage
 import play.api.http.HeaderNames
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.test.WsTestClient
+import play.api.test.{WsTestClient, FakeRequest}
 
 class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
 
@@ -18,10 +18,13 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
   def checkRoutePath(index: String) = s"/change-packaging-site-details/remove/$index"
   val indexOfPackingSiteToBeRemoved: String = "siteUNO"
 
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
+  
   "GET " + normalRoutePath("indexDoesntExist") - {
     "when the userAnswers contains no data" - {
       "should redirect away when no data exists" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -40,7 +43,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
     userAnswersForCorrectReturnRemovePackagingSiteConfirmPage(indexOfPackingSiteToBeRemoved).foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page without the " + key + " radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
@@ -52,7 +55,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
 
-              page.title must include(Messages("correctReturn.removePackagingSiteConfirm" + ".title"))
+              page.title must include(messages("correctReturn.removePackagingSiteConfirm" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -74,7 +77,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
   s"GET " + checkRoutePath(indexOfPackingSiteToBeRemoved) - {
     "when the userAnswers contains no data" - {
       "should redirect away when no data exists" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -93,7 +96,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
     userAnswersForCorrectReturnRemovePackagingSiteConfirmPage(indexOfPackingSiteToBeRemoved).foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page without the " + key + " radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
@@ -104,7 +107,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
             whenReady(result) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("correctReturn.removePackagingSiteConfirm" + ".title"))
+              page.title must include(messages("correctReturn.removePackagingSiteConfirm" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -129,7 +132,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
         s"when the user selects $key and is ${if (lastPackagingSite) "" else "not"} last packaging site"  - {
           "should update the session with the new value and redirect to the expected controller" - {
             "when the session contains no data for page" in {
-              given
+              build
                 .commonPrecondition
 
               setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -147,7 +150,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
             }
 
             "when the session already contains data for page" in {
-              given
+              build
                 .commonPrecondition
 
               setUpForCorrectReturn(userAnswers)
@@ -186,7 +189,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(
@@ -201,13 +204,13 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("correctReturn.removePackagingSiteConfirm" + ".title"))
+            page.title must include("Error: " + messages("correctReturn.removePackagingSiteConfirm" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("correctReturn.removePackagingSiteConfirm" + ".error.required")
+            errorSummary.text() mustBe messages("correctReturn.removePackagingSiteConfirm" + ".error.required")
             page.getElementById("value-hint").text() mustBe s"${ukAddress.lines.mkString(", ")} ${ukAddress.postCode}"
             getAnswers(emptyUserAnswersForCorrectReturn.id).get.packagingSiteList.size mustBe 1
           }
@@ -226,7 +229,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
         s"when the user selects $key and is ${if (lastPackagingSite) "" else "not"} last packaging site"  - {
           "should update the session with the new value and redirect to the expected controller" - {
             "when the session contains no data for page" in {
-              given
+              build
                 .commonPrecondition
 
               setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -244,7 +247,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
             }
 
             "when the session already contains data for page" in {
-              given
+              build
                 .commonPrecondition
 
               setUpForCorrectReturn(userAnswers)
@@ -283,7 +286,7 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(
@@ -299,13 +302,13 @@ class RemovePackagingSiteConfirmControllerISpec extends ControllerITTestHelper {
             res.status mustBe 400
             getAnswers(emptyUserAnswersForCorrectReturn.id).get.packagingSiteList.size mustBe 1
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("correctReturn.removePackagingSiteConfirm" + ".title"))
+            page.title must include("Error: " + messages("correctReturn.removePackagingSiteConfirm" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("correctReturn.removePackagingSiteConfirm" + ".error.required")
+            errorSummary.text() mustBe messages("correctReturn.removePackagingSiteConfirm" + ".error.required")
             page.getElementById("value-hint").text() mustBe s"${ukAddress.lines.mkString(", ")} ${ukAddress.postCode}"
           }
         }

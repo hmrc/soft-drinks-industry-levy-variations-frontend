@@ -5,7 +5,7 @@ import models.SelectChange.CorrectReturn
 import models.submission.Litreage
 import models.{CheckMode, NormalMode, SmallProducer}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import pages.correctReturn.SmallProducerDetailsPage
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
@@ -19,7 +19,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the SmallProducerDetails page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -44,7 +44,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the userAnswers has one small producer in the small producers list" - {
       "should return OK and render the SmallProducerDetails page with one summary row" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", Litreage(20, 10)))))
@@ -65,7 +65,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the userAnswers has two small producers in the small producers list" - {
       "should return OK and render the SmallProducerDetails page with two summary rows" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", Litreage(20, 10)),
@@ -88,7 +88,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
     userAnswersForCorrectReturnSmallProducerDetailsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
@@ -120,7 +120,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
   s"GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the SmallProducerDetails page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -146,7 +146,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
     userAnswersForCorrectReturnSmallProducerDetailsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
@@ -181,7 +181,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
       "when the user selects " + key - {
         "should update the session with the new value and redirect to the index controller" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -209,7 +209,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(userAnswers)
@@ -241,7 +241,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -274,7 +274,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
       "when the user selects " + key - {
         "should update the session with the new value and redirect to the checkAnswers controller" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -302,7 +302,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(userAnswers)
@@ -334,7 +334,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)

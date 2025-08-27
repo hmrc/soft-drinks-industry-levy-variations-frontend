@@ -89,7 +89,7 @@ class PackagingSiteDetailsController @Inject()(
     if(addPackagingSite) {
       addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode)(hc, ec, messages, requestHeader)
     } else if(mode == CheckMode) {
-      Future.successful(controllers.changeActivity.routes.ChangeActivityCYAController.onPageLoad.url)
+      Future.successful(controllers.changeActivity.routes.ChangeActivityCYAController.onPageLoad().url)
     } else {
       Future.successful(controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(mode).url)
     }

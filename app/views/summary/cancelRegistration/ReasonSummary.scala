@@ -40,5 +40,5 @@ object ReasonSummary  {
             )
           } else Seq.empty
         )
-    }.getOrElse(throw new IllegalArgumentException(s"No reason given"))
+    }.getOrElse(throw new IllegalArgumentException(s"No reason build"))
 }
