@@ -17,10 +17,9 @@
 package views.summary.correctReturn
 
 import base.SpecBase
-import models.{CheckMode, LitresInBands, ReturnPeriod}
+import models.{CheckMode, ReturnPeriod}
 import pages.correctReturn.ExemptionsForSmallProducersPage
 import play.twirl.api.Html
-import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
 import controllers.correctReturn.routes
 
 class ExemptionsForSmallProducersSummarySpec extends SpecBase {

@@ -19,7 +19,6 @@ package views.summary.changeActivity
 import base.SpecBase
 import models.{SelectChange, UserAnswers}
 import play.api.libs.json.Json
-import views.summary.changeActivity.AmountProducedSummary
 
 class AmountProducedSummarySpec extends SpecBase {
 

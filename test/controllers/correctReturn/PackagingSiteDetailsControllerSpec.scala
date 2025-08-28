@@ -25,7 +25,7 @@ import models.{CheckMode, Mode, NormalMode, SdilReturn, UserAnswers}
 import navigation._
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{when, times, verify, mock}
+import org.mockito.Mockito.{when, times, verify}
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.data.Form
 import play.api.inject.bind

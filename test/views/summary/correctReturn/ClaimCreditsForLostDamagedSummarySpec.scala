@@ -42,7 +42,7 @@ class ClaimCreditsForLostDamagedSummarySpec extends SpecBase{
       case ReturnPeriod(2026, 0) => "&minus;£518.00"
     }
 
-   val returnPeriodWithLabels = List(
+    val returnPeriodWithLabels = List(
      (preApril2025ReturnePeriod, "- pre April 2025 rates"),
      (taxYear2025ReturnPeriod, "- 2025 tax year rates")
    )

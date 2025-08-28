@@ -41,7 +41,7 @@ lazy val root = (project in file("."))
     scalacOptions += "-deprecation",
     scalacOptions ++= Seq(
       "-feature",
-      "-Wconf:cat=deprecation:s,cat=feature:s,src=target/.*:s,msg=Flag.*repeatedly:s,msg=unused explicit parameter*:s"
+      "-Wconf:cat=deprecation:s,cat=feature:s,src=target/.*:s,msg=Flag.*repeatedly:s,msg=unused explicit parameter*:s,msg=unused local definition*:s"
     ),
     libraryDependencies ++= AppDependencies.all,
     retrieveManaged := true,
