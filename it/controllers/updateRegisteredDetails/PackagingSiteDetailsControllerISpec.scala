@@ -175,7 +175,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         }
       }
 
-    "when the user does not select yes or no" - {
+      "when the user does not select yes or no" - {
       "should return 400 with required error" in {
         build
           .commonPrecondition
@@ -200,9 +200,9 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         }
       }
     }
-    testUnauthorisedUser(updateRegisteredDetailsBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl +
+      testUnauthorisedUser(updateRegisteredDetailsBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+      testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl +
       normalRoutePath, Some(Json.obj("value" -> "true")))
   }
 
@@ -250,7 +250,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         }
       }
 
-    "when the user does not select yes or no" - {
+      "when the user does not select yes or no" - {
       "should return 400 with required error" in {
         build
           .commonPrecondition
@@ -275,9 +275,9 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         }
       }
     }
-    testUnauthorisedUser(updateRegisteredDetailsBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl +
+      testUnauthorisedUser(updateRegisteredDetailsBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
+      testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
+      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl +
       checkRoutePath, Some(Json.obj("value" -> "true")))
   }
 

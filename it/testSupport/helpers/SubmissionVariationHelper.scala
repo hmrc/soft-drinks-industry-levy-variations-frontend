@@ -61,7 +61,7 @@ trait SubmissionVariationHelper {
       case (true, _) => (Map("1" -> site1, "2" -> site3), Map("1" -> site2, "2" -> site4))
       case (_, true) => (Map.empty, Map.empty)
       case _ => (Map("1" -> site1), Map("1" -> site2))
-    }
+    }: @unchecked
     userAnswers.copy(
       packagingSiteList = productionSites,
       warehouseList = warehouses

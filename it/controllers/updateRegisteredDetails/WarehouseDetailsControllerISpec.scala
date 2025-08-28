@@ -325,7 +325,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
             "changeRegisteredDetails" -> Seq("sites")))
         )
 
-    val alfOnRampURL: String = "http://onramp.com"
+        val alfOnRampURL: String = "http://onramp.com"
 
         build
           .commonPrecondition

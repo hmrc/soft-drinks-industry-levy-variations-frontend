@@ -346,7 +346,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
       }
     }
 
-  "when the user does not select yes or no" - {
+    "when the user does not select yes or no" - {
       "should return 400 with required error" in {
         build
           .commonPrecondition

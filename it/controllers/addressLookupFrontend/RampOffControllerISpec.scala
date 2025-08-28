@@ -1,7 +1,7 @@
 package controllers.addressLookupFrontend
 
 import controllers.ControllerITTestHelper
-import models.SelectChange.{ChangeActivity, UpdateRegisteredDetails}
+import models.SelectChange.ChangeActivity
 import models.{CheckMode, NormalMode}
 import models.backend.{Site, UkAddress}
 import org.scalatest.matchers.must.Matchers._

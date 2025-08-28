@@ -8,9 +8,9 @@ import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers._
 import pages.changeActivity._
 import play.api.http.HeaderNames
-import play.api.i18n.{Messages, MessagesApi}
+import play.api.i18n.Messages
 import play.api.libs.json.Json
-import play.api.test.{WsTestClient, FakeRequest}
+import play.api.test.WsTestClient
 
 class ImportsControllerISpec extends ControllerITTestHelper with LitresISpecHelper {
 
