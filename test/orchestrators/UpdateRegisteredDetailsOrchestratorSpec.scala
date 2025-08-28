@@ -313,7 +313,7 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
         } else {
           (Map("1" -> site1), Map("1" -> site2))
         }
-      }
+      }: @unchecked
       val baseUA = emptyUserAnswersForUpdateRegisteredDetails.copy(
         contactAddress = optUpdatedBusinessAddress.getOrElse(ORIGINAL_ADDRESS),
         packagingSiteList = productionSites,
