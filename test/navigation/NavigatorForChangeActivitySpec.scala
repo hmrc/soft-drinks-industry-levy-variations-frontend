@@ -42,7 +42,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress = contactAddress)
-        ) mustBe routes.ChangeActivityCYAController.onPageLoad
+        ) mustBe routes.ChangeActivityCYAController.onPageLoad()
       }
     }
 
@@ -76,7 +76,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
             if (newAmountProduced == previousAmountProduced && mode == CheckMode) {
               s"select $newAmountProduced when $previousAmountProduced previously selected to navigate to CYA in CheckMode" in {
                 val result = navigateFromAmountProduced(newAmountProduced, mode, previousAmountProduced)
-                result mustBe routes.ChangeActivityCYAController.onPageLoad
+                result mustBe routes.ChangeActivityCYAController.onPageLoad()
               }
             } else {
               newAmountProduced match {
@@ -117,7 +117,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
 
       "navigate to Check Your Answers page in CheckMode" in {
         val result = navigateFromThirdPartyPackagers(CheckMode)
-        result mustBe routes.ChangeActivityCYAController.onPageLoad
+        result mustBe routes.ChangeActivityCYAController.onPageLoad()
       }
     }
 
@@ -140,7 +140,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
 
       "Should navigate to Check Your Answers page when no is selected in CheckMode" in {
         val result = navigateFromOperatePackagingSiteOwnBrandsPage(value = false, CheckMode)
-        result mustBe routes.ChangeActivityCYAController.onPageLoad
+        result mustBe routes.ChangeActivityCYAController.onPageLoad()
       }
     }
 
@@ -156,7 +156,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
 
       "navigate to Check Your Answers page in CheckMode" in {
         val result = navigateFromHowManyOperatePackagingSiteOwnBrands(CheckMode)
-        result mustBe routes.ChangeActivityCYAController.onPageLoad
+        result mustBe routes.ChangeActivityCYAController.onPageLoad()
       }
     }
 
@@ -180,7 +180,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
 
       "Should navigate to Check Your Answers page when no is selected in CheckMode and deregistration not suggested" in {
         val result = navigateFromContractPackingPage(value = false, CheckMode)
-        result mustBe routes.ChangeActivityCYAController.onPageLoad
+        result mustBe routes.ChangeActivityCYAController.onPageLoad()
       }
 
       "should navigate to suggest deregistration in CheckMode when Amount Produced Small, not TPP, not Contract Packing, not Importing" in {
@@ -190,7 +190,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
           .set(ContractPackingPage, false).success.value
           .set(ImportsPage, false).success.value
         )
-        result mustBe routes.SuggestDeregistrationController.onPageLoad
+        result mustBe routes.SuggestDeregistrationController.onPageLoad()
       }
 
       "should navigate to suggest deregistration in CheckMode when Amount Produced None, not Contract Packing, not Importing" in {
@@ -199,7 +199,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
           .set(ContractPackingPage, false).success.value
           .set(ImportsPage, false).success.value
         )
-        result mustBe routes.SuggestDeregistrationController.onPageLoad
+        result mustBe routes.SuggestDeregistrationController.onPageLoad()
       }
     }
 
@@ -222,7 +222,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
 
       "navigate to Check Your Answers page in CheckMode" in {
         val result = navigateFromHowManyContractPacking(CheckMode)
-        result mustBe routes.ChangeActivityCYAController.onPageLoad
+        result mustBe routes.ChangeActivityCYAController.onPageLoad()
       }
     }
 
@@ -252,7 +252,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
               .set(AmountProducedPage, AmountProduced.None).success.value
               .set(ContractPackingPage, true).success.value
               .set(ImportsPage, false).success.value)
-          result mustBe routes.ChangeActivityCYAController.onPageLoad
+          result mustBe routes.ChangeActivityCYAController.onPageLoad()
         }
       }
     }
@@ -373,7 +373,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
                   .set(OperatePackagingSiteOwnBrandsPage, true).success.value
                   .set(ImportsPage, false).success.value
                 val result = navigateFollowingImportsPage(userAnswers)
-                result mustBe routes.ChangeActivityCYAController.onPageLoad
+                result mustBe routes.ChangeActivityCYAController.onPageLoad()
               }
             }
 
@@ -386,7 +386,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
                     .set(ContractPackingPage, false).success.value
                     .set(ImportsPage, false).success.value
                   val result = navigator.nextPage(ImportsPage, NormalMode, isVoluntaryRegUserAnswers)
-                  result mustBe routes.ChangeActivityCYAController.onPageLoad
+                  result mustBe routes.ChangeActivityCYAController.onPageLoad()
                 }
               }
             }
@@ -400,7 +400,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
                   .set(ImportsPage, false).success.value
                   .set(OperatePackagingSiteOwnBrandsPage, true).success.value
                 val result = navigateFollowingImportsPage(userAnswers)
-                result mustBe routes.SuggestDeregistrationController.onPageLoad
+                result mustBe routes.SuggestDeregistrationController.onPageLoad()
               }
             }
           }
@@ -432,7 +432,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
                 .set(ContractPackingPage, false).success.value
                 .set(ImportsPage, false).success.value
               val result = navigateFollowingImportsPage(userAnswers)
-              result mustBe routes.SuggestDeregistrationController.onPageLoad
+              result mustBe routes.SuggestDeregistrationController.onPageLoad()
             }
           }
         }
@@ -449,7 +449,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, true).success.value
           val result = navigateFromHowManyImportsPageInCheckMode(userAnswers)
-          result mustBe routes.ChangeActivityCYAController.onPageLoad
+          result mustBe routes.ChangeActivityCYAController.onPageLoad()
         }
 
         "to the checkAnswers page when the imports page has already been populated and the user is a small producer" in {
@@ -459,7 +459,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, false).success.value
           val result = navigateFromHowManyImportsPageInCheckMode(userAnswers)
-          result mustBe routes.ChangeActivityCYAController.onPageLoad
+          result mustBe routes.ChangeActivityCYAController.onPageLoad()
         }
 
         "to the checkAnswers page when the imports page has already been populated and the user is not a producer" in {
@@ -469,7 +469,7 @@ class NavigatorForChangeActivitySpec extends SpecBase {
             .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
             .set(SecondaryWarehouseDetailsPage, false).success.value
           val result = navigateFromHowManyImportsPageInCheckMode(userAnswers)
-          result mustBe routes.ChangeActivityCYAController.onPageLoad
+          result mustBe routes.ChangeActivityCYAController.onPageLoad()
         }
       }
     }

@@ -6,11 +6,11 @@ import models.correctReturn.CorrectReturnUserAnswersData
 import models.submission.Litreage
 import models.{LitresInBands, NormalMode, ReturnPeriod, SdilReturn, SelectChange}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, defined, include}
+import org.scalatest.matchers.must.Matchers._
 import play.api.http.HeaderNames
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.test.WsTestClient
+import play.api.test.{WsTestClient, FakeRequest}
 import testSupport.SDILBackendTestData._
 
 class SelectControllerISpec extends ControllerITTestHelper {
@@ -49,11 +49,14 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
   val userAnswersNoReturnPeriod = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None)
 
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
+  
   "GET " + routePath - {
     "should render the select page with radio items for each unique return period" - {
       "that has no return periods checked" - {
         "when the user answers contains no data for the page and no repeated return period" in {
-          given
+          build
             .commonPrecondition
             .sdilBackend.returns_variable(UTR)
 
@@ -84,7 +87,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
         "when the user answers contains no data for the page and has repeated return periods" in {
           val returnsPeriodWithRepeats = returnPeriodList ++ returnPeriodList
-          given
+          build
             .commonPrecondition
             .sdilBackend.returns_variable(UTR, returnsPeriodWithRepeats)
 
@@ -116,7 +119,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
       "should generate the userAnswers and render the select page" - {
         "when the user is deregistered and has no useranswers" in {
-          given
+          build
             .commonPreconditionDereg
             .sdilBackend.returns_variable(UTR)
 
@@ -153,7 +156,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
       returnPeriodList.foreach { selectedReturnPeriod =>
         s"with ${selectedReturnPeriod.radioValue} checked" - {
           s"when the user answers contain return period for ${selectedReturnPeriod.radioValue}" in {
-            given
+            build
               .commonPrecondition
               .sdilBackend.returns_variable(UTR)
 
@@ -189,7 +192,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
     "should redirect to sdilHome" - {
       "when the are no variable returns for a deregistered user" in {
-        given
+        build
           .commonPreconditionDereg
           .sdilBackend.no_returns_variable(UTR)
 
@@ -208,7 +211,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
     "should redirect to the select change page" - {
       "when the are no variable returns" in {
-        given
+        build
           .commonPrecondition
           .sdilBackend.no_returns_variable(UTR)
 
@@ -227,7 +230,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
     "should render the internal server error page" - {
       "when the call to get variable returns fails" in {
-        given
+        build
           .commonPrecondition
           .sdilBackend.returns_variable_error(UTR)
 
@@ -257,7 +260,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
           s"and the previous return was $key" - {
             "should update the session with the new value and redirect to own brands controller" - {
               "when the session contains no data for page and the user is not a small producer" in {
-                given
+                build
                   .commonPrecondition
                   .sdilBackend.returns_variable(UTR)
                   .sdilBackend.retrieveReturn(UTR, returnPeriod, Some(sdilReturn))
@@ -285,7 +288,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
               }
 
               "when the session already contains data for page and the user is not a small producer" in {
-                given
+                build
                   .commonPrecondition
                   .sdilBackend.returns_variable(UTR)
                   .sdilBackend.retrieveReturn(UTR, returnPeriod, Some(sdilReturn))
@@ -317,7 +320,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
             "should update the session with the new value and redirect to copacks controller" - {
               "when the session contains no data for page and the user is a small producer" in {
-                given
+                build
                   .commonPreconditionChangeSubscription(subscriptionSmallProducer)
                   .sdilBackend.returns_variable(UTR)
                   .sdilBackend.retrieveReturn(UTR, returnPeriod, Some(sdilReturn))
@@ -345,7 +348,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
               }
 
               "when the session already contains data for page and the user is not a small producer" in {
-                given
+                build
                   .commonPreconditionChangeSubscription(subscriptionSmallProducer)
                   .sdilBackend.returns_variable(UTR)
                   .sdilBackend.retrieveReturn(UTR, returnPeriod, Some(sdilReturn))
@@ -381,7 +384,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select an option" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
           .sdilBackend.returns_variable(UTR)
 
@@ -394,13 +397,13 @@ class SelectControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("correctReturn.select" + ".title"))
+            page.title must include("Error: " + messages("correctReturn.select" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value_0_0"
-            errorSummary.text() mustBe Messages("correctReturn.select" + ".error.required")
+            errorSummary.text() mustBe messages("correctReturn.select" + ".error.required")
           }
         }
       }
@@ -408,7 +411,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
     "when the user return is not in the list of variable returns" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
           .sdilBackend.returns_variable(UTR)
 
@@ -422,13 +425,13 @@ class SelectControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("correctReturn.select" + ".title"))
+            page.title must include("Error: " + messages("correctReturn.select" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value_0_0"
-            errorSummary.text() mustBe Messages("correctReturn.select" + ".error.required")
+            errorSummary.text() mustBe messages("correctReturn.select" + ".error.required")
           }
         }
       }
@@ -436,7 +439,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
     "should redirect to the select change page" - {
       "when the are no variable returns" in {
-        given
+        build
           .commonPrecondition
           .sdilBackend.no_returns_variable(UTR)
 
@@ -457,7 +460,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
     "should redirect to the sdil home" - {
       "when the are no variable returns for a deregistered user" in {
-        given
+        build
           .commonPreconditionDereg
           .sdilBackend.no_returns_variable(UTR)
 
@@ -478,7 +481,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
     "should render the internal server error page" - {
       "when there is no sdilReturn for returnPeriod" in {
-        given
+        build
           .commonPrecondition
           .sdilBackend.returns_variable(UTR)
           .sdilBackend.retrieveReturn(UTR, returnPeriodList.head, None)
@@ -499,7 +502,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
       }
 
       "when the call to get sdilReturn fails" in {
-        given
+        build
           .commonPrecondition
           .sdilBackend.returns_variable(UTR)
           .sdilBackend.retrieveReturnError(UTR, returnPeriodList.head)
@@ -520,7 +523,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
       }
 
       "when the call to get variable returns fails" in {
-        given
+        build
           .commonPrecondition
           .sdilBackend.returns_variable_error(UTR)
 

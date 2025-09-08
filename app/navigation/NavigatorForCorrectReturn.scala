@@ -195,7 +195,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
   private def navigationForCorrectionReason(mode: Mode, userAnswers: UserAnswers): Call = {
     (mode, userAnswers.get(BalanceRepaymentRequired)) match {
       case (NormalMode, Some(true)) => routes.RepaymentMethodController.onPageLoad(NormalMode)
-      case _ => routes.CorrectReturnCheckChangesCYAController.onPageLoad
+      case _ => routes.CorrectReturnCheckChangesCYAController.onPageLoad()
     }
   }
 
@@ -219,7 +219,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case SecondaryWarehouseDetailsPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case RemoveWarehouseDetailsPage => userAnswers => navigationForRemoveWarehouse(userAnswers, NormalMode)
     case CorrectionReasonPage => userAnswers => navigationForCorrectionReason(NormalMode, userAnswers)
-    case RepaymentMethodPage => userAnswers => routes.CorrectReturnCheckChangesCYAController.onPageLoad
+    case RepaymentMethodPage => userAnswers => routes.CorrectReturnCheckChangesCYAController.onPageLoad()
     case _ => _ => defaultCall
   }
 
@@ -253,7 +253,7 @@ class NavigatorForCorrectReturn @Inject()() extends Navigator {
     case SecondaryWarehouseDetailsPage => _ => routes.CorrectReturnCYAController.onPageLoad
     case RemoveWarehouseDetailsPage => userAnswers => navigationForRemoveWarehouse(userAnswers, CheckMode)
     case CorrectionReasonPage => userAnswers => navigationForCorrectionReason(CheckMode, userAnswers)
-    case RepaymentMethodPage => _ => routes.CorrectReturnCheckChangesCYAController.onPageLoad
+    case RepaymentMethodPage => _ => routes.CorrectReturnCheckChangesCYAController.onPageLoad()
     case _ => _ => routes.CorrectReturnCYAController.onPageLoad
   }
 

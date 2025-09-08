@@ -23,8 +23,7 @@ import models.backend.UkAddress
 import models.updateRegisteredDetails.ContactDetails
 import orchestrators.UpdateRegisteredDetailsOrchestrator
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.mock
+import org.mockito.Mockito.{when, mock}
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -65,7 +64,7 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
     }
 
     "must redirect to update done when data is correct for POST" in {
-      val mockOrchestrator: UpdateRegisteredDetailsOrchestrator = mock[UpdateRegisteredDetailsOrchestrator]
+      val mockOrchestrator: UpdateRegisteredDetailsOrchestrator = mock(classOf[UpdateRegisteredDetailsOrchestrator])
 
       val application = applicationBuilder(
         userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails),
@@ -82,7 +81,7 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual UpdateDoneController.onPageLoad.url
+        redirectLocation(result).value mustEqual UpdateDoneController.onPageLoad().url
       }
     }
     testInvalidJourneyType(UpdateRegisteredDetails, UpdateRegisteredDetailsCYAController.onPageLoad.url)

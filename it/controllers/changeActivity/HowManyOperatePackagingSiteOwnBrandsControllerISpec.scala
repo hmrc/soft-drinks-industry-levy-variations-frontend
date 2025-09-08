@@ -4,7 +4,7 @@ import controllers.LitresISpecHelper
 import models.SelectChange.ChangeActivity
 import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import pages.changeActivity.HowManyOperatePackagingSiteOwnBrandsPage
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
@@ -22,13 +22,13 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
     val (path, redirectLocation) = if(mode == NormalMode) {
       (normalRoutePath, routes.ContractPackingController.onPageLoad(NormalMode).url)
     } else {
-      (checkRoutePath, routes.ChangeActivityCYAController.onPageLoad.url)
+      (checkRoutePath, routes.ChangeActivityCYAController.onPageLoad().url)
     }
 
     "GET " + path - {
       "when the userAnswers contains no data" - {
         "should return OK and render the litres page for OperatePackagingSiteOwnBrands with no data populated" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForChangeActivity)
@@ -48,7 +48,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
 
       s"when the userAnswers contains data for the page" - {
         s"should return OK and render the page with fields populated" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswers)
@@ -74,7 +74,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
       "when the user populates all litres fields" - {
         "should update the session with the new values and redirect to " + redirectLocation - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(emptyUserAnswersForChangeActivity)
@@ -94,7 +94,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(userAnswers)
@@ -119,7 +119,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
         val errorTitle = "Error: How many litres of your own brands will you package in the next 12 months? - Soft Drinks Industry Levy - GOV.UK"
 
         "when no questions are answered" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForChangeActivity)
@@ -137,7 +137,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
         }
 
         "when the user answers with no numeric answers" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForChangeActivity)
@@ -155,7 +155,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
         }
 
         "when the user answers with negative numbers" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForChangeActivity)
@@ -173,7 +173,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
         }
 
         "when the user answers with decimal numbers" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForChangeActivity)
@@ -191,7 +191,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
         }
 
         "when the user answers with out of max range numbers" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForChangeActivity)
@@ -209,7 +209,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
         }
 
         "when the user answers with 0" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForChangeActivity)

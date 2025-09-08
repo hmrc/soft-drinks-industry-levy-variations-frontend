@@ -5,21 +5,25 @@ import models.SelectChange.CorrectReturn
 import models.backend.Site
 import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.matchers.must.Matchers._
 import play.api.http.HeaderNames
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.test.WsTestClient
+import play.api.test.{WsTestClient, FakeRequest}
 
 class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
   def normalRoutePath(index: String) = s"/remove-warehouse-confirm/$index"
   def checkRoutePath(index: String) = s"/change-remove-warehouse-confirm/$index"
   val indexOfWarehouseToBeRemoved: String = "warehouseUNO"
+
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
+  
   "GET " + normalRoutePath("indexDoesntExist") - {
     "when the userAnswers contains no data" - {
       "should redirect away when no data exists" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForSelectChange(CorrectReturn)
@@ -39,7 +43,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
     userAnswersForCorrectReturnRemoveWarehouseDetailsPage(indexOfWarehouseToBeRemoved).foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page without the " + key + " radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
@@ -50,7 +54,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("correctReturn.removeWarehouseDetails" + ".title"))
+              page.title must include(messages("correctReturn.removeWarehouseDetails" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -72,7 +76,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
   s"GET " + checkRoutePath(indexOfWarehouseToBeRemoved) - {
     "when the userAnswers contains no data" - {
       "should redirect away when no data exists" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForSelectChange(CorrectReturn)
@@ -92,7 +96,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
     userAnswersForCorrectReturnRemoveWarehouseDetailsPage(indexOfWarehouseToBeRemoved).foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page without the " + key + " radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
@@ -103,7 +107,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("correctReturn.removeWarehouseDetails" + ".title"))
+              page.title must include(messages("correctReturn.removeWarehouseDetails" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -128,7 +132,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
       "when the user selects " + key - {
         "should redirect to the Secondary warehouse details controller" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(completedUserAnswersForCorrectReturnNewPackerOrImporter.copy(warehouseList =
@@ -147,7 +151,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page and there is only one warehouse" in {
-            given
+            build
               .commonPrecondition
             val userAnswers = completedUserAnswersForCorrectReturnNewPackerOrImporter.copy(warehouseList =
               Map("warehouseUNO" -> Site(ukAddress)))
@@ -178,7 +182,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(
@@ -193,13 +197,13 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("correctReturn.removeWarehouseDetails" + ".title"))
+            page.title must include("Error: " + messages("correctReturn.removeWarehouseDetails" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("correctReturn.removeWarehouseDetails" + ".error.required")
+            errorSummary.text() mustBe messages("correctReturn.removeWarehouseDetails" + ".error.required")
             page.getElementById("warehouseToRemove").text() mustBe s"${ukAddress.lines.mkString(", ")} ${ukAddress.postCode}"
             getAnswers(emptyUserAnswersForCorrectReturn.id).get.warehouseList.size mustBe 1
           }
@@ -218,7 +222,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
       "when the user selects " + key - {
         "should redirect to the Secondary Warehouse controller " - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(warehouseList =
@@ -238,7 +242,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
         }
         "should redirect to the Secondary Warehouse Details controller when there are multiple warehouses" - {
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(completedUserAnswersForCorrectReturnNewPackerOrImporter.copy(warehouseList =
@@ -268,7 +272,7 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(
@@ -284,13 +288,13 @@ class RemoveWarehouseDetailsControllerISpec extends ControllerITTestHelper {
             res.status mustBe 400
             getAnswers(emptyUserAnswersForCorrectReturn.id).get.warehouseList.size mustBe 1
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("correctReturn.removeWarehouseDetails" + ".title"))
+            page.title must include("Error: " + messages("correctReturn.removeWarehouseDetails" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("correctReturn.removeWarehouseDetails" + ".error.required")
+            errorSummary.text() mustBe messages("correctReturn.removeWarehouseDetails" + ".error.required")
             page.getElementById("warehouseToRemove").text() mustBe s"${ukAddress.lines.mkString(", ")} ${ukAddress.postCode}"
           }
         }

@@ -6,8 +6,8 @@ import models.SelectChange.UpdateRegisteredDetails
 import models.backend.RetrievedActivity
 import models.updateRegisteredDetails.ChangeRegisteredDetails
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, not}
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.must.Matchers.*
+import org.scalatest.matchers.should.Matchers.should
 import pages.updateRegisteredDetails.ChangeRegisteredDetailsPage
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
@@ -21,7 +21,7 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the ChangeRegisteredDetails page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -48,7 +48,7 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
     ChangeRegisteredDetails.values.zipWithIndex.foreach { case (checkboxItem, index) =>
       s"when the userAnswers contains data for the page with " + checkboxItem.toString + " selected" - {
         s"should return OK and render the page with " + checkboxItem.toString + " checkboxItem checked" in {
-          given
+          build
             .commonPrecondition
 
           val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(ChangeRegisteredDetailsPage, Seq(checkboxItem)).success.value
@@ -78,7 +78,7 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the userAnswers contains data for the page with all checkbox items" - {
       "should return OK and render the page with all checkboxes checked" in {
-        given
+        build
           .commonPrecondition
 
         val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(ChangeRegisteredDetailsPage, ChangeRegisteredDetails.values).success.value
@@ -106,7 +106,7 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
     }
     "when the user activity is voluntary true" - {
       "should return OK and render only two checkboxes" in {
-        given
+        build
           .commonPreconditionChangeSubscription(aSubscription.copy(activity = RetrievedActivity(
             smallProducer = false, largeProducer = true, contractPacker = false, importer = false, voluntaryRegistration = true)))
 
@@ -140,7 +140,7 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
       "when the user selects " + checkboxItem.toString - {
         "should update the session with the new value and redirect to the index controller" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -167,7 +167,7 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(ChangeRegisteredDetailsPage, Seq(checkboxItem)).success.value
@@ -200,7 +200,7 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
     "when the user selects all checkboxItems" - {
       "should update the session with the new value and redirect to the index controller" - {
         "when the session contains no data for page" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -222,7 +222,7 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
         }
 
         "when the session already contains data for page" in {
-          given
+          build
             .commonPrecondition
 
           val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(ChangeRegisteredDetailsPage, ChangeRegisteredDetails.values).success.value
@@ -249,7 +249,7 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select any checkbox" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -275,7 +275,7 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the user activity is voluntary true" - {
       "when value 'sites' is attempted to be saved, should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(ChangeRegisteredDetailsPage,

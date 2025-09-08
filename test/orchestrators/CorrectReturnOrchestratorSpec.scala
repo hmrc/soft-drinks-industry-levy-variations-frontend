@@ -17,15 +17,16 @@
 package orchestrators
 
 import base.SpecBase
+import cats.data.EitherT
 import connectors.SoftDrinksIndustryLevyConnector
-import errors._
+import errors.*
 import models.correctReturn.{CorrectReturnUserAnswersData, RepaymentMethod}
 import models.submission.Litreage
 import models.{LitresInBands, ReturnPeriod, SdilReturn, SelectChange, SmallProducer, UserAnswers}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.correctReturn._
+import pages.correctReturn.*
 import play.api.libs.json.{JsString, Json, Writes}
 import services.{ReturnService, SessionService}
 
@@ -227,16 +228,16 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
                 submittedOn = Some(LocalDateTime.ofInstant(submittedInstant, ZoneId.of("Europe/London"))))
 
               when(mockReturnsService.submitSdilReturnsVary(aSubscription,
-                userAnswers, emptySdilReturn, returnPeriod, expectedRevisedReturn)(hc)).thenReturn(createSuccessVariationResult(Right(): Unit))
+                userAnswers, emptySdilReturn, returnPeriod, expectedRevisedReturn)(hc)).thenReturn(EitherT.rightT[Future, VariationsErrors](()))
 
               when(mockReturnsService.submitReturnVariation(aSubscription,
-                expectedRevisedReturn, userAnswers, correctReturnUserAnswersData, returnPeriod)(hc)).thenReturn(createSuccessVariationResult(Right(): Unit))
+                expectedRevisedReturn, userAnswers, correctReturnUserAnswersData, returnPeriod)(hc)).thenReturn(EitherT.rightT[Future, VariationsErrors](()))
 
               when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
               val res = orchestrator.submitReturn(userAnswers, aSubscription, returnPeriod, emptySdilReturn)(hc, ec)
 
               whenReady(res.value) { result =>
-                result mustBe Right((): Unit)
+                result mustBe Right(())
               }
             }
           })

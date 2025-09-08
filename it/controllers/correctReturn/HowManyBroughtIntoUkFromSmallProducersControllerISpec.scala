@@ -6,10 +6,10 @@ import models.SelectChange.CorrectReturn
 import org.jsoup.Jsoup
 import pages.correctReturn.HowManyBroughtIntoUkFromSmallProducersPage
 import play.api.http.HeaderNames
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.test.WsTestClient
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import play.api.test.{WsTestClient, FakeRequest}
+import org.scalatest.matchers.must.Matchers._
 
 class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecHelper {
 
@@ -25,10 +25,13 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
       (checkRoutePath, routes.CorrectReturnCYAController.onPageLoad.url)
     }
 
+    given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+    given messages: Messages = messagesApi.preferred(FakeRequest())
+    
     "GET " + path - {
       "when the userAnswers contains no data" - {
         "should return OK and render the litres page for BroughtIntoUkFromSmallProducers with no data populated" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -39,7 +42,7 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("correctReturn.howManyBroughtIntoUkFromSmallProducers" + ".title"))
+              page.title must include(messages("correctReturn.howManyBroughtIntoUkFromSmallProducers" + ".title"))
               testLitresInBandsNoPrepopulatedData(page)
             }
           }
@@ -48,7 +51,7 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
 
       s"when the userAnswers contains data for the page" - {
         s"should return OK and render the page with fields populated" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
@@ -59,7 +62,7 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("correctReturn.howManyBroughtIntoUkFromSmallProducers" + ".title"))
+              page.title must include(messages("correctReturn.howManyBroughtIntoUkFromSmallProducers" + ".title"))
               testLitresInBandsWithPrepopulatedData(page)
             }
           }
@@ -75,7 +78,7 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
       "when the user populates all litres fields" - {
         "should update the session with the new values and redirect to " + redirectLocation - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -95,7 +98,7 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(userAnswers)
@@ -117,10 +120,10 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
       }
 
       "should return 400 with required error" - {
-        val errorTitle = "Error: " + Messages("correctReturn.howManyBroughtIntoUkFromSmallProducers.title")
+        val errorTitle = "Error: " + messages("correctReturn.howManyBroughtIntoUkFromSmallProducers.title")
 
         "when no questions are answered" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -138,7 +141,7 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
         }
 
         "when the user answers with no numeric answers" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -156,7 +159,7 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
         }
 
         "when the user answers with negative numbers" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -174,7 +177,7 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
         }
 
         "when the user answers with decimal numbers" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -192,7 +195,7 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
         }
 
         "when the user answers with out of max range numbers" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -210,7 +213,7 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
         }
 
         "when the user answers with 0" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)

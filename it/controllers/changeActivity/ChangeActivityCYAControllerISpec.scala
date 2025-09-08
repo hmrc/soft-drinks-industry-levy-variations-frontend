@@ -10,11 +10,11 @@ import models.submission._
 import models.{CheckMode, LitresInBands}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.matchers.must.Matchers._
 import play.api.http.Status.{OK, SEE_OTHER}
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.test.WsTestClient
+import play.api.test.{WsTestClient, FakeRequest}
 import play.mvc.Http.HeaderNames
 import testSupport.helpers.SubmissionVariationHelper
 
@@ -22,10 +22,13 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
 
   val route = "/change-activity/check-your-answers"
 
-  "GET " + routes.ChangeActivityCYAController.onPageLoad.url - {
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
+  
+  "GET " + routes.ChangeActivityCYAController.onPageLoad().url - {
     "when the userAnswers contains no data" - {
       "should redirect the page as there are missing user answers" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -207,7 +210,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
 
       s"when the userAnswers contains $key" - {
         "should render the page" in {
-          given
+          build
             .commonPrecondition
           setAnswers(userAnswers)
 
@@ -217,7 +220,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
             whenReady(result) { res =>
               res.status mustBe OK
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("changeActivity.checkYourAnswers.title"))
+              page.title must include(messages("changeActivity.checkYourAnswers.title"))
               page.getElementsByClass("govuk-body").text() mustBe
                 s"${Messages("changeActivity.checkYourAnswers.updateFor")} Super Lemonade Plc Print this page"
               val sectionIndexes: Seq[Option[Int]] = List(
@@ -260,7 +263,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
           )
           override val hasClosedSites: Boolean = true
 
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription(AmountProduced.Large, false))
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -270,7 +273,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad().url)
               requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
             }
           }
@@ -286,7 +289,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
           override val hasClosedSites: Boolean = true
           override val hasNewSites: Boolean = true
 
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription(AmountProduced.Large, false))
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -296,7 +299,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad().url)
               requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
             }
           }
@@ -315,7 +318,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
           override val hasClosedSites: Boolean = true
           override val hasRemovedSites: Boolean = true
 
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription(AmountProduced.Large, false))
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -325,7 +328,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad().url)
               requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
             }
           }
@@ -342,7 +345,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
           override val hasNewSites: Boolean = true
           override val hasRemovedSites: Boolean = true
 
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription(AmountProduced.Large, false))
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -352,7 +355,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad().url)
               requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
             }
           }
@@ -368,7 +371,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
           )
           override val hasClosedSites: Boolean = true
 
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription(AmountProduced.Small, true))
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -378,7 +381,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad().url)
               requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
             }
           }
@@ -399,7 +402,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
           override val hasClosedSites: Boolean = true
           override val hasNewSites: Boolean = true
 
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription(AmountProduced.Small, true))
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -409,7 +412,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad().url)
               requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
             }
           }
@@ -430,7 +433,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
           override val hasClosedSites: Boolean = true
           override val hasRemovedSites: Boolean = true
 
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription(AmountProduced.Small, true))
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -440,7 +443,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad().url)
               requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
             }
           }
@@ -462,7 +465,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
           override val hasNewSites: Boolean = true
           override val hasRemovedSites: Boolean = true
 
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription(AmountProduced.Small, true))
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -472,7 +475,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad().url)
               requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
             }
           }
@@ -486,7 +489,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
           override val expectedSdilActivity = SdilActivity(
             Some(expectedNewActivity)
           )
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription(AmountProduced.None, false))
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -496,7 +499,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad().url)
               requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
             }
           }
@@ -509,7 +512,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
             Some(expectedNewActivity)
           )
 
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription(AmountProduced.None, false))
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -519,7 +522,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad().url)
               requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
             }
           }
@@ -537,7 +540,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
             None
           )
 
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription(AmountProduced.None, false))
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -547,7 +550,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad().url)
               requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
             }
           }
@@ -561,7 +564,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
             Some(false)
           )
 
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription(AmountProduced.None, false))
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -571,7 +574,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad().url)
               requestBodyMatchesChangeActivity(wireMockServer, expectedSdilActivity, expectedNewSites, expectedClosedSites)
             }
           }

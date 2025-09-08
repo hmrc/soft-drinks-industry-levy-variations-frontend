@@ -16,14 +16,23 @@
 
 package models.enums
 
-import play.api.libs.json.{Format, Reads, Writes}
+import play.api.libs.json._
 
 object SiteTypes extends Enumeration {
 
   val PRODUCTION_SITE = Value("Production Site")
   val WAREHOUSE = Value("Warehouse")
 
-  implicit val format: Format[SiteTypes.Value] =
-    Format[SiteTypes.Value](Reads.enumNameReads(SiteTypes), Writes.enumNameWrites)
+  implicit val format: Format[SiteTypes.Value] = new Format[SiteTypes.Value] {
+    def reads(json: JsValue): JsResult[SiteTypes.Value] = json match {
+      case JsString(value) =>
+        SiteTypes.values.find(_.toString == value) match {
+          case Some(siteType) => JsSuccess(siteType)
+          case None => JsError(s"Invalid SiteTypes value: $value")
+        }
+      case _ => JsError("Expected a string value for SiteTypes")
+    }
 
+    def writes(siteType: SiteTypes.Value): JsValue = JsString(siteType.toString)
+  }
 }

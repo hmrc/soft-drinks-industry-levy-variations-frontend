@@ -29,8 +29,7 @@ import models.{LitresInBands, ReturnPeriod, SdilReturn, SmallProducer, UserAnswe
 import orchestrators.CorrectReturnOrchestrator
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.mock
+import org.mockito.Mockito.{when, mock}
 import pages.Page
 import pages.correctReturn._
 import play.api.i18n.Messages
@@ -60,9 +59,9 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
   val returnPeriodStart: String = currentReturnPeriod.start.format(returnPeriodFormat)
   val returnPeriodEnd: String = currentReturnPeriod.end.format(returnPeriodFormat)
 
-  val mockOrchestrator: CorrectReturnOrchestrator = mock[CorrectReturnOrchestrator]
-  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-  val mockConfig: FrontendAppConfig = mock[FrontendAppConfig]
+  val mockOrchestrator: CorrectReturnOrchestrator = mock(classOf[CorrectReturnOrchestrator])
+  val mockSdilConnector = mock(classOf[SoftDrinksIndustryLevyConnector])
+  val mockConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
 
   val litresInBands = LitresInBands(2000, 4000)
   val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(submitted = true, submittedOn = Some(Instant.now()))
@@ -139,7 +138,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).overrides(bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)).build()
 
       running(application) {
-        val request = FakeRequest(GET, CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, CorrectReturnUpdateDoneController.onPageLoad().url)
 
         when(mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(),any())) thenReturn createSuccessVariationResult(amounts)
 
@@ -173,7 +172,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).overrides(bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)).build()
 
       running(application) {
-        val request = FakeRequest(GET, CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, CorrectReturnUpdateDoneController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -191,7 +190,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -212,7 +211,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -241,7 +240,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -279,7 +278,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -313,7 +312,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -342,7 +341,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -380,7 +379,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -414,7 +413,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -446,7 +445,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -487,7 +486,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -521,7 +520,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -550,7 +549,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -588,7 +587,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -622,7 +621,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -651,7 +650,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -689,7 +688,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -723,7 +722,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -752,7 +751,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -790,7 +789,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -824,7 +823,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -853,7 +852,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -891,7 +890,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK

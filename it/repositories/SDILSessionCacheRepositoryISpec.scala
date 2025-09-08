@@ -16,6 +16,7 @@ import uk.gov.hmrc.crypto.json.CryptoFormats
 
 import java.time.{LocalDateTime, ZoneOffset}
 import java.util.concurrent.TimeUnit
+import org.mongodb.scala.{SingleObservableFuture, ObservableFuture}
 
 class SDILSessionCacheRepositoryISpec extends AnyFreeSpec
   with Matchers

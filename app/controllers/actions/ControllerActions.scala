@@ -114,8 +114,8 @@ class ControllerActions @Inject()(identify: IdentifierAction,
   private def postSubmissionResultFromJourneyType(selectChange: SelectChange): String = selectChange match {
     case CancelRegistration => controllers.cancelRegistration.routes.CancellationRequestDoneController.onPageLoad().url
     case UpdateRegisteredDetails => controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad().url
-    case CorrectReturn => controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url
-    case ChangeActivity => controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad.url
+    case CorrectReturn => controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url
+    case ChangeActivity => controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad().url
   }
 
   private def preSubmissionResultFromJourneyType(selectChange: SelectChange): String = selectChange match {

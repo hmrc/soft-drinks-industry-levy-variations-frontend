@@ -8,12 +8,12 @@ import models.updateRegisteredDetails.ChangeRegisteredDetails
 import models.updateRegisteredDetails.ChangeRegisteredDetails.{BusinessAddress, ContactDetails, Sites}
 import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.matchers.must.Matchers._
 import pages.updateRegisteredDetails.{ChangeRegisteredDetailsPage, WarehouseDetailsPage}
 import play.api.http.HeaderNames
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
-import play.api.test.WsTestClient
+import play.api.test.{WsTestClient, FakeRequest}
 import testSupport.helpers.ALFTestHelper
 
 class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
@@ -29,13 +29,15 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
   val userAnswersWithAllChangeRegisteredDetailsSelections: UserAnswers = emptyUserAnswersForUpdateRegisteredDetails
     .set(ChangeRegisteredDetailsPage, selectedChangeRegisteredDetails).success.value
 
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
 
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data (no warehouses)" - {
       "should return OK and render the WarehouseDetails page with no data populated " +
         "(with message displaying no warehouses added) " +
         "with subheading asking if user would like to add a warehouse" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -46,7 +48,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("updateRegisteredDetails.warehouseDetails" + ".title"))
+            page.title must include(messages("updateRegisteredDetails.warehouseDetails" + ".title"))
             val summaryList = page.getElementsByClass("govuk-caption-m")
             summaryList.text mustBe "You don't have any registered warehouses."
             val legend = page.getElementsByClass("govuk-fieldset__legend  govuk-fieldset__legend--m")
@@ -67,7 +69,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
         "should return OK and render the WarehouseDetails page with no data populated " +
           "(with message displaying summary list of warehouses)" +
           "with subheading asking if user would like to add another warehouse" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForUpdateRegisteredDetails.copy(warehouseList =
@@ -79,7 +81,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("updateRegisteredDetails.warehouseDetails" + ".title"))
+              page.title must include(messages("updateRegisteredDetails.warehouseDetails" + ".title"))
               val summaryList = page.getElementsByClass("govuk-caption-m")
               summaryList.text mustBe "ABC Ltd 33 Rhes Priordy WR53 7CX Remove warehouse ABC Ltd at 33 Rhes Priordy"
               val legend = page.getElementsByClass("govuk-fieldset__legend  govuk-fieldset__legend--m")
@@ -100,7 +102,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with neither radio checked" +
           "(with message displaying no warehouses added)" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswers)
@@ -111,7 +113,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("updateRegisteredDetails.warehouseDetails" + ".title"))
+              page.title must include(messages("updateRegisteredDetails.warehouseDetails" + ".title"))
               val summaryList = page.getElementsByClass("govuk-caption-m")
               summaryList.text mustBe "You don't have any registered warehouses."
               val radioInputs = page.getElementsByClass("govuk-radios__input")
@@ -134,7 +136,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
     "when the userAnswers contains no data" - {
       "should return OK and render the WarehouseDetails page with no data populated" +
         "(with message displaying no warehouses added)" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -145,7 +147,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("updateRegisteredDetails.warehouseDetails" + ".title"))
+            page.title must include(messages("updateRegisteredDetails.warehouseDetails" + ".title"))
             val summaryList = page.getElementsByClass("govuk-caption-m")
             summaryList.text mustBe "You don't have any registered warehouses."
             val radioInputs = page.getElementsByClass("govuk-radios__input")
@@ -163,7 +165,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with neither radio checked" +
           "(with message displaying no warehouses added)" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswers)
@@ -174,7 +176,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("updateRegisteredDetails.warehouseDetails" + ".title"))
+              page.title must include(messages("updateRegisteredDetails.warehouseDetails" + ".title"))
               val summaryList = page.getElementsByClass("govuk-caption-m")
               summaryList.text mustBe "You don't have any registered warehouses."
               val radioInputs = page.getElementsByClass("govuk-radios__input")
@@ -207,7 +209,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
     "when the user selects no and there are no other options selected from Update Registered Details" - {
       "should update the session with the new value and redirect to the CYA controller" - {
         "when the session contains no data for page" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswersWithSiteOnlyChangeRegisteredDetailsSelections)
@@ -229,7 +231,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
         "when the user selects no and update contact details is selected from Update Registered Details" - {
           "should not update the session with the selected value and redirect to the Contact details controller" - {
             "when the session contains no data for page" in {
-              given
+              build
                 .commonPrecondition
 
               setAnswers(userAnswersWithSitesAndContactDetailsChangeRegisteredDetailsSelections)
@@ -258,7 +260,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
           options = JourneyOptions(
             continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/secondary-warehouses/$sdilNumber",
             homeNavHref = None,
-            signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+            signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
             accessibilityFooterUrl = Some("localhost/accessibility-statement/soft-drinks-industry-levy-variations-frontend"),
             phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fchange-registered-details%2Fwarehouse-details"),
             deskProServiceName = None,
@@ -281,7 +283,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
             )),
             timeoutConfig = Some(TimeoutConfig(
               timeoutAmount = 900,
-              timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+              timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
               timeoutKeepAliveUrl = Some(controllers.routes.KeepAliveController.keepAlive.url)
             )),
            serviceHref = Some("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"),
@@ -323,9 +325,9 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
             "changeRegisteredDetails" -> Seq("sites")))
         )
 
-    val alfOnRampURL: String = "http://onramp.com"
+        val alfOnRampURL: String = "http://onramp.com"
 
-        given
+        build
           .commonPrecondition
           .alf.getSuccessResponseFromALFInit(alfOnRampURL)
         setAnswers(userAnswersWithSiteOnlyChangeRegisteredDetailsSelections)
@@ -347,7 +349,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -371,7 +373,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
       }
       "when the user has warehouses and does not select yes or no" - {
         "should return 400 with required error" in {
-          given
+          build
             .commonPrecondition
           val userAnswersWithWarehouses = emptyUserAnswersForUpdateRegisteredDetails.copy(warehouseList = warehousesFromSubscription)
           setAnswers(userAnswersWithWarehouses)
@@ -407,7 +409,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
     "when the user selects no and there are no other options selected from Update Registered Details" - {
       "should not update the session with the selected value and redirect to the CYA controller" - {
         "when the session contains no data for page" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswersWithSiteOnlyChangeRegisteredDetailsSelections)
@@ -430,7 +432,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
     "when the user selects no and update contact details is selected from Update Registered Details" - {
       "should not update the session with the selected value and redirect to the Contact details controller" - {
         "when the session contains no data for page" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswersWithSitesAndContactDetailsChangeRegisteredDetailsSelections)
@@ -454,7 +456,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
     "when the user selects no and update business address is selected from Update Registered Details" - {
       "should update the session with the new value and redirect to the Business address controller" - {
         "when the session contains no data for page" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswersWithSitesAndBusinessAddressChangeRegisteredDetailsSelections)
@@ -475,7 +477,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
     }
 
     "when the session already contains data for page" in {
-      given
+      build
         .commonPrecondition
 
       setAnswers(userAnswers)
@@ -495,7 +497,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForUpdateRegisteredDetails)

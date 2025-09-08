@@ -25,14 +25,14 @@ import models.alf.{AlfAddress, AlfResponse}
 import models.backend.{Site, UkAddress}
 import models.core.ErrorModel
 import org.mockito.ArgumentMatchers
-import org.mockito.MockitoSugar.{mock, when}
+import org.mockito.Mockito.{mock, when}
 import play.api.test.{DefaultAwaitTimeout, FakeRequest, FutureAwaits}
 
 import scala.concurrent.Future
 
 class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAwaitTimeout {
 
-  val mockALFConnector: AddressLookupConnector = mock[AddressLookupConnector]
+  val mockALFConnector: AddressLookupConnector = mock(classOf[AddressLookupConnector])
   val service = new AddressLookupService(mockALFConnector, frontendAppConfig)
   val organisation = "soft drinks ltd"
   val addressLine1 = "line 1"
@@ -285,7 +285,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
           options = JourneyOptions(
             continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/${if (mode == CheckMode) "change-" else "" }packing-site-details/$sdilId",
             homeNavHref = None,
-            signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+            signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
             accessibilityFooterUrl = Some("localhost/accessibility-statement/soft-drinks-industry-levy-variations-frontend"),
             phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705bar"),
             deskProServiceName = None,
@@ -308,7 +308,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
             )),
             timeoutConfig = Some(TimeoutConfig(
               timeoutAmount = frontendAppConfig.timeout,
-              timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+              timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
               timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
             )),
             serviceHref = Some(frontendAppConfig.sdilHomeUrl),
@@ -359,7 +359,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
           options = JourneyOptions(
             continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/${if (mode == CheckMode) "change-" else "" }secondary-warehouses/$sdilId",
             homeNavHref = None,
-            signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+            signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
             accessibilityFooterUrl = Some("localhost/accessibility-statement/soft-drinks-industry-levy-variations-frontend"),
             phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705bar"),
             deskProServiceName = None,
@@ -382,7 +382,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
             )),
             timeoutConfig = Some(TimeoutConfig(
               timeoutAmount = frontendAppConfig.timeout,
-              timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+              timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
               timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
             )),
             serviceHref = Some(frontendAppConfig.sdilHomeUrl),
@@ -433,7 +433,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
           options = JourneyOptions(
             continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/${if (mode == CheckMode) "change-" else "" }business-address/$sdilId",
             homeNavHref = None,
-            signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+            signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
             accessibilityFooterUrl = Some("localhost/accessibility-statement/soft-drinks-industry-levy-variations-frontend"),
             phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705bar"),
             deskProServiceName = None,
@@ -456,7 +456,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
             )),
             timeoutConfig = Some(TimeoutConfig(
               timeoutAmount = frontendAppConfig.timeout,
-              timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+              timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
               timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
             )),
             serviceHref = Some(frontendAppConfig.sdilHomeUrl),
@@ -520,7 +520,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
           options = JourneyOptions(
             continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/${if (mode == CheckMode) "change-" else "" }secondary-warehouses/$exampleSdilIdWeGenerate",
             homeNavHref = None,
-            signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+            signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
             accessibilityFooterUrl = Some("localhost/accessibility-statement/soft-drinks-industry-levy-variations-frontend"),
             phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705${request.uri}"),
             deskProServiceName = None,
@@ -543,7 +543,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
             )),
             timeoutConfig = Some(TimeoutConfig(
               timeoutAmount = frontendAppConfig.timeout,
-              timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+              timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
               timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
             )),
             serviceHref = Some(frontendAppConfig.sdilHomeUrl),
@@ -592,7 +592,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
           options = JourneyOptions(
             continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/${if (mode == CheckMode) "change-" else "" }packing-site-details/$exampleSdilIdWeGenerate",
             homeNavHref = None,
-            signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+            signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
             accessibilityFooterUrl = Some("localhost/accessibility-statement/soft-drinks-industry-levy-variations-frontend"),
             phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705${request.uri}"),
             deskProServiceName = None,
@@ -615,7 +615,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
             )),
             timeoutConfig = Some(TimeoutConfig(
               timeoutAmount = frontendAppConfig.timeout,
-              timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+              timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
               timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
             )),
             serviceHref = Some(frontendAppConfig.sdilHomeUrl),
@@ -664,7 +664,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
           options = JourneyOptions(
             continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/${if (mode == CheckMode) "change-" else "" }business-address/$exampleSdilIdWeGenerate",
             homeNavHref = None,
-            signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+            signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
             accessibilityFooterUrl = Some("localhost/accessibility-statement/soft-drinks-industry-levy-variations-frontend"),
             phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705${request.uri}"),
             deskProServiceName = None,
@@ -687,7 +687,7 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
             )),
             timeoutConfig = Some(TimeoutConfig(
               timeoutAmount = frontendAppConfig.timeout,
-              timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+              timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
               timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
             )),
             serviceHref = Some(frontendAppConfig.sdilHomeUrl),

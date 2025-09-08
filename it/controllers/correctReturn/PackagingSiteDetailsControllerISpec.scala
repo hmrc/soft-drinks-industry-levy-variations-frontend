@@ -7,7 +7,7 @@ import models.SelectChange.CorrectReturn
 import models.alf.init._
 import org.jsoup.Jsoup
 import org.scalatest.TryValues
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import pages.correctReturn.{BroughtIntoUKPage, PackagingSiteDetailsPage}
 import play.api.http.HeaderNames
 import play.api.libs.json.{JsObject, Json}
@@ -23,7 +23,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the PackagingSiteDetails page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packAtBusinessAddressSite))
@@ -49,7 +49,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
     userAnswersForCorrectReturnPackagingSiteDetailsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with neither radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
@@ -81,7 +81,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
   s"GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the PackagingSiteDetails page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packAtBusinessAddressSite))
@@ -107,7 +107,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
     userAnswersForCorrectReturnPackagingSiteDetailsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with neither radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
@@ -144,7 +144,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
         options = JourneyOptions(
           continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/packing-site-details/$sdilNumber",
           homeNavHref = None,
-          signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+          signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
           accessibilityFooterUrl = Some("localhost/accessibility-statement/soft-drinks-industry-levy-variations-frontend"),
           phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fcorrect-return%2Fpackaging-site-details"),
           deskProServiceName = None,
@@ -167,7 +167,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
           )),
           timeoutConfig = Some(TimeoutConfig(
             timeoutAmount = 900,
-            timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+            timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
             timeoutKeepAliveUrl = Some(controllers.routes.KeepAliveController.keepAlive.url)
           )),
          serviceHref = Some("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"),
@@ -207,7 +207,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
 
       val alfOnRampURL: String = "https://onramp.com"
 
-      given
+      build
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
       setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -230,7 +230,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
       "should not update the session with the selected value and redirect to the expected controller" - {
 
         "when the session contains no data for page and is not new importer" in {
-          given
+          build
             .commonPrecondition
           val userAnswers = emptyUserAnswersForCorrectReturn
           setUpForCorrectReturn(userAnswers)
@@ -249,7 +249,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
         }
 
         "when the session contains no data for page and is new importer" in {
-          given
+          build
             .commonPreconditionChangeSubscription(diffSubscription.copy(activity = diffSubscription.activity.copy(importer = false)))
           val userAnswers = emptyUserAnswersForCorrectReturn
             .set(BroughtIntoUKPage, true).success.value
@@ -272,7 +272,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packAtBusinessAddressSite))
@@ -307,7 +307,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
         options = JourneyOptions(
           continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/change-packing-site-details/$sdilNumber",
           homeNavHref = None,
-          signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+          signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
           accessibilityFooterUrl = Some("localhost/accessibility-statement/soft-drinks-industry-levy-variations-frontend"),
           phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fcorrect-return%2Fchange-packaging-site-details"),
           deskProServiceName = None,
@@ -330,7 +330,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
           )),
           timeoutConfig = Some(TimeoutConfig(
             timeoutAmount = 900,
-            timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+            timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
             timeoutKeepAliveUrl = Some(controllers.routes.KeepAliveController.keepAlive.url)
           )),
          serviceHref = Some("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"),
@@ -370,7 +370,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
 
       val alfOnRampURL: String = "https://onramp.com"
 
-      given
+      build
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
       setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -392,7 +392,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
     "when the user selects no" - {
       "should not update the session with the selected value and redirect to the expected controller" - {
         "when the session already no data for page and is not new importer" in {
-          given
+          build
             .commonPrecondition
 
           val userAnswers = emptyUserAnswersForCorrectReturn
@@ -412,7 +412,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
         }
         
         "when the session already contains no data for page and is new importer" in {
-          given
+          build
             .commonPreconditionChangeSubscription(diffSubscription.copy(activity = diffSubscription.activity.copy(importer = false)))
 
           val userAnswers = emptyUserAnswersForCorrectReturn
@@ -436,7 +436,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper with Tr
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(packagingSiteList = packAtBusinessAddressSite))

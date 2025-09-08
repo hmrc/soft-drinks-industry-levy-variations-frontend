@@ -4,7 +4,7 @@ import controllers.ControllerITTestHelper
 import models.SelectChange.CorrectReturn
 import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import pages.correctReturn.{BalanceRepaymentRequired, CorrectReturnBaseCYAPage, CorrectionReasonPage}
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
@@ -26,7 +26,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the CorrectionReason page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
@@ -47,7 +47,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
 
     s"when the userAnswers contains data for the page" - {
       s"should return OK and render the page with fields populated" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(userAnswers.set(CorrectReturnBaseCYAPage, true).success.value)
@@ -75,7 +75,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
   "GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the CorrectionReason page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
@@ -97,7 +97,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
 
     s"when the userAnswers contains data for the page" - {
       s"should return OK and render the page with fields populated" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(userAnswers.set(CorrectReturnBaseCYAPage, true).success.value)
@@ -128,7 +128,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
         "should update the session with the new values and redirect to the repayment controller" +
           s"when balance repayment ${if (balanceRepaymentRequired) " not" else ""}required" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             val userAnswers = emptyUserAnswersForCorrectReturn
@@ -145,7 +145,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
                 val expectedLocation = if (balanceRepaymentRequired) {
                   routes.RepaymentMethodController.onPageLoad(NormalMode).url
                 } else {
-                  routes.CorrectReturnCheckChangesCYAController.onPageLoad.url
+                  routes.CorrectReturnCheckChangesCYAController.onPageLoad().url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[String]](None)(_.get(CorrectionReasonPage))
@@ -156,7 +156,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             val userAnswersWithData = userAnswers
@@ -173,7 +173,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
                 val expectedLocation = if (balanceRepaymentRequired) {
                   routes.RepaymentMethodController.onPageLoad(NormalMode).url
                 } else {
-                  routes.CorrectReturnCheckChangesCYAController.onPageLoad.url
+                  routes.CorrectReturnCheckChangesCYAController.onPageLoad().url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
                 val dataStoredForPage = getAnswers(userAnswersWithData.id).fold[Option[String]](None)(_.get(CorrectionReasonPage))
@@ -188,7 +188,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
 
     "should return 400 with required error" - {
       "when the question is not answered" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
@@ -224,7 +224,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
     "when the user answers the question" - {
       "should update the session with the new values and redirect to the CYA controller" - {
         "when the session contains no data for page" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
@@ -235,7 +235,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[String]](None)(_.get(CorrectionReasonPage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe correctionReasonDiff
@@ -244,7 +244,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
         }
 
         "when the session already contains data for page" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers.set(CorrectReturnBaseCYAPage, true).success.value)
@@ -255,7 +255,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[String]](None)(_.get(CorrectionReasonPage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe correctionReasonDiff
@@ -267,7 +267,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
 
     "should return 400 with required error" - {
       "when the question is not answered" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)

@@ -5,7 +5,7 @@ import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced
 import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import pages.changeActivity._
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
@@ -30,14 +30,14 @@ class HowManyContractPackingControllerISpec extends LitresISpecHelper {
       if (userAnswers.get(PackagingSiteDetailsPage).isEmpty) {
         (checkRoutePath, routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
       } else {
-        (checkRoutePath, routes.ChangeActivityCYAController.onPageLoad.url)
+        (checkRoutePath, routes.ChangeActivityCYAController.onPageLoad().url)
       }
     }
 
     "GET " + path - {
       "when the userAnswers contains no data" - {
         "should return OK and render the litres page for ContractPacking with no data populated" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswers.remove(HowManyContractPackingPage).success.value)
@@ -58,7 +58,7 @@ class HowManyContractPackingControllerISpec extends LitresISpecHelper {
 
       s"when the userAnswers contains data for the page" - {
         s"should return OK and render the page with fields populated" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswers)
@@ -85,7 +85,7 @@ class HowManyContractPackingControllerISpec extends LitresISpecHelper {
       "when the user populates all litres fields" - {
         "should update the session with the new values and redirect to " + redirectLocation - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(userAnswers.remove(HowManyContractPackingPage).success.value)
@@ -105,7 +105,7 @@ class HowManyContractPackingControllerISpec extends LitresISpecHelper {
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(userAnswers)
@@ -131,7 +131,7 @@ class HowManyContractPackingControllerISpec extends LitresISpecHelper {
           "Error: How many litres will you package as a third party or contract packer in the next 12 months? - Soft Drinks Industry Levy - GOV.UK"
 
         "when no questions are answered" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForChangeActivity)
@@ -149,7 +149,7 @@ class HowManyContractPackingControllerISpec extends LitresISpecHelper {
         }
 
         "when the user answers with no numeric answers" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForChangeActivity)
@@ -167,7 +167,7 @@ class HowManyContractPackingControllerISpec extends LitresISpecHelper {
         }
 
         "when the user answers with negative numbers" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForChangeActivity)
@@ -185,7 +185,7 @@ class HowManyContractPackingControllerISpec extends LitresISpecHelper {
         }
 
         "when the user answers with decimal numbers" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForChangeActivity)
@@ -203,7 +203,7 @@ class HowManyContractPackingControllerISpec extends LitresISpecHelper {
         }
 
         "when the user answers with out of max range numbers" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForChangeActivity)
@@ -221,7 +221,7 @@ class HowManyContractPackingControllerISpec extends LitresISpecHelper {
         }
 
         "when the user answers with 0" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForChangeActivity)

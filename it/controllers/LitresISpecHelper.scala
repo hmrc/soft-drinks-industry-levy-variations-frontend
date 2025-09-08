@@ -18,13 +18,16 @@ package controllers
 
 import models.LitresInBands
 import org.jsoup.nodes.Document
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import play.api.i18n.Messages
+import org.scalatest.matchers.must.Matchers.*
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
+import play.api.test.FakeRequest
 
 
 trait LitresISpecHelper extends ControllerITTestHelper {
 
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
 
   val lowBandValue: Long = 1000
   val highBandValue: Long = 2000

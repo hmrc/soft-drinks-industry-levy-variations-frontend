@@ -23,7 +23,7 @@ import models.changeActivity.{AmountProduced, ChangeActivityData}
 import models.submission.{Activity, Litreage, SdilActivity}
 import models.{LitresInBands, VariationsSubmissionDataHelper}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
 import services.SessionService

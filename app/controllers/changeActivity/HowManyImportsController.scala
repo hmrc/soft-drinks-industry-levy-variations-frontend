@@ -57,7 +57,7 @@ class HowManyImportsController @Inject()(
           case Some(value) => form.fill(value)
         }
 
-      Future.successful(Ok(view(preparedForm, mode)))
+        Future.successful(Ok(view(preparedForm, mode)))
       }
   }
 

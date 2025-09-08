@@ -28,13 +28,11 @@ import models.SelectChange._
 import models._
 import models.backend.{RetrievedActivity, RetrievedSubscription, Site, UkAddress}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.mock
+import org.mockito.Mockito.{when, mock}
 import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{BeforeAndAfterEach, OptionValues, TryValues}
-import play.api.http.Status.SEE_OTHER
 import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -220,12 +218,12 @@ trait SpecBase
     val expectedLocation = selectChange match {
       case CancelRegistration => controllers.cancelRegistration.routes.CancellationRequestDoneController.onPageLoad()
       case UpdateRegisteredDetails => controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad()
-      case CorrectReturn => controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad
-      case ChangeActivity => controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad
+      case CorrectReturn => controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad()
+      case ChangeActivity => controllers.changeActivity.routes.ChangeActivitySentController.onPageLoad()
     }
     val application = selectChange match {
       case CorrectReturn =>
-        val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
+        val mockSdilConnector = mock(classOf[SoftDrinksIndustryLevyConnector])
         when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(Some(emptySdilReturn)))
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector)).build()

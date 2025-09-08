@@ -7,12 +7,12 @@ import models.backend.UkAddress
 import models.submission.{ClosedSite, VariationsContact, VariationsPersonalDetails, VariationsSite}
 import models.updateRegisteredDetails.ContactDetails
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.matchers.must.Matchers._
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.http.Status.OK
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.test.WsTestClient
+import play.api.test.{WsTestClient, FakeRequest}
 import play.mvc.Http.HeaderNames
 import testSupport.helpers.SubmissionVariationHelper
 import viewmodels.AddressFormattingHelper
@@ -20,10 +20,14 @@ import viewmodels.AddressFormattingHelper
 class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
 
   val route = "/change-registered-details/check-your-answers"
+
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
+  
   "GET " + routes.UpdateRegisteredDetailsCYAController.onPageLoad.url - {
     "when the userAnswers contains business address only" - {
       "should render the page including uk site details summary for zero values" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForUpdateRegisteredDetails.copy(data = Json.obj(), packagingSiteList = Map.empty, warehouseList = Map.empty))
@@ -34,7 +38,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe OK
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("updateRegisteredDetails.checkYourAnswers.title"))
+            page.title must include(messages("updateRegisteredDetails.checkYourAnswers.title"))
             page.getElementsByClass("govuk-body").first().text() mustBe s"This update is for ${diffSubscription.orgName}"
             page.getElementsByTag("h2").get(1).text() mustBe "Business address"
             val ukSiteElems = page.getElementsByClass("govuk-summary-list").first().getElementsByClass("govuk-summary-list__row")
@@ -54,7 +58,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
 
     "when the userAnswers contains a packaging site" - {
       "should render the page with the packaging site details as a summary" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForUpdateRegisteredDetails.copy(data = Json.obj(), packagingSiteList = packagingSitesFromSubscription, warehouseList = Map.empty))
@@ -65,7 +69,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe OK
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("updateRegisteredDetails.checkYourAnswers.title"))
+            page.title must include(messages("updateRegisteredDetails.checkYourAnswers.title"))
             page.getElementsByClass("govuk-body").first().text() mustBe s"This update is for ${diffSubscription.orgName}"
             page.getElementsByTag("h2").first.text() mustBe "UK site details"
             val elems = page.getElementsByClass("govuk-summary-list").first().getElementsByClass("govuk-summary-list__row")
@@ -80,7 +84,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
 
     "when the userAnswers contains a warehouse" - {
       "should render the page with the warehouse details as a summary" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForUpdateRegisteredDetails
@@ -92,7 +96,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe OK
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("updateRegisteredDetails.checkYourAnswers.title"))
+            page.title must include(messages("updateRegisteredDetails.checkYourAnswers.title"))
             page.getElementsByClass("govuk-body").first().text() mustBe s"This update is for ${diffSubscription.orgName}"
             page.getElementsByTag("h2").first.text() mustBe "UK site details"
             val elems = page.getElementsByClass("govuk-summary-list").first().getElementsByClass("govuk-summary-list__row")
@@ -107,7 +111,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
 
     s"when the userAnswers contains the $UpdateContactDetailsPage" - {
       "should render the page with the contact details as a summary" in {
-        given
+        build
           .commonPrecondition
         setAnswers(emptyUserAnswersForUpdateRegisteredDetails
           .copy(packagingSiteList = Map.empty, warehouseList = Map.empty)
@@ -120,7 +124,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
             res.status mustBe OK
             val page = Jsoup.parse(res.body)
 
-            page.title must include(Messages("updateRegisteredDetails.checkYourAnswers.title"))
+            page.title must include(messages("updateRegisteredDetails.checkYourAnswers.title"))
             page.getElementsByClass("govuk-body").first().text() mustBe s"This update is for ${diffSubscription.orgName}"
             page.getElementsByTag("h2").get(1).text() mustBe "Soft Drinks Industry Levy contact"
             val elems = page.getElementsByClass("govuk-summary-list").get(1).getElementsByClass("govuk-summary-list__row")
@@ -161,7 +165,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
           override val hasNewSites: Boolean = true
           override val hasRemovedSites = false
 
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription)
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -171,7 +175,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad().url)
               requestBodyMatchesUpdateRegDetails(wireMockServer, None, None, expectedNewSites, expectedClosedSites)
             }
           }
@@ -182,7 +186,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
           override val hasNewSites: Boolean = true
           override val hasRemovedSites = false
 
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription)
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -192,7 +196,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad().url)
               requestBodyMatchesUpdateRegDetails(wireMockServer, None, None, expectedNewSites, expectedClosedSites)
             }
           }
@@ -205,7 +209,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
           override val hasNewSites: Boolean = true
           override val hasRemovedSites = true
 
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription)
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -215,7 +219,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad().url)
               requestBodyMatchesUpdateRegDetails(wireMockServer, None, None, expectedNewSites, expectedClosedSites)
             }
           }
@@ -226,7 +230,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
           override val hasNewSites: Boolean = true
           override val hasRemovedSites = true
 
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription)
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -236,7 +240,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad().url)
               requestBodyMatchesUpdateRegDetails(wireMockServer, None, None, expectedNewSites, expectedClosedSites)
             }
           }
@@ -249,7 +253,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
           override val hasNewSites: Boolean = false
           override val hasRemovedSites = true
 
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription)
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -259,7 +263,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad().url)
               requestBodyMatchesUpdateRegDetails(wireMockServer, None, None, expectedNewSites, expectedClosedSites)
             }
           }
@@ -270,7 +274,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
           override val hasNewSites: Boolean = false
           override val hasRemovedSites = true
 
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription)
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -280,7 +284,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad().url)
               requestBodyMatchesUpdateRegDetails(wireMockServer, None, None, expectedNewSites, expectedClosedSites)
             }
           }
@@ -293,7 +297,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
           override val optUpdatedContactDetails: Option[ContactDetails] = Some(updatedContactDetails)
           val expectVariationPDs = VariationsPersonalDetails(name = Some(UPDATED_NAME))
 
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription)
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -303,7 +307,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad().url)
               requestBodyMatchesUpdateRegDetails(wireMockServer, None, Some(expectVariationPDs))
             }
           }
@@ -314,7 +318,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
           override val optUpdatedContactDetails: Option[ContactDetails] = Some(updatedContactDetails)
           val expectVariationPDs = VariationsPersonalDetails(position = Some(UPDATED_POSITION))
 
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription)
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -324,7 +328,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad().url)
               requestBodyMatchesUpdateRegDetails(wireMockServer, None, Some(expectVariationPDs))
             }
           }
@@ -335,7 +339,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
           override val optUpdatedContactDetails: Option[ContactDetails] = Some(updatedContactDetails)
           val expectVariationPDs = VariationsPersonalDetails(telephoneNumber = Some(UPDATED_PHONE_NUMBER))
           val expectVariationContact = VariationsContact(telephoneNumber = Some(UPDATED_PHONE_NUMBER))
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription)
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -345,7 +349,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad().url)
               requestBodyMatchesUpdateRegDetails(wireMockServer, Some(expectVariationContact), Some(expectVariationPDs))
             }
           }
@@ -356,7 +360,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
           override val optUpdatedContactDetails: Option[ContactDetails] = Some(updatedContactDetails)
           val expectVariationPDs = VariationsPersonalDetails(emailAddress = Some(UPDATED_EMAIL))
           val expectVariationContact = VariationsContact(emailAddress = Some(UPDATED_EMAIL))
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription)
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -366,7 +370,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad().url)
               requestBodyMatchesUpdateRegDetails(wireMockServer, Some(expectVariationContact), Some(expectVariationPDs))
             }
           }
@@ -377,7 +381,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
           override val optUpdatedContactDetails: Option[ContactDetails] = Some(updatedContactDetails)
           val expectVariationPDs = updatedPersonalDetails
           val expectVariationContact = VariationsContact(telephoneNumber = Some(UPDATED_PHONE_NUMBER), emailAddress = Some(UPDATED_EMAIL))
-          given
+          build
             .commonPreconditionChangeSubscription(getSubscription)
             .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -387,7 +391,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
             val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
             whenReady(result) { res =>
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad().url)
               requestBodyMatchesUpdateRegDetails(wireMockServer, Some(expectVariationContact), Some(expectVariationPDs))
             }
           }
@@ -398,7 +402,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
       "when the user has updated business address" in new UpdateRegDetailsPOSTHelper {
         override val optUpdatedBusinessAddress: Option[UkAddress] = Some(UPDATED_ADDRESS)
         val expectVariationContact = VariationsContact(address = Some(UPDATED_ADDRESS))
-        given
+        build
           .commonPreconditionChangeSubscription(getSubscription)
           .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -408,7 +412,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
           val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
           whenReady(result) { res =>
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad.url)
+            res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad().url)
             requestBodyMatchesUpdateRegDetails(wireMockServer, Some(expectVariationContact), None)
           }
         }
@@ -424,7 +428,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
 
         val expectVariationPDs = updatedPersonalDetails
         val expectVariationContact = VariationsContact(address = Some(UPDATED_ADDRESS), telephoneNumber = Some(UPDATED_PHONE_NUMBER), emailAddress = Some(UPDATED_EMAIL))
-        given
+        build
           .commonPreconditionChangeSubscription(getSubscription)
           .sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
@@ -434,7 +438,7 @@ class UpdateRegisteredDetailsCYAControllerISpec extends ControllerITTestHelper {
           val result = createClientRequestPOST(client, baseUrl + route, Json.obj())
 
           whenReady(result) { res =>
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad.url)
+            res.header(HeaderNames.LOCATION) mustBe Some(controllers.updateRegisteredDetails.routes.UpdateDoneController.onPageLoad().url)
             requestBodyMatchesUpdateRegDetails(wireMockServer, Some(expectVariationContact), Some(expectVariationPDs), expectedNewSites, expectedClosedSites)
           }
         }

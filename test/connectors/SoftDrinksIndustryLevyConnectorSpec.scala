@@ -57,7 +57,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends HttpClientV2Helper with DataHe
         }
       }
 
-    "when there is no subscription in cache" in {
+      "when there is no subscription in cache" in {
       val identifierType: String = "sdil"
       val sdilNumber: String = "XKSDIL000000022"
       when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(),any())(any())).thenReturn(Future.successful(None))
@@ -131,7 +131,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends HttpClientV2Helper with DataHe
         }
       }
 
-    "return balance history successfully" in {
+      "return balance history successfully" in {
       when(requestBuilderExecute[List[FinancialLineItem]]).thenReturn(Future.successful(financialItemList))
 
       val res = softDrinksIndustryLevyConnector.balanceHistory(sdilNumber, false)
@@ -144,7 +144,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends HttpClientV2Helper with DataHe
       }
     }
 
-    "POST submitSdilReturnsVary successfully when valid data is given" - {
+      "POST submitSdilReturnsVary successfully when valid data is given" - {
       "for no change" in{
 
         when(requestBuilderExecute[HttpResponse])
@@ -216,7 +216,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends HttpClientV2Helper with DataHe
       }
     }
 
-    "POST submitReturnVariation successfully when valid data is given" in {
+      "POST submitReturnVariation successfully when valid data is given" in {
       when(requestBuilderExecute[HttpResponse])
         .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
@@ -242,7 +242,7 @@ class SoftDrinksIndustryLevyConnectorSpec extends HttpClientV2Helper with DataHe
         }
     }
 
-    "POST variation successfully when valid data is given" - {
+       "POST variation successfully when valid data is given" - {
       "for a user who has updated registered details" in {
         val variationsSubmission = testVariationSubmission(variationContact = Some(updatedVariationsContact),
           variationsPersonalDetails = Some(updatedPersonalDetails),

@@ -71,7 +71,7 @@ class ModelEncryptionSpec extends SpecBase {
         Option(Instant.ofEpochSecond(1)),
         Instant.ofEpochSecond(1))
 
-     val result = ModelEncryption.decryptUserAnswers(
+      val result = ModelEncryption.decryptUserAnswers(
         userAnswers.id,
         userAnswers.journeyType,
         encryption.crypto.encrypt(userAnswers.data.toString(), userAnswers.id),

@@ -5,7 +5,7 @@ import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced
 import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.matchers.must.Matchers._
 import pages.changeActivity._
 import play.api.http.HeaderNames
 import play.api.i18n.Messages
@@ -31,7 +31,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       "when all previous required pages have been answered" - {
         "when the userAnswers contains no page data" - {
           "should return OK and render the litres page for Imports with no data populated" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(completedUserAnswers)
@@ -51,7 +51,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
         s"when the userAnswers contains data for the page" - {
           s"should return OK and render the page with fields populated" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(completedUserAnswers.set(HowManyImportsPage, litresInBands).success.value)
@@ -75,7 +75,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
       "when a page is missing from the userAnswers" - {
         s"should redirect to the $AmountProducedPage page" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(completedUserAnswers.remove(AmountProducedPage).success.value)
@@ -91,7 +91,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
         }
 
         s"should redirect to the $ThirdPartyPackagersPage page" in {
-          given
+          build
             .commonPrecondition
           val updatedAnswers = completedUserAnswers
             .remove(ThirdPartyPackagersPage).success.value
@@ -109,7 +109,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
         }
 
         s"should redirect to the $OperatePackagingSiteOwnBrandsPage page" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(completedUserAnswers.remove(OperatePackagingSiteOwnBrandsPage).success.value)
@@ -125,7 +125,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
         }
 
         s"should redirect to the $ContractPackingPage page" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(completedUserAnswers.remove(ContractPackingPage).success.value)
@@ -141,7 +141,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
         }
 
         s"should redirect to the $ImportsPage page" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(completedUserAnswers.remove(ImportsPage).success.value)
@@ -166,7 +166,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
           "when the user has no packaging sites" - {
             "and the user has answered previous required pages" - {
               "with large producer type, yes for own brands and no for copacker" in {
-                given
+                build
                   .commonPrecondition
 
                 val userAnswers = emptyUserAnswersForChangeActivity
@@ -194,7 +194,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               }
 
               "with large producer type, no for own brands and yes for copacker" in {
-                given
+                build
                   .commonPrecondition
 
                 val userAnswers = emptyUserAnswersForChangeActivity
@@ -222,7 +222,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               }
 
               "with large producer type, yes for own brands and yes for copacker" in {
-                given
+                build
                   .commonPrecondition
 
                 val userAnswers = emptyUserAnswersForChangeActivity
@@ -251,7 +251,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               }
 
               s"with small producer type and true $ContractPackingPage" in {
-                given
+                build
                   .commonPrecondition
 
                 val userAnswers = emptyUserAnswersForChangeActivity
@@ -280,7 +280,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               }
 
               "with None producer type and yes for copacker" in {
-                given
+                build
                   .commonPrecondition
 
                 val userAnswers = emptyUserAnswersForChangeActivity
@@ -314,7 +314,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             "and the user has answered previous required pages" - {
               val userAnswersWithPackagingSite = emptyUserAnswersForChangeActivity.copy(packagingSiteList = packAtBusinessAddressSite)
               s"with large producer type, true $OperatePackagingSiteOwnBrandsPage and false $ContractPackingPage" in {
-                given
+                build
                   .commonPrecondition
 
                 val userAnswers = userAnswersWithPackagingSite
@@ -341,7 +341,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               }
 
               s"with large producer type, false $OperatePackagingSiteOwnBrandsPage and true $ContractPackingPage" in {
-                given
+                build
                   .commonPrecondition
 
                 val userAnswers = userAnswersWithPackagingSite
@@ -368,7 +368,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               }
 
               s"with large producer type, true $OperatePackagingSiteOwnBrandsPage, and true $ContractPackingPage" in {
-                given
+                build
                   .commonPrecondition
 
                 val userAnswers = userAnswersWithPackagingSite
@@ -396,7 +396,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               }
 
               s"with small producer type, false $OperatePackagingSiteOwnBrandsPage and true $ContractPackingPage " in {
-                given
+                build
                   .commonPrecondition
 
                 val userAnswers = userAnswersWithPackagingSite
@@ -424,7 +424,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               }
 
               s"with small producer type, true $ThirdPartyPackagersPage, true $OperatePackagingSiteOwnBrandsPage, and true $ContractPackingPage" in {
-                given
+                build
                   .commonPrecondition
 
                 val userAnswers = userAnswersWithPackagingSite
@@ -453,7 +453,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               }
 
               s"with None producer type and true $ContractPackingPage" in {
-                given
+                build
                   .commonPrecondition
 
                 val userAnswers = userAnswersWithPackagingSite
@@ -484,7 +484,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
         "and redirect to add secondary warehouse" - {
           "the user has answered previous required pages" - {
             s"with large producer type, false $OperatePackagingSiteOwnBrandsPage and false $ContractPackingPage" in {
-              given
+              build
                 .commonPrecondition
 
               val userAnswers = emptyUserAnswersForChangeActivity
@@ -510,7 +510,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
 
             s"with small producer type, true $OperatePackagingSiteOwnBrandsPage and false $ContractPackingPage" in {
-              given
+              build
                 .commonPrecondition
 
               val userAnswers = emptyUserAnswersForChangeActivity
@@ -539,7 +539,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
 
             s"with small producer type, true $ThirdPartyPackagersPage, false $OperatePackagingSiteOwnBrandsPage, false $ContractPackingPage" in {
-              given
+              build
                 .commonPrecondition
 
               val userAnswers = emptyUserAnswersForChangeActivity
@@ -567,7 +567,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
 
             s"with None producer type and false $ContractPackingPage" in {
-              given
+              build
                 .commonPrecondition
 
               val userAnswers = emptyUserAnswersForChangeActivity
@@ -595,7 +595,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
         "and redirect to the Amount produced controller" - {
           "when the session contains no data for any pages" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(emptyUserAnswersForChangeActivity)
@@ -621,7 +621,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       val errorTitle = "Error: " + Messages("howManyImports.title")
 
       "when no questions are answered" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -639,7 +639,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       }
 
       "when the user answers with no numeric answers" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -657,7 +657,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       }
 
       "when the user answers with negative numbers" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -675,7 +675,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       }
 
       "when the user answers with decimal numbers" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -693,7 +693,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       }
 
       "when the user answers with out of max range numbers" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -711,7 +711,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       }
 
       "when the user answers with 0" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -740,7 +740,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
         "when the user has no packaging sites" - {
           "and the user has answered previous required pages" - {
             "with large producer type, yes for own brands and no for copacker" in {
-              given
+              build
                 .commonPrecondition
 
               val userAnswers = emptyUserAnswersForChangeActivity
@@ -759,7 +759,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
                   val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
@@ -768,7 +768,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
 
             "with large producer type, no for own brands and yes for copacker" in {
-              given
+              build
                 .commonPrecondition
 
               val userAnswers = emptyUserAnswersForChangeActivity
@@ -787,7 +787,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
                   val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
@@ -796,7 +796,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
 
             "with large producer type, yes for own brands and yes for copacker" in {
-              given
+              build
                 .commonPrecondition
 
               val userAnswers = emptyUserAnswersForChangeActivity
@@ -816,7 +816,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
                   val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
@@ -824,7 +824,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               }
             }
             "with None producer type and yes for co-packer" in {
-              given
+              build
                 .commonPrecondition
 
               val userAnswers = emptyUserAnswersForChangeActivity
@@ -850,7 +850,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
 
             "with None producer type, yes for co-packer and has answered warehouse details" in {
-              given
+              build
                 .commonPrecondition
 
               val userAnswers = emptyUserAnswersForChangeActivity
@@ -867,7 +867,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
                   val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
@@ -881,7 +881,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
           "and the user has answered previous required pages" - {
             val userAnswersWithPackagingSite = emptyUserAnswersForChangeActivity.copy(packagingSiteList = packAtBusinessAddressSite)
             "with large producer type, yes for own brands and no for copacker" in {
-              given
+              build
                 .commonPrecondition
 
               val userAnswers = userAnswersWithPackagingSite
@@ -900,7 +900,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
                   val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
@@ -909,7 +909,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
 
             "with large producer type, no for own brands and yes for copacker" in {
-              given
+              build
                 .commonPrecondition
 
               val userAnswers = userAnswersWithPackagingSite
@@ -928,7 +928,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
                   val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
@@ -937,7 +937,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
 
             "with large producer type, yes for own brands and yes for copacker" in {
-              given
+              build
                 .commonPrecondition
 
               val userAnswers = userAnswersWithPackagingSite
@@ -957,7 +957,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
                   val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
@@ -966,7 +966,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
 
             "with None producer type and yes for co-packer and no warehouse details answered" in {
-              given
+              build
                 .commonPrecondition
 
               val userAnswers = userAnswersWithPackagingSite
@@ -992,7 +992,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
 
             "with None producer type and yes for co-packer and warehouse details answered" in {
-              given
+              build
                 .commonPrecondition
 
               val userAnswers = userAnswersWithPackagingSite
@@ -1010,7 +1010,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
                   val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
@@ -1019,7 +1019,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
 
             "with None producer type, no for Co-packer and Warehouse details answered" in {
-              given
+              build
                 .commonPrecondition
 
               val userAnswers = userAnswersWithPackagingSite
@@ -1036,7 +1036,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
                   val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
@@ -1048,7 +1048,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
         "the user has answered previous required pages" - {
           "with large producer type, no for own brands, no for copacker and no warehouse details answers" in {
-            given
+            build
               .commonPrecondition
 
             val userAnswers = emptyUserAnswersForChangeActivity
@@ -1066,7 +1066,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBands
@@ -1075,7 +1075,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
           }
 
           "with large producer type, no for own brands , no for copacker and warehouse answers" in {
-            given
+            build
               .commonPrecondition
 
             val userAnswers = emptyUserAnswersForChangeActivity
@@ -1093,7 +1093,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBands
@@ -1102,7 +1102,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
           }
 
           "when the session contains no data for any pages" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(emptyUserAnswersForChangeActivity)
@@ -1122,7 +1122,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
           }
 
           "when the session contains data stating activity type Large, but no other pages" in {
-            given
+            build
               .commonPrecondition
 
             val userAnswers = emptyUserAnswersForChangeActivity
@@ -1136,7 +1136,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBands
@@ -1145,7 +1145,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
           }
 
           "when the session contains data stating activity type is Large and copacker" in {
-            given
+            build
               .commonPrecondition
 
             val userAnswers = emptyUserAnswersForChangeActivity
@@ -1160,7 +1160,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBands
@@ -1169,7 +1169,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
           }
 
           "when the session contains data stating activity type is Large and own brands" in {
-            given
+            build
               .commonPrecondition
 
             val userAnswers = emptyUserAnswersForChangeActivity
@@ -1184,7 +1184,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBands
@@ -1193,7 +1193,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
           }
 
           "when the session contains data stating activity type is Small" in {
-            given
+            build
               .commonPrecondition
 
             val userAnswers = emptyUserAnswersForChangeActivity
@@ -1226,7 +1226,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       val errorTitle = "Error: " + Messages("howManyImports.title")
 
       "when no questions are answered" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -1244,7 +1244,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       }
 
       "when the user answers with no numeric answers" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -1262,7 +1262,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       }
 
       "when the user answers with negative numbers" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -1280,7 +1280,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       }
 
       "when the user answers with decimal numbers" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -1298,7 +1298,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       }
 
       "when the user answers with out of max range numbers" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -1316,7 +1316,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       }
 
       "when the user answers with 0" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)

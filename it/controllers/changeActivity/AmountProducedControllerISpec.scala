@@ -6,22 +6,25 @@ import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced
 import models.changeActivity.AmountProduced.{Large, Small}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.matchers.must.Matchers._
 import pages.changeActivity.AmountProducedPage
 import play.api.http.HeaderNames
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.test.WsTestClient
+import play.api.test.{WsTestClient, FakeRequest}
 
 class AmountProducedControllerISpec extends ControllerITTestHelper {
 
   val normalRoutePath = "/amount-produced"
   val checkRoutePath = "/change-amount-produced"
 
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
+  
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the AmountProduced page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -32,7 +35,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("changeActivity.amountProduced" + ".title"))
+            page.title must include(messages("changeActivity.amountProduced" + ".title"))
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 3
 
@@ -48,7 +51,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
     AmountProduced.values.zipWithIndex.foreach { case (radio, index) =>
       s"when the userAnswers contains data for the page with " + radio.toString + " selected" - {
         s"should return OK and render the page with " + radio.toString + " radio checked" in {
-          given
+          build
             .commonPrecondition
 
           val userAnswers = emptyUserAnswersForChangeActivity.set(AmountProducedPage, radio).success.value
@@ -61,7 +64,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("changeActivity.amountProduced" + ".title"))
+              page.title must include(messages("changeActivity.amountProduced" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe AmountProduced.values.size
 
@@ -82,7 +85,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
   s"GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the AmountProduced page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -93,7 +96,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("changeActivity.amountProduced" + ".title"))
+            page.title must include(messages("changeActivity.amountProduced" + ".title"))
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 3
 
@@ -109,7 +112,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
     AmountProduced.values.zipWithIndex.foreach { case (radio, index) =>
       s"when the userAnswers contains data for the page with " + radio.toString + " selected" - {
         s"should return OK and render the page with " + radio.toString + " radio checked" in {
-          given
+          build
             .commonPrecondition
 
           val userAnswers = emptyUserAnswersForChangeActivity.set(AmountProducedPage, radio).success.value
@@ -123,7 +126,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("changeActivity.amountProduced" + ".title"))
+              page.title must include(messages("changeActivity.amountProduced" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 3
 
@@ -146,7 +149,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
       "when the user selects " + radio.toString - {
         "should update the session with the new value and redirect to the index controller" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(emptyUserAnswersForChangeActivity)
@@ -172,7 +175,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             val userAnswers = emptyUserAnswersForChangeActivity.set(AmountProducedPage, radio).success.value
@@ -205,7 +208,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select an option" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -217,7 +220,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("changeActivity.amountProduced" + ".title"))
+            page.title must include("Error: " + messages("changeActivity.amountProduced" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
@@ -239,7 +242,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
       "when the user selects " + radio.toString - {
         "should update the session with the new value and redirect to the corresponding next page" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             radio match {
@@ -268,7 +271,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             val userAnswers = emptyUserAnswersForChangeActivity.set(AmountProducedPage, radio).success.value
@@ -281,7 +284,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
                 val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[AmountProduced]](None)(_.get(AmountProducedPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
@@ -291,7 +294,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
         }
         "should update the session with the new value and redirect check your answers controller" - {
           "when the session matches what the user has submitted" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(emptyUserAnswersForChangeActivity.set(AmountProducedPage, radio).success.value)
@@ -303,9 +306,9 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
               whenReady(result) { res =>
                 res.status mustBe 303
                 radio match {
-                  case AmountProduced.Large => res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
-                  case AmountProduced.Small => res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
-                  case AmountProduced.None => res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad.url)
+                  case AmountProduced.Large => res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
+                  case AmountProduced.Small => res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
+                  case AmountProduced.None => res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
                 }
 
                 val dataStoredForPage = getAnswers(sdilNumber).fold[Option[AmountProduced]](None)(_.get(AmountProducedPage))
@@ -320,7 +323,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select an option" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -332,7 +335,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("changeActivity.amountProduced" + ".title"))
+            page.title must include("Error: " + messages("changeActivity.amountProduced" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary

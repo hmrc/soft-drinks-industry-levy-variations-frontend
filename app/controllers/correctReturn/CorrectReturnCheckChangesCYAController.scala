@@ -84,7 +84,7 @@ class CorrectReturnCheckChangesCYAController @Inject()(
   def onSubmit: Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
     correctReturnOrchestrator.submitReturn(request.userAnswers, request.subscription, request.returnPeriod, request.originalSdilReturn).value.flatMap {
-      case Right(_) => Future.successful(Redirect(routes.CorrectReturnUpdateDoneController.onPageLoad.url))
+      case Right(_) => Future.successful(Redirect(routes.CorrectReturnUpdateDoneController.onPageLoad().url))
       case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - received a failed response from return submission")
         errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
     }

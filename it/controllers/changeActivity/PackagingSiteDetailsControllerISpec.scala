@@ -3,14 +3,14 @@ package controllers.changeActivity
 import controllers.{ControllerITTestHelper, routes}
 import models.SelectChange.ChangeActivity
 import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
-import models.alf.init._
+import models.alf.init.*
 import models.changeActivity.AmountProduced
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import pages.changeActivity._
-import play.api.i18n.Messages
+import org.scalatest.matchers.must.Matchers.*
+import pages.changeActivity.*
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
-import play.api.test.WsTestClient
+import play.api.test.{WsTestClient, FakeRequest}
 import play.mvc.Http.HeaderNames
 import testSupport.helpers.ALFTestHelper
 
@@ -26,10 +26,13 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
     .set(ImportsPage, true).success.value
     .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
 
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
+
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the PackagingSiteDetails page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -54,7 +57,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
     s"when the userAnswers contains an empty packaging site list" - {
       s"should return 303 and redirect to $PackAtBusinessAddressPage page" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity.copy(packagingSiteList = Map.empty))
@@ -73,7 +76,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
     userAnswersForChangeActivityPackagingSiteDetailsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with neither radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswers)
@@ -104,7 +107,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
   s"GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the PackagingSiteDetails page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -129,7 +132,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
     s"when the userAnswers contains an empty packaging site list" - {
       s"should redirect to PackAtBusinessAddress" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity.copy(packagingSiteList = Map.empty))
@@ -148,7 +151,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
     userAnswersForChangeActivityPackagingSiteDetailsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with neither radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswers)
@@ -159,7 +162,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("changeActivity.packagingSiteDetails" + ".title"))
+              page.title must include(messages("changeActivity.packagingSiteDetails" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -182,7 +185,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
       "when the user selects no" - {
         "should redirect to the SecondaryWarehouseDetails controller" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(updatedUserAnswersImports)
@@ -207,7 +210,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
           options = JourneyOptions(
             continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/packing-site-details/$sdilNumber",
             homeNavHref = None,
-            signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+            signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
             accessibilityFooterUrl = Some("localhost/accessibility-statement/soft-drinks-industry-levy-variations-frontend"),
             phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fchange-activity%2Fpackaging-site-details"),
             deskProServiceName = None,
@@ -230,7 +233,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
             )),
             timeoutConfig = Some(TimeoutConfig(
               timeoutAmount = 900,
-              timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+              timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
               timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
             )),
             serviceHref = Some("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"),
@@ -274,7 +277,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
         val alfOnRampURL: String = "http://onramp.com"
 
-        given
+        build
           .commonPrecondition
           .alf.getSuccessResponseFromALFInit(alfOnRampURL)
         setAnswers(updatedUserAnswersImports)
@@ -295,7 +298,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(updatedUserAnswersImports)
@@ -326,7 +329,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
     "when the user selects no" - {
       "should redirect to the CYA controller" - {
         "when the session contains no data for page" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(updatedUserAnswersImports)
@@ -336,7 +339,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
             )
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivityCYAController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(controllers.changeActivity.routes.ChangeActivityCYAController.onPageLoad().url)
               val dataStoredForPage = getAnswers(updatedUserAnswersImports.id).fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
               dataStoredForPage mustBe Some(false)
             }
@@ -351,7 +354,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         options = JourneyOptions(
           continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/packing-site-details/$sdilNumber",
           homeNavHref = None,
-          signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+          signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
           accessibilityFooterUrl = Some("localhost/accessibility-statement/soft-drinks-industry-levy-variations-frontend"),
           phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fchange-activity%2Fchange-packaging-site-details"),
           deskProServiceName = None,
@@ -374,7 +377,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
           )),
           timeoutConfig = Some(TimeoutConfig(
             timeoutAmount = 900,
-            timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+            timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
             timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
           )),
           serviceHref = Some("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"),
@@ -417,7 +420,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
       val alfOnRampURL: String = "http://onramp.com"
 
-      given
+      build
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
       setAnswers(updatedUserAnswersImports)
@@ -437,7 +440,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)

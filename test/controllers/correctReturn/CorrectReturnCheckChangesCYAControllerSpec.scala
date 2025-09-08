@@ -31,8 +31,7 @@ import navigation.{FakeNavigatorForCorrectReturn, NavigatorForCorrectReturn}
 import orchestrators.CorrectReturnOrchestrator
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.mock
+import org.mockito.Mockito.{when, mock}
 import pages.Page
 import pages.correctReturn._
 import play.api.i18n.Messages
@@ -50,9 +49,9 @@ import scala.concurrent.Future
 
 class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryListFluency {
 
-  val mockOrchestrator: CorrectReturnOrchestrator = mock[CorrectReturnOrchestrator]
-  val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
-  val mockConfig: FrontendAppConfig = mock[FrontendAppConfig]
+  val mockOrchestrator: CorrectReturnOrchestrator = mock(classOf[CorrectReturnOrchestrator])
+  val mockSdilConnector = mock(classOf[SoftDrinksIndustryLevyConnector])
+  val mockConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
 
   def correctReturnAction(userAnswers: Option[UserAnswers],
                           optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn),
@@ -123,7 +122,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         when(mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(),any())) thenReturn createSuccessVariationResult(amounts)
         val result = route(application, request).value
 
@@ -148,7 +147,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         when(mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
 
         val result = route(application, request).value
@@ -165,7 +164,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -185,7 +184,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -214,7 +213,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -254,7 +253,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -290,7 +289,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -319,7 +318,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -359,7 +358,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -395,7 +394,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -427,7 +426,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -470,7 +469,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -506,7 +505,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -535,7 +534,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -575,7 +574,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -611,7 +610,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -640,7 +639,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -680,7 +679,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -716,7 +715,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -745,7 +744,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -785,7 +784,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -821,7 +820,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -850,7 +849,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -890,7 +889,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
@@ -928,7 +927,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         when(mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
 
         val result = route(application, request).value
@@ -959,7 +958,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         when(mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
 
         val result = route(application, request).value
@@ -991,7 +990,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         when(mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
 
         val result = route(application, request).value
@@ -1023,7 +1022,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         when(mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
 
         val result = route(application, request).value
@@ -1040,13 +1039,13 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
           .build()
 
       running(application) {
-        val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url).withFormUrlEncodedBody()
+        val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url).withFormUrlEncodedBody()
         when (mockOrchestrator.submitReturn(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url
       }
     }
 
@@ -1060,7 +1059,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       running(application) {
         when (mockOrchestrator.submitReturn(any(), any(), any(), any())(any(), any())) thenReturn createFailureVariationResult(UnexpectedResponseFromSDIL)
 
-        val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url).withFormUrlEncodedBody()
+        val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url).withFormUrlEncodedBody()
 
         val result = route(application, request).value
 
@@ -1076,7 +1075,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
           )
           .build()
       running(application) {
-        val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad.url).withFormUrlEncodedBody()
+        val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url).withFormUrlEncodedBody()
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.SelectChangeController.onPageLoad.url

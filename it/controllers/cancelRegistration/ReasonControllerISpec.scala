@@ -4,12 +4,12 @@ import controllers.ControllerITTestHelper
 import models.SelectChange.CancelRegistration
 import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.matchers.must.Matchers.*
 import pages.cancelRegistration.ReasonPage
 import play.api.http.HeaderNames
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.test.WsTestClient
+import play.api.test.{FakeRequest, WsTestClient}
 
 import scala.util.Random
 
@@ -25,10 +25,13 @@ class ReasonControllerISpec extends ControllerITTestHelper {
 
   val userAnswers: UserAnswers = emptyUserAnswersForCancelRegistration.set(ReasonPage, reason).success.value
 
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
+
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the Reason page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForCancelRegistration)
@@ -39,7 +42,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("Why do you need to cancel your registration? - Soft Drinks Industry Levy - GOV.UK"))
+            page.title must include(messages("Why do you need to cancel your registration? - Soft Drinks Industry Levy - GOV.UK"))
             val inputFields = page.getElementsByClass("govuk-textarea")
             inputFields.text() mustEqual ""
           }
@@ -49,7 +52,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
 
     s"when the userAnswers contains data for the page" - {
       s"should return OK and render the page with fields populated" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(userAnswers)
@@ -60,7 +63,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("Why do you need to cancel your registration? - Soft Drinks Industry Levy - GOV.UK"))
+            page.title must include(messages("Why do you need to cancel your registration? - Soft Drinks Industry Levy - GOV.UK"))
             val inputFields = page.getElementsByClass("govuk-textarea")
             inputFields.size() mustBe 1
             inputFields.text() mustBe reason
@@ -76,7 +79,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
   "GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the Reason page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForCancelRegistration)
@@ -87,7 +90,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("Why do you need to cancel your registration? - Soft Drinks Industry Levy - GOV.UK"))
+            page.title must include(messages("Why do you need to cancel your registration? - Soft Drinks Industry Levy - GOV.UK"))
             val inputFields = page.getElementsByClass("govuk-textarea")
             inputFields.size() mustBe 1
             inputFields.text() mustBe ""
@@ -98,7 +101,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
 
     s"when the userAnswers contains data for the page" - {
       s"should return OK and render the page with fields populated" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(userAnswers)
@@ -109,7 +112,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("Why do you need to cancel your registration? - Soft Drinks Industry Levy - GOV.UK"))
+            page.title must include(messages("Why do you need to cancel your registration? - Soft Drinks Industry Levy - GOV.UK"))
             val inputFields = page.getElementsByClass("govuk-textarea")
             inputFields.size() mustBe 1
             inputFields.text() mustBe reason
@@ -126,7 +129,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
     "when the user answers the question" - {
       "should update the session with the new values and redirect to the cancellation date controller " - {
         "when the session contains no data for page" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForCancelRegistration)
@@ -146,7 +149,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
         }
 
         "when the session already contains data for page" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswers)
@@ -169,7 +172,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
 
     "should return 400 with required error" - {
       "when the question is not answered" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForCancelRegistration)
@@ -181,7 +184,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("cancelRegistration.reason" + ".title"))
+            page.title must include("Error: " + messages("cancelRegistration.reason" + ".title"))
             val errorSummaryList = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first().getElementsByTag("li")
             errorSummaryList.size() mustBe 1
@@ -204,7 +207,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
     "when the user answers the question" - {
       "should update the session with the new values and redirect to the CYA controller" - {
         "when the session contains no data for page" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForCancelRegistration)
@@ -215,7 +218,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(routes.CancelRegistrationCYAController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.CancelRegistrationCYAController.onPageLoad().url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[String]](None)(_.get(ReasonPage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe reasonDiff
@@ -224,7 +227,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
         }
 
         "when the session already contains data for page" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswers)
@@ -235,7 +238,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(routes.CancelRegistrationCYAController.onPageLoad.url)
+              res.header(HeaderNames.LOCATION) mustBe Some(routes.CancelRegistrationCYAController.onPageLoad().url)
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[String]](None)(_.get(ReasonPage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe reasonDiff
@@ -247,7 +250,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
 
     "should return 400 with required error" - {
       "when the question is not answered" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForCancelRegistration)

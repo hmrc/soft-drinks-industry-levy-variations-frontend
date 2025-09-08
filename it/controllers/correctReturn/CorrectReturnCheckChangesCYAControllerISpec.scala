@@ -6,7 +6,7 @@ import models.SelectChange.CorrectReturn
 import models.correctReturn.RepaymentMethod
 import models.correctReturn.RepaymentMethod.BankAccount
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import pages.correctReturn._
 import play.api.http.Status.OK
 import play.api.libs.json.Json
@@ -23,11 +23,11 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
   val route = "/correct-return/check-changes"
 
-  "GET " + routes.CorrectReturnCheckChangesCYAController.onPageLoad.url - {
+  "GET " + routes.CorrectReturnCheckChangesCYAController.onPageLoad().url - {
 
     "when the userAnswers contains no data for correct return " - {
       "should redirect to select return controller" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(
@@ -53,12 +53,12 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
           .set(CorrectReturnBaseCYAPage, true).success.value
           .set(CorrectionReasonPage, "I forgot something").success.value
           .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(userAnswers)
 
-        given.sdilBackend.balance(userAnswers.id, false)
+        build.sdilBackend.balance(userAnswers.id, false)
 
         WsTestClient.withClient { client =>
           val result = createClientRequestGet(client, baseUrl + route)
@@ -122,12 +122,12 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             .set(CorrectionReasonPage, "I forgot something").success.value
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
 
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers, Some(populatedReturn))
 
-          given.sdilBackend.balance(userAnswers.id, false)
+          build.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
 
@@ -188,12 +188,12 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             .set(CorrectReturnBaseCYAPage, true).success.value
             .set(CorrectionReasonPage, "I forgot something").success.value
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
-          given.sdilBackend.balance(userAnswers.id, false)
+          build.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
 
@@ -223,12 +223,12 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             .set(CorrectReturnBaseCYAPage, true).success.value
             .set(CorrectionReasonPage, "I forgot something").success.value
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
-          given.sdilBackend.balance(userAnswers.id, false)
+          build.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
 
@@ -258,12 +258,12 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             .set(CorrectReturnBaseCYAPage, true).success.value
             .set(CorrectionReasonPage, "I forgot something").success.value
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-          given
+          build
             .commonPreconditionChangeSubscription(diffSubscriptionWithWarehouses)
 
           setUpForCorrectReturn(userAnswers)
 
-          given.sdilBackend.balance(userAnswers.id, false)
+          build.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
 
@@ -294,12 +294,12 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             .set(CorrectReturnBaseCYAPage, true).success.value
             .set(CorrectionReasonPage, "I forgot something").success.value
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-          given
+          build
             .commonPreconditionChangeSubscription(diffSubscriptionWithWarehouses)
 
           setUpForCorrectReturn(userAnswers)
 
-          given.sdilBackend.balance(userAnswers.id, false)
+          build.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
 
@@ -329,12 +329,12 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             .set(CorrectReturnBaseCYAPage, true).success.value
             .set(CorrectionReasonPage, "I forgot something").success.value
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
-          given.sdilBackend.balance(userAnswers.id, false)
+          build.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
 
@@ -364,10 +364,10 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             .set(CorrectReturnBaseCYAPage, true).success.value
             .set(CorrectionReasonPage, "I forgot something").success.value
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-          given
+          build
             .commonPrecondition
 
-          given.sdilBackend.balance(userAnswers.id, false)
+          build.sdilBackend.balance(userAnswers.id, false)
           setUpForCorrectReturn(userAnswers)
 
           WsTestClient.withClient { client =>
@@ -397,12 +397,12 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             .set(CorrectReturnBaseCYAPage, true).success.value
             .set(CorrectionReasonPage, "I forgot something").success.value
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
-          given.sdilBackend.balance(userAnswers.id, false)
+          build.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
 
@@ -433,12 +433,12 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             .set(CorrectReturnBaseCYAPage, true).success.value
             .set(CorrectionReasonPage, "I forgot something").success.value
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
-          given.sdilBackend.balance(userAnswers.id, false)
+          build.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
 
@@ -476,12 +476,12 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             .set(BalanceRepaymentRequired, true).success.value
             .set(CorrectionReasonPage, "I forgot something").success.value
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
-          given.sdilBackend.balance(userAnswers.id, false)
+          build.sdilBackend.balance(userAnswers.id, false)
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
 
@@ -515,12 +515,12 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             .set(CorrectReturnBaseCYAPage, true).success.value
             .set(BalanceRepaymentRequired, false).success.value
             .set(CorrectionReasonPage, "I forgot something").success.value
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
-          given.sdilBackend.balance(userAnswers.id, false, 500)
+          build.sdilBackend.balance(userAnswers.id, false, 500)
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
 
@@ -556,12 +556,12 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             .set(CorrectReturnBaseCYAPage, true).success.value
             .set(CorrectionReasonPage, "I forgot something").success.value
             .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
-          given.sdilBackend.balance("", false)
+          build.sdilBackend.balance("", false)
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
 
@@ -580,7 +580,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
   "POST " + routes.CorrectReturnCheckChangesCYAController.onSubmit.url - {
     "should redirect to correct return update done page when balance repayment required" in {
-      given
+      build
         .commonPrecondition
         .sdilBackend.submitSdilReturnsVary("XKSDIL000000022")
         .sdilBackend.submitReturnVariations("XKSDIL000000022")
@@ -597,14 +597,14 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
         whenReady(result) { res =>
           res.status mustBe 303
-          res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+          res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnUpdateDoneController.onPageLoad().url)
           checkReturnsVariationSubmission.checkReturnVariationSubmissionSent(wireMockServer, populatedReturn)
         }
       }
     }
 
     "should redirect to correct return update done page when balance repayment not required" in {
-      given
+      build
         .commonPrecondition
         .sdilBackend.submitSdilReturnsVary("XKSDIL000000022")
         .sdilBackend.submitReturnVariations("XKSDIL000000022")
@@ -620,7 +620,7 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
         whenReady(result) { res =>
           res.status mustBe 303
-          res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnUpdateDoneController.onPageLoad.url)
+          res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnUpdateDoneController.onPageLoad().url)
           checkReturnsVariationSubmission.checkReturnVariationSubmissionSent(wireMockServer, populatedReturn)
         }
       }

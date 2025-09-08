@@ -20,7 +20,6 @@ import controllers.correctReturn.routes
 import models.{CheckMode, LitresInBands}
 import pages.QuestionPage
 import pages.correctReturn.ExemptionsForSmallProducersPage
-import views.summary.correctReturn.SmallProducerDetailsSummary
 import views.summary.{ReturnDetailsSummaryListWithLitres, SummaryListRowLitresHelper}
 
 object ExemptionsForSmallProducersSummary extends ReturnDetailsSummaryListWithLitres {

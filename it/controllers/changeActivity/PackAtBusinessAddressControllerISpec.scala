@@ -5,12 +5,12 @@ import models.{CheckMode, NormalMode}
 import models.SelectChange.ChangeActivity
 import models.alf.init._
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.matchers.must.Matchers._
 import pages.changeActivity.PackAtBusinessAddressPage
 import play.api.http.HeaderNames
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.test.WsTestClient
+import play.api.test.{WsTestClient, FakeRequest}
 import testSupport.helpers.ALFTestHelper
 
 class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
@@ -18,10 +18,13 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
   val normalRoutePath = "/pack-at-business-address"
   val checkRoutePath = "/change-pack-at-business-address"
 
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
+  
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the PackAtBusinessAddress page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity.copy(packagingSiteList = Map.empty))
@@ -32,7 +35,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("changeActivity.packAtBusinessAddress" + ".title"))
+            page.title must include(messages("changeActivity.packAtBusinessAddress" + ".title"))
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -47,7 +50,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
     userAnswersForChangeActivityPackAtBusinessAddressPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with $key selected" - {
         s"should return OK and render the PackAtBusinessAddress page with $key populated" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswers)
@@ -58,7 +61,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("changeActivity.packAtBusinessAddress" + ".title"))
+              page.title must include(messages("changeActivity.packAtBusinessAddress" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -79,7 +82,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
   s"GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the PackAtBusinessAddress page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity.copy(packagingSiteList = Map.empty))
@@ -90,7 +93,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("changeActivity.packAtBusinessAddress" + ".title"))
+            page.title must include(messages("changeActivity.packAtBusinessAddress" + ".title"))
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -105,7 +108,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
     userAnswersForChangeActivityPackAtBusinessAddressPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with $key selected" - {
         s"should return OK and render the PackAtBusinessAddress page with $key populated" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswers)
@@ -116,7 +119,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("changeActivity.packAtBusinessAddress" + ".title"))
+              page.title must include(messages("changeActivity.packAtBusinessAddress" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -140,7 +143,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
       "when the user selects yes" - {
         "should update the session with the new value and redirect to the packaging site details controller" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(emptyUserAnswersForChangeActivity.copy(packagingSiteList = Map.empty))
@@ -164,7 +167,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
 
           userAnswersForChangeActivityPackagingSiteDetailsPage.foreach { case (previousKey, _) =>
             s"when the session already contains $previousKey data for page" in {
-              given
+              build
                 .commonPrecondition
 
               val userAnswersWithPreviousSelection = if (previousKey == "yes") {
@@ -201,7 +204,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
         options = JourneyOptions(
           continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/pack-at-business-address/$sdilNumber",
           homeNavHref = None,
-          signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+          signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
           accessibilityFooterUrl = Some("localhost/accessibility-statement/soft-drinks-industry-levy-variations-frontend"),
           phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fchange-activity%2Fpack-at-business-address"),
           deskProServiceName = None,
@@ -224,7 +227,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
           )),
           timeoutConfig = Some(TimeoutConfig(
             timeoutAmount = 900,
-            timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+            timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
             timeoutKeepAliveUrl = Some(controllers.routes.KeepAliveController.keepAlive.url)
           )),
          serviceHref = Some("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"),
@@ -263,7 +266,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
 
       val alfOnRampURL: String = "http://onramp.com"
 
-      given
+      build
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
       setAnswers(emptyUserAnswersForChangeActivity)
@@ -281,7 +284,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity.copy(packagingSiteList = Map.empty))
@@ -293,13 +296,13 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("changeActivity.packAtBusinessAddress" + ".title"))
+            page.title must include("Error: " + messages("changeActivity.packAtBusinessAddress" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("changeActivity.packAtBusinessAddress" + ".error.required")
+            errorSummary.text() mustBe messages("changeActivity.packAtBusinessAddress" + ".error.required")
           }
         }
       }
@@ -315,7 +318,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
       "when the user selects yes" - {
         "should update the session with the new value and redirect to the packaging site details controller" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(emptyUserAnswersForChangeActivity.copy(packagingSiteList = Map.empty))
@@ -339,7 +342,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
 
           userAnswersForChangeActivityPackagingSiteDetailsPage.foreach { case (previousKey, _) =>
             s"when the session already contains $previousKey data for page" in {
-              given
+              build
                 .commonPrecondition
 
               val userAnswersWithPreviousSelection = if (previousKey == "yes") {
@@ -376,7 +379,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
         options = JourneyOptions(
           continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/pack-at-business-address/$sdilNumber",
           homeNavHref = None,
-          signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+          signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
           accessibilityFooterUrl = Some("localhost/accessibility-statement/soft-drinks-industry-levy-variations-frontend"),
           phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fchange-activity%2Fpack-at-business-address"),
           deskProServiceName = None,
@@ -399,7 +402,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
           )),
           timeoutConfig = Some(TimeoutConfig(
             timeoutAmount = 900,
-            timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+            timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
             timeoutKeepAliveUrl = Some(controllers.routes.KeepAliveController.keepAlive.url)
           )),
          serviceHref = Some("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"),
@@ -437,7 +440,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
       )
 
       val alfOnRampURL: String = "http://onramp.com"
-      given
+      build
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
 
@@ -456,7 +459,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
@@ -468,13 +471,13 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("changeActivity.packAtBusinessAddress" + ".title"))
+            page.title must include("Error: " + messages("changeActivity.packAtBusinessAddress" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe Messages("changeActivity.packAtBusinessAddress" + ".error.required")
+            errorSummary.text() mustBe messages("changeActivity.packAtBusinessAddress" + ".error.required")
           }
         }
       }

@@ -4,7 +4,7 @@ import cats.data.EitherT
 import errors.{UnexpectedResponseFromSDIL, VariationsErrors}
 import models.ReturnPeriod
 import models.backend.{FinancialLineItem, OptPreviousSubmittedReturn, OptRetrievedSubscription, OptSmallProducer}
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import repositories.SDILSessionKeys
 import testSupport.{ITCoreTestData, Specifications, TestConfiguration}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -13,14 +13,14 @@ import testSupport.SDILBackendTestData._
 class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfiguration with ITCoreTestData {
 
   val sdilConnector = app.injector.instanceOf[SoftDrinksIndustryLevyConnector]
-  implicit val hc = new HeaderCarrier()
+  implicit val hc: HeaderCarrier = new HeaderCarrier()
 
   "retrieveSubscription" - {
     "when the cache is empty" - {
       "and the backend call returns no subscription" - {
         "should return None" - {
           "when searching by utr" in {
-            given
+            build
               .sdilBackend
               .retrieveSubscriptionNone("utr", UTR)
 
@@ -32,7 +32,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
           }
 
           "when searching by sdilRef" in {
-            given
+            build
               .sdilBackend
               .retrieveSubscriptionNone("sdil", SDIL_REF)
 
@@ -48,7 +48,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
       "and the backend call returns a subscription" - {
         "should return the subscription" - {
           "when searching by utr" in {
-            given
+            build
               .sdilBackend
               .retrieveSubscription("utr", UTR)
 
@@ -60,7 +60,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
           }
 
           "when searching by sdilRef" in {
-            given
+            build
               .sdilBackend
               .retrieveSubscription("sdil", SDIL_REF)
 
@@ -75,7 +75,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
 
       "when the backend returns an internal error" - {
         "should return an UnexpectedResponseFromSDIL error" in {
-          given
+          build
             .sdilBackend
             .retrieveSubscriptionError("sdil", SDIL_REF)
 
@@ -145,7 +145,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
     "when the no pending returns in the cache" - {
       "should call the backend" - {
         "and return None when no pending returns" in {
-          given
+          build
             .sdilBackend
             .no_returns_pending(UTR)
 
@@ -156,7 +156,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
           }
         }
         "and return the list of pending return when exist" in {
-          given
+          build
             .sdilBackend
             .returns_pending(UTR)
 
@@ -168,7 +168,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
         }
 
         "and return UnexpectedResponseFromSDIL when the backend returns an unexpectedResponse code" in {
-          given
+          build
             .sdilBackend
             .returns_pending_error(UTR)
 
@@ -211,7 +211,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
     "when the no variable returns in the cache" - {
       "should call the backend" - {
         "and return None when no pending returns" in {
-          given
+          build
             .sdilBackend
             .no_returns_variable(UTR)
 
@@ -222,7 +222,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
           }
         }
         "and return the list of variable return when exist" in {
-          given
+          build
             .sdilBackend
             .returns_variable(UTR)
 
@@ -234,7 +234,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
         }
 
         "and return UnexpectedResponseFromSDIL when the backend returns an unexpectedResponse code" in {
-          given
+          build
             .sdilBackend
             .returns_variable_error(UTR)
 
@@ -278,7 +278,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
     "when the no previous submitted returns in the cache" - {
       "should call the backend" - {
         "and return None when no previous return submitted" in {
-          given
+          build
             .sdilBackend
             .retrieveReturn(UTR, currentReturnPeriod.previous, None)
 
@@ -289,7 +289,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
           }
         }
         "and return the sdil return when exists" in {
-          given
+          build
             .sdilBackend
             .retrieveReturn(UTR, currentReturnPeriod.previous, Some(emptyReturn))
 
@@ -301,7 +301,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
         }
 
         "and return UnexpectedResponseFromSDIL when the backend returns an unexpectedResponse code" in {
-          given
+          build
             .sdilBackend
             .retrieveReturnError(UTR, currentReturnPeriod.previous)
 
@@ -314,7 +314,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
       }
     }
 
-    "when a submitted returns record is in the cache for the given period" - {
+    "when a submitted returns record is in the cache for the build period" - {
       "should read the value from the cache" - {
         "and return None when no return submitted for period" in {
           val res = for {
@@ -345,7 +345,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
       "and there is no balance in the cache" - {
         "should call the backend" - {
           "and return the balance when sucessful" in {
-            given
+            build
               .sdilBackend
               .balance(aSubscription.sdilRef, withAssessment = true)
 
@@ -362,7 +362,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
       "and there is no balance in the cache" - {
         "should call the backend" - {
           "and return the balance when sucessful" in {
-            given
+            build
               .sdilBackend
               .balance(aSubscription.sdilRef, false)
 
@@ -382,7 +382,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
       "and there is no balanceHistory in the cache" - {
         "should call the backend" - {
           "and return the balanceHistory when sucessful" in {
-            given
+            build
               .sdilBackend
               .balanceHistory(aSubscription.sdilRef, true, allFinicialItems)
 
@@ -413,7 +413,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
       "and there is no balanceHistory in the cache" - {
         "should call the backend" - {
           "and return an empty list when no history and when sucessful" in {
-            given
+            build
               .sdilBackend
               .balanceHistory(aSubscription.sdilRef, false, List.empty)
 
@@ -442,11 +442,11 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
   }
 
   "checkSmallProducerStatus" - {
-    "when the cache doesn't contain the result for the given utr and period" - {
+    "when the cache doesn't contain the result for the build utr and period" - {
       "should call the backend" - {
         "and return true" - {
           "when the backend call returns true" in {
-            given
+            build
               .sdilBackend
               .checkSmallProducerStatus(aSubscription.sdilRef, returnPeriods.head, true)
 
@@ -460,7 +460,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
 
         "and return false" - {
           "when the backend call returns false" in {
-            given
+            build
               .sdilBackend
               .checkSmallProducerStatus(aSubscription.sdilRef, returnPeriods.head, false)
 
@@ -475,7 +475,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
 
         "and return None" - {
           "when the backend call returns 404" in {
-            given
+            build
               .sdilBackend
               .checkSmallProducerStatusNone(aSubscription.sdilRef, returnPeriods.head)
 
@@ -489,7 +489,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
 
         "and return UnexpectedResponseFromSDIL error" - {
           "when the backend call fails" in {
-            given
+            build
               .sdilBackend
               .checkSmallProducerStatusError(aSubscription.sdilRef, returnPeriods.head)
 
@@ -503,7 +503,7 @@ class SoftDrinksIndustryLevyConnectorISpec extends Specifications with TestConfi
       }
     }
 
-    "when the cache contains the result for the given utr and period" - {
+    "when the cache contains the result for the build utr and period" - {
       "and return true" - {
         "when the cache returns true" in {
           val res = for {

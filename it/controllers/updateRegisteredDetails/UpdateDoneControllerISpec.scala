@@ -3,7 +3,7 @@ package controllers.updateRegisteredDetails
 import controllers.ControllerITTestHelper
 import models.SelectChange.UpdateRegisteredDetails
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import play.api.test.WsTestClient
 
 import java.time.Instant
@@ -16,7 +16,7 @@ class UpdateDoneControllerISpec extends ControllerITTestHelper {
 
   "GET " + normalRoutePath - {
     "should return OK and render the UpdateDone page" in {
-      given
+      build
         .commonPrecondition
 
       val testTime = Instant.now()
@@ -33,7 +33,7 @@ class UpdateDoneControllerISpec extends ControllerITTestHelper {
       }
     }
     "should redirect when no submitted on time is present" in {
-      given
+      build
         .commonPrecondition
       setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
 

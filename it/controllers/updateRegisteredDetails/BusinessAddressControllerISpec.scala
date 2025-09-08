@@ -4,7 +4,7 @@ import controllers.{ControllerITTestHelper, routes}
 import models.SelectChange.UpdateRegisteredDetails
 import models.alf.init._
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import play.api.http.HeaderNames
 import play.api.http.Status.SEE_OTHER
 import play.api.libs.json.Json
@@ -23,7 +23,7 @@ class BusinessAddressControllerISpec extends ControllerITTestHelper {
         options = JourneyOptions(
           continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/business-address/$sdilNumber",
           homeNavHref = None,
-          signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+          signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
           accessibilityFooterUrl = Some("localhost/accessibility-statement/soft-drinks-industry-levy-variations-frontend"),
           phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fchange-registered-details%2Fchange-business-address"),
           deskProServiceName = None,
@@ -46,7 +46,7 @@ class BusinessAddressControllerISpec extends ControllerITTestHelper {
           )),
           timeoutConfig = Some(TimeoutConfig(
             timeoutAmount = 900,
-            timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+            timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
             timeoutKeepAliveUrl = Some(routes.KeepAliveController.keepAlive.url)
           )),
           serviceHref = Some("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"),
@@ -83,11 +83,11 @@ class BusinessAddressControllerISpec extends ControllerITTestHelper {
       )
 
       val alfOnRampURL: String = "http://onramp.com"
-      given
+      build
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
 
-      given
+      build
         .commonPrecondition
 
       setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -109,7 +109,7 @@ class BusinessAddressControllerISpec extends ControllerITTestHelper {
   }
   "GET " + normalRoutePath - {
     "should return OK and render the BusinessAddress page" in {
-      given
+      build
         .commonPrecondition
 
       setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -130,7 +130,7 @@ class BusinessAddressControllerISpec extends ControllerITTestHelper {
   }
   "POST " + normalRoutePath - {
     "should return OK and render the BusinessAddress page" in {
-      given
+      build
         .commonPrecondition
 
       setAnswers(emptyUserAnswersForUpdateRegisteredDetails)

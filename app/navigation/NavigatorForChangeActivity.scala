@@ -41,7 +41,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
 
   private def navigationForAmountProducedCheckMode(userAnswers: UserAnswers, previousAnswer: AmountProduced) = {
     if (userAnswers.get(page = AmountProducedPage).contains(previousAnswer)) {
-      routes.ChangeActivityCYAController.onPageLoad
+      routes.ChangeActivityCYAController.onPageLoad()
     } else {
       navigationForAmountProduced(userAnswers)
     }
@@ -64,7 +64,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     if (userAnswers.get(page = OperatePackagingSiteOwnBrandsPage).contains(true)) {
       routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(mode)
     } else if (mode == CheckMode) {
-      routes.ChangeActivityCYAController.onPageLoad
+      routes.ChangeActivityCYAController.onPageLoad()
     } else {
       routes.ContractPackingController.onPageLoad(mode)
     }
@@ -77,7 +77,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
       if (suggestDeregistration(userAnswers)) {
         routes.SuggestDeregistrationController.onPageLoad()
       } else {
-        routes.ChangeActivityCYAController.onPageLoad
+        routes.ChangeActivityCYAController.onPageLoad()
       }
     } else {
       routes.ImportsController.onPageLoad(mode)
@@ -88,7 +88,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     if (mode == CheckMode && userAnswers.get(PackagingSiteDetailsPage).isEmpty) {
       routes.PackagingSiteDetailsController.onPageLoad(mode)
     } else {
-      routes.ChangeActivityCYAController.onPageLoad
+      routes.ChangeActivityCYAController.onPageLoad()
     }
   }
 
@@ -123,7 +123,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     (operateOwnBrands, coPacker, mode) match {
       case (Some(false), Some(false), NormalMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
       case (Some(_), Some(_), NormalMode) => routeToPackagingSiteJourney(userAnswers, NormalMode)
-      case _ => routes.ChangeActivityCYAController.onPageLoad
+      case _ => routes.ChangeActivityCYAController.onPageLoad()
     }
   }
 
@@ -131,14 +131,14 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
     if (suggestDeregistration(userAnswers)) {
       routes.SuggestDeregistrationController.onPageLoad()
     } else if (userAnswers.getChangeActivityData.exists(_.isVoluntary)) {
-      routes.ChangeActivityCYAController.onPageLoad
+      routes.ChangeActivityCYAController.onPageLoad()
     } else {
       (userAnswers.get(ContractPackingPage), userAnswers.get(ImportsPage), mode) match {
         case (Some(true), Some(_), NormalMode) => routeToPackagingSiteJourney(userAnswers, NormalMode)
         case (Some(false), Some(true), NormalMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
         case (Some(_), Some(true), CheckMode) if userAnswers.get(SecondaryWarehouseDetailsPage).isEmpty =>
           routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
-        case _ => routes.ChangeActivityCYAController.onPageLoad
+        case _ => routes.ChangeActivityCYAController.onPageLoad()
       }
     }
   }
@@ -152,7 +152,7 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
         case (Some(false), Some(true), NormalMode) => routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode)
         case (Some(_), Some(true), CheckMode) if userAnswers.get(SecondaryWarehouseDetailsPage).isEmpty =>
           routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
-        case _ => routes.ChangeActivityCYAController.onPageLoad
+        case _ => routes.ChangeActivityCYAController.onPageLoad()
       }
     }
   }
@@ -172,16 +172,16 @@ class NavigatorForChangeActivity @Inject() extends Navigator {
   }
 
   override val checkRouteMap: Page => UserAnswers => Call = {
-    case ThirdPartyPackagersPage => _ => routes.ChangeActivityCYAController.onPageLoad
+    case ThirdPartyPackagersPage => _ => routes.ChangeActivityCYAController.onPageLoad()
     case OperatePackagingSiteOwnBrandsPage => userAnswers => navigationForOperatePackagingSiteOwnBrands(userAnswers, CheckMode)
-    case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.ChangeActivityCYAController.onPageLoad
+    case HowManyOperatePackagingSiteOwnBrandsPage => _ => routes.ChangeActivityCYAController.onPageLoad()
     case ContractPackingPage => userAnswers => navigationForContractPacking(userAnswers, CheckMode)
     case HowManyContractPackingPage => userAnswers => navigationForHowManyContractPacking(userAnswers, CheckMode)
     case ImportsPage => userAnswers => navigationForImports(userAnswers, CheckMode)
     case HowManyImportsPage => userAnswers => navigationFollowingImports(userAnswers, CheckMode)
     case RemovePackagingSiteDetailsPage => userAnswers => routeToPackagingSiteJourney(userAnswers, CheckMode)
     case RemoveWarehouseDetailsPage => _ => routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode)
-    case _ => _ => routes.ChangeActivityCYAController.onPageLoad
+    case _ => _ => routes.ChangeActivityCYAController.onPageLoad()
   }
 
   override val normalRoutesWithAmountProduced: Page => (UserAnswers, AmountProduced) => Call = {

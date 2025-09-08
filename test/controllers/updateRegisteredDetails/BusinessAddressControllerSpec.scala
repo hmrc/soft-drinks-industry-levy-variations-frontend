@@ -21,8 +21,7 @@ import models.SelectChange.UpdateRegisteredDetails
 import models.backend.UkAddress
 import navigation._
 import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.mock
+import org.mockito.Mockito.{when, mock}
 import play.api.inject
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -41,7 +40,7 @@ class BusinessAddressControllerSpec extends SpecBase {
   "BusinessAddress Controller" - {
 
     "must redirect to ALF" in {
-      val mockAddressLookupService: AddressLookupService = mock[AddressLookupService]
+      val mockAddressLookupService: AddressLookupService = mock(classOf[AddressLookupService])
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
           .overrides(inject.bind[AddressLookupService].toInstance(mockAddressLookupService))
@@ -63,7 +62,7 @@ class BusinessAddressControllerSpec extends SpecBase {
     }
 
     "must return error when attempting to navigate to ALF but ALF returns error" in {
-      val mockAddressLookupService: AddressLookupService = mock[AddressLookupService]
+      val mockAddressLookupService: AddressLookupService = mock(classOf[AddressLookupService])
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
           .overrides(inject.bind[AddressLookupService].toInstance(mockAddressLookupService))

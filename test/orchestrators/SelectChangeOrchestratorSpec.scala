@@ -22,7 +22,7 @@ import errors.{ReturnsStillPending, SessionDatabaseInsertError, UnexpectedRespon
 import models.backend.{RetrievedActivity, RetrievedSubscription, Site, UkAddress}
 import models.updateRegisteredDetails.ContactDetails
 import models.{Contact, SelectChange, UserAnswers}
-import org.mockito.MockitoSugar.when
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
 import services.SessionService
@@ -233,7 +233,7 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
               val res = orchestrator.createUserAnswersAndSaveToDatabase(selectChange, voluntaryRegistrationSubscription)
 
               whenReady(res.value) { result =>
-                result mustBe Right()
+                result mustBe Right(())
               }
             }
           }
@@ -248,7 +248,7 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
               val res = orchestrator.createUserAnswersAndSaveToDatabase(selectChange, retrievedSubscription())
 
               whenReady(res.value) { result =>
-                result mustBe Right()
+                result mustBe Right(())
               }
             }
           }

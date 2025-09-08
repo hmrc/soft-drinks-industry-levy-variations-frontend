@@ -3,6 +3,7 @@ package testSupport.actions
 import play.api.libs.ws.{WSClient, WSResponse}
 
 import scala.concurrent.Future
+import play.api.libs.ws.DefaultBodyWritables.writeableOf_String
 
 class PostCalls(baseUrl: String) {
 

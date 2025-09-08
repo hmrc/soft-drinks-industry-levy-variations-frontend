@@ -25,7 +25,7 @@ case object CorrectReturnCheckChangesPage extends Page {
 
   def journeyType: String = "correctReturn"
   override def toString: String = "checkChanges"
-  override val url: Mode => String = _ => routes.CorrectReturnCheckChangesCYAController.onPageLoad.url
+  override val url: Mode => String = _ => routes.CorrectReturnCheckChangesCYAController.onPageLoad().url
 
   override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (userAnswers, _) => {
     List(

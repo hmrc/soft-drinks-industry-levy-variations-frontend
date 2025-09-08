@@ -5,7 +5,7 @@ import models.NormalMode
 import models.SelectChange.UpdateRegisteredDetails
 import models.alf.init._
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import pages.updateRegisteredDetails.PackagingSiteDetailsPage
 import play.api.http.HeaderNames
 import play.api.libs.json.{JsObject, Json}
@@ -20,7 +20,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the PackagingSiteDetails page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -46,7 +46,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
     userAnswersForUpdateRegisteredDetailsPackagingSiteDetailsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with neither radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswers)
@@ -77,7 +77,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
   s"GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the PackagingSiteDetails page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -103,7 +103,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
     userAnswersForUpdateRegisteredDetailsPackagingSiteDetailsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with neither radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswers)
@@ -136,7 +136,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
       "when the user selects no " - {
         "should update the session with the new value and redirect warehouse details controller" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -155,7 +155,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -175,9 +175,9 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         }
       }
 
-    "when the user does not select yes or no" - {
+      "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -200,9 +200,9 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         }
       }
     }
-    testUnauthorisedUser(updateRegisteredDetailsBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl +
+      testUnauthorisedUser(updateRegisteredDetailsBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+      testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl +
       normalRoutePath, Some(Json.obj("value" -> "true")))
   }
 
@@ -211,7 +211,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
       "when the user selects no "  - {
         "should update the session with the new value and redirect to the checkAnswers controller" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -230,7 +230,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            given
+            build
               .commonPrecondition
 
             setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -250,9 +250,9 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         }
       }
 
-    "when the user does not select yes or no" - {
+      "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -275,9 +275,9 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         }
       }
     }
-    testUnauthorisedUser(updateRegisteredDetailsBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl +
+      testUnauthorisedUser(updateRegisteredDetailsBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
+      testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
+      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl +
       checkRoutePath, Some(Json.obj("value" -> "true")))
   }
 
@@ -288,7 +288,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
         options = JourneyOptions(
           continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/packing-site-details/$sdilNumber",
           homeNavHref = None,
-          signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+          signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
           accessibilityFooterUrl = Some("localhost/accessibility-statement/soft-drinks-industry-levy-variations-frontend"),
           phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fchange-registered-details%2Fpackaging-site-details"),
           deskProServiceName = None,
@@ -311,7 +311,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
           )),
           timeoutConfig = Some(TimeoutConfig(
             timeoutAmount = 900,
-            timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+            timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
             timeoutKeepAliveUrl = Some(controllers.routes.KeepAliveController.keepAlive.url)
           )),
          serviceHref = Some("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"),
@@ -355,7 +355,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
       val alfOnRampURL: String = "https://onramp.com"
 
-      given
+      build
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
       setAnswers(emptyUserAnswersForUpdateRegisteredDetails)

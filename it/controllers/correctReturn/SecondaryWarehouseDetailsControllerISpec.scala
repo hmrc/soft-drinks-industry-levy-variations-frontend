@@ -6,7 +6,7 @@ import models.UserAnswers
 import models.alf.init._
 import models.backend.{Site, UkAddress}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import pages.correctReturn.{PackagingSiteDetailsPage, SecondaryWarehouseDetailsPage}
 import play.api.http.HeaderNames
 import play.api.libs.json.{JsObject, Json}
@@ -30,7 +30,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
     "when the userAnswers contains no data (no warehouses)" - {
       "should return OK and render the SecondaryWarehouseDetails page with no data populated " +
         "(with message displaying no warehouses added)" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -58,7 +58,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
       List(singleWarehouse, multipleWarehouses).foreach { warehouseList =>
         "should return OK and render the SecondaryWarehouseDetails page with no data populated " +
           s"(with message displaying summary list of warehouses) for warehouse list size ${warehouseList.size}" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(warehouseList = warehouseList))
@@ -94,7 +94,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" +
           "(with message displaying no warehouses added)" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
@@ -126,7 +126,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
     "when the userAnswers contains no data (no warehouses)" - {
       "should return OK and render the SecondaryWarehouseDetails page with no data populated " +
         "(with message displaying no warehouses added)" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -154,7 +154,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
       List(singleWarehouse, multipleWarehouses).foreach { warehouseList =>
         "should return OK and render the SecondaryWarehouseDetails page with no data populated " +
           s"(with message displaying summary list of warehouses) for warehouse list size ${warehouseList.size}" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(warehouseList = warehouseList))
@@ -190,7 +190,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" +
           "(with message displaying no warehouses added)" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
@@ -222,7 +222,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
     "when the user selects no" - {
       "should not update the session with the selected value and redirect to the CYA controller" - {
         "when the session contains no data for page" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -249,7 +249,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
         options = JourneyOptions(
           continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/secondary-warehouses/$sdilNumber",
           homeNavHref = None,
-          signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+          signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
           accessibilityFooterUrl = Some("localhost/accessibility-statement/soft-drinks-industry-levy-variations-frontend"),
           phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fcorrect-return%2Fsecondary-warehouse-details"),
           deskProServiceName = None,
@@ -272,7 +272,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           )),
           timeoutConfig = Some(TimeoutConfig(
             timeoutAmount = 900,
-            timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+            timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
             timeoutKeepAliveUrl = Some(controllers.routes.KeepAliveController.keepAlive.url)
           )),
          serviceHref = Some("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"),
@@ -312,7 +312,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
       val alfOnRampURL: String = "http://onramp.com"
 
-      given
+      build
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
       setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -333,7 +333,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -364,7 +364,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
     "when the user selects no" - {
       "should not update the session with the selected value and redirect to the CYA controller" - {
         "when the session contains no data for page" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -391,7 +391,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
         options = JourneyOptions(
           continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/change-secondary-warehouses/$sdilNumber",
           homeNavHref = None,
-          signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+          signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
           accessibilityFooterUrl = Some("localhost/accessibility-statement/soft-drinks-industry-levy-variations-frontend"),
           phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fcorrect-return%2Fchange-secondary-warehouse-details"),
           deskProServiceName = None,
@@ -414,7 +414,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
           )),
           timeoutConfig = Some(TimeoutConfig(
             timeoutAmount = 900,
-            timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+            timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
             timeoutKeepAliveUrl = Some(controllers.routes.KeepAliveController.keepAlive.url)
           )),
          serviceHref = Some("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"),
@@ -454,7 +454,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
       val alfOnRampURL: String = "http://onramp.com"
 
-      given
+      build
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
       setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -475,7 +475,7 @@ class SecondaryWarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)

@@ -4,12 +4,12 @@ import controllers.ControllerITTestHelper
 import models.SelectChange.UpdateRegisteredDetails
 import models.updateRegisteredDetails.{ChangeRegisteredDetails, ContactDetails}
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.matchers.must.Matchers._
 import pages.updateRegisteredDetails.{ChangeRegisteredDetailsPage, UpdateContactDetailsPage}
 import play.api.http.HeaderNames
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
-import play.api.test.WsTestClient
+import play.api.test.{WsTestClient, FakeRequest}
 
 class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
 
@@ -29,10 +29,13 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
 
   val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(UpdateContactDetailsPage, contactDetails).success.value
 
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
+  
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the UpdateContactDetails page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForUpdateRegisteredDetails.copy(data = Json.obj()))
@@ -43,7 +46,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("updateRegisteredDetails.updateContactDetails" + ".title"))
+            page.title must include(messages("updateRegisteredDetails.updateContactDetails" + ".title"))
             val inputFields = page.getElementsByClass("govuk-form-group")
             inputFields.size() mustBe 4
             updateContactDetailsMap.zipWithIndex.foreach { case ((fieldName, _), index) =>
@@ -57,7 +60,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
 
     s"when the userAnswers contains data for the page" - {
       s"should return OK and render the page with fields populated" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(userAnswers)
@@ -68,7 +71,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("updateRegisteredDetails.updateContactDetails" + ".title"))
+            page.title must include(messages("updateRegisteredDetails.updateContactDetails" + ".title"))
             val inputFields = page.getElementsByClass("govuk-form-group")
             inputFields.size() mustBe 4
             updateContactDetailsMap.zipWithIndex.foreach { case ((fieldName, fieldValue), index) =>
@@ -88,7 +91,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
   "GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the UpdateContactDetails page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForUpdateRegisteredDetails.copy(data = Json.obj()))
@@ -99,7 +102,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("updateRegisteredDetails.updateContactDetails" + ".title"))
+            page.title must include(messages("updateRegisteredDetails.updateContactDetails" + ".title"))
             val inputFields = page.getElementsByClass("govuk-form-group")
             inputFields.size() mustBe 4
             updateContactDetailsMap.zipWithIndex.foreach { case ((fieldName, _), index) =>
@@ -113,7 +116,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
 
     s"when the userAnswers contains data for the page" - {
       s"should return OK and render the page with fields populated" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(userAnswers)
@@ -124,7 +127,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("updateRegisteredDetails.updateContactDetails" + ".title"))
+            page.title must include(messages("updateRegisteredDetails.updateContactDetails" + ".title"))
             val inputFields = page.getElementsByClass("govuk-form-group")
             inputFields.size() mustBe 4
             updateContactDetailsMap.zipWithIndex.foreach { case ((fieldName, fieldValue), index) =>
@@ -145,7 +148,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
     "when the user populates answers all questions" - {
       "should update the session with the new values and redirect to the index controller" - {
         "when the session contains no data for page" in {
-          given
+          build
             .commonPrecondition
 
           val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(ChangeRegisteredDetailsPage, Seq(ChangeRegisteredDetails.ContactDetails)).success.value
@@ -167,7 +170,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
         }
 
         "when the session already contains data for page" in {
-          given
+          build
             .commonPrecondition
 
           val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(ChangeRegisteredDetailsPage, Seq(ChangeRegisteredDetails.ContactDetails)).success.value
@@ -193,7 +196,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
 
     "should return 400 with required error" - {
       "when no questions are answered" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -205,7 +208,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("updateRegisteredDetails.updateContactDetails" + ".title"))
+            page.title must include("Error: " + messages("updateRegisteredDetails.updateContactDetails" + ".title"))
             val errorSummaryList = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first().getElementsByTag("li")
             errorSummaryList.size() mustBe updateContactDetailsMap.size
@@ -214,14 +217,14 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
               errorSummary
                 .select("a")
                 .attr("href") mustBe "#" + fieldName
-              errorSummary.text() mustBe Messages("updateRegisteredDetails.updateContactDetails.error." + fieldName + ".required")
+              errorSummary.text() mustBe messages("updateRegisteredDetails.updateContactDetails.error." + fieldName + ".required")
             }
           }
         }
       }
       updateContactDetailsMap.zipWithIndex.foreach { case ((fieldName, _), index) =>
-        "when no answer is given for field" + fieldName in {
-          given
+        "when no answer is build for field" + fieldName in {
+          build
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -241,13 +244,13 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result) { res =>
               res.status mustBe 400
               val page = Jsoup.parse(res.body)
-              page.title must include("Error: " + Messages("updateRegisteredDetails.updateContactDetails" + ".title"))
+              page.title must include("Error: " + messages("updateRegisteredDetails.updateContactDetails" + ".title"))
               val errorSummaryList = page.getElementsByClass("govuk-list govuk-error-summary__list")
                 .first()
               errorSummaryList
                 .select("a")
                 .attr("href") mustBe "#" + fieldName
-              errorSummaryList.text() mustBe Messages("updateRegisteredDetails.updateContactDetails.error." + fieldName + ".required")
+              errorSummaryList.text() mustBe messages("updateRegisteredDetails.updateContactDetails.error." + fieldName + ".required")
             }
           }
         }
@@ -263,7 +266,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
     "when the user populates answers all questions" - {
       "should update the session with the new values and redirect to the index controller" - {
         "when the session contains no data for page" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -283,7 +286,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
         }
 
         "when the session already contains data for page" in {
-          given
+          build
             .commonPrecondition
 
           setAnswers(userAnswers)
@@ -306,7 +309,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
 
     "should return 400 with required error" - {
       "when no questions are answered" in {
-        given
+        build
           .commonPrecondition
 
         setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -318,7 +321,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("updateRegisteredDetails.updateContactDetails" + ".title"))
+            page.title must include("Error: " + messages("updateRegisteredDetails.updateContactDetails" + ".title"))
             val errorSummaryList = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first().getElementsByTag("li")
             errorSummaryList.size() mustBe updateContactDetailsMap.size
@@ -327,14 +330,14 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
               errorSummary
                 .select("a")
                 .attr("href") mustBe "#" + fieldName
-              errorSummary.text() mustBe Messages("updateRegisteredDetails.updateContactDetails.error." + fieldName + ".required")
+              errorSummary.text() mustBe messages("updateRegisteredDetails.updateContactDetails.error." + fieldName + ".required")
             }
           }
         }
       }
       updateContactDetailsMap.zipWithIndex.foreach { case ((fieldName, _), index) =>
-        "when no answer is given for field" + fieldName in {
-          given
+        "when no answer is build for field" + fieldName in {
+          build
             .commonPrecondition
 
           setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
@@ -354,13 +357,13 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
             whenReady(result) { res =>
               res.status mustBe 400
               val page = Jsoup.parse(res.body)
-              page.title must include("Error: " + Messages("updateRegisteredDetails.updateContactDetails" + ".title"))
+              page.title must include("Error: " + messages("updateRegisteredDetails.updateContactDetails" + ".title"))
               val errorSummaryList = page.getElementsByClass("govuk-list govuk-error-summary__list")
                 .first()
               errorSummaryList
                 .select("a")
                 .attr("href") mustBe "#" + fieldName
-              errorSummaryList.text() mustBe Messages("updateRegisteredDetails.updateContactDetails.error." + fieldName + ".required")
+              errorSummaryList.text() mustBe messages("updateRegisteredDetails.updateContactDetails.error." + fieldName + ".required")
             }
           }
         }

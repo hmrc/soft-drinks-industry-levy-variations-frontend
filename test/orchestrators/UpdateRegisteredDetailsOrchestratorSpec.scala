@@ -24,7 +24,7 @@ import models.enums.SiteTypes
 import models.submission.{ClosedSite, VariationsContact, VariationsPersonalDetails, VariationsSite}
 import models.updateRegisteredDetails.ContactDetails
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import services.SessionService
@@ -313,7 +313,7 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
         } else {
           (Map("1" -> site1), Map("1" -> site2))
         }
-      }
+      }: @unchecked
       val baseUA = emptyUserAnswersForUpdateRegisteredDetails.copy(
         contactAddress = optUpdatedBusinessAddress.getOrElse(ORIGINAL_ADDRESS),
         packagingSiteList = productionSites,

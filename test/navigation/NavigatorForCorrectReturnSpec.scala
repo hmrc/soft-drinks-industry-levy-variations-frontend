@@ -50,7 +50,7 @@ class NavigatorForCorrectReturnSpec extends SpecBase with DataHelper {
 
       "must go from repayment method page to check changes page" in {
         navigator.nextPage(RepaymentMethodPage, NormalMode, UserAnswers("id", SelectChange.CorrectReturn, contactAddress = contactAddress)) mustBe
-          controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad
+          controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad()
       }
 
     }

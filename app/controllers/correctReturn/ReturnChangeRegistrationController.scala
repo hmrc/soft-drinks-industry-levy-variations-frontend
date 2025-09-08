@@ -38,7 +38,7 @@ class ReturnChangeRegistrationController @Inject()(
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
-        val userIsANewPacker = UserTypeCheck.isNewPacker(request.userAnswers, request.subscription)
+      val userIsANewPacker = UserTypeCheck.isNewPacker(request.userAnswers, request.subscription)
       if (userIsANewPacker) {
         Ok(view(mode, controllers.correctReturn.routes.PackagedAsContractPackerController.onPageLoad(mode).url))
       } else {

@@ -2,14 +2,14 @@ package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.CorrectReturn
-import models.alf.init._
+import models.alf.init.*
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.matchers.must.Matchers.*
 import pages.correctReturn.AskSecondaryWarehouseInReturnPage
 import play.api.http.HeaderNames
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.{JsObject, Json}
-import play.api.test.WsTestClient
+import play.api.test.{WsTestClient, FakeRequest}
 import testSupport.helpers.ALFTestHelper
 
 class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelper {
@@ -17,10 +17,13 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
   val normalRoutePath = "/ask-secondary-warehouses-in-return"
   val checkRoutePath = "/change-ask-secondary-warehouses-in-return"
 
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
+
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the AskSecondaryWarehouseInReturn page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -31,7 +34,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("correctReturn.askSecondaryWarehouseInReturn" + ".title"))
+            page.title must include(messages("correctReturn.askSecondaryWarehouseInReturn" + ".title"))
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -46,7 +49,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
     userAnswersForCorrectReturnAskSecondaryWarehouseInReturnPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
@@ -57,7 +60,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("correctReturn.askSecondaryWarehouseInReturn" + ".title"))
+              page.title must include(messages("correctReturn.askSecondaryWarehouseInReturn" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -78,7 +81,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
   s"GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the AskSecondaryWarehouseInReturn page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -89,7 +92,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("correctReturn.askSecondaryWarehouseInReturn" + ".title"))
+            page.title must include(messages("correctReturn.askSecondaryWarehouseInReturn" + ".title"))
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -104,7 +107,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
     userAnswersForCorrectReturnAskSecondaryWarehouseInReturnPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
@@ -115,7 +118,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("correctReturn.askSecondaryWarehouseInReturn" + ".title"))
+              page.title must include(messages("correctReturn.askSecondaryWarehouseInReturn" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -137,7 +140,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
     "when the user selects no" - {
       "should update the session with the new value and redirect to the CYA controller" - {
         "when the session contains no data for page" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -157,7 +160,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
         }
 
         "when the session already contains data for page" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(AskSecondaryWarehouseInReturnPage, false).success.value)
@@ -185,7 +188,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
         options = JourneyOptions(
           continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/secondary-warehouses/$sdilNumber",
           homeNavHref = None,
-          signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+          signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
           accessibilityFooterUrl = Some("localhost/accessibility-statement/soft-drinks-industry-levy-variations-frontend"),
           phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fcorrect-return%2Fask-secondary-warehouses-in-return"),
           deskProServiceName = None,
@@ -208,7 +211,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
           )),
           timeoutConfig = Some(TimeoutConfig(
             timeoutAmount = 900,
-            timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+            timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
             timeoutKeepAliveUrl = Some(controllers.routes.KeepAliveController.keepAlive.url)
           )),
          serviceHref = Some("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"),
@@ -250,7 +253,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
 
       val alfOnRampURL: String = "http://onramp.com"
 
-      given
+      build
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
       setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -271,7 +274,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -283,7 +286,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("correctReturn.askSecondaryWarehouseInReturn" + ".title"))
+            page.title must include("Error: " + messages("correctReturn.askSecondaryWarehouseInReturn" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
@@ -303,7 +306,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
     "when the user selects no" - {
       "should update the session with the new value and redirect to the CYA controller" - {
         "when the session contains no data for page" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -323,7 +326,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
         }
 
         "when the session already contains data for page" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(AskSecondaryWarehouseInReturnPage, false).success.value)
@@ -351,7 +354,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
         options = JourneyOptions(
           continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/change-secondary-warehouses/$sdilNumber",
           homeNavHref = None,
-          signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+          signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
           accessibilityFooterUrl = Some("localhost/accessibility-statement/soft-drinks-industry-levy-variations-frontend"),
           phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fcorrect-return%2Fchange-ask-secondary-warehouses-in-return"),
           deskProServiceName = None,
@@ -374,7 +377,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
           )),
           timeoutConfig = Some(TimeoutConfig(
             timeoutAmount = 900,
-            timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+            timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
             timeoutKeepAliveUrl = Some(controllers.routes.KeepAliveController.keepAlive.url)
           )),
          serviceHref = Some("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"),
@@ -416,7 +419,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
 
       val alfOnRampURL: String = "http://onramp.com"
 
-      given
+      build
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
       setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -437,7 +440,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -449,7 +452,7 @@ class AskSecondaryWarehouseInReturnControllerISpec extends ControllerITTestHelpe
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + Messages("correctReturn.askSecondaryWarehouseInReturn" + ".title"))
+            page.title must include("Error: " + messages("correctReturn.askSecondaryWarehouseInReturn" + ".title"))
             val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary

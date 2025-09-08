@@ -18,6 +18,7 @@ import uk.gov.hmrc.crypto.json.CryptoFormats
 
 import java.time.{Instant, LocalDate}
 import java.util.concurrent.TimeUnit
+import org.mongodb.scala.{SingleObservableFuture, ObservableFuture}
 
 class SessionRepositoryISpec
   extends AnyFreeSpec

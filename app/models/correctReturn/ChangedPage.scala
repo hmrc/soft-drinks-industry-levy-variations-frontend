@@ -22,7 +22,7 @@ import pages.correctReturn._
 
 case class ChangedPage(page: Page, answerChanged: Boolean)
 
-  object ChangedPage {
+object ChangedPage {
     def returnLiteragePagesThatChangedComparedToOriginalReturn(original: SdilReturn, current: SdilReturn): List[ChangedPage] = {
       List(
         ChangedPage(
@@ -57,11 +57,11 @@ case class ChangedPage(page: Page, answerChanged: Boolean)
         ),
         ChangedPage(
           page = ClaimCreditsForExportsPage,
-          answerChanged = original.export != current.export
+          answerChanged = original.`export` != current.`export`
         ),
         ChangedPage(
           page = HowManyClaimCreditsForExportsPage,
-          answerChanged = original.export != current.export
+          answerChanged = original.`export` != current.`export`
         ),
         ChangedPage(
           page = ClaimCreditsForLostDamagedPage,

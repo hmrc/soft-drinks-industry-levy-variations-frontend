@@ -47,7 +47,7 @@ class UserAnswersIsEmptySpec extends AnyFreeSpec with Matchers with ScalaCheckPr
         forAll(gen) {
           case (keys: List[String], value: String, wrongPath: String) =>
             SelectChange.values.foreach(change => {
-              val pathNodes = (List(change.toString) ++ keys).map(KeyPathNode)
+              val pathNodes = (List(change.toString) ++ keys).map(play.api.libs.json.KeyPathNode.apply)
               val data = Json.obj().set(JsPath(pathNodes), JsString(value)).asOpt.value.asInstanceOf[JsObject]
               val userAnswers = UserAnswers("sdilId", change, contactAddress = contactAddress, data = data)
               val emptyJsPaths = nonEmptyJsPaths(keys, change.toString).map(path => JsPath(path.path :+ KeyPathNode(wrongPath)))
@@ -65,7 +65,7 @@ class UserAnswersIsEmptySpec extends AnyFreeSpec with Matchers with ScalaCheckPr
         forAll(gen) {
           case (keys: List[String], value: String) =>
             SelectChange.values.foreach(change => {
-              val pathNodes = (List(change.toString) ++ keys).map(KeyPathNode)
+              val pathNodes = (List(change.toString) ++ keys).map(play.api.libs.json.KeyPathNode.apply)
               val data = Json.obj().set(JsPath(pathNodes), JsString(value)).asOpt.value.asInstanceOf[JsObject]
               val userAnswers = UserAnswers("sdilId", change, contactAddress = contactAddress, data = data)
               nonEmptyJsPaths(keys, change.toString).foreach(userAnswers.isEmptyAtPath(_) mustEqual false)

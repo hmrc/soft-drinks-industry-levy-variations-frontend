@@ -6,12 +6,12 @@ import models.alf.init._
 import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.scalatest.TryValues
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
+import org.scalatest.matchers.must.Matchers._
 import pages.correctReturn.PackAtBusinessAddressPage
 import play.api.http.HeaderNames
-import play.api.i18n.Messages
+import play.api.i18n.{Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.test.WsTestClient
+import play.api.test.{WsTestClient, FakeRequest}
 import testSupport.helpers.ALFTestHelper
 
 class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with TryValues {
@@ -19,10 +19,13 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
   val normalRoutePath = "/pack-at-business-address"
   val checkRoutePath = "/change-pack-at-business-address"
 
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
+  
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the PackAtBusinessAddress page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -33,7 +36,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("correctReturn.packAtBusinessAddress" + ".title"))
+            page.title must include(messages("correctReturn.packAtBusinessAddress" + ".title"))
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -51,7 +54,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
         options = JourneyOptions(
           continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/pack-at-business-address/$sdilNumber",
           homeNavHref = None,
-          signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+          signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
           accessibilityFooterUrl = Some("localhost/accessibility-statement/soft-drinks-industry-levy-variations-frontend"),
           phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fcorrect-return%2Fpack-at-business-address"),
           deskProServiceName = None,
@@ -74,7 +77,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
           )),
           timeoutConfig = Some(TimeoutConfig(
             timeoutAmount = 900,
-            timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+            timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
             timeoutKeepAliveUrl = Some(controllers.routes.KeepAliveController.keepAlive.url)
           )),
          serviceHref = Some("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"),
@@ -113,7 +116,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
 
       val alfOnRampURL: String = "http://onramp.com"
 
-      given
+      build
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
       setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -135,7 +138,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
         options = JourneyOptions(
           continueUrl = s"http://localhost:8705/soft-drinks-industry-levy-variations-frontend/off-ramp/pack-at-business-address/$sdilNumber",
           homeNavHref = None,
-          signOutHref = Some(controllers.auth.routes.AuthController.signOut.url),
+          signOutHref = Some(controllers.auth.routes.AuthController.signOut().url),
           accessibilityFooterUrl = Some("localhost/accessibility-statement/soft-drinks-industry-levy-variations-frontend"),
           phaseFeedbackLink = Some(s"http://localhost:9250/contact/beta-feedback?service=soft-drinks-industry-levy-variations-frontend&backUrl=http%3A%2F%2Flocalhost%3A8705%2Fsoft-drinks-industry-levy-variations-frontend%2Fcorrect-return%2Fpack-at-business-address"),
           deskProServiceName = None,
@@ -158,7 +161,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
           )),
           timeoutConfig = Some(TimeoutConfig(
             timeoutAmount = 900,
-            timeoutUrl = controllers.auth.routes.AuthController.signOut.url,
+            timeoutUrl = controllers.auth.routes.AuthController.signOut().url,
             timeoutKeepAliveUrl = Some(controllers.routes.KeepAliveController.keepAlive.url)
           )),
          serviceHref = Some("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"),
@@ -196,7 +199,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
       )
 
       val alfOnRampURL: String = "http://onramp.com"
-      given
+      build
         .commonPrecondition
         .alf.getSuccessResponseFromALFInit(alfOnRampURL)
 
@@ -217,7 +220,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
     userAnswersForCorrectReturnPackAtBusinessAddressPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
@@ -228,7 +231,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("correctReturn.packAtBusinessAddress" + ".title"))
+              page.title must include(messages("correctReturn.packAtBusinessAddress" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -249,7 +252,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
   s"GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the PackAtBusinessAddress page with no data populated" in {
-        given
+        build
           .commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -260,7 +263,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
           whenReady(result1) { res =>
             res.status mustBe 200
             val page = Jsoup.parse(res.body)
-            page.title must include(Messages("correctReturn.packAtBusinessAddress" + ".title"))
+            page.title must include(messages("correctReturn.packAtBusinessAddress" + ".title"))
             val radioInputs = page.getElementsByClass("govuk-radios__input")
             radioInputs.size() mustBe 2
             radioInputs.get(0).attr("value") mustBe "true"
@@ -275,7 +278,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
     userAnswersForCorrectReturnPackAtBusinessAddressPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
-          given
+          build
             .commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
@@ -286,7 +289,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-              page.title must include(Messages("correctReturn.packAtBusinessAddress" + ".title"))
+              page.title must include(messages("correctReturn.packAtBusinessAddress" + ".title"))
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -310,7 +313,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
       "when the user selects " + key - {
         "should update the session with the new value and redirect to the index controller" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -336,7 +339,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
 
           userAnswersForCorrectReturnPackagingSiteDetailsPage.foreach { case (previousKey, _) =>
             s"when the session already contains $previousKey data for page" in {
-              given
+              build
                 .commonPrecondition
 
               val userAnswersWithPreviousSelection = if (previousKey == "yes") {
@@ -378,7 +381,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
       "when the user selects " + key - {
         "should update the session with the new value and redirect to the checkAnswers controller" - {
           "when the session contains no data for page" in {
-            given
+            build
               .commonPrecondition
 
             setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -405,7 +408,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
 
           userAnswersForCorrectReturnPackagingSiteDetailsPage.foreach { case (previousKey, _) =>
             s"when the session already contains $previousKey data for page" in {
-              given
+              build
                 .commonPrecondition
 
               setUpForCorrectReturn(userAnswers)
@@ -440,7 +443,7 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
 
   "when the user does not select yes or no" - {
     "should return 400 with required error" in {
-      given
+      build
         .commonPrecondition
 
       setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
@@ -452,13 +455,13 @@ class PackAtBusinessAddressControllerISpec extends ControllerITTestHelper with T
         whenReady(result) { res =>
           res.status mustBe 400
           val page = Jsoup.parse(res.body)
-          page.title must include("Error: " + Messages("correctReturn.packAtBusinessAddress" + ".title"))
+          page.title must include("Error: " + messages("correctReturn.packAtBusinessAddress" + ".title"))
           val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
             .first()
           errorSummary
             .select("a")
             .attr("href") mustBe "#value"
-          errorSummary.text() mustBe Messages("correctReturn.packAtBusinessAddress" + ".error.required")
+          errorSummary.text() mustBe messages("correctReturn.packAtBusinessAddress" + ".error.required")
         }
       }
     }

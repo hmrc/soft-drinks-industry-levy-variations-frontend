@@ -42,7 +42,7 @@ class ClaimCreditsForLostDamagedSummarySpec extends SpecBase{
       case ReturnPeriod(2026, 0) => "&minus;£518.00"
     }
 
-   val returnPeriodWithLabels = List(
+    val returnPeriodWithLabels = List(
      (preApril2025ReturnePeriod, "- pre April 2025 rates"),
      (taxYear2025ReturnPeriod, "- 2025 tax year rates")
    )
@@ -144,7 +144,7 @@ class ClaimCreditsForLostDamagedSummarySpec extends SpecBase{
         res.rows.size mustBe 1
       }
 
-      s"must return empty when no answer given ${returnPeriod._2}" in {
+      s"must return empty when no answer build ${returnPeriod._2}" in {
         val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
 
         val res = ClaimCreditsForLostDestroyedSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)

@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import models.VariationsSubmissionDataHelper
 import org.mockito.ArgumentMatchers.any
-import org.mockito.MockitoSugar.when
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
 import services.SessionService

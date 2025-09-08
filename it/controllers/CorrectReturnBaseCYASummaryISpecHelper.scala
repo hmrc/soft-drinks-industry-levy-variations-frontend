@@ -23,7 +23,7 @@ import models.submission.Litreage
 import models.{CheckMode, LitresInBands, SdilReturn, UserAnswers}
 import org.jsoup.nodes.Element
 import org.scalatest.Assertion
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import pages.correctReturn._
 import play.api.libs.json.Json
 import testSupport.SDILBackendTestData.{smallProducerList, submittedDateTime}
