@@ -41,10 +41,9 @@
         }
 
         <h1 class="govuk-heading-l">@messages("correctReturn.howManyCreditsForExport.title")</h1>
-        <p class="govuk-body">@messages("correctReturn.howManyCreditsForExport.subtext")</p>
 
         @lowAndHighBandInputs(form)(messages)
-        @exportedWhatCanIClaimCreditFor(form)(messages)
+        @exportedWhatCanIClaimCreditFor(form, includeDisposedOfWaste = true)(messages)
         @govukButton(ButtonViewModel(messages("site.saveContinue")))
 
         }

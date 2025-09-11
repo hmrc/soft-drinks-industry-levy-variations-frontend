@@ -50,7 +50,7 @@
             RadiosViewModel.yesNo(
                 field = form("value"),
                 legend = LegendViewModel(messages("correctReturn.claimCreditsForLostDamaged.legendHeading")).asPageSubHeading(),
-                hint = Some(Hint(content = Text(messages("correctReturn.claimCreditsForLostDamaged.hint"))))
+                hint = None
             )
         )
         @claimCreditsForLostDamaged(form)(messages)

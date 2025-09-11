@@ -48,11 +48,11 @@
             RadiosViewModel.yesNo(
             field = form("value"),
             legend = LegendViewModel(messages("correctReturn.claimCreditsForExports.heading2")).asPageSubHeading(),
-            hint = Some(Hint(content = messages("correctReturn.claimCreditsForExports.subHeading")))
+            hint = None
                 )
             )
 
-        @exportedWhatCanIClaimCreditFor(form)(messages)
+        @exportedWhatCanIClaimCreditFor(form, includeDisposedOfWaste = false)(messages)
         @govukButton(ButtonViewModel(messages("site.saveContinue")))
     }
 }

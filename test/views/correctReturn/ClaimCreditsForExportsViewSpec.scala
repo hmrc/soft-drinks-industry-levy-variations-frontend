@@ -51,12 +51,6 @@ class ClaimCreditsForExportsViewSpec extends ViewSpecHelper {
       document.title() mustBe "Exported drinks - Soft Drinks Industry Levy - GOV.UK"
     }
 
-    "should include the expected hint text" in {
-      val hint = document.getElementById("value-hint")
-      hint.className() mustBe "govuk-hint"
-      hint.text() mustBe
-        "You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them."
-    }
     "should include a legend with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
