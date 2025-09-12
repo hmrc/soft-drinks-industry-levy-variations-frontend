@@ -169,6 +169,7 @@ whatDrinksAreExempt.bullet2 = it is a milk-substitute which contains at least 12
 whatDrinksAreExempt.bullet3 = it is an alcohol replacement drink, for example de-alcoholised beer or wine
 whatDrinksAreExempt.bullet4 = it is infant formula, follow-on formula, baby foods, formulated food intended as a total diet replacement or dietary food used for special medical purposes
 
+creditClaims.info=Returns ending after 1 April 2025 cannot be used to claim credit for levy reported or paid in returns ending before 1 April 2025. Notify HMRC separately to <a class="govuk-link" href="https://www.gov.uk/guidance/submit-a-return-and-pay-the-soft-drinks-industry-levy-notice-2">claim credits for the levy accounted for or paid in returns ending on or before 31 March 2025</a>.
 changeActivity.Deregistration.title = Cancel your Soft Drinks Industry Levy registration
 changeActivity.Deregistration.subHeading = Cancellation for
 changeActivity.suggestDeregistration.title = You need to cancel your Soft Drinks Industry Levy registration
