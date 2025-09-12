@@ -27,7 +27,8 @@
     govukDetails: GovukDetails,
     lowAndHighBandInputs: lowAndHighBandInputs,
     saveAndContinueButton: saveAndContinueButton,
-    exportedWhatCanIClaimCreditFor: helpers.exportedWhatCanIClaimCreditFor
+    exportedWhatCanIClaimCreditFor: helpers.exportedWhatCanIClaimCreditFor,
+    creditClaimsInset: creditClaimsInset
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], messages: Messages)
@@ -41,10 +42,9 @@
         }
 
         <h1 class="govuk-heading-l">@messages("correctReturn.howManyCreditsForExport.title")</h1>
-        <p class="govuk-body">@messages("correctReturn.howManyCreditsForExport.subtext")</p>
-
+        @creditClaimsInset(messages)
         @lowAndHighBandInputs(form)(messages)
-        @exportedWhatCanIClaimCreditFor(form)(messages)
+        @exportedWhatCanIClaimCreditFor(form, includeDisposedOfWaste = true)(messages)
         @govukButton(ButtonViewModel(messages("site.saveContinue")))
 
         }

@@ -57,15 +57,11 @@ class HowManyClaimCreditsForExportsViewSpec extends LitresSpecHelper {
           document.getElementsByClass(Selectors.heading).text() mustBe "How many credits do you want to claim for liable drinks that have been exported?"
         }
 
-        "should include a govuk body with the expected content" in {
-          document.getElementsByClass(Selectors.body).text() mustBe "You can only claim a levy credit for drinks that you have paid the levy on or will pay the levy on. Do not include drinks produced for small producers or imported from them. You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the: If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return."
-        }
-
         testLitresInBandsNoPrepopulatedData(document)
         testLitresInBandsWithPrepopulatedData(documentWithValidData)
 
         val expectedDetails = Map(
-          "What can I claim a credit for?" -> "You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the: brand of the liable drinks supplier or consigner customer and destination the liable drinks are supplied to method of delivery If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.")
+          "What can I claim a credit for?" -> "You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the: brand of the liable drinks supplier or consigner disposed of as waste customer and destination the liable drinks are supplied to method of delivery If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.")
         testDetails(document, expectedDetails)
         testButton(document)
         testAction(document, routes.HowManyClaimCreditsForExportsController.onSubmit(mode).url)
