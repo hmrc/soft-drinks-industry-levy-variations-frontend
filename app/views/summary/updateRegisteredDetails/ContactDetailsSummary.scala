@@ -27,27 +27,46 @@ import viewmodels.implicits._
 
 object ContactDetailsSummary {
 
-  def rows(contact: ContactDetails)(implicit messages: Messages): SummaryList = {
-    SummaryList(rows = Seq(
-      createSummaryListItem("fullName", contact.fullName, messages("updateRegisteredDetails.contactDetails.name.change.hidden")),
-      createSummaryListItem("position", contact.position, messages("updateRegisteredDetails.contactDetails.position.change.hidden")),
-      createSummaryListItem("phoneNumber", contact.phoneNumber, messages("updateRegisteredDetails.contactDetails.phoneNumber.change.hidden")),
-      createSummaryListItem("email", contact.email, messages("updateRegisteredDetails.contactDetails.email.change.hidden")))
+  def rows(contact: ContactDetails)(implicit messages: Messages): SummaryList =
+    SummaryList(rows =
+      Seq(
+        createSummaryListItem(
+          "fullName",
+          contact.fullName,
+          messages("updateRegisteredDetails.contactDetails.name.change.hidden")
+        ),
+        createSummaryListItem(
+          "position",
+          contact.position,
+          messages("updateRegisteredDetails.contactDetails.position.change.hidden")
+        ),
+        createSummaryListItem(
+          "phoneNumber",
+          contact.phoneNumber,
+          messages("updateRegisteredDetails.contactDetails.phoneNumber.change.hidden")
+        ),
+        createSummaryListItem(
+          "email",
+          contact.email,
+          messages("updateRegisteredDetails.contactDetails.email.change.hidden")
+        )
+      )
     )
-  }
 
-  private def createSummaryListItem(fieldName: String, fieldValue: String, visuallyHiddenMessage: String)
-                                   (implicit messages: Messages): SummaryListRow = {
+  private def createSummaryListItem(fieldName: String, fieldValue: String, visuallyHiddenMessage: String)(implicit
+    messages: Messages
+  ): SummaryListRow =
     SummaryListRow(
       key = s"updateRegisteredDetails.updateContactDetails.$fieldName",
       value = Value(Text(fieldValue)),
       actions = Some(
         Actions(
-          items = Seq(ActionItem(routes.UpdateContactDetailsController.onPageLoad(NormalMode).url, "site.change")
-            .withVisuallyHiddenText(visuallyHiddenMessage))
-      )
+          items = Seq(
+            ActionItem(routes.UpdateContactDetailsController.onPageLoad(NormalMode).url, "site.change")
+              .withVisuallyHiddenText(visuallyHiddenMessage)
+          )
+        )
       )
     )
-  }
 
 }

@@ -25,9 +25,9 @@ import models.SelectChange.ChangeActivity
 import navigation._
 import pages.changeActivity.SecondaryWarehouseDetailsPage
 import play.api.data.Form
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
-import services.{AddressLookupService, SessionService, WarehouseDetails}
+import play.api.i18n.{ Messages, MessagesApi }
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents, RequestHeader }
+import services.{ AddressLookupService, SessionService, WarehouseDetails }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.http.HeaderCarrier
 import utilities.GenericLogger
@@ -36,64 +36,70 @@ import views.html.changeActivity.SecondaryWarehouseDetailsView
 import views.summary.changeActivity.SecondaryWarehouseDetailsSummary
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class SecondaryWarehouseDetailsController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       val sessionService: SessionService,
-                                       val navigator: NavigatorForChangeActivity,
-                                       controllerActions: ControllerActions,
-                                       formProvider: SecondaryWarehouseDetailsFormProvider,
-                                       addressLookupService: AddressLookupService,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: SecondaryWarehouseDetailsView,
-                                       val genericLogger: GenericLogger,
-                                       val errorHandler: ErrorHandler
-                                     )(implicit val ec: ExecutionContext) extends ControllerHelper with SummaryListFluency {
+class SecondaryWarehouseDetailsController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForChangeActivity,
+  controllerActions: ControllerActions,
+  formProvider: SecondaryWarehouseDetailsFormProvider,
+  addressLookupService: AddressLookupService,
+  val controllerComponents: MessagesControllerComponents,
+  view: SecondaryWarehouseDetailsView,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper with SummaryListFluency {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
       val form: Form[Boolean] = formProvider(hasWarehouses = request.userAnswers.warehouseList.nonEmpty)
       val summaryList: Option[SummaryList] = request.userAnswers.warehouseList match {
-        case warehouseList if warehouseList.nonEmpty => Some(SummaryListViewModel(
-          rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouseList, mode))
-        )
+        case warehouseList if warehouseList.nonEmpty =>
+          Some(SummaryListViewModel(rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouseList, mode)))
         case _ => None
       }
 
       Ok(view(form, summaryList, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
-    implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    controllerActions.withRequiredJourneyData(ChangeActivity).async { implicit request =>
       val form: Form[Boolean] = formProvider(hasWarehouses = request.userAnswers.warehouseList.nonEmpty)
       val summaryList: Option[SummaryList] = request.userAnswers.warehouseList match {
-        case warehouseList if warehouseList.nonEmpty => Some(SummaryListViewModel(
-          rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouseList, mode))
-        )
+        case warehouseList if warehouseList.nonEmpty =>
+          Some(SummaryListViewModel(rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouseList, mode)))
         case _ => None
       }
 
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, summaryList, mode))),
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, summaryList, mode))),
+          value => {
+            val updatedAnswers = request.userAnswers.set(SecondaryWarehouseDetailsPage, value)
+            updateDatabaseWithoutRedirect(updatedAnswers, SecondaryWarehouseDetailsPage)
+              .flatMap(_ => getOnwardUrl(value, mode).map(Redirect(_)))
+          }
+        )
+    }
 
-        value => {
-          val updatedAnswers = request.userAnswers.set(SecondaryWarehouseDetailsPage, value)
-          updateDatabaseWithoutRedirect(updatedAnswers, SecondaryWarehouseDetailsPage).flatMap(_ => {
-            getOnwardUrl(value, mode).map(Redirect(_))
-          })
-        }
-      )
-  }
-
-  private def getOnwardUrl(value: Boolean, mode: Mode)
-                          (implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages, requestHeader: RequestHeader): Future[String] = {
+  private def getOnwardUrl(value: Boolean, mode: Mode)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext,
+    messages: Messages,
+    requestHeader: RequestHeader
+  ): Future[String] =
     if (value) {
-      addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = mode)(hc, ec, messages, requestHeader)
+      addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = mode)(using
+        hc,
+        ec,
+        messages,
+        requestHeader
+      )
     } else {
       Future.successful(routes.ChangeActivityCYAController.onPageLoad().url)
     }
-  }
 
 }

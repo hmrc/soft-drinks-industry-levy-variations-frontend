@@ -20,84 +20,90 @@ import controllers.actions._
 import errors.ReturnsStillPending
 import forms.SelectChangeFormProvider
 import handlers.ErrorHandler
-import models.{NormalMode, SelectChange}
+import models.{ NormalMode, SelectChange }
 import orchestrators.SelectChangeOrchestrator
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
+import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.mvc.{ Action, AnyContent, Call, MessagesControllerComponents }
 import services.SessionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.SelectChangeView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class SelectChangeController @Inject()(
-                                        override val messagesApi: MessagesApi,
-                                        selectChangeOrchestrator: SelectChangeOrchestrator,
-                                        sessionService: SessionService,
-                                        identify: IdentifierAction,
-                                        getData: DataRetrievalAction,
-                                        formProvider: SelectChangeFormProvider,
-                                        val controllerComponents: MessagesControllerComponents,
-                                        view: SelectChangeView,
-                                        val errorHandler: ErrorHandler
-                                      )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class SelectChangeController @Inject() (
+  override val messagesApi: MessagesApi,
+  selectChangeOrchestrator: SelectChangeOrchestrator,
+  sessionService: SessionService,
+  identify: IdentifierAction,
+  getData: DataRetrievalAction,
+  formProvider: SelectChangeFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: SelectChangeView,
+  val errorHandler: ErrorHandler
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController with I18nSupport {
 
   val form = formProvider()
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData).async {
-    implicit request =>
-      val preparedForm = request.userAnswers match {
-        case Some(userAnswers) if !userAnswers.submitted => form.fill(userAnswers.journeyType)
-        case _ => form
-      }
-      selectChangeOrchestrator.hasReturnsToCorrect(request.subscription).value.flatMap {
-        case Right(hasVariableReturns) =>
-          Future.successful(
-            request.subscription.deregDate match {
+  def onPageLoad: Action[AnyContent] = (identify andThen getData).async { implicit request =>
+    val preparedForm = request.userAnswers match {
+      case Some(userAnswers) if !userAnswers.submitted => form.fill(userAnswers.journeyType)
+      case _                                           => form
+    }
+    selectChangeOrchestrator.hasReturnsToCorrect(request.subscription).value.flatMap {
+      case Right(hasVariableReturns) =>
+        Future.successful(
+          request.subscription.deregDate match {
             case None => Ok(view(preparedForm, hasVariableReturns))
-            case _ => Ok(view(preparedForm, hasVariableReturns,isDeregistered = true))
+            case _    => Ok(view(preparedForm, hasVariableReturns, isDeregistered = true))
           }
-          )
-        case Left(_) =>
-          errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
+        )
+      case Left(_) =>
+        errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
 
-      }
+    }
   }
 
-  def onSubmit: Action[AnyContent] = (identify andThen getData).async {
-    implicit request =>
-      form.bindFromRequest().fold(
-        formWithErrors => selectChangeOrchestrator.hasReturnsToCorrect(request.subscription).value
-          .flatMap {
-            case Right(hasVariableReturns) => Future.successful(
-              BadRequest(view(formWithErrors, hasVariableReturns))
-            )
-            case Left(_) =>
-              errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
-          },
-        value => {
+  def onSubmit: Action[AnyContent] = (identify andThen getData).async { implicit request =>
+    form
+      .bindFromRequest()
+      .fold(
+        formWithErrors =>
+          selectChangeOrchestrator
+            .hasReturnsToCorrect(request.subscription)
+            .value
+            .flatMap {
+              case Right(hasVariableReturns) =>
+                Future.successful(
+                  BadRequest(view(formWithErrors, hasVariableReturns))
+                )
+              case Left(_) =>
+                errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
+            },
+        value =>
           selectChangeOrchestrator.createUserAnswersAndSaveToDatabase(value, request.subscription).value.flatMap {
-            case Right(_) => Future.successful(
-              Redirect(getRedirectUrl(value))
-            )
-            case Left(ReturnsStillPending) => Future.successful(
-              Redirect(cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad())
-            )
+            case Right(_) =>
+              Future.successful(
+                Redirect(getRedirectUrl(value))
+              )
+            case Left(ReturnsStillPending) =>
+              Future.successful(
+                Redirect(cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad())
+              )
             case Left(_) =>
               errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
           }
-        }
       )
   }
 
-  private def getRedirectUrl(value: SelectChange): Call = {
+  private def getRedirectUrl(value: SelectChange): Call =
     value match {
-      case SelectChange.UpdateRegisteredDetails => updateRegisteredDetails.routes.ChangeRegisteredDetailsController.onPageLoad()
+      case SelectChange.UpdateRegisteredDetails =>
+        updateRegisteredDetails.routes.ChangeRegisteredDetailsController.onPageLoad()
       case SelectChange.ChangeActivity => changeActivity.routes.AmountProducedController.onPageLoad(NormalMode)
-      case SelectChange.CorrectReturn => correctReturn.routes.SelectController.onPageLoad
-      case _ => cancelRegistration.routes.ReasonController.onPageLoad(NormalMode)
+      case SelectChange.CorrectReturn  => correctReturn.routes.SelectController.onPageLoad
+      case _                           => cancelRegistration.routes.ReasonController.onPageLoad(NormalMode)
     }
-  }
 
 }

@@ -17,12 +17,12 @@
 package views.summary.correctReturn
 
 import controllers.correctReturn.routes
-import models.{CheckMode, LitresInBands}
+import models.{ CheckMode, LitresInBands }
 import pages.QuestionPage
-import pages.correctReturn.{ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage}
-import views.summary.{ReturnDetailsSummaryListWithLitres, SummaryListRowLitresHelper}
+import pages.correctReturn.{ ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage }
+import views.summary.{ ReturnDetailsSummaryListWithLitres, SummaryListRowLitresHelper }
 
-object ClaimCreditsForLostDestroyedSummary extends ReturnDetailsSummaryListWithLitres  {
+object ClaimCreditsForLostDestroyedSummary extends ReturnDetailsSummaryListWithLitres {
 
   override val page: QuestionPage[Boolean] = ClaimCreditsForLostDamagedPage
   override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyCreditsForLostDamagedPage)

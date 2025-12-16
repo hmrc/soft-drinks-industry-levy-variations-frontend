@@ -18,16 +18,16 @@ package orchestrators
 
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
-import errors.{ReturnsStillPending, SessionDatabaseInsertError, UnexpectedResponseFromSDIL}
-import models.backend.{RetrievedActivity, RetrievedSubscription, Site, UkAddress}
+import errors.{ ReturnsStillPending, SessionDatabaseInsertError, UnexpectedResponseFromSDIL }
+import models.backend.{ RetrievedActivity, RetrievedSubscription, Site, UkAddress }
 import models.updateRegisteredDetails.ContactDetails
-import models.{Contact, SelectChange, UserAnswers}
+import models.{ Contact, SelectChange, UserAnswers }
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.Json
 import services.SessionService
 
-import java.time.{Instant, LocalDate}
+import java.time.{ Instant, LocalDate }
 import scala.concurrent.Future
 
 class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
@@ -42,8 +42,10 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
   }
 
   val businessAddress = UkAddress(List("63 Clifton Roundabout", "Worcester"), "WR53 7CX")
-  val contact = Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com")
-  val updateContact = ContactDetails("Ava Adams", "Chief Infrastructure Agent", "04495 206189", "Adeline.Greene@gmail.com")
+  val contact =
+    Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com")
+  val updateContact =
+    ContactDetails("Ava Adams", "Chief Infrastructure Agent", "04495 206189", "Adeline.Greene@gmail.com")
 
   val tradingName1 = "ABC Ltd"
   val tradingName2 = "DEF Ltd"
@@ -55,9 +57,11 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
   val address3 = UkAddress(List("3 Test drive", "Example"), "EX3 3AB")
   val address4 = UkAddress(List("4 Test drive", "Example"), "EX4 4AB")
 
-  def retrievedSubscription(productionSites: List[Site] = List.empty,
-                            warehouses: List[Site] = List.empty,
-                            deregDate: Option[LocalDate] = None) = RetrievedSubscription(
+  def retrievedSubscription(
+    productionSites: List[Site] = List.empty,
+    warehouses: List[Site] = List.empty,
+    deregDate: Option[LocalDate] = None
+  ) = RetrievedSubscription(
     utr = "0000000022",
     sdilRef = "XKSDIL000000022",
     orgName = "Super Lemonade Plc",
@@ -76,11 +80,13 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
     deregDate = deregDate
   )
 
-  def expectedUserAnswers(value: SelectChange,
-                          productionSites: Map[String, Site] = Map.empty,
-                          warehouses: Map[String, Site] = Map.empty,
-                          addContactDetails: Boolean = false): UserAnswers = {
-    val data = if(addContactDetails) {
+  def expectedUserAnswers(
+    value: SelectChange,
+    productionSites: Map[String, Site] = Map.empty,
+    warehouses: Map[String, Site] = Map.empty,
+    addContactDetails: Boolean = false
+  ): UserAnswers = {
+    val data = if (addContactDetails) {
       Json.obj(("updateRegisteredDetails", Json.obj(("updateContactDetails", Json.toJson(updateContact)))))
     } else {
       Json.obj()
@@ -104,7 +110,7 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
 
         val res = orchestrator.hasReturnsToCorrect(aSubscription)
 
-        whenReady(res.value) {result =>
+        whenReady(res.value) { result =>
           result mustBe Right(true)
         }
       }
@@ -138,15 +144,18 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
   }
 
   "createUserAnswersAndSaveToDatabase" - {
-    SelectChange.values.foreach{ selectChange =>
+    SelectChange.values.foreach { selectChange =>
       s"when the user selected to $selectChange" - {
         "should generate and save the expected user answers and return unit" - {
           "when the subscription contains no packaging sites or warehouses" in {
-            if(selectChange == SelectChange.CancelRegistration) {
+            if (selectChange == SelectChange.CancelRegistration) {
               when(mockSdilConnector.returnsPending("0000000022")(hc))
                 .thenReturn(createSuccessVariationResult(List.empty))
             }
-            val expectedGeneratedUA = expectedUserAnswers(selectChange, addContactDetails = selectChange == SelectChange.UpdateRegisteredDetails)
+            val expectedGeneratedUA = expectedUserAnswers(
+              selectChange,
+              addContactDetails = selectChange == SelectChange.UpdateRegisteredDetails
+            )
             when(mockSessionService.set(expectedGeneratedUA)).thenReturn(Future.successful(Right(true)))
 
             val res = orchestrator.createUserAnswersAndSaveToDatabase(selectChange, retrievedSubscription())
@@ -167,13 +176,18 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
               when(mockSdilConnector.returnsPending("0000000022")(hc))
                 .thenReturn(createSuccessVariationResult(List.empty))
             }
-            val expectedGeneratedUA = expectedUserAnswers(selectChange,
+            val expectedGeneratedUA = expectedUserAnswers(
+              selectChange,
               Map("0" -> packagingSite1, "1" -> packagingSite2),
               Map("0" -> warehouseSite1, "1" -> warehouseSite2),
-              addContactDetails = selectChange == SelectChange.UpdateRegisteredDetails)
+              addContactDetails = selectChange == SelectChange.UpdateRegisteredDetails
+            )
             when(mockSessionService.set(expectedGeneratedUA)).thenReturn(Future.successful(Right(true)))
 
-            val res = orchestrator.createUserAnswersAndSaveToDatabase(selectChange, retrievedSubscription(packagingSites, warehouseSites))
+            val res = orchestrator.createUserAnswersAndSaveToDatabase(
+              selectChange,
+              retrievedSubscription(packagingSites, warehouseSites)
+            )
 
             whenReady(res.value) { result =>
               result mustBe Right((): Unit)
@@ -192,13 +206,18 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
               when(mockSdilConnector.returnsPending("0000000022")(hc))
                 .thenReturn(createSuccessVariationResult(List.empty))
             }
-            val expectedGeneratedUA = expectedUserAnswers(selectChange,
+            val expectedGeneratedUA = expectedUserAnswers(
+              selectChange,
               Map("0" -> packagingSite1),
               Map("0" -> warehouse1),
-              addContactDetails = selectChange == SelectChange.UpdateRegisteredDetails)
+              addContactDetails = selectChange == SelectChange.UpdateRegisteredDetails
+            )
             when(mockSessionService.set(expectedGeneratedUA)).thenReturn(Future.successful(Right(true)))
 
-            val res = orchestrator.createUserAnswersAndSaveToDatabase(selectChange, retrievedSubscription(packagingSites, warehouseSites))
+            val res = orchestrator.createUserAnswersAndSaveToDatabase(
+              selectChange,
+              retrievedSubscription(packagingSites, warehouseSites)
+            )
 
             whenReady(res.value) { result =>
               result mustBe Right((): Unit)
@@ -210,7 +229,10 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
             "when the user has returns pending and is not voluntary registration" in {
               when(mockSdilConnector.returnsPending("0000000022")(hc))
                 .thenReturn(createSuccessVariationResult(returnPeriodList))
-              val expectedGeneratedUA = expectedUserAnswers(selectChange, addContactDetails = selectChange == SelectChange.UpdateRegisteredDetails)
+              val expectedGeneratedUA = expectedUserAnswers(
+                selectChange,
+                addContactDetails = selectChange == SelectChange.UpdateRegisteredDetails
+              )
               when(mockSessionService.set(expectedGeneratedUA)).thenReturn(Future.successful(Right(true)))
 
               val res = orchestrator.createUserAnswersAndSaveToDatabase(selectChange, retrievedSubscription())
@@ -225,7 +247,10 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
             "when the user has returns pending and is voluntary registration" in {
               when(mockSdilConnector.returnsPending("0000000022")(hc))
                 .thenReturn(createSuccessVariationResult(returnPeriodList))
-              val expectedGeneratedUA = expectedUserAnswers(selectChange, addContactDetails = selectChange == SelectChange.UpdateRegisteredDetails)
+              val expectedGeneratedUA = expectedUserAnswers(
+                selectChange,
+                addContactDetails = selectChange == SelectChange.UpdateRegisteredDetails
+              )
               when(mockSessionService.set(expectedGeneratedUA)).thenReturn(Future.successful(Right(true)))
 
               val voluntaryRegistrationSubscription = retrievedSubscription()
@@ -242,7 +267,10 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
             "when the user has no returns pending" in {
               when(mockSdilConnector.returnsPending("0000000022")(hc))
                 .thenReturn(createSuccessVariationResult(List.empty))
-              val expectedGeneratedUA = expectedUserAnswers(selectChange, addContactDetails = selectChange == SelectChange.UpdateRegisteredDetails)
+              val expectedGeneratedUA = expectedUserAnswers(
+                selectChange,
+                addContactDetails = selectChange == SelectChange.UpdateRegisteredDetails
+              )
               when(mockSessionService.set(expectedGeneratedUA)).thenReturn(Future.successful(Right(true)))
 
               val res = orchestrator.createUserAnswersAndSaveToDatabase(selectChange, retrievedSubscription())
@@ -256,8 +284,12 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
 
         "should return a SessionDatabaseInsertError" - {
           "when the insert to database fails" in {
-            val expectedGeneratedUA = expectedUserAnswers(selectChange, addContactDetails = selectChange == SelectChange.UpdateRegisteredDetails)
-            when(mockSessionService.set(expectedGeneratedUA)).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
+            val expectedGeneratedUA = expectedUserAnswers(
+              selectChange,
+              addContactDetails = selectChange == SelectChange.UpdateRegisteredDetails
+            )
+            when(mockSessionService.set(expectedGeneratedUA))
+              .thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
 
             val res = orchestrator.createUserAnswersAndSaveToDatabase(selectChange, retrievedSubscription())
 
@@ -276,7 +308,9 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
         val expectedGeneratedUA = expectedUserAnswers(SelectChange.CorrectReturn)
         when(mockSessionService.set(expectedGeneratedUA)).thenReturn(Future.successful(Right(true)))
 
-        val res = orchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(retrievedSubscription(deregDate = Some(LocalDate.now())))
+        val res = orchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(
+          retrievedSubscription(deregDate = Some(LocalDate.now()))
+        )
 
         whenReady(res.value) { result =>
           result mustBe Right(expectedGeneratedUA)
@@ -293,7 +327,9 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
         val expectedGeneratedUA = expectedUserAnswers(SelectChange.CorrectReturn)
         when(mockSessionService.set(expectedGeneratedUA)).thenReturn(Future.successful(Right(true)))
 
-        val res = orchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(retrievedSubscription(packagingSites, warehouseSites, deregDate = Some(LocalDate.now)))
+        val res = orchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(
+          retrievedSubscription(packagingSites, warehouseSites, deregDate = Some(LocalDate.now))
+        )
 
         whenReady(res.value) { result =>
           result mustBe Right(expectedGeneratedUA)
@@ -310,7 +346,9 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
         val expectedGeneratedUA = expectedUserAnswers(SelectChange.CorrectReturn)
         when(mockSessionService.set(expectedGeneratedUA)).thenReturn(Future.successful(Right(true)))
 
-        val res = orchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(retrievedSubscription(packagingSites, warehouseSites, deregDate = Some(LocalDate.now)))
+        val res = orchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(
+          retrievedSubscription(packagingSites, warehouseSites, deregDate = Some(LocalDate.now))
+        )
 
         whenReady(res.value) { result =>
           result mustBe Right(expectedGeneratedUA)
@@ -321,9 +359,11 @@ class SelectChangeOrchestratorSpec extends SpecBase with MockitoSugar {
     "should return a SessionDatabaseInsertError" - {
       "when the insert to database fails" in {
         val expectedGeneratedUA = expectedUserAnswers(SelectChange.CorrectReturn)
-        when(mockSessionService.set(expectedGeneratedUA)).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
+        when(mockSessionService.set(expectedGeneratedUA))
+          .thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
 
-        val res = orchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(retrievedSubscription())
+        val res =
+          orchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(retrievedSubscription())
 
         whenReady(res.value) { result =>
           result mustBe Left(SessionDatabaseInsertError)

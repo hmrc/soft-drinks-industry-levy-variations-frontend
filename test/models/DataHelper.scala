@@ -16,7 +16,7 @@
 
 package models
 
-import models.backend.{RetrievedActivity, RetrievedSubscription, Site, UkAddress}
+import models.backend.{ RetrievedActivity, RetrievedSubscription, Site, UkAddress }
 import models.submission.Litreage
 import models.updateRegisteredDetails.ContactDetails
 
@@ -24,13 +24,15 @@ import java.time.LocalDate
 
 trait DataHelper {
 
-  def testSdilReturn(ownBrand: Litreage = Litreage(15, 12),
-                     packLarge: Litreage = Litreage(15, 12),
-                     packSmall: List[SmallProducer],
-                     importLarge: Litreage = Litreage(15, 12),
-                     importSmall: Litreage = Litreage(15, 12),
-                     `export`: Litreage = Litreage(15, 12),
-                     wastage: Litreage = Litreage(15, 12)): SdilReturn = {
+  def testSdilReturn(
+    ownBrand: Litreage = Litreage(15, 12),
+    packLarge: Litreage = Litreage(15, 12),
+    packSmall: List[SmallProducer],
+    importLarge: Litreage = Litreage(15, 12),
+    importSmall: Litreage = Litreage(15, 12),
+    `export`: Litreage = Litreage(15, 12),
+    wastage: Litreage = Litreage(15, 12)
+  ): SdilReturn =
     SdilReturn(
       ownBrand = ownBrand,
       packLarge = packLarge,
@@ -41,29 +43,23 @@ trait DataHelper {
       wastage = wastage,
       submittedOn = None
     )
-  }
 
-  def testReturnPeriod(year: Int = 2022,
-                       quarter: Int = 2): ReturnPeriod = {
+  def testReturnPeriod(year: Int = 2022, quarter: Int = 2): ReturnPeriod =
     ReturnPeriod(year, quarter)
-  }
 
-
-  def testSmallProducer(alias: String,
-                        sdilRef: String,
-                        litreage: Litreage): SmallProducer = SmallProducer(
+  def testSmallProducer(alias: String, sdilRef: String, litreage: Litreage): SmallProducer = SmallProducer(
     alias = alias,
     sdilRef = sdilRef,
     litreage = litreage
   )
 
   def testRetrievedActivity(
-                             smallProducer: Boolean = false,
-                             largeProducer: Boolean = false,
-                             contractPacker: Boolean = false,
-                             importer: Boolean = false,
-                             voluntaryRegistration: Boolean = false,
-                           ): RetrievedActivity = RetrievedActivity(
+    smallProducer: Boolean = false,
+    largeProducer: Boolean = false,
+    contractPacker: Boolean = false,
+    importer: Boolean = false,
+    voluntaryRegistration: Boolean = false
+  ): RetrievedActivity = RetrievedActivity(
     smallProducer = smallProducer,
     largeProducer = largeProducer,
     contractPacker = contractPacker,
@@ -72,11 +68,11 @@ trait DataHelper {
   )
 
   def testSite(
-                address: UkAddress,
-                ref: Option[String] = None,
-                tradingName: Option[String] = None,
-                closureDate: Option[LocalDate] = None
-              ): Site = Site(
+    address: UkAddress,
+    ref: Option[String] = None,
+    tradingName: Option[String] = None,
+    closureDate: Option[LocalDate] = None
+  ): Site = Site(
     address = address,
     ref = ref,
     tradingName = tradingName,
@@ -84,11 +80,11 @@ trait DataHelper {
   )
 
   def testContact(
-                   name: Option[String] = Some("test name"),
-                   positionInCompany: Option[String] = Some("test position"),
-                   phoneNumber: String,
-                   email: String
-                 ): Contact = Contact(
+    name: Option[String] = Some("test name"),
+    positionInCompany: Option[String] = Some("test position"),
+    phoneNumber: String,
+    email: String
+  ): Contact = Contact(
     name = name,
     positionInCompany = positionInCompany,
     phoneNumber = phoneNumber,
@@ -96,14 +92,13 @@ trait DataHelper {
   )
 
   def testContactDetails(
-                          fullName: String = "test name",
-                          position: String = "test position",
-                          phoneNumber: String = "testnumber",
-                          email: String = "test@email.test",
-                        ): ContactDetails = ContactDetails(
+    fullName: String = "test name",
+    position: String = "test position",
+    phoneNumber: String = "testnumber",
+    email: String = "test@email.test"
+  ): ContactDetails = ContactDetails(
     fullName = fullName,
     position = position,
-
     phoneNumber = phoneNumber,
     email = email
   )
@@ -113,19 +108,18 @@ trait DataHelper {
     postCode = "AA111AA"
   )
 
-
   def testRetrievedSubscription(
-                                 utr: String = "testutr",
-                                 sdilRef: String = "testref",
-                                 orgName: String = "test name",
-                                 address: UkAddress,
-                                 activity: RetrievedActivity,
-                                 liabilityDate: LocalDate,
-                                 productionSites: List[Site],
-                                 warehouseSites: List[Site],
-                                 contact: Contact,
-                                 deregDate: Option[LocalDate] = None
-                               ): RetrievedSubscription = RetrievedSubscription(
+    utr: String = "testutr",
+    sdilRef: String = "testref",
+    orgName: String = "test name",
+    address: UkAddress,
+    activity: RetrievedActivity,
+    liabilityDate: LocalDate,
+    productionSites: List[Site],
+    warehouseSites: List[Site],
+    contact: Contact,
+    deregDate: Option[LocalDate] = None
+  ): RetrievedSubscription = RetrievedSubscription(
     utr = utr,
     sdilRef = sdilRef,
     orgName = orgName,

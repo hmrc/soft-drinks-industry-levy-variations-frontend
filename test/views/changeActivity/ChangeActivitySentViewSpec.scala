@@ -22,17 +22,17 @@ import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.Value
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ SummaryList, SummaryListRow }
 import views.ViewSpecHelper
 import views.html.changeActivity.ChangeActivitySentView
 
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDateTime, ZoneId}
+import java.time.{ LocalDateTime, ZoneId }
 
 class ChangeActivitySentViewSpec extends ViewSpecHelper {
 
   val view: ChangeActivitySentView = application.injector.instanceOf[ChangeActivitySentView]
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   val getSentDateTime: LocalDateTime = LocalDateTime.now(ZoneId.of("UTC"))
   val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
@@ -58,15 +58,15 @@ class ChangeActivitySentViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val summaryList: Seq[(String, SummaryList)] = {
+    val summaryList: Seq[(String, SummaryList)] =
       Seq(
-        "foo" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bar"))))),
+        "foo"  -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bar"))))),
         "wizz" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bang")))))
       )
-    }
 
     val orgName: String = " " + aSubscription.orgName
-    val html: HtmlFormat.Appendable = view(orgName, formattedDate, formattedTime, summaryList)(request, messages(application), frontendAppConfig)
+    val html: HtmlFormat.Appendable =
+      view(orgName, formattedDate, formattedTime, summaryList)(request, messages(application), frontendAppConfig)
     val document: Document = doc(html)
 
     "should contain the expected title" in {
@@ -78,10 +78,12 @@ class ChangeActivitySentViewSpec extends ViewSpecHelper {
     }
 
     "should include the expected panel" in {
-    val panel = document.getElementsByClass(Selectors.panel).get(0)
-    panel.getElementsByClass(Selectors.panel_title).text() mustEqual "Update sent"
-    panel.getElementsByClass(Selectors.panel_body).text() mustEqual "We have received the update to your Soft Drinks Industry Levy details"
-  }
+      val panel = document.getElementsByClass(Selectors.panel).get(0)
+      panel.getElementsByClass(Selectors.panel_title).text() mustEqual "Update sent"
+      panel
+        .getElementsByClass(Selectors.panel_body)
+        .text() mustEqual "We have received the update to your Soft Drinks Industry Levy details"
+    }
 
     "should include a link to print page" in {
       val printPageElements = document.getElementById("printPage")
@@ -96,7 +98,8 @@ class ChangeActivitySentViewSpec extends ViewSpecHelper {
 
     "The what happens next section should have the expected body" in {
       val whatNextBody = document.getElementById("whatNextBody")
-      whatNextBody.text() mustEqual "You do not need to do anything else. We will update your details with the information you have provided."
+      whatNextBody
+        .text() mustEqual "You do not need to do anything else. We will update your details with the information you have provided."
     }
 
     "should include a details section" - {
@@ -108,17 +111,23 @@ class ChangeActivitySentViewSpec extends ViewSpecHelper {
 
     "that has the expected content" in {
       document.getElementsByClass(Selectors.summaryListHeading).get(1).text() mustBe "foo"
-      document.getElementsByClass(Selectors.summaryList)
+      document
+        .getElementsByClass(Selectors.summaryList)
         .first()
         .getElementsByClass(Selectors.summaryRow)
         .first()
-        .getElementsByClass(Selectors.summaryValue).first().text() mustBe "bar"
+        .getElementsByClass(Selectors.summaryValue)
+        .first()
+        .text() mustBe "bar"
       document.getElementsByClass(Selectors.summaryListHeading).get(2).text() mustBe "wizz"
-      document.getElementsByClass(Selectors.summaryList)
+      document
+        .getElementsByClass(Selectors.summaryList)
         .last()
         .getElementsByClass(Selectors.summaryRow)
         .first()
-        .getElementsByClass(Selectors.summaryValue).first().text() mustBe "bang"
+        .getElementsByClass(Selectors.summaryValue)
+        .first()
+        .text() mustBe "bang"
     }
 
     validateTimeoutDialog(document)

@@ -5,11 +5,11 @@ import models.SelectChange.CorrectReturn
 import models.correctReturn.RepaymentMethod
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers._
-import pages.correctReturn.{CorrectReturnBaseCYAPage, RepaymentMethodPage}
+import pages.correctReturn.{ CorrectReturnBaseCYAPage, RepaymentMethodPage }
 import play.api.http.HeaderNames
-import play.api.i18n.{Messages, MessagesApi}
+import play.api.i18n.{ Messages, MessagesApi }
 import play.api.libs.json.Json
-import play.api.test.{WsTestClient, FakeRequest}
+import play.api.test.{ FakeRequest, WsTestClient }
 
 class RepaymentMethodControllerISpec extends ControllerITTestHelper {
   val normalRoutePath = "/repayment-method"
@@ -17,12 +17,11 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
 
   given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   given messages: Messages = messagesApi.preferred(FakeRequest())
-  
+
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the RepaymentMethod page with no data populated" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
 
@@ -48,12 +47,15 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
     RepaymentMethod.values.zipWithIndex.foreach { case (radio, index) =>
       s"when the userAnswers contains data for the page with " + radio.toString + " selected" - {
         s"should return OK and render the page with " + radio.toString + " radio checked" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           val userAnswers = emptyUserAnswersForCorrectReturn
-            .set(CorrectReturnBaseCYAPage, true).success.value
-            .set(RepaymentMethodPage, radio).success.value
+            .set(CorrectReturnBaseCYAPage, true)
+            .success
+            .value
+            .set(RepaymentMethodPage, radio)
+            .success
+            .value
 
           setUpForCorrectReturn(userAnswers)
 
@@ -85,8 +87,7 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
   s"GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the RepaymentMethod page with no data populated" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
 
@@ -112,13 +113,15 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
     RepaymentMethod.values.zipWithIndex.foreach { case (radio, index) =>
       s"when the userAnswers contains data for the page with " + radio.toString + " selected" - {
         s"should return OK and render the page with " + radio.toString + " radio checked" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           val userAnswers = emptyUserAnswersForCorrectReturn
-            .set(CorrectReturnBaseCYAPage, true).success.value
-            .set(RepaymentMethodPage, radio).success.value
-
+            .set(CorrectReturnBaseCYAPage, true)
+            .success
+            .value
+            .set(RepaymentMethodPage, radio)
+            .success
+            .value
 
           setUpForCorrectReturn(userAnswers)
 
@@ -152,19 +155,23 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
       "when the user selects " + radio.toString - {
         "should update the session with the new value and redirect to the index controller" - {
           "when the session contains no data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> radio)
+                client,
+                correctReturnBaseUrl + normalRoutePath,
+                Json.obj("value" -> radio)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
-                val dataStoredForPage = getAnswers(sdilNumber).fold[Option[RepaymentMethod]](None)(_.get(RepaymentMethodPage))
+                res.header(HeaderNames.LOCATION) mustBe Some(
+                  routes.CorrectReturnCheckChangesCYAController.onPageLoad().url
+                )
+                val dataStoredForPage =
+                  getAnswers(sdilNumber).fold[Option[RepaymentMethod]](None)(_.get(RepaymentMethodPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
               }
@@ -172,23 +179,31 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             val userAnswers = emptyUserAnswersForCorrectReturn
-              .set(CorrectReturnBaseCYAPage, true).success.value
-              .set(RepaymentMethodPage, radio).success.value
+              .set(CorrectReturnBaseCYAPage, true)
+              .success
+              .value
+              .set(RepaymentMethodPage, radio)
+              .success
+              .value
 
             setUpForCorrectReturn(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> radio)
+                client,
+                correctReturnBaseUrl + normalRoutePath,
+                Json.obj("value" -> radio)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[RepaymentMethod]](None)(_.get(RepaymentMethodPage))
+                res.header(HeaderNames.LOCATION) mustBe Some(
+                  routes.CorrectReturnCheckChangesCYAController.onPageLoad().url
+                )
+                val dataStoredForPage =
+                  getAnswers(userAnswers.id).fold[Option[RepaymentMethod]](None)(_.get(RepaymentMethodPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
               }
@@ -200,20 +215,22 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select an option" - {
       "should return 400 with required error" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> "")
+            client,
+            correctReturnBaseUrl + normalRoutePath,
+            Json.obj("value" -> "")
           )
 
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
             page.title must include("Error: " + messages("correctReturn.repaymentMethod" + ".title"))
-            val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
+            val errorSummary = page
+              .getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
@@ -225,7 +242,11 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+      CorrectReturn,
+      correctReturnBaseUrl + normalRoutePath,
+      Some(Json.obj("value" -> "true"))
+    )
   }
 
   s"POST " + checkRoutePath - {
@@ -233,19 +254,23 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
       "when the user selects " + radio.toString - {
         "should update the session with the new value and redirect to the checkAnswers controller" - {
           "when the session contains no data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> Json.toJson(radio))
+                client,
+                correctReturnBaseUrl + checkRoutePath,
+                Json.obj("value" -> Json.toJson(radio))
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
-                val dataStoredForPage = getAnswers(sdilNumber).fold[Option[RepaymentMethod]](None)(_.get(RepaymentMethodPage))
+                res.header(HeaderNames.LOCATION) mustBe Some(
+                  routes.CorrectReturnCheckChangesCYAController.onPageLoad().url
+                )
+                val dataStoredForPage =
+                  getAnswers(sdilNumber).fold[Option[RepaymentMethod]](None)(_.get(RepaymentMethodPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
               }
@@ -253,23 +278,31 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             val userAnswers = emptyUserAnswersForCorrectReturn
-              .set(CorrectReturnBaseCYAPage, true).success.value
-              .set(RepaymentMethodPage, radio).success.value
+              .set(CorrectReturnBaseCYAPage, true)
+              .success
+              .value
+              .set(RepaymentMethodPage, radio)
+              .success
+              .value
 
             setUpForCorrectReturn(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> Json.toJson(radio))
+                client,
+                correctReturnBaseUrl + checkRoutePath,
+                Json.obj("value" -> Json.toJson(radio))
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[RepaymentMethod]](None)(_.get(RepaymentMethodPage))
+                res.header(HeaderNames.LOCATION) mustBe Some(
+                  routes.CorrectReturnCheckChangesCYAController.onPageLoad().url
+                )
+                val dataStoredForPage =
+                  getAnswers(userAnswers.id).fold[Option[RepaymentMethod]](None)(_.get(RepaymentMethodPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
               }
@@ -281,20 +314,22 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select an option" - {
       "should return 400 with required error" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> "")
+            client,
+            correctReturnBaseUrl + checkRoutePath,
+            Json.obj("value" -> "")
           )
 
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
             page.title must include("Error: " + messages("correctReturn.repaymentMethod" + ".title"))
-            val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
+            val errorSummary = page
+              .getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
@@ -306,6 +341,10 @@ class RepaymentMethodControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+      CorrectReturn,
+      correctReturnBaseUrl + checkRoutePath,
+      Some(Json.obj("value" -> "true"))
+    )
   }
 }

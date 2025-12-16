@@ -17,7 +17,7 @@
 package views.summary.changeActivity
 
 import base.SpecBase
-import models.{SelectChange, UserAnswers}
+import models.{ SelectChange, UserAnswers }
 import play.api.libs.json.Json
 
 class ThirdPartyPackagersSummarySpec extends SpecBase {
@@ -25,16 +25,22 @@ class ThirdPartyPackagersSummarySpec extends SpecBase {
   "row" - {
 
     "should return nothing when no ThirdPartyPackagers answers are passed in" in {
-      val thirdPartyPackagersSummaryRow = ThirdPartyPackagersSummary.row(emptyUserAnswersForChangeActivity, isCheckAnswers = true)
+      val thirdPartyPackagersSummaryRow =
+        ThirdPartyPackagersSummary.row(emptyUserAnswersForChangeActivity, isCheckAnswers = true)
 
       thirdPartyPackagersSummaryRow mustBe None
     }
 
     "should return a summary list row with the selected answer if thirdPartyPackagers page has been answered" in {
-      val userAnswersWithThirdPartyPackagers = UserAnswers(sdilNumber, SelectChange.ChangeActivity, Json.obj(
-        "changeActivity" -> Json.obj("thirdPartyPackagers" -> true)), contactAddress = contactAddress)
+      val userAnswersWithThirdPartyPackagers = UserAnswers(
+        sdilNumber,
+        SelectChange.ChangeActivity,
+        Json.obj("changeActivity" -> Json.obj("thirdPartyPackagers" -> true)),
+        contactAddress = contactAddress
+      )
 
-      val thirdPartyPackagersSummaryRow = ThirdPartyPackagersSummary.row(userAnswersWithThirdPartyPackagers, isCheckAnswers = true)
+      val thirdPartyPackagersSummaryRow =
+        ThirdPartyPackagersSummary.row(userAnswersWithThirdPartyPackagers, isCheckAnswers = true)
 
       thirdPartyPackagersSummaryRow.head.key.content.asHtml.toString mustBe "Use third party packagers?"
       thirdPartyPackagersSummaryRow.head.value.content.asHtml.toString mustBe "Yes"

@@ -26,7 +26,7 @@ import views.html.changeActivity.SuggestDeregistrationView
 class SuggestDeregistrationViewSpec extends ViewSpecHelper {
 
   val view: SuggestDeregistrationView = application.injector.instanceOf[SuggestDeregistrationView]
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-heading-l"
@@ -35,14 +35,16 @@ class SuggestDeregistrationViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view()(request, messages(application))
+    val html = view()(using request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
       document.title() mustBe "You need to cancel your Soft Drinks Industry Levy registration - Soft Drinks Industry Levy - GOV.UK"
     }
 
     "should have the expected heading" in {
-      document.getElementsByClass(Selectors.heading).text() mustBe "You need to cancel your Soft Drinks Industry Levy registration"
+      document
+        .getElementsByClass(Selectors.heading)
+        .text() mustBe "You need to cancel your Soft Drinks Industry Levy registration"
     }
 
     "should have the expected cancel registration button" in {

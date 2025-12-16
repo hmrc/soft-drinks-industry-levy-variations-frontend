@@ -17,7 +17,7 @@
 package views.summary.correctReturn
 
 import controllers.correctReturn.routes
-import models.{CheckMode, UserAnswers}
+import models.{ CheckMode, UserAnswers }
 import pages.correctReturn.RepaymentMethodPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -26,27 +26,28 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object RepaymentMethodSummary  {
+object RepaymentMethodSummary {
 
   def row(answers: UserAnswers, isCheckAnswers: Boolean = true)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(RepaymentMethodPage).map {
-      answer =>
-        val value = ValueViewModel(
-          HtmlContent(
-            HtmlFormat.escape(messages(s"correctReturn.repaymentMethod.$answer"))
-          )
+    answers.get(RepaymentMethodPage).map { answer =>
+      val value = ValueViewModel(
+        HtmlContent(
+          HtmlFormat.escape(messages(s"correctReturn.repaymentMethod.$answer"))
         )
+      )
 
-        SummaryListRowViewModel(
-          key     = "correctReturn.repaymentMethod.checkYourAnswersLabel",
-          value   = value,
-          actions = if (!isCheckAnswers) Seq.empty else {
+      SummaryListRowViewModel(
+        key = "correctReturn.repaymentMethod.checkYourAnswersLabel",
+        value = value,
+        actions =
+          if (!isCheckAnswers) Seq.empty
+          else {
             Seq(
               ActionItemViewModel("site.change", routes.RepaymentMethodController.onPageLoad(CheckMode).url)
                 .withVisuallyHiddenText(messages("correctReturn.repaymentMethod.change.hidden"))
                 .withAttribute(("id", "change-repaymentMethod"))
             )
           }
-        )
+      )
     }
 }

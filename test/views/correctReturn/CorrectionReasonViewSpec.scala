@@ -18,7 +18,7 @@ package views.correctReturn
 
 import controllers.correctReturn.routes
 import forms.correctReturn.CorrectionReasonFormProvider
-import models.{CheckMode, NormalMode}
+import models.{ CheckMode, NormalMode }
 import play.api.data.Form
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -32,7 +32,7 @@ class CorrectionReasonViewSpec extends ViewSpecHelper {
   val view: CorrectionReasonView = application.injector.instanceOf[CorrectionReasonView]
   val formProvider = new CorrectionReasonFormProvider
   val form: Form[String] = formProvider.apply()
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val formGroup = "govuk-form-group"
@@ -45,7 +45,7 @@ class CorrectionReasonViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view(form, NormalMode)(request, messages(application))
+    val html = view(form, NormalMode)(using request, messages(application))
     val document = doc(html)
     val formGroup = document.getElementsByClass(Selectors.formGroup)
     "should contain the expected title" in {
@@ -55,7 +55,9 @@ class CorrectionReasonViewSpec extends ViewSpecHelper {
     "should contain a govuk form group" - {
 
       "that contains the expected hint text" in {
-        formGroup.get(0).getElementsByClass(Selectors.hint)
+        formGroup
+          .get(0)
+          .getElementsByClass(Selectors.hint)
           .text() mustBe
           "Make sure you provide as much detail as you can. We may get in touch with your contact person to discuss this. You can enter up to 255 characters"
       }
@@ -71,25 +73,28 @@ class CorrectionReasonViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
       "when in CheckMode" in {
-        val htmlAllSelected = view(form.fill("testing"), CheckMode)(request, messages(application))
+        val htmlAllSelected = view(form.fill("testing"), CheckMode)(using request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
-        documentAllSelected.select(Selectors.form)
+        documentAllSelected
+          .select(Selectors.form)
           .attr("action") mustEqual routes.CorrectionReasonController.onSubmit(CheckMode).url
       }
 
       "when in NormalMode" in {
-        val htmlAllSelected = view(form.fill("testing"), NormalMode)(request, messages(application))
+        val htmlAllSelected = view(form.fill("testing"), NormalMode)(using request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
-        documentAllSelected.select(Selectors.form)
+        documentAllSelected
+          .select(Selectors.form)
           .attr("action") mustEqual routes.CorrectionReasonController.onSubmit(NormalMode).url
       }
     }
 
     "when a form error exists" - {
       val valueOutOfMaxRange = Random.nextString(255 + 1)
-      val htmlWithErrors = view(form.bind(Map("value" -> valueOutOfMaxRange)), NormalMode)(request, messages(application))
+      val htmlWithErrors =
+        view(form.bind(Map("value" -> valueOutOfMaxRange)), NormalMode)(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
       "should have a title containing error" in {
         documentWithErrors.title mustBe "Error: Why do you need to correct this return? - Soft Drinks Industry Levy - GOV.UK"

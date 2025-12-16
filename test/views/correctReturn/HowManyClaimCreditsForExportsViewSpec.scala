@@ -18,7 +18,7 @@ package views.correctReturn
 
 import config.FrontendAppConfig
 import controllers.correctReturn.routes
-import models.{CheckMode, NormalMode}
+import models.{ CheckMode, NormalMode }
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
@@ -26,27 +26,32 @@ import views.LitresSpecHelper
 import views.html.correctReturn.HowManyClaimCreditsForExportsView
 class HowManyClaimCreditsForExportsViewSpec extends LitresSpecHelper {
 
-  val howManyClaimCreditsForExportsView: HowManyClaimCreditsForExportsView = application.injector.instanceOf[HowManyClaimCreditsForExportsView]
+  val howManyClaimCreditsForExportsView: HowManyClaimCreditsForExportsView =
+    application.injector.instanceOf[HowManyClaimCreditsForExportsView]
 
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
   implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
   "HowManyClaimCreditsForExportsView" - {
     List(NormalMode, CheckMode).foreach { mode =>
-      "when in " + mode +" mode" - {
+      "when in " + mode + " mode" - {
         val html: HtmlFormat.Appendable = howManyClaimCreditsForExportsView(form, mode)
         val document = doc(html)
         val htmlWithValidData: HtmlFormat.Appendable = howManyClaimCreditsForExportsView(formWithHighAndLowBands, mode)
         val documentWithValidData = doc(htmlWithValidData)
         val htmlFormErrorsEmpty: HtmlFormat.Appendable = howManyClaimCreditsForExportsView(emptyForm, mode)
         val documentFormErrorsEmpty = doc(htmlFormErrorsEmpty)
-        val htmlFormErrorsNegative: HtmlFormat.Appendable = howManyClaimCreditsForExportsView(formWithNegativeNumber, mode)
+        val htmlFormErrorsNegative: HtmlFormat.Appendable =
+          howManyClaimCreditsForExportsView(formWithNegativeNumber, mode)
         val documentFormErrorsNegative = doc(htmlFormErrorsNegative)
-        val htmlFormErrorsNoneNumeric: HtmlFormat.Appendable = howManyClaimCreditsForExportsView(formWithNoNumeric, mode)
+        val htmlFormErrorsNoneNumeric: HtmlFormat.Appendable =
+          howManyClaimCreditsForExportsView(formWithNoNumeric, mode)
         val documentFormErrorsNoneNumeric = doc(htmlFormErrorsNoneNumeric)
-        val htmlFormErrorsNotWhole: HtmlFormat.Appendable = howManyClaimCreditsForExportsView(formWithDecimalNumber, mode)
+        val htmlFormErrorsNotWhole: HtmlFormat.Appendable =
+          howManyClaimCreditsForExportsView(formWithDecimalNumber, mode)
         val documentFormErrorsNotWhole = doc(htmlFormErrorsNotWhole)
-        val htmlFormErrorsOutOfRange: HtmlFormat.Appendable = howManyClaimCreditsForExportsView(formWithOutOfRangeNumber, mode)
+        val htmlFormErrorsOutOfRange: HtmlFormat.Appendable =
+          howManyClaimCreditsForExportsView(formWithOutOfRangeNumber, mode)
         val documentFormErrorsOutOfRange = doc(htmlFormErrorsOutOfRange)
 
         "should have the expected title" in {
@@ -54,20 +59,24 @@ class HowManyClaimCreditsForExportsViewSpec extends LitresSpecHelper {
         }
 
         "should have the expected heading" in {
-          document.getElementsByClass(Selectors.heading).text() mustBe "How many credits do you want to claim for liable drinks that have been exported?"
+          document
+            .getElementsByClass(Selectors.heading)
+            .text() mustBe "How many credits do you want to claim for liable drinks that have been exported?"
         }
 
         testLitresInBandsNoPrepopulatedData(document)
         testLitresInBandsWithPrepopulatedData(documentWithValidData)
 
         val expectedDetails = Map(
-          "What can I claim a credit for?" -> "You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the: brand of the liable drinks supplier or consigner disposed of as waste customer and destination the liable drinks are supplied to method of delivery If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.")
+          "What can I claim a credit for?" -> "You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the: brand of the liable drinks supplier or consigner disposed of as waste customer and destination the liable drinks are supplied to method of delivery If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return."
+        )
         testDetails(document, expectedDetails)
         testButton(document)
         testAction(document, routes.HowManyClaimCreditsForExportsController.onSubmit(mode).url)
 
         "and the form has errors" - {
-          val errorTitle = "Error: How many credits do you want to claim for liable drinks that have been exported? - Soft Drinks Industry Levy - GOV.UK"
+          val errorTitle =
+            "Error: How many credits do you want to claim for liable drinks that have been exported? - Soft Drinks Industry Levy - GOV.UK"
           testEmptyFormErrors(documentFormErrorsEmpty, errorTitle)
           testNoNumericFormErrors(documentFormErrorsNoneNumeric, errorTitle)
           testNegativeFormErrors(documentFormErrorsNegative, errorTitle)

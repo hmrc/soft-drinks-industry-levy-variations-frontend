@@ -17,7 +17,7 @@
 package pages.correctReturn
 
 import play.api.libs.json.JsPath
-import queries.{Gettable, Settable}
+import queries.{ Gettable, Settable }
 
 case object BalanceRepaymentRequired extends Gettable[Boolean] with Settable[Boolean] {
 

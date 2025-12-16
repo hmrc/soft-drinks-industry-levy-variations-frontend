@@ -17,29 +17,29 @@
 package navigation
 
 import controllers.cancelRegistration.routes
-import models.{NormalMode, UserAnswers}
+import models.{ NormalMode, UserAnswers }
 import pages.Page
-import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
+import pages.cancelRegistration.{ CancelRegistrationDatePage, ReasonPage }
 import play.api.mvc.Call
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 @Singleton
-class NavigatorForCancelRegistration @Inject()() extends Navigator {
+class NavigatorForCancelRegistration @Inject() () extends Navigator {
 
   override val normalRoutes: Page => UserAnswers => Call = {
     case CancelRegistrationDatePage => userAnswers => routes.CancelRegistrationCYAController.onPageLoad()
     case ReasonPage => userAnswers => routes.CancelRegistrationDateController.onPageLoad(mode = NormalMode)
-    case _ => _ => defaultCall
+    case _          => _ => defaultCall
   }
 
   override val checkRouteMap: Page => UserAnswers => Call = {
     case CancelRegistrationDatePage => _ => routes.CancelRegistrationCYAController.onPageLoad()
-    case ReasonPage => _ => routes.CancelRegistrationCYAController.onPageLoad()
-    case _ => _ => routes.CancelRegistrationCYAController.onPageLoad()
+    case ReasonPage                 => _ => routes.CancelRegistrationCYAController.onPageLoad()
+    case _                          => _ => routes.CancelRegistrationCYAController.onPageLoad()
   }
 
-  override val editRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => defaultCall
+  override val editRouteMap: Page => UserAnswers => Call = { case _ =>
+    _ => defaultCall
   }
 }

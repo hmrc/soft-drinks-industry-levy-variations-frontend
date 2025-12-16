@@ -17,7 +17,7 @@
 package views.summary.changeActivity
 
 import base.SpecBase
-import models.{SelectChange, UserAnswers}
+import models.{ SelectChange, UserAnswers }
 import play.api.libs.json.Json
 
 class AmountProducedSummarySpec extends SpecBase {
@@ -31,8 +31,12 @@ class AmountProducedSummarySpec extends SpecBase {
     }
 
     "should return a summary list row with the selected answer if amountProduced page has been answered" in {
-      val userAnswersWithAmountProduced = UserAnswers(sdilNumber, SelectChange.ChangeActivity, Json.obj(
-        "changeActivity" -> Json.obj("amountProduced" -> "large")), contactAddress = contactAddress)
+      val userAnswersWithAmountProduced = UserAnswers(
+        sdilNumber,
+        SelectChange.ChangeActivity,
+        Json.obj("changeActivity" -> Json.obj("amountProduced" -> "large")),
+        contactAddress = contactAddress
+      )
 
       val amountProducedSummaryRow = AmountProducedSummary.row(userAnswersWithAmountProduced, isCheckAnswers = true)
 

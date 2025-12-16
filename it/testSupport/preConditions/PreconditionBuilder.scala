@@ -8,4 +8,3 @@ class PreconditionBuilder extends PreconditionHelpers {
   val alf = ALFStub()
 
 }
-

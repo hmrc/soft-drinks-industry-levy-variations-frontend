@@ -2,10 +2,7 @@ package testSupport.preConditions
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 
-case class UserStub
-()
-(implicit builder: PreconditionBuilder) {
-
+case class UserStub()(implicit builder: PreconditionBuilder) {
 
   def isAuthorisedButNotEnrolled() = {
     stubFor(
@@ -95,7 +92,8 @@ case class UserStub
   def isNotAuthorised(reason: String = "MissingBearerToken") = {
     stubFor(
       post(urlPathEqualTo("/auth/authorise"))
-        .willReturn(unauthorized().withHeader("WWW-Authenticate", s"""MDTP detail="$reason"""")))
+        .willReturn(unauthorized().withHeader("WWW-Authenticate", s"""MDTP detail="$reason""""))
+    )
 
     builder
   }

@@ -17,7 +17,7 @@
 package views.summary.correctReturn
 
 import controllers.correctReturn.routes
-import models.{CheckMode, EditMode, Mode, NormalMode, SmallProducer}
+import models.{ CheckMode, EditMode, Mode, NormalMode, SmallProducer }
 import pages.QuestionPage
 import pages.correctReturn.SmallProducerDetailsPage
 import play.api.i18n.Messages
@@ -40,24 +40,33 @@ object SmallProducerDetailsSummary extends SummaryListRowLitresHelper {
   override val hasZeroLevy: Boolean = true
 
   def producerList(mode: Mode, smallProducersList: List[SmallProducer])(implicit messages: Messages): SummaryList = {
-    val rows = smallProducersList.map {
-      smallProducer =>
-        val value = ValueViewModel(
-          Text(
-            smallProducer.alias
-          )
+    val rows = smallProducersList.map { smallProducer =>
+      val value = ValueViewModel(
+        Text(
+          smallProducer.alias
         )
+      )
 
-        SummaryListRowViewModel(
-          key = smallProducer.sdilRef,
-          value = value,
-          actions = Seq(
-            ActionItemViewModel(messages("site.edit"), routes.AddASmallProducerController.onEditPageLoad(if (mode == NormalMode) EditMode else CheckMode, smallProducer.sdilRef).url)
-              .withVisuallyHiddenText(s"${smallProducer.alias} reference number ${smallProducer.sdilRef}"),
-            ActionItemViewModel(messages("site.remove"), routes.RemoveSmallProducerConfirmController.onPageLoad(mode, smallProducer.sdilRef).url)
-              .withVisuallyHiddenText(messages("correctReturn.smallProducerDetails.remove.hidden", smallProducer.alias, smallProducer.sdilRef))
+      SummaryListRowViewModel(
+        key = smallProducer.sdilRef,
+        value = value,
+        actions = Seq(
+          ActionItemViewModel(
+            messages("site.edit"),
+            routes.AddASmallProducerController
+              .onEditPageLoad(if (mode == NormalMode) EditMode else CheckMode, smallProducer.sdilRef)
+              .url
           )
+            .withVisuallyHiddenText(s"${smallProducer.alias} reference number ${smallProducer.sdilRef}"),
+          ActionItemViewModel(
+            messages("site.remove"),
+            routes.RemoveSmallProducerConfirmController.onPageLoad(mode, smallProducer.sdilRef).url
+          )
+            .withVisuallyHiddenText(
+              messages("correctReturn.smallProducerDetails.remove.hidden", smallProducer.alias, smallProducer.sdilRef)
+            )
         )
+      )
     }
 
     SummaryListViewModel(rows)

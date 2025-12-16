@@ -18,7 +18,7 @@ package views.correctReturn
 
 import config.FrontendAppConfig
 import controllers.correctReturn.routes
-import models.{CheckMode, NormalMode}
+import models.{ CheckMode, NormalMode }
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -27,27 +27,33 @@ import views.LitresSpecHelper
 import views.html.correctReturn.HowManyOperatePackagingSiteOwnBrandsView
 class HowManyOperatePackagingSiteOwnBrandsViewSpec extends LitresSpecHelper {
 
-  val howManyOperatePackagingSiteOwnBrandsView: HowManyOperatePackagingSiteOwnBrandsView = application.injector.instanceOf[HowManyOperatePackagingSiteOwnBrandsView]
+  val howManyOperatePackagingSiteOwnBrandsView: HowManyOperatePackagingSiteOwnBrandsView =
+    application.injector.instanceOf[HowManyOperatePackagingSiteOwnBrandsView]
 
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
   implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
   "HowManyOperatePackagingSiteOwnBrandsView" - {
     List(NormalMode, CheckMode).foreach { mode =>
-      "when in " + mode +" mode" - {
+      "when in " + mode + " mode" - {
         val html: HtmlFormat.Appendable = howManyOperatePackagingSiteOwnBrandsView(form, mode)
         val document = doc(html)
-        val htmlWithValidData: HtmlFormat.Appendable = howManyOperatePackagingSiteOwnBrandsView(formWithHighAndLowBands, mode)
+        val htmlWithValidData: HtmlFormat.Appendable =
+          howManyOperatePackagingSiteOwnBrandsView(formWithHighAndLowBands, mode)
         val documentWithValidData = doc(htmlWithValidData)
         val htmlFormErrorsEmpty: HtmlFormat.Appendable = howManyOperatePackagingSiteOwnBrandsView(emptyForm, mode)
         val documentFormErrorsEmpty = doc(htmlFormErrorsEmpty)
-        val htmlFormErrorsNegative: HtmlFormat.Appendable = howManyOperatePackagingSiteOwnBrandsView(formWithNegativeNumber, mode)
+        val htmlFormErrorsNegative: HtmlFormat.Appendable =
+          howManyOperatePackagingSiteOwnBrandsView(formWithNegativeNumber, mode)
         val documentFormErrorsNegative = doc(htmlFormErrorsNegative)
-        val htmlFormErrorsNoneNumeric: HtmlFormat.Appendable = howManyOperatePackagingSiteOwnBrandsView(formWithNoNumeric, mode)
+        val htmlFormErrorsNoneNumeric: HtmlFormat.Appendable =
+          howManyOperatePackagingSiteOwnBrandsView(formWithNoNumeric, mode)
         val documentFormErrorsNoneNumeric = doc(htmlFormErrorsNoneNumeric)
-        val htmlFormErrorsNotWhole: HtmlFormat.Appendable = howManyOperatePackagingSiteOwnBrandsView(formWithDecimalNumber, mode)
+        val htmlFormErrorsNotWhole: HtmlFormat.Appendable =
+          howManyOperatePackagingSiteOwnBrandsView(formWithDecimalNumber, mode)
         val documentFormErrorsNotWhole = doc(htmlFormErrorsNotWhole)
-        val htmlFormErrorsOutOfRange: HtmlFormat.Appendable = howManyOperatePackagingSiteOwnBrandsView(formWithOutOfRangeNumber, mode)
+        val htmlFormErrorsOutOfRange: HtmlFormat.Appendable =
+          howManyOperatePackagingSiteOwnBrandsView(formWithOutOfRangeNumber, mode)
         val documentFormErrorsOutOfRange = doc(htmlFormErrorsOutOfRange)
 
         "should have the expected title" in {
@@ -55,11 +61,15 @@ class HowManyOperatePackagingSiteOwnBrandsViewSpec extends LitresSpecHelper {
         }
 
         "should have the expected heading" in {
-          document.getElementsByClass(Selectors.heading).text() mustBe Messages("correctReturn.howManyOperatePackagingSiteOwnBrands.heading")
+          document.getElementsByClass(Selectors.heading).text() mustBe Messages(
+            "correctReturn.howManyOperatePackagingSiteOwnBrands.heading"
+          )
         }
 
         "should include a govuk body with the expected content" in {
-          document.getElementsByClass(Selectors.body).text() mustBe Messages("correctReturn.howManyOperatePackagingSiteOwnBrands.hint")
+          document.getElementsByClass(Selectors.body).text() mustBe Messages(
+            "correctReturn.howManyOperatePackagingSiteOwnBrands.hint"
+          )
         }
 
         testLitresInBandsNoPrepopulatedData(document)

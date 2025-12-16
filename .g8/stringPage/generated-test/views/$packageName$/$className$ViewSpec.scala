@@ -31,7 +31,7 @@ class $className$ViewSpec extends ViewSpecHelper {
   val view = application.injector.instanceOf[$className$View]
   val formProvider = new $className$FormProvider
   val form = formProvider.apply()
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val formGroup = "govuk-form-group"
@@ -42,7 +42,7 @@ class $className$ViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view(form, NormalMode)(request, messages(application))
+    val html = view(form, NormalMode)(using request, messages(application))
     val document = doc(html)
     val formGroup = document.getElementsByClass(Selectors.formGroup)
     "should contain the expected title" in {
@@ -61,7 +61,7 @@ class $className$ViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
       "when in CheckMode" in {
-        val htmlAllSelected = view(form.fill("testing"), CheckMode)(request, messages(application))
+        val htmlAllSelected = view(form.fill("testing"), CheckMode)(using request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
         documentAllSelected.select(Selectors.form)
@@ -69,7 +69,7 @@ class $className$ViewSpec extends ViewSpecHelper {
       }
 
       "when in NormalMode" in {
-        val htmlAllSelected = view(form.fill("testing"), NormalMode)(request, messages(application))
+        val htmlAllSelected = view(form.fill("testing"), NormalMode)(using request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
         documentAllSelected.select(Selectors.form)
@@ -78,7 +78,7 @@ class $className$ViewSpec extends ViewSpecHelper {
     }
 
     "when a form error exists" - {
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode)(request, messages(application))
+      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode)(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
       "should have a title containing error" in {
         val titleMessage = Messages("$packageName$.$className;format="decap"$.title")

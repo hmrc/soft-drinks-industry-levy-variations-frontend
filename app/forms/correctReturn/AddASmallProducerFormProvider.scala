@@ -17,7 +17,7 @@
 package forms.correctReturn
 
 import forms.mappings.Mappings
-import models.{LitresInBands, UserAnswers}
+import models.{ LitresInBands, UserAnswers }
 import models.correctReturn.AddASmallProducer
 import play.api.data.Form
 import play.api.data.Forms._
@@ -26,21 +26,32 @@ import javax.inject.Inject
 
 class AddASmallProducerFormProvider @Inject() extends Mappings {
 
-  def apply(userAnswers: UserAnswers):Form[AddASmallProducer] = {
+  def apply(userAnswers: UserAnswers): Form[AddASmallProducer] =
     Form(
       mapping(
-        "producerName" -> optional(text().verifying(maxLength(160,"correctReturn.addASmallProducer.error.producerName.maxLength"))),
-        "referenceNumber" -> sdilReference("correctReturn.addASmallProducer.error.referenceNumber.required", userAnswers.id),
-        "litres" -> tuple[Long, Long]("lowBand" -> litres(
-          "lowBand"),
-          "highBand" -> litres(
-            "highBand")).verifying("litres.error.negative", litres => litres._1 + litres._2 != 0)
-      ){ case(producerName, referenceNumber, litres) =>
-          AddASmallProducer(producerName = producerName, referenceNumber = referenceNumber, LitresInBands(litres._1, litres._2))
-      }( addASmallProducer=>
-        Some(
-          (addASmallProducer.producerName, addASmallProducer.referenceNumber, (addASmallProducer.litres.lowBand, addASmallProducer.litres.highBand)))
+        "producerName" -> optional(
+          text().verifying(maxLength(160, "correctReturn.addASmallProducer.error.producerName.maxLength"))
+        ),
+        "referenceNumber" -> sdilReference(
+          "correctReturn.addASmallProducer.error.referenceNumber.required",
+          userAnswers.id
+        ),
+        "litres" -> tuple[Long, Long]("lowBand" -> litres("lowBand"), "highBand" -> litres("highBand"))
+          .verifying("litres.error.negative", litres => litres._1 + litres._2 != 0)
+      ) { case (producerName, referenceNumber, litres) =>
+        AddASmallProducer(
+          producerName = producerName,
+          referenceNumber = referenceNumber,
+          LitresInBands(litres._1, litres._2)
         )
+      }(addASmallProducer =>
+        Some(
+          (
+            addASmallProducer.producerName,
+            addASmallProducer.referenceNumber,
+            (addASmallProducer.litres.lowBand, addASmallProducer.litres.highBand)
+          )
+        )
+      )
     )
-  }
 }

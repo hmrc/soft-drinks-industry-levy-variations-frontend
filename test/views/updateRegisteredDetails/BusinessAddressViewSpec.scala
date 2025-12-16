@@ -25,7 +25,7 @@ import views.html.updateRegisteredDetails.BusinessAddressView
 class BusinessAddressViewSpec extends ViewSpecHelper {
 
   val view: BusinessAddressView = application.injector.instanceOf[BusinessAddressView]
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
   lazy val businessAddress: UkAddress = UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")
 
   object Selectors {
@@ -35,14 +35,17 @@ class BusinessAddressViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view(List(businessAddress))(request, messages(application))
+    val html = view(List(businessAddress))(using request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
-      document.title() mustBe "Your business address for the Soft Drinks Industry Levy - Soft Drinks Industry Levy - GOV.UK"
+      document
+        .title() mustBe "Your business address for the Soft Drinks Industry Levy - Soft Drinks Industry Levy - GOV.UK"
     }
 
     "should have the expected heading" in {
-      document.getElementsByClass(Selectors.heading).text() mustBe "Your business address for the Soft Drinks Industry Levy"
+      document
+        .getElementsByClass(Selectors.heading)
+        .text() mustBe "Your business address for the Soft Drinks Industry Levy"
     }
 
     "contain the correct button" - {
@@ -50,7 +53,7 @@ class BusinessAddressViewSpec extends ViewSpecHelper {
     }
 
     "View should contain the correct heading and summary row details" in {
-      val html1 = view(List(businessAddress))(request, messages(application))
+      val html1 = view(List(businessAddress))(using request, messages(application))
       val document1 = doc(html1)
       val listItems = document1.getElementsByClass(Selectors.summaryListActions)
       val summaryListKey = document1.getElementsByClass("govuk-summary-list__key")

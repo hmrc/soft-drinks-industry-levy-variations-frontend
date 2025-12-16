@@ -17,8 +17,8 @@
 package views.summary.correctReturn
 
 import base.SpecBase
-import models.{CheckMode, LitresInBands, ReturnPeriod}
-import pages.correctReturn.{HowManyClaimCreditsForExportsPage, ClaimCreditsForExportsPage}
+import models.{ CheckMode, LitresInBands, ReturnPeriod }
+import pages.correctReturn.{ ClaimCreditsForExportsPage, HowManyClaimCreditsForExportsPage }
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
 import controllers.correctReturn.routes
@@ -31,7 +31,6 @@ class ClaimCreditsForExportSummarySpec extends SpecBase {
 
     val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
     val taxYear2025ReturnPeriod = ReturnPeriod(2026, 0)
-
 
     def lowBandLevyValue(returnPeriod: ReturnPeriod): String = returnPeriod match {
       case ReturnPeriod(2025, 0) => "&minus;£180.00"
@@ -48,18 +47,25 @@ class ClaimCreditsForExportSummarySpec extends SpecBase {
       (taxYear2025ReturnPeriod, "- 2025 tax year rates")
     )
 
-    returnPeriodsWithLabels.foreach(returnPeriod => {
+    returnPeriodsWithLabels.foreach { returnPeriod =>
       s"must show correct rows when business has exports is true, litres provided, and checkAnswers is true ${returnPeriod._2}" in {
-        val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
-          .set(ClaimCreditsForExportsPage, true).success.value
-          .set(HowManyClaimCreditsForExportsPage, LitresInBands(lowLitres, highLitres)).success.value
+        val userAnswers = emptyUserAnswersForCorrectReturn
+          .copy(correctReturnPeriod = Some(returnPeriod._1))
+          .set(ClaimCreditsForExportsPage, true)
+          .success
+          .value
+          .set(HowManyClaimCreditsForExportsPage, LitresInBands(lowLitres, highLitres))
+          .success
+          .value
 
         val res = ClaimCreditsForExportsSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)
         res.rows.head.key.content.asHtml mustBe Html("Claiming credits for exported liable drinks?")
         res.rows.head.key.classes mustBe ""
         res.rows.head.value.content.asHtml mustBe Html("Yes")
         res.rows.head.value.classes.trim mustBe "sdil-right-align--desktop"
-        res.rows.head.actions.head.items.head.href mustBe routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url
+        res.rows.head.actions.head.items.head.href mustBe routes.ClaimCreditsForExportsController
+          .onPageLoad(CheckMode)
+          .url
         res.rows.head.actions.head.items.head.attributes mustBe Map("id" -> "change-claimCreditsForExports")
         res.rows.head.actions.head.items.head.content.asHtml mustBe Html("Change")
 
@@ -67,10 +73,13 @@ class ClaimCreditsForExportSummarySpec extends SpecBase {
         res.rows(1).key.classes mustBe ""
         res.rows(1).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(lowLitres))
         res.rows(1).value.classes.trim mustBe "sdil-right-align--desktop"
-        res.rows(1).actions.head.items.head.href mustBe routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
-        res.rows(1).actions.head.items.head.attributes mustBe Map("id" -> "change-lowband-litreage-correctReturn.claimCreditsForExports")
+        res.rows(1).actions.head.items.head.href mustBe routes.HowManyClaimCreditsForExportsController
+          .onPageLoad(CheckMode)
+          .url
+        res.rows(1).actions.head.items.head.attributes mustBe Map(
+          "id" -> "change-lowband-litreage-correctReturn.claimCreditsForExports"
+        )
         res.rows(1).actions.head.items.head.content.asHtml mustBe Html("Change")
-
 
         res.rows(2).key.content.asHtml mustBe Html("Low band levy")
         res.rows(2).key.classes mustBe ""
@@ -81,10 +90,13 @@ class ClaimCreditsForExportSummarySpec extends SpecBase {
         res.rows(3).key.classes mustBe ""
         res.rows(3).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(highLitres))
         res.rows(3).value.classes.trim mustBe "sdil-right-align--desktop"
-        res.rows(3).actions.head.items.head.href mustBe routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
-        res.rows(3).actions.head.items.head.attributes mustBe Map("id" -> "change-highband-litreage-correctReturn.claimCreditsForExports")
+        res.rows(3).actions.head.items.head.href mustBe routes.HowManyClaimCreditsForExportsController
+          .onPageLoad(CheckMode)
+          .url
+        res.rows(3).actions.head.items.head.attributes mustBe Map(
+          "id" -> "change-highband-litreage-correctReturn.claimCreditsForExports"
+        )
         res.rows(3).actions.head.items.head.content.asHtml mustBe Html("Change")
-
 
         res.rows(4).key.content.asHtml mustBe Html("High band levy")
         res.rows(4).key.classes mustBe ""
@@ -95,9 +107,14 @@ class ClaimCreditsForExportSummarySpec extends SpecBase {
       }
 
       s"must show correct rows when business has exports is true, litres provided, and checkAnswers is false ${returnPeriod._2}" in {
-        val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
-          .set(ClaimCreditsForExportsPage, true).success.value
-          .set(HowManyClaimCreditsForExportsPage, LitresInBands(lowLitres, highLitres)).success.value
+        val userAnswers = emptyUserAnswersForCorrectReturn
+          .copy(correctReturnPeriod = Some(returnPeriod._1))
+          .set(ClaimCreditsForExportsPage, true)
+          .success
+          .value
+          .set(HowManyClaimCreditsForExportsPage, LitresInBands(lowLitres, highLitres))
+          .success
+          .value
 
         val res = ClaimCreditsForExportsSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = false)
         res.rows.head.key.content.asHtml mustBe Html("Claiming credits for exported liable drinks?")
@@ -132,8 +149,11 @@ class ClaimCreditsForExportSummarySpec extends SpecBase {
       }
 
       s"should return correct elements when business has exports is false and NO litres provided  ${returnPeriod._2}" in {
-        val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
-          .set(ClaimCreditsForExportsPage, false).success.value
+        val userAnswers = emptyUserAnswersForCorrectReturn
+          .copy(correctReturnPeriod = Some(returnPeriod._1))
+          .set(ClaimCreditsForExportsPage, false)
+          .success
+          .value
 
         val res = ClaimCreditsForExportsSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)
 
@@ -141,7 +161,9 @@ class ClaimCreditsForExportSummarySpec extends SpecBase {
         res.rows.head.key.classes mustBe ""
         res.rows.head.value.content.asHtml mustBe Html("No")
         res.rows.head.value.classes.trim mustBe "sdil-right-align--desktop"
-        res.rows.head.actions.head.items.head.href mustBe controllers.correctReturn.routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url
+        res.rows.head.actions.head.items.head.href mustBe controllers.correctReturn.routes.ClaimCreditsForExportsController
+          .onPageLoad(CheckMode)
+          .url
         res.rows.head.actions.head.items.head.attributes mustBe Map("id" -> "change-claimCreditsForExports")
         res.rows.head.actions.head.items.head.content.asHtml mustBe Html("Change")
 
@@ -155,6 +177,6 @@ class ClaimCreditsForExportSummarySpec extends SpecBase {
         res.rows.size mustBe 0
       }
 
-    })
+    }
   }
 }

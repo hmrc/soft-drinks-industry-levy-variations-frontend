@@ -16,19 +16,18 @@
 
 package views.changeActivity
 
-import play.api.mvc.{Call, Request}
+import play.api.mvc.{ Call, Request }
 import play.api.test.FakeRequest
 import uk.gov.hmrc.govukfrontend.views.Aliases.Value
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ SummaryList, SummaryListRow }
 import views.ViewSpecHelper
 import views.html.changeActivity.ChangeActivityCYAView
-
 
 class ChangeActivityCYAViewSpec extends ViewSpecHelper {
 
   val view: ChangeActivityCYAView = application.injector.instanceOf[ChangeActivityCYAView]
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-heading-l"
@@ -41,15 +40,14 @@ class ChangeActivityCYAViewSpec extends ViewSpecHelper {
     val form = "form"
   }
   "View" - {
-    val summaryList: Seq[(String, SummaryList)] = {
+    val summaryList: Seq[(String, SummaryList)] =
       Seq(
-        "foo" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bar"))))),
+        "foo"  -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bar"))))),
         "wizz" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bang")))))
       )
-    }
-    val call = Call("GET","/foo")
+    val call = Call("GET", "/foo")
     val orgName = " Acme Inc."
-    val html = view(orgName, summaryList, call)(request, messages(application))
+    val html = view(orgName, summaryList, call)(using request, messages(application))
     val document = doc(html)
     "should have the expected heading" in {
       document.getElementsByTag("h1").text() mustEqual "Check your answers before sending your update"
@@ -65,17 +63,23 @@ class ChangeActivityCYAViewSpec extends ViewSpecHelper {
 
     "contain the correct summary lists" in {
       document.getElementsByClass(Selectors.summaryListHeading).get(0).text() mustBe "foo"
-      document.getElementsByClass(Selectors.summaryList)
+      document
+        .getElementsByClass(Selectors.summaryList)
         .first()
         .getElementsByClass(Selectors.summaryRow)
         .first()
-        .getElementsByClass(Selectors.summaryValue).first().text() mustBe "bar"
+        .getElementsByClass(Selectors.summaryValue)
+        .first()
+        .text() mustBe "bar"
       document.getElementsByClass(Selectors.summaryListHeading).get(1).text() mustBe "wizz"
-      document.getElementsByClass(Selectors.summaryList)
+      document
+        .getElementsByClass(Selectors.summaryList)
         .last()
         .getElementsByClass(Selectors.summaryRow)
         .first()
-        .getElementsByClass(Selectors.summaryValue).first().text() mustBe "bang"
+        .getElementsByClass(Selectors.summaryValue)
+        .first()
+        .text() mustBe "bang"
     }
 
     "contains a form with the correct action" in {

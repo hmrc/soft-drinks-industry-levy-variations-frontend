@@ -2,10 +2,10 @@ package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.CorrectReturn
-import models.{NormalMode, UserAnswers}
+import models.{ NormalMode, UserAnswers }
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers._
-import pages.correctReturn.{BalanceRepaymentRequired, CorrectReturnBaseCYAPage, CorrectionReasonPage}
+import pages.correctReturn.{ BalanceRepaymentRequired, CorrectReturnBaseCYAPage, CorrectionReasonPage }
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
@@ -21,13 +21,13 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
 
   val randomStringExceedingMaxLength: String = Random.nextString(255 + 1)
 
-  val userAnswers: UserAnswers = emptyUserAnswersForCorrectReturn.set(CorrectionReasonPage, correctionReason).success.value
+  val userAnswers: UserAnswers =
+    emptyUserAnswersForCorrectReturn.set(CorrectionReasonPage, correctionReason).success.value
 
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the CorrectionReason page with no data populated" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
 
@@ -47,8 +47,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
 
     s"when the userAnswers contains data for the page" - {
       s"should return OK and render the page with fields populated" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(userAnswers.set(CorrectReturnBaseCYAPage, true).success.value)
 
@@ -75,8 +74,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
   "GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the CorrectionReason page with no data populated" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
 
@@ -97,8 +95,7 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
 
     s"when the userAnswers contains data for the page" - {
       s"should return OK and render the page with fields populated" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(userAnswers.set(CorrectReturnBaseCYAPage, true).success.value)
 
@@ -124,77 +121,90 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
 
   s"POST " + normalRoutePath - {
     "when the user answers the question" - {
-      List(true, false).foreach(balanceRepaymentRequired => {
+      List(true, false).foreach { balanceRepaymentRequired =>
         "should update the session with the new values and redirect to the repayment controller" +
           s"when balance repayment ${if (balanceRepaymentRequired) " not" else ""}required" - {
-          "when the session contains no data for page" in {
-            build
-              .commonPrecondition
+            "when the session contains no data for page" in {
+              build.commonPrecondition
 
-            val userAnswers = emptyUserAnswersForCorrectReturn
-              .set(CorrectReturnBaseCYAPage, true).success.value
-              .set(BalanceRepaymentRequired, balanceRepaymentRequired).success.value
-            setUpForCorrectReturn(userAnswers)
-            WsTestClient.withClient { client =>
-              val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> correctionReasonDiff)
-              )
+              val userAnswers = emptyUserAnswersForCorrectReturn
+                .set(CorrectReturnBaseCYAPage, true)
+                .success
+                .value
+                .set(BalanceRepaymentRequired, balanceRepaymentRequired)
+                .success
+                .value
+              setUpForCorrectReturn(userAnswers)
+              WsTestClient.withClient { client =>
+                val result = createClientRequestPOST(
+                  client,
+                  correctReturnBaseUrl + normalRoutePath,
+                  Json.obj("value" -> correctionReasonDiff)
+                )
 
-              whenReady(result) { res =>
-                res.status mustBe 303
-                val expectedLocation = if (balanceRepaymentRequired) {
-                  routes.RepaymentMethodController.onPageLoad(NormalMode).url
-                } else {
-                  routes.CorrectReturnCheckChangesCYAController.onPageLoad().url
+                whenReady(result) { res =>
+                  res.status mustBe 303
+                  val expectedLocation = if (balanceRepaymentRequired) {
+                    routes.RepaymentMethodController.onPageLoad(NormalMode).url
+                  } else {
+                    routes.CorrectReturnCheckChangesCYAController.onPageLoad().url
+                  }
+                  res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[String]](None)(_.get(CorrectionReasonPage))
+                  dataStoredForPage.nonEmpty mustBe true
+                  dataStoredForPage.get mustBe correctionReasonDiff
                 }
-                res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[String]](None)(_.get(CorrectionReasonPage))
-                dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe correctionReasonDiff
+              }
+            }
+
+            "when the session already contains data for page" in {
+              build.commonPrecondition
+
+              val userAnswersWithData = userAnswers
+                .set(CorrectReturnBaseCYAPage, true)
+                .success
+                .value
+                .set(BalanceRepaymentRequired, balanceRepaymentRequired)
+                .success
+                .value
+              setUpForCorrectReturn(userAnswersWithData)
+              WsTestClient.withClient { client =>
+                val result = createClientRequestPOST(
+                  client,
+                  correctReturnBaseUrl + normalRoutePath,
+                  Json.obj("value" -> correctionReasonDiff)
+                )
+
+                whenReady(result) { res =>
+                  res.status mustBe 303
+                  val expectedLocation = if (balanceRepaymentRequired) {
+                    routes.RepaymentMethodController.onPageLoad(NormalMode).url
+                  } else {
+                    routes.CorrectReturnCheckChangesCYAController.onPageLoad().url
+                  }
+                  res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
+                  val dataStoredForPage =
+                    getAnswers(userAnswersWithData.id).fold[Option[String]](None)(_.get(CorrectionReasonPage))
+                  dataStoredForPage.nonEmpty mustBe true
+                  dataStoredForPage.get mustBe correctionReasonDiff
+                }
               }
             }
           }
-
-          "when the session already contains data for page" in {
-            build
-              .commonPrecondition
-
-            val userAnswersWithData = userAnswers
-              .set(CorrectReturnBaseCYAPage, true).success.value
-              .set(BalanceRepaymentRequired, balanceRepaymentRequired).success.value
-            setUpForCorrectReturn(userAnswersWithData)
-            WsTestClient.withClient { client =>
-              val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> correctionReasonDiff)
-              )
-
-              whenReady(result) { res =>
-                res.status mustBe 303
-                val expectedLocation = if (balanceRepaymentRequired) {
-                  routes.RepaymentMethodController.onPageLoad(NormalMode).url
-                } else {
-                  routes.CorrectReturnCheckChangesCYAController.onPageLoad().url
-                }
-                res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
-                val dataStoredForPage = getAnswers(userAnswersWithData.id).fold[Option[String]](None)(_.get(CorrectionReasonPage))
-                dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe correctionReasonDiff
-              }
-            }
-          }
-        }
-      })
+      }
     }
 
     "should return 400 with required error" - {
       "when the question is not answered" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> randomStringExceedingMaxLength)
+            client,
+            correctReturnBaseUrl + normalRoutePath,
+            Json.obj("value" -> randomStringExceedingMaxLength)
           )
 
           whenReady(result) { res =>
@@ -202,8 +212,10 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
             val page = Jsoup.parse(res.body)
             page.title mustBe "Error: Why do you need to correct this return? - Soft Drinks Industry Levy - GOV.UK"
 
-            val errorSummaryList = page.getElementsByClass("govuk-list govuk-error-summary__list")
-              .first().getElementsByTag("li")
+            val errorSummaryList = page
+              .getElementsByClass("govuk-list govuk-error-summary__list")
+              .first()
+              .getElementsByTag("li")
             errorSummaryList.size() mustBe 1
             val errorSummary = errorSummaryList.get(0)
             errorSummary
@@ -215,27 +227,36 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
       }
     }
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> correctionReasonDiff)))
-    testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> correctionReasonDiff)))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath,
-      Some(Json.obj("value" -> correctionReasonDiff)))
+    testAuthenticatedUserButNoUserAnswers(
+      correctReturnBaseUrl + normalRoutePath,
+      Some(Json.obj("value" -> correctionReasonDiff))
+    )
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+      CorrectReturn,
+      correctReturnBaseUrl + normalRoutePath,
+      Some(Json.obj("value" -> correctionReasonDiff))
+    )
   }
 
   s"POST " + checkRoutePath - {
     "when the user answers the question" - {
       "should update the session with the new values and redirect to the CYA controller" - {
         "when the session contains no data for page" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> correctionReasonDiff)
+              client,
+              correctReturnBaseUrl + checkRoutePath,
+              Json.obj("value" -> correctionReasonDiff)
             )
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+              res.header(HeaderNames.LOCATION) mustBe Some(
+                routes.CorrectReturnCheckChangesCYAController.onPageLoad().url
+              )
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[String]](None)(_.get(CorrectionReasonPage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe correctionReasonDiff
@@ -244,18 +265,21 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
         }
 
         "when the session already contains data for page" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(userAnswers.set(CorrectReturnBaseCYAPage, true).success.value)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> correctionReasonDiff)
+              client,
+              correctReturnBaseUrl + checkRoutePath,
+              Json.obj("value" -> correctionReasonDiff)
             )
 
             whenReady(result) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+              res.header(HeaderNames.LOCATION) mustBe Some(
+                routes.CorrectReturnCheckChangesCYAController.onPageLoad().url
+              )
               val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[String]](None)(_.get(CorrectionReasonPage))
               dataStoredForPage.nonEmpty mustBe true
               dataStoredForPage.get mustBe correctionReasonDiff
@@ -267,21 +291,24 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
 
     "should return 400 with required error" - {
       "when the question is not answered" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> randomStringExceedingMaxLength)
+            client,
+            correctReturnBaseUrl + checkRoutePath,
+            Json.obj("value" -> randomStringExceedingMaxLength)
           )
 
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
             page.title mustBe "Error: Why do you need to correct this return? - Soft Drinks Industry Levy - GOV.UK"
-            val errorSummaryList = page.getElementsByClass("govuk-list govuk-error-summary__list")
-              .first().getElementsByTag("li")
+            val errorSummaryList = page
+              .getElementsByClass("govuk-list govuk-error-summary__list")
+              .first()
+              .getElementsByTag("li")
             errorSummaryList.size() mustBe 1
             val errorSummary = errorSummaryList.get(0)
             errorSummary
@@ -293,8 +320,14 @@ class CorrectionReasonControllerISpec extends ControllerITTestHelper {
       }
     }
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> correctionReasonDiff)))
-    testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> correctionReasonDiff)))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath,
-      Some(Json.obj("value" -> correctionReasonDiff)))
+    testAuthenticatedUserButNoUserAnswers(
+      correctReturnBaseUrl + checkRoutePath,
+      Some(Json.obj("value" -> correctionReasonDiff))
+    )
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+      CorrectReturn,
+      correctReturnBaseUrl + checkRoutePath,
+      Some(Json.obj("value" -> correctionReasonDiff))
+    )
   }
 }

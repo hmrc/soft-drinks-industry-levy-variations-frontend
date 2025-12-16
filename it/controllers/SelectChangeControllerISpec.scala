@@ -1,6 +1,6 @@
 package controllers
 
-import models.{NormalMode, SelectChange}
+import models.{ NormalMode, SelectChange }
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers._
 import play.api.http.HeaderNames
@@ -15,9 +15,7 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
     "should render the select change page" - {
       "that includes the option to correct a return" - {
         "when the user has variable returns" in {
-          build
-            .commonPrecondition
-            .sdilBackend.returns_variable("0000001611")
+          build.commonPrecondition.sdilBackend.returns_variable("0000001611")
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, baseUrl + route)
@@ -38,9 +36,7 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
 
       "that does not include the option to correct a return" - {
         "when the user has no variable returns" in {
-          build
-            .commonPrecondition
-            .sdilBackend.no_returns_variable("0000001611")
+          build.commonPrecondition.sdilBackend.no_returns_variable("0000001611")
 
           WsTestClient.withClient { client =>
             val result1 = createClientRequestGet(client, baseUrl + route)
@@ -62,9 +58,7 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
 
     "should render the error page" - {
       "when the call to get variable returns fails" in {
-        build
-          .commonPrecondition
-          .sdilBackend.returns_variable_error("0000001611")
+        build.commonPrecondition.sdilBackend.returns_variable_error("0000001611")
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, baseUrl + route)
@@ -84,15 +78,20 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
     "should generate and save the expected user answers" - {
       "then redirect to the index controller" - {
         "when the user selects to update the registered details" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           WsTestClient.withClient { client =>
-            val result1 = createClientRequestPOST(client, baseUrl + route, Json.obj(("value", SelectChange.UpdateRegisteredDetails.toString)))
+            val result1 = createClientRequestPOST(
+              client,
+              baseUrl + route,
+              Json.obj(("value", SelectChange.UpdateRegisteredDetails.toString))
+            )
 
             whenReady(result1) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some("/soft-drinks-industry-levy-variations-frontend/change-registered-details")
+              res.header(HeaderNames.LOCATION) mustBe Some(
+                "/soft-drinks-industry-levy-variations-frontend/change-registered-details"
+              )
               val expectedUserAnswers = emptyUserAnswersForUpdateRegisteredDetails
               val generatedUserAnswers = getAnswers(sdilNumber)
               generatedUserAnswers mustBe defined
@@ -104,11 +103,11 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
 
       "then redirect to correct return select" - {
         "when the user selects to correct return select" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           WsTestClient.withClient { client =>
-            val result1 = createClientRequestPOST(client, baseUrl + route, Json.obj(("value", SelectChange.CorrectReturn.toString)))
+            val result1 =
+              createClientRequestPOST(client, baseUrl + route, Json.obj(("value", SelectChange.CorrectReturn.toString)))
 
             whenReady(result1) { res =>
               res.status mustBe 303
@@ -124,16 +123,20 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
 
       "then redirect to cancel registration reason" - {
         "when the user selects to cancel registration and has no returns pending" in {
-          build
-            .commonPrecondition
-            .sdilBackend.no_returns_pending("0000001611")
+          build.commonPrecondition.sdilBackend.no_returns_pending("0000001611")
 
           WsTestClient.withClient { client =>
-            val result1 = createClientRequestPOST(client, baseUrl + route, Json.obj(("value", SelectChange.CancelRegistration.toString)))
+            val result1 = createClientRequestPOST(
+              client,
+              baseUrl + route,
+              Json.obj(("value", SelectChange.CancelRegistration.toString))
+            )
 
             whenReady(result1) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(cancelRegistration.routes.ReasonController.onPageLoad(NormalMode).url)
+              res.header(HeaderNames.LOCATION) mustBe Some(
+                cancelRegistration.routes.ReasonController.onPageLoad(NormalMode).url
+              )
               val expectedUserAnswers = emptyUserAnswersForCancelRegistration
               val generatedUserAnswers = getAnswers(sdilNumber)
               generatedUserAnswers mustBe defined
@@ -145,16 +148,20 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
 
       "then redirect to cancel registration file returns before deregistering" - {
         "when the user selects to cancel registration and has returns pending" in {
-          build
-            .commonPrecondition
-            .sdilBackend.returns_pending("0000001611")
+          build.commonPrecondition.sdilBackend.returns_pending("0000001611")
 
           WsTestClient.withClient { client =>
-            val result1 = createClientRequestPOST(client, baseUrl + route, Json.obj(("value", SelectChange.CancelRegistration.toString)))
+            val result1 = createClientRequestPOST(
+              client,
+              baseUrl + route,
+              Json.obj(("value", SelectChange.CancelRegistration.toString))
+            )
 
             whenReady(result1) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad().url)
+              res.header(HeaderNames.LOCATION) mustBe Some(
+                cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad().url
+              )
               val expectedUserAnswers = emptyUserAnswersForCancelRegistration
               val generatedUserAnswers = getAnswers(sdilNumber)
               generatedUserAnswers mustBe defined
@@ -166,15 +173,20 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
 
       "then redirect to change activity producer type" - {
         "when the user selects to change activity" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           WsTestClient.withClient { client =>
-            val result1 = createClientRequestPOST(client, baseUrl + route, Json.obj(("value", SelectChange.ChangeActivity.toString)))
+            val result1 = createClientRequestPOST(
+              client,
+              baseUrl + route,
+              Json.obj(("value", SelectChange.ChangeActivity.toString))
+            )
 
             whenReady(result1) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(changeActivity.routes.AmountProducedController.onPageLoad(NormalMode).url)
+              res.header(HeaderNames.LOCATION) mustBe Some(
+                changeActivity.routes.AmountProducedController.onPageLoad(NormalMode).url
+              )
               val expectedUserAnswers = emptyUserAnswersForChangeActivity
               val generatedUserAnswers = getAnswers(sdilNumber)
               generatedUserAnswers mustBe defined
@@ -187,9 +199,7 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select an option" - {
       "should return 400 with required error" in {
-        build
-          .commonPrecondition
-          .sdilBackend.no_returns_variable("0000001611")
+        build.commonPrecondition.sdilBackend.no_returns_variable("0000001611")
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestPOST(client, baseUrl + route, Json.obj(("value", "")))
@@ -198,7 +208,8 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
             page.title must include("Error: What do you need to do? - Soft Drinks Industry Levy - GOV.UK")
-            val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
+            val errorSummary = page
+              .getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")

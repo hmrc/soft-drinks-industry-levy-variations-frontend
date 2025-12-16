@@ -16,9 +16,9 @@
 
 package models.submission
 
-import models.{ReturnPeriod, SdilReturn, SmallProducer}
+import models.{ ReturnPeriod, SdilReturn, SmallProducer }
 import models.backend.UkAddress
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.{ Json, Writes }
 
 import java.time.LocalDate
 
@@ -28,32 +28,33 @@ object VariationsSubmission {
 
 /** The payload that is sent to GForms */
 case class VariationsSubmission(
-                                 tradingName: Option[String] = None,
-                                 displayOrgName: String,
-                                 ppobAddress: UkAddress,
-                                 businessContact: Option[VariationsContact] = None,
-                                 correspondenceContact: Option[VariationsContact] = None,
-                                 primaryPersonContact: Option[VariationsPersonalDetails] = None,
-                                 sdilActivity: Option[SdilActivity] = None,
-                                 deregistrationText: Option[String] = None,
-                                 deregistrationDate: Option[LocalDate] = None,
-                                 newSites: List[VariationsSite] = Nil,
-                                 amendSites: List[VariationsSite] = Nil,
-                                 closeSites: List[ClosedSite] = Nil)
+  tradingName: Option[String] = None,
+  displayOrgName: String,
+  ppobAddress: UkAddress,
+  businessContact: Option[VariationsContact] = None,
+  correspondenceContact: Option[VariationsContact] = None,
+  primaryPersonContact: Option[VariationsPersonalDetails] = None,
+  sdilActivity: Option[SdilActivity] = None,
+  deregistrationText: Option[String] = None,
+  deregistrationDate: Option[LocalDate] = None,
+  newSites: List[VariationsSite] = Nil,
+  amendSites: List[VariationsSite] = Nil,
+  closeSites: List[ClosedSite] = Nil
+)
 
 object ReturnVariationData {
   implicit val writes: Writes[ReturnVariationData] = Json.writes[ReturnVariationData]
 }
 
 case class ReturnVariationData(
-                                original: SdilReturn,
-                                revised: SdilReturn,
-                                period: ReturnPeriod,
-                                orgName: String,
-                                address: UkAddress,
-                                reason: String,
-                                repaymentMethod: Option[String] = None
-                              ) {
+  original: SdilReturn,
+  revised: SdilReturn,
+  period: ReturnPeriod,
+  orgName: String,
+  address: UkAddress,
+  reason: String,
+  repaymentMethod: Option[String] = None
+) {
   def removedSmallProducers: List[SmallProducer] = original.packSmall.filterNot(revised.packSmall.toSet)
   def addedSmallProducers: List[SmallProducer] = revised.packSmall.filterNot(original.packSmall.toSet)
 }

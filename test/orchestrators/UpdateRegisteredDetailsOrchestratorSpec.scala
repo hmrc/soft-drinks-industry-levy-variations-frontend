@@ -19,9 +19,9 @@ package orchestrators
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import models.VariationsSubmissionDataHelper
-import models.backend.{RetrievedActivity, Site, UkAddress}
+import models.backend.{ RetrievedActivity, Site, UkAddress }
 import models.enums.SiteTypes
-import models.submission.{ClosedSite, VariationsContact, VariationsPersonalDetails, VariationsSite}
+import models.submission.{ ClosedSite, VariationsContact, VariationsPersonalDetails, VariationsSite }
 import models.updateRegisteredDetails.ContactDetails
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -32,7 +32,7 @@ import services.SessionService
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar with VariationsSubmissionDataHelper{
+class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar with VariationsSubmissionDataHelper {
 
   val mockSessionService: SessionService = mock[SessionService]
   val mockConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
@@ -56,7 +56,6 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
     voluntaryRegistration = true
   )
 
-
   val retrievedActivityLiableNoneProducer = RetrievedActivity(
     smallProducer = false,
     largeProducer = false,
@@ -75,9 +74,11 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
           override val hasNewSites: Boolean = true
           override val hasRemovedSites = false
 
-          val expectedVariationSubmission = testVariationSubmission(newSites = expectedNewSites, closeSites = expectedClosedSites)
+          val expectedVariationSubmission =
+            testVariationSubmission(newSites = expectedNewSites, closeSites = expectedClosedSites)
 
-          when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
           val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
           whenReady(res.value) { result =>
@@ -90,9 +91,11 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
           override val hasNewSites: Boolean = true
           override val hasRemovedSites = false
 
-          val expectedVariationSubmission = testVariationSubmission(newSites = expectedNewSites, closeSites = expectedClosedSites)
+          val expectedVariationSubmission =
+            testVariationSubmission(newSites = expectedNewSites, closeSites = expectedClosedSites)
 
-          when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
           val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
           whenReady(res.value) { result =>
@@ -107,8 +110,10 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
           override val hasNewSites: Boolean = true
           override val hasRemovedSites = true
 
-          val expectedVariationSubmission = testVariationSubmission(newSites = expectedNewSites, closeSites = expectedClosedSites)
-          when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          val expectedVariationSubmission =
+            testVariationSubmission(newSites = expectedNewSites, closeSites = expectedClosedSites)
+          when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
           val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
@@ -122,9 +127,11 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
           override val hasNewSites: Boolean = true
           override val hasRemovedSites = true
 
-          val expectedVariationSubmission = testVariationSubmission(newSites = expectedNewSites, closeSites = expectedClosedSites)
+          val expectedVariationSubmission =
+            testVariationSubmission(newSites = expectedNewSites, closeSites = expectedClosedSites)
 
-          when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
           val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
@@ -140,8 +147,10 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
           override val hasNewSites: Boolean = false
           override val hasRemovedSites = true
 
-          val expectedVariationSubmission = testVariationSubmission(newSites = expectedNewSites, closeSites = expectedClosedSites)
-          when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          val expectedVariationSubmission =
+            testVariationSubmission(newSites = expectedNewSites, closeSites = expectedClosedSites)
+          when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
           val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
@@ -155,9 +164,11 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
           override val hasNewSites: Boolean = false
           override val hasRemovedSites = true
 
-          val expectedVariationSubmission = testVariationSubmission(newSites = expectedNewSites, closeSites = expectedClosedSites)
+          val expectedVariationSubmission =
+            testVariationSubmission(newSites = expectedNewSites, closeSites = expectedClosedSites)
 
-          when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
           val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
           whenReady(res.value) { result =>
@@ -172,9 +183,11 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
           override val optUpdatedContactDetails: Option[ContactDetails] = Some(updatedContactDetails)
           val expectVariationPDs = VariationsPersonalDetails(name = Some(UPDATED_NAME))
 
-          val expectedVariationSubmission = testVariationSubmission(variationsPersonalDetails = Some(expectVariationPDs))
+          val expectedVariationSubmission =
+            testVariationSubmission(variationsPersonalDetails = Some(expectVariationPDs))
 
-          when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
           val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
@@ -188,9 +201,11 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
           override val optUpdatedContactDetails: Option[ContactDetails] = Some(updatedContactDetails)
           val expectVariationPDs = VariationsPersonalDetails(position = Some(UPDATED_POSITION))
 
-          val expectedVariationSubmission = testVariationSubmission(variationsPersonalDetails = Some(expectVariationPDs))
+          val expectedVariationSubmission =
+            testVariationSubmission(variationsPersonalDetails = Some(expectVariationPDs))
 
-          when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
           val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
@@ -204,9 +219,13 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
           override val optUpdatedContactDetails: Option[ContactDetails] = Some(updatedContactDetails)
           val expectVariationPDs = VariationsPersonalDetails(telephoneNumber = Some(UPDATED_PHONE_NUMBER))
           val expectVariationContact = VariationsContact(telephoneNumber = Some(UPDATED_PHONE_NUMBER))
-          val expectedVariationSubmission = testVariationSubmission(variationContact = Some(expectVariationContact), variationsPersonalDetails = Some(expectVariationPDs))
+          val expectedVariationSubmission = testVariationSubmission(
+            variationContact = Some(expectVariationContact),
+            variationsPersonalDetails = Some(expectVariationPDs)
+          )
 
-          when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
           val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
@@ -220,8 +239,12 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
           override val optUpdatedContactDetails: Option[ContactDetails] = Some(updatedContactDetails)
           val expectVariationPDs = VariationsPersonalDetails(emailAddress = Some(UPDATED_EMAIL))
           val expectVariationContact = VariationsContact(emailAddress = Some(UPDATED_EMAIL))
-          val expectedVariationSubmission = testVariationSubmission(variationContact = Some(expectVariationContact), variationsPersonalDetails = Some(expectVariationPDs))
-          when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          val expectedVariationSubmission = testVariationSubmission(
+            variationContact = Some(expectVariationContact),
+            variationsPersonalDetails = Some(expectVariationPDs)
+          )
+          when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
           val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
@@ -231,12 +254,18 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
         }
 
         "by changing all fields" in new URDOrchestratorHelper {
-          val updatedContactDetails = ContactDetails(UPDATED_NAME, UPDATED_POSITION, UPDATED_PHONE_NUMBER, UPDATED_EMAIL)
+          val updatedContactDetails =
+            ContactDetails(UPDATED_NAME, UPDATED_POSITION, UPDATED_PHONE_NUMBER, UPDATED_EMAIL)
           override val optUpdatedContactDetails: Option[ContactDetails] = Some(updatedContactDetails)
           val expectVariationPDs = updatedPersonalDetails
-          val expectVariationContact = VariationsContact(telephoneNumber = Some(UPDATED_PHONE_NUMBER), emailAddress = Some(UPDATED_EMAIL))
-          val expectedVariationSubmission = testVariationSubmission(variationContact = Some(expectVariationContact), variationsPersonalDetails = Some(expectVariationPDs))
-          when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          val expectVariationContact =
+            VariationsContact(telephoneNumber = Some(UPDATED_PHONE_NUMBER), emailAddress = Some(UPDATED_EMAIL))
+          val expectedVariationSubmission = testVariationSubmission(
+            variationContact = Some(expectVariationContact),
+            variationsPersonalDetails = Some(expectVariationPDs)
+          )
+          when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
           val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
@@ -246,12 +275,12 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
         }
       }
 
-
       "when the user has updated business address" in new URDOrchestratorHelper {
         override val optUpdatedBusinessAddress: Option[UkAddress] = Some(UPDATED_ADDRESS)
         val expectVariationContact = VariationsContact(address = Some(UPDATED_ADDRESS))
         val expectedVariationSubmission = testVariationSubmission(variationContact = Some(expectVariationContact))
-        when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+        when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc))
+          .thenReturn(createSuccessVariationResult((): Unit))
         when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
         val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
@@ -269,11 +298,20 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
         override val optUpdatedBusinessAddress: Option[UkAddress] = Some(UPDATED_ADDRESS)
 
         val expectVariationPDs = updatedPersonalDetails
-        val expectVariationContact = VariationsContact(address = Some(UPDATED_ADDRESS), telephoneNumber = Some(UPDATED_PHONE_NUMBER), emailAddress = Some(UPDATED_EMAIL))
-        val expectedVariationSubmission = testVariationSubmission(variationContact = Some(expectVariationContact),
-          variationsPersonalDetails = Some(expectVariationPDs), newSites = expectedNewSites, closeSites = expectedClosedSites)
+        val expectVariationContact = VariationsContact(
+          address = Some(UPDATED_ADDRESS),
+          telephoneNumber = Some(UPDATED_PHONE_NUMBER),
+          emailAddress = Some(UPDATED_EMAIL)
+        )
+        val expectedVariationSubmission = testVariationSubmission(
+          variationContact = Some(expectVariationContact),
+          variationsPersonalDetails = Some(expectVariationPDs),
+          newSites = expectedNewSites,
+          closeSites = expectedClosedSites
+        )
 
-        when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+        when(mockConnector.submitVariation(expectedVariationSubmission, aSubscription.sdilRef)(hc))
+          .thenReturn(createSuccessVariationResult((): Unit))
         when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
         val res = updateRegDetailsOrchestrator.submitVariation(getSubscription, userAnswers)(hc, ec)
         whenReady(res.value) { result =>
@@ -303,30 +341,32 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
     val closedsite2 = Site(contactAddress, Some("Closed Site 2"), Some("15"), Some(localDate.minusMonths(1)))
 
     def userAnswers = {
-      val (productionSites, warehouses):(Map[String, Site], Map[String, Site]) = {
-        if(hasNewSites && hasRemovedSites) {
+      val (productionSites, warehouses): (Map[String, Site], Map[String, Site]) =
+        if (hasNewSites && hasRemovedSites) {
           (Map("2" -> site3), Map("2" -> site4))
-        } else if(hasNewSites) {
+        } else if (hasNewSites) {
           (Map("1" -> site1, "2" -> site3), Map("1" -> site2, "2" -> site4))
-        } else if(hasRemovedSites) {
+        } else if (hasRemovedSites) {
           (Map(), Map())
-        } else {
-          (Map("1" -> site1), Map("1" -> site2))
-        }
-      }: @unchecked
+        } else
+          (Map("1" -> site1), Map("1" -> site2)): @unchecked
       val baseUA = emptyUserAnswersForUpdateRegisteredDetails.copy(
         contactAddress = optUpdatedBusinessAddress.getOrElse(ORIGINAL_ADDRESS),
         packagingSiteList = productionSites,
-        warehouseList = warehouses)
+        warehouseList = warehouses
+      )
 
       optUpdatedContactDetails.fold(baseUA)(updContactDetails =>
         baseUA
-          .set(UpdateContactDetailsPage, updContactDetails).success.value)
+          .set(UpdateContactDetailsPage, updContactDetails)
+          .success
+          .value
+      )
 
     }
 
     def getSubscription = {
-      val productionSites = if(hasClosedSites) {
+      val productionSites = if (hasClosedSites) {
         List(site1, closedsite1)
       } else {
         List(site1)
@@ -344,36 +384,27 @@ class UpdateRegisteredDetailsOrchestratorSpec extends SpecBase with MockitoSugar
       )
     }
 
-    def expectedNewSites: List[VariationsSite] = {
+    def expectedNewSites: List[VariationsSite] =
       if (hasNewSites) {
         lazy val minRef = if (hasClosedSites) {
           16
         } else {
           14
         }
-        val newProductionSite = VariationsSite.generateFromSite(site3,
-          siteContactDetails,
-          minRef,
-          SiteTypes.PRODUCTION_SITE
-        )
-        val newWarehouse = VariationsSite.generateFromSite(site4,
-          siteContactDetails,
-          minRef + 1,
-          SiteTypes.WAREHOUSE
-        )
+        val newProductionSite =
+          VariationsSite.generateFromSite(site3, siteContactDetails, minRef, SiteTypes.PRODUCTION_SITE)
+        val newWarehouse = VariationsSite.generateFromSite(site4, siteContactDetails, minRef + 1, SiteTypes.WAREHOUSE)
         List(newProductionSite, newWarehouse)
       } else {
         List.empty
       }
-    }
 
-    def expectedClosedSites: List[ClosedSite] = {
+    def expectedClosedSites: List[ClosedSite] =
       (hasRemovedSites, hasClosedSites) match {
-        case (true, true) => List(site1, closedsite1, site2, closedsite2).map(ClosedSite.fromSite)
+        case (true, true)  => List(site1, closedsite1, site2, closedsite2).map(ClosedSite.fromSite)
         case (false, true) => List(closedsite1, closedsite2).map(ClosedSite.fromSite)
         case (true, false) => List(site1, site2).map(ClosedSite.fromSite)
-        case _ => List.empty[ClosedSite]
+        case _             => List.empty[ClosedSite]
       }
-    }
   }
 }

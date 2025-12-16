@@ -3,7 +3,7 @@ package controllers.correctReturn
 import controllers.ControllerITTestHelper
 import models.SelectChange.CorrectReturn
 import models.submission.Litreage
-import models.{CheckMode, NormalMode, SmallProducer}
+import models.{ CheckMode, NormalMode, SmallProducer }
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers._
 import pages.correctReturn.SmallProducerDetailsPage
@@ -19,8 +19,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the SmallProducerDetails page with no data populated" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
@@ -44,10 +43,13 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the userAnswers has one small producer in the small producers list" - {
       "should return OK and render the SmallProducerDetails page with one summary row" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
-        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", Litreage(20, 10)))))
+        setUpForCorrectReturn(
+          emptyUserAnswersForCorrectReturn.copy(smallProducerList =
+            List(SmallProducer("Super Cola Plc", "XCSDIL000000069", Litreage(20, 10)))
+          )
+        )
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
@@ -65,11 +67,16 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the userAnswers has two small producers in the small producers list" - {
       "should return OK and render the SmallProducerDetails page with two summary rows" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
-        setUpForCorrectReturn(emptyUserAnswersForCorrectReturn.copy(smallProducerList = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", Litreage(20, 10)),
-          SmallProducer("Soft Juice", "XMSDIL000000113", Litreage(40, 60)))))
+        setUpForCorrectReturn(
+          emptyUserAnswersForCorrectReturn.copy(smallProducerList =
+            List(
+              SmallProducer("Super Cola Plc", "XCSDIL000000069", Litreage(20, 10)),
+              SmallProducer("Soft Juice", "XMSDIL000000113", Litreage(40, 60))
+            )
+          )
+        )
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestGet(client, correctReturnBaseUrl + normalRoutePath)
@@ -88,8 +95,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
     userAnswersForCorrectReturnSmallProducerDetailsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
@@ -120,8 +126,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
   s"GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the SmallProducerDetails page with no data populated" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
@@ -146,8 +151,7 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
     userAnswersForCorrectReturnSmallProducerDetailsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
@@ -181,26 +185,33 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
       "when the user selects " + key - {
         "should update the session with the new value and redirect to the index controller" - {
           "when the session contains no data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> yesSelected.toString)
+                client,
+                correctReturnBaseUrl + normalRoutePath,
+                Json.obj("value" -> yesSelected.toString)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                if(key == "yes"){
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.AddASmallProducerController.onPageLoad(NormalMode).url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
+                if (key == "yes") {
+                  res.header(HeaderNames.LOCATION) mustBe Some(
+                    routes.AddASmallProducerController.onPageLoad(NormalMode).url
+                  )
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe yesSelected
-                }else{
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.BroughtIntoUKController.onPageLoad(NormalMode).url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
+                } else {
+                  res.header(HeaderNames.LOCATION) mustBe Some(
+                    routes.BroughtIntoUKController.onPageLoad(NormalMode).url
+                  )
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe yesSelected
                 }
@@ -209,26 +220,33 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setUpForCorrectReturn(userAnswers)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> yesSelected.toString)
+                client,
+                correctReturnBaseUrl + normalRoutePath,
+                Json.obj("value" -> yesSelected.toString)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                if(key == "yes"){
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.AddASmallProducerController.onPageLoad(NormalMode).url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
+                if (key == "yes") {
+                  res.header(HeaderNames.LOCATION) mustBe Some(
+                    routes.AddASmallProducerController.onPageLoad(NormalMode).url
+                  )
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe yesSelected
-                }else{
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.BroughtIntoUKController.onPageLoad(NormalMode).url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
+                } else {
+                  res.header(HeaderNames.LOCATION) mustBe Some(
+                    routes.BroughtIntoUKController.onPageLoad(NormalMode).url
+                  )
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe yesSelected
                 }
@@ -241,20 +259,22 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> "")
+            client,
+            correctReturnBaseUrl + normalRoutePath,
+            Json.obj("value" -> "")
           )
 
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
             page.title mustBe "Error: You added 0 small producers - Soft Drinks Industry Levy - GOV.UK"
-            val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
+            val errorSummary = page
+              .getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
@@ -266,7 +286,11 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+      CorrectReturn,
+      correctReturnBaseUrl + normalRoutePath,
+      Some(Json.obj("value" -> "true"))
+    )
   }
 
   s"POST " + checkRoutePath - {
@@ -274,26 +298,31 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
       "when the user selects " + key - {
         "should update the session with the new value and redirect to the checkAnswers controller" - {
           "when the session contains no data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> yesSelected.toString)
+                client,
+                correctReturnBaseUrl + checkRoutePath,
+                Json.obj("value" -> yesSelected.toString)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                if(key == "yes"){
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.AddASmallProducerController.onPageLoad(CheckMode).url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
+                if (key == "yes") {
+                  res.header(HeaderNames.LOCATION) mustBe Some(
+                    routes.AddASmallProducerController.onPageLoad(CheckMode).url
+                  )
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe yesSelected
-                }else{
+                } else {
                   res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe yesSelected
                 }
@@ -302,26 +331,31 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setUpForCorrectReturn(userAnswers)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> yesSelected.toString)
+                client,
+                correctReturnBaseUrl + checkRoutePath,
+                Json.obj("value" -> yesSelected.toString)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                if(key == "yes"){
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.AddASmallProducerController.onPageLoad(CheckMode).url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
+                if (key == "yes") {
+                  res.header(HeaderNames.LOCATION) mustBe Some(
+                    routes.AddASmallProducerController.onPageLoad(CheckMode).url
+                  )
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe yesSelected
-                }else{
+                } else {
                   res.header(HeaderNames.LOCATION) mustBe Some(routes.CorrectReturnCYAController.onPageLoad.url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(SmallProducerDetailsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe yesSelected
                 }
@@ -334,20 +368,22 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> "")
+            client,
+            correctReturnBaseUrl + checkRoutePath,
+            Json.obj("value" -> "")
           )
 
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
             page.title mustBe "Error: You added 0 small producers - Soft Drinks Industry Levy - GOV.UK"
-            val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
+            val errorSummary = page
+              .getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
@@ -359,6 +395,10 @@ class SmallProducerDetailsControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+      CorrectReturn,
+      correctReturnBaseUrl + checkRoutePath,
+      Some(Json.obj("value" -> "true"))
+    )
   }
 }

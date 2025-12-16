@@ -17,14 +17,18 @@
 package models.correctReturn
 
 import models.submission.Litreage
-import models.{LitresInBands, SmallProducer}
+import models.{ LitresInBands, SmallProducer }
 import play.api.libs.json._
 
-case class AddASmallProducer(producerName: Option[String], referenceNumber: String, litres:LitresInBands)
+case class AddASmallProducer(producerName: Option[String], referenceNumber: String, litres: LitresInBands)
 
 object AddASmallProducer {
   implicit val format: OFormat[AddASmallProducer] = Json.format[AddASmallProducer]
 
   def toSmallProducer(addASmallProducer: AddASmallProducer): SmallProducer =
-    SmallProducer(addASmallProducer.producerName.getOrElse(""), addASmallProducer.referenceNumber, Litreage.fromLitresInBands(addASmallProducer.litres))
+    SmallProducer(
+      addASmallProducer.producerName.getOrElse(""),
+      addASmallProducer.referenceNumber,
+      Litreage.fromLitresInBands(addASmallProducer.litres)
+    )
 }

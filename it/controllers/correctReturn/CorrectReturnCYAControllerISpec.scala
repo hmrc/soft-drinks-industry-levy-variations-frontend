@@ -23,8 +23,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
   "GET " + routes.CorrectReturnCYAController.onPageLoad.url - {
     "when the userAnswers contains no data for return to correct" - {
       "should redirect to Select Return controller" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForSelectChange(CorrectReturn).copy(correctReturnPeriod = None))
 
@@ -43,9 +42,10 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
       "should render the check your answers page with only the required details" in {
         val userAnswers = userAnswerWithLitresForAllPagesNilSdilReturn
           .copy(packagingSiteList = packagingSitesFromSubscription, warehouseList = warehousesFromSubscription)
-          .set(PackAtBusinessAddressPage, true).success.value
-        build
-          .commonPrecondition
+          .set(PackAtBusinessAddressPage, true)
+          .success
+          .value
+        build.commonPrecondition
 
         setUpForCorrectReturn(userAnswers)
 
@@ -63,7 +63,11 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
             val operatePackagingSites = page.getElementsByClass("govuk-summary-list").get(0)
 
             page.getElementsByTag("h2").get(0).text() mustBe "Own brands packaged at your own site"
-            validateOperatePackagingSitesWithLitresSummaryList(operatePackagingSites, operatePackagingSiteLitres, isCheckAnswers = true)
+            validateOperatePackagingSitesWithLitresSummaryList(
+              operatePackagingSites,
+              operatePackagingSiteLitres,
+              isCheckAnswers = true
+            )
 
             val contractPacking = page.getElementsByClass("govuk-summary-list").get(1)
 
@@ -73,7 +77,11 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
             val contractPackedForSmallProducers = page.getElementsByClass("govuk-summary-list").get(2)
 
             page.getElementsByTag("h2").get(2).text() mustBe "Contract packed for registered small producers"
-            validateContractPackedForSmallProducersWithLitresSummaryList(contractPackedForSmallProducers, smallProducerLitres, isCheckAnswers = true)
+            validateContractPackedForSmallProducersWithLitresSummaryList(
+              contractPackedForSmallProducers,
+              smallProducerLitres,
+              isCheckAnswers = true
+            )
 
             val imports = page.getElementsByClass("govuk-summary-list").get(3)
 
@@ -83,7 +91,11 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
             val importsSmallProducers = page.getElementsByClass("govuk-summary-list").get(4)
 
             page.getElementsByTag("h2").get(4).text() mustBe "Brought into the UK from small producers"
-            validateImportsFromSmallProducersWithLitresSummaryList(importsSmallProducers, importsLitres, isCheckYourAnswers = true)
+            validateImportsFromSmallProducersWithLitresSummaryList(
+              importsSmallProducers,
+              importsLitres,
+              isCheckYourAnswers = true
+            )
 
             val exported = page.getElementsByClass("govuk-summary-list").get(5)
 
@@ -109,8 +121,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
       "and they have only populated the required pages and have no litres" - {
         "should render the check your answers page with expected summary items" in {
           val userAnswers = userAnswerWithAllNosWithOriginalSdilReturn
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(userAnswers, Some(populatedReturn))
 
@@ -137,7 +148,10 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
               val contractPackedForSmallProducers = page.getElementsByClass("govuk-summary-list").get(2)
 
               page.getElementsByTag("h2").get(2).text() mustBe "Contract packed for registered small producers"
-              validateContractPackedForSmallProducersWithNoLitresSummaryList(contractPackedForSmallProducers, isCheckYourAnswers = true)
+              validateContractPackedForSmallProducersWithNoLitresSummaryList(
+                contractPackedForSmallProducers,
+                isCheckYourAnswers = true
+              )
 
               val imports = page.getElementsByClass("govuk-summary-list").get(3)
 
@@ -147,7 +161,10 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
               val importsFromSmallProducers = page.getElementsByClass("govuk-summary-list").get(4)
 
               page.getElementsByTag("h2").get(4).text() mustBe "Brought into the UK from small producers"
-              validateImportsFromSmallProducersWithNoLitresSummaryList(importsFromSmallProducers, isCheckYourAnswers = true)
+              validateImportsFromSmallProducersWithNoLitresSummaryList(
+                importsFromSmallProducers,
+                isCheckYourAnswers = true
+              )
 
               val exports = page.getElementsByClass("govuk-summary-list").get(5)
 
@@ -161,11 +178,22 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
 
               page.getElementsByTag("h2").get(7).text() mustBe "Summary"
               page.getElementsByClass("govuk-summary-list__key").get(7).text() mustBe "Total this quarter"
-              page.getElementsByClass("govuk-summary-list__value  total-for-quarter sdil-right-align--desktop").get(0).text() mustBe "£0.00"
+              page
+                .getElementsByClass("govuk-summary-list__value  total-for-quarter sdil-right-align--desktop")
+                .get(0)
+                .text() mustBe "£0.00"
               page.getElementsByClass("govuk-summary-list__key").get(8).text() mustBe "Balance brought forward"
-              page.getElementsByClass("govuk-summary-list__value  balance-brought-forward sdil-right-align--desktop").get(0).text() mustBe "−£500.00"
+              page
+                .getElementsByClass("govuk-summary-list__value  balance-brought-forward sdil-right-align--desktop")
+                .get(0)
+                .text() mustBe "−£500.00"
               page.getElementsByClass("govuk-summary-list__key").get(9).text() mustBe "Total"
-              page.getElementsByClass("govuk-summary-list__value  total sdil-right-align--desktop govuk-!-font-weight-bold").get(0).text() mustBe "−£500.00"
+              page
+                .getElementsByClass(
+                  "govuk-summary-list__value  total sdil-right-align--desktop govuk-!-font-weight-bold"
+                )
+                .get(0)
+                .text() mustBe "−£500.00"
               page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCYAController.onSubmit.url
               page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Save and continue"
             }
@@ -181,8 +209,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
   "POST " + routes.CorrectReturnCYAController.onPageLoad.url - {
     "should redirect to Correction Reason controller" in {
       val userAnswers = userAnswerWithAllNosWithOriginalSdilReturn
-      build
-        .commonPrecondition
+      build.commonPrecondition
 
       setUpForCorrectReturn(userAnswers, Some(populatedReturn))
 
@@ -203,8 +230,7 @@ class CorrectReturnCYAControllerISpec extends CorrectReturnBaseCYASummaryISpecHe
         val correctReturnData = nilCorrectReturnUAData
           .copy(broughtIntoUK = true, howManyBroughtIntoUK = Some(operatePackagingSiteLitres))
         val userAnswers = userAnswerWithAllNosWithOriginalSdilReturn
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(userAnswers)
 

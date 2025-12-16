@@ -22,37 +22,38 @@ import controllers.actions.ControllerActions
 import controllers.routes
 import handlers.ErrorHandler
 import models.SelectChange
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.cancelRegistration.FileReturnBeforeDeregView
 import views.summary.cancelRegistration.FileReturnBeforeDeregSummary
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class FileReturnBeforeDeregController @Inject()(
-                                                 override val messagesApi: MessagesApi,
-                                                 controllerActions: ControllerActions,
-                                                 connector: SoftDrinksIndustryLevyConnector,
-                                                 val controllerComponents: MessagesControllerComponents,
-                                                 view: FileReturnBeforeDeregView,
-                                                 errorHandler: ErrorHandler
-                                               )(implicit ec: ExecutionContext, config: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+class FileReturnBeforeDeregController @Inject() (
+  override val messagesApi: MessagesApi,
+  controllerActions: ControllerActions,
+  connector: SoftDrinksIndustryLevyConnector,
+  val controllerComponents: MessagesControllerComponents,
+  view: FileReturnBeforeDeregView,
+  errorHandler: ErrorHandler
+)(implicit ec: ExecutionContext, config: FrontendAppConfig)
+    extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration).async {
-    implicit request =>
-    connector.getPendingReturnsFromCache(request.subscription.utr).value.flatMap {
-      case Right(returns) if returns.nonEmpty => Future.successful(
-        Ok(view(FileReturnBeforeDeregSummary.displayMessage(returns))))
-      case Right(_) => Future.successful(Redirect(routes.SelectChangeController.onPageLoad))
-      case Left(_) =>
-        errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
+  def onPageLoad: Action[AnyContent] =
+    controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration).async { implicit request =>
+      connector.getPendingReturnsFromCache(request.subscription.utr).value.flatMap {
+        case Right(returns) if returns.nonEmpty =>
+          Future.successful(Ok(view(FileReturnBeforeDeregSummary.displayMessage(returns))))
+        case Right(_) => Future.successful(Redirect(routes.SelectChangeController.onPageLoad))
+        case Left(_) =>
+          errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
+      }
     }
-  }
 
-  def onSubmit(): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration) {
-    _ => Redirect(config.sdilHomeUrl)
+  def onSubmit(): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration) { _ =>
+    Redirect(config.sdilHomeUrl)
   }
 
 }

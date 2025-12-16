@@ -21,12 +21,12 @@ import models.SelectChange.UpdateRegisteredDetails
 import models.backend.UkAddress
 import navigation._
 import org.mockito.ArgumentMatchers
-import org.mockito.Mockito.{when, mock}
+import org.mockito.Mockito.{ mock, when }
 import play.api.inject
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.{AddressLookupService, ContactDetails}
+import services.{ AddressLookupService, ContactDetails }
 import views.html.updateRegisteredDetails.BusinessAddressView
 
 import scala.concurrent.Future
@@ -46,9 +46,13 @@ class BusinessAddressControllerSpec extends SpecBase {
           .overrides(inject.bind[AddressLookupService].toInstance(mockAddressLookupService))
           .build()
 
-      when(mockAddressLookupService
-        .initJourneyAndReturnOnRampUrl(ArgumentMatchers.eq(ContactDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+      when(
+        mockAddressLookupService
+          .initJourneyAndReturnOnRampUrl(
+            ArgumentMatchers.eq(ContactDetails),
+            ArgumentMatchers.any(),
+            ArgumentMatchers.any()
+          )(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       ).thenReturn(Future.successful("woohooherewegoo!"))
 
       running(application) {
@@ -68,9 +72,13 @@ class BusinessAddressControllerSpec extends SpecBase {
           .overrides(inject.bind[AddressLookupService].toInstance(mockAddressLookupService))
           .build()
 
-      when(mockAddressLookupService
-        .initJourneyAndReturnOnRampUrl(ArgumentMatchers.eq(ContactDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+      when(
+        mockAddressLookupService
+          .initJourneyAndReturnOnRampUrl(
+            ArgumentMatchers.eq(ContactDetails),
+            ArgumentMatchers.any(),
+            ArgumentMatchers.any()
+          )(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       ).thenReturn(Future.failed(new Exception("uh oh spagetio")))
 
       running(application) {
@@ -94,7 +102,7 @@ class BusinessAddressControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[BusinessAddressView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(List(contactAddress))(request, messages(application)).toString
+        contentAsString(result) mustEqual view(List(contactAddress))(using request, messages(application)).toString
       }
     }
 
@@ -103,7 +111,9 @@ class BusinessAddressControllerSpec extends SpecBase {
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
           .overrides(
-            inject.bind[NavigatorForUpdateRegisteredDetails].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute))
+            inject
+              .bind[NavigatorForUpdateRegisteredDetails]
+              .toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute))
           )
           .build()
 
@@ -113,7 +123,9 @@ class BusinessAddressControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.updateRegisteredDetails.routes.UpdateRegisteredDetailsCYAController.onPageLoad.url
+        redirectLocation(
+          result
+        ).value mustEqual controllers.updateRegisteredDetails.routes.UpdateRegisteredDetailsCYAController.onPageLoad.url
       }
     }
 

@@ -31,7 +31,7 @@ class SelectViewSpec extends ViewSpecHelper {
   val formProvider = new SelectFormProvider
   val form: Form[String] = formProvider.apply()
   val returnsList: List[List[ReturnPeriod]] = List(returnPeriodsFor2022, returnPeriodsFor2020)
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-heading-m"
@@ -48,9 +48,8 @@ class SelectViewSpec extends ViewSpecHelper {
     val form = "form"
   }
 
-
   "View" - {
-    val html = view(form, returnsList)(request, messages(application))
+    val html = view(form, returnsList)(using request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
       document.title() must include(Messages("correctReturn.select" + ".title"))
@@ -108,10 +107,10 @@ class SelectViewSpec extends ViewSpecHelper {
           }
         }
 
-
         returnPeriodList.foreach { selectedReturnPeriod =>
           s"when the form is prepopulated with " + selectedReturnPeriod.radioValue + "selected and has no errors" - {
-            val htmlPop = view(form.fill(selectedReturnPeriod.radioValue), returnsList)(request, messages(application))
+            val htmlPop =
+              view(form.fill(selectedReturnPeriod.radioValue), returnsList)(using request, messages(application))
             val documentPop = doc(htmlPop)
             val radioItems = documentPop.getElementsByClass(Selectors.radiosItems)
 
@@ -140,12 +139,13 @@ class SelectViewSpec extends ViewSpecHelper {
     }
 
     "contains a form with the correct action" in {
-      document.select(Selectors.form)
+      document
+        .select(Selectors.form)
         .attr("action") mustEqual routes.SelectController.onSubmit.url
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), returnsList)(request, messages(application))
+      val htmlWithErrors = view(form.bind(Map("value" -> "")), returnsList)(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {

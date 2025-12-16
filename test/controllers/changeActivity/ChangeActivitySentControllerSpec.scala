@@ -19,7 +19,7 @@ package controllers.changeActivity
 import base.SpecBase
 import config.FrontendAppConfig
 import models.changeActivity.AmountProduced
-import models.{LitresInBands, NormalMode, UserAnswers}
+import models.{ LitresInBands, NormalMode, UserAnswers }
 import pages.changeActivity._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -28,7 +28,7 @@ import views.html.changeActivity.ChangeActivitySentView
 import views.summary.changeActivity.ChangeActivitySummary
 
 import java.time.format.DateTimeFormatter
-import java.time.{Instant, LocalDateTime, ZoneId}
+import java.time.{ Instant, LocalDateTime, ZoneId }
 
 class ChangeActivitySentControllerSpec extends SpecBase {
 
@@ -40,13 +40,24 @@ class ChangeActivitySentControllerSpec extends SpecBase {
   val formattedTime: String = getSentDateTime.format(timeFormatter)
   val completedUserAnswers: UserAnswers = emptyUserAnswersForChangeActivity
     .copy(submitted = true, warehouseList = twoWarehouses)
-    .set(AmountProducedPage, AmountProduced.None).success.value
-    .set(ContractPackingPage, false).success.value
-    .set(ImportsPage, true).success.value
-    .set(HowManyImportsPage, LitresInBands(1, 1)).success.value
-    .set(SecondaryWarehouseDetailsPage, false).success.value
+    .set(AmountProducedPage, AmountProduced.None)
+    .success
+    .value
+    .set(ContractPackingPage, false)
+    .success
+    .value
+    .set(ImportsPage, true)
+    .success
+    .value
+    .set(HowManyImportsPage, LitresInBands(1, 1))
+    .success
+    .value
+    .set(SecondaryWarehouseDetailsPage, false)
+    .success
+    .value
 
-  val sections: Seq[(String, SummaryList)] = ChangeActivitySummary.summaryListsAndHeadings(completedUserAnswers, isCheckAnswers = false)
+  val sections: Seq[(String, SummaryList)] =
+    ChangeActivitySummary.summaryListsAndHeadings(completedUserAnswers, isCheckAnswers = false)
   val alias: String = aSubscription.orgName
   val config: FrontendAppConfig = frontendAppConfig
 
@@ -55,7 +66,8 @@ class ChangeActivitySentControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET" in {
 
       val testTime = Instant.now()
-      val application = applicationBuilder(userAnswers = Some(completedUserAnswers.copy(submittedOn = Some(testTime)))).build()
+      val application =
+        applicationBuilder(userAnswers = Some(completedUserAnswers.copy(submittedOn = Some(testTime)))).build()
 
       running(application) {
         val request = FakeRequest(GET, updateSentRoute)
@@ -65,8 +77,14 @@ class ChangeActivitySentControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[ChangeActivitySentView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(alias, formattedDate, LocalDateTime.ofInstant(testTime, ZoneId.of("Europe/London"))
-          .format(DateTimeFormatter.ofPattern("h:mma")), sections)(request, messages(application), config).toString
+        contentAsString(result) mustEqual view(
+          alias,
+          formattedDate,
+          LocalDateTime
+            .ofInstant(testTime, ZoneId.of("Europe/London"))
+            .format(DateTimeFormatter.ofPattern("h:mma")),
+          sections
+        )(request, messages(application), config).toString
       }
     }
 

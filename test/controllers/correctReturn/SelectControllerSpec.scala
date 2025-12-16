@@ -17,11 +17,11 @@
 package controllers.correctReturn
 
 import base.SpecBase
-import errors.{NoSdilReturnForPeriod, NoVariableReturns, SessionDatabaseInsertError, UnexpectedResponseFromSDIL}
+import errors.{ NoSdilReturnForPeriod, NoVariableReturns, SessionDatabaseInsertError, UnexpectedResponseFromSDIL }
 import forms.correctReturn.SelectFormProvider
 import models.SelectChange.CorrectReturn
-import models.{NormalMode, ReturnPeriod}
-import orchestrators.{CorrectReturnOrchestrator, SelectChangeOrchestrator}
+import models.{ NormalMode, ReturnPeriod }
+import orchestrators.{ CorrectReturnOrchestrator, SelectChangeOrchestrator }
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -48,9 +48,12 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None))).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None)))
+          .overrides(
+            bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+          )
+          .build()
 
       running(application) {
         val request = FakeRequest(GET, selectRoute)
@@ -60,15 +63,18 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
 
         val separatedByYearAndSortedReturnPeriods = List(returnPeriodsFor2022, returnPeriodsFor2020)
 
-        when(mockOrchestrator.separateReturnPeriodsByYear(returnPeriodList)).thenReturn(separatedByYearAndSortedReturnPeriods)
+        when(mockOrchestrator.separateReturnPeriodsByYear(returnPeriodList))
+          .thenReturn(separatedByYearAndSortedReturnPeriods)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[SelectView]
 
-
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, separatedByYearAndSortedReturnPeriods)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, separatedByYearAndSortedReturnPeriods)(
+          request,
+          messages(application)
+        ).toString
       }
     }
 
@@ -76,9 +82,11 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
 
       val userAnswers = emptyUserAnswersForCorrectReturn
 
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+        )
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, selectRoute)
@@ -88,24 +96,28 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
 
         val separatedByYearAndSortedReturnPeriods = List(returnPeriodsFor2022, returnPeriodsFor2020)
 
-        when(mockOrchestrator.separateReturnPeriodsByYear(returnPeriodList)).thenReturn(separatedByYearAndSortedReturnPeriods)
+        when(mockOrchestrator.separateReturnPeriodsByYear(returnPeriodList))
+          .thenReturn(separatedByYearAndSortedReturnPeriods)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[SelectView]
 
-
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(returnPeriodsFor2022.head.radioValue), separatedByYearAndSortedReturnPeriods)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(
+          form.fill(returnPeriodsFor2022.head.radioValue),
+          separatedByYearAndSortedReturnPeriods
+        )(using request, messages(application)).toString
       }
     }
 
-
     "must redirect to SelectChange page when returns is empty for GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+        .overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+        )
+        .build()
 
       running(application) {
 
@@ -123,20 +135,25 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-
     "must redirect to sdilHome when returns is empty for GET nd user is deregistered" in {
 
       val mockSelectChangeOrchestrator = mock[SelectChangeOrchestrator]
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn),
-        subscription = Some(deregSubscription)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator),
-        bind[SelectChangeOrchestrator].toInstance(mockSelectChangeOrchestrator)
-      ).build()
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn), subscription = Some(deregSubscription))
+          .overrides(
+            bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator),
+            bind[SelectChangeOrchestrator].toInstance(mockSelectChangeOrchestrator)
+          )
+          .build()
 
       running(application) {
 
-        when(mockSelectChangeOrchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(deregSubscription)(ec))
+        when(
+          mockSelectChangeOrchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(
+            deregSubscription
+          )(ec)
+        )
           .thenReturn(createSuccessVariationResult(emptyUserAnswersForCorrectReturn))
 
         when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
@@ -157,15 +174,21 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
       "when the backend call get variable returns fails for a GET" in {
         val mockSelectChangeOrchestrator = mock[SelectChangeOrchestrator]
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn),
-          subscription = Some(deregSubscription)).overrides(
+        val application = applicationBuilder(
+          userAnswers = Some(emptyUserAnswersForCorrectReturn),
+          subscription = Some(deregSubscription)
+        ).overrides(
           bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator),
           bind[SelectChangeOrchestrator].toInstance(mockSelectChangeOrchestrator)
         ).build()
 
         running(application) {
 
-          when(mockSelectChangeOrchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(deregSubscription)(ec))
+          when(
+            mockSelectChangeOrchestrator.createCorrectReturnUserAnswersForDeregisteredUserAndSaveToDatabase(
+              deregSubscription
+            )(ec)
+          )
             .thenReturn(createFailureVariationResult(SessionDatabaseInsertError))
           when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
             createFailureVariationResult(UnexpectedResponseFromSDIL)
@@ -183,9 +206,11 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
       }
 
       "when the session fails to save the user answers for deregistered user" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).overrides(
-          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+          .overrides(
+            bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+          )
+          .build()
 
         running(application) {
           when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
@@ -207,56 +232,59 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
     "on submit POST" - {
       "when a valid return period selected and no errors occur" - {
         "must redirect to own brands for a user who is not a small producer" in {
-          val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).overrides(
-            bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-          ).build()
+          val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+            .overrides(
+              bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+            )
+            .build()
 
           running(application) {
             when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
               createSuccessVariationResult(returnPeriodList)
             }
-            when(mockOrchestrator.setupUserAnswersForCorrectReturn(any(), any(),
-              any())(any(), any())
-            ).thenReturn {
+            when(mockOrchestrator.setupUserAnswersForCorrectReturn(any(), any(), any())(any(), any())).thenReturn {
               createSuccessVariationResult((): Unit)
             }
 
             val request =
-              FakeRequest(POST, selectRoute
-              )
+              FakeRequest(POST, selectRoute)
                 .withFormUrlEncodedBody(("value", returnPeriodList.head.radioValue))
 
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustEqual routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
+            redirectLocation(result).value mustEqual routes.OperatePackagingSiteOwnBrandsController
+              .onPageLoad(NormalMode)
+              .url
           }
         }
 
         "must redirect to copacker page for a user who is a small producer" in {
-          val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn), Some(subscriptionSmallProducer)).overrides(
-            bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-          ).build()
+          val application =
+            applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn), Some(subscriptionSmallProducer))
+              .overrides(
+                bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+              )
+              .build()
 
           running(application) {
             when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
               createSuccessVariationResult(returnPeriodList)
             }
-            when(mockOrchestrator.setupUserAnswersForCorrectReturn(any(), any(),
-              any())(any(), any())
-            ).thenReturn {
+            when(mockOrchestrator.setupUserAnswersForCorrectReturn(any(), any(), any())(any(), any())).thenReturn {
               createSuccessVariationResult((): Unit)
             }
 
             val request =
-              FakeRequest(POST, selectRoute
-              )
+              FakeRequest(POST, selectRoute)
                 .withFormUrlEncodedBody(("value", returnPeriodList.head.radioValue))
 
             val result = route(application, request).value
 
             status(result) mustEqual SEE_OTHER
-            redirectLocation(result).value mustEqual routes.PackagedAsContractPackerController.onPageLoad(NormalMode).url
+            redirectLocation(result).value mustEqual routes.PackagedAsContractPackerController
+              .onPageLoad(NormalMode)
+              .url
           }
         }
       }
@@ -264,9 +292,12 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
 
     "must return a Bad Request and errors when no return period selected" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn), Some(subscriptionSmallProducer)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn), Some(subscriptionSmallProducer))
+          .overrides(
+            bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+          )
+          .build()
 
       running(application) {
         when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
@@ -275,11 +306,11 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
 
         val separatedByYearAndSortedReturnPeriods = List(returnPeriodsFor2022, returnPeriodsFor2020)
 
-        when(mockOrchestrator.separateReturnPeriodsByYear(returnPeriodList)).thenReturn(separatedByYearAndSortedReturnPeriods)
+        when(mockOrchestrator.separateReturnPeriodsByYear(returnPeriodList))
+          .thenReturn(separatedByYearAndSortedReturnPeriods)
 
         val request =
-          FakeRequest(POST, selectRoute
-          )
+          FakeRequest(POST, selectRoute)
             .withFormUrlEncodedBody(("value", ""))
 
         val result = route(application, request).value
@@ -288,15 +319,21 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
         val formWithError = form.withError(FormError("value", "correctReturn.select.error.required"))
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(formWithError, separatedByYearAndSortedReturnPeriods)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(formWithError, separatedByYearAndSortedReturnPeriods)(
+          request,
+          messages(application)
+        ).toString
       }
     }
 
     "must return a Bad Request and errors when return period selected is not in variableReturnList" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn), Some(subscriptionSmallProducer)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn), Some(subscriptionSmallProducer))
+          .overrides(
+            bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+          )
+          .build()
 
       running(application) {
         when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
@@ -305,11 +342,11 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
 
         val separatedByYearAndSortedReturnPeriods = List(returnPeriodsFor2022, returnPeriodsFor2020)
 
-        when(mockOrchestrator.separateReturnPeriodsByYear(returnPeriodList)).thenReturn(separatedByYearAndSortedReturnPeriods)
+        when(mockOrchestrator.separateReturnPeriodsByYear(returnPeriodList))
+          .thenReturn(separatedByYearAndSortedReturnPeriods)
 
         val request =
-          FakeRequest(POST, selectRoute
-          )
+          FakeRequest(POST, selectRoute)
             .withFormUrlEncodedBody(("value", ReturnPeriod(2023, 0).radioValue))
 
         val result = route(application, request).value
@@ -318,14 +355,20 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
         val formWithError = form.withError(FormError("value", "correctReturn.select.error.required"))
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(formWithError, separatedByYearAndSortedReturnPeriods)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(formWithError, separatedByYearAndSortedReturnPeriods)(
+          request,
+          messages(application)
+        ).toString
       }
     }
 
     "must redirect to selectChange when there are no variable returns" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn), Some(subscriptionSmallProducer)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn), Some(subscriptionSmallProducer))
+          .overrides(
+            bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+          )
+          .build()
 
       running(application) {
         when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
@@ -333,8 +376,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
         }
 
         val request =
-          FakeRequest(POST, selectRoute
-          )
+          FakeRequest(POST, selectRoute)
             .withFormUrlEncodedBody(("value", returnPeriodList.head.radioValue))
 
         val result = route(application, request).value
@@ -345,9 +387,12 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
     }
 
     "must redirect to sdil home when there are no variable returns for a deregistered user" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn), Some(deregSubscription)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application =
+        applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn), Some(deregSubscription))
+          .overrides(
+            bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+          )
+          .build()
 
       running(application) {
         when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
@@ -355,8 +400,7 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
         }
 
         val request =
-          FakeRequest(POST, selectRoute
-          )
+          FakeRequest(POST, selectRoute)
             .withFormUrlEncodedBody(("value", returnPeriodList.head.radioValue))
 
         val result = route(application, request).value
@@ -368,46 +412,46 @@ class SelectControllerSpec extends SpecBase with MockitoSugar {
 
     "must render the error page" - {
       "when the call to get return periods fails" in {
-          val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).overrides(
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+          .overrides(
             bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-          ).build()
+          )
+          .build()
 
-          running(application) {
-            when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
-              createFailureVariationResult(UnexpectedResponseFromSDIL)
-            }
-
-            val request =
-              FakeRequest(POST, selectRoute
-              )
-                .withFormUrlEncodedBody(("value", returnPeriodList.head.radioValue))
-
-            val result = route(application, request).value
-
-            status(result) mustEqual INTERNAL_SERVER_ERROR
-            val page = Jsoup.parse(contentAsString(result))
-            page.title() mustBe "Sorry, there is a problem with the service - Soft Drinks Industry Levy - GOV.UK"
+        running(application) {
+          when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
+            createFailureVariationResult(UnexpectedResponseFromSDIL)
           }
+
+          val request =
+            FakeRequest(POST, selectRoute)
+              .withFormUrlEncodedBody(("value", returnPeriodList.head.radioValue))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual INTERNAL_SERVER_ERROR
+          val page = Jsoup.parse(contentAsString(result))
+          page.title() mustBe "Sorry, there is a problem with the service - Soft Drinks Industry Levy - GOV.UK"
         }
+      }
 
       "when no sdilReturn was found for the selected variable return" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn)).overrides(
-          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-        ).build()
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCorrectReturn))
+          .overrides(
+            bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+          )
+          .build()
 
         running(application) {
           when(mockOrchestrator.getReturnPeriods(any())(any(), any())).thenReturn {
             createSuccessVariationResult(returnPeriodList)
           }
-          when(mockOrchestrator.setupUserAnswersForCorrectReturn(any(), any(),
-            any())(any(), any())
-          ).thenReturn {
+          when(mockOrchestrator.setupUserAnswersForCorrectReturn(any(), any(), any())(any(), any())).thenReturn {
             createFailureVariationResult(NoSdilReturnForPeriod)
           }
 
           val request =
-            FakeRequest(POST, selectRoute
-            )
+            FakeRequest(POST, selectRoute)
               .withFormUrlEncodedBody(("value", returnPeriodList.head.radioValue))
 
           val result = route(application, request).value

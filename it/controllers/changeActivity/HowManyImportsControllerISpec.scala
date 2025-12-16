@@ -3,7 +3,7 @@ package controllers.changeActivity
 import controllers.LitresISpecHelper
 import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced
-import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
+import models.{ CheckMode, LitresInBands, NormalMode, UserAnswers }
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers._
 import pages.changeActivity._
@@ -12,27 +12,34 @@ import play.api.i18n.Messages
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
 
-
 class HowManyImportsControllerISpec extends LitresISpecHelper {
 
   val normalRoutePath = "/how-many-imports-next-12-months"
   val checkRoutePath = "/change-how-many-imports-next-12-months"
 
-  val completedUserAnswers:UserAnswers = emptyUserAnswersForChangeActivity
-    .set(AmountProducedPage, AmountProduced.Large).success.value
-    .set(ThirdPartyPackagersPage, false).success.value
-    .set(OperatePackagingSiteOwnBrandsPage, false).success.value
-    .set(ContractPackingPage, false).success.value
-    .set(ImportsPage, true).success.value
+  val completedUserAnswers: UserAnswers = emptyUserAnswersForChangeActivity
+    .set(AmountProducedPage, AmountProduced.Large)
+    .success
+    .value
+    .set(ThirdPartyPackagersPage, false)
+    .success
+    .value
+    .set(OperatePackagingSiteOwnBrandsPage, false)
+    .success
+    .value
+    .set(ContractPackingPage, false)
+    .success
+    .value
+    .set(ImportsPage, true)
+    .success
+    .value
 
   List(normalRoutePath, checkRoutePath).foreach { path =>
-
     "GET " + path - {
       "when all previous required pages have been answered" - {
         "when the userAnswers contains no page data" - {
           "should return OK and render the litres page for Imports with no data populated" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setAnswers(completedUserAnswers)
 
@@ -51,8 +58,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
         s"when the userAnswers contains data for the page" - {
           s"should return OK and render the page with fields populated" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setAnswers(completedUserAnswers.set(HowManyImportsPage, litresInBands).success.value)
 
@@ -75,8 +81,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
       "when a page is missing from the userAnswers" - {
         s"should redirect to the $AmountProducedPage page" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setAnswers(completedUserAnswers.remove(AmountProducedPage).success.value)
 
@@ -91,11 +96,14 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
         }
 
         s"should redirect to the $ThirdPartyPackagersPage page" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
           val updatedAnswers = completedUserAnswers
-            .remove(ThirdPartyPackagersPage).success.value
-            .set(AmountProducedPage, AmountProduced.Small).success.value
+            .remove(ThirdPartyPackagersPage)
+            .success
+            .value
+            .set(AmountProducedPage, AmountProduced.Small)
+            .success
+            .value
           setAnswers(updatedAnswers)
 
           WsTestClient.withClient { client =>
@@ -103,14 +111,15 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
             whenReady(result1) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url)
+              res.header(HeaderNames.LOCATION) mustBe Some(
+                routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url
+              )
             }
           }
         }
 
         s"should redirect to the $OperatePackagingSiteOwnBrandsPage page" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setAnswers(completedUserAnswers.remove(OperatePackagingSiteOwnBrandsPage).success.value)
 
@@ -119,14 +128,15 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
             whenReady(result1) { res =>
               res.status mustBe 303
-              res.header(HeaderNames.LOCATION) mustBe Some(routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url)
+              res.header(HeaderNames.LOCATION) mustBe Some(
+                routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
+              )
             }
           }
         }
 
         s"should redirect to the $ContractPackingPage page" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setAnswers(completedUserAnswers.remove(ContractPackingPage).success.value)
 
@@ -141,8 +151,7 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
         }
 
         s"should redirect to the $ImportsPage page" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setAnswers(completedUserAnswers.remove(ImportsPage).success.value)
 
@@ -166,27 +175,41 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
           "when the user has no packaging sites" - {
             "and the user has answered previous required pages" - {
               "with large producer type, yes for own brands and no for copacker" in {
-                build
-                  .commonPrecondition
+                build.commonPrecondition
 
                 val userAnswers = emptyUserAnswersForChangeActivity
                   .copy(packagingSiteList = Map.empty)
-                  .set(AmountProducedPage, AmountProduced.Large).success.value
-                  .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-                  .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100)).success.value
-                  .set(ContractPackingPage, false).success.value
-                  .set(ImportsPage, true).success.value
+                  .set(AmountProducedPage, AmountProduced.Large)
+                  .success
+                  .value
+                  .set(OperatePackagingSiteOwnBrandsPage, true)
+                  .success
+                  .value
+                  .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100))
+                  .success
+                  .value
+                  .set(ContractPackingPage, false)
+                  .success
+                  .value
+                  .set(ImportsPage, true)
+                  .success
+                  .value
 
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
+                    client,
+                    changeActivityBaseUrl + normalRoutePath,
+                    Json.toJson(litresInBandsObj)
                   )
 
                   whenReady(result) { res =>
                     res.status mustBe 303
-                    res.header(HeaderNames.LOCATION) mustBe Some(routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url)
-                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                    res.header(HeaderNames.LOCATION) mustBe Some(
+                      routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url
+                    )
+                    val dataStoredForPage =
+                      getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                     dataStoredForPage.nonEmpty mustBe true
                     dataStoredForPage.get mustBe litresInBands
                   }
@@ -194,27 +217,41 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               }
 
               "with large producer type, no for own brands and yes for copacker" in {
-                build
-                  .commonPrecondition
+                build.commonPrecondition
 
                 val userAnswers = emptyUserAnswersForChangeActivity
                   .copy(packagingSiteList = Map.empty)
-                  .set(AmountProducedPage, AmountProduced.Large).success.value
-                  .set(OperatePackagingSiteOwnBrandsPage, false).success.value
-                  .set(ContractPackingPage, true).success.value
-                  .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
-                  .set(ImportsPage, true).success.value
+                  .set(AmountProducedPage, AmountProduced.Large)
+                  .success
+                  .value
+                  .set(OperatePackagingSiteOwnBrandsPage, false)
+                  .success
+                  .value
+                  .set(ContractPackingPage, true)
+                  .success
+                  .value
+                  .set(HowManyContractPackingPage, LitresInBands(100, 100))
+                  .success
+                  .value
+                  .set(ImportsPage, true)
+                  .success
+                  .value
 
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
+                    client,
+                    changeActivityBaseUrl + normalRoutePath,
+                    Json.toJson(litresInBandsObj)
                   )
 
                   whenReady(result) { res =>
                     res.status mustBe 303
-                    res.header(HeaderNames.LOCATION) mustBe Some(routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url)
-                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                    res.header(HeaderNames.LOCATION) mustBe Some(
+                      routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url
+                    )
+                    val dataStoredForPage =
+                      getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                     dataStoredForPage.nonEmpty mustBe true
                     dataStoredForPage.get mustBe litresInBands
                   }
@@ -222,28 +259,44 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               }
 
               "with large producer type, yes for own brands and yes for copacker" in {
-                build
-                  .commonPrecondition
+                build.commonPrecondition
 
                 val userAnswers = emptyUserAnswersForChangeActivity
                   .copy(packagingSiteList = Map.empty)
-                  .set(AmountProducedPage, AmountProduced.Large).success.value
-                  .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-                  .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100)).success.value
-                  .set(ContractPackingPage, true).success.value
-                  .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
-                  .set(ImportsPage, true).success.value
+                  .set(AmountProducedPage, AmountProduced.Large)
+                  .success
+                  .value
+                  .set(OperatePackagingSiteOwnBrandsPage, true)
+                  .success
+                  .value
+                  .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100))
+                  .success
+                  .value
+                  .set(ContractPackingPage, true)
+                  .success
+                  .value
+                  .set(HowManyContractPackingPage, LitresInBands(100, 100))
+                  .success
+                  .value
+                  .set(ImportsPage, true)
+                  .success
+                  .value
 
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
+                    client,
+                    changeActivityBaseUrl + normalRoutePath,
+                    Json.toJson(litresInBandsObj)
                   )
 
                   whenReady(result) { res =>
                     res.status mustBe 303
-                    res.header(HeaderNames.LOCATION) mustBe Some(routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url)
-                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                    res.header(HeaderNames.LOCATION) mustBe Some(
+                      routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url
+                    )
+                    val dataStoredForPage =
+                      getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                     dataStoredForPage.nonEmpty mustBe true
                     dataStoredForPage.get mustBe litresInBands
                   }
@@ -251,28 +304,44 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               }
 
               s"with small producer type and true $ContractPackingPage" in {
-                build
-                  .commonPrecondition
+                build.commonPrecondition
 
                 val userAnswers = emptyUserAnswersForChangeActivity
                   .copy(packagingSiteList = Map.empty)
-                  .set(AmountProducedPage, AmountProduced.Small).success.value
-                  .set(ThirdPartyPackagersPage, true).success.value
-                  .set(OperatePackagingSiteOwnBrandsPage, false).success.value
-                  .set(ContractPackingPage, true).success.value
-                  .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
-                  .set(ImportsPage, true).success.value
+                  .set(AmountProducedPage, AmountProduced.Small)
+                  .success
+                  .value
+                  .set(ThirdPartyPackagersPage, true)
+                  .success
+                  .value
+                  .set(OperatePackagingSiteOwnBrandsPage, false)
+                  .success
+                  .value
+                  .set(ContractPackingPage, true)
+                  .success
+                  .value
+                  .set(HowManyContractPackingPage, LitresInBands(100, 100))
+                  .success
+                  .value
+                  .set(ImportsPage, true)
+                  .success
+                  .value
 
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
+                    client,
+                    changeActivityBaseUrl + normalRoutePath,
+                    Json.toJson(litresInBandsObj)
                   )
 
                   whenReady(result) { res =>
                     res.status mustBe 303
-                    res.header(HeaderNames.LOCATION) mustBe Some(routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url)
-                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                    res.header(HeaderNames.LOCATION) mustBe Some(
+                      routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url
+                    )
+                    val dataStoredForPage =
+                      getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                     dataStoredForPage.nonEmpty mustBe true
                     dataStoredForPage.get mustBe litresInBands
                   }
@@ -280,26 +349,38 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               }
 
               "with None producer type and yes for copacker" in {
-                build
-                  .commonPrecondition
+                build.commonPrecondition
 
                 val userAnswers = emptyUserAnswersForChangeActivity
                   .copy(packagingSiteList = Map.empty)
-                  .set(AmountProducedPage, AmountProduced.None).success.value
-                  .set(ContractPackingPage, true).success.value
-                  .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
-                  .set(ImportsPage, true).success.value
+                  .set(AmountProducedPage, AmountProduced.None)
+                  .success
+                  .value
+                  .set(ContractPackingPage, true)
+                  .success
+                  .value
+                  .set(HowManyContractPackingPage, LitresInBands(100, 100))
+                  .success
+                  .value
+                  .set(ImportsPage, true)
+                  .success
+                  .value
 
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
+                    client,
+                    changeActivityBaseUrl + normalRoutePath,
+                    Json.toJson(litresInBandsObj)
                   )
 
                   whenReady(result) { res =>
                     res.status mustBe 303
-                    res.header(HeaderNames.LOCATION) mustBe Some(routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url)
-                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                    res.header(HeaderNames.LOCATION) mustBe Some(
+                      routes.PackAtBusinessAddressController.onPageLoad(NormalMode).url
+                    )
+                    val dataStoredForPage =
+                      getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                     dataStoredForPage.nonEmpty mustBe true
                     dataStoredForPage.get mustBe litresInBands
                   }
@@ -312,28 +393,43 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
         "and redirect to packaging sites page" - {
           "when the user already packaging sites" - {
             "and the user has answered previous required pages" - {
-              val userAnswersWithPackagingSite = emptyUserAnswersForChangeActivity.copy(packagingSiteList = packAtBusinessAddressSite)
+              val userAnswersWithPackagingSite =
+                emptyUserAnswersForChangeActivity.copy(packagingSiteList = packAtBusinessAddressSite)
               s"with large producer type, true $OperatePackagingSiteOwnBrandsPage and false $ContractPackingPage" in {
-                build
-                  .commonPrecondition
+                build.commonPrecondition
 
                 val userAnswers = userAnswersWithPackagingSite
-                  .set(AmountProducedPage, AmountProduced.Large).success.value
-                  .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-                  .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100)).success.value
-                  .set(ContractPackingPage, false).success.value
-                  .set(ImportsPage, true).success.value
+                  .set(AmountProducedPage, AmountProduced.Large)
+                  .success
+                  .value
+                  .set(OperatePackagingSiteOwnBrandsPage, true)
+                  .success
+                  .value
+                  .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100))
+                  .success
+                  .value
+                  .set(ContractPackingPage, false)
+                  .success
+                  .value
+                  .set(ImportsPage, true)
+                  .success
+                  .value
 
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
+                    client,
+                    changeActivityBaseUrl + normalRoutePath,
+                    Json.toJson(litresInBandsObj)
                   )
 
                   whenReady(result) { res =>
                     res.status mustBe 303
-                    res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
-                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                    res.header(HeaderNames.LOCATION) mustBe Some(
+                      routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
+                    )
+                    val dataStoredForPage =
+                      getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                     dataStoredForPage.nonEmpty mustBe true
                     dataStoredForPage.get mustBe litresInBands
                   }
@@ -341,26 +437,40 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               }
 
               s"with large producer type, false $OperatePackagingSiteOwnBrandsPage and true $ContractPackingPage" in {
-                build
-                  .commonPrecondition
+                build.commonPrecondition
 
                 val userAnswers = userAnswersWithPackagingSite
-                  .set(AmountProducedPage, AmountProduced.Large).success.value
-                  .set(OperatePackagingSiteOwnBrandsPage, false).success.value
-                  .set(ContractPackingPage, true).success.value
-                  .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
-                  .set(ImportsPage, true).success.value
+                  .set(AmountProducedPage, AmountProduced.Large)
+                  .success
+                  .value
+                  .set(OperatePackagingSiteOwnBrandsPage, false)
+                  .success
+                  .value
+                  .set(ContractPackingPage, true)
+                  .success
+                  .value
+                  .set(HowManyContractPackingPage, LitresInBands(100, 100))
+                  .success
+                  .value
+                  .set(ImportsPage, true)
+                  .success
+                  .value
 
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
+                    client,
+                    changeActivityBaseUrl + normalRoutePath,
+                    Json.toJson(litresInBandsObj)
                   )
 
                   whenReady(result) { res =>
                     res.status mustBe 303
-                    res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
-                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                    res.header(HeaderNames.LOCATION) mustBe Some(
+                      routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
+                    )
+                    val dataStoredForPage =
+                      getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                     dataStoredForPage.nonEmpty mustBe true
                     dataStoredForPage.get mustBe litresInBands
                   }
@@ -368,27 +478,43 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               }
 
               s"with large producer type, true $OperatePackagingSiteOwnBrandsPage, and true $ContractPackingPage" in {
-                build
-                  .commonPrecondition
+                build.commonPrecondition
 
                 val userAnswers = userAnswersWithPackagingSite
-                  .set(AmountProducedPage, AmountProduced.Large).success.value
-                  .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-                  .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100)).success.value
-                  .set(ContractPackingPage, true).success.value
-                  .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
-                  .set(ImportsPage, true).success.value
+                  .set(AmountProducedPage, AmountProduced.Large)
+                  .success
+                  .value
+                  .set(OperatePackagingSiteOwnBrandsPage, true)
+                  .success
+                  .value
+                  .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100))
+                  .success
+                  .value
+                  .set(ContractPackingPage, true)
+                  .success
+                  .value
+                  .set(HowManyContractPackingPage, LitresInBands(100, 100))
+                  .success
+                  .value
+                  .set(ImportsPage, true)
+                  .success
+                  .value
 
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
+                    client,
+                    changeActivityBaseUrl + normalRoutePath,
+                    Json.toJson(litresInBandsObj)
                   )
 
                   whenReady(result) { res =>
                     res.status mustBe 303
-                    res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
-                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                    res.header(HeaderNames.LOCATION) mustBe Some(
+                      routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
+                    )
+                    val dataStoredForPage =
+                      getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                     dataStoredForPage.nonEmpty mustBe true
                     dataStoredForPage.get mustBe litresInBands
                   }
@@ -396,27 +522,43 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               }
 
               s"with small producer type, false $OperatePackagingSiteOwnBrandsPage and true $ContractPackingPage " in {
-                build
-                  .commonPrecondition
+                build.commonPrecondition
 
                 val userAnswers = userAnswersWithPackagingSite
-                  .set(AmountProducedPage, AmountProduced.Small).success.value
-                  .set(ThirdPartyPackagersPage, true).success.value
-                  .set(OperatePackagingSiteOwnBrandsPage, false).success.value
-                  .set(ContractPackingPage, true).success.value
-                  .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
-                  .set(ImportsPage, true).success.value
+                  .set(AmountProducedPage, AmountProduced.Small)
+                  .success
+                  .value
+                  .set(ThirdPartyPackagersPage, true)
+                  .success
+                  .value
+                  .set(OperatePackagingSiteOwnBrandsPage, false)
+                  .success
+                  .value
+                  .set(ContractPackingPage, true)
+                  .success
+                  .value
+                  .set(HowManyContractPackingPage, LitresInBands(100, 100))
+                  .success
+                  .value
+                  .set(ImportsPage, true)
+                  .success
+                  .value
 
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
+                    client,
+                    changeActivityBaseUrl + normalRoutePath,
+                    Json.toJson(litresInBandsObj)
                   )
 
                   whenReady(result) { res =>
                     res.status mustBe 303
-                    res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
-                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                    res.header(HeaderNames.LOCATION) mustBe Some(
+                      routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
+                    )
+                    val dataStoredForPage =
+                      getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                     dataStoredForPage.nonEmpty mustBe true
                     dataStoredForPage.get mustBe litresInBands
                   }
@@ -424,28 +566,46 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               }
 
               s"with small producer type, true $ThirdPartyPackagersPage, true $OperatePackagingSiteOwnBrandsPage, and true $ContractPackingPage" in {
-                build
-                  .commonPrecondition
+                build.commonPrecondition
 
                 val userAnswers = userAnswersWithPackagingSite
-                  .set(AmountProducedPage, AmountProduced.Small).success.value
-                  .set(ThirdPartyPackagersPage, true).success.value
-                  .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-                  .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100)).success.value
-                  .set(ContractPackingPage, true).success.value
-                  .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
-                  .set(ImportsPage, true).success.value
+                  .set(AmountProducedPage, AmountProduced.Small)
+                  .success
+                  .value
+                  .set(ThirdPartyPackagersPage, true)
+                  .success
+                  .value
+                  .set(OperatePackagingSiteOwnBrandsPage, true)
+                  .success
+                  .value
+                  .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100))
+                  .success
+                  .value
+                  .set(ContractPackingPage, true)
+                  .success
+                  .value
+                  .set(HowManyContractPackingPage, LitresInBands(100, 100))
+                  .success
+                  .value
+                  .set(ImportsPage, true)
+                  .success
+                  .value
 
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
+                    client,
+                    changeActivityBaseUrl + normalRoutePath,
+                    Json.toJson(litresInBandsObj)
                   )
 
                   whenReady(result) { res =>
                     res.status mustBe 303
-                    res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
-                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                    res.header(HeaderNames.LOCATION) mustBe Some(
+                      routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
+                    )
+                    val dataStoredForPage =
+                      getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                     dataStoredForPage.nonEmpty mustBe true
                     dataStoredForPage.get mustBe litresInBands
                   }
@@ -453,25 +613,37 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
               }
 
               s"with None producer type and true $ContractPackingPage" in {
-                build
-                  .commonPrecondition
+                build.commonPrecondition
 
                 val userAnswers = userAnswersWithPackagingSite
-                  .set(AmountProducedPage, AmountProduced.None).success.value
-                  .set(ContractPackingPage, true).success.value
-                  .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
-                  .set(ImportsPage, true).success.value
+                  .set(AmountProducedPage, AmountProduced.None)
+                  .success
+                  .value
+                  .set(ContractPackingPage, true)
+                  .success
+                  .value
+                  .set(HowManyContractPackingPage, LitresInBands(100, 100))
+                  .success
+                  .value
+                  .set(ImportsPage, true)
+                  .success
+                  .value
 
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
+                    client,
+                    changeActivityBaseUrl + normalRoutePath,
+                    Json.toJson(litresInBandsObj)
                   )
 
                   whenReady(result) { res =>
                     res.status mustBe 303
-                    res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url)
-                    val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                    res.header(HeaderNames.LOCATION) mustBe Some(
+                      routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
+                    )
+                    val dataStoredForPage =
+                      getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                     dataStoredForPage.nonEmpty mustBe true
                     dataStoredForPage.get mustBe litresInBands
                   }
@@ -484,25 +656,37 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
         "and redirect to add secondary warehouse" - {
           "the user has answered previous required pages" - {
             s"with large producer type, false $OperatePackagingSiteOwnBrandsPage and false $ContractPackingPage" in {
-              build
-                .commonPrecondition
+              build.commonPrecondition
 
               val userAnswers = emptyUserAnswersForChangeActivity
-                .set(AmountProducedPage, AmountProduced.Large).success.value
-                .set(OperatePackagingSiteOwnBrandsPage, false).success.value
-                .set(ContractPackingPage, false).success.value
-                .set(ImportsPage, true).success.value
+                .set(AmountProducedPage, AmountProduced.Large)
+                .success
+                .value
+                .set(OperatePackagingSiteOwnBrandsPage, false)
+                .success
+                .value
+                .set(ContractPackingPage, false)
+                .success
+                .value
+                .set(ImportsPage, true)
+                .success
+                .value
 
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
+                  client,
+                  changeActivityBaseUrl + normalRoutePath,
+                  Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                  res.header(HeaderNames.LOCATION) mustBe Some(
+                    routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url
+                  )
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
                 }
@@ -510,28 +694,44 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
 
             s"with small producer type, true $OperatePackagingSiteOwnBrandsPage and false $ContractPackingPage" in {
-              build
-                .commonPrecondition
+              build.commonPrecondition
 
               val userAnswers = emptyUserAnswersForChangeActivity
                 .copy(packagingSiteList = Map.empty)
-                .set(AmountProducedPage, AmountProduced.Small).success.value
-                .set(ThirdPartyPackagersPage, true).success.value
-                .set(OperatePackagingSiteOwnBrandsPage, false).success.value
-                .set(ContractPackingPage, false).success.value
-                .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
-                .set(ImportsPage, true).success.value
+                .set(AmountProducedPage, AmountProduced.Small)
+                .success
+                .value
+                .set(ThirdPartyPackagersPage, true)
+                .success
+                .value
+                .set(OperatePackagingSiteOwnBrandsPage, false)
+                .success
+                .value
+                .set(ContractPackingPage, false)
+                .success
+                .value
+                .set(HowManyContractPackingPage, LitresInBands(100, 100))
+                .success
+                .value
+                .set(ImportsPage, true)
+                .success
+                .value
 
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
+                  client,
+                  changeActivityBaseUrl + normalRoutePath,
+                  Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                  res.header(HeaderNames.LOCATION) mustBe Some(
+                    routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url
+                  )
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
                 }
@@ -539,27 +739,41 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
 
             s"with small producer type, true $ThirdPartyPackagersPage, false $OperatePackagingSiteOwnBrandsPage, false $ContractPackingPage" in {
-              build
-                .commonPrecondition
+              build.commonPrecondition
 
               val userAnswers = emptyUserAnswersForChangeActivity
                 .copy(packagingSiteList = Map.empty)
-                .set(AmountProducedPage, AmountProduced.Small).success.value
-                .set(ThirdPartyPackagersPage, true).success.value
-                .set(OperatePackagingSiteOwnBrandsPage, false).success.value
-                .set(ContractPackingPage, false).success.value
-                .set(ImportsPage, true).success.value
+                .set(AmountProducedPage, AmountProduced.Small)
+                .success
+                .value
+                .set(ThirdPartyPackagersPage, true)
+                .success
+                .value
+                .set(OperatePackagingSiteOwnBrandsPage, false)
+                .success
+                .value
+                .set(ContractPackingPage, false)
+                .success
+                .value
+                .set(ImportsPage, true)
+                .success
+                .value
 
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
+                  client,
+                  changeActivityBaseUrl + normalRoutePath,
+                  Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                  res.header(HeaderNames.LOCATION) mustBe Some(
+                    routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url
+                  )
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
                 }
@@ -567,24 +781,34 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
 
             s"with None producer type and false $ContractPackingPage" in {
-              build
-                .commonPrecondition
+              build.commonPrecondition
 
               val userAnswers = emptyUserAnswersForChangeActivity
-                .set(AmountProducedPage, AmountProduced.None).success.value
-                .set(ContractPackingPage, false).success.value
-                .set(ImportsPage, true).success.value
+                .set(AmountProducedPage, AmountProduced.None)
+                .success
+                .value
+                .set(ContractPackingPage, false)
+                .success
+                .value
+                .set(ImportsPage, true)
+                .success
+                .value
 
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
+                  client,
+                  changeActivityBaseUrl + normalRoutePath,
+                  Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                  res.header(HeaderNames.LOCATION) mustBe Some(
+                    routes.SecondaryWarehouseDetailsController.onPageLoad(NormalMode).url
+                  )
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
                 }
@@ -595,19 +819,21 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
         "and redirect to the Amount produced controller" - {
           "when the session contains no data for any pages" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setAnswers(emptyUserAnswersForChangeActivity)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
+                client,
+                changeActivityBaseUrl + normalRoutePath,
+                Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(routes.AmountProducedController.onPageLoad(NormalMode).url)
-                val dataStoredForPage = getAnswers(emptyUserAnswersForChangeActivity.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                val dataStoredForPage = getAnswers(emptyUserAnswersForChangeActivity.id)
+                  .fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBands
               }
@@ -621,13 +847,14 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       val errorTitle = "Error: " + Messages("howManyImports.title")
 
       "when no questions are answered" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, changeActivityBaseUrl + normalRoutePath, emptyJson
+            client,
+            changeActivityBaseUrl + normalRoutePath,
+            emptyJson
           )
 
           whenReady(result) { res =>
@@ -639,13 +866,14 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       }
 
       "when the user answers with no numeric answers" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, changeActivityBaseUrl + normalRoutePath, jsonWithNoNumeric
+            client,
+            changeActivityBaseUrl + normalRoutePath,
+            jsonWithNoNumeric
           )
 
           whenReady(result) { res =>
@@ -657,13 +885,14 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       }
 
       "when the user answers with negative numbers" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, changeActivityBaseUrl + normalRoutePath, jsonWithNegativeNumber
+            client,
+            changeActivityBaseUrl + normalRoutePath,
+            jsonWithNegativeNumber
           )
 
           whenReady(result) { res =>
@@ -675,13 +904,14 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       }
 
       "when the user answers with decimal numbers" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, changeActivityBaseUrl + normalRoutePath, jsonWithDecimalNumber
+            client,
+            changeActivityBaseUrl + normalRoutePath,
+            jsonWithDecimalNumber
           )
 
           whenReady(result) { res =>
@@ -693,13 +923,14 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       }
 
       "when the user answers with out of max range numbers" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, changeActivityBaseUrl + normalRoutePath, jsonWithOutOfRangeNumber
+            client,
+            changeActivityBaseUrl + normalRoutePath,
+            jsonWithOutOfRangeNumber
           )
 
           whenReady(result) { res =>
@@ -711,13 +942,14 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       }
 
       "when the user answers with 0" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, changeActivityBaseUrl + normalRoutePath, jsonWith0
+            client,
+            changeActivityBaseUrl + normalRoutePath,
+            jsonWith0
           )
 
           whenReady(result) { res =>
@@ -730,8 +962,15 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
     }
 
     testUnauthorisedUser(changeActivityBaseUrl + normalRoutePath, Some(Json.toJson(litresInBandsDiffObj)))
-    testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + normalRoutePath, Some(Json.toJson(litresInBandsDiffObj)))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + normalRoutePath, Some(Json.toJson(litresInBandsDiffObj)))
+    testAuthenticatedUserButNoUserAnswers(
+      changeActivityBaseUrl + normalRoutePath,
+      Some(Json.toJson(litresInBandsDiffObj))
+    )
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+      ChangeActivity,
+      changeActivityBaseUrl + normalRoutePath,
+      Some(Json.toJson(litresInBandsDiffObj))
+    )
   }
 
   s"POST " + checkRoutePath - {
@@ -740,27 +979,41 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
         "when the user has no packaging sites" - {
           "and the user has answered previous required pages" - {
             "with large producer type, yes for own brands and no for copacker" in {
-              build
-                .commonPrecondition
+              build.commonPrecondition
 
               val userAnswers = emptyUserAnswersForChangeActivity
-                .set(AmountProducedPage, AmountProduced.Large).success.value
-                .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-                .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100)).success.value
-                .set(ContractPackingPage, false).success.value
-                .set(ThirdPartyPackagersPage, false).success.value
-                .set(ImportsPage, true).success.value
+                .set(AmountProducedPage, AmountProduced.Large)
+                .success
+                .value
+                .set(OperatePackagingSiteOwnBrandsPage, true)
+                .success
+                .value
+                .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100))
+                .success
+                .value
+                .set(ContractPackingPage, false)
+                .success
+                .value
+                .set(ThirdPartyPackagersPage, false)
+                .success
+                .value
+                .set(ImportsPage, true)
+                .success
+                .value
 
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
+                  client,
+                  changeActivityBaseUrl + checkRoutePath,
+                  Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
                   res.status mustBe 303
                   res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
                 }
@@ -768,27 +1021,41 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
 
             "with large producer type, no for own brands and yes for copacker" in {
-              build
-                .commonPrecondition
+              build.commonPrecondition
 
               val userAnswers = emptyUserAnswersForChangeActivity
-                .set(AmountProducedPage, AmountProduced.Large).success.value
-                .set(OperatePackagingSiteOwnBrandsPage, false).success.value
-                .set(ContractPackingPage, true).success.value
-                .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
-                .set(ThirdPartyPackagersPage, false).success.value
-                .set(ImportsPage, true).success.value
+                .set(AmountProducedPage, AmountProduced.Large)
+                .success
+                .value
+                .set(OperatePackagingSiteOwnBrandsPage, false)
+                .success
+                .value
+                .set(ContractPackingPage, true)
+                .success
+                .value
+                .set(HowManyContractPackingPage, LitresInBands(100, 100))
+                .success
+                .value
+                .set(ThirdPartyPackagersPage, false)
+                .success
+                .value
+                .set(ImportsPage, true)
+                .success
+                .value
 
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
+                  client,
+                  changeActivityBaseUrl + checkRoutePath,
+                  Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
                   res.status mustBe 303
                   res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
                 }
@@ -796,53 +1063,81 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
 
             "with large producer type, yes for own brands and yes for copacker" in {
-              build
-                .commonPrecondition
+              build.commonPrecondition
 
               val userAnswers = emptyUserAnswersForChangeActivity
-                .set(AmountProducedPage, AmountProduced.Large).success.value
-                .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-                .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100)).success.value
-                .set(ContractPackingPage, true).success.value
-                .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
-                .set(ThirdPartyPackagersPage, false).success.value
-                .set(ImportsPage, true).success.value
+                .set(AmountProducedPage, AmountProduced.Large)
+                .success
+                .value
+                .set(OperatePackagingSiteOwnBrandsPage, true)
+                .success
+                .value
+                .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100))
+                .success
+                .value
+                .set(ContractPackingPage, true)
+                .success
+                .value
+                .set(HowManyContractPackingPage, LitresInBands(100, 100))
+                .success
+                .value
+                .set(ThirdPartyPackagersPage, false)
+                .success
+                .value
+                .set(ImportsPage, true)
+                .success
+                .value
 
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
+                  client,
+                  changeActivityBaseUrl + checkRoutePath,
+                  Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
                   res.status mustBe 303
                   res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
                 }
               }
             }
             "with None producer type and yes for co-packer" in {
-              build
-                .commonPrecondition
+              build.commonPrecondition
 
               val userAnswers = emptyUserAnswersForChangeActivity
-                .set(AmountProducedPage, AmountProduced.None).success.value
-                .set(ContractPackingPage, true).success.value
-                .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
-                .set(ImportsPage, true).success.value
+                .set(AmountProducedPage, AmountProduced.None)
+                .success
+                .value
+                .set(ContractPackingPage, true)
+                .success
+                .value
+                .set(HowManyContractPackingPage, LitresInBands(100, 100))
+                .success
+                .value
+                .set(ImportsPage, true)
+                .success
+                .value
 
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
+                  client,
+                  changeActivityBaseUrl + checkRoutePath,
+                  Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                  res.header(HeaderNames.LOCATION) mustBe Some(
+                    routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url
+                  )
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
                 }
@@ -850,25 +1145,35 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
 
             "with None producer type, yes for co-packer and has answered warehouse details" in {
-              build
-                .commonPrecondition
+              build.commonPrecondition
 
               val userAnswers = emptyUserAnswersForChangeActivity
-                .set(SecondaryWarehouseDetailsPage, true).success.value
-                .set(AmountProducedPage, AmountProduced.None).success.value
-                .set(ContractPackingPage, true).success.value
-                .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
+                .set(SecondaryWarehouseDetailsPage, true)
+                .success
+                .value
+                .set(AmountProducedPage, AmountProduced.None)
+                .success
+                .value
+                .set(ContractPackingPage, true)
+                .success
+                .value
+                .set(HowManyContractPackingPage, LitresInBands(100, 100))
+                .success
+                .value
 
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
+                  client,
+                  changeActivityBaseUrl + checkRoutePath,
+                  Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
                   res.status mustBe 303
                   res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
                 }
@@ -879,29 +1184,44 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
         "when the user already packaging sites" - {
           "and the user has answered previous required pages" - {
-            val userAnswersWithPackagingSite = emptyUserAnswersForChangeActivity.copy(packagingSiteList = packAtBusinessAddressSite)
+            val userAnswersWithPackagingSite =
+              emptyUserAnswersForChangeActivity.copy(packagingSiteList = packAtBusinessAddressSite)
             "with large producer type, yes for own brands and no for copacker" in {
-              build
-                .commonPrecondition
+              build.commonPrecondition
 
               val userAnswers = userAnswersWithPackagingSite
-                .set(AmountProducedPage, AmountProduced.Large).success.value
-                .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-                .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100)).success.value
-                .set(ContractPackingPage, false).success.value
-                .set(ThirdPartyPackagersPage, false).success.value
-                .set(ImportsPage, true).success.value
+                .set(AmountProducedPage, AmountProduced.Large)
+                .success
+                .value
+                .set(OperatePackagingSiteOwnBrandsPage, true)
+                .success
+                .value
+                .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100))
+                .success
+                .value
+                .set(ContractPackingPage, false)
+                .success
+                .value
+                .set(ThirdPartyPackagersPage, false)
+                .success
+                .value
+                .set(ImportsPage, true)
+                .success
+                .value
 
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
+                  client,
+                  changeActivityBaseUrl + checkRoutePath,
+                  Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
                   res.status mustBe 303
                   res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
                 }
@@ -909,27 +1229,41 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
 
             "with large producer type, no for own brands and yes for copacker" in {
-              build
-                .commonPrecondition
+              build.commonPrecondition
 
               val userAnswers = userAnswersWithPackagingSite
-                .set(AmountProducedPage, AmountProduced.Large).success.value
-                .set(OperatePackagingSiteOwnBrandsPage, false).success.value
-                .set(ContractPackingPage, true).success.value
-                .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
-                .set(ThirdPartyPackagersPage, false).success.value
-                .set(ImportsPage, true).success.value
+                .set(AmountProducedPage, AmountProduced.Large)
+                .success
+                .value
+                .set(OperatePackagingSiteOwnBrandsPage, false)
+                .success
+                .value
+                .set(ContractPackingPage, true)
+                .success
+                .value
+                .set(HowManyContractPackingPage, LitresInBands(100, 100))
+                .success
+                .value
+                .set(ThirdPartyPackagersPage, false)
+                .success
+                .value
+                .set(ImportsPage, true)
+                .success
+                .value
 
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
+                  client,
+                  changeActivityBaseUrl + checkRoutePath,
+                  Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
                   res.status mustBe 303
                   res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
                 }
@@ -937,28 +1271,44 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
 
             "with large producer type, yes for own brands and yes for copacker" in {
-              build
-                .commonPrecondition
+              build.commonPrecondition
 
               val userAnswers = userAnswersWithPackagingSite
-                .set(AmountProducedPage, AmountProduced.Large).success.value
-                .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-                .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100)).success.value
-                .set(ContractPackingPage, true).success.value
-                .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
-                .set(ThirdPartyPackagersPage, false).success.value
-                .set(ImportsPage, true).success.value
+                .set(AmountProducedPage, AmountProduced.Large)
+                .success
+                .value
+                .set(OperatePackagingSiteOwnBrandsPage, true)
+                .success
+                .value
+                .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 100))
+                .success
+                .value
+                .set(ContractPackingPage, true)
+                .success
+                .value
+                .set(HowManyContractPackingPage, LitresInBands(100, 100))
+                .success
+                .value
+                .set(ThirdPartyPackagersPage, false)
+                .success
+                .value
+                .set(ImportsPage, true)
+                .success
+                .value
 
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
+                  client,
+                  changeActivityBaseUrl + checkRoutePath,
+                  Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
                   res.status mustBe 303
                   res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
                 }
@@ -966,25 +1316,37 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
 
             "with None producer type and yes for co-packer and no warehouse details answered" in {
-              build
-                .commonPrecondition
+              build.commonPrecondition
 
               val userAnswers = userAnswersWithPackagingSite
-                .set(AmountProducedPage, AmountProduced.None).success.value
-                .set(ContractPackingPage, true).success.value
-                .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
-                .set(ImportsPage, true).success.value
+                .set(AmountProducedPage, AmountProduced.None)
+                .success
+                .value
+                .set(ContractPackingPage, true)
+                .success
+                .value
+                .set(HowManyContractPackingPage, LitresInBands(100, 100))
+                .success
+                .value
+                .set(ImportsPage, true)
+                .success
+                .value
 
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
+                  client,
+                  changeActivityBaseUrl + checkRoutePath,
+                  Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
                   res.status mustBe 303
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                  res.header(HeaderNames.LOCATION) mustBe Some(
+                    routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url
+                  )
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
                 }
@@ -992,26 +1354,38 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
 
             "with None producer type and yes for co-packer and warehouse details answered" in {
-              build
-                .commonPrecondition
+              build.commonPrecondition
 
               val userAnswers = userAnswersWithPackagingSite
-                .set(AmountProducedPage, AmountProduced.None).success.value
-                .set(ContractPackingPage, true).success.value
-                .set(HowManyContractPackingPage, LitresInBands(100, 100)).success.value
-                .set(ImportsPage, true).success.value
-                .set(SecondaryWarehouseDetailsPage, false).success.value
+                .set(AmountProducedPage, AmountProduced.None)
+                .success
+                .value
+                .set(ContractPackingPage, true)
+                .success
+                .value
+                .set(HowManyContractPackingPage, LitresInBands(100, 100))
+                .success
+                .value
+                .set(ImportsPage, true)
+                .success
+                .value
+                .set(SecondaryWarehouseDetailsPage, false)
+                .success
+                .value
 
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
+                  client,
+                  changeActivityBaseUrl + checkRoutePath,
+                  Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
                   res.status mustBe 303
                   res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
                 }
@@ -1019,25 +1393,35 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
             }
 
             "with None producer type, no for Co-packer and Warehouse details answered" in {
-              build
-                .commonPrecondition
+              build.commonPrecondition
 
               val userAnswers = userAnswersWithPackagingSite
-                .set(AmountProducedPage, AmountProduced.None).success.value
-                .set(ContractPackingPage, false).success.value
-                .set(SecondaryWarehouseDetailsPage, false).success.value
-                .set(ImportsPage, true).success.value
+                .set(AmountProducedPage, AmountProduced.None)
+                .success
+                .value
+                .set(ContractPackingPage, false)
+                .success
+                .value
+                .set(SecondaryWarehouseDetailsPage, false)
+                .success
+                .value
+                .set(ImportsPage, true)
+                .success
+                .value
 
               setAnswers(userAnswers)
               WsTestClient.withClient { client =>
                 val result = createClientRequestPOST(
-                  client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
+                  client,
+                  changeActivityBaseUrl + checkRoutePath,
+                  Json.toJson(litresInBandsObj)
                 )
 
                 whenReady(result) { res =>
                   res.status mustBe 303
                   res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
-                  val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                  val dataStoredForPage =
+                    getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                   dataStoredForPage.nonEmpty mustBe true
                   dataStoredForPage.get mustBe litresInBands
                 }
@@ -1048,26 +1432,38 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
 
         "the user has answered previous required pages" - {
           "with large producer type, no for own brands, no for copacker and no warehouse details answers" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             val userAnswers = emptyUserAnswersForChangeActivity
-              .set(AmountProducedPage, AmountProduced.Large).success.value
-              .set(OperatePackagingSiteOwnBrandsPage, false).success.value
-              .set(ContractPackingPage, false).success.value
-              .set(ThirdPartyPackagersPage, false).success.value
-              .set(ImportsPage, true).success.value
+              .set(AmountProducedPage, AmountProduced.Large)
+              .success
+              .value
+              .set(OperatePackagingSiteOwnBrandsPage, false)
+              .success
+              .value
+              .set(ContractPackingPage, false)
+              .success
+              .value
+              .set(ThirdPartyPackagersPage, false)
+              .success
+              .value
+              .set(ImportsPage, true)
+              .success
+              .value
 
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
+                client,
+                changeActivityBaseUrl + checkRoutePath,
+                Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                val dataStoredForPage =
+                  getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBands
               }
@@ -1075,26 +1471,38 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
           }
 
           "with large producer type, no for own brands , no for copacker and warehouse answers" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             val userAnswers = emptyUserAnswersForChangeActivity
-              .set(AmountProducedPage, AmountProduced.Large).success.value
-              .set(OperatePackagingSiteOwnBrandsPage, false).success.value
-              .set(ContractPackingPage, false).success.value
-              .set(ThirdPartyPackagersPage, false).success.value
-              .set(ImportsPage, true).success.value
+              .set(AmountProducedPage, AmountProduced.Large)
+              .success
+              .value
+              .set(OperatePackagingSiteOwnBrandsPage, false)
+              .success
+              .value
+              .set(ContractPackingPage, false)
+              .success
+              .value
+              .set(ThirdPartyPackagersPage, false)
+              .success
+              .value
+              .set(ImportsPage, true)
+              .success
+              .value
 
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
+                client,
+                changeActivityBaseUrl + checkRoutePath,
+                Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                val dataStoredForPage =
+                  getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBands
               }
@@ -1102,19 +1510,21 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
           }
 
           "when the session contains no data for any pages" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setAnswers(emptyUserAnswersForChangeActivity)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
+                client,
+                changeActivityBaseUrl + checkRoutePath,
+                Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(routes.AmountProducedController.onPageLoad(NormalMode).url)
-                val dataStoredForPage = getAnswers(emptyUserAnswersForChangeActivity.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                val dataStoredForPage = getAnswers(emptyUserAnswersForChangeActivity.id)
+                  .fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBands
               }
@@ -1122,22 +1532,26 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
           }
 
           "when the session contains data stating activity type Large, but no other pages" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             val userAnswers = emptyUserAnswersForChangeActivity
-              .set(AmountProducedPage, AmountProduced.Large).success.value
+              .set(AmountProducedPage, AmountProduced.Large)
+              .success
+              .value
 
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
+                client,
+                changeActivityBaseUrl + checkRoutePath,
+                Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                val dataStoredForPage =
+                  getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBands
               }
@@ -1145,23 +1559,29 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
           }
 
           "when the session contains data stating activity type is Large and copacker" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             val userAnswers = emptyUserAnswersForChangeActivity
-              .set(AmountProducedPage, AmountProduced.Large).success.value
-              .set(ContractPackingPage, false).success.value
+              .set(AmountProducedPage, AmountProduced.Large)
+              .success
+              .value
+              .set(ContractPackingPage, false)
+              .success
+              .value
 
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
+                client,
+                changeActivityBaseUrl + checkRoutePath,
+                Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                val dataStoredForPage =
+                  getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBands
               }
@@ -1169,23 +1589,29 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
           }
 
           "when the session contains data stating activity type is Large and own brands" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             val userAnswers = emptyUserAnswersForChangeActivity
-              .set(AmountProducedPage, AmountProduced.Large).success.value
-              .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+              .set(AmountProducedPage, AmountProduced.Large)
+              .success
+              .value
+              .set(OperatePackagingSiteOwnBrandsPage, false)
+              .success
+              .value
 
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
+                client,
+                changeActivityBaseUrl + checkRoutePath,
+                Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                val dataStoredForPage =
+                  getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBands
               }
@@ -1193,26 +1619,40 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
           }
 
           "when the session contains data stating activity type is Small" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             val userAnswers = emptyUserAnswersForChangeActivity
-              .set(AmountProducedPage, AmountProduced.Small).success.value
-              .set(ContractPackingPage, false).success.value
-              .set(ThirdPartyPackagersPage, true).success.value
-              .set(OperatePackagingSiteOwnBrandsPage, false).success.value
-              .set(ImportsPage, true).success.value
+              .set(AmountProducedPage, AmountProduced.Small)
+              .success
+              .value
+              .set(ContractPackingPage, false)
+              .success
+              .value
+              .set(ThirdPartyPackagersPage, true)
+              .success
+              .value
+              .set(OperatePackagingSiteOwnBrandsPage, false)
+              .success
+              .value
+              .set(ImportsPage, true)
+              .success
+              .value
 
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + checkRoutePath, Json.toJson(litresInBandsObj)
+                client,
+                changeActivityBaseUrl + checkRoutePath,
+                Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
-                res.header(HeaderNames.LOCATION) mustBe Some(routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
+                res.header(HeaderNames.LOCATION) mustBe Some(
+                  routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url
+                )
+                val dataStoredForPage =
+                  getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyImportsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBands
               }
@@ -1226,13 +1666,14 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       val errorTitle = "Error: " + Messages("howManyImports.title")
 
       "when no questions are answered" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, changeActivityBaseUrl + checkRoutePath, emptyJson
+            client,
+            changeActivityBaseUrl + checkRoutePath,
+            emptyJson
           )
 
           whenReady(result) { res =>
@@ -1244,13 +1685,14 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       }
 
       "when the user answers with no numeric answers" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, changeActivityBaseUrl + checkRoutePath, jsonWithNoNumeric
+            client,
+            changeActivityBaseUrl + checkRoutePath,
+            jsonWithNoNumeric
           )
 
           whenReady(result) { res =>
@@ -1262,13 +1704,14 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       }
 
       "when the user answers with negative numbers" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, changeActivityBaseUrl + checkRoutePath, jsonWithNegativeNumber
+            client,
+            changeActivityBaseUrl + checkRoutePath,
+            jsonWithNegativeNumber
           )
 
           whenReady(result) { res =>
@@ -1280,13 +1723,14 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       }
 
       "when the user answers with decimal numbers" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, changeActivityBaseUrl + checkRoutePath, jsonWithDecimalNumber
+            client,
+            changeActivityBaseUrl + checkRoutePath,
+            jsonWithDecimalNumber
           )
 
           whenReady(result) { res =>
@@ -1298,13 +1742,14 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       }
 
       "when the user answers with out of max range numbers" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, changeActivityBaseUrl + checkRoutePath, jsonWithOutOfRangeNumber
+            client,
+            changeActivityBaseUrl + checkRoutePath,
+            jsonWithOutOfRangeNumber
           )
 
           whenReady(result) { res =>
@@ -1316,13 +1761,14 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
       }
 
       "when the user answers with 0" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, changeActivityBaseUrl + checkRoutePath, jsonWith0
+            client,
+            changeActivityBaseUrl + checkRoutePath,
+            jsonWith0
           )
 
           whenReady(result) { res =>
@@ -1335,7 +1781,14 @@ class HowManyImportsControllerISpec extends LitresISpecHelper {
     }
 
     testUnauthorisedUser(changeActivityBaseUrl + checkRoutePath, Some(Json.toJson(litresInBandsDiffObj)))
-    testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + checkRoutePath, Some(Json.toJson(litresInBandsDiffObj)))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + checkRoutePath, Some(Json.toJson(litresInBandsDiffObj)))
+    testAuthenticatedUserButNoUserAnswers(
+      changeActivityBaseUrl + checkRoutePath,
+      Some(Json.toJson(litresInBandsDiffObj))
+    )
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+      ChangeActivity,
+      changeActivityBaseUrl + checkRoutePath,
+      Some(Json.toJson(litresInBandsDiffObj))
+    )
   }
 }

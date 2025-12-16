@@ -30,17 +30,19 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-trait IdentifierAction extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
+trait IdentifierAction
+    extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
 
-class AuthenticatedIdentifierAction @Inject()(
-                                               override val authConnector: AuthConnector,
-                                               config: FrontendAppConfig,
-                                               val parser: BodyParsers.Default,
-                                               sdilConnector: SoftDrinksIndustryLevyConnector,
-                                               errorHandler: ErrorHandler)
-                                             (implicit val executionContext: ExecutionContext) extends IdentifierAction with AuthorisedFunctions with ActionHelpers {
+class AuthenticatedIdentifierAction @Inject() (
+  override val authConnector: AuthConnector,
+  config: FrontendAppConfig,
+  val parser: BodyParsers.Default,
+  sdilConnector: SoftDrinksIndustryLevyConnector,
+  errorHandler: ErrorHandler
+)(implicit val executionContext: ExecutionContext)
+    extends IdentifierAction with AuthorisedFunctions with ActionHelpers {
 
   override def invokeBlock[A](request: Request[A], block: IdentifierRequest[A] => Future[Result]): Future[Result] = {
 
@@ -64,17 +66,17 @@ class AuthenticatedIdentifierAction @Inject()(
     }
   }
 
-  private def getSubscriptionAndGenerateIdentifierRequest[A](identifierValue: String,
-                                                             identifierType: String,
-                                                             request: Request[A],
-                                                             block: IdentifierRequest[A] => Future[Result])
-                                                            (implicit hc: HeaderCarrier): Future[Result] = {
+  private def getSubscriptionAndGenerateIdentifierRequest[A](
+    identifierValue: String,
+    identifierType: String,
+    request: Request[A],
+    block: IdentifierRequest[A] => Future[Result]
+  )(implicit hc: HeaderCarrier): Future[Result] =
     sdilConnector.retrieveSubscription(identifierValue, identifierType).value.flatMap {
       case Right(Some(sub)) => block(IdentifierRequest(request, EnrolmentIdentifier("sdil", sub.sdilRef).value, sub))
       case Right(None) =>
         Future.successful(Redirect(config.sdilHomeUrl))
       case Left(_) =>
-        errorHandler.internalServerErrorTemplate(request).map(errorView => InternalServerError(errorView))
+        errorHandler.internalServerErrorTemplate(using request).map(errorView => InternalServerError(errorView))
     }
-  }
 }

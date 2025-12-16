@@ -2,30 +2,28 @@ package repositories
 
 import org.mongodb.scala.bson.BsonDocument
 import org.mongodb.scala.model.Indexes.ascending
-import org.mongodb.scala.model.{IndexModel, IndexOptions, Indexes}
-import org.scalatest.concurrent.{IntegrationPatience, ScalaFutures}
+import org.mongodb.scala.model.{ IndexModel, IndexOptions, Indexes }
+import org.scalatest.concurrent.{ IntegrationPatience, ScalaFutures }
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.{BeforeAndAfterEach, OptionValues}
+import org.scalatest.{ BeforeAndAfterEach, OptionValues }
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.libs.json.{Format, JsObject, Json}
-import play.api.test.{DefaultAwaitTimeout, FutureAwaits}
+import play.api.libs.json.{ Format, JsObject, Json }
+import play.api.test.{ DefaultAwaitTimeout, FutureAwaits }
 import services.Encryption
 import uk.gov.hmrc.crypto.EncryptedValue
 import uk.gov.hmrc.crypto.json.CryptoFormats
 
-import java.time.{LocalDateTime, ZoneOffset}
+import java.time.{ LocalDateTime, ZoneOffset }
 import java.util.concurrent.TimeUnit
-import org.mongodb.scala.{SingleObservableFuture, ObservableFuture}
+import org.mongodb.scala.{ ObservableFuture, SingleObservableFuture }
 
-class SDILSessionCacheRepositoryISpec extends AnyFreeSpec
-  with Matchers
-  with ScalaFutures
-  with IntegrationPatience
-  with OptionValues with GuiceOneAppPerSuite with FutureAwaits with DefaultAwaitTimeout with BeforeAndAfterEach {
+class SDILSessionCacheRepositoryISpec
+    extends AnyFreeSpec with Matchers with ScalaFutures with IntegrationPatience with OptionValues
+    with GuiceOneAppPerSuite with FutureAwaits with DefaultAwaitTimeout with BeforeAndAfterEach {
 
   val encryption: Encryption = app.injector.instanceOf[Encryption]
-  implicit val cryptEncryptedValueFormats: Format[EncryptedValue]  = CryptoFormats.encryptedValueFormat
+  implicit val cryptEncryptedValueFormats: Format[EncryptedValue] = CryptoFormats.encryptedValueFormat
 
   val repository: SDILSessionCacheRepository = app.injector.instanceOf[SDILSessionCacheRepository]
 

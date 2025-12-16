@@ -19,26 +19,28 @@ package forms.updateRegisteredDetails
 import forms.mappings.Mappings
 import models.Enumerable
 import models.updateRegisteredDetails.ChangeRegisteredDetails
-import models.updateRegisteredDetails.ChangeRegisteredDetails.{enumerableNonVoluntary, enumerableVoluntary}
+import models.updateRegisteredDetails.ChangeRegisteredDetails.{ enumerableNonVoluntary, enumerableVoluntary }
 import play.api.data.Form
 import play.api.data.Forms.seq
 
 import javax.inject.Inject
 
-
 class ChangeRegisteredDetailsFormProvider @Inject() extends Mappings {
 
   def apply(isVoluntary: Boolean): Form[Seq[ChangeRegisteredDetails]] = {
-    val enumerableValues: Enumerable[ChangeRegisteredDetails] = {
-      if(isVoluntary) {
+    val enumerableValues: Enumerable[ChangeRegisteredDetails] =
+      if (isVoluntary) {
         enumerableVoluntary
       } else {
         enumerableNonVoluntary
       }
-    }
     Form(
       "value" ->
-        seq(enumerable[ChangeRegisteredDetails]("updateRegisteredDetails.changeRegisteredDetails.error.required")(enumerableValues))
+        seq(
+          enumerable[ChangeRegisteredDetails]("updateRegisteredDetails.changeRegisteredDetails.error.required")(using
+            enumerableValues
+          )
+        )
           .verifying(nonEmptySeq("updateRegisteredDetails.changeRegisteredDetails.error.required"))
     )
   }

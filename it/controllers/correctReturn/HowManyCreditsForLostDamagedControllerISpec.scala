@@ -2,10 +2,10 @@ package controllers.correctReturn
 
 import controllers.LitresISpecHelper
 import models.SelectChange.CorrectReturn
-import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
+import models.{ CheckMode, LitresInBands, NormalMode, UserAnswers }
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers._
-import pages.correctReturn.{ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage}
+import pages.correctReturn.{ ClaimCreditsForLostDamagedPage, HowManyCreditsForLostDamagedPage }
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
@@ -15,7 +15,8 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
   val normalRoutePath = "/how-many-credits-for-lost-damaged"
   val checkRoutePath = "/change-how-many-credits-for-lost-damaged"
 
-  val userAnswers: UserAnswers = emptyUserAnswersForCorrectReturn.set(HowManyCreditsForLostDamagedPage, litresInBands).success.value
+  val userAnswers: UserAnswers =
+    emptyUserAnswersForCorrectReturn.set(HowManyCreditsForLostDamagedPage, litresInBands).success.value
 
   List(NormalMode, CheckMode).foreach { mode =>
     val (path, redirectLocation) = if (mode == NormalMode) {
@@ -27,8 +28,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
     "GET " + path - {
       "when the userAnswers contains no data" - {
         "should return OK and render the litres page for CreditsForLostDamaged with no data populated" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
@@ -47,8 +47,7 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
 
       s"when the userAnswers contains data for the page" - {
         s"should return OK and render the page with fields populated" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
@@ -74,19 +73,21 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
       "when the user populates all litres fields" - {
         "should update the session with the new values and redirect to " + redirectLocation - {
           "when the session contains no data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + path, Json.toJson(litresInBandsObj)
+                client,
+                correctReturnBaseUrl + path,
+                Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(redirectLocation)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyCreditsForLostDamagedPage))
+                val dataStoredForPage =
+                  getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyCreditsForLostDamagedPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBands
               }
@@ -94,19 +95,21 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
           }
 
           "when the session already contains data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setUpForCorrectReturn(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + path, Json.toJson(litresInBandsDiffObj)
+                client,
+                correctReturnBaseUrl + path,
+                Json.toJson(litresInBandsDiffObj)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(redirectLocation)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyCreditsForLostDamagedPage))
+                val dataStoredForPage =
+                  getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyCreditsForLostDamagedPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBandsDiff
               }
@@ -120,13 +123,14 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
           "Error: How many credits do you want to claim for liable drinks which have been lost or destroyed? - Soft Drinks Industry Levy - GOV.UK"
 
         "when no questions are answered" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, correctReturnBaseUrl + path, emptyJson
+              client,
+              correctReturnBaseUrl + path,
+              emptyJson
             )
 
             whenReady(result) { res =>
@@ -138,13 +142,14 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
         }
 
         "when the user answers with no numeric answers" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, correctReturnBaseUrl + path, jsonWithNoNumeric
+              client,
+              correctReturnBaseUrl + path,
+              jsonWithNoNumeric
             )
 
             whenReady(result) { res =>
@@ -156,13 +161,14 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
         }
 
         "when the user answers with negative numbers" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, correctReturnBaseUrl + path, jsonWithNegativeNumber
+              client,
+              correctReturnBaseUrl + path,
+              jsonWithNegativeNumber
             )
 
             whenReady(result) { res =>
@@ -174,13 +180,14 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
         }
 
         "when the user answers with decimal numbers" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, correctReturnBaseUrl + path, jsonWithDecimalNumber
+              client,
+              correctReturnBaseUrl + path,
+              jsonWithDecimalNumber
             )
 
             whenReady(result) { res =>
@@ -192,13 +199,14 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
         }
 
         "when the user answers with out of max range numbers" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, correctReturnBaseUrl + path, jsonWithOutOfRangeNumber
+              client,
+              correctReturnBaseUrl + path,
+              jsonWithOutOfRangeNumber
             )
 
             whenReady(result) { res =>
@@ -210,13 +218,14 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
         }
 
         "when the user answers with 0" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, correctReturnBaseUrl + path, jsonWith0
+              client,
+              correctReturnBaseUrl + path,
+              jsonWith0
             )
 
             whenReady(result) { res =>
@@ -230,28 +239,38 @@ class HowManyCreditsForLostDamagedControllerISpec extends LitresISpecHelper {
 
       testUnauthorisedUser(correctReturnBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
       testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
-      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
-
+      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+        CorrectReturn,
+        correctReturnBaseUrl + path,
+        Some(Json.toJson(litresInBandsDiff))
+      )
 
       "should redirect to Change Registration in Returns controller when user is a new packer or importer" in {
         build
           .commonPreconditionChangeSubscription(diffSubscription)
 
-
-        setUpForCorrectReturn(completedUserAnswersForCorrectReturnNewPackerOrImporter.set(ClaimCreditsForLostDamagedPage, true).success.value)
+        setUpForCorrectReturn(
+          completedUserAnswersForCorrectReturnNewPackerOrImporter
+            .set(ClaimCreditsForLostDamagedPage, true)
+            .success
+            .value
+        )
 
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, correctReturnBaseUrl + normalRoutePath, Json.toJson(litresInBandsObj)
+            client,
+            correctReturnBaseUrl + normalRoutePath,
+            Json.toJson(litresInBandsObj)
           )
 
           whenReady(result) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some(routes.ReturnChangeRegistrationController.onPageLoad(NormalMode).url)
+            res.header(HeaderNames.LOCATION) mustBe Some(
+              routes.ReturnChangeRegistrationController.onPageLoad(NormalMode).url
+            )
           }
         }
       }
-
 
     }
   }

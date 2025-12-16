@@ -62,13 +62,15 @@ class AmountProducedControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(using request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val userAnswersWithAmountProduced = emptyUserAnswersForChangeActivity
-      .set(AmountProducedPage, AmountProduced.values.head).success.value
+        .set(AmountProducedPage, AmountProduced.values.head)
+        .success
+        .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswersWithAmountProduced)).build()
 
@@ -80,7 +82,10 @@ class AmountProducedControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[AmountProducedView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(AmountProduced.values.head), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(AmountProduced.values.head), NormalMode)(
+          request,
+          messages(application)
+        ).toString
       }
     }
 
@@ -88,22 +93,20 @@ class AmountProducedControllerSpec extends SpecBase with MockitoSugar {
 
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
-      .overrides(
-        bind[NavigatorForChangeActivity
-      ].toInstance(new FakeNavigatorForChangeActivity (onwardRoute)),
-      bind[SessionService].toInstance(mockSessionService)
-      )
-      .build()
+          .overrides(
+            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute)),
+            bind[SessionService].toInstance(mockSessionService)
+          )
+          .build()
 
       running(application) {
         val request =
-          FakeRequest(POST, amountProducedRoute
-        )
-        .withFormUrlEncodedBody(("value", AmountProduced.values.head.toString))
+          FakeRequest(POST, amountProducedRoute)
+            .withFormUrlEncodedBody(("value", AmountProduced.values.head.toString))
 
         val result = route(application, request).value
 
@@ -118,9 +121,8 @@ class AmountProducedControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, amountProducedRoute
-        )
-        .withFormUrlEncodedBody(("value", "invalid value"))
+          FakeRequest(POST, amountProducedRoute)
+            .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
@@ -129,7 +131,7 @@ class AmountProducedControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -139,12 +141,13 @@ class AmountProducedControllerSpec extends SpecBase with MockitoSugar {
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(ChangeActivity))).build()
+      val application =
+        applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(ChangeActivity))).build()
 
       running(application) {
         val request =
           FakeRequest(POST, amountProducedRoute)
-        .withFormUrlEncodedBody(("value", AmountProduced.values.head.toString))
+            .withFormUrlEncodedBody(("value", AmountProduced.values.head.toString))
 
         val result = route(application, request).value
 
@@ -156,12 +159,12 @@ class AmountProducedControllerSpec extends SpecBase with MockitoSugar {
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
           .overrides(
-            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity (onwardRoute)),
+            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           )
           .build()
@@ -169,16 +172,16 @@ class AmountProducedControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           running(application) {
-            val request = FakeRequest(POST, amountProducedRoute
-            )
-            .withFormUrlEncodedBody(("value", AmountProduced.values.head.toString))
+            val request = FakeRequest(POST, amountProducedRoute)
+              .withFormUrlEncodedBody(("value", AmountProduced.values.head.toString))
 
             await(route(application, request).value)
-            events.collectFirst {
-              case event =>
+            events
+              .collectFirst { case event =>
                 event.getLevel.levelStr mustBe "ERROR"
                 event.getMessage mustEqual "Failed to set value in session repository while attempting set on amountProduced"
-            }.getOrElse(fail("No logging captured"))
+              }
+              .getOrElse(fail("No logging captured"))
           }
         }
       }

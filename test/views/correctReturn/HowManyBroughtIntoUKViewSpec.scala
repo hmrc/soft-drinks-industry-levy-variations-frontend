@@ -18,7 +18,7 @@ package views.correctReturn
 
 import config.FrontendAppConfig
 import controllers.correctReturn.routes
-import models.{CheckMode, NormalMode}
+import models.{ CheckMode, NormalMode }
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
@@ -28,12 +28,12 @@ class HowManyBroughtIntoUKViewSpec extends LitresSpecHelper {
 
   val howManyBroughtIntoUKView: HowManyBroughtIntoUKView = application.injector.instanceOf[HowManyBroughtIntoUKView]
 
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
   implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
   "HowManyBroughtIntoUKView" - {
     List(NormalMode, CheckMode).foreach { mode =>
-      "when in " + mode +" mode" - {
+      "when in " + mode + " mode" - {
         val html: HtmlFormat.Appendable = howManyBroughtIntoUKView(form, mode)
         val document = doc(html)
         val htmlWithValidData: HtmlFormat.Appendable = howManyBroughtIntoUKView(formWithHighAndLowBands, mode)
@@ -54,11 +54,16 @@ class HowManyBroughtIntoUKViewSpec extends LitresSpecHelper {
         }
 
         "should have the expected heading" in {
-          document.getElementsByClass(Selectors.heading).text() mustBe "How many litres of liable drinks have you brought into the UK from anywhere outside of the UK?"
+          document
+            .getElementsByClass(Selectors.heading)
+            .text() mustBe "How many litres of liable drinks have you brought into the UK from anywhere outside of the UK?"
         }
 
         "should include a govuk body with the expected content" in {
-          document.getElementsByClass(Selectors.body).first().text() mustBe "Do not include liable drinks from small producers or your own brands if you are a registered small producer."
+          document
+            .getElementsByClass(Selectors.body)
+            .first()
+            .text() mustBe "Do not include liable drinks from small producers or your own brands if you are a registered small producer."
         }
 
         testLitresInBandsNoPrepopulatedData(document)
@@ -68,14 +73,14 @@ class HowManyBroughtIntoUKViewSpec extends LitresSpecHelper {
           "has had less than 1 million litres of its own brands of liable drinks packaged globally in the" +
           " past 12 months will not have more than 1 million litres of its own brands of liable drinks packaged globally in the next 30 days"
 
-        val expectedDetails = Map(
-          "What is a small producer?" -> expectedDetailsContent)
+        val expectedDetails = Map("What is a small producer?" -> expectedDetailsContent)
         testDetails(document, expectedDetails)
         testButton(document)
         testAction(document, routes.HowManyBroughtIntoUKController.onSubmit(mode).url)
 
         "and the form has errors" - {
-          val errorTitle = "Error: How many litres of liable drinks have you brought into the UK from anywhere outside of the UK? - Soft Drinks Industry Levy - GOV.UK"
+          val errorTitle =
+            "Error: How many litres of liable drinks have you brought into the UK from anywhere outside of the UK? - Soft Drinks Industry Levy - GOV.UK"
           testEmptyFormErrors(documentFormErrorsEmpty, errorTitle)
           testNoNumericFormErrors(documentFormErrorsNoneNumeric, errorTitle)
           testNegativeFormErrors(documentFormErrorsNegative, errorTitle)

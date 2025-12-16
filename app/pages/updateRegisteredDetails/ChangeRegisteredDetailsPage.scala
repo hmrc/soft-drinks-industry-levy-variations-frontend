@@ -22,7 +22,6 @@ import pages.QuestionPage
 
 case object ChangeRegisteredDetailsPage extends QuestionPage[Seq[ChangeRegisteredDetails]] {
 
-
   override def path: JsPath = JsPath \ journeyType \ toString
 
   def journeyType: String = "updateRegisteredDetails"

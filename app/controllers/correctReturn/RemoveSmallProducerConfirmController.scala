@@ -24,36 +24,38 @@ import models.Mode
 import navigation._
 import pages.correctReturn.RemoveSmallProducerConfirmPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import services.SessionService
 import utilities.GenericLogger
 import views.html.correctReturn.RemoveSmallProducerConfirmView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class RemoveSmallProducerConfirmController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       val sessionService: SessionService,
-                                       val navigator: NavigatorForCorrectReturn,
-                                       controllerActions: ControllerActions,
-                                       formProvider: RemoveSmallProducerConfirmFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: RemoveSmallProducerConfirmView,
-                                       val genericLogger: GenericLogger,
-                                       val errorHandler: ErrorHandler
-                                     )(implicit val ec: ExecutionContext) extends ControllerHelper {
+class RemoveSmallProducerConfirmController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForCorrectReturn,
+  controllerActions: ControllerActions,
+  formProvider: RemoveSmallProducerConfirmFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: RemoveSmallProducerConfirmView,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper {
 
   val form = formProvider()
 
   def onPageLoad(mode: Mode, sdilRef: String): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
     implicit request =>
 
-      val smallProducerToRemove = request.userAnswers.smallProducerList.find(smallProducer => smallProducer.sdilRef == sdilRef)
+      val smallProducerToRemove =
+        request.userAnswers.smallProducerList.find(smallProducer => smallProducer.sdilRef == sdilRef)
       smallProducerToRemove match {
         case None =>
           genericLogger.logger.warn(s"Small Producer sdilRef $sdilRef doesn't exist for ${request.userAnswers.id}")
-          if(request.userAnswers.smallProducerList.size >= 1){
+          if (request.userAnswers.smallProducerList.size >= 1) {
             Redirect(routes.SmallProducerDetailsController.onPageLoad(mode))
           } else {
             Redirect(routes.ExemptionsForSmallProducersController.onPageLoad(mode))
@@ -64,22 +66,28 @@ class RemoveSmallProducerConfirmController @Inject()(
 
   def onSubmit(mode: Mode, sdilRef: String): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-      val smallProducerToRemove = request.userAnswers.smallProducerList.find(smallProducer => smallProducer.sdilRef == sdilRef)
+      val smallProducerToRemove =
+        request.userAnswers.smallProducerList.find(smallProducer => smallProducer.sdilRef == sdilRef)
       smallProducerToRemove match {
         case None =>
           genericLogger.logger.warn(s"Small Producer sdilRef $sdilRef doesn't exist for ${request.userAnswers.id}")
           Future.successful(Redirect(routes.SmallProducerDetailsController.onPageLoad(mode)))
         case Some(smallProducer) =>
-          form.bindFromRequest().fold(
-            formWithErrors =>
-              Future.successful(BadRequest(view(formWithErrors, mode, sdilRef, smallProducer.alias))),
-            value => {
-              val updatedUserAnswers = if (!value) request.userAnswers else {
-                val modifiedProducerList = request.userAnswers.smallProducerList.filterNot(producer => producer.sdilRef == sdilRef)
-                request.userAnswers.copy(smallProducerList = modifiedProducerList)
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, sdilRef, smallProducer.alias))),
+              value => {
+                val updatedUserAnswers =
+                  if (!value) request.userAnswers
+                  else {
+                    val modifiedProducerList =
+                      request.userAnswers.smallProducerList.filterNot(producer => producer.sdilRef == sdilRef)
+                    request.userAnswers.copy(smallProducerList = modifiedProducerList)
+                  }
+                updateDatabaseAndRedirect(updatedUserAnswers, RemoveSmallProducerConfirmPage, mode)
               }
-              updateDatabaseAndRedirect(updatedUserAnswers, RemoveSmallProducerConfirmPage, mode)
-            })
+            )
       }
   }
 }

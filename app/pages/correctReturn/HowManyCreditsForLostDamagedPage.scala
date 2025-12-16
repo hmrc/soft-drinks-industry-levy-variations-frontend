@@ -17,7 +17,7 @@
 package pages.correctReturn
 
 import controllers.correctReturn.routes
-import models.{LitresInBands, Mode}
+import models.{ LitresInBands, Mode }
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 

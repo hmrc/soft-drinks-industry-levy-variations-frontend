@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import errors.SessionDatabaseInsertError
 import forms.correctReturn.RepaymentMethodFormProvider
-import models.{NormalMode, SdilReturn, UserAnswers}
+import models.{ NormalMode, SdilReturn, UserAnswers }
 import models.SelectChange.CorrectReturn
 import models.correctReturn.RepaymentMethod
 import navigation._
@@ -28,7 +28,7 @@ import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.correctReturn.{CorrectReturnBaseCYAPage, RepaymentMethodPage}
+import pages.correctReturn.{ CorrectReturnBaseCYAPage, RepaymentMethodPage }
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -51,15 +51,17 @@ class RepaymentMethodControllerSpec extends SpecBase with MockitoSugar {
   val form: Form[RepaymentMethod] = formProvider()
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
-  def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
+  def correctReturnAction(
+    userAnswers: Option[UserAnswers],
+    optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)
+  ): GuiceApplicationBuilder = {
     when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers)
-      .overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+      .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
   }
 
   val userAnswers = emptyUserAnswersForCorrectReturn.set(CorrectReturnBaseCYAPage, true).success.value
-  
+
   "RepaymentMethod Controller" - {
 
     "must redirect to CYA when that page has not been submitted" in {
@@ -87,13 +89,15 @@ class RepaymentMethodControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(using request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val userAnswersWithRepaymentMethod = userAnswers
-      .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+        .set(RepaymentMethodPage, RepaymentMethod.values.head)
+        .success
+        .value
 
       val application = correctReturnAction(userAnswers = Some(userAnswersWithRepaymentMethod)).build()
 
@@ -105,7 +109,10 @@ class RepaymentMethodControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[RepaymentMethodView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(RepaymentMethod.values.head), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(RepaymentMethod.values.head), NormalMode)(
+          request,
+          messages(application)
+        ).toString
       }
     }
 
@@ -113,22 +120,20 @@ class RepaymentMethodControllerSpec extends SpecBase with MockitoSugar {
 
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         correctReturnAction(userAnswers = Some(userAnswers))
-      .overrides(
-        bind[NavigatorForCorrectReturn
-      ].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
-      bind[SessionService].toInstance(mockSessionService)
-      )
-      .build()
+          .overrides(
+            bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
+            bind[SessionService].toInstance(mockSessionService)
+          )
+          .build()
 
       running(application) {
         val request =
-          FakeRequest(POST, repaymentMethodRoute
-        )
-        .withFormUrlEncodedBody(("value", RepaymentMethod.values.head.toString))
+          FakeRequest(POST, repaymentMethodRoute)
+            .withFormUrlEncodedBody(("value", RepaymentMethod.values.head.toString))
 
         val result = route(application, request).value
 
@@ -143,9 +148,8 @@ class RepaymentMethodControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request =
-          FakeRequest(POST, repaymentMethodRoute
-        )
-        .withFormUrlEncodedBody(("value", "invalid value"))
+          FakeRequest(POST, repaymentMethodRoute)
+            .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
 
@@ -154,7 +158,7 @@ class RepaymentMethodControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -164,12 +168,13 @@ class RepaymentMethodControllerSpec extends SpecBase with MockitoSugar {
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = correctReturnAction(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CorrectReturn))).build()
+      val application =
+        correctReturnAction(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CorrectReturn))).build()
 
       running(application) {
         val request =
           FakeRequest(POST, repaymentMethodRoute)
-        .withFormUrlEncodedBody(("value", RepaymentMethod.values.head.toString))
+            .withFormUrlEncodedBody(("value", RepaymentMethod.values.head.toString))
 
         val result = route(application, request).value
 
@@ -181,7 +186,7 @@ class RepaymentMethodControllerSpec extends SpecBase with MockitoSugar {
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
 
       val application =
         correctReturnAction(userAnswers = Some(userAnswers))
@@ -194,16 +199,16 @@ class RepaymentMethodControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           running(application) {
-            val request = FakeRequest(POST, repaymentMethodRoute
-            )
-            .withFormUrlEncodedBody(("value", RepaymentMethod.values.head.toString))
+            val request = FakeRequest(POST, repaymentMethodRoute)
+              .withFormUrlEncodedBody(("value", RepaymentMethod.values.head.toString))
 
             await(route(application, request).value)
-            events.collectFirst {
-              case event =>
+            events
+              .collectFirst { case event =>
                 event.getLevel.levelStr mustBe "ERROR"
                 event.getMessage mustEqual "Failed to set value in session repository while attempting set on repaymentMethod"
-            }.getOrElse(fail("No logging captured"))
+              }
+              .getOrElse(fail("No logging captured"))
           }
         }
       }

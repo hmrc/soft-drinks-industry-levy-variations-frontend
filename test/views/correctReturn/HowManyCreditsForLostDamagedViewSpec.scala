@@ -18,7 +18,7 @@ package views.correctReturn
 
 import config.FrontendAppConfig
 import controllers.correctReturn.routes
-import models.{CheckMode, NormalMode}
+import models.{ CheckMode, NormalMode }
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -28,27 +28,31 @@ import views.html.correctReturn.HowManyCreditsForLostDamagedView
 
 class HowManyCreditsForLostDamagedViewSpec extends LitresSpecHelper {
 
-  val howManyCreditsForLostDamagedView: HowManyCreditsForLostDamagedView = application.injector.instanceOf[HowManyCreditsForLostDamagedView]
+  val howManyCreditsForLostDamagedView: HowManyCreditsForLostDamagedView =
+    application.injector.instanceOf[HowManyCreditsForLostDamagedView]
 
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
   implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
   "HowManyCreditsForLostDamagedView" - {
     List(NormalMode, CheckMode).foreach { mode =>
-      "when in " + mode +" mode" - {
+      "when in " + mode + " mode" - {
         val html: HtmlFormat.Appendable = howManyCreditsForLostDamagedView(form, mode)
         val document = doc(html)
         val htmlWithValidData: HtmlFormat.Appendable = howManyCreditsForLostDamagedView(formWithHighAndLowBands, mode)
         val documentWithValidData = doc(htmlWithValidData)
         val htmlFormErrorsEmpty: HtmlFormat.Appendable = howManyCreditsForLostDamagedView(emptyForm, mode)
         val documentFormErrorsEmpty = doc(htmlFormErrorsEmpty)
-        val htmlFormErrorsNegative: HtmlFormat.Appendable = howManyCreditsForLostDamagedView(formWithNegativeNumber, mode)
+        val htmlFormErrorsNegative: HtmlFormat.Appendable =
+          howManyCreditsForLostDamagedView(formWithNegativeNumber, mode)
         val documentFormErrorsNegative = doc(htmlFormErrorsNegative)
         val htmlFormErrorsNoneNumeric: HtmlFormat.Appendable = howManyCreditsForLostDamagedView(formWithNoNumeric, mode)
         val documentFormErrorsNoneNumeric = doc(htmlFormErrorsNoneNumeric)
-        val htmlFormErrorsNotWhole: HtmlFormat.Appendable = howManyCreditsForLostDamagedView(formWithDecimalNumber, mode)
+        val htmlFormErrorsNotWhole: HtmlFormat.Appendable =
+          howManyCreditsForLostDamagedView(formWithDecimalNumber, mode)
         val documentFormErrorsNotWhole = doc(htmlFormErrorsNotWhole)
-        val htmlFormErrorsOutOfRange: HtmlFormat.Appendable = howManyCreditsForLostDamagedView(formWithOutOfRangeNumber, mode)
+        val htmlFormErrorsOutOfRange: HtmlFormat.Appendable =
+          howManyCreditsForLostDamagedView(formWithOutOfRangeNumber, mode)
         val documentFormErrorsOutOfRange = doc(htmlFormErrorsOutOfRange)
 
         "should have the expected title" in {
@@ -56,7 +60,9 @@ class HowManyCreditsForLostDamagedViewSpec extends LitresSpecHelper {
         }
 
         "should have the expected heading" in {
-          document.getElementsByClass(Selectors.heading).text() mustBe Messages("correctReturn.howManyCreditsForLostDamaged.heading")
+          document.getElementsByClass(Selectors.heading).text() mustBe Messages(
+            "correctReturn.howManyCreditsForLostDamaged.heading"
+          )
         }
 
         testLitresInBandsNoPrepopulatedData(document)

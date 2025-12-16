@@ -19,11 +19,11 @@ package controllers.correctReturn
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import models.SelectChange.CorrectReturn
-import models.{LitresInBands, NormalMode, SdilReturn, UserAnswers}
+import models.{ LitresInBands, NormalMode, SdilReturn, UserAnswers }
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.correctReturn.{BroughtIntoUKPage, HowManyBroughtIntoUKPage, PackagedAsContractPackerPage}
+import pages.correctReturn.{ BroughtIntoUKPage, HowManyBroughtIntoUKPage, PackagedAsContractPackerPage }
 import play.api.inject
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.test.FakeRequest
@@ -34,19 +34,27 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase with MockitoSugar 
   lazy val returnChangeRegistrationRoute: String = routes.ReturnChangeRegistrationController.onPageLoad(NormalMode).url
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
-  def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
+  def correctReturnAction(
+    userAnswers: Option[UserAnswers],
+    optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)
+  ): GuiceApplicationBuilder = {
     when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers)
-      .overrides(
-        inject.bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+      .overrides(inject.bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
   }
   "ReturnChangeRegistration Controller" - {
 
     "must return OK and the correct view for a GET when user is a new importer " in {
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
-        .set(PackagedAsContractPackerPage, false).success.value
-        .set(BroughtIntoUKPage, true).success.value
-        .set(HowManyBroughtIntoUKPage, LitresInBands(1L, 1L)).success.value
+        .set(PackagedAsContractPackerPage, false)
+        .success
+        .value
+        .set(BroughtIntoUKPage, true)
+        .success
+        .value
+        .set(HowManyBroughtIntoUKPage, LitresInBands(1L, 1L))
+        .success
+        .value
       val application = correctReturnAction(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -57,13 +65,16 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase with MockitoSugar 
         val view = application.injector.instanceOf[ReturnChangeRegistrationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(NormalMode,
-          "/soft-drinks-industry-levy-variations-frontend/correct-return/brought-into-uk")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(
+          NormalMode,
+          "/soft-drinks-industry-levy-variations-frontend/correct-return/brought-into-uk"
+        )(using request, messages(application)).toString
       }
     }
 
     "must return OK and the correct view for a GET when user is a new packager " in {
-      val application = correctReturnAction(userAnswers = Some(completedUserAnswersForCorrectReturnNewPackerOrImporter)).build()
+      val application =
+        correctReturnAction(userAnswers = Some(completedUserAnswersForCorrectReturnNewPackerOrImporter)).build()
 
       running(application) {
         val request = FakeRequest(GET, returnChangeRegistrationRoute)
@@ -73,8 +84,10 @@ class ReturnChangeRegistrationControllerSpec extends SpecBase with MockitoSugar 
         val view = application.injector.instanceOf[ReturnChangeRegistrationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(NormalMode,
-          "/soft-drinks-industry-levy-variations-frontend/correct-return/packaged-as-contract-packer")(request, messages(application)).toString
+        contentAsString(result) mustEqual view(
+          NormalMode,
+          "/soft-drinks-industry-levy-variations-frontend/correct-return/packaged-as-contract-packer"
+        )(using request, messages(application)).toString
       }
     }
 

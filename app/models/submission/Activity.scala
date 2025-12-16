@@ -20,35 +20,35 @@ import models.changeActivity.ChangeActivityData
 import play.api.libs.json._
 
 case class Activity(
-                     ProducedOwnBrand: Option[Litreage] = None,
-                     Imported: Option[Litreage] = None,
-                     CopackerAll: Option[Litreage] = None,
-                     Copackee: Option[Litreage] = None,
-                     isLarge: Boolean) {
+  ProducedOwnBrand: Option[Litreage] = None,
+  Imported: Option[Litreage] = None,
+  CopackerAll: Option[Litreage] = None,
+  Copackee: Option[Litreage] = None,
+  isLarge: Boolean
+) {
   def nonEmpty: Boolean = Seq(ProducedOwnBrand, Imported, CopackerAll, Copackee).flatten.nonEmpty
 }
 
 object Activity {
 
   implicit val formatLitreage: Format[Litreage] = new Format[Litreage] {
-    override def reads(json: JsValue): JsResult[Litreage] = {
+    override def reads(json: JsValue): JsResult[Litreage] =
       JsSuccess(
         Litreage(
           (json \ "lower").as[Long],
           (json \ "upper").as[Long]
-        ))
-    }
+        )
+      )
 
-    override def writes(o: Litreage): JsValue = {
+    override def writes(o: Litreage): JsValue =
       Json.obj(
         ("lower", JsNumber(o.lower)),
         ("upper", JsNumber(o.higher))
       )
-    }
   }
 
   implicit val format: Format[Activity] = Json.format[Activity]
-  def fromChangeActivityData(changeActivityData: ChangeActivityData): Activity = {
+  def fromChangeActivityData(changeActivityData: ChangeActivityData): Activity =
     Activity(
       changeActivityData.ownBrandsProduced.map(Litreage.fromLitresInBands),
       changeActivityData.imported.map(Litreage.fromLitresInBands),
@@ -56,5 +56,4 @@ object Activity {
       Copackee = if (changeActivityData.isCopackee) Some(Litreage(1, 1)) else None,
       changeActivityData.isLarge
     )
-  }
 }

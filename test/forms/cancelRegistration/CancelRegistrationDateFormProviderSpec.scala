@@ -22,7 +22,7 @@ import forms.behaviours.DateBehaviours
 
 import java.time.LocalDate
 
-class CancelRegistrationDateFormProviderSpec extends DateBehaviours with SpecBase  {
+class CancelRegistrationDateFormProviderSpec extends DateBehaviours with SpecBase {
 
   val appConfig = application.injector.instanceOf[FrontendAppConfig]
   val form = new CancelRegistrationDateFormProvider(appConfig)()

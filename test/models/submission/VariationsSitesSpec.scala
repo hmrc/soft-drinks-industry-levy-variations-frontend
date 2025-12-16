@@ -18,7 +18,7 @@ package models.submission
 
 import base.SpecBase
 import models.UserAnswers
-import models.backend.{RetrievedSubscription, Site}
+import models.backend.{ RetrievedSubscription, Site }
 import models.updateRegisteredDetails.ContactDetails
 import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
@@ -27,7 +27,8 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import java.time.LocalDate
 
-class VariationsSitesSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with SpecBase{
+class VariationsSitesSpec
+    extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with SpecBase {
 
   val todaysDate = LocalDate.now()
 
@@ -43,20 +44,20 @@ class VariationsSitesSpec extends AnyFreeSpec with Matchers with ScalaCheckPrope
 
   val contactDetailsFromSubscription = ContactDetails.fromContact(aSubscription.contact)
 
-  def getSubscription(packagingSites: List[Site] = List.empty, warehouses: List[Site] = List.empty): RetrievedSubscription = {
+  def getSubscription(
+    packagingSites: List[Site] = List.empty,
+    warehouses: List[Site] = List.empty
+  ): RetrievedSubscription =
     aSubscription.copy(
       warehouseSites = warehouses,
       productionSites = packagingSites
     )
-  }
 
-  def getUserAnswers(packagingSites: List[Site] = List.empty, warehouses: List[Site] = List.empty): UserAnswers = {
+  def getUserAnswers(packagingSites: List[Site] = List.empty, warehouses: List[Site] = List.empty): UserAnswers =
     emptyUserAnswersForCancelRegistration.copy(
-      warehouseList = warehouses.zipWithIndex.map{case(site, index) => index.toString -> site}.toMap,
-      packagingSiteList = packagingSites.zipWithIndex.map{case(site, index) => index.toString -> site}.toMap
+      warehouseList = warehouses.zipWithIndex.map { case (site, index) => index.toString -> site }.toMap,
+      packagingSiteList = packagingSites.zipWithIndex.map { case (site, index) => index.toString -> site }.toMap
     )
-  }
-
 
   "fromUserAnswers" - {
     "when the retrieved subscription has a closure date in the past" - {
@@ -69,7 +70,7 @@ class VariationsSitesSpec extends AnyFreeSpec with Matchers with ScalaCheckPrope
           val res = VariationsSites.fromUserAnswers(userAnswers, subscription, contactDetailsFromSubscription)
           res.newSites.isEmpty mustBe true
           res.closedSites.size mustBe 2
-          res.closedSites.map(_.siteReference) mustEqual(List("14", "15"))
+          res.closedSites.map(_.siteReference) mustEqual (List("14", "15"))
         }
       }
       "and a new warehouse site is added and none removed" - {
@@ -81,7 +82,7 @@ class VariationsSitesSpec extends AnyFreeSpec with Matchers with ScalaCheckPrope
           res.newSites.size mustBe 1
           res.newSites.head.siteReference mustBe "16"
           res.closedSites.size mustBe 2
-          res.closedSites.map(_.siteReference) mustEqual(List("14", "15"))
+          res.closedSites.map(_.siteReference) mustEqual (List("14", "15"))
         }
       }
       "and a new packaging site is added and none removed" - {
@@ -93,7 +94,7 @@ class VariationsSitesSpec extends AnyFreeSpec with Matchers with ScalaCheckPrope
           res.newSites.size mustBe 1
           res.newSites.head.siteReference mustBe "16"
           res.closedSites.size mustBe 2
-          res.closedSites.map(_.siteReference) mustEqual(List("14", "15"))
+          res.closedSites.map(_.siteReference) mustEqual (List("14", "15"))
         }
       }
 
@@ -106,7 +107,7 @@ class VariationsSitesSpec extends AnyFreeSpec with Matchers with ScalaCheckPrope
           res.newSites.size mustBe 2
           res.newSites.map(_.siteReference) mustBe List("16", "17")
           res.closedSites.size mustBe 2
-          res.closedSites.map(_.siteReference) mustEqual(List("14", "15"))
+          res.closedSites.map(_.siteReference) mustEqual (List("14", "15"))
         }
       }
 
@@ -249,7 +250,7 @@ class VariationsSitesSpec extends AnyFreeSpec with Matchers with ScalaCheckPrope
           val res = VariationsSites.fromUserAnswers(userAnswers, subscription, contactDetailsFromSubscription)
           res.newSites.size mustBe 0
           res.closedSites.size mustBe 2
-          res.closedSites.map(_.siteReference) mustEqual List("12","13")
+          res.closedSites.map(_.siteReference) mustEqual List("12", "13")
         }
       }
 

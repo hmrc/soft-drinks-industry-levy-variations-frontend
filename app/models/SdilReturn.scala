@@ -20,27 +20,29 @@ import config.FrontendAppConfig
 import models.LevyCalculator.getLevyCalculation
 import models.submission.Litreage
 import pages.correctReturn.ExemptionsForSmallProducersPage
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{ Json, OFormat }
 
-import java.time.{Instant, LocalDateTime, ZoneId}
+import java.time.{ Instant, LocalDateTime, ZoneId }
 
 case class SdilReturn(
-                       ownBrand: Litreage,
-                       packLarge: Litreage,
-                       packSmall: List[SmallProducer],
-                       importLarge: Litreage,
-                       importSmall: Litreage,
-                       `export`: Litreage,
-                       wastage: Litreage,
-                       submittedOn: Option[LocalDateTime] = None
-                     ) {
+  ownBrand: Litreage,
+  packLarge: Litreage,
+  packSmall: List[SmallProducer],
+  importLarge: Litreage,
+  importSmall: Litreage,
+  `export`: Litreage,
+  wastage: Litreage,
+  submittedOn: Option[LocalDateTime] = None
+) {
   private[models] val leviedLitreage: Litreage = Litreage.sum(List(ownBrand, packLarge, importLarge))
 
   private[models] val creditedLitreage: Litreage = Litreage.sum(List(`export`, wastage))
 
-  private [models] def calculatelevy(litreage: Litreage)
-                                    (implicit config: FrontendAppConfig, returnPeriod: ReturnPeriod): BigDecimal = {
-    val levyCalculation: LevyCalculation = getLevyCalculation(litreage.lower, litreage.higher, returnPeriod)(config)
+  private[models] def calculatelevy(
+    litreage: Litreage
+  )(implicit config: FrontendAppConfig, returnPeriod: ReturnPeriod): BigDecimal = {
+    val levyCalculation: LevyCalculation =
+      getLevyCalculation(litreage.lower, litreage.higher, returnPeriod)(using config)
     levyCalculation.totalRoundedDown
   }
 
@@ -52,32 +54,34 @@ case class SdilReturn(
     calculatelevy(totalLiterage)
   }
 
-  def taxEstimation(implicit config: FrontendAppConfig, returnPeriod: ReturnPeriod): BigDecimal = calculatelevy(leviedLitreage.combineN(4))
+  def taxEstimation(implicit config: FrontendAppConfig, returnPeriod: ReturnPeriod): BigDecimal = calculatelevy(
+    leviedLitreage.combineN(4)
+  )
 }
 
 object SdilReturn {
 
-  def packSmallValueFromUserAnswers(userAnswers: UserAnswers): List[SmallProducer] = {
+  def packSmallValueFromUserAnswers(userAnswers: UserAnswers): List[SmallProducer] =
     userAnswers.get(ExemptionsForSmallProducersPage) match {
       case Some(true) => userAnswers.smallProducerList
-      case _ => List.empty
+      case _          => List.empty
     }
-  }
 
-  def generateFromUserAnswers(userAnswers: UserAnswers, submitted: Option[Instant] = None): SdilReturn = {
-    userAnswers.getCorrectReturnData.map(correctReturnData => {
-      SdilReturn(
-        ownBrand = correctReturnData.ownBrandsLitreage,
-        packLarge = correctReturnData.contractPackerLitreage,
-        packSmall = packSmallValueFromUserAnswers(userAnswers),
-        importLarge = correctReturnData.broughtIntoUkLitreage,
-        importSmall = correctReturnData.broughtIntoUkFromSmallProducerLitreage,
-        `export` = correctReturnData.exportsLitreage,
-        wastage = correctReturnData.lostDamagedLitreage,
-        submittedOn = submitted.map(instant => LocalDateTime.ofInstant(instant, ZoneId.of("Europe/London")))
-      )
-    }).getOrElse(emptySdilReturn(userAnswers))
-  }
+  def generateFromUserAnswers(userAnswers: UserAnswers, submitted: Option[Instant] = None): SdilReturn =
+    userAnswers.getCorrectReturnData
+      .map { correctReturnData =>
+        SdilReturn(
+          ownBrand = correctReturnData.ownBrandsLitreage,
+          packLarge = correctReturnData.contractPackerLitreage,
+          packSmall = packSmallValueFromUserAnswers(userAnswers),
+          importLarge = correctReturnData.broughtIntoUkLitreage,
+          importSmall = correctReturnData.broughtIntoUkFromSmallProducerLitreage,
+          `export` = correctReturnData.exportsLitreage,
+          wastage = correctReturnData.lostDamagedLitreage,
+          submittedOn = submitted.map(instant => LocalDateTime.ofInstant(instant, ZoneId.of("Europe/London")))
+        )
+      }
+      .getOrElse(emptySdilReturn(userAnswers))
 
   def emptySdilReturn(userAnswers: UserAnswers) = SdilReturn(
     ownBrand = Litreage(0L, 0L),

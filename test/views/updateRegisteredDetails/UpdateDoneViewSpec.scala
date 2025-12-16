@@ -21,29 +21,28 @@ import play.api.mvc.Request
 import play.api.test.FakeRequest
 import uk.gov.hmrc.govukfrontend.views.Aliases.Value
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ SummaryList, SummaryListRow }
 import views.ViewSpecHelper
 import views.html.updateRegisteredDetails.UpdateDoneView
 
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDateTime, ZoneId}
+import java.time.{ LocalDateTime, ZoneId }
 
 class UpdateDoneViewSpec extends ViewSpecHelper {
 
   val view: UpdateDoneView = application.injector.instanceOf[UpdateDoneView]
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   val getSentDateTime: LocalDateTime = LocalDateTime.now(ZoneId.of("UTC"))
   val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
   val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("H:MMa")
   val formattedDate: String = getSentDateTime.format(dateFormatter)
   val formattedTime: String = getSentDateTime.format(timeFormatter)
-  val summaryList: Seq[(String, SummaryList)] = {
+  val summaryList: Seq[(String, SummaryList)] =
     Seq(
       "foo" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("wizz"))))),
       "bar" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bang")))))
     )
-  }
   val orgName: String = aSubscription.orgName
   val config: FrontendAppConfig = frontendAppConfig
 
@@ -69,7 +68,9 @@ class UpdateDoneViewSpec extends ViewSpecHelper {
     "should include the expected panel" in {
       val panel = document.getElementsByClass(Selectors.panel).get(0)
       panel.getElementsByClass(Selectors.panel_title).text() mustEqual "Update sent"
-      panel.getElementsByClass(Selectors.panel_body).text() mustEqual "We have received the update to your Soft Drinks Industry Levy details"
+      panel
+        .getElementsByClass(Selectors.panel_body)
+        .text() mustEqual "We have received the update to your Soft Drinks Industry Levy details"
     }
 
     "should include a link to print page" in {
@@ -99,7 +100,8 @@ class UpdateDoneViewSpec extends ViewSpecHelper {
       }
 
       "that has the expected content" in {
-        details.getElementsByClass(Selectors.detailsContent).text() mustEqual List("foo","wizz","bar","bang").mkString(" ")
+        details.getElementsByClass(Selectors.detailsContent).text() mustEqual List("foo", "wizz", "bar", "bang")
+          .mkString(" ")
       }
     }
 

@@ -18,7 +18,7 @@ package views.summary.updateRegisteredDetails
 
 import base.SpecBase
 import models.NormalMode
-import models.backend.{Site, UkAddress}
+import models.backend.{ Site, UkAddress }
 
 import java.time.LocalDate
 
@@ -27,12 +27,14 @@ class WarehouseDetailsSummarySpec extends SpecBase {
     UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
     Some("Wild Lemonade Group"),
     Some("88"),
-    Some(LocalDate.of(2018, 2, 26)))
+    Some(LocalDate.of(2018, 2, 26))
+  )
   lazy val warehouse2: Site = Site(
     UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
     None,
     Some("88"),
-    Some(LocalDate.of(2018, 2, 26)))
+    Some(LocalDate.of(2018, 2, 26))
+  )
   lazy val warehouses2: Map[String, Site] = Map("000001" -> warehouse1, "00002" -> warehouse2)
   lazy val warehouses1: Map[String, Site] = Map("00213" -> warehouse1)
   lazy val warehouses3: Map[String, Site] = Map("000001" -> warehouse1, "00002" -> warehouse2, "00213" -> warehouse1)

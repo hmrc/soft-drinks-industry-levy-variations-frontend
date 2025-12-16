@@ -21,7 +21,7 @@ import play.api.i18n.Messages
 import play.api.libs.json._
 
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDate => Date}
+import java.time.{ LocalDate => Date }
 
 sealed trait FinancialLineItem {
   def date: Date

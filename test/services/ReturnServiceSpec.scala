@@ -21,13 +21,13 @@ import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import models.TaxRateUtil._
 import models.backend.CentralAssessment
-import models.correctReturn.{CorrectReturnUserAnswersData, RepaymentMethod, ReturnsVariation}
-import models.submission.{Litreage, ReturnVariationData}
-import models.{LitresInBands, ReturnPeriod, SdilReturn}
+import models.correctReturn.{ CorrectReturnUserAnswersData, RepaymentMethod, ReturnsVariation }
+import models.submission.{ Litreage, ReturnVariationData }
+import models.{ LitresInBands, ReturnPeriod, SdilReturn }
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
-import pages.correctReturn.{BalanceRepaymentRequired, CorrectionReasonPage, RepaymentMethodPage}
+import pages.correctReturn.{ BalanceRepaymentRequired, CorrectionReasonPage, RepaymentMethodPage }
 import play.api.libs.json.Json
 
 import java.time.LocalDate
@@ -87,35 +87,57 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
     "should submit the sdilReturnsVary and return unit" - {
       "when the userAnswers contains correction reason and payment method and balance repayment required" in {
         val userAnswers = emptyUserAnswersForCorrectReturn
-          .set(BalanceRepaymentRequired, true).success.value
-          .set(CorrectionReasonPage, "testing").success.value
-          .set(RepaymentMethodPage, RepaymentMethod.BankAccount).success.value
+          .set(BalanceRepaymentRequired, true)
+          .success
+          .value
+          .set(CorrectionReasonPage, "testing")
+          .success
+          .value
+          .set(RepaymentMethodPage, RepaymentMethod.BankAccount)
+          .success
+          .value
         val expectedReturnVariation = ReturnVariationData(
-          originalReturn, revisedReturn, returnPeriod, aSubscription.orgName,
-          aSubscription.address, "testing", Some(RepaymentMethod.BankAccount.toString)
+          originalReturn,
+          revisedReturn,
+          returnPeriod,
+          aSubscription.orgName,
+          aSubscription.address,
+          "testing",
+          Some(RepaymentMethod.BankAccount.toString)
         )
         when(mockSdilConnector.submitSdilReturnsVary(aSubscription.sdilRef, expectedReturnVariation)(hc))
           .thenReturn(createSuccessVariationResult((): Unit))
 
-        val res = returnService.submitSdilReturnsVary(aSubscription, userAnswers, originalReturn, returnPeriod, revisedReturn)
+        val res =
+          returnService.submitSdilReturnsVary(aSubscription, userAnswers, originalReturn, returnPeriod, revisedReturn)
 
-        whenReady(res.value) {result =>
+        whenReady(res.value) { result =>
           result mustBe Right((): Unit)
         }
       }
 
       "when the userAnswers contains correction reason and balance repayment not required" in {
         val userAnswers = emptyUserAnswersForCorrectReturn
-          .set(BalanceRepaymentRequired, false).success.value
-          .set(CorrectionReasonPage, "testing").success.value
+          .set(BalanceRepaymentRequired, false)
+          .success
+          .value
+          .set(CorrectionReasonPage, "testing")
+          .success
+          .value
         val expectedReturnVariation = ReturnVariationData(
-          originalReturn, revisedReturn, returnPeriod, aSubscription.orgName,
-          aSubscription.address, "testing", None
+          originalReturn,
+          revisedReturn,
+          returnPeriod,
+          aSubscription.orgName,
+          aSubscription.address,
+          "testing",
+          None
         )
         when(mockSdilConnector.submitSdilReturnsVary(aSubscription.sdilRef, expectedReturnVariation)(hc))
           .thenReturn(createSuccessVariationResult((): Unit))
 
-        val res = returnService.submitSdilReturnsVary(aSubscription, userAnswers, originalReturn, returnPeriod, revisedReturn)
+        val res =
+          returnService.submitSdilReturnsVary(aSubscription, userAnswers, originalReturn, returnPeriod, revisedReturn)
 
         whenReady(res.value) { result =>
           result mustBe Right((): Unit)
@@ -125,13 +147,19 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
       "when the userAnswers does not contain correction reason and payment method" in {
         val userAnswers = emptyUserAnswersForCorrectReturn
         val expectedReturnVariation = ReturnVariationData(
-          originalReturn, revisedReturn, returnPeriod, aSubscription.orgName,
-          aSubscription.address, "", None
+          originalReturn,
+          revisedReturn,
+          returnPeriod,
+          aSubscription.orgName,
+          aSubscription.address,
+          "",
+          None
         )
         when(mockSdilConnector.submitSdilReturnsVary(aSubscription.sdilRef, expectedReturnVariation)(hc))
           .thenReturn(createSuccessVariationResult((): Unit))
 
-        val res = returnService.submitSdilReturnsVary(aSubscription, userAnswers, originalReturn, returnPeriod, revisedReturn)
+        val res =
+          returnService.submitSdilReturnsVary(aSubscription, userAnswers, originalReturn, returnPeriod, revisedReturn)
 
         whenReady(res.value) { result =>
           result mustBe Right((): Unit)
@@ -144,15 +172,26 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
     "should submit the submitReturnVariation and return unit" - {
       "when the userAnswers is a new importer and new packer with warehouses" in {
         val correctReturnData = CorrectReturnUserAnswersData(
-          true, Some(LitresInBands(100, 100)), true, Some(LitresInBands(100, 100)),
-          false, true, Some(LitresInBands(100, 100)), true, Some(LitresInBands(100, 100)),
-          true, Some(LitresInBands(100, 100)), true, Some(LitresInBands(100, 100))
+          true,
+          Some(LitresInBands(100, 100)),
+          true,
+          Some(LitresInBands(100, 100)),
+          false,
+          true,
+          Some(LitresInBands(100, 100)),
+          true,
+          Some(LitresInBands(100, 100)),
+          true,
+          Some(LitresInBands(100, 100)),
+          true,
+          Some(LitresInBands(100, 100))
         )
 
         val returnPeriod = ReturnPeriod(2025, 0)
 
         val userAnswers = emptyUserAnswersForCorrectReturn
-          .copy(packagingSiteList = packingSiteMap,
+          .copy(
+            packagingSiteList = packingSiteMap,
             warehouseList = twoWarehouses,
             correctReturnPeriod = Option(returnPeriod),
             data = Json.obj(("correctReturn", Json.toJson(correctReturnData)))
@@ -161,7 +200,8 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
         val sdilReturn = SdilReturn.generateFromUserAnswers(userAnswers, None)
 
         val expectedReturnsVariation = ReturnsVariation(
-          aSubscription.orgName, aSubscription.address,
+          aSubscription.orgName,
+          aSubscription.address,
           (true, Litreage(800, 800)),
           (true, Litreage(400, 400)),
           twoWarehouses.values.toList,
@@ -176,7 +216,8 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
         when(mockSdilConnector.submitReturnVariation(aSubscription.sdilRef, expectedReturnsVariation)(hc))
           .thenReturn(createSuccessVariationResult((): Unit))
 
-        val res = returnService.submitReturnVariation(aSubscription, sdilReturn, userAnswers, correctReturnData, returnPeriod)
+        val res =
+          returnService.submitReturnVariation(aSubscription, sdilReturn, userAnswers, correctReturnData, returnPeriod)
 
         whenReady(res.value) { result =>
           result mustBe Right((): Unit)
@@ -185,9 +226,19 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
 
       "when the userAnswers is a new importer and not a new packer with warehouses" in {
         val correctReturnData = CorrectReturnUserAnswersData(
-          true, Some(LitresInBands(100, 100)), false, None,
-          false, true, Some(LitresInBands(100, 100)), true, Some(LitresInBands(100, 100)),
-          true, Some(LitresInBands(100, 100)), true, Some(LitresInBands(100, 100))
+          true,
+          Some(LitresInBands(100, 100)),
+          false,
+          None,
+          false,
+          true,
+          Some(LitresInBands(100, 100)),
+          true,
+          Some(LitresInBands(100, 100)),
+          true,
+          Some(LitresInBands(100, 100)),
+          true,
+          Some(LitresInBands(100, 100))
         )
 
         val returnPeriod = ReturnPeriod(2025, 0)
@@ -202,7 +253,8 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
         val sdilReturn = SdilReturn.generateFromUserAnswers(userAnswers, None)
 
         val expectedReturnsVariation = ReturnsVariation(
-          aSubscription.orgName, aSubscription.address,
+          aSubscription.orgName,
+          aSubscription.address,
           (true, Litreage(800, 800)),
           (false, Litreage(0, 0)),
           twoWarehouses.values.toList,
@@ -217,7 +269,8 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
         when(mockSdilConnector.submitReturnVariation(aSubscription.sdilRef, expectedReturnsVariation)(hc))
           .thenReturn(createSuccessVariationResult((): Unit))
 
-        val res = returnService.submitReturnVariation(aSubscription, sdilReturn, userAnswers, correctReturnData, returnPeriod)
+        val res =
+          returnService.submitReturnVariation(aSubscription, sdilReturn, userAnswers, correctReturnData, returnPeriod)
 
         whenReady(res.value) { result =>
           result mustBe Right((): Unit)
@@ -226,15 +279,26 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
 
       "when the userAnswers is a new packer with no warehouses" in {
         val correctReturnData = CorrectReturnUserAnswersData(
-          true, Some(LitresInBands(100, 100)), true, Some(LitresInBands(100, 100)),
-          false, false, None, false, None,
-          true, Some(LitresInBands(100, 100)), true, Some(LitresInBands(100, 100))
+          true,
+          Some(LitresInBands(100, 100)),
+          true,
+          Some(LitresInBands(100, 100)),
+          false,
+          false,
+          None,
+          false,
+          None,
+          true,
+          Some(LitresInBands(100, 100)),
+          true,
+          Some(LitresInBands(100, 100))
         )
 
         val returnPeriod = ReturnPeriod(2025, 0)
 
         val userAnswers = emptyUserAnswersForCorrectReturn
-          .copy(packagingSiteList = packingSiteMap,
+          .copy(
+            packagingSiteList = packingSiteMap,
             correctReturnPeriod = Option(returnPeriod),
             data = Json.obj(("correctReturn", Json.toJson(correctReturnData)))
           )
@@ -242,7 +306,8 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
         val sdilReturn = SdilReturn.generateFromUserAnswers(userAnswers, None)
 
         val expectedReturnsVariation = ReturnsVariation(
-          aSubscription.orgName, aSubscription.address,
+          aSubscription.orgName,
+          aSubscription.address,
           (false, Litreage(0, 0)),
           (true, Litreage(400, 400)),
           List.empty,
@@ -257,7 +322,8 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
         when(mockSdilConnector.submitReturnVariation(aSubscription.sdilRef, expectedReturnsVariation)(hc))
           .thenReturn(createSuccessVariationResult((): Unit))
 
-        val res = returnService.submitReturnVariation(aSubscription, sdilReturn, userAnswers, correctReturnData, returnPeriod)
+        val res =
+          returnService.submitReturnVariation(aSubscription, sdilReturn, userAnswers, correctReturnData, returnPeriod)
 
         whenReady(res.value) { result =>
           result mustBe Right((): Unit)

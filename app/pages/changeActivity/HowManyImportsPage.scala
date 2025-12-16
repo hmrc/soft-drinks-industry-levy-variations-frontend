@@ -19,8 +19,8 @@ package pages.changeActivity
 import controllers.changeActivity.routes
 import models.backend.RetrievedSubscription
 import play.api.libs.json.JsPath
-import models.{LitresInBands, Mode, UserAnswers}
-import pages.{QuestionPage, RequiredPage}
+import models.{ LitresInBands, Mode, UserAnswers }
+import pages.{ QuestionPage, RequiredPage }
 
 case object HowManyImportsPage extends QuestionPage[LitresInBands] {
 
@@ -34,8 +34,14 @@ case object HowManyImportsPage extends QuestionPage[LitresInBands] {
   override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (userAnswers, _) =>
     List(
       RequiredPage(AmountProducedPage),
-      RequiredPage(ThirdPartyPackagersPage, additionalPreconditions = List(userAnswers.getChangeActivityData.exists(_.isSmall))),
-      RequiredPage(OperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(userAnswers.getChangeActivityData.exists(_.isLargeOrSmall))),
+      RequiredPage(
+        ThirdPartyPackagersPage,
+        additionalPreconditions = List(userAnswers.getChangeActivityData.exists(_.isSmall))
+      ),
+      RequiredPage(
+        OperatePackagingSiteOwnBrandsPage,
+        additionalPreconditions = List(userAnswers.getChangeActivityData.exists(_.isLargeOrSmall))
+      ),
       RequiredPage(ContractPackingPage),
       RequiredPage(ImportsPage)
     )

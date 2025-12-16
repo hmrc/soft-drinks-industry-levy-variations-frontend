@@ -19,7 +19,7 @@ package views.changeActivity
 import controllers.changeActivity.routes
 import forms.changeActivity.PackAtBusinessAddressFormProvider
 import models.backend.UkAddress
-import models.{CheckMode, NormalMode}
+import models.{ CheckMode, NormalMode }
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
@@ -33,10 +33,11 @@ class PackAtBusinessAddressViewSpec extends ViewSpecHelper {
   val view: PackAtBusinessAddressView = application.injector.instanceOf[PackAtBusinessAddressView]
   val formProvider = new PackAtBusinessAddressFormProvider
   val form: Form[Boolean] = formProvider.apply()
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   val businessName: String = "ACME Drinks Ltd."
-  val businessAddress: UkAddress = UkAddress(lines = List("First Line", "Middle Line", "Last Line"), postCode = "AA1 1AA")
+  val businessAddress: UkAddress =
+    UkAddress(lines = List("First Line", "Middle Line", "Last Line"), postCode = "AA1 1AA")
   val address: Html = AddressFormattingHelper.addressFormatting(businessAddress, Option(businessName))
 
   object Selectors {
@@ -54,7 +55,7 @@ class PackAtBusinessAddressViewSpec extends ViewSpecHelper {
   }
 
   "View - Change Activity - PackAtBusinessAddressViewSpec" - {
-    val html = view(form, NormalMode, address)(request, messages(application))
+    val html = view(form, NormalMode, address)(using request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
       document.title() must include(Messages("changeActivity.packAtBusinessAddress" + ".title"))
@@ -112,7 +113,7 @@ class PackAtBusinessAddressViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with yes and has no errors" - {
-      val html1 = view(form.fill(true), NormalMode, address)(request, messages(application))
+      val html1 = view(form.fill(true), NormalMode, address)(using request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -147,7 +148,7 @@ class PackAtBusinessAddressViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with no and has no errors" - {
-      val html1 = view(form.fill(false), NormalMode, address)(request, messages(application))
+      val html1 = view(form.fill(false), NormalMode, address)(using request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -187,42 +188,47 @@ class PackAtBusinessAddressViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
       "when in CheckMode" - {
-        val htmlYesSelected = view(form.fill(true), CheckMode, address)(request, messages(application))
+        val htmlYesSelected = view(form.fill(true), CheckMode, address)(using request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), CheckMode, address)(request, messages(application))
+        val htmlNoSelected = view(form.fill(false), CheckMode, address)(using request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
-          documentYesSelected.select(Selectors.form)
+          documentYesSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.PackAtBusinessAddressController.onSubmit(CheckMode).url
         }
 
         "and no is selected" in {
-          documentNoSelected.select(Selectors.form)
+          documentNoSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.PackAtBusinessAddressController.onSubmit(CheckMode).url
         }
       }
 
       "when in NormalMode" - {
-        val htmlYesSelected = view(form.fill(true), NormalMode, address)(request, messages(application))
+        val htmlYesSelected = view(form.fill(true), NormalMode, address)(using request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), NormalMode, address)(request, messages(application))
+        val htmlNoSelected = view(form.fill(false), NormalMode, address)(using request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
-          documentYesSelected.select(Selectors.form)
+          documentYesSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.PackAtBusinessAddressController.onSubmit(NormalMode).url
         }
 
         "and no is selected" in {
-          documentNoSelected.select(Selectors.form)
+          documentNoSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.PackAtBusinessAddressController.onSubmit(NormalMode).url
         }
       }
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode, address)(request, messages(application))
+      val htmlWithErrors =
+        view(form.bind(Map("value" -> "")), NormalMode, address)(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {

@@ -26,7 +26,7 @@ import views.ViewSpecHelper
 class FileReturnBeforeDeregViewSpec extends ViewSpecHelper {
 
   val view = application.injector.instanceOf[FileReturnBeforeDeregView]
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-heading-l"
@@ -36,11 +36,17 @@ class FileReturnBeforeDeregViewSpec extends ViewSpecHelper {
     val html = view(Html(""))(request, messages(application), frontendAppConfig)
     val document = doc(html)
     "should contain the expected title" in {
-      document.title() must include(Messages("You cannot cancel your registration while you have returns to send - Soft Drinks Industry Levy - GOV.UK"))
+      document.title() must include(
+        Messages(
+          "You cannot cancel your registration while you have returns to send - Soft Drinks Industry Levy - GOV.UK"
+        )
+      )
     }
 
     "should have the expected heading" in {
-      document.getElementsByClass(Selectors.heading).text() mustEqual Messages("You cannot cancel your registration while you have returns to send")
+      document.getElementsByClass(Selectors.heading).text() mustEqual Messages(
+        "You cannot cancel your registration while you have returns to send"
+      )
     }
 
     testBackLink(document)

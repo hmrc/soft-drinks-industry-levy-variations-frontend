@@ -19,10 +19,9 @@ package controllers
 import models.LitresInBands
 import org.jsoup.nodes.Document
 import org.scalatest.matchers.must.Matchers.*
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.libs.json.{JsObject, Json}
+import play.api.i18n.{ Messages, MessagesApi }
+import play.api.libs.json.{ JsObject, Json }
 import play.api.test.FakeRequest
-
 
 trait LitresISpecHelper extends ControllerITTestHelper {
 
@@ -35,14 +34,17 @@ trait LitresISpecHelper extends ControllerITTestHelper {
   val highBandValueDiff: Long = 2200
   val litresInBands: LitresInBands = LitresInBands(lowBandValue, highBandValue)
   val litresInBandsDiff: LitresInBands = LitresInBands(lowBandValueDiff, highBandValueDiff)
-  val litresInBandsObj: JsObject = Json.obj("litres.lowBand" -> s"$lowBandValue", "litres.highBand" -> s"$highBandValue")
-  val litresInBandsDiffObj: JsObject = Json.obj("litres.lowBand" -> s"$lowBandValueDiff", "litres.highBand" -> s"$highBandValueDiff")
+  val litresInBandsObj: JsObject =
+    Json.obj("litres.lowBand" -> s"$lowBandValue", "litres.highBand" -> s"$highBandValue")
+  val litresInBandsDiffObj: JsObject =
+    Json.obj("litres.lowBand" -> s"$lowBandValueDiff", "litres.highBand" -> s"$highBandValueDiff")
 
   val emptyJson: JsObject = Json.obj("litres.lowBand" -> "", "litres.highBand" -> "")
   val jsonWithNoNumeric: JsObject = Json.obj("litres.lowBand" -> "x", "litres.highBand" -> "y")
   val jsonWithNegativeNumber: JsObject = Json.obj("litres.lowBand" -> "-1", "litres.highBand" -> "-2")
   val jsonWithDecimalNumber: JsObject = Json.obj("litres.lowBand" -> "1.8", "litres.highBand" -> "2.3")
-  val jsonWithOutOfRangeNumber: JsObject = Json.obj("litres.lowBand" -> "110000000000000", "litres.highBand" -> "120000000000000")
+  val jsonWithOutOfRangeNumber: JsObject =
+    Json.obj("litres.lowBand" -> "110000000000000", "litres.highBand" -> "120000000000000")
   val jsonWith0: JsObject = Json.obj("litres.lowBand" -> "0", "litres.highBand" -> "0")
 
   object Selectors {
@@ -127,7 +129,6 @@ trait LitresISpecHelper extends ControllerITTestHelper {
 
     errors.size() mustEqual 1
     val error1 = errors.get(0)
-
 
     error1.text() mustBe Messages("litres.error.negative")
     error1.select("a").attr("href") mustBe "#litres"

@@ -16,65 +16,69 @@
 
 package models.correctReturn
 
-import models.{SdilReturn, SmallProducer}
+import models.{ SdilReturn, SmallProducer }
 import pages.Page
 import pages.correctReturn._
 
 case class ChangedPage(page: Page, answerChanged: Boolean)
 
 object ChangedPage {
-    def returnLiteragePagesThatChangedComparedToOriginalReturn(original: SdilReturn, current: SdilReturn): List[ChangedPage] = {
-      List(
-        ChangedPage(
-          page = OperatePackagingSiteOwnBrandsPage,
-          answerChanged = original.ownBrand != current.ownBrand),
-        ChangedPage(
-          page = HowManyOperatePackagingSiteOwnBrandsPage,
-          answerChanged = original.ownBrand != current.ownBrand),
-        ChangedPage(
-          page = PackagedAsContractPackerPage,
-          answerChanged = original.packLarge != current.packLarge
-        ),
-        ChangedPage(
-          page = HowManyPackagedAsContractPackerPage,
-          answerChanged = original.packLarge != current.packLarge
-        ),
-        ChangedPage(
-          page = BroughtIntoUKPage,
-          answerChanged = original.importLarge != current.importLarge
-        ),
-        ChangedPage(
-          page = HowManyBroughtIntoUKPage,
-          answerChanged = original.importLarge != current.importLarge
-        ),
-        ChangedPage(
-          page = BroughtIntoUkFromSmallProducersPage,
-          answerChanged = original.importSmall != current.importSmall
-        ),
-        ChangedPage(
-          page = HowManyBroughtIntoUkFromSmallProducersPage,
-          answerChanged = original.importSmall != current.importSmall
-        ),
-        ChangedPage(
-          page = ClaimCreditsForExportsPage,
-          answerChanged = original.`export` != current.`export`
-        ),
-        ChangedPage(
-          page = HowManyClaimCreditsForExportsPage,
-          answerChanged = original.`export` != current.`export`
-        ),
-        ChangedPage(
-          page = ClaimCreditsForLostDamagedPage,
-          answerChanged = original.wastage != current.wastage
-        ),
-        ChangedPage(
-          page = HowManyCreditsForLostDamagedPage,
-          answerChanged = original.wastage != current.wastage
-        ),
-        ChangedPage(
-          page = ExemptionsForSmallProducersPage,
-          answerChanged = SmallProducer.totalOfAllSmallProducers(original.packSmall) != SmallProducer.totalOfAllSmallProducers(current.packSmall)
-        )
+  def returnLiteragePagesThatChangedComparedToOriginalReturn(
+    original: SdilReturn,
+    current: SdilReturn
+  ): List[ChangedPage] =
+    List(
+      ChangedPage(page = OperatePackagingSiteOwnBrandsPage, answerChanged = original.ownBrand != current.ownBrand),
+      ChangedPage(
+        page = HowManyOperatePackagingSiteOwnBrandsPage,
+        answerChanged = original.ownBrand != current.ownBrand
+      ),
+      ChangedPage(
+        page = PackagedAsContractPackerPage,
+        answerChanged = original.packLarge != current.packLarge
+      ),
+      ChangedPage(
+        page = HowManyPackagedAsContractPackerPage,
+        answerChanged = original.packLarge != current.packLarge
+      ),
+      ChangedPage(
+        page = BroughtIntoUKPage,
+        answerChanged = original.importLarge != current.importLarge
+      ),
+      ChangedPage(
+        page = HowManyBroughtIntoUKPage,
+        answerChanged = original.importLarge != current.importLarge
+      ),
+      ChangedPage(
+        page = BroughtIntoUkFromSmallProducersPage,
+        answerChanged = original.importSmall != current.importSmall
+      ),
+      ChangedPage(
+        page = HowManyBroughtIntoUkFromSmallProducersPage,
+        answerChanged = original.importSmall != current.importSmall
+      ),
+      ChangedPage(
+        page = ClaimCreditsForExportsPage,
+        answerChanged = original.`export` != current.`export`
+      ),
+      ChangedPage(
+        page = HowManyClaimCreditsForExportsPage,
+        answerChanged = original.`export` != current.`export`
+      ),
+      ChangedPage(
+        page = ClaimCreditsForLostDamagedPage,
+        answerChanged = original.wastage != current.wastage
+      ),
+      ChangedPage(
+        page = HowManyCreditsForLostDamagedPage,
+        answerChanged = original.wastage != current.wastage
+      ),
+      ChangedPage(
+        page = ExemptionsForSmallProducersPage,
+        answerChanged =
+          SmallProducer.totalOfAllSmallProducers(original.packSmall) != SmallProducer.totalOfAllSmallProducers(
+            current.packSmall
+          )
       )
-    }
-  }
+    )
+}

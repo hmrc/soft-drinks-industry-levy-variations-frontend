@@ -19,7 +19,7 @@ package controllers.correctReturn
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import forms.correctReturn.PackagedAsContractPackerFormProvider
-import models.{NormalMode, SdilReturn, UserAnswers}
+import models.{ NormalMode, SdilReturn, UserAnswers }
 import models.SelectChange.CorrectReturn
 import navigation._
 import org.mockito.ArgumentMatchers.any
@@ -49,11 +49,13 @@ class PackagedAsContractPackerControllerSpec extends SpecBase with MockitoSugar 
   lazy val packagedAsContractPackerRoute = routes.PackagedAsContractPackerController.onPageLoad(NormalMode).url
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
-  def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
+  def correctReturnAction(
+    userAnswers: Option[UserAnswers],
+    optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)
+  ): GuiceApplicationBuilder = {
     when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers)
-      .overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+      .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
   }
   "PackagedAsContractPacker Controller" - {
 
@@ -69,7 +71,7 @@ class PackagedAsContractPackerControllerSpec extends SpecBase with MockitoSugar 
         val view = application.injector.instanceOf[PackagedAsContractPackerView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -87,7 +89,10 @@ class PackagedAsContractPackerControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode)(using
+          request,
+          messages(application)
+        ).toString
       }
     }
 
@@ -95,7 +100,7 @@ class PackagedAsContractPackerControllerSpec extends SpecBase with MockitoSugar 
 
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn))
@@ -133,7 +138,7 @@ class PackagedAsContractPackerControllerSpec extends SpecBase with MockitoSugar 
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -143,13 +148,13 @@ class PackagedAsContractPackerControllerSpec extends SpecBase with MockitoSugar 
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = correctReturnAction(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CorrectReturn))).build()
+      val application =
+        correctReturnAction(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CorrectReturn))).build()
 
       running(application) {
         val request =
-          FakeRequest(POST, packagedAsContractPackerRoute
-        )
-        .withFormUrlEncodedBody(("value", "true"))
+          FakeRequest(POST, packagedAsContractPackerRoute)
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
@@ -162,27 +167,29 @@ class PackagedAsContractPackerControllerSpec extends SpecBase with MockitoSugar 
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
 
       val application =
         correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn))
           .overrides(
-            bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn (onwardRoute)),
+            bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
-          ).build()
+          )
+          .build()
 
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request =
             FakeRequest(POST, packagedAsContractPackerRoute)
-          .withFormUrlEncodedBody(("value", "true"))
+              .withFormUrlEncodedBody(("value", "true"))
 
           await(route(application, request).value)
-          events.collectFirst {
-            case event =>
+          events
+            .collectFirst { case event =>
               event.getLevel.levelStr mustBe "ERROR"
               event.getMessage mustEqual "Failed to set value in session repository while attempting set on packagedAsContractPacker"
-          }.getOrElse(fail("No logging captured"))
+            }
+            .getOrElse(fail("No logging captured"))
         }
       }
     }

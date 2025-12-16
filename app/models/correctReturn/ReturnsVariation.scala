@@ -16,20 +16,21 @@
 
 package models.correctReturn
 
-import models.backend.{Site, UkAddress}
+import models.backend.{ Site, UkAddress }
 import models.submission.Litreage
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{ Format, Json }
 
 case class ReturnsVariation(
-                             orgName: String,
-                             ppobAddress: UkAddress,
-                             importer: (Boolean, Litreage) = (false, Litreage(0, 0)),
-                             packer: (Boolean, Litreage) = (false, Litreage(0, 0)),
-                             warehouses: List[Site] = Nil,
-                             packingSites: List[Site] = Nil,
-                             phoneNumber: String,
-                             email: String,
-                             taxEstimation: BigDecimal)
+  orgName: String,
+  ppobAddress: UkAddress,
+  importer: (Boolean, Litreage) = (false, Litreage(0, 0)),
+  packer: (Boolean, Litreage) = (false, Litreage(0, 0)),
+  warehouses: List[Site] = Nil,
+  packingSites: List[Site] = Nil,
+  phoneNumber: String,
+  email: String,
+  taxEstimation: BigDecimal
+)
 object ReturnsVariation {
 
   implicit val bllFormat: Format[(Boolean, Litreage)] = Json.format[(Boolean, Litreage)]

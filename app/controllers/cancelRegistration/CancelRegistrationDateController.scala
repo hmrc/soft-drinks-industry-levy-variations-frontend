@@ -20,54 +20,54 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.cancelRegistration.CancelRegistrationDateFormProvider
 import handlers.ErrorHandler
-import models.{Mode, SelectChange}
+import models.{ Mode, SelectChange }
 import navigation._
 import pages.cancelRegistration.CancelRegistrationDatePage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import services.SessionService
 import utilities.GenericLogger
 import views.html.cancelRegistration.CancelRegistrationDateView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class CancelRegistrationDateController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       val sessionService: SessionService,
-                                       val navigator: NavigatorForCancelRegistration,
-                                       controllerActions: ControllerActions,
-                                       formProvider: CancelRegistrationDateFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: CancelRegistrationDateView,
-                                       val genericLogger: GenericLogger,
-                                       val errorHandler: ErrorHandler
-                                     )(implicit val ec: ExecutionContext) extends ControllerHelper {
+class CancelRegistrationDateController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForCancelRegistration,
+  controllerActions: ControllerActions,
+  formProvider: CancelRegistrationDateFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: CancelRegistrationDateView,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration) {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration) { implicit request =>
 
       val preparedForm = request.userAnswers.get(CancelRegistrationDatePage) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       Ok(view(preparedForm, mode))
-  }
+    }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration).async {
-    implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
-        value => {
-          val updatedAnswers = request.userAnswers.set(CancelRegistrationDatePage, value)
-          updateDatabaseAndRedirect(updatedAnswers, CancelRegistrationDatePage, mode)
-        }
-      )
-  }
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration).async { implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value => {
+            val updatedAnswers = request.userAnswers.set(CancelRegistrationDatePage, value)
+            updateDatabaseAndRedirect(updatedAnswers, CancelRegistrationDatePage, mode)
+          }
+        )
+    }
 }

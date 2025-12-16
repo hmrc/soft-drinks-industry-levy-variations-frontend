@@ -32,7 +32,7 @@ class SelectChangeFormProviderSpec extends OptionFieldBehaviours {
     behave like optionsField[SelectChange](
       form,
       fieldName,
-      validValues  = SelectChange.values,
+      validValues = SelectChange.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

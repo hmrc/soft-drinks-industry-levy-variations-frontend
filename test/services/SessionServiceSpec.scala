@@ -17,7 +17,7 @@
 package services
 
 import base.SpecBase
-import errors.{SessionDatabaseDeleteError, SessionDatabaseGetError, SessionDatabaseInsertError}
+import errors.{ SessionDatabaseDeleteError, SessionDatabaseGetError, SessionDatabaseInsertError }
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -36,11 +36,11 @@ class SessionServiceSpec extends SpecBase with MockitoSugar {
     "must return true" - {
       "when no mongo errors occur" in {
 
-        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         val res = sessionService.set(emptyUserAnswersForUpdateRegisteredDetails)
 
-        whenReady(res) {result =>
+        whenReady(res) { result =>
           result mustBe Right(true)
         }
       }
@@ -49,7 +49,7 @@ class SessionServiceSpec extends SpecBase with MockitoSugar {
     "must return SessionDatabaseInsertError" - {
       "when a mongo errors occurs" in {
 
-        when(mockSessionRepository.set(any())) thenReturn Future.failed(new Exception("error"))
+        when(mockSessionRepository.set(any())).thenReturn(Future.failed(new Exception("error")))
 
         val res = sessionService.set(emptyUserAnswersForUpdateRegisteredDetails)
 
@@ -66,7 +66,7 @@ class SessionServiceSpec extends SpecBase with MockitoSugar {
       "when no mongo errors occur and a record exists" in {
         val record = emptyUserAnswersForUpdateRegisteredDetails
 
-        when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(record))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(record)))
 
         val res = sessionService.get("id")
 
@@ -76,11 +76,10 @@ class SessionServiceSpec extends SpecBase with MockitoSugar {
       }
     }
 
-
     "must return None" - {
       "when no mongo errors occur and a record doesn't exists" in {
 
-        when(mockSessionRepository.get(any())) thenReturn Future.successful(None)
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
 
         val res = sessionService.get("id")
 
@@ -93,7 +92,7 @@ class SessionServiceSpec extends SpecBase with MockitoSugar {
     "must return SessionDatabaseGetError" - {
       "when a mongo errors occurs" in {
 
-        when(mockSessionRepository.get(any())) thenReturn Future.failed(new Exception("error"))
+        when(mockSessionRepository.get(any())).thenReturn(Future.failed(new Exception("error")))
 
         val res = sessionService.get("id")
 
@@ -109,7 +108,7 @@ class SessionServiceSpec extends SpecBase with MockitoSugar {
     "must return true" - {
       "when no mongo errors occur" in {
 
-        when(mockSessionRepository.clear(any())) thenReturn Future.successful(true)
+        when(mockSessionRepository.clear(any())).thenReturn(Future.successful(true))
 
         val res = sessionService.clear("id")
 
@@ -122,7 +121,7 @@ class SessionServiceSpec extends SpecBase with MockitoSugar {
     "must return SessionDatabaseDeleteError" - {
       "when a mongo errors occurs" in {
 
-        when(mockSessionRepository.clear(any())) thenReturn Future.failed(new Exception("error"))
+        when(mockSessionRepository.clear(any())).thenReturn(Future.failed(new Exception("error")))
 
         val res = sessionService.clear("id")
 
@@ -138,7 +137,7 @@ class SessionServiceSpec extends SpecBase with MockitoSugar {
     "must return true" - {
       "when no mongo errors occur" in {
 
-        when(mockSessionRepository.keepAlive(any())) thenReturn Future.successful(true)
+        when(mockSessionRepository.keepAlive(any())).thenReturn(Future.successful(true))
 
         val res = sessionService.keepAlive("id")
 
@@ -151,7 +150,7 @@ class SessionServiceSpec extends SpecBase with MockitoSugar {
     "must return SessionDatabaseInsertError" - {
       "when a mongo errors occurs" in {
 
-        when(mockSessionRepository.keepAlive(any())) thenReturn Future.failed(new Exception("error"))
+        when(mockSessionRepository.keepAlive(any())).thenReturn(Future.failed(new Exception("error")))
 
         val res = sessionService.keepAlive("id")
 

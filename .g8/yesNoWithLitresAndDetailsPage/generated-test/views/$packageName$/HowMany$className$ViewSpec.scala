@@ -29,7 +29,7 @@ class HowMany$className$ViewSpec extends LitresSpecHelper {
 
   val howMany$className$View: HowMany$className$View = application.injector.instanceOf[HowMany$className$View]
 
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
   implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
   "HowMany$className$View" - {

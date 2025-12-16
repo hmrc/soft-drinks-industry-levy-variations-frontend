@@ -31,7 +31,7 @@ trait ReturnDetailsSummaryRowHelper {
   val actionId: String
   val hiddenText: String
 
-  def row(answers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages): Seq[SummaryListRow] = {
+  def row(answers: UserAnswers, isCheckAnswers: Boolean = false)(implicit messages: Messages): Seq[SummaryListRow] =
     answers.get(page) match {
       case None => Seq.empty
       case Some(answer) =>
@@ -51,6 +51,5 @@ trait ReturnDetailsSummaryRowHelper {
           )
         )
     }
-  }
 
 }

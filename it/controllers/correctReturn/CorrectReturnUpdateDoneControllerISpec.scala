@@ -22,11 +22,12 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
 
     "when the userAnswers contains no data for correct return " - {
       "should redirect to select return controller" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
         val testTime = Instant.now()
-        setUpForCorrectReturn(emptyUserAnswersForSelectChange(CorrectReturn).copy(submitted = true, submittedOn = Some(testTime),
-          correctReturnPeriod = None))
+        setUpForCorrectReturn(
+          emptyUserAnswersForSelectChange(CorrectReturn)
+            .copy(submitted = true, submittedOn = Some(testTime), correctReturnPeriod = None)
+        )
 
         WsTestClient.withClient { client =>
           val result = createClientRequestGet(client, baseUrl + route)
@@ -42,16 +43,17 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
     "when the user has changed all pages including litres" - {
       "should render the check changes page with all sections" in {
 
-
         val testTime = Instant.now()
         val userAnswers = userAnswerWithLitresForAllPagesNilSdilReturn
-          .set(CorrectionReasonPage, "I forgot something").success.value
-          .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+          .set(CorrectionReasonPage, "I forgot something")
+          .success
+          .value
+          .set(RepaymentMethodPage, RepaymentMethod.values.head)
+          .success
+          .value
         setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
 
-        build
-          .commonPrecondition
-          .sdilBackend.balance(userAnswers.id, false)
+        build.commonPrecondition.sdilBackend.balance(userAnswers.id, false)
 
         WsTestClient.withClient { client =>
           val result = createClientRequestGet(client, baseUrl + route)
@@ -77,7 +79,11 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
             val contractPackedForSmallProducers = page.getElementsByClass("govuk-summary-list").get(2)
 
             page.getElementsByTag("h2").get(3).text() mustBe "Contract packed for registered small producers"
-            validateContractPackedForSmallProducersWithLitresSummaryList(contractPackedForSmallProducers, smallProducerLitres, false)
+            validateContractPackedForSmallProducersWithLitresSummaryList(
+              contractPackedForSmallProducers,
+              smallProducerLitres,
+              false
+            )
 
             val imports = page.getElementsByClass("govuk-summary-list").get(3)
 
@@ -113,15 +119,15 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
           val testTime = Instant.now()
 
           val userAnswers = userAnswerWithAllNosWithOriginalSdilReturn
-            .set(CorrectionReasonPage, "I forgot something").success.value
-            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+            .set(CorrectionReasonPage, "I forgot something")
+            .success
+            .value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head)
+            .success
+            .value
           setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)), Some(populatedReturn))
 
-          build
-            .commonPrecondition
-            .sdilBackend.balance(userAnswers.id, false)
-
-
+          build.commonPrecondition.sdilBackend.balance(userAnswers.id, false)
 
           WsTestClient.withClient { client =>
             val result = createClientRequestGet(client, baseUrl + route)
@@ -176,14 +182,19 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
         s"when the user has changed answers on $OperatePackagingSiteOwnBrandsPage" - {
           "should render the check changes page with only the own brands section" in {
             val testTime = Instant.now()
-            val correctReturnData = nilCorrectReturnUAData.copy(operatePackagingSiteOwnBrands = true, howManyOperatePackagingSiteOwnBrands = Some(operatePackagingSiteLitres))
+            val correctReturnData = nilCorrectReturnUAData.copy(
+              operatePackagingSiteOwnBrands = true,
+              howManyOperatePackagingSiteOwnBrands = Some(operatePackagingSiteLitres)
+            )
             val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
               .copy(submitted = true, submittedOn = Some(testTime))
-              .set(CorrectionReasonPage, "I forgot something").success.value
-              .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-            build
-              .commonPrecondition
-              .sdilBackend.balance(userAnswers.id, false)
+              .set(CorrectionReasonPage, "I forgot something")
+              .success
+              .value
+              .set(RepaymentMethodPage, RepaymentMethod.values.head)
+              .success
+              .value
+            build.commonPrecondition.sdilBackend.balance(userAnswers.id, false)
 
             setUpForCorrectReturn(userAnswers)
 
@@ -201,7 +212,11 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
                 val operatePackagingSites = page.getElementsByClass("govuk-summary-list").get(0)
 
                 page.getElementsByTag("h2").get(1).text() mustBe "Own brands packaged at your own site"
-                validateOperatePackagingSitesWithLitresSummaryList(operatePackagingSites, LitresInBands(1000, 2000), false)
+                validateOperatePackagingSitesWithLitresSummaryList(
+                  operatePackagingSites,
+                  LitresInBands(1000, 2000),
+                  false
+                )
               }
             }
           }
@@ -210,15 +225,20 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
         s"when the user has changed answers on $PackagedAsContractPackerPage" - {
           "should render the check changes page with only the packaged as contract packer section" in {
             val testTime = Instant.now()
-            val correctReturnData = nilCorrectReturnUAData.copy(packagedAsContractPacker = true, howManyPackagedAsContractPacker = Some(operatePackagingSiteLitres))
+            val correctReturnData = nilCorrectReturnUAData.copy(
+              packagedAsContractPacker = true,
+              howManyPackagedAsContractPacker = Some(operatePackagingSiteLitres)
+            )
             val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
-              .set(CorrectionReasonPage, "I forgot something").success.value
-              .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+              .set(CorrectionReasonPage, "I forgot something")
+              .success
+              .value
+              .set(RepaymentMethodPage, RepaymentMethod.values.head)
+              .success
+              .value
             setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
 
-            build
-              .commonPrecondition
-              .sdilBackend.balance(userAnswers.id, false)
+            build.commonPrecondition.sdilBackend.balance(userAnswers.id, false)
 
             WsTestClient.withClient { client =>
               val result = createClientRequestGet(client, baseUrl + route)
@@ -243,15 +263,20 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
         s"when the user has changed answers on $BroughtIntoUKPage" - {
           "should render the check changes page with only the Brought into the UK section" in {
             val testTime = Instant.now()
-            val correctReturnData = nilCorrectReturnUAData.copy(broughtIntoUK = true, howManyBroughtIntoUK = Some(operatePackagingSiteLitres))
+            val correctReturnData =
+              nilCorrectReturnUAData.copy(broughtIntoUK = true, howManyBroughtIntoUK = Some(operatePackagingSiteLitres))
             val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
-              .set(CorrectionReasonPage, "I forgot something").success.value
-              .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+              .set(CorrectionReasonPage, "I forgot something")
+              .success
+              .value
+              .set(RepaymentMethodPage, RepaymentMethod.values.head)
+              .success
+              .value
             setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
             build
               .commonPreconditionChangeSubscription(diffSubscriptionWithWarehouses)
-              .sdilBackend.balance(userAnswers.id, false)
-
+              .sdilBackend
+              .balance(userAnswers.id, false)
 
             WsTestClient.withClient { client =>
               val result = createClientRequestGet(client, baseUrl + route)
@@ -277,14 +302,22 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
         s"when the user has changed answers on $BroughtIntoUkFromSmallProducersPage" - {
           "should render the check changes page with only the Brought into the UK from small producers section" in {
             val testTime = Instant.now()
-            val correctReturnData = nilCorrectReturnUAData.copy(broughtIntoUkFromSmallProducers = true, howManyBroughtIntoUkFromSmallProducers = Some(operatePackagingSiteLitres))
+            val correctReturnData = nilCorrectReturnUAData.copy(
+              broughtIntoUkFromSmallProducers = true,
+              howManyBroughtIntoUkFromSmallProducers = Some(operatePackagingSiteLitres)
+            )
             val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
-              .set(CorrectionReasonPage, "I forgot something").success.value
-              .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+              .set(CorrectionReasonPage, "I forgot something")
+              .success
+              .value
+              .set(RepaymentMethodPage, RepaymentMethod.values.head)
+              .success
+              .value
             setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
             build
               .commonPreconditionChangeSubscription(diffSubscriptionWithWarehouses)
-              .sdilBackend.balance(userAnswers.id, false)
+              .sdilBackend
+              .balance(userAnswers.id, false)
 
             WsTestClient.withClient { client =>
               val result = createClientRequestGet(client, baseUrl + route)
@@ -300,7 +333,11 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
                 val contractPacking = page.getElementsByClass("govuk-summary-list").get(0)
 
                 page.getElementsByTag("h2").get(1).text() mustBe "Brought into the UK from small producers"
-                validateImportsFromSmallProducersWithLitresSummaryList(contractPacking, LitresInBands(1000, 2000), false)
+                validateImportsFromSmallProducersWithLitresSummaryList(
+                  contractPacking,
+                  LitresInBands(1000, 2000),
+                  false
+                )
               }
             }
           }
@@ -309,15 +346,19 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
         s"when the user has changed answers on $ClaimCreditsForExportsPage" - {
           "should render the check changes page with only the Exports section" in {
             val testTime = Instant.now()
-            val correctReturnData = nilCorrectReturnUAData.copy(claimCreditsForExports = true, howManyClaimCreditsForExports = Some(operatePackagingSiteLitres))
+            val correctReturnData = nilCorrectReturnUAData.copy(
+              claimCreditsForExports = true,
+              howManyClaimCreditsForExports = Some(operatePackagingSiteLitres)
+            )
             val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
-              .set(CorrectionReasonPage, "I forgot something").success.value
-              .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+              .set(CorrectionReasonPage, "I forgot something")
+              .success
+              .value
+              .set(RepaymentMethodPage, RepaymentMethod.values.head)
+              .success
+              .value
             setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
-            build
-              .commonPrecondition
-              .sdilBackend.balance(userAnswers.id, false)
-
+            build.commonPrecondition.sdilBackend.balance(userAnswers.id, false)
 
             WsTestClient.withClient { client =>
               val result = createClientRequestGet(client, baseUrl + route)
@@ -342,13 +383,18 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
         s"when the user has changed answers on $ClaimCreditsForLostDamagedPage" - {
           "should render the check changes page with only the Lost Destroyed section" in {
             val testTime = Instant.now()
-            val correctReturnData = nilCorrectReturnUAData.copy(claimCreditsForLostDamaged = true, howManyCreditsForLostDamaged = Some(operatePackagingSiteLitres))
+            val correctReturnData = nilCorrectReturnUAData.copy(
+              claimCreditsForLostDamaged = true,
+              howManyCreditsForLostDamaged = Some(operatePackagingSiteLitres)
+            )
             val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
-              .set(CorrectionReasonPage, "I forgot something").success.value
-              .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-            build
-              .commonPrecondition
-              .sdilBackend.balance(userAnswers.id, false)
+              .set(CorrectionReasonPage, "I forgot something")
+              .success
+              .value
+              .set(RepaymentMethodPage, RepaymentMethod.values.head)
+              .success
+              .value
+            build.commonPrecondition.sdilBackend.balance(userAnswers.id, false)
 
             setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
 
@@ -376,11 +422,13 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
           "should render the check changes page with only the exemptions from small producers section" in {
             val testTime = Instant.now()
             val userAnswers = userAnswerWithExemptionSmallProducerPageUpdatedAndNilSdilReturn
-              .set(CorrectionReasonPage, "I forgot something").success.value
-              .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-            build
-              .commonPrecondition
-              .sdilBackend.balance(userAnswers.id, false)
+              .set(CorrectionReasonPage, "I forgot something")
+              .success
+              .value
+              .set(RepaymentMethodPage, RepaymentMethod.values.head)
+              .success
+              .value
+            build.commonPrecondition.sdilBackend.balance(userAnswers.id, false)
 
             setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
 
@@ -398,7 +446,11 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
                 val contractPackedForSmallProducers = page.getElementsByClass("govuk-summary-list").get(0)
 
                 page.getElementsByTag("h2").get(1).text() mustBe "Contract packed for registered small producers"
-                validateContractPackedForSmallProducersWithLitresSummaryList(contractPackedForSmallProducers, smallProducerLitres, false)
+                validateContractPackedForSmallProducersWithLitresSummaryList(
+                  contractPackedForSmallProducers,
+                  smallProducerLitres,
+                  false
+                )
               }
             }
           }
@@ -407,14 +459,17 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
         s"when the user has changed answers on $BroughtIntoUKPage, activity of Importer is false, and they have no warehouses " - {
           "should render the check changes page with the Brought into the UK and UK site sections" in {
             val testTime = Instant.now()
-            val correctReturnData = nilCorrectReturnUAData.copy(broughtIntoUK = true, howManyBroughtIntoUK = Some(operatePackagingSiteLitres))
+            val correctReturnData =
+              nilCorrectReturnUAData.copy(broughtIntoUK = true, howManyBroughtIntoUK = Some(operatePackagingSiteLitres))
             val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
               .copy(warehouseList = warehousesFromSubscription)
-              .set(CorrectionReasonPage, "I forgot something").success.value
-              .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-            build
-              .commonPrecondition
-              .sdilBackend.balance(userAnswers.id, false)
+              .set(CorrectionReasonPage, "I forgot something")
+              .success
+              .value
+              .set(RepaymentMethodPage, RepaymentMethod.values.head)
+              .success
+              .value
+            build.commonPrecondition.sdilBackend.balance(userAnswers.id, false)
 
             setUpForCorrectReturn(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
 
@@ -438,7 +493,14 @@ class CorrectReturnUpdateDoneControllerISpec extends CorrectReturnBaseCYASummary
                 val siteDetailsSummaryListItem = page.getElementsByClass("govuk-summary-list").get(1)
 
                 page.getElementsByTag("h2").get(2).text() mustBe "UK site details"
-                validateSiteDetailsSummary(userAnswers, aSubscription, siteDetailsSummaryListItem, 0, numberOfWarehouses = 2, isCheckAnswers = false)
+                validateSiteDetailsSummary(
+                  userAnswers,
+                  aSubscription,
+                  siteDetailsSummaryListItem,
+                  0,
+                  numberOfWarehouses = 2,
+                  isCheckAnswers = false
+                )
               }
             }
           }

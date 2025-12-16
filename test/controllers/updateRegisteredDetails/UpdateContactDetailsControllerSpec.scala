@@ -52,10 +52,10 @@ class UpdateContactDetailsControllerSpec extends SpecBase with MockitoSugar {
     data = Json.obj(
       "updateRegisteredDetails" -> Json.obj(
         UpdateContactDetailsPage.toString -> Json.obj(
-          "fullName" -> "Testing Example",
-          "position" -> "Job Position",
+          "fullName"    -> "Testing Example",
+          "position"    -> "Job Position",
           "phoneNumber" -> "080073282942",
-          "email" -> "email@test.com"
+          "email"       -> "email@test.com"
         )
       )
     )
@@ -75,7 +75,7 @@ class UpdateContactDetailsControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -91,21 +91,24 @@ class UpdateContactDetailsControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(ContactDetails("Testing Example", "Job Position", "080073282942", "email@test.com")), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(
+          form.fill(ContactDetails("Testing Example", "Job Position", "080073282942", "email@test.com")),
+          NormalMode
+        )(using request, messages(application)).toString
       }
     }
 
     "must redirect to the next page when valid data is submitted" in {
 
-
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
           .overrides(
-            bind[NavigatorForUpdateRegisteredDetails].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
+            bind[NavigatorForUpdateRegisteredDetails]
+              .toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           )
           .build()
@@ -113,10 +116,12 @@ class UpdateContactDetailsControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, updateContactDetailsRoute)
-            .withFormUrlEncodedBody(("fullName", "Testing Example"),
+            .withFormUrlEncodedBody(
+              ("fullName", "Testing Example"),
               ("position", "Job Position"),
               ("phoneNumber", "080073282942"),
-              ("email", "email@test.com"))
+              ("email", "email@test.com")
+            )
 
         val result = route(application, request).value
 
@@ -141,7 +146,7 @@ class UpdateContactDetailsControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -151,16 +156,19 @@ class UpdateContactDetailsControllerSpec extends SpecBase with MockitoSugar {
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(UpdateRegisteredDetails))).build()
+      val application = applicationBuilder(userAnswers =
+        Some(userDetailsWithSetMethodsReturningFailure(UpdateRegisteredDetails))
+      ).build()
 
       running(application) {
         val request =
-          FakeRequest(POST, updateContactDetailsRoute
-        )
-        .withFormUrlEncodedBody(("fullName", "Testing Example"),
-          ("position", "Job Position"),
-          ("phoneNumber", "080073282942"),
-          ("email", "email@test.com"))
+          FakeRequest(POST, updateContactDetailsRoute)
+            .withFormUrlEncodedBody(
+              ("fullName", "Testing Example"),
+              ("position", "Job Position"),
+              ("phoneNumber", "080073282942"),
+              ("email", "email@test.com")
+            )
 
         val result = route(application, request).value
         status(result) mustEqual INTERNAL_SERVER_ERROR
@@ -171,12 +179,13 @@ class UpdateContactDetailsControllerSpec extends SpecBase with MockitoSugar {
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
           .overrides(
-            bind[NavigatorForUpdateRegisteredDetails].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
+            bind[NavigatorForUpdateRegisteredDetails]
+              .toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           )
           .build()
@@ -185,17 +194,20 @@ class UpdateContactDetailsControllerSpec extends SpecBase with MockitoSugar {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request =
             FakeRequest(POST, updateContactDetailsRoute)
-              .withFormUrlEncodedBody(("fullName", "Testing Example"),
+              .withFormUrlEncodedBody(
+                ("fullName", "Testing Example"),
                 ("position", "Job Position"),
                 ("phoneNumber", "080073282942"),
-                ("email", "email@test.com"))
+                ("email", "email@test.com")
+              )
 
           await(route(application, request).value)
-          events.collectFirst {
-            case event =>
+          events
+            .collectFirst { case event =>
               event.getLevel.levelStr mustBe "ERROR"
               event.getMessage mustEqual "Failed to set value in session repository while attempting set on updateContactDetails"
-          }.getOrElse(fail("No logging captured"))
+            }
+            .getOrElse(fail("No logging captured"))
         }
       }
     }

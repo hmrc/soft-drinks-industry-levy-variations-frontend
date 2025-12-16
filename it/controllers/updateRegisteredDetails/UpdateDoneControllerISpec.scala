@@ -16,8 +16,7 @@ class UpdateDoneControllerISpec extends ControllerITTestHelper {
 
   "GET " + normalRoutePath - {
     "should return OK and render the UpdateDone page" in {
-      build
-        .commonPrecondition
+      build.commonPrecondition
 
       val testTime = Instant.now()
       setAnswers(emptyUserAnswersForUpdateRegisteredDetails.copy(submitted = true, submittedOn = Some(testTime)))
@@ -33,8 +32,7 @@ class UpdateDoneControllerISpec extends ControllerITTestHelper {
       }
     }
     "should redirect when no submitted on time is present" in {
-      build
-        .commonPrecondition
+      build.commonPrecondition
       setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
 
       WsTestClient.withClient { client =>
@@ -47,7 +45,10 @@ class UpdateDoneControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(updateRegisteredDetailsBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + normalRoutePath)
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+      UpdateRegisteredDetails,
+      updateRegisteredDetailsBaseUrl + normalRoutePath
+    )
 
   }
 }

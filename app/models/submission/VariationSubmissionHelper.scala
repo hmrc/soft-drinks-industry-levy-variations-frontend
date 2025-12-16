@@ -23,19 +23,18 @@ trait VariationSubmissionHelper {
 
   implicit class RichA[A](first: A) {
 
-    /** if the first value is the same as the second then
-     * return None - otherwise return Some(first)
-     */
+    /** if the first value is the same as the second then return None - otherwise return Some(first)
+      */
     def ifDifferentTo(other: A): Option[A] =
       if (first == other) None else Some(first)
   }
 
-  def getHighestRefNumber(sites: List[Site]): Int = sites.flatMap(site =>
-    site.ref
-      .fold[Option[Int]](None)(ref =>
-        Try(ref.toInt).toOption))
+  def getHighestRefNumber(sites: List[Site]): Int = sites
+    .flatMap(site =>
+      site.ref
+        .fold[Option[Int]](None)(ref => Try(ref.toInt).toOption)
+    )
     .maxOption
     .getOrElse(0)
-
 
 }

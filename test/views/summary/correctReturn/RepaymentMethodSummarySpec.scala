@@ -17,7 +17,7 @@
 package views.summary.correctReturn
 
 import base.SpecBase
-import models.{SelectChange, UserAnswers}
+import models.{ SelectChange, UserAnswers }
 import pages.correctReturn.RepaymentMethodPage
 import play.api.libs.json.Json
 
@@ -31,10 +31,14 @@ class RepaymentMethodSummarySpec extends SpecBase {
       repaymentMethodSummaryRow mustBe None
     }
 
-    List(true, false).foreach(isCheckAnswers => {
+    List(true, false).foreach { isCheckAnswers =>
       s"should return a summary list row with credit to SDIL acct repayment method if this answer has been added and isCheckAnswers $isCheckAnswers" in {
-        val userAnswersWithRepaymentMethod = UserAnswers(sdilNumber, SelectChange.CorrectReturn,
-          Json.obj("correctReturn" -> Json.obj("repaymentMethod" -> "sdilAccount")), contactAddress = contactAddress)
+        val userAnswersWithRepaymentMethod = UserAnswers(
+          sdilNumber,
+          SelectChange.CorrectReturn,
+          Json.obj("correctReturn" -> Json.obj("repaymentMethod" -> "sdilAccount")),
+          contactAddress = contactAddress
+        )
 
         val repaymentMethodSummaryRow = RepaymentMethodSummary.row(userAnswersWithRepaymentMethod, isCheckAnswers)
 
@@ -48,8 +52,12 @@ class RepaymentMethodSummarySpec extends SpecBase {
       }
 
       s"should return a summary list row with deposit to bank acct repayment method if this answer has been added and isCheckAnswers $isCheckAnswers" in {
-        val userAnswersWithRepaymentMethod = UserAnswers(sdilNumber, SelectChange.CorrectReturn,
-          Json.obj("correctReturn" -> Json.obj("repaymentMethod" -> "bankAccount")), contactAddress = contactAddress)
+        val userAnswersWithRepaymentMethod = UserAnswers(
+          sdilNumber,
+          SelectChange.CorrectReturn,
+          Json.obj("correctReturn" -> Json.obj("repaymentMethod" -> "bankAccount")),
+          contactAddress = contactAddress
+        )
 
         val repaymentMethodSummaryRow = RepaymentMethodSummary.row(userAnswersWithRepaymentMethod, isCheckAnswers)
 
@@ -61,7 +69,7 @@ class RepaymentMethodSummarySpec extends SpecBase {
           repaymentMethodSummaryRow.head.actions.head.items.length mustEqual 0
         }
       }
-    })
+    }
 
   }
 }

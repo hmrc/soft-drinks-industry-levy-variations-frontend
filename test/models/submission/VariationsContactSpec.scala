@@ -25,7 +25,8 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.Json
 
-class VariationsContactSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with SpecBase{
+class VariationsContactSpec
+    extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with SpecBase {
   "VariationsContact" - {
     "findDiffInAddress" - {
       "when i have submitted no changes to an address" in {
@@ -64,7 +65,9 @@ class VariationsContactSpec extends AnyFreeSpec with Matchers with ScalaCheckPro
         "when the contact address is the same and variation personal details are not supplied" in {
           val res = VariationsContact.generateForBusinessContact(
             emptyUserAnswersForUpdateRegisteredDetails.copy(contactAddress = aSubscription.address),
-            aSubscription, None)
+            aSubscription,
+            None
+          )
 
           res mustEqual None
         }
@@ -73,7 +76,9 @@ class VariationsContactSpec extends AnyFreeSpec with Matchers with ScalaCheckPro
           val varPDs = VariationsPersonalDetails()
           val res = VariationsContact.generateForBusinessContact(
             emptyUserAnswersForUpdateRegisteredDetails.copy(contactAddress = aSubscription.address),
-            aSubscription, Some(varPDs))
+            aSubscription,
+            Some(varPDs)
+          )
 
           res mustEqual None
         }
@@ -83,7 +88,9 @@ class VariationsContactSpec extends AnyFreeSpec with Matchers with ScalaCheckPro
         "when the address is different but contact details are unchanged" in {
           val res = VariationsContact.generateForBusinessContact(
             emptyUserAnswersForUpdateRegisteredDetails.copy(contactAddress = updatedContactAddress),
-            aSubscription, None)
+            aSubscription,
+            None
+          )
 
           val expectedResult = VariationsContact(Some(updatedContactAddress))
 
@@ -94,7 +101,9 @@ class VariationsContactSpec extends AnyFreeSpec with Matchers with ScalaCheckPro
           val updatedPhoneNumber = "0800483922"
           val res = VariationsContact.generateForBusinessContact(
             emptyUserAnswersForUpdateRegisteredDetails.copy(contactAddress = aSubscription.address),
-            aSubscription, Some(VariationsPersonalDetails(telephoneNumber = Some(updatedPhoneNumber))))
+            aSubscription,
+            Some(VariationsPersonalDetails(telephoneNumber = Some(updatedPhoneNumber)))
+          )
 
           val expectedResult = VariationsContact(telephoneNumber = Some(updatedPhoneNumber))
 
@@ -105,7 +114,9 @@ class VariationsContactSpec extends AnyFreeSpec with Matchers with ScalaCheckPro
           val updatedEmail = "test1@example.com"
           val res = VariationsContact.generateForBusinessContact(
             emptyUserAnswersForUpdateRegisteredDetails.copy(contactAddress = aSubscription.address),
-            aSubscription, Some(VariationsPersonalDetails(emailAddress = Some(updatedEmail))))
+            aSubscription,
+            Some(VariationsPersonalDetails(emailAddress = Some(updatedEmail)))
+          )
 
           val expectedResult = VariationsContact(emailAddress = Some(updatedEmail))
 
@@ -117,9 +128,14 @@ class VariationsContactSpec extends AnyFreeSpec with Matchers with ScalaCheckPro
           val updatedEmail = "test1@example.com"
           val res = VariationsContact.generateForBusinessContact(
             emptyUserAnswersForUpdateRegisteredDetails.copy(contactAddress = updatedContactAddress),
-            aSubscription, Some(VariationsPersonalDetails(telephoneNumber = Some(updatedPhoneNumber), emailAddress = Some(updatedEmail))))
+            aSubscription,
+            Some(
+              VariationsPersonalDetails(telephoneNumber = Some(updatedPhoneNumber), emailAddress = Some(updatedEmail))
+            )
+          )
 
-          val expectedResult = VariationsContact(Some(updatedContactAddress), Some(updatedPhoneNumber), Some(updatedEmail))
+          val expectedResult =
+            VariationsContact(Some(updatedContactAddress), Some(updatedPhoneNumber), Some(updatedEmail))
 
           res mustEqual Some(expectedResult)
         }
@@ -153,7 +169,8 @@ class VariationsContactSpec extends AnyFreeSpec with Matchers with ScalaCheckPro
           variationsContact.nonEmpty mustBe true
         }
         "when the variations contact contains all fields" in {
-          val variationsContact = VariationsContact(Some(updatedContactAddress), Some("0889089903"), Some("test@email.com"))
+          val variationsContact =
+            VariationsContact(Some(updatedContactAddress), Some("0889089903"), Some("test@email.com"))
           variationsContact.nonEmpty mustBe true
         }
 
@@ -166,38 +183,40 @@ class VariationsContactSpec extends AnyFreeSpec with Matchers with ScalaCheckPro
       }
     }
 
-    "writes"-{
+    "writes" - {
       "when submitted json is formed correctly" in {
-        Json.toJson(VariationsContact(
+        Json.toJson(
+          VariationsContact(
             Some(emptyUserAnswersForUpdateRegisteredDetails.contactAddress),
             Some("123456789"),
             Some("email@test.com")
           )
         ) mustBe Json.obj(
-          "addressLine1" -> "19 Rhes Priordy",
-                 "addressLine2" -> "East London",
-                 "addressLine3" -> "",
-                 "addressLine4" -> "",
-                 "postCode" -> "E73 2RP",
-                 "telephoneNumber" -> "123456789",
-                 "emailAddress" -> "email@test.com"
-          )
+          "addressLine1"    -> "19 Rhes Priordy",
+          "addressLine2"    -> "East London",
+          "addressLine3"    -> "",
+          "addressLine4"    -> "",
+          "postCode"        -> "E73 2RP",
+          "telephoneNumber" -> "123456789",
+          "emailAddress"    -> "email@test.com"
+        )
       }
 
       "when submitted (with no telephone number or email address) json is formed correctly" in {
-        Json.toJson(VariationsContact(
-          Some(emptyUserAnswersForUpdateRegisteredDetails.contactAddress),
-          None,
-          None
-        )
+        Json.toJson(
+          VariationsContact(
+            Some(emptyUserAnswersForUpdateRegisteredDetails.contactAddress),
+            None,
+            None
+          )
         ) mustBe Json.obj(
-          "addressLine1" -> "19 Rhes Priordy",
-          "addressLine2" -> "East London",
-          "addressLine3" -> "",
-          "addressLine4" -> "",
-          "postCode" -> "E73 2RP",
+          "addressLine1"    -> "19 Rhes Priordy",
+          "addressLine2"    -> "East London",
+          "addressLine3"    -> "",
+          "addressLine4"    -> "",
+          "postCode"        -> "E73 2RP",
           "telephoneNumber" -> None,
-          "emailAddress" -> None
+          "emailAddress"    -> None
         )
       }
     }

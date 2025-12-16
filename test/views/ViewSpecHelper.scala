@@ -26,7 +26,7 @@ import play.twirl.api.Html
 
 import scala.jdk.CollectionConverters._
 
-trait ViewSpecHelper extends SpecBase{
+trait ViewSpecHelper extends SpecBase {
 
   def doc(result: Html): Document = Jsoup.parse(contentAsString(result))
 
@@ -113,7 +113,12 @@ trait ViewSpecHelper extends SpecBase{
   }
 
   def validateAccessibilityStatementLinkPresent(doc: Document): Unit = {
-    val accessibilityStatementElement = doc.getElementsByAttributeValueContaining("href", "/accessibility-statement/soft-drinks-industry-levy-variations-frontend?referrerUrl=%2F").get(0)
+    val accessibilityStatementElement = doc
+      .getElementsByAttributeValueContaining(
+        "href",
+        "/accessibility-statement/soft-drinks-industry-levy-variations-frontend?referrerUrl=%2F"
+      )
+      .get(0)
 
     "accessibility statement exists, text and link are correct" in {
       accessibilityStatementElement.text() mustBe "Accessibility statement"

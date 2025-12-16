@@ -17,104 +17,127 @@
 package orchestrators
 
 import cats.data.EitherT
-import com.google.inject.{Inject, Singleton}
+import com.google.inject.{ Inject, Singleton }
 import connectors.SoftDrinksIndustryLevyConnector
-import errors.{FailedToAddDataToUserAnswers, MissingRequiredAnswers, NoSdilReturnForPeriod, NoVariableReturns}
+import errors.{ FailedToAddDataToUserAnswers, MissingRequiredAnswers, NoSdilReturnForPeriod, NoVariableReturns }
 import models.backend.RetrievedSubscription
 import models.correctReturn.CorrectReturnUserAnswersData
-import models.{Amounts, ReturnPeriod, SdilReturn, UserAnswers}
+import models.{ Amounts, ReturnPeriod, SdilReturn, UserAnswers }
 import service.VariationResult
-import services.{ReturnService, SessionService}
+import services.{ ReturnService, SessionService }
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.Instant
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class CorrectReturnOrchestrator @Inject()(returnService: ReturnService,
-                                          connector: SoftDrinksIndustryLevyConnector,
-                                          sessionService: SessionService){
+class CorrectReturnOrchestrator @Inject() (
+  returnService: ReturnService,
+  connector: SoftDrinksIndustryLevyConnector,
+  sessionService: SessionService
+) {
 
-  def submitReturn(userAnswers: UserAnswers, subscription: RetrievedSubscription, returnPeriod: ReturnPeriod, originalReturn: SdilReturn)
-                  (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = EitherT {
+  def submitReturn(
+    userAnswers: UserAnswers,
+    subscription: RetrievedSubscription,
+    returnPeriod: ReturnPeriod,
+    originalReturn: SdilReturn
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = EitherT {
 
     userAnswers.getCorrectReturnData match {
       case Some(correctReturnData) =>
-        submitReturnAndVariationAndUpdateSession(subscription, returnPeriod, originalReturn, userAnswers, correctReturnData).value
+        submitReturnAndVariationAndUpdateSession(
+          subscription,
+          returnPeriod,
+          originalReturn,
+          userAnswers,
+          correctReturnData
+        ).value
       case _ => Future.successful(Left(MissingRequiredAnswers))
     }
   }
 
-  def submitReturnAndVariationAndUpdateSession(subscription: RetrievedSubscription,
-                               returnPeriod: ReturnPeriod,
-                               originalReturn: SdilReturn,
-                               userAnswers: UserAnswers,
-                               correctReturnData: CorrectReturnUserAnswersData)
-                              (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = {
+  def submitReturnAndVariationAndUpdateSession(
+    subscription: RetrievedSubscription,
+    returnPeriod: ReturnPeriod,
+    originalReturn: SdilReturn,
+    userAnswers: UserAnswers,
+    correctReturnData: CorrectReturnUserAnswersData
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = {
     val revisedReturn = SdilReturn.generateFromUserAnswers(userAnswers, Some(instantNow))
     for {
       _ <- returnService.submitSdilReturnsVary(subscription, userAnswers, originalReturn, returnPeriod, revisedReturn)
-      variation <- returnService.submitReturnVariation(subscription, revisedReturn, userAnswers, correctReturnData, returnPeriod)
+      variation <-
+        returnService.submitReturnVariation(subscription, revisedReturn, userAnswers, correctReturnData, returnPeriod)
       _ <- EitherT(sessionService.set(userAnswers.copy(submitted = true, submittedOn = Some(instantNow))))
     } yield variation
   }
 
-  def getReturnPeriods(retrievedSubscription: RetrievedSubscription)
-                              (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[List[ReturnPeriod]] = EitherT {
-    connector.getVariableReturnsFromCache(retrievedSubscription.utr).value.map{
+  def getReturnPeriods(
+    retrievedSubscription: RetrievedSubscription
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[List[ReturnPeriod]] = EitherT {
+    connector.getVariableReturnsFromCache(retrievedSubscription.utr).value.map {
       case Right(returnPeriods) if returnPeriods.nonEmpty => Right(returnPeriods)
-      case Right(_) => Left(NoVariableReturns)
-      case Left(error) => Left(error)
+      case Right(_)                                       => Left(NoVariableReturns)
+      case Left(error)                                    => Left(error)
     }
   }
 
-  def setupUserAnswersForCorrectReturn(retrievedSubscription: RetrievedSubscription,
-                                       userAnswers: UserAnswers,
-                                       selectedReturnPeriod: ReturnPeriod)
-                                      (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = {
-
+  def setupUserAnswersForCorrectReturn(
+    retrievedSubscription: RetrievedSubscription,
+    userAnswers: UserAnswers,
+    selectedReturnPeriod: ReturnPeriod
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] =
     for {
-      sdilReturn <- getSdilReturn(retrievedSubscription, selectedReturnPeriod)
+      sdilReturn         <- getSdilReturn(retrievedSubscription, selectedReturnPeriod)
       updatedUserAnswers <- generateUserAnswersWithSdilReturn(userAnswers, sdilReturn, selectedReturnPeriod)
-      _ <- EitherT(sessionService.set(updatedUserAnswers))
+      _                  <- EitherT(sessionService.set(updatedUserAnswers))
     } yield (): Unit
 
-  }
-
-  def separateReturnPeriodsByYear(returnPeriods: List[ReturnPeriod]): List[List[ReturnPeriod]] = {
-    returnPeriods.distinct.groupBy(_.year).values.toList
+  def separateReturnPeriodsByYear(returnPeriods: List[ReturnPeriod]): List[List[ReturnPeriod]] =
+    returnPeriods.distinct
+      .groupBy(_.year)
+      .values
+      .toList
       .map(_.sortBy(_.start).reverse)
-      .sortBy(_.head.year).reverse
-  }
+      .sortBy(_.head.year)
+      .reverse
 
-  def getSdilReturn(retrievedSubscription: RetrievedSubscription,
-                            selectedReturnPeriod: ReturnPeriod)
-                           (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[SdilReturn] = EitherT {
+  def getSdilReturn(retrievedSubscription: RetrievedSubscription, selectedReturnPeriod: ReturnPeriod)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): VariationResult[SdilReturn] = EitherT {
     connector.getReturn(retrievedSubscription.utr, selectedReturnPeriod).value.map {
       case Right(Some(sdilReturn)) => Right(sdilReturn)
-      case Right(_) => Left(NoSdilReturnForPeriod)
-      case Left(error) => Left(error)
+      case Right(_)                => Left(NoSdilReturnForPeriod)
+      case Left(error)             => Left(error)
     }
   }
 
-  private def generateUserAnswersWithSdilReturn(userAnswers: UserAnswers, sdilReturn: SdilReturn, selectedReturnPeriod: ReturnPeriod)
-                                             (implicit ec: ExecutionContext): VariationResult[UserAnswers] = EitherT {
+  private def generateUserAnswersWithSdilReturn(
+    userAnswers: UserAnswers,
+    sdilReturn: SdilReturn,
+    selectedReturnPeriod: ReturnPeriod
+  )(implicit ec: ExecutionContext): VariationResult[UserAnswers] = EitherT {
     val correctReturnUAData = CorrectReturnUserAnswersData.fromSdilReturn(sdilReturn)
-    Future.fromTry(userAnswers
-      .setForCorrectReturn(correctReturnUAData, sdilReturn.packSmall, selectedReturnPeriod)
-    ).map(Right(_))
-      .recover {
-        case _ => Left(FailedToAddDataToUserAnswers)
+    Future
+      .fromTry(
+        userAnswers
+          .setForCorrectReturn(correctReturnUAData, sdilReturn.packSmall, selectedReturnPeriod)
+      )
+      .map(Right(_))
+      .recover { case _ =>
+        Left(FailedToAddDataToUserAnswers)
       }
   }
 
   def instantNow: Instant = Instant.now()
 
-  def calculateAmounts(sdilRef: String,
-                       userAnswers: UserAnswers,
-                       returnPeriod: ReturnPeriod,
-                       originalReturn: SdilReturn)
-                      (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Amounts] = {
+  def calculateAmounts(
+    sdilRef: String,
+    userAnswers: UserAnswers,
+    returnPeriod: ReturnPeriod,
+    originalReturn: SdilReturn
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Amounts] =
     returnService.calculateAmounts(sdilRef, userAnswers, returnPeriod, originalReturn)
-  }
 }

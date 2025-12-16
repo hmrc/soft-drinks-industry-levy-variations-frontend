@@ -20,31 +20,45 @@ import controllers.updateRegisteredDetails.routes
 import models.backend.Site
 import models.Mode
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{ Actions, Key }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.AddressFormattingHelper
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object PackagingSiteDetailsSummary  {
+object PackagingSiteDetailsSummary {
 
-  def row2(packingSiteList: Map[String, Site], mode: Mode)(implicit messages: Messages): List[SummaryListRow] = {
-    packingSiteList.map {
-        packingSite =>
-          SummaryListRow(
-            key     = Key(
-              content = HtmlContent(AddressFormattingHelper.addressFormatting(packingSite._2.address, packingSite._2.tradingName)),
-              classes = "govuk-!-font-weight-regular govuk-!-width-full"
-            ),
-            actions = if(packingSiteList.size > 1){ Some(Actions("",Seq(
-              ActionItemViewModel("site.remove", routes.PackingSiteDetailsRemoveController.onPageLoad(mode, packingSite._1).url)
-                .withVisuallyHiddenText(messages("updateRegisteredDetails.packagingSiteDetails.remove.hidden",
-                  packingSite._2.tradingName.getOrElse(""), packingSite._2.address.lines.head))
-            )))} else {
-              None
-            }
+  def row2(packingSiteList: Map[String, Site], mode: Mode)(implicit messages: Messages): List[SummaryListRow] =
+    packingSiteList.map { packingSite =>
+      SummaryListRow(
+        key = Key(
+          content =
+            HtmlContent(AddressFormattingHelper.addressFormatting(packingSite._2.address, packingSite._2.tradingName)),
+          classes = "govuk-!-font-weight-regular govuk-!-width-full"
+        ),
+        actions = if (packingSiteList.size > 1) {
+          Some(
+            Actions(
+              "",
+              Seq(
+                ActionItemViewModel(
+                  "site.remove",
+                  routes.PackingSiteDetailsRemoveController.onPageLoad(mode, packingSite._1).url
+                )
+                  .withVisuallyHiddenText(
+                    messages(
+                      "updateRegisteredDetails.packagingSiteDetails.remove.hidden",
+                      packingSite._2.tradingName.getOrElse(""),
+                      packingSite._2.address.lines.head
+                    )
+                  )
+              )
+            )
           )
-      }.toList
-    }
+        } else {
+          None
+        }
+      )
+    }.toList
 }

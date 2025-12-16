@@ -18,7 +18,7 @@ package views.changeActivity
 
 import controllers.changeActivity.routes
 import forms.changeActivity.AmountProducedFormProvider
-import models.{CheckMode, NormalMode}
+import models.{ CheckMode, NormalMode }
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -31,7 +31,7 @@ class AmountProducedViewSpec extends ViewSpecHelper {
   val view: AmountProducedView = application.injector.instanceOf[AmountProducedView]
   val formProvider = new AmountProducedFormProvider
   val form: Form[AmountProduced] = formProvider.apply()
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-fieldset__heading"
@@ -48,16 +48,20 @@ class AmountProducedViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view(form, NormalMode)(request, messages(application))
+    val html = view(form, NormalMode)(using request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
-      document.title() must include("How many litres of your own brands of liable drinks have been packaged globally in the past 12 months?")
+      document.title() must include(
+        "How many litres of your own brands of liable drinks have been packaged globally in the past 12 months?"
+      )
     }
 
     "should include a legend with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.heading)
+      legend
+        .get(0)
+        .getElementsByClass(Selectors.heading)
         .text() mustEqual "How many litres of your own brands of liable drinks have been packaged globally in the past 12 months?"
     }
 
@@ -86,7 +90,7 @@ class AmountProducedViewSpec extends ViewSpecHelper {
     }
 
     AmountProduced.values.foreach { radio =>
-      val html1 = view(form.fill(radio), NormalMode)(request, messages(application))
+      val html1 = view(form.fill(radio), NormalMode)(using request, messages(application))
       val document1 = doc(html1)
 
       s"when the form is preoccupied with " + radio.toString + "selected and has no errors" - {
@@ -129,36 +133,52 @@ class AmountProducedViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
       "when in CheckMode" in {
-        val htmlAllSelected = view(form.fill(AmountProduced.values.head), CheckMode)(request, messages(application))
+        val htmlAllSelected =
+          view(form.fill(AmountProduced.values.head), CheckMode)(using request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
-        documentAllSelected.select(Selectors.form)
+        documentAllSelected
+          .select(Selectors.form)
           .attr("action") mustEqual routes.AmountProducedController.onSubmit(CheckMode).url
       }
 
       "when in NormalMode" in {
-        val htmlAllSelected = view(form.fill(AmountProduced.values.head), NormalMode)(request, messages(application))
+        val htmlAllSelected =
+          view(form.fill(AmountProduced.values.head), NormalMode)(using request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
-        documentAllSelected.select(Selectors.form)
+        documentAllSelected
+          .select(Selectors.form)
           .attr("action") mustEqual routes.AmountProducedController.onSubmit(NormalMode).url
       }
     }
 
     "should include the What does packaged mean detail content" in {
       val details = document.getElementsByClass("govuk-details")
-      details.get(0).getElementsByClass("govuk-details__summary")
+      details
+        .get(0)
+        .getElementsByClass("govuk-details__summary")
         .text() mustEqual "What does packaged mean?"
-      details.get(0).getElementsByClass("govuk-details__text")
-        .text() must include("A liable drink is packaged if it is bottled, canned, or otherwise packaged, so it is ready to either drink or dilute.")
+      details
+        .get(0)
+        .getElementsByClass("govuk-details__text")
+        .text() must include(
+        "A liable drink is packaged if it is bottled, canned, or otherwise packaged, so it is ready to either drink or dilute."
+      )
     }
     "should include the expected What is a liable drink detail content" in {
       val details = document.getElementsByClass("govuk-details")
-      details.get(1).getElementsByClass("govuk-details__summary")
+      details
+        .get(1)
+        .getElementsByClass("govuk-details__summary")
         .text() mustEqual "What is a liable drink?"
-      details.get(1).getElementsByClass("govuk-body")
+      details
+        .get(1)
+        .getElementsByClass("govuk-body")
         .text() mustEqual "A drink is liable if it meets all of the following conditions:"
-      details.get(1).getElementsByClass("govuk-details__text")
+      details
+        .get(1)
+        .getElementsByClass("govuk-details__text")
         .text() must include("it has a content of 1.2% alcohol by volume or less")
     }
     "What is a liable drink detail content should have 5 bullet points" in {
@@ -169,18 +189,26 @@ class AmountProducedViewSpec extends ViewSpecHelper {
 
     "should include the expected What drinks are exempt? content" in {
       val details = document.getElementsByClass("govuk-details")
-      details.get(2).getElementsByClass("govuk-details__summary")
+      details
+        .get(2)
+        .getElementsByClass("govuk-details__summary")
         .text() mustEqual "What drinks are exempt?"
-      details.get(2).getElementsByClass("govuk-body")
+      details
+        .get(2)
+        .getElementsByClass("govuk-body")
         .text() mustEqual "A drink is exempt if it meets one of the following conditions:"
-      details.get(2).getElementsByClass("govuk-details__text")
-        .text() must include("it is a milk-substitute which contains at least 120 milligrams of calcium per 100ml, for example soya or almond milk")
+      details
+        .get(2)
+        .getElementsByClass("govuk-details__text")
+        .text() must include(
+        "it is a milk-substitute which contains at least 120 milligrams of calcium per 100ml, for example soya or almond milk"
+      )
       val detailBullets = details.get(2).getElementsByClass("govuk-list govuk-list--bullet").get(0)
       detailBullets.childrenSize() mustBe 4
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode)(request, messages(application))
+      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode)(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
@@ -195,7 +223,8 @@ class AmountProducedViewSpec extends ViewSpecHelper {
         errorSummary
           .select("a")
           .attr("href") mustBe "#value_0"
-        errorSummary.text() mustBe "Select how many litres of your own brands of liable drinks have been packaged globally in the past 12 months"
+        errorSummary
+          .text() mustBe "Select how many litres of your own brands of liable drinks have been packaged globally in the past 12 months"
       }
     }
 

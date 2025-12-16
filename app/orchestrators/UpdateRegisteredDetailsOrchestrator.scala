@@ -20,7 +20,7 @@ import cats.data.EitherT
 import connectors.SoftDrinksIndustryLevyConnector
 import models.UserAnswers
 import models.backend.RetrievedSubscription
-import models.submission.{VariationsContact, VariationsPersonalDetails, VariationsSites, VariationsSubmission}
+import models.submission.{ VariationsContact, VariationsPersonalDetails, VariationsSites, VariationsSubmission }
 import models.updateRegisteredDetails.ContactDetails
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import service.VariationResult
@@ -31,11 +31,15 @@ import java.time.Instant
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class UpdateRegisteredDetailsOrchestrator @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
-                                                    sessionService: SessionService) {
+class UpdateRegisteredDetailsOrchestrator @Inject() (
+  sdilConnector: SoftDrinksIndustryLevyConnector,
+  sessionService: SessionService
+) {
 
-  private def getVariationToBeSubmitted(subscription: RetrievedSubscription,
-                                        userAnswers: UserAnswers): VariationsSubmission = {
+  private def getVariationToBeSubmitted(
+    subscription: RetrievedSubscription,
+    userAnswers: UserAnswers
+  ): VariationsSubmission = {
 
     val optUpdatedContact = userAnswers.get(UpdateContactDetailsPage)
     val optNewPDs = optUpdatedContact.flatMap(VariationsPersonalDetails.apply(_, subscription))
@@ -54,12 +58,14 @@ class UpdateRegisteredDetailsOrchestrator @Inject()(sdilConnector: SoftDrinksInd
       closeSites = variationSites.closedSites
     )
   }
-  def submitVariation(subscription: RetrievedSubscription, userAnswers: UserAnswers)
-                     (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = {
+  def submitVariation(subscription: RetrievedSubscription, userAnswers: UserAnswers)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): VariationResult[Unit] = {
     val variationSubmission = getVariationToBeSubmitted(subscription, userAnswers)
     for {
       variationSubmitted <- sdilConnector.submitVariation(variationSubmission, subscription.sdilRef)
-        _ <- EitherT(sessionService.set(userAnswers.copy(submitted = true, submittedOn = Some(Instant.now))))
+      _ <- EitherT(sessionService.set(userAnswers.copy(submitted = true, submittedOn = Some(Instant.now))))
     } yield variationSubmitted
 
   }

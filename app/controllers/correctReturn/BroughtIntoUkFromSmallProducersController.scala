@@ -22,52 +22,55 @@ import forms.correctReturn.BroughtIntoUkFromSmallProducersFormProvider
 import handlers.ErrorHandler
 import models.Mode
 import navigation._
-import pages.correctReturn.{BroughtIntoUkFromSmallProducersPage, HowManyBroughtIntoUkFromSmallProducersPage}
+import pages.correctReturn.{ BroughtIntoUkFromSmallProducersPage, HowManyBroughtIntoUkFromSmallProducersPage }
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import services.SessionService
 import utilities.GenericLogger
 import views.html.correctReturn.BroughtIntoUkFromSmallProducersView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class BroughtIntoUkFromSmallProducersController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         val sessionService: SessionService,
-                                         val navigator: NavigatorForCorrectReturn,
-                                         controllerActions: ControllerActions,
-                                         formProvider: BroughtIntoUkFromSmallProducersFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: BroughtIntoUkFromSmallProducersView,
-                                          val genericLogger: GenericLogger,
-                                          val errorHandler: ErrorHandler
-                                 )(implicit val ec: ExecutionContext) extends ControllerHelper {
+class BroughtIntoUkFromSmallProducersController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForCorrectReturn,
+  controllerActions: ControllerActions,
+  formProvider: BroughtIntoUkFromSmallProducersFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: BroughtIntoUkFromSmallProducersView,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData { implicit request =>
 
-      val preparedForm = request.userAnswers.get(BroughtIntoUkFromSmallProducersPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+    val preparedForm = request.userAnswers.get(BroughtIntoUkFromSmallProducersPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
-      Ok(view(preparedForm, mode))
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
-        value => {
-          val updatedAnswers = request.userAnswers.setAndRemoveLitresIfReq(BroughtIntoUkFromSmallProducersPage, HowManyBroughtIntoUkFromSmallProducersPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, BroughtIntoUkFromSmallProducersPage, mode)
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value => {
+            val updatedAnswers = request.userAnswers.setAndRemoveLitresIfReq(
+              BroughtIntoUkFromSmallProducersPage,
+              HowManyBroughtIntoUkFromSmallProducersPage,
+              value
+            )
+            updateDatabaseAndRedirect(updatedAnswers, BroughtIntoUkFromSmallProducersPage, mode)
           }
-      )
+        )
   }
 }

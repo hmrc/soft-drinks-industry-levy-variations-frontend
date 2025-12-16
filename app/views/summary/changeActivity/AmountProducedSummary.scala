@@ -17,7 +17,7 @@
 package views.summary.changeActivity
 
 import controllers.changeActivity.routes
-import models.{CheckMode, UserAnswers}
+import models.{ CheckMode, UserAnswers }
 import pages.changeActivity.AmountProducedPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
@@ -26,7 +26,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object AmountProducedSummary  {
+object AmountProducedSummary {
 
   def row(answers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(AmountProducedPage).map { answer =>
@@ -37,11 +37,13 @@ object AmountProducedSummary  {
       )
 
       SummaryListRowViewModel(
-        key     = "changeActivity.amountProduced.checkYourAnswersLabel",
-        value   = value.withCssClass("sdil-right-align--desktop"),
+        key = "changeActivity.amountProduced.checkYourAnswersLabel",
+        value = value.withCssClass("sdil-right-align--desktop"),
         actions = if (isCheckAnswers) {
-          Seq(ActionItemViewModel("site.change", routes.AmountProducedController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("changeActivity.amountProduced.change.hidden")))
+          Seq(
+            ActionItemViewModel("site.change", routes.AmountProducedController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("changeActivity.amountProduced.change.hidden"))
+          )
         } else {
           Seq.empty
         }
