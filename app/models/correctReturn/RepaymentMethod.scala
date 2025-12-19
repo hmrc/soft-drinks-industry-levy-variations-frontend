@@ -17,7 +17,7 @@
 package models.correctReturn
 
 import play.api.i18n.Messages
-import models.{Enumerable, WithName}
+import models.{ Enumerable, WithName }
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
@@ -29,18 +29,18 @@ object RepaymentMethod extends Enumerable.Implicits {
   case object SDILAccount extends WithName("sdilAccount") with RepaymentMethod
 
   val values: Seq[RepaymentMethod] = Seq(
-    BankAccount, SDILAccount
+    BankAccount,
+    SDILAccount
   )
 
-  def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {
-    case (value, index) =>
-      RadioItem(
-        content = Text(messages(s"correctReturn.repaymentMethod.${value.toString}")),
-        value   = Some(value.toString),
-        id      = Some(s"value_$index")
-      )
+  def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map { case (value, index) =>
+    RadioItem(
+      content = Text(messages(s"correctReturn.repaymentMethod.${value.toString}")),
+      value = Some(value.toString),
+      id = Some(s"value_$index")
+    )
   }
 
   implicit val enumerable: Enumerable[RepaymentMethod] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+    Enumerable(values.map(v => v.toString -> v)*)
 }

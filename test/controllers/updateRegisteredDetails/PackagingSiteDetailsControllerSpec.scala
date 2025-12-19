@@ -20,11 +20,11 @@ import base.SpecBase
 import forms.updateRegisteredDetails.PackagingSiteDetailsFormProvider
 import models.SelectChange.UpdateRegisteredDetails
 import models.updateRegisteredDetails.ChangeRegisteredDetails
-import models.{CheckMode, Mode, NormalMode}
+import models.{ CheckMode, Mode, NormalMode }
 import navigation._
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{when, times, verify}
+import org.mockito.Mockito.{ times, verify, when }
 import org.scalatestplus.mockito.MockitoSugar
 import pages.updateRegisteredDetails.ChangeRegisteredDetailsPage
 import play.api.data.Form
@@ -33,14 +33,14 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import services.{AddressLookupService, PackingDetails, SessionService}
+import services.{ AddressLookupService, PackingDetails, SessionService }
 import viewmodels.govuk.SummaryListFluency
 import views.html.updateRegisteredDetails.PackagingSiteDetailsView
 import views.summary.updateRegisteredDetails.PackagingSiteDetailsSummary
 
 import scala.concurrent.Future
 
-class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  with SummaryListFluency{
+class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with SummaryListFluency {
 
   def onwardRoute: Call = Call("GET", "/foo")
 
@@ -50,16 +50,19 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
   lazy val packagingSiteDetailsRoute: String = routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
   lazy val packagingSiteDetailsCheckRoute: String = routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
 
-  def packagingSiteDetailsRouteForMode(mode: Mode): String = if (mode == CheckMode) packagingSiteDetailsCheckRoute else packagingSiteDetailsRoute
+  def packagingSiteDetailsRouteForMode(mode: Mode): String =
+    if (mode == CheckMode) packagingSiteDetailsCheckRoute else packagingSiteDetailsRoute
 
-  lazy val emptyUserAnswersForUpdateRegisteredDetailsWithPackagingSite = emptyUserAnswersForUpdateRegisteredDetails.copy(packagingSiteList = packingSiteMap)
+  lazy val emptyUserAnswersForUpdateRegisteredDetailsWithPackagingSite =
+    emptyUserAnswersForUpdateRegisteredDetails.copy(packagingSiteList = packingSiteMap)
 
   "PackagingSiteDetails Controller within Update Registered Details" - {
 
-    List(NormalMode, CheckMode).foreach(mode => {
+    List(NormalMode, CheckMode).foreach { mode =>
       s"must return OK and the correct view for a GET in $mode" in {
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetailsWithPackagingSite)).build()
+        val application =
+          applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetailsWithPackagingSite)).build()
 
         val summary = SummaryListViewModel(
           rows = PackagingSiteDetailsSummary.row2(packingSiteMap, mode)
@@ -73,7 +76,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
           val view = application.injector.instanceOf[PackagingSiteDetailsView]
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form, mode, summary)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(form, mode, summary)(using request, messages(application)).toString
         }
       }
 
@@ -95,16 +98,16 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form, mode, summary)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(form, mode, summary)(using request, messages(application)).toString
         }
       }
-    })
+    }
 
     "must redirect to the warehouse details page when valid false answer data is submitted in NormalMode" in {
 
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
@@ -130,7 +133,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
 
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
@@ -148,7 +151,9 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.updateRegisteredDetails.routes.UpdateRegisteredDetailsCYAController.onPageLoad.url
+        redirectLocation(
+          result
+        ).value mustEqual controllers.updateRegisteredDetails.routes.UpdateRegisteredDetailsCYAController.onPageLoad.url
       }
     }
 
@@ -156,14 +161,15 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
     testRedirectToPostSubmissionIfRequired(UpdateRegisteredDetails, packagingSiteDetailsRoute)
     testNoUserAnswersError(packagingSiteDetailsRoute)
 
-    List(NormalMode, CheckMode).foreach(mode => {
+    List(NormalMode, CheckMode).foreach { mode =>
       s"must return a Bad Request and errors when invalid data is submitted in $mode" in {
 
         val summary = SummaryListViewModel(
           rows = PackagingSiteDetailsSummary.row2(packingSiteMap, mode)
         )
 
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetailsWithPackagingSite)).build()
+        val application =
+          applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetailsWithPackagingSite)).build()
 
         running(application) {
           val request =
@@ -177,24 +183,34 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
           val result = route(application, request).value
 
           status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual view(boundForm, mode, summary)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(boundForm, mode, summary)(using
+            request,
+            messages(application)
+          ).toString
         }
       }
-    })
+    }
 
     "must redirect to the next page when valid data is submitted (true)" in {
       val mockSessionRepository = mock[SessionRepository]
       val mockAddressLookupService = mock[AddressLookupService]
       val onwardUrlForALF = "foobarwizz"
 
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
-      when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
-        ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-        ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
+      when(
+        mockAddressLookupService.initJourneyAndReturnOnRampUrl(
+          ArgumentMatchers.eq(PackingDetails),
+          ArgumentMatchers.any(),
+          ArgumentMatchers.any()
+        )(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+      )
         .thenReturn(Future.successful(onwardUrlForALF))
 
-      val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.set(ChangeRegisteredDetailsPage, ChangeRegisteredDetails.values).success.value
+      val userAnswers = emptyUserAnswersForUpdateRegisteredDetails
+        .set(ChangeRegisteredDetailsPage, ChangeRegisteredDetails.values)
+        .success
+        .value
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
@@ -216,8 +232,10 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar  wit
         redirectLocation(result).value mustEqual onwardUrlForALF
 
         verify(mockAddressLookupService, times(1)).initJourneyAndReturnOnRampUrl(
-          ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+          ArgumentMatchers.eq(PackingDetails),
+          ArgumentMatchers.any(),
+          ArgumentMatchers.any()
+        )(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       }
     }
 

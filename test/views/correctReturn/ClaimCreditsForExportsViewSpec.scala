@@ -18,7 +18,7 @@ package views.correctReturn
 
 import controllers.correctReturn.routes
 import forms.correctReturn.ClaimCreditsForExportsFormProvider
-import models.{CheckMode, NormalMode}
+import models.{ CheckMode, NormalMode }
 import play.api.data.Form
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -29,7 +29,7 @@ class ClaimCreditsForExportsViewSpec extends ViewSpecHelper {
   val view: ClaimCreditsForExportsView = application.injector.instanceOf[ClaimCreditsForExportsView]
   val formProvider = new ClaimCreditsForExportsFormProvider
   val form: Form[Boolean] = formProvider.apply()
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-fieldset__heading"
@@ -45,7 +45,7 @@ class ClaimCreditsForExportsViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view(form, NormalMode)(request, messages(application))
+    val html = view(form, NormalMode)(using request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
       document.title() mustBe "Exported drinks - Soft Drinks Industry Levy - GOV.UK"
@@ -92,7 +92,7 @@ class ClaimCreditsForExportsViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with yes and has no errors" - {
-      val html1 = view(form.fill(true), NormalMode)(request, messages(application))
+      val html1 = view(form.fill(true), NormalMode)(using request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -127,7 +127,7 @@ class ClaimCreditsForExportsViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with no and has no errors" - {
-      val html1 = view(form.fill(false), NormalMode)(request, messages(application))
+      val html1 = view(form.fill(false), NormalMode)(using request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -162,7 +162,8 @@ class ClaimCreditsForExportsViewSpec extends ViewSpecHelper {
     }
 
     val expectedDetails = Map(
-      "What can I claim a credit for?" -> "You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the: brand of the liable drinks supplier or consigner customer and destination the liable drinks are supplied to method of delivery If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return.")
+      "What can I claim a credit for?" -> "You can claim a credit for liable drinks that have been, or you expect to be, exported by you or someone else. You will need to get and keep evidence of details such as the: brand of the liable drinks supplier or consigner customer and destination the liable drinks are supplied to method of delivery If you do not have the evidence by the end of the quarter after you reported the liable drinks as exported, you must add the levy credit back in your next return."
+    )
     testDetails(document, expectedDetails)
 
     "contain the correct button" in {
@@ -171,42 +172,46 @@ class ClaimCreditsForExportsViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
       "when in CheckMode" - {
-        val htmlYesSelected = view(form.fill(true), CheckMode)(request, messages(application))
+        val htmlYesSelected = view(form.fill(true), CheckMode)(using request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), CheckMode)(request, messages(application))
+        val htmlNoSelected = view(form.fill(false), CheckMode)(using request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
-          documentYesSelected.select(Selectors.form)
+          documentYesSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.ClaimCreditsForExportsController.onSubmit(CheckMode).url
         }
 
         "and no is selected" in {
-          documentNoSelected.select(Selectors.form)
+          documentNoSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.ClaimCreditsForExportsController.onSubmit(CheckMode).url
         }
       }
 
       "when in NormalMode" - {
-        val htmlYesSelected = view(form.fill(true), NormalMode)(request, messages(application))
+        val htmlYesSelected = view(form.fill(true), NormalMode)(using request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), NormalMode)(request, messages(application))
+        val htmlNoSelected = view(form.fill(false), NormalMode)(using request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
-          documentYesSelected.select(Selectors.form)
+          documentYesSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.ClaimCreditsForExportsController.onSubmit(NormalMode).url
         }
 
         "and no is selected" in {
-          documentNoSelected.select(Selectors.form)
+          documentNoSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.ClaimCreditsForExportsController.onSubmit(NormalMode).url
         }
       }
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode)(request, messages(application))
+      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode)(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {

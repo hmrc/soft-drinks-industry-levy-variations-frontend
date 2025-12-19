@@ -21,7 +21,7 @@ import connectors.SoftDrinksIndustryLevyConnector
 import errors.SessionDatabaseInsertError
 import forms.HowManyLitresFormProvider
 import models.SelectChange.CorrectReturn
-import models.{LitresInBands, NormalMode, SdilReturn, UserAnswers}
+import models.{ LitresInBands, NormalMode, SdilReturn, UserAnswers }
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -48,14 +48,17 @@ class HowManyPackagedAsContractPackerControllerSpec extends SpecBase with Mockit
 
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
-  def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
+  def correctReturnAction(
+    userAnswers: Option[UserAnswers],
+    optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)
+  ): GuiceApplicationBuilder = {
     when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers)
-      .overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+      .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
   }
 
-  lazy val howManyPackagedAsContractPackerRoute = routes.HowManyPackagedAsContractPackerController.onPageLoad(NormalMode).url
+  lazy val howManyPackagedAsContractPackerRoute =
+    routes.HowManyPackagedAsContractPackerController.onPageLoad(NormalMode).url
 
   "HowManyPackagedAsContractPacker Controller" - {
 
@@ -71,13 +74,14 @@ class HowManyPackagedAsContractPackerControllerSpec extends SpecBase with Mockit
         val view = application.injector.instanceOf[HowManyPackagedAsContractPackerView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(using request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswersForCorrectReturn.set(HowManyPackagedAsContractPackerPage, LitresInBands(100, 200)).success.value
+      val userAnswers =
+        emptyUserAnswersForCorrectReturn.set(HowManyPackagedAsContractPackerPage, LitresInBands(100, 200)).success.value
 
       val application = correctReturnAction(userAnswers = Some(userAnswers)).build()
 
@@ -89,7 +93,10 @@ class HowManyPackagedAsContractPackerControllerSpec extends SpecBase with Mockit
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(LitresInBands(100, 200)), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(LitresInBands(100, 200)), NormalMode)(
+          request,
+          messages(application)
+        ).toString
       }
     }
 
@@ -97,7 +104,7 @@ class HowManyPackagedAsContractPackerControllerSpec extends SpecBase with Mockit
 
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn))
@@ -135,7 +142,7 @@ class HowManyPackagedAsContractPackerControllerSpec extends SpecBase with Mockit
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -145,12 +152,13 @@ class HowManyPackagedAsContractPackerControllerSpec extends SpecBase with Mockit
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = correctReturnAction(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CorrectReturn))).build()
+      val application =
+        correctReturnAction(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CorrectReturn))).build()
 
       running(application) {
         val request =
           FakeRequest(POST, howManyPackagedAsContractPackerRoute)
-        .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
+            .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
 
         val result = route(application, request).value
 
@@ -163,27 +171,29 @@ class HowManyPackagedAsContractPackerControllerSpec extends SpecBase with Mockit
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
 
       val application =
         correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn))
           .overrides(
-            bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn (onwardRoute)),
+            bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
-          ).build()
+          )
+          .build()
 
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request =
             FakeRequest(POST, howManyPackagedAsContractPackerRoute)
-          .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
+              .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
 
           await(route(application, request).value)
-          events.collectFirst {
-            case event =>
+          events
+            .collectFirst { case event =>
               event.getLevel.levelStr mustBe "ERROR"
               event.getMessage mustEqual "Failed to set value in session repository while attempting set on howManyPackagedAsContractPacker"
-          }.getOrElse(fail("No logging captured"))
+            }
+            .getOrElse(fail("No logging captured"))
         }
       }
     }

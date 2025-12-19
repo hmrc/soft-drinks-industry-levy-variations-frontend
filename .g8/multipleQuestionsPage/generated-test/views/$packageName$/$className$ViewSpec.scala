@@ -34,7 +34,7 @@ class $className$ViewSpec extends ViewSpecHelper {
   val view = application.injector.instanceOf[$className$View]
   val formProvider = new $className$FormProvider
   val form = formProvider.apply()
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-heading-l"
@@ -51,7 +51,7 @@ class $className$ViewSpec extends ViewSpecHelper {
   $className;format="Camel"$JsObject.map { case (fName, fValue) => fName -> fValue.toString }
 
   "View" - {
-    val html = view(form, NormalMode)(request, messages(application))
+    val html = view(form, NormalMode)(using request, messages(application))
     val document = doc(html)
     val questionItems = document.getElementsByClass(Selectors.formGroup)
     "should contain the expected title" in {
@@ -88,7 +88,7 @@ class $className$ViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
       "when in CheckMode" in {
-        val htmlAllSelected = view(form.fill($className;format="Camel"$), CheckMode)(request, messages(application))
+        val htmlAllSelected = view(form.fill($className;format="Camel"$), CheckMode)(using request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
         documentAllSelected.select(Selectors.form)
@@ -96,7 +96,7 @@ class $className$ViewSpec extends ViewSpecHelper {
       }
 
       "when in NormalMode" in {
-        val htmlAllSelected = view(form.fill($className;format="Camel"$), NormalMode)(request, messages(application))
+        val htmlAllSelected = view(form.fill($className;format="Camel"$), NormalMode)(using request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
         documentAllSelected.select(Selectors.form)
@@ -107,7 +107,7 @@ class $className$ViewSpec extends ViewSpecHelper {
 
     $className;format="Camel"$Map.foreach { case (fieldName, _) =>
       val fieldWithError = $className;format="Camel"$Map + ((fieldName -> ""))
-      val htmlWithErrors = view(form.bind(fieldWithError.toMap), NormalMode)(request, messages(application))
+      val htmlWithErrors = view(form.bind(fieldWithError.toMap), NormalMode)(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "when " + fieldName + "is empty" - {

@@ -18,7 +18,7 @@ package models.submission
 
 import models.backend.RetrievedSubscription
 import models.changeActivity.ChangeActivityData
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.{ Json, Writes }
 
 import java.time.LocalDate
 
@@ -29,14 +29,20 @@ case class SdilActivity(
   usesContractPacker: Option[Boolean] = None,
   voluntarilyRegistered: Option[Boolean] = None,
   reasonForAmendment: Option[String] = None,
-  taxObligationStartDate: Option[LocalDate] = None)
+  taxObligationStartDate: Option[LocalDate] = None
+)
 
 object SdilActivity extends VariationSubmissionHelper {
 
   implicit val writes: Writes[SdilActivity] = Json.writes[SdilActivity]
 
-  def fromChangeActivityData(changeActivityData: ChangeActivityData, subscription: RetrievedSubscription, todaysDate: LocalDate): SdilActivity = {
-    val voluntaryChangedValue = changeActivityData.isVoluntary ifDifferentTo subscription.activity.voluntaryRegistration
+  def fromChangeActivityData(
+    changeActivityData: ChangeActivityData,
+    subscription: RetrievedSubscription,
+    todaysDate: LocalDate
+  ): SdilActivity = {
+    val voluntaryChangedValue =
+      changeActivityData.isVoluntary.ifDifferentTo(subscription.activity.voluntaryRegistration)
     val taxObligationStartDate = if (subscription.activity.voluntaryRegistration && changeActivityData.isLiable) {
       Some(todaysDate)
     } else {
@@ -45,7 +51,7 @@ object SdilActivity extends VariationSubmissionHelper {
     val activity = Activity.fromChangeActivityData(changeActivityData)
     SdilActivity(
       if (activity.nonEmpty || activity.isLarge != subscription.activity.largeProducer) Some(activity) else None,
-      !changeActivityData.isLarge ifDifferentTo !subscription.activity.largeProducer,
+      (!changeActivityData.isLarge).ifDifferentTo(!subscription.activity.largeProducer),
       smallProducerExemption = voluntaryChangedValue,
       usesContractPacker = voluntaryChangedValue,
       voluntarilyRegistered = voluntaryChangedValue,

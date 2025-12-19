@@ -19,7 +19,7 @@ package views.correctReturn
 import controllers.correctReturn.routes
 import forms.correctReturn.SmallProducerDetailsFormProvider
 import models.submission.Litreage
-import models.{CheckMode, NormalMode, SmallProducer}
+import models.{ CheckMode, NormalMode, SmallProducer }
 import play.api.data.Form
 import play.api.mvc.Request
 import play.api.test.FakeRequest
@@ -30,7 +30,7 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
   val view: SmallProducerDetailsView = application.injector.instanceOf[SmallProducerDetailsView]
   val formProvider = new SmallProducerDetailsFormProvider
   val form: Form[Boolean] = formProvider.apply()
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-heading-l"
@@ -47,14 +47,16 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
     val hidden = "govuk-visually-hidden"
   }
 
-  override val smallProducerList: List[SmallProducer] = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", Litreage(20, 10)))
+  override val smallProducerList: List[SmallProducer] = List(
+    SmallProducer("Super Cola Plc", "XCSDIL000000069", Litreage(20, 10))
+  )
   lazy val smallProducerListWithTwoProducers: List[SmallProducer] = List(
     SmallProducer("Super Cola Plc", "XCSDIL000000069", Litreage(20, 10)),
     SmallProducer("", "XMSDIL000000113", Litreage(25, 80))
   )
 
   "View" - {
-    val html = view(form, NormalMode, smallProducerList)(request, messages(application))
+    val html = view(form, NormalMode, smallProducerList)(using request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
       document.title() mustBe "You added 1 small producer - Soft Drinks Industry Levy - GOV.UK"
@@ -107,7 +109,7 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with yes and has no errors" - {
-      val html1 = view(form.fill(true), NormalMode, smallProducerList)(request, messages(application))
+      val html1 = view(form.fill(true), NormalMode, smallProducerList)(using request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -142,7 +144,7 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with no and has no errors" - {
-      val html1 = view(form.fill(false), NormalMode, smallProducerList)(request, messages(application))
+      val html1 = view(form.fill(false), NormalMode, smallProducerList)(using request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -182,42 +184,47 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
       "when in CheckMode" - {
-        val htmlYesSelected = view(form.fill(true), CheckMode, smallProducerList)(request, messages(application))
+        val htmlYesSelected = view(form.fill(true), CheckMode, smallProducerList)(using request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), CheckMode, smallProducerList)(request, messages(application))
+        val htmlNoSelected = view(form.fill(false), CheckMode, smallProducerList)(using request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
-          documentYesSelected.select(Selectors.form)
+          documentYesSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.SmallProducerDetailsController.onSubmit(CheckMode).url
         }
 
         "and no is selected" in {
-          documentNoSelected.select(Selectors.form)
+          documentNoSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.SmallProducerDetailsController.onSubmit(CheckMode).url
         }
       }
 
       "when in NormalMode" - {
-        val htmlYesSelected = view(form.fill(true), NormalMode, smallProducerList)(request, messages(application))
+        val htmlYesSelected = view(form.fill(true), NormalMode, smallProducerList)(using request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), NormalMode, smallProducerList)(request, messages(application))
+        val htmlNoSelected = view(form.fill(false), NormalMode, smallProducerList)(using request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
-          documentYesSelected.select(Selectors.form)
+          documentYesSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.SmallProducerDetailsController.onSubmit(NormalMode).url
         }
 
         "and no is selected" in {
-          documentNoSelected.select(Selectors.form)
+          documentNoSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.SmallProducerDetailsController.onSubmit(NormalMode).url
         }
       }
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode, smallProducerList)(request, messages(application))
+      val htmlWithErrors =
+        view(form.bind(Map("value" -> "")), NormalMode, smallProducerList)(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
@@ -235,8 +242,6 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
       }
     }
 
-
-
     testBackLink(document)
     validateTimeoutDialog(document)
     validateTechnicalHelpLinkPresent(document)
@@ -244,13 +249,14 @@ class SmallProducerDetailsViewSpec extends ViewSpecHelper {
   }
 
   "View should contain the correct heading and summary row details" - {
-    val html1 = view(form.fill(true), NormalMode, smallProducerList = List.empty)(request, messages(application))
+    val html1 = view(form.fill(true), NormalMode, smallProducerList = List.empty)(using request, messages(application))
     val document1 = doc(html1)
     val heading1 = document1.getElementsByClass("govuk-heading-l").get(0).text()
-    val html2 = view(form.fill(true), NormalMode, smallProducerList)(request, messages(application))
+    val html2 = view(form.fill(true), NormalMode, smallProducerList)(using request, messages(application))
     val document2 = doc(html2)
     val heading2 = document2.getElementsByClass("govuk-heading-l").get(0).text()
-    val html3 = view(form.fill(true), NormalMode, smallProducerListWithTwoProducers)(request, messages(application))
+    val html3 =
+      view(form.fill(true), NormalMode, smallProducerListWithTwoProducers)(using request, messages(application))
     val document3 = doc(html3)
     val heading3 = document3.getElementsByClass("govuk-heading-l").get(0).text()
 

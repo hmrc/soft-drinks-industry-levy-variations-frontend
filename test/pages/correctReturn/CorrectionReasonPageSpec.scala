@@ -18,7 +18,6 @@ package pages.correctReturn
 
 import pages.behaviours.PageBehaviours
 
-
 class CorrectionReasonPageSpec extends PageBehaviours {
 
   "CorrectionReasonPage" - {

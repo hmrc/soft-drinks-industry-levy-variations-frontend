@@ -16,39 +16,44 @@
 
 package models.submission
 
-import models.backend.{RetrievedSubscription, Site, UkAddress}
+import models.backend.{ RetrievedSubscription, Site, UkAddress }
 import models.updateRegisteredDetails.ContactDetails
 import models.UserAnswers
-import play.api.libs.json.{JsObject, JsString, JsValue, Json, Writes}
+import play.api.libs.json.{ JsObject, JsString, JsValue, Json, Writes }
 
 import scala.util.Try
 
 case class VariationsContact(
-                              address: Option[UkAddress] = None,
-                              telephoneNumber: Option[String] = None,
-                              emailAddress: Option[String] = None){
+  address: Option[UkAddress] = None,
+  telephoneNumber: Option[String] = None,
+  emailAddress: Option[String] = None
+) {
   def nonEmpty: Boolean = Seq(address, telephoneNumber, emailAddress).flatten.nonEmpty
 }
 
 object VariationsContact {
 
-  private[models] def findDiffInAddress(userAnswersAddress: UkAddress, subscriptionAddress: UkAddress): Option[UkAddress] = {
+  private[models] def findDiffInAddress(
+    userAnswersAddress: UkAddress,
+    subscriptionAddress: UkAddress
+  ): Option[UkAddress] = {
     val diffInAddress = subscriptionAddress.lines != userAnswersAddress.lines ||
       subscriptionAddress.postCode != userAnswersAddress.postCode
     if (diffInAddress) Some(userAnswersAddress) else None
   }
 
-  def generateForSiteContact(contactDetails: ContactDetails, site: Site): VariationsContact = {
+  def generateForSiteContact(contactDetails: ContactDetails, site: Site): VariationsContact =
     VariationsContact(
       Some(site.address),
       Some(contactDetails.phoneNumber),
       Some(contactDetails.email)
     )
-  }
 
-  def generateForBusinessContact(userAnswers: UserAnswers,
-                                 subscription: RetrievedSubscription,
-                                 updatedContactDetails: Option[VariationsPersonalDetails]): Option[VariationsContact] = {
+  def generateForBusinessContact(
+    userAnswers: UserAnswers,
+    subscription: RetrievedSubscription,
+    updatedContactDetails: Option[VariationsPersonalDetails]
+  ): Option[VariationsContact] = {
     val variationsContact: Option[UkAddress] = findDiffInAddress(userAnswers.contactAddress, subscription.address)
     lazy val telephoneNumber = updatedContactDetails.fold[Option[String]](None)(_.telephoneNumber)
     lazy val emailAddress = updatedContactDetails.flatMap(_.emailAddress)
@@ -72,11 +77,11 @@ object VariationsContact {
       }
       val phoneAndEmailJson: JsObject = Json.obj(
         "telephoneNumber" -> o.telephoneNumber,
-        "emailAddress" -> o.emailAddress
+        "emailAddress"    -> o.emailAddress
       )
       optAddressJson match {
         case Some(jsObject) => jsObject ++ phoneAndEmailJson
-        case None => phoneAndEmailJson
+        case None           => phoneAndEmailJson
       }
     }
   }

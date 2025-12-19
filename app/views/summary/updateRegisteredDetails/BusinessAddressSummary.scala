@@ -19,52 +19,60 @@ package views.summary.updateRegisteredDetails
 import models.UserAnswers
 import models.backend.UkAddress
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{ Actions, Key }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow, Value}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ SummaryList, SummaryListRow, Value }
 import viewmodels.AddressFormattingHelper
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object BusinessAddressSummary  {
+object BusinessAddressSummary {
 
-  def summaryList(businessAddressList: List[UkAddress])(implicit messages: Messages): SummaryList = {
+  def summaryList(businessAddressList: List[UkAddress])(implicit messages: Messages): SummaryList =
     SummaryListViewModel(
       rows = row(businessAddressList)
     )
-  }
 
-  def row(businessAddressList: List[UkAddress], isCheckAnswers: Boolean = true)(implicit messages: Messages): List[SummaryListRow] = {
-    businessAddressList.map {
-      businessAddress =>
-        if (isCheckAnswers) {
-          SummaryListRow(
-            key = Key(
-              content = HtmlContent(AddressFormattingHelper.addressFormatting(businessAddress, None)),
-              classes = "govuk-!-font-weight-regular govuk-!-width-full"
-            ),
-            actions = Some(Actions("", Seq(
-              ActionItemViewModel("site.change", controllers.updateRegisteredDetails.routes.BusinessAddressController.changeAddress().url)
-                .withVisuallyHiddenText(messages("updateRegisteredDetails.businessAddress.change.hidden"))
-                .withAttribute(("id", "change-businessAddress"))
-            )))
+  def row(businessAddressList: List[UkAddress], isCheckAnswers: Boolean = true)(implicit
+    messages: Messages
+  ): List[SummaryListRow] =
+    businessAddressList.map { businessAddress =>
+      if (isCheckAnswers) {
+        SummaryListRow(
+          key = Key(
+            content = HtmlContent(AddressFormattingHelper.addressFormatting(businessAddress, None)),
+            classes = "govuk-!-font-weight-regular govuk-!-width-full"
+          ),
+          actions = Some(
+            Actions(
+              "",
+              Seq(
+                ActionItemViewModel(
+                  "site.change",
+                  controllers.updateRegisteredDetails.routes.BusinessAddressController.changeAddress().url
+                )
+                  .withVisuallyHiddenText(messages("updateRegisteredDetails.businessAddress.change.hidden"))
+                  .withAttribute(("id", "change-businessAddress"))
+              )
+            )
           )
-        } else {
-          SummaryListRow(
-            key = "updateRegisteredDetails.businessAddress.key",
-            value = Value(HtmlContent(AddressFormattingHelper.addressFormatting(businessAddress, None)))
-          )
-        }
+        )
+      } else {
+        SummaryListRow(
+          key = "updateRegisteredDetails.businessAddress.key",
+          value = Value(HtmlContent(AddressFormattingHelper.addressFormatting(businessAddress, None)))
+        )
+      }
     }
-  }
 
-  def rows(answers: UserAnswers, isCheckAnswers: Boolean = true)(implicit messages: Messages): Option[(String, SummaryList)] = {
+  def rows(answers: UserAnswers, isCheckAnswers: Boolean = true)(implicit
+    messages: Messages
+  ): Option[(String, SummaryList)] =
     Some(
       messages("updateRegisteredDetails.checkYourAnswers.businessAddress.title") ->
         SummaryList(
           rows = row(List(answers.contactAddress), isCheckAnswers)
         )
     )
-  }
 
 }

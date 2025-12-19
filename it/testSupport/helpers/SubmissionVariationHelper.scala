@@ -3,11 +3,11 @@ package testSupport.helpers
 import com.github.tomakehurst.wiremock.WireMockServer
 import generators.ChangeActivityCYAGenerators.contactAddress
 import models.UserAnswers
-import models.backend.{RetrievedActivity, Site, UkAddress}
+import models.backend.{ RetrievedActivity, Site, UkAddress }
 import models.enums.SiteTypes
 import models.submission._
 import models.updateRegisteredDetails.ContactDetails
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{ JsObject, Json }
 import testSupport.SDILBackendTestData
 
 import java.time.LocalDate
@@ -41,26 +41,28 @@ trait SubmissionVariationHelper {
       List(site2)
     }
     optOriginalActivity match {
-      case Some(originalActivity) => SDILBackendTestData.aSubscription.copy(
-        address = ORIGINAL_ADDRESS,
-        activity = originalActivity,
-        productionSites = productionSites,
-        warehouseSites = warehouses
-      )
-      case _ => SDILBackendTestData.aSubscription.copy(
-        address = ORIGINAL_ADDRESS,
-        productionSites = productionSites,
-        warehouseSites = warehouses
-      )
+      case Some(originalActivity) =>
+        SDILBackendTestData.aSubscription.copy(
+          address = ORIGINAL_ADDRESS,
+          activity = originalActivity,
+          productionSites = productionSites,
+          warehouseSites = warehouses
+        )
+      case _ =>
+        SDILBackendTestData.aSubscription.copy(
+          address = ORIGINAL_ADDRESS,
+          productionSites = productionSites,
+          warehouseSites = warehouses
+        )
     }
   }
 
   def addSitesToUserAnswers(userAnswers: UserAnswers, hasNewSites: Boolean, hasRemovedSites: Boolean): UserAnswers = {
     val (productionSites: Map[String, Site], warehouses: Map[String, Site]) = (hasNewSites, hasRemovedSites) match {
       case (true, true) => (Map("2" -> site3), Map("2" -> site4))
-      case (true, _) => (Map("1" -> site1, "2" -> site3), Map("1" -> site2, "2" -> site4))
-      case (_, true) => (Map.empty, Map.empty)
-      case _ => (Map("1" -> site1), Map("1" -> site2))
+      case (true, _)    => (Map("1" -> site1, "2" -> site3), Map("1" -> site2, "2" -> site4))
+      case (_, true)    => (Map.empty, Map.empty)
+      case _            => (Map("1" -> site1), Map("1" -> site2))
     }: @unchecked
     userAnswers.copy(
       packagingSiteList = productionSites,
@@ -77,40 +79,32 @@ trait SubmissionVariationHelper {
   val closedsite1 = Site(contactAddress, Some("Closed Site 1"), Some("14"), Some(localDate.minusMonths(1)))
   val closedsite2 = Site(contactAddress, Some("Closed Site 2"), Some("15"), Some(localDate.minusMonths(1)))
 
-
-  def getExpectedNewSites(hasNewSites: Boolean,
-                          hasClosedSites: Boolean,
-                          siteContactDetails: ContactDetails = contactDetailsFromSubscription): List[VariationsSite] = {
+  def getExpectedNewSites(
+    hasNewSites: Boolean,
+    hasClosedSites: Boolean,
+    siteContactDetails: ContactDetails = contactDetailsFromSubscription
+  ): List[VariationsSite] =
     if (hasNewSites) {
       lazy val minRef = if (hasClosedSites) {
         16
       } else {
         14
       }
-      val newProductionSite = VariationsSite.generateFromSite(site3,
-        siteContactDetails,
-        minRef,
-        SiteTypes.PRODUCTION_SITE
-      )
-      val newWarehouse = VariationsSite.generateFromSite(site4,
-        siteContactDetails,
-        minRef + 1,
-        SiteTypes.WAREHOUSE
-      )
+      val newProductionSite =
+        VariationsSite.generateFromSite(site3, siteContactDetails, minRef, SiteTypes.PRODUCTION_SITE)
+      val newWarehouse = VariationsSite.generateFromSite(site4, siteContactDetails, minRef + 1, SiteTypes.WAREHOUSE)
       List(newProductionSite, newWarehouse)
     } else {
       List.empty
     }
-  }
 
-  def getExpectedClosedSites(hasRemovedSites: Boolean, hasClosedSites: Boolean): List[ClosedSite] = {
+  def getExpectedClosedSites(hasRemovedSites: Boolean, hasClosedSites: Boolean): List[ClosedSite] =
     (hasRemovedSites, hasClosedSites) match {
-      case (true, true) => List(site1, closedsite1, site2, closedsite2).map(ClosedSite.fromSite)
+      case (true, true)  => List(site1, closedsite1, site2, closedsite2).map(ClosedSite.fromSite)
       case (false, true) => List(closedsite1, closedsite2).map(ClosedSite.fromSite)
       case (true, false) => List(site1, site2).map(ClosedSite.fromSite)
-      case _ => List.empty[ClosedSite]
+      case _             => List.empty[ClosedSite]
     }
-  }
 
   val updatedPersonalDetails: VariationsPersonalDetails = VariationsPersonalDetails(
     name = Some(UPDATED_NAME),
@@ -165,10 +159,12 @@ trait SubmissionVariationHelper {
     requestedBodyMatchesExpected(wireMockServer, bodyExpected)
   }
 
-  def requestBodyMatchesChangeActivity(wireMockServer: WireMockServer,
-                                       sdilActivity: SdilActivity,
-                                       newSites: List[VariationsSite] = List.empty,
-                                       closeSites: List[ClosedSite] = List.empty) = {
+  def requestBodyMatchesChangeActivity(
+    wireMockServer: WireMockServer,
+    sdilActivity: SdilActivity,
+    newSites: List[VariationsSite] = List.empty,
+    closeSites: List[ClosedSite] = List.empty
+  ) = {
     val bodyExpected = defaultVariationsSubmission.copy(
       sdilActivity = Some(sdilActivity),
       newSites = newSites,
@@ -177,10 +173,13 @@ trait SubmissionVariationHelper {
     requestedBodyMatchesExpected(wireMockServer, bodyExpected)
   }
 
-  def requestBodyMatchesUpdateRegDetails(wireMockServer: WireMockServer, variationContact: Option[VariationsContact] = None,
-                              variationsPersonalDetails: Option[VariationsPersonalDetails] = None,
-                              newSites: List[VariationsSite] = List.empty,
-                              closeSites: List[ClosedSite] = List.empty): Boolean = {
+  def requestBodyMatchesUpdateRegDetails(
+    wireMockServer: WireMockServer,
+    variationContact: Option[VariationsContact] = None,
+    variationsPersonalDetails: Option[VariationsPersonalDetails] = None,
+    newSites: List[VariationsSite] = List.empty,
+    closeSites: List[ClosedSite] = List.empty
+  ): Boolean = {
     val bodyExpected = defaultVariationsSubmission.copy(
       businessContact = variationContact,
       correspondenceContact = variationContact,
@@ -192,9 +191,11 @@ trait SubmissionVariationHelper {
   }
 
   def requestedBodyMatchesExpected(wireMockServer: WireMockServer, bodyExpected: VariationsSubmission): Boolean = {
-    val requestMade = wireMockServer.getAllServeEvents.asScala.toList.map(_.getRequest)
-      .filter(_.getUrl.contains("/submit-variations/sdil/XKSDIL000000022")).head
-    val jsonBodySent =  Json.parse(requestMade.getBodyAsString).as[JsObject]
+    val requestMade = wireMockServer.getAllServeEvents.asScala.toList
+      .map(_.getRequest)
+      .filter(_.getUrl.contains("/submit-variations/sdil/XKSDIL000000022"))
+      .head
+    val jsonBodySent = Json.parse(requestMade.getBodyAsString).as[JsObject]
     val jsonBodyOfExpectedPost = Json.toJson(bodyExpected).as[JsObject]
     jsonBodyOfExpectedPost == jsonBodySent
   }

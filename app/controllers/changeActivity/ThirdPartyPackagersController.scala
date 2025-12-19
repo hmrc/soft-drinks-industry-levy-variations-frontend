@@ -23,8 +23,8 @@ import handlers.ErrorHandler
 import models.Mode
 import navigation.NavigatorForChangeActivity
 import pages.changeActivity.ThirdPartyPackagersPage
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import services.SessionService
 import utilities.GenericLogger
 import views.html.changeActivity.ThirdPartyPackagersView
@@ -32,44 +32,46 @@ import models.SelectChange.ChangeActivity
 import play.api.data.Form
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class ThirdPartyPackagersController @Inject()(
-                                               override val messagesApi: MessagesApi,
-                                               val sessionService: SessionService,
-                                               val navigator: NavigatorForChangeActivity,
-                                               controllerActions: ControllerActions,
-                                               requiredUserAnswers: RequiredUserAnswersForChangeActivity,
-                                               formProvider: ThirdPartyPackagersFormProvider,
-                                               val controllerComponents: MessagesControllerComponents,
-                                               view: ThirdPartyPackagersView,
-                                               val errorHandler: ErrorHandler,
-                                               val genericLogger: GenericLogger
-                                             )(implicit val ec: ExecutionContext) extends ControllerHelper  with I18nSupport {
+class ThirdPartyPackagersController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForChangeActivity,
+  controllerActions: ControllerActions,
+  requiredUserAnswers: RequiredUserAnswersForChangeActivity,
+  formProvider: ThirdPartyPackagersFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: ThirdPartyPackagersView,
+  val errorHandler: ErrorHandler,
+  val genericLogger: GenericLogger
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper with I18nSupport {
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    controllerActions.withRequiredJourneyData(ChangeActivity).async { implicit request =>
       requiredUserAnswers.requireData(ThirdPartyPackagersPage, request.userAnswers, request.subscription) {
         val preparedForm = request.userAnswers.get(ThirdPartyPackagersPage) match {
-          case None => form
+          case None        => form
           case Some(value) => form.fill(value)
         }
 
         Future.successful(Ok(view(preparedForm, mode)))
       }
-  }
+    }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
-    implicit request =>
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-        value => {
-          val updatedAnswers = request.userAnswers.set(ThirdPartyPackagersPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, ThirdPartyPackagersPage, mode)
-        }
-      )
-  }
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    controllerActions.withRequiredJourneyData(ChangeActivity).async { implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value => {
+            val updatedAnswers = request.userAnswers.set(ThirdPartyPackagersPage, value)
+            updateDatabaseAndRedirect(updatedAnswers, ThirdPartyPackagersPage, mode)
+          }
+        )
+    }
 }

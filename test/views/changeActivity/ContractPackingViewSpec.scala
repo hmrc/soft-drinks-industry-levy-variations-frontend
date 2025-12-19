@@ -18,7 +18,7 @@ package views.changeActivity
 
 import controllers.changeActivity.routes
 import forms.changeActivity.ContractPackingFormProvider
-import models.{CheckMode, NormalMode}
+import models.{ CheckMode, NormalMode }
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
@@ -30,7 +30,7 @@ class ContractPackingViewSpec extends ViewSpecHelper {
   val view: ContractPackingView = application.injector.instanceOf[ContractPackingView]
   val formProvider = new ContractPackingFormProvider
   val form: Form[Boolean] = formProvider.apply()
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-fieldset__heading"
@@ -46,11 +46,11 @@ class ContractPackingViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view(form, NormalMode)(request, messages(application))
+    val html = view(form, NormalMode)(using request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
       document.title() mustBe
-      "Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer? - Soft Drinks Industry Levy - GOV.UK"
+        "Do you operate any packaging sites in the UK to package liable drinks as a third party or contract packer? - Soft Drinks Industry Levy - GOV.UK"
     }
 
     "should include a legend with the expected heading" in {
@@ -95,7 +95,7 @@ class ContractPackingViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with yes and has no errors" - {
-      val html1 = view(form.fill(true), NormalMode)(request, messages(application))
+      val html1 = view(form.fill(true), NormalMode)(using request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -130,7 +130,7 @@ class ContractPackingViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with no and has no errors" - {
-      val html1 = view(form.fill(false), NormalMode)(request, messages(application))
+      val html1 = view(form.fill(false), NormalMode)(using request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -170,42 +170,46 @@ class ContractPackingViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
       "when in CheckMode" - {
-        val htmlYesSelected = view(form.fill(true), CheckMode)(request, messages(application))
+        val htmlYesSelected = view(form.fill(true), CheckMode)(using request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), CheckMode)(request, messages(application))
+        val htmlNoSelected = view(form.fill(false), CheckMode)(using request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
-          documentYesSelected.select(Selectors.form)
+          documentYesSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.ContractPackingController.onSubmit(CheckMode).url
         }
 
         "and no is selected" in {
-          documentNoSelected.select(Selectors.form)
+          documentNoSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.ContractPackingController.onSubmit(CheckMode).url
         }
       }
 
       "when in NormalMode" - {
-        val htmlYesSelected = view(form.fill(true), NormalMode)(request, messages(application))
+        val htmlYesSelected = view(form.fill(true), NormalMode)(using request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), NormalMode)(request, messages(application))
+        val htmlNoSelected = view(form.fill(false), NormalMode)(using request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
-          documentYesSelected.select(Selectors.form)
+          documentYesSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.ContractPackingController.onSubmit(NormalMode).url
         }
 
         "and no is selected" in {
-          documentNoSelected.select(Selectors.form)
+          documentNoSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.ContractPackingController.onSubmit(NormalMode).url
         }
       }
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode)(request, messages(application))
+      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode)(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
@@ -221,7 +225,8 @@ class ContractPackingViewSpec extends ViewSpecHelper {
         errorSummary
           .select("a")
           .attr("href") mustBe "#value"
-        errorSummary.text() mustBe "Select yes if you operate any packaging sites in the UK to package liable drinks as a third party or contract packer"
+        errorSummary
+          .text() mustBe "Select yes if you operate any packaging sites in the UK to package liable drinks as a third party or contract packer"
       }
     }
 

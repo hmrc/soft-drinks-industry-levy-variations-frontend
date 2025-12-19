@@ -16,7 +16,7 @@
 
 package models
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{ Json, OFormat }
 
 import java.time.LocalDate
 
@@ -24,7 +24,7 @@ case class ReturnPeriod(year: Int, quarter: Int) {
   require(quarter <= 3 && quarter >= 0)
   require(year >= 2018)
   def start: LocalDate = {
-    val dayOfWeek = if(year == 2018 && quarter == 1) {
+    val dayOfWeek = if (year == 2018 && quarter == 1) {
       5
     } else {
       1
@@ -35,20 +35,19 @@ case class ReturnPeriod(year: Int, quarter: Int) {
   def deadline: LocalDate = end.plusDays(30)
   def next: ReturnPeriod = {
     val nextReturnQuarter = (quarter + 1) % 4
-    val nextReturnYear = if(nextReturnQuarter < quarter) {
+    val nextReturnYear = if (nextReturnQuarter < quarter) {
       year + 1
     } else {
       year
     }
     ReturnPeriod(nextReturnYear, nextReturnQuarter)
   }
-  def previous: ReturnPeriod = {
-    if(quarter == 0) {
-      ReturnPeriod((year - 1), 3)
+  def previous: ReturnPeriod =
+    if (quarter == 0) {
+      ReturnPeriod(year - 1, 3)
     } else {
-      ReturnPeriod(year, (quarter - 1))
+      ReturnPeriod(year, quarter - 1)
     }
-  }
   def radioValue: String = s"YEAR-$year-QUARTER-$quarter"
 }
 

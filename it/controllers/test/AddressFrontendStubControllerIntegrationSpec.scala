@@ -4,7 +4,7 @@ import controllers.ControllerITTestHelper
 import org.scalatest.matchers.must.Matchers._
 import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
-import play.api.test.Helpers.{CONTENT_TYPE, JSON, LOCATION}
+import play.api.test.Helpers.{ CONTENT_TYPE, JSON, LOCATION }
 import play.api.test.WsTestClient
 import play.api.libs.ws.writeableOf_JsValue
 import play.api.libs.ws.DefaultBodyReadables.readableAsString
@@ -17,7 +17,8 @@ class AddressFrontendStubControllerIntegrationSpec extends ControllerITTestHelpe
   s"POST $initialisePath should" - {
     "return Accepted with a rampOn url in the header" in {
       WsTestClient.withClient { client =>
-        val result1 = client.url(s"$baseUrl$initialisePath")
+        val result1 = client
+          .url(s"$baseUrl$initialisePath")
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .addHttpHeaders((CONTENT_TYPE, JSON))
@@ -34,7 +35,7 @@ class AddressFrontendStubControllerIntegrationSpec extends ControllerITTestHelpe
   s"GET $addressesPath should" - {
     "return Ok with the confirmed address" in {
       WsTestClient.withClient { client =>
-        val result1 = createClientRequestGet(client,s"$baseUrl$addressesPath")
+        val result1 = createClientRequestGet(client, s"$baseUrl$addressesPath")
 
         val addressConfirmed =
           "{\"auditRef\":\"bed4bd24-72da-42a7-9338-f43431b7ed72\"," +

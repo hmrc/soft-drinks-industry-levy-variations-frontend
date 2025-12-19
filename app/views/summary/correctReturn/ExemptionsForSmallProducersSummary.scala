@@ -17,10 +17,10 @@
 package views.summary.correctReturn
 
 import controllers.correctReturn.routes
-import models.{CheckMode, LitresInBands}
+import models.{ CheckMode, LitresInBands }
 import pages.QuestionPage
 import pages.correctReturn.ExemptionsForSmallProducersPage
-import views.summary.{ReturnDetailsSummaryListWithLitres, SummaryListRowLitresHelper}
+import views.summary.{ ReturnDetailsSummaryListWithLitres, SummaryListRowLitresHelper }
 
 object ExemptionsForSmallProducersSummary extends ReturnDetailsSummaryListWithLitres {
 

@@ -18,13 +18,13 @@ package views.correctReturn
 
 import controllers.correctReturn.routes
 import forms.correctReturn.SecondaryWarehouseDetailsFormProvider
-import models.backend.{Site, UkAddress}
-import models.{CheckMode, NormalMode}
+import models.backend.{ Site, UkAddress }
+import models.{ CheckMode, NormalMode }
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ SummaryList, SummaryListRow }
 import viewmodels.govuk.SummaryListFluency
 import views.ViewSpecHelper
 import views.html.correctReturn.SecondaryWarehouseDetailsView
@@ -35,7 +35,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
   val view: SecondaryWarehouseDetailsView = application.injector.instanceOf[SecondaryWarehouseDetailsView]
   val formProvider = new SecondaryWarehouseDetailsFormProvider
   val form: Form[Boolean] = formProvider.apply()
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-fieldset__heading"
@@ -51,9 +51,11 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
   }
 
   "View" - {
-    val WarehouseMap: Map[String,Site] =
-      Map("1"-> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), Some("ABC Ltd")),
-        "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), Some("Super Cola Ltd")))
+    val WarehouseMap: Map[String, Site] =
+      Map(
+        "1" -> Site(UkAddress(List("33 Rhes Priordy", "East London", "Line 3", "Line 4"), "WR53 7CX"), Some("ABC Ltd")),
+        "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London", "Line 3", ""), "SA13 7CE"), Some("Super Cola Ltd"))
+      )
 
     val warehouseSummaryList: List[SummaryListRow] =
       SecondaryWarehouseDetailsSummary.row2(WarehouseMap, NormalMode)(messages(application))
@@ -62,7 +64,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
       rows = warehouseSummaryList
     )
 
-    val html = view(form, NormalMode, summaryList)(request, messages(application))
+    val html = view(form, NormalMode, summaryList)(using request, messages(application))
     val document = doc(html)
 
     "should contain the expected title" in {
@@ -72,7 +74,9 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
     "should include a legend with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.legend).text() mustEqual Messages("Do you want to add another UK warehouse?")
+      legend.get(0).getElementsByClass(Selectors.legend).text() mustEqual Messages(
+        "Do you want to add another UK warehouse?"
+      )
     }
 
     "when the form is not preoccupied and has no errors" - {
@@ -110,9 +114,17 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
     }
 
     "when the form is preoccupied with yes and has no errors" - {
-      val WarehouseMap: Map[String,Site] =
-        Map("1"-> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), Some("ABC Ltd")),
-          "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), Some("Super Cola Ltd")))
+      val WarehouseMap: Map[String, Site] =
+        Map(
+          "1" -> Site(
+            UkAddress(List("33 Rhes Priordy", "East London", "Line 3", "Line 4"), "WR53 7CX"),
+            Some("ABC Ltd")
+          ),
+          "2" -> Site(
+            UkAddress(List("33 Rhes Priordy", "East London", "Line 3", ""), "SA13 7CE"),
+            Some("Super Cola Ltd")
+          )
+        )
 
       val warehouseSummaryList: List[SummaryListRow] =
         SecondaryWarehouseDetailsSummary.row2(WarehouseMap, NormalMode)(messages(application))
@@ -121,7 +133,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
         rows = warehouseSummaryList
       )
 
-      val html1 = view(form.fill(true), NormalMode, summaryList)(request, messages(application))
+      val html1 = view(form.fill(true), NormalMode, summaryList)(using request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -156,9 +168,17 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
     }
 
     "when the form is preoccupied with no and has no errors" - {
-      val WarehouseMap: Map[String,Site] =
-        Map("1"-> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), Some("ABC Ltd")),
-          "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), Some("Super Cola Ltd")))
+      val WarehouseMap: Map[String, Site] =
+        Map(
+          "1" -> Site(
+            UkAddress(List("33 Rhes Priordy", "East London", "Line 3", "Line 4"), "WR53 7CX"),
+            Some("ABC Ltd")
+          ),
+          "2" -> Site(
+            UkAddress(List("33 Rhes Priordy", "East London", "Line 3", ""), "SA13 7CE"),
+            Some("Super Cola Ltd")
+          )
+        )
 
       val warehouseSummaryList: List[SummaryListRow] =
         SecondaryWarehouseDetailsSummary.row2(WarehouseMap, NormalMode)(messages(application))
@@ -167,7 +187,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
         rows = warehouseSummaryList
       )
 
-      val html1 = view(form.fill(false), NormalMode, summaryList)(request, messages(application))
+      val html1 = view(form.fill(false), NormalMode, summaryList)(using request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -207,9 +227,17 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
 
     "contains a form with the correct action" - {
       "when in CheckMode" - {
-        val WarhouseMap: Map[String,Site] =
-          Map("1"-> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), Some("ABC Ltd")),
-            "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), Some("Super Cola Ltd")))
+        val WarhouseMap: Map[String, Site] =
+          Map(
+            "1" -> Site(
+              UkAddress(List("33 Rhes Priordy", "East London", "Line 3", "Line 4"), "WR53 7CX"),
+              Some("ABC Ltd")
+            ),
+            "2" -> Site(
+              UkAddress(List("33 Rhes Priordy", "East London", "Line 3", ""), "SA13 7CE"),
+              Some("Super Cola Ltd")
+            )
+          )
 
         val warehouseSummaryList: List[SummaryListRow] =
           SecondaryWarehouseDetailsSummary.row2(WarhouseMap, NormalMode)(messages(application))
@@ -218,27 +246,36 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
           rows = warehouseSummaryList
         )
 
-
-        val htmlYesSelected = view(form.fill(true), CheckMode, summaryList)(request, messages(application))
+        val htmlYesSelected = view(form.fill(true), CheckMode, summaryList)(using request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), CheckMode, summaryList)(request, messages(application))
+        val htmlNoSelected = view(form.fill(false), CheckMode, summaryList)(using request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
-          documentYesSelected.select(Selectors.form)
+          documentYesSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.SecondaryWarehouseDetailsController.onSubmit(CheckMode).url
         }
 
         "and no is selected" in {
-          documentNoSelected.select(Selectors.form)
+          documentNoSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.SecondaryWarehouseDetailsController.onSubmit(CheckMode).url
         }
       }
 
       "when in NormalMode" - {
-        val WarhouseMap: Map[String,Site] =
-          Map("1"-> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), Some("ABC Ltd")),
-            "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), Some("Super Cola Ltd")))
+        val WarhouseMap: Map[String, Site] =
+          Map(
+            "1" -> Site(
+              UkAddress(List("33 Rhes Priordy", "East London", "Line 3", "Line 4"), "WR53 7CX"),
+              Some("ABC Ltd")
+            ),
+            "2" -> Site(
+              UkAddress(List("33 Rhes Priordy", "East London", "Line 3", ""), "SA13 7CE"),
+              Some("Super Cola Ltd")
+            )
+          )
 
         val warehouseSummaryList: List[SummaryListRow] =
           SecondaryWarehouseDetailsSummary.row2(WarhouseMap, NormalMode)(messages(application))
@@ -247,27 +284,37 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
           rows = warehouseSummaryList
         )
 
-        val htmlYesSelected = view(form.fill(true), NormalMode, summaryList)(request, messages(application))
+        val htmlYesSelected = view(form.fill(true), NormalMode, summaryList)(using request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), NormalMode, summaryList)(request, messages(application))
+        val htmlNoSelected = view(form.fill(false), NormalMode, summaryList)(using request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
-          documentYesSelected.select(Selectors.form)
+          documentYesSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.SecondaryWarehouseDetailsController.onSubmit(NormalMode).url
         }
 
         "and no is selected" in {
-          documentNoSelected.select(Selectors.form)
+          documentNoSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.SecondaryWarehouseDetailsController.onSubmit(NormalMode).url
         }
       }
     }
 
     "when there are form errors" - {
-      val WarehouseMap: Map[String,Site] =
-        Map("1"-> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3","Line 4"),"WR53 7CX"), Some("ABC Ltd")),
-          "2" -> Site(UkAddress(List("33 Rhes Priordy", "East London","Line 3",""),"SA13 7CE"), Some("Super Cola Ltd")))
+      val WarehouseMap: Map[String, Site] =
+        Map(
+          "1" -> Site(
+            UkAddress(List("33 Rhes Priordy", "East London", "Line 3", "Line 4"), "WR53 7CX"),
+            Some("ABC Ltd")
+          ),
+          "2" -> Site(
+            UkAddress(List("33 Rhes Priordy", "East London", "Line 3", ""), "SA13 7CE"),
+            Some("Super Cola Ltd")
+          )
+        )
 
       val warehouseSummaryList: List[SummaryListRow] =
         SecondaryWarehouseDetailsSummary.row2(WarehouseMap, NormalMode)(messages(application))
@@ -276,7 +323,8 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
         rows = warehouseSummaryList
       )
 
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode, summaryList)(request, messages(application))
+      val htmlWithErrors =
+        view(form.bind(Map("value" -> "")), NormalMode, summaryList)(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {

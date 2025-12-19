@@ -20,13 +20,13 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.correctReturn.PackagingSiteDetailsFormProvider
 import handlers.ErrorHandler
-import models.{Mode, NormalMode}
+import models.{ Mode, NormalMode }
 import navigation._
 import pages.correctReturn.PackagingSiteDetailsPage
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{AddressLookupService, PackingDetails, SessionService}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
+import services.{ AddressLookupService, PackingDetails, SessionService }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
@@ -34,30 +34,30 @@ import views.html.correctReturn.PackagingSiteDetailsView
 import views.summary.correctReturn.PackagingSiteDetailsSummary
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class PackagingSiteDetailsController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       val sessionService: SessionService,
-                                       val navigator: NavigatorForCorrectReturn,
-                                       controllerActions: ControllerActions,
-                                       formProvider: PackagingSiteDetailsFormProvider,
-                                       addressLookupService: AddressLookupService,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: PackagingSiteDetailsView,
-                                       val genericLogger: GenericLogger,
-                                       val errorHandler: ErrorHandler
-                                     )(implicit val ec: ExecutionContext) extends ControllerHelper with SummaryListFluency{
+class PackagingSiteDetailsController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForCorrectReturn,
+  controllerActions: ControllerActions,
+  formProvider: PackagingSiteDetailsFormProvider,
+  addressLookupService: AddressLookupService,
+  val controllerComponents: MessagesControllerComponents,
+  view: PackagingSiteDetailsView,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper with SummaryListFluency {
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
-    implicit request =>
-      val siteList: SummaryList = SummaryListViewModel(
-        rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList, mode)
-      )
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData { implicit request =>
+    val siteList: SummaryList = SummaryListViewModel(
+      rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList, mode)
+    )
 
-      Ok(view(form, mode, siteList))
+    Ok(view(form, mode, siteList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
@@ -66,17 +66,21 @@ class PackagingSiteDetailsController @Inject()(
         rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList, mode)
       )
 
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
-
-        value =>
-          if (value) {
-            addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode).map(Redirect(_))
-          } else {
-            val subscription = if (mode == NormalMode) Some(request.subscription) else None
-            Future.successful(Redirect(navigator.nextPage(PackagingSiteDetailsPage, mode, request.userAnswers, subscription = subscription)))
-          }
-      )
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
+          value =>
+            if (value) {
+              addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode).map(Redirect(_))
+            } else {
+              val subscription = if (mode == NormalMode) Some(request.subscription) else None
+              Future.successful(
+                Redirect(
+                  navigator.nextPage(PackagingSiteDetailsPage, mode, request.userAnswers, subscription = subscription)
+                )
+              )
+            }
+        )
   }
 }

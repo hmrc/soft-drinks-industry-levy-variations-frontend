@@ -17,8 +17,8 @@
 package views.summary.correctReturn
 
 import base.SpecBase
-import models.{CheckMode, LitresInBands, ReturnPeriod}
-import pages.correctReturn.{BroughtIntoUkFromSmallProducersPage, HowManyBroughtIntoUkFromSmallProducersPage}
+import models.{ CheckMode, LitresInBands, ReturnPeriod }
+import pages.correctReturn.{ BroughtIntoUkFromSmallProducersPage, HowManyBroughtIntoUkFromSmallProducersPage }
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
 import controllers.correctReturn.routes
@@ -31,7 +31,6 @@ class BroughtIntoUkFromSmallProducersSummarySpec extends SpecBase {
 
     val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
     val taxYear2025ReturnPeriod = ReturnPeriod(2026, 0)
-
 
     def lowBandLevyValue(returnPeriod: ReturnPeriod): String = returnPeriod match {
       case ReturnPeriod(2025, 0) => "£0.00"
@@ -48,18 +47,27 @@ class BroughtIntoUkFromSmallProducersSummarySpec extends SpecBase {
       (taxYear2025ReturnPeriod, "- 2025 tax year rates")
     )
 
-    returnPeriodsWithLabels.foreach(returnPeriod => {
+    returnPeriodsWithLabels.foreach { returnPeriod =>
       s"must show correct rows when brought into UK from small producer is true , litres provided, and checkAnswers is true ${returnPeriod._2}" in {
-        val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
-          .set(BroughtIntoUkFromSmallProducersPage, true).success.value
-          .set(HowManyBroughtIntoUkFromSmallProducersPage, LitresInBands(lowLitres, highLitres)).success.value
+        val userAnswers = emptyUserAnswersForCorrectReturn
+          .copy(correctReturnPeriod = Some(returnPeriod._1))
+          .set(BroughtIntoUkFromSmallProducersPage, true)
+          .success
+          .value
+          .set(HowManyBroughtIntoUkFromSmallProducersPage, LitresInBands(lowLitres, highLitres))
+          .success
+          .value
 
         val res = BroughtIntoUkFromSmallProducersSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)
-        res.rows.head.key.content.asHtml mustBe Html("Reporting liable drinks brought into the UK from small producers?")
+        res.rows.head.key.content.asHtml mustBe Html(
+          "Reporting liable drinks brought into the UK from small producers?"
+        )
         res.rows.head.key.classes mustBe ""
         res.rows.head.value.content.asHtml mustBe Html("Yes")
         res.rows.head.value.classes.trim mustBe "sdil-right-align--desktop"
-        res.rows.head.actions.head.items.head.href mustBe routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
+        res.rows.head.actions.head.items.head.href mustBe routes.BroughtIntoUkFromSmallProducersController
+          .onPageLoad(CheckMode)
+          .url
         res.rows.head.actions.head.items.head.attributes mustBe Map("id" -> "change-broughtIntoUkFromSmallProducers")
         res.rows.head.actions.head.items.head.content.asHtml mustBe Html("Change")
 
@@ -67,8 +75,12 @@ class BroughtIntoUkFromSmallProducersSummarySpec extends SpecBase {
         res.rows(1).key.classes mustBe ""
         res.rows(1).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(lowLitres))
         res.rows(1).value.classes.trim mustBe "sdil-right-align--desktop"
-        res.rows(1).actions.head.items.head.href mustBe routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
-        res.rows(1).actions.head.items.head.attributes mustBe Map("id" -> "change-lowband-litreage-broughtIntoUkFromSmallProducers")
+        res.rows(1).actions.head.items.head.href mustBe routes.HowManyBroughtIntoUkFromSmallProducersController
+          .onPageLoad(CheckMode)
+          .url
+        res.rows(1).actions.head.items.head.attributes mustBe Map(
+          "id" -> "change-lowband-litreage-broughtIntoUkFromSmallProducers"
+        )
         res.rows(1).actions.head.items.head.content.asHtml mustBe Html("Change")
 
         res.rows(2).key.content.asHtml mustBe Html("Low band levy")
@@ -80,8 +92,12 @@ class BroughtIntoUkFromSmallProducersSummarySpec extends SpecBase {
         res.rows(3).key.classes mustBe ""
         res.rows(3).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(highLitres))
         res.rows(3).value.classes.trim mustBe "sdil-right-align--desktop"
-        res.rows(3).actions.head.items.head.href mustBe routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
-        res.rows(3).actions.head.items.head.attributes mustBe Map("id" -> "change-highband-litreage-broughtIntoUkFromSmallProducers")
+        res.rows(3).actions.head.items.head.href mustBe routes.HowManyBroughtIntoUkFromSmallProducersController
+          .onPageLoad(CheckMode)
+          .url
+        res.rows(3).actions.head.items.head.attributes mustBe Map(
+          "id" -> "change-highband-litreage-broughtIntoUkFromSmallProducers"
+        )
         res.rows(3).actions.head.items.head.content.asHtml mustBe Html("Change")
 
         res.rows(4).key.content.asHtml mustBe Html("High band levy")
@@ -93,12 +109,20 @@ class BroughtIntoUkFromSmallProducersSummarySpec extends SpecBase {
       }
 
       s"must show correct rows when brought into UK is from small producer is true, litres provided, and checkAnswers is false ${returnPeriod._2}" in {
-        val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
-          .set(BroughtIntoUkFromSmallProducersPage, true).success.value
-          .set(HowManyBroughtIntoUkFromSmallProducersPage, LitresInBands(lowLitres, highLitres)).success.value
+        val userAnswers = emptyUserAnswersForCorrectReturn
+          .copy(correctReturnPeriod = Some(returnPeriod._1))
+          .set(BroughtIntoUkFromSmallProducersPage, true)
+          .success
+          .value
+          .set(HowManyBroughtIntoUkFromSmallProducersPage, LitresInBands(lowLitres, highLitres))
+          .success
+          .value
 
-        val res = BroughtIntoUkFromSmallProducersSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = false)
-        res.rows.head.key.content.asHtml mustBe Html("Reporting liable drinks brought into the UK from small producers?")
+        val res =
+          BroughtIntoUkFromSmallProducersSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = false)
+        res.rows.head.key.content.asHtml mustBe Html(
+          "Reporting liable drinks brought into the UK from small producers?"
+        )
         res.rows.head.key.classes mustBe ""
         res.rows.head.value.content.asHtml mustBe Html("Yes")
         res.rows.head.value.classes.trim mustBe "sdil-right-align--desktop"
@@ -126,21 +150,27 @@ class BroughtIntoUkFromSmallProducersSummarySpec extends SpecBase {
         res.rows(4).value.content.asHtml mustBe Html(highBandLevyValue(returnPeriod._1))
         res.rows(4).value.classes.trim mustBe "sdil-right-align--desktop"
 
-
         res.rows.size mustBe 5
       }
 
       s"should return correct elements when passed in with false and NO litres provided  ${returnPeriod._2}" in {
-        val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
-          .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+        val userAnswers = emptyUserAnswersForCorrectReturn
+          .copy(correctReturnPeriod = Some(returnPeriod._1))
+          .set(BroughtIntoUkFromSmallProducersPage, false)
+          .success
+          .value
 
         val res = BroughtIntoUkFromSmallProducersSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)
 
-        res.rows.head.key.content.asHtml mustBe Html("Reporting liable drinks brought into the UK from small producers?")
+        res.rows.head.key.content.asHtml mustBe Html(
+          "Reporting liable drinks brought into the UK from small producers?"
+        )
         res.rows.head.key.classes mustBe ""
         res.rows.head.value.content.asHtml mustBe Html("No")
         res.rows.head.value.classes.trim mustBe "sdil-right-align--desktop"
-        res.rows.head.actions.head.items.head.href mustBe controllers.correctReturn.routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
+        res.rows.head.actions.head.items.head.href mustBe controllers.correctReturn.routes.BroughtIntoUkFromSmallProducersController
+          .onPageLoad(CheckMode)
+          .url
         res.rows.head.actions.head.items.head.attributes mustBe Map("id" -> "change-broughtIntoUkFromSmallProducers")
         res.rows.head.actions.head.items.head.content.asHtml mustBe Html("Change")
 
@@ -153,6 +183,6 @@ class BroughtIntoUkFromSmallProducersSummarySpec extends SpecBase {
         val res = BroughtIntoUkFromSmallProducersSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)
         res.rows.size mustBe 0
       }
-    })
+    }
   }
 }

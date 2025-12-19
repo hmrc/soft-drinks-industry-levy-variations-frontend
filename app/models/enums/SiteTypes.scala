@@ -28,7 +28,7 @@ object SiteTypes extends Enumeration {
       case JsString(value) =>
         SiteTypes.values.find(_.toString == value) match {
           case Some(siteType) => JsSuccess(siteType)
-          case None => JsError(s"Invalid SiteTypes value: $value")
+          case None           => JsError(s"Invalid SiteTypes value: $value")
         }
       case _ => JsError("Expected a string value for SiteTypes")
     }

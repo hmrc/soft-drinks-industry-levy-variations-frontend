@@ -23,8 +23,9 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class VariationsPersonalDetailsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with SpecBase{
-  "VariationsPersonalDetails" -{
+class VariationsPersonalDetailsSpec
+    extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with SpecBase {
+  "VariationsPersonalDetails" - {
     val contactDetailsFromSubscription = ContactDetails.fromContact(aSubscription.contact)
     "apply should return the None" - {
       "when i have made no changes" in {
@@ -65,7 +66,13 @@ class VariationsPersonalDetailsSpec extends AnyFreeSpec with Matchers with Scala
         val contactDetails = ContactDetails("Tom Jeffery", "Chief Data Analyst", "02246 259761", "new.email@gmail.com")
 
         val res = VariationsPersonalDetails.apply(contactDetails, aSubscription)
-        res mustEqual Some(VariationsPersonalDetails(Some("Tom Jeffery"), Some("Chief Data Analyst"), Some("02246 259761"), Some("new.email@gmail.com"))
+        res mustEqual Some(
+          VariationsPersonalDetails(
+            Some("Tom Jeffery"),
+            Some("Chief Data Analyst"),
+            Some("02246 259761"),
+            Some("new.email@gmail.com")
+          )
         )
       }
     }

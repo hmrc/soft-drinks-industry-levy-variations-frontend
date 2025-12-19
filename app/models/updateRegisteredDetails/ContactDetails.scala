@@ -24,12 +24,11 @@ case class ContactDetails(fullName: String, position: String, phoneNumber: Strin
 object ContactDetails {
   implicit val format: OFormat[ContactDetails] = Json.format[ContactDetails]
 
-  def fromContact(contact: Contact): ContactDetails = {
+  def fromContact(contact: Contact): ContactDetails =
     ContactDetails(
       fullName = contact.name.getOrElse(""),
       position = contact.positionInCompany.getOrElse(""),
       phoneNumber = contact.phoneNumber,
       email = contact.email
     )
-  }
 }

@@ -4,7 +4,7 @@ import controllers.ControllerITTestHelper
 import models.SelectChange.CancelRegistration
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers._
-import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
+import pages.cancelRegistration.{ CancelRegistrationDatePage, ReasonPage }
 import play.api.http.HeaderNames
 import play.api.http.Status.OK
 import play.api.libs.json.Json
@@ -13,16 +13,14 @@ import testSupport.helpers.SubmissionVariationHelper
 
 import java.time.LocalDate
 
-
-class CancelRegistrationCYAControllerISpec extends ControllerITTestHelper with SubmissionVariationHelper{
+class CancelRegistrationCYAControllerISpec extends ControllerITTestHelper with SubmissionVariationHelper {
 
   val route = "/cancel-registration/check-your-answers"
 
   "GET " + routes.CancelRegistrationCYAController.onPageLoad().url - {
     "when the userAnswers contains no data" - {
       "should redirect to Select Change controller" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setAnswers(emptyUserAnswersForSelectChange(CancelRegistration))
 
@@ -41,10 +39,13 @@ class CancelRegistrationCYAControllerISpec extends ControllerITTestHelper with S
       "should render the check your answers page with the required details" in {
         val validCancellationDate = LocalDate.now()
         val userAnswers = emptyUserAnswersForCancelRegistration
-          .set(ReasonPage, "No longer sell drinks").success.value
-          .set(CancelRegistrationDatePage, validCancellationDate).success.value
-        build
-          .commonPrecondition
+          .set(ReasonPage, "No longer sell drinks")
+          .success
+          .value
+          .set(CancelRegistrationDatePage, validCancellationDate)
+          .success
+          .value
+        build.commonPrecondition
 
         setAnswers(userAnswers)
 
@@ -57,14 +58,24 @@ class CancelRegistrationCYAControllerISpec extends ControllerITTestHelper with S
             page.title mustBe "Cancel your Soft Drinks Industry Levy registration - Soft Drinks Industry Levy - GOV.UK"
             page.getElementsByClass("govuk-summary-list__row").size() mustBe 2
 
-            val reasonRow = page.getElementsByClass("govuk-summary-list__row").get(0).getElementsByClass("govuk-summary-list__key")
-            val dateRow = page.getElementsByClass("govuk-summary-list__row").get(1).getElementsByClass("govuk-summary-list__key")
+            val reasonRow =
+              page.getElementsByClass("govuk-summary-list__row").get(0).getElementsByClass("govuk-summary-list__key")
+            val dateRow =
+              page.getElementsByClass("govuk-summary-list__row").get(1).getElementsByClass("govuk-summary-list__key")
 
             reasonRow.get(0).text() mustBe "Reason for cancelling"
             dateRow.get(0).text() mustBe "Date of cancellation"
 
-            page.getElementsByTag("form").first().attr("action") mustBe routes.CancelRegistrationCYAController.onSubmit.url
-            page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm cancellation"
+            page
+              .getElementsByTag("form")
+              .first()
+              .attr("action") mustBe routes.CancelRegistrationCYAController.onSubmit.url
+            page
+              .getElementsByTag("form")
+              .first()
+              .getElementsByTag("button")
+              .first()
+              .text() mustBe "Confirm cancellation"
           }
         }
       }
@@ -78,13 +89,17 @@ class CancelRegistrationCYAControllerISpec extends ControllerITTestHelper with S
     "should send the expected variation submission" - {
       "and redirect to Cancellation Request done controller" in {
 
-        build
-          .commonPrecondition
-          .sdilBackend.submitVariationSuccess("XKSDIL000000022")
+        build.commonPrecondition.sdilBackend.submitVariationSuccess("XKSDIL000000022")
 
-        setAnswers(emptyUserAnswersForSelectChange(CancelRegistration)
-          .set(ReasonPage, DEREG_REASON).success.value
-          .set(CancelRegistrationDatePage, DEREG_DATE).success.value)
+        setAnswers(
+          emptyUserAnswersForSelectChange(CancelRegistration)
+            .set(ReasonPage, DEREG_REASON)
+            .success
+            .value
+            .set(CancelRegistrationDatePage, DEREG_DATE)
+            .success
+            .value
+        )
 
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(client, baseUrl + route, Json.obj())

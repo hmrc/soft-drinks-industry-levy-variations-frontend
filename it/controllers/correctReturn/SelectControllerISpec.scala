@@ -4,13 +4,13 @@ import controllers.ControllerITTestHelper
 import models.SelectChange.CorrectReturn
 import models.correctReturn.CorrectReturnUserAnswersData
 import models.submission.Litreage
-import models.{LitresInBands, NormalMode, ReturnPeriod, SdilReturn, SelectChange}
+import models.{ LitresInBands, NormalMode, ReturnPeriod, SdilReturn, SelectChange }
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers._
 import play.api.http.HeaderNames
-import play.api.i18n.{Messages, MessagesApi}
+import play.api.i18n.{ Messages, MessagesApi }
 import play.api.libs.json.Json
-import play.api.test.{WsTestClient, FakeRequest}
+import play.api.test.{ FakeRequest, WsTestClient }
 import testSupport.SDILBackendTestData._
 
 class SelectControllerISpec extends ControllerITTestHelper {
@@ -26,22 +26,37 @@ class SelectControllerISpec extends ControllerITTestHelper {
     case _ => s"October to December $year"
   }
 
-  val populatedReturn = SdilReturn(Litreage(100, 200), Litreage(200, 100), smallProducerList, Litreage(300, 400),
-    Litreage(400, 300), Litreage(50, 60), Litreage(60, 50), submittedOn = Some(submittedDateTime))
+  val populatedReturn = SdilReturn(
+    Litreage(100, 200),
+    Litreage(200, 100),
+    smallProducerList,
+    Litreage(300, 400),
+    Litreage(400, 300),
+    Litreage(50, 60),
+    Litreage(60, 50),
+    submittedOn = Some(submittedDateTime)
+  )
 
-  val expectedCorrectReturnDataForNilReturn = CorrectReturnUserAnswersData(false, None, false, None, false, false, None, false, None, false, None, false, None)
+  val expectedCorrectReturnDataForNilReturn =
+    CorrectReturnUserAnswersData(false, None, false, None, false, false, None, false, None, false, None, false, None)
   val expectedCorrectReturnDataForPopulatedReturn = CorrectReturnUserAnswersData(
-    true, Some(LitresInBands(100, 200)),
-    true, Some(LitresInBands(200, 100)),
     true,
-    true, Some(LitresInBands(300, 400)),
-    true, Some(LitresInBands(400, 300)),
-    true, Some(LitresInBands(50, 60)),
-    true, Some(LitresInBands(60, 50))
+    Some(LitresInBands(100, 200)),
+    true,
+    Some(LitresInBands(200, 100)),
+    true,
+    true,
+    Some(LitresInBands(300, 400)),
+    true,
+    Some(LitresInBands(400, 300)),
+    true,
+    Some(LitresInBands(50, 60)),
+    true,
+    Some(LitresInBands(60, 50))
   )
 
   val sdilReturnsExamples = Map("a nilReturn" -> emptyReturn, "not a nilReturn" -> populatedReturn)
-  def getExpectedUserAnswersCorrectReturnData(key: String): CorrectReturnUserAnswersData = if(key == "a nilReturn") {
+  def getExpectedUserAnswersCorrectReturnData(key: String): CorrectReturnUserAnswersData = if (key == "a nilReturn") {
     expectedCorrectReturnDataForNilReturn
   } else {
     expectedCorrectReturnDataForPopulatedReturn
@@ -51,14 +66,12 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
   given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   given messages: Messages = messagesApi.preferred(FakeRequest())
-  
+
   "GET " + routePath - {
     "should render the select page with radio items for each unique return period" - {
       "that has no return periods checked" - {
         "when the user answers contains no data for the page and no repeated return period" in {
-          build
-            .commonPrecondition
-            .sdilBackend.returns_variable(UTR)
+          build.commonPrecondition.sdilBackend.returns_variable(UTR)
 
           setAnswers(userAnswersNoReturnPeriod)
 
@@ -87,9 +100,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
         "when the user answers contains no data for the page and has repeated return periods" in {
           val returnsPeriodWithRepeats = returnPeriodList ++ returnPeriodList
-          build
-            .commonPrecondition
-            .sdilBackend.returns_variable(UTR, returnsPeriodWithRepeats)
+          build.commonPrecondition.sdilBackend.returns_variable(UTR, returnsPeriodWithRepeats)
 
           setAnswers(userAnswersNoReturnPeriod)
 
@@ -119,9 +130,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
       "should generate the userAnswers and render the select page" - {
         "when the user is deregistered and has no useranswers" in {
-          build
-            .commonPreconditionDereg
-            .sdilBackend.returns_variable(UTR)
+          build.commonPreconditionDereg.sdilBackend.returns_variable(UTR)
 
           remove(sdilNumber)
 
@@ -156,9 +165,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
       returnPeriodList.foreach { selectedReturnPeriod =>
         s"with ${selectedReturnPeriod.radioValue} checked" - {
           s"when the user answers contain return period for ${selectedReturnPeriod.radioValue}" in {
-            build
-              .commonPrecondition
-              .sdilBackend.returns_variable(UTR)
+            build.commonPrecondition.sdilBackend.returns_variable(UTR)
 
             val userAnswers = userAnswersNoReturnPeriod.copy(correctReturnPeriod = Some(selectedReturnPeriod))
 
@@ -192,9 +199,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
     "should redirect to sdilHome" - {
       "when the are no variable returns for a deregistered user" in {
-        build
-          .commonPreconditionDereg
-          .sdilBackend.no_returns_variable(UTR)
+        build.commonPreconditionDereg.sdilBackend.no_returns_variable(UTR)
 
         remove(sdilNumber)
 
@@ -203,7 +208,9 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
           whenReady(result1) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home")
+            res.header(HeaderNames.LOCATION) mustBe Some(
+              "http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"
+            )
           }
         }
       }
@@ -211,9 +218,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
     "should redirect to the select change page" - {
       "when the are no variable returns" in {
-        build
-          .commonPrecondition
-          .sdilBackend.no_returns_variable(UTR)
+        build.commonPrecondition.sdilBackend.no_returns_variable(UTR)
 
         setAnswers(userAnswersNoReturnPeriod)
 
@@ -230,9 +235,7 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
     "should render the internal server error page" - {
       "when the call to get variable returns fails" in {
-        build
-          .commonPrecondition
-          .sdilBackend.returns_variable_error(UTR)
+        build.commonPrecondition.sdilBackend.returns_variable_error(UTR)
 
         setAnswers(userAnswersNoReturnPeriod)
 
@@ -260,20 +263,24 @@ class SelectControllerISpec extends ControllerITTestHelper {
           s"and the previous return was $key" - {
             "should update the session with the new value and redirect to own brands controller" - {
               "when the session contains no data for page and the user is not a small producer" in {
-                build
-                  .commonPrecondition
-                  .sdilBackend.returns_variable(UTR)
-                  .sdilBackend.retrieveReturn(UTR, returnPeriod, Some(sdilReturn))
+                build.commonPrecondition.sdilBackend
+                  .returns_variable(UTR)
+                  .sdilBackend
+                  .retrieveReturn(UTR, returnPeriod, Some(sdilReturn))
 
                 setAnswers(userAnswersNoReturnPeriod)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, correctReturnBaseUrl + routePath, Json.obj("value" -> returnPeriod.radioValue)
+                    client,
+                    correctReturnBaseUrl + routePath,
+                    Json.obj("value" -> returnPeriod.radioValue)
                   )
 
                   whenReady(result) { res =>
                     res.status mustBe 303
-                    res.header(HeaderNames.LOCATION) mustBe Some(routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url)
+                    res.header(HeaderNames.LOCATION) mustBe Some(
+                      routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
+                    )
                     val updatedUserAnswers = getAnswers(sdilNumber).get
                     updatedUserAnswers.correctReturnPeriod mustBe Some(returnPeriod)
                     val expectedSmallProducerList = if (key == "a nilReturn") {
@@ -288,22 +295,26 @@ class SelectControllerISpec extends ControllerITTestHelper {
               }
 
               "when the session already contains data for page and the user is not a small producer" in {
-                build
-                  .commonPrecondition
-                  .sdilBackend.returns_variable(UTR)
-                  .sdilBackend.retrieveReturn(UTR, returnPeriod, Some(sdilReturn))
+                build.commonPrecondition.sdilBackend
+                  .returns_variable(UTR)
+                  .sdilBackend
+                  .retrieveReturn(UTR, returnPeriod, Some(sdilReturn))
 
                 val userAnswers = userAnswersNoReturnPeriod.copy(correctReturnPeriod = Some(returnPeriod))
 
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, correctReturnBaseUrl + routePath, Json.obj("value" -> returnPeriod.radioValue)
+                    client,
+                    correctReturnBaseUrl + routePath,
+                    Json.obj("value" -> returnPeriod.radioValue)
                   )
 
                   whenReady(result) { res =>
                     res.status mustBe 303
-                    res.header(HeaderNames.LOCATION) mustBe Some(routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url)
+                    res.header(HeaderNames.LOCATION) mustBe Some(
+                      routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
+                    )
                     val updatedUserAnswers = getAnswers(sdilNumber).get
                     updatedUserAnswers.correctReturnPeriod mustBe Some(returnPeriod)
                     val expectedSmallProducerList = if (key == "a nilReturn") {
@@ -322,18 +333,24 @@ class SelectControllerISpec extends ControllerITTestHelper {
               "when the session contains no data for page and the user is a small producer" in {
                 build
                   .commonPreconditionChangeSubscription(subscriptionSmallProducer)
-                  .sdilBackend.returns_variable(UTR)
-                  .sdilBackend.retrieveReturn(UTR, returnPeriod, Some(sdilReturn))
+                  .sdilBackend
+                  .returns_variable(UTR)
+                  .sdilBackend
+                  .retrieveReturn(UTR, returnPeriod, Some(sdilReturn))
 
                 setAnswers(userAnswersNoReturnPeriod)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, correctReturnBaseUrl + routePath, Json.obj("value" -> returnPeriod.radioValue)
+                    client,
+                    correctReturnBaseUrl + routePath,
+                    Json.obj("value" -> returnPeriod.radioValue)
                   )
 
                   whenReady(result) { res =>
                     res.status mustBe 303
-                    res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagedAsContractPackerController.onPageLoad(NormalMode).url)
+                    res.header(HeaderNames.LOCATION) mustBe Some(
+                      routes.PackagedAsContractPackerController.onPageLoad(NormalMode).url
+                    )
                     val updatedUserAnswers = getAnswers(sdilNumber).get
                     updatedUserAnswers.correctReturnPeriod mustBe Some(returnPeriod)
                     val expectedSmallProducerList = if (key == "a nilReturn") {
@@ -350,20 +367,26 @@ class SelectControllerISpec extends ControllerITTestHelper {
               "when the session already contains data for page and the user is not a small producer" in {
                 build
                   .commonPreconditionChangeSubscription(subscriptionSmallProducer)
-                  .sdilBackend.returns_variable(UTR)
-                  .sdilBackend.retrieveReturn(UTR, returnPeriod, Some(sdilReturn))
+                  .sdilBackend
+                  .returns_variable(UTR)
+                  .sdilBackend
+                  .retrieveReturn(UTR, returnPeriod, Some(sdilReturn))
 
                 val userAnswers = userAnswersNoReturnPeriod.copy(correctReturnPeriod = Some(returnPeriod))
 
                 setAnswers(userAnswers)
                 WsTestClient.withClient { client =>
                   val result = createClientRequestPOST(
-                    client, correctReturnBaseUrl + routePath, Json.obj("value" -> returnPeriod.radioValue)
+                    client,
+                    correctReturnBaseUrl + routePath,
+                    Json.obj("value" -> returnPeriod.radioValue)
                   )
 
                   whenReady(result) { res =>
                     res.status mustBe 303
-                    res.header(HeaderNames.LOCATION) mustBe Some(routes.PackagedAsContractPackerController.onPageLoad(NormalMode).url)
+                    res.header(HeaderNames.LOCATION) mustBe Some(
+                      routes.PackagedAsContractPackerController.onPageLoad(NormalMode).url
+                    )
                     val updatedUserAnswers = getAnswers(sdilNumber).get
                     updatedUserAnswers.correctReturnPeriod mustBe Some(returnPeriod)
                     val expectedSmallProducerList = if (key == "a nilReturn") {
@@ -384,21 +407,22 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select an option" - {
       "should return 400 with required error" in {
-        build
-          .commonPrecondition
-          .sdilBackend.returns_variable(UTR)
+        build.commonPrecondition.sdilBackend.returns_variable(UTR)
 
         setAnswers(userAnswersNoReturnPeriod)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, correctReturnBaseUrl + routePath, Json.obj("value" -> "")
+            client,
+            correctReturnBaseUrl + routePath,
+            Json.obj("value" -> "")
           )
 
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
             page.title must include("Error: " + messages("correctReturn.select" + ".title"))
-            val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
+            val errorSummary = page
+              .getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
@@ -411,22 +435,23 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
     "when the user return is not in the list of variable returns" - {
       "should return 400 with required error" in {
-        build
-          .commonPrecondition
-          .sdilBackend.returns_variable(UTR)
+        build.commonPrecondition.sdilBackend.returns_variable(UTR)
 
         setAnswers(userAnswersNoReturnPeriod)
         WsTestClient.withClient { client =>
           val diffReturnPeriod = ReturnPeriod(2018, 1)
           val result = createClientRequestPOST(
-            client, correctReturnBaseUrl + routePath, Json.obj("value" -> diffReturnPeriod.radioValue)
+            client,
+            correctReturnBaseUrl + routePath,
+            Json.obj("value" -> diffReturnPeriod.radioValue)
           )
 
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
             page.title must include("Error: " + messages("correctReturn.select" + ".title"))
-            val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
+            val errorSummary = page
+              .getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
@@ -439,15 +464,15 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
     "should redirect to the select change page" - {
       "when the are no variable returns" in {
-        build
-          .commonPrecondition
-          .sdilBackend.no_returns_variable(UTR)
+        build.commonPrecondition.sdilBackend.no_returns_variable(UTR)
 
         setAnswers(userAnswersNoReturnPeriod)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestPOST(
-            client, correctReturnBaseUrl + routePath, Json.obj("value" -> returnPeriodList.head.radioValue)
+            client,
+            correctReturnBaseUrl + routePath,
+            Json.obj("value" -> returnPeriodList.head.radioValue)
           )
 
           whenReady(result1) { res =>
@@ -460,20 +485,22 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
     "should redirect to the sdil home" - {
       "when the are no variable returns for a deregistered user" in {
-        build
-          .commonPreconditionDereg
-          .sdilBackend.no_returns_variable(UTR)
+        build.commonPreconditionDereg.sdilBackend.no_returns_variable(UTR)
 
         remove(sdilNumber)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestPOST(
-            client, correctReturnBaseUrl + routePath, Json.obj("value" -> returnPeriodList.head.radioValue)
+            client,
+            correctReturnBaseUrl + routePath,
+            Json.obj("value" -> returnPeriodList.head.radioValue)
           )
 
           whenReady(result1) { res =>
             res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some("http://localhost:8707/soft-drinks-industry-levy-account-frontend/home")
+            res.header(HeaderNames.LOCATION) mustBe Some(
+              "http://localhost:8707/soft-drinks-industry-levy-account-frontend/home"
+            )
           }
         }
       }
@@ -481,16 +508,18 @@ class SelectControllerISpec extends ControllerITTestHelper {
 
     "should render the internal server error page" - {
       "when there is no sdilReturn for returnPeriod" in {
-        build
-          .commonPrecondition
-          .sdilBackend.returns_variable(UTR)
-          .sdilBackend.retrieveReturn(UTR, returnPeriodList.head, None)
+        build.commonPrecondition.sdilBackend
+          .returns_variable(UTR)
+          .sdilBackend
+          .retrieveReturn(UTR, returnPeriodList.head, None)
 
         setAnswers(userAnswersNoReturnPeriod)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestPOST(
-            client, correctReturnBaseUrl + routePath, Json.obj("value" -> returnPeriodList.head.radioValue)
+            client,
+            correctReturnBaseUrl + routePath,
+            Json.obj("value" -> returnPeriodList.head.radioValue)
           )
 
           whenReady(result1) { res =>
@@ -502,16 +531,18 @@ class SelectControllerISpec extends ControllerITTestHelper {
       }
 
       "when the call to get sdilReturn fails" in {
-        build
-          .commonPrecondition
-          .sdilBackend.returns_variable(UTR)
-          .sdilBackend.retrieveReturnError(UTR, returnPeriodList.head)
+        build.commonPrecondition.sdilBackend
+          .returns_variable(UTR)
+          .sdilBackend
+          .retrieveReturnError(UTR, returnPeriodList.head)
 
         setAnswers(userAnswersNoReturnPeriod)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestPOST(
-            client, correctReturnBaseUrl + routePath, Json.obj("value" -> returnPeriodList.head.radioValue)
+            client,
+            correctReturnBaseUrl + routePath,
+            Json.obj("value" -> returnPeriodList.head.radioValue)
           )
 
           whenReady(result1) { res =>
@@ -523,15 +554,15 @@ class SelectControllerISpec extends ControllerITTestHelper {
       }
 
       "when the call to get variable returns fails" in {
-        build
-          .commonPrecondition
-          .sdilBackend.returns_variable_error(UTR)
+        build.commonPrecondition.sdilBackend.returns_variable_error(UTR)
 
         setAnswers(userAnswersNoReturnPeriod)
 
         WsTestClient.withClient { client =>
           val result1 = createClientRequestPOST(
-            client, correctReturnBaseUrl + routePath, Json.obj("value" -> returnPeriodList.head.radioValue)
+            client,
+            correctReturnBaseUrl + routePath,
+            Json.obj("value" -> returnPeriodList.head.radioValue)
           )
 
           whenReady(result1) { res =>
@@ -544,6 +575,10 @@ class SelectControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(correctReturnBaseUrl + routePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + routePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + routePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+      CorrectReturn,
+      correctReturnBaseUrl + routePath,
+      Some(Json.obj("value" -> "true"))
+    )
   }
 }

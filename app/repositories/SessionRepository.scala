@@ -26,30 +26,30 @@ import uk.gov.hmrc.mongo.MongoComponent
 import uk.gov.hmrc.mongo.play.json.PlayMongoRepository
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
-import java.time.{Clock, Instant}
+import java.time.{ Clock, Instant }
 import java.util.concurrent.TimeUnit
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import javax.inject.{ Inject, Singleton }
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class SessionRepository @Inject()(
-                                   mongoComponent: MongoComponent,
-                                   appConfig: FrontendAppConfig,
-                                   clock: Clock
-                                 )(implicit ec: ExecutionContext, encryption: Encryption)
-  extends PlayMongoRepository[UserAnswers](
-    collectionName = "user-answers",
-    mongoComponent = mongoComponent,
-    domainFormat   = UserAnswers.MongoFormats.format,
-    indexes        = Seq(
-      IndexModel(
-        Indexes.ascending("lastUpdated"),
-        IndexOptions()
-          .name("lastUpdatedIdx")
-          .expireAfter(appConfig.cacheTtl.toLong, TimeUnit.SECONDS)
+class SessionRepository @Inject() (
+  mongoComponent: MongoComponent,
+  appConfig: FrontendAppConfig,
+  clock: Clock
+)(implicit ec: ExecutionContext, encryption: Encryption)
+    extends PlayMongoRepository[UserAnswers](
+      collectionName = "user-answers",
+      mongoComponent = mongoComponent,
+      domainFormat = UserAnswers.MongoFormats.format,
+      indexes = Seq(
+        IndexModel(
+          Indexes.ascending("lastUpdated"),
+          IndexOptions()
+            .name("lastUpdatedIdx")
+            .expireAfter(appConfig.cacheTtl.toLong, TimeUnit.SECONDS)
+        )
       )
-    )
-  ) {
+    ) {
 
   implicit val instantFormat: Format[Instant] = MongoJavatimeFormats.instantFormat
 
@@ -64,22 +64,21 @@ class SessionRepository @Inject()(
       .toFuture()
       .map(_ => true)
 
-  def get(id: String): Future[Option[UserAnswers]] = {
+  def get(id: String): Future[Option[UserAnswers]] =
     for {
-      _ <- keepAlive(id)
+      _              <- keepAlive(id)
       optUserAnswers <- collection.find(byId(id)).headOption
     } yield optUserAnswers
-  }
 
   def set(answers: UserAnswers): Future[Boolean] = {
 
-    val updatedAnswers = answers copy (lastUpdated = Instant.now(clock))
+    val updatedAnswers = answers.copy(lastUpdated = Instant.now(clock))
 
     collection
       .replaceOne(
-        filter      = byId(updatedAnswers.id),
+        filter = byId(updatedAnswers.id),
         replacement = updatedAnswers,
-        options     = ReplaceOptions().upsert(true)
+        options = ReplaceOptions().upsert(true)
       )
       .toFuture()
       .map(_ => true)

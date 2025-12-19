@@ -17,24 +17,24 @@
 package models.correctReturn
 
 import models.submission.Litreage
-import models.{LitresInBands, SdilReturn, SmallProducer}
-import play.api.libs.json.{Json, OFormat}
+import models.{ LitresInBands, SdilReturn, SmallProducer }
+import play.api.libs.json.{ Json, OFormat }
 
 case class CorrectReturnUserAnswersData(
-                                         operatePackagingSiteOwnBrands: Boolean,
-                                         howManyOperatePackagingSiteOwnBrands: Option[LitresInBands],
-                                         packagedAsContractPacker: Boolean,
-                                         howManyPackagedAsContractPacker: Option[LitresInBands],
-                                         exemptionsForSmallProducers: Boolean,
-                                         broughtIntoUK: Boolean,
-                                         howManyBroughtIntoUK: Option[LitresInBands],
-                                         broughtIntoUkFromSmallProducers: Boolean,
-                                         howManyBroughtIntoUkFromSmallProducers: Option[LitresInBands],
-                                         claimCreditsForExports: Boolean,
-                                         howManyClaimCreditsForExports: Option[LitresInBands],
-                                         claimCreditsForLostDamaged: Boolean,
-                                         howManyCreditsForLostDamaged: Option[LitresInBands]
-                                       ) {
+  operatePackagingSiteOwnBrands: Boolean,
+  howManyOperatePackagingSiteOwnBrands: Option[LitresInBands],
+  packagedAsContractPacker: Boolean,
+  howManyPackagedAsContractPacker: Option[LitresInBands],
+  exemptionsForSmallProducers: Boolean,
+  broughtIntoUK: Boolean,
+  howManyBroughtIntoUK: Option[LitresInBands],
+  broughtIntoUkFromSmallProducers: Boolean,
+  howManyBroughtIntoUkFromSmallProducers: Option[LitresInBands],
+  claimCreditsForExports: Boolean,
+  howManyClaimCreditsForExports: Option[LitresInBands],
+  claimCreditsForLostDamaged: Boolean,
+  howManyCreditsForLostDamaged: Option[LitresInBands]
+) {
   def totalImported: Litreage = Litreage.sum(List(broughtIntoUkLitreage, broughtIntoUkFromSmallProducerLitreage))
   def totalPacked(smallProducerList: List[SmallProducer]): Litreage = Litreage.sum(
     List(contractPackerLitreage) ++ smallProducerList.map(_.litreage)
@@ -42,16 +42,18 @@ case class CorrectReturnUserAnswersData(
   def ownBrandsLitreage: Litreage = getLiterage(operatePackagingSiteOwnBrands, howManyOperatePackagingSiteOwnBrands)
   def contractPackerLitreage: Litreage = getLiterage(packagedAsContractPacker, howManyPackagedAsContractPacker)
   def broughtIntoUkLitreage: Litreage = getLiterage(broughtIntoUK, howManyBroughtIntoUK)
-  def broughtIntoUkFromSmallProducerLitreage: Litreage = getLiterage(broughtIntoUkFromSmallProducers, howManyBroughtIntoUkFromSmallProducers)
+  def broughtIntoUkFromSmallProducerLitreage: Litreage =
+    getLiterage(broughtIntoUkFromSmallProducers, howManyBroughtIntoUkFromSmallProducers)
   def exportsLitreage: Litreage = getLiterage(claimCreditsForExports, howManyClaimCreditsForExports)
   def lostDamagedLitreage: Litreage = getLiterage(claimCreditsForLostDamaged, howManyCreditsForLostDamaged)
-  private def getLiterage(hasLitres: Boolean, optLitres: Option[LitresInBands]): Litreage = {
-    optLitres.fold[Litreage](Litreage())(litres => if (hasLitres) {
-      Litreage.fromLitresInBands(litres)
-    } else {
-      Litreage()
-    })
-  }
+  private def getLiterage(hasLitres: Boolean, optLitres: Option[LitresInBands]): Litreage =
+    optLitres.fold[Litreage](Litreage())(litres =>
+      if (hasLitres) {
+        Litreage.fromLitresInBands(litres)
+      } else {
+        Litreage()
+      }
+    )
 }
 
 object CorrectReturnUserAnswersData {
@@ -86,7 +88,7 @@ object CorrectReturnUserAnswersData {
 
   private def getBooleanAndLitresInBands(literage: Litreage): (Boolean, Option[LitresInBands]) = {
     val totalLitres = literage.total
-    if(totalLitres == 0) {
+    if (totalLitres == 0) {
       (false, None)
     } else {
       (true, Option(LitresInBands.fromLitreage(literage)))

@@ -20,22 +20,26 @@ import cats.data.EitherT
 import connectors.SoftDrinksIndustryLevyConnector
 import models.UserAnswers
 import models.backend.RetrievedSubscription
-import models.submission.{SdilActivity, VariationsSites, VariationsSubmission}
+import models.submission.{ SdilActivity, VariationsSites, VariationsSubmission }
 import models.updateRegisteredDetails.ContactDetails
 import service.VariationResult
 import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.{Instant, LocalDate}
+import java.time.{ Instant, LocalDate }
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class ChangeActivityOrchestrator @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
-                                           sessionService: SessionService){
+class ChangeActivityOrchestrator @Inject() (
+  sdilConnector: SoftDrinksIndustryLevyConnector,
+  sessionService: SessionService
+) {
 
   def todaysDate: LocalDate = LocalDate.now()
-  def changeActivityVariationToBeSubmitted(subscription: RetrievedSubscription,
-                                                   userAnswers: UserAnswers): VariationsSubmission = {
+  def changeActivityVariationToBeSubmitted(
+    subscription: RetrievedSubscription,
+    userAnswers: UserAnswers
+  ): VariationsSubmission = {
     val changeActivityData = userAnswers.getChangeActivityData
     val contactDetails = ContactDetails.fromContact(subscription.contact)
     val variationSites = VariationsSites.fromUserAnswers(userAnswers, subscription, contactDetails)
@@ -48,13 +52,15 @@ class ChangeActivityOrchestrator @Inject()(sdilConnector: SoftDrinksIndustryLevy
     )
   }
 
-  def submitVariation(subscription: RetrievedSubscription, userAnswers: UserAnswers)
-                     (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = {
+  def submitVariation(subscription: RetrievedSubscription, userAnswers: UserAnswers)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): VariationResult[Unit] = {
     val changeActivityVariation = changeActivityVariationToBeSubmitted(subscription, userAnswers)
 
     for {
       variationSubmitted <- sdilConnector.submitVariation(changeActivityVariation, subscription.sdilRef)
-        _ <- EitherT(sessionService.set(userAnswers.copy(submitted = true, submittedOn = Some(Instant.now()))))
+      _ <- EitherT(sessionService.set(userAnswers.copy(submitted = true, submittedOn = Some(Instant.now()))))
     } yield variationSubmitted
   }
 }

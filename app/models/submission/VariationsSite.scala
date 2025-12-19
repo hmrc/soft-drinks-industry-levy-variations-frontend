@@ -19,27 +19,29 @@ package models.submission
 import models.backend.Site
 import models.enums.SiteTypes
 import models.updateRegisteredDetails.ContactDetails
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.{ Json, Writes }
 
 object VariationsSite {
 
-  def generateFromSite(site: Site,
-                       contactDetails: ContactDetails,
-                       newRef: Int,
-                       siteType: SiteTypes.Value): VariationsSite = {
+  def generateFromSite(
+    site: Site,
+    contactDetails: ContactDetails,
+    newRef: Int,
+    siteType: SiteTypes.Value
+  ): VariationsSite =
     VariationsSite(
       tradingName = site.tradingName.getOrElse(""),
       siteReference = newRef.toString,
       variationsContact = VariationsContact.generateForSiteContact(contactDetails, site),
       typeOfSite = siteType
     )
-  }
   implicit val writes: Writes[VariationsSite] = Json.writes[VariationsSite]
 
 }
 
 case class VariationsSite(
-                           tradingName: String,
-                           siteReference: String,
-                           variationsContact: VariationsContact,
-                           typeOfSite: SiteTypes.Value)
+  tradingName: String,
+  siteReference: String,
+  variationsContact: VariationsContact,
+  typeOfSite: SiteTypes.Value
+)

@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.correctReturn.routes
 import forms.correctReturn.AddASmallProducerFormProvider
 import models.correctReturn.AddASmallProducer
-import models.{CheckMode, EditMode, LitresInBands, Mode, NormalMode}
+import models.{ CheckMode, EditMode, LitresInBands, Mode, NormalMode }
 import org.jsoup.nodes.Document
 import play.api.data.Form
 import play.api.i18n.Messages
@@ -34,7 +34,7 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
 
   val addASmallProducerView: AddASmallProducerView = application.injector.instanceOf[AddASmallProducerView]
 
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
   implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
   val lowBandValue: Long = 1000
@@ -42,19 +42,62 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
   val litresInBands: LitresInBands = LitresInBands(lowBandValue, highBandValue)
 
   val sdilProducerReference: String = "XKSDIL000000023"
-  val addASmallProducer: AddASmallProducer = AddASmallProducer(Option("PRODUCER"), sdilProducerReference,litres = LitresInBands(lowBandValue, highBandValue))
+  val addASmallProducer: AddASmallProducer =
+    AddASmallProducer(Option("PRODUCER"), sdilProducerReference, litres = LitresInBands(lowBandValue, highBandValue))
 
   val formProvider = new AddASmallProducerFormProvider()
   val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod.head))
   val form: Form[AddASmallProducer] = formProvider.apply(userAnswers)
-  val formWithHighAndLowBands: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "litres.lowBand" -> s"$lowBandValue", "litres.highBand" -> s"$highBandValue"))
+  val formWithHighAndLowBands: Form[AddASmallProducer] = form.bind(
+    Map(
+      "producerName"    -> "PRODUCER",
+      "referenceNumber" -> sdilProducerReference,
+      "litres.lowBand"  -> s"$lowBandValue",
+      "litres.highBand" -> s"$highBandValue"
+    )
+  )
   val formWithLowBandOnly: Form[AddASmallProducer] = form.fill(addASmallProducer.copy(litres = LitresInBands(1, 0)))
   val formWithHighBandOnly: Form[AddASmallProducer] = form.fill(addASmallProducer.copy(litres = LitresInBands(0, 1)))
-  val emptyForm: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "litres.lowBand" -> "", "litres.highBand" -> ""))
-  val formWithNoNumeric: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "litres.lowBand" -> "x", "litres.highBand" -> "y"))
-  val formWithNegativeNumber: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "litres.lowBand" -> "-1", "litres.highBand" -> "-2"))
-  val formWithDecimalNumber: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "litres.lowBand" -> "1.8", "litres.highBand" -> "2.3"))
-  val formWithOutOfRangeNumber: Form[AddASmallProducer] = form.bind(Map("producerName" -> "PRODUCER", "referenceNumber" -> sdilProducerReference, "litres.lowBand" -> "110000000000000", "litres.highBand" -> "120000000000000"))
+  val emptyForm: Form[AddASmallProducer] = form.bind(
+    Map(
+      "producerName"    -> "PRODUCER",
+      "referenceNumber" -> sdilProducerReference,
+      "litres.lowBand"  -> "",
+      "litres.highBand" -> ""
+    )
+  )
+  val formWithNoNumeric: Form[AddASmallProducer] = form.bind(
+    Map(
+      "producerName"    -> "PRODUCER",
+      "referenceNumber" -> sdilProducerReference,
+      "litres.lowBand"  -> "x",
+      "litres.highBand" -> "y"
+    )
+  )
+  val formWithNegativeNumber: Form[AddASmallProducer] = form.bind(
+    Map(
+      "producerName"    -> "PRODUCER",
+      "referenceNumber" -> sdilProducerReference,
+      "litres.lowBand"  -> "-1",
+      "litres.highBand" -> "-2"
+    )
+  )
+  val formWithDecimalNumber: Form[AddASmallProducer] = form.bind(
+    Map(
+      "producerName"    -> "PRODUCER",
+      "referenceNumber" -> sdilProducerReference,
+      "litres.lowBand"  -> "1.8",
+      "litres.highBand" -> "2.3"
+    )
+  )
+  val formWithOutOfRangeNumber: Form[AddASmallProducer] = form.bind(
+    Map(
+      "producerName"    -> "PRODUCER",
+      "referenceNumber" -> sdilProducerReference,
+      "litres.lowBand"  -> "110000000000000",
+      "litres.highBand" -> "120000000000000"
+    )
+  )
 
   object Selectors {
     val heading = "govuk-heading-l"
@@ -67,7 +110,7 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
     val form = "form"
   }
 
-  def testLitresInBandsWithPrepopulatedData(document: Document, numberOfPrecedingInputs: Int = 0): Unit = {
+  def testLitresInBandsWithPrepopulatedData(document: Document, numberOfPrecedingInputs: Int = 0): Unit =
     "should include form groups for litres" - {
       "when the form is not prepopulated and has no errors" - {
         val formGroups = document.getElementsByClass(Selectors.govukFormGroup)
@@ -90,9 +133,8 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
         }
       }
     }
-  }
 
-  def testLitresInBandsNoPrepopulatedData(document: Document, numberOfPrecedingInputs: Int = 0): Unit = {
+  def testLitresInBandsNoPrepopulatedData(document: Document, numberOfPrecedingInputs: Int = 0): Unit =
     "should include form groups for litres" - {
       "when the form is populated and has no errors" - {
         val formGroups = document.getElementsByClass(Selectors.govukFormGroup)
@@ -113,15 +155,13 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
         }
       }
     }
-  }
 
-  def testButton(document: Document): Unit = {
+  def testButton(document: Document): Unit =
     "should contain the correct button" in {
       document.getElementsByClass(Selectors.button).text() mustBe Messages("site.saveContinue")
     }
-  }
 
-  def testAction(mode: Mode, document: Document): Unit = {
+  def testAction(mode: Mode, document: Document): Unit =
     "should contains a form with the correct action" in {
       val action = document.select(Selectors.form).attr("action")
       val route = if (mode != NormalMode) {
@@ -131,9 +171,8 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
       }
       action mustEqual route
     }
-  }
 
-  def testEmptyFormErrors(document: Document, errorTitle: String): Unit = {
+  def testEmptyFormErrors(document: Document, errorTitle: String): Unit =
     "due to the form being empty" - {
       "should contain the title with error" in {
         document.title() must include(errorTitle)
@@ -156,9 +195,8 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
         }
       }
     }
-  }
 
-  def testNoNumericFormErrors(document: Document, errorTitle: String): Unit = {
+  def testNoNumericFormErrors(document: Document, errorTitle: String): Unit =
     "due to the form containing no numeric values" - {
       "should contain the title with error" in {
         document.title() must include(errorTitle)
@@ -181,9 +219,8 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
         }
       }
     }
-  }
 
-  def testNegativeFormErrors(document: Document, errorTitle: String): Unit = {
+  def testNegativeFormErrors(document: Document, errorTitle: String): Unit =
     "due to the form containing no negative values" - {
       "should contain the title with error" in {
         document.title() must include(errorTitle)
@@ -204,9 +241,8 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
         }
       }
     }
-  }
 
-  def testDecimalFormErrors(document: Document, errorTitle: String): Unit = {
+  def testDecimalFormErrors(document: Document, errorTitle: String): Unit =
     "due to the form containing decimal values" - {
       "should contain the title with error" in {
         document.title() must include(errorTitle)
@@ -229,9 +265,8 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
         }
       }
     }
-  }
 
-  def testOutOfMaxValFormErrors(document: Document, errorTitle: String): Unit = {
+  def testOutOfMaxValFormErrors(document: Document, errorTitle: String): Unit =
     "due to the form containing values out of max range" - {
       "should contain the title with error" in {
         document.title() must include(errorTitle)
@@ -254,7 +289,6 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
         }
       }
     }
-  }
 
   "AddASmallProducerView" - {
     List(NormalMode, CheckMode, EditMode).foreach { mode =>
@@ -272,11 +306,13 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
         val documentFormErrorsNoneNumeric = doc(htmlFormErrorsNoneNumeric)
         val htmlFormErrorsNotWhole: HtmlFormat.Appendable = addASmallProducerView(formWithDecimalNumber, mode, sdilRef)
         val documentFormErrorsNotWhole = doc(htmlFormErrorsNotWhole)
-        val htmlFormErrorsOutOfRange: HtmlFormat.Appendable = addASmallProducerView(formWithOutOfRangeNumber, mode, sdilRef)
+        val htmlFormErrorsOutOfRange: HtmlFormat.Appendable =
+          addASmallProducerView(formWithOutOfRangeNumber, mode, sdilRef)
         val documentFormErrorsOutOfRange = doc(htmlFormErrorsOutOfRange)
 
         "should have the expected title" in {
-          document.title() mustEqual "Enter the registered small producer’s details - Soft Drinks Industry Levy - GOV.UK"
+          document
+            .title() mustEqual "Enter the registered small producer’s details - Soft Drinks Industry Levy - GOV.UK"
         }
 
         "should have the expected heading" in {
@@ -286,34 +322,46 @@ class AddASmallProducerViewSpec extends ViewSpecHelper {
         val formGroupsNotPopulated = document.getElementsByClass(Selectors.govukFormGroup)
         "that includes a field for small producer name that is not populated" in {
           val smallProducerGroup = formGroupsNotPopulated.get(0)
-          smallProducerGroup.getElementsByClass(Selectors.label).text() mustBe Messages("correctReturn.addASmallProducer.hint1")
+          smallProducerGroup.getElementsByClass(Selectors.label).text() mustBe Messages(
+            "correctReturn.addASmallProducer.hint1"
+          )
           smallProducerGroup.getElementById("producerName").hasAttr("value") mustBe false
         }
         "that includes a field for SDIL reference number that is not populated" in {
           val sdilRefGroup = formGroupsNotPopulated.get(1)
-          sdilRefGroup.getElementsByClass(Selectors.label).text() mustBe Messages("correctReturn.addASmallProducer.referenceNumber")
-          sdilRefGroup.getElementById("referenceNumber-hint").text() mustBe Messages("correctReturn.addASmallProducer.hint2")
+          sdilRefGroup.getElementsByClass(Selectors.label).text() mustBe Messages(
+            "correctReturn.addASmallProducer.referenceNumber"
+          )
+          sdilRefGroup.getElementById("referenceNumber-hint").text() mustBe Messages(
+            "correctReturn.addASmallProducer.hint2"
+          )
           sdilRefGroup.getElementById("referenceNumber").hasAttr("value") mustBe false
         }
 
         val formGroupsPopulated = documentWithValidData.getElementsByClass(Selectors.govukFormGroup)
         "that includes a field for small producer name that is populated" in {
           val smallProducerGroup = formGroupsPopulated.get(0)
-          smallProducerGroup.getElementsByClass(Selectors.label).text() mustBe Messages("correctReturn.addASmallProducer.hint1")
+          smallProducerGroup.getElementsByClass(Selectors.label).text() mustBe Messages(
+            "correctReturn.addASmallProducer.hint1"
+          )
           smallProducerGroup.getElementById("producerName").hasAttr("value") mustBe true
           smallProducerGroup.getElementById("producerName").attr("value") mustBe "PRODUCER"
         }
         "that includes a field for SDIL reference number that is populated" in {
           val sdilRefGroup = formGroupsPopulated.get(1)
-          sdilRefGroup.getElementsByClass(Selectors.label).text() mustBe Messages("correctReturn.addASmallProducer.referenceNumber")
-          sdilRefGroup.getElementById("referenceNumber-hint").text() mustBe Messages("correctReturn.addASmallProducer.hint2")
+          sdilRefGroup.getElementsByClass(Selectors.label).text() mustBe Messages(
+            "correctReturn.addASmallProducer.referenceNumber"
+          )
+          sdilRefGroup.getElementById("referenceNumber-hint").text() mustBe Messages(
+            "correctReturn.addASmallProducer.hint2"
+          )
           sdilRefGroup.getElementById("referenceNumber").hasAttr("value") mustBe true
           sdilRefGroup.getElementById("referenceNumber").attr("value") mustBe sdilProducerReference
         }
 
         testLitresInBandsNoPrepopulatedData(document, numberOfPrecedingInputs = 2)
         testLitresInBandsWithPrepopulatedData(documentWithValidData, numberOfPrecedingInputs = 2)
-        
+
         testButton(document)
         testAction(mode, document)
 

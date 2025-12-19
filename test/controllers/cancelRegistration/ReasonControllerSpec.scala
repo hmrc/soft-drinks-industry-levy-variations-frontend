@@ -61,7 +61,7 @@ class ReasonControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[ReasonView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -79,7 +79,10 @@ class ReasonControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill("answer"), NormalMode)(using
+          request,
+          messages(application)
+        ).toString
       }
     }
 
@@ -87,20 +90,20 @@ class ReasonControllerSpec extends SpecBase with MockitoSugar {
 
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForCancelRegistration))
-      .overrides(
-        bind[NavigatorForCancelRegistration].toInstance(new FakeNavigatorForCancelRegistration(onwardRoute)),
-      bind[SessionService].toInstance(mockSessionService)
-      )
-      .build()
+          .overrides(
+            bind[NavigatorForCancelRegistration].toInstance(new FakeNavigatorForCancelRegistration(onwardRoute)),
+            bind[SessionService].toInstance(mockSessionService)
+          )
+          .build()
 
       running(application) {
         val request =
           FakeRequest(POST, reasonRoute)
-        .withFormUrlEncodedBody(("value", "answer"))
+            .withFormUrlEncodedBody(("value", "answer"))
 
         val result = route(application, request).value
 
@@ -116,7 +119,7 @@ class ReasonControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, reasonRoute)
-        .withFormUrlEncodedBody(("value", ""))
+            .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = form.bind(Map("value" -> ""))
 
@@ -125,7 +128,7 @@ class ReasonControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -133,16 +136,15 @@ class ReasonControllerSpec extends SpecBase with MockitoSugar {
     testRedirectToPostSubmissionIfRequired(CancelRegistration, reasonRoute)
     testNoUserAnswersError(reasonRoute)
 
-
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CancelRegistration))).build()
+      val application =
+        applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(CancelRegistration))).build()
 
       running(application) {
         val request =
-          FakeRequest(POST, reasonRoute
-        )
-        .withFormUrlEncodedBody(("value", "answer"))
+          FakeRequest(POST, reasonRoute)
+            .withFormUrlEncodedBody(("value", "answer"))
 
         val result = route(application, request).value
 
@@ -152,31 +154,32 @@ class ReasonControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForCancelRegistration))
           .overrides(
-            bind[NavigatorForCancelRegistration].toInstance(new FakeNavigatorForCancelRegistration (onwardRoute)),
+            bind[NavigatorForCancelRegistration].toInstance(new FakeNavigatorForCancelRegistration(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
-          ).build()
+          )
+          .build()
 
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request =
             FakeRequest(POST, reasonRoute)
-          .withFormUrlEncodedBody(("value", "answer"))
+              .withFormUrlEncodedBody(("value", "answer"))
 
           await(route(application, request).value)
-          events.collectFirst {
-            case event =>
+          events
+            .collectFirst { case event =>
               event.getLevel.levelStr mustBe "ERROR"
               event.getMessage mustEqual "Failed to set value in session repository while attempting set on reason"
-          }.getOrElse(fail("No logging captured"))
+            }
+            .getOrElse(fail("No logging captured"))
         }
       }
     }

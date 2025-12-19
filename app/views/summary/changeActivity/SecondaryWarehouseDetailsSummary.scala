@@ -17,20 +17,19 @@
 package views.summary.changeActivity
 
 import controllers.changeActivity.routes
-import models.{CheckMode, Mode, UserAnswers}
+import models.{ CheckMode, Mode, UserAnswers }
 import models.backend.Site
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryList, SummaryListRow, Value}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ Key, SummaryList, SummaryListRow, Value }
 import viewmodels.AddressFormattingHelper
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object SecondaryWarehouseDetailsSummary {
 
-  def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)
-                 (implicit messages: Messages): SummaryList = {
+  def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages): SummaryList = {
     val key = if (userAnswers.warehouseList.size != 1) {
       messages("checkYourAnswers.warehouse.checkYourAnswersLabel.multiple", userAnswers.warehouseList.size.toString)
     } else {
@@ -43,35 +42,49 @@ object SecondaryWarehouseDetailsSummary {
     }
 
     SummaryListViewModel(
-      rows = Seq(SummaryListRowViewModel(
-        key = Key(content = key),
-        value = Value(),
-        actions = if (isCheckAnswers) {
-          Seq(
-            ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
-              .withAttribute(("id", "change-warehouses"))
-              .withVisuallyHiddenText(visuallyHiddenChangeText)
-          )
-        } else {
-          Seq.empty
-        }
-      ))
+      rows = Seq(
+        SummaryListRowViewModel(
+          key = Key(content = key),
+          value = Value(),
+          actions = if (isCheckAnswers) {
+            Seq(
+              ActionItemViewModel("site.change", routes.SecondaryWarehouseDetailsController.onPageLoad(CheckMode).url)
+                .withAttribute(("id", "change-warehouses"))
+                .withVisuallyHiddenText(visuallyHiddenChangeText)
+            )
+          } else {
+            Seq.empty
+          }
+        )
+      )
     )
   }
 
-  def summaryRows(warehouseList: Map[String, Site], mode: Mode)(implicit messages: Messages): List[SummaryListRow] = {
-    warehouseList.map {
-      warehouse =>
-        SummaryListRow(
-          key = Key(HtmlContent(AddressFormattingHelper.addressFormatting(warehouse._2.address, warehouse._2.tradingName)))
+  def summaryRows(warehouseList: Map[String, Site], mode: Mode)(implicit messages: Messages): List[SummaryListRow] =
+    warehouseList.map { warehouse =>
+      SummaryListRow(
+        key =
+          Key(HtmlContent(AddressFormattingHelper.addressFormatting(warehouse._2.address, warehouse._2.tradingName)))
             .withCssClass("govuk-!-font-weight-regular govuk-!-width-full"),
-          actions = Some(Actions("", Seq(
-            ActionItemViewModel("site.remove", routes.RemoveWarehouseDetailsController.onPageLoad(warehouse._1, mode).url)
-              .withVisuallyHiddenText(messages("changeActivity.secondaryWarehouseDetails.remove.hidden",
-                warehouse._2.tradingName.getOrElse(""), warehouse._2.address.lines.head))
-          )))
+        actions = Some(
+          Actions(
+            "",
+            Seq(
+              ActionItemViewModel(
+                "site.remove",
+                routes.RemoveWarehouseDetailsController.onPageLoad(warehouse._1, mode).url
+              )
+                .withVisuallyHiddenText(
+                  messages(
+                    "changeActivity.secondaryWarehouseDetails.remove.hidden",
+                    warehouse._2.tradingName.getOrElse(""),
+                    warehouse._2.address.lines.head
+                  )
+                )
+            )
+          )
         )
-    }
-  }.toList
+      )
+    }.toList
 
 }

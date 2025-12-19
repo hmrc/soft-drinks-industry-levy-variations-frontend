@@ -20,27 +20,39 @@ import controllers.correctReturn.routes
 import models.backend.Site
 import models.Mode
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Key}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{ Actions, Key }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.AddressFormattingHelper
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object SecondaryWarehouseDetailsSummary  {
+object SecondaryWarehouseDetailsSummary {
 
-  def row2(warehouseList: Map[String, Site], mode: Mode)(implicit messages: Messages): List[SummaryListRow] = {
-    warehouseList.map {
-      warehouse =>
-        SummaryListRow(
-          key     = Key(HtmlContent(AddressFormattingHelper.addressFormatting(warehouse._2.address, warehouse._2.tradingName))),
-          classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds",
-          actions = Some(Actions("",Seq(
-            ActionItemViewModel("site.remove", routes.RemoveWarehouseDetailsController.onPageLoad(mode, warehouse._1).url)
-              .withVisuallyHiddenText(messages("correctReturn.secondaryWarehouseDetails.remove.hidden",
-                warehouse._2.tradingName.getOrElse(""), warehouse._2.address.lines.head))
-          )))
+  def row2(warehouseList: Map[String, Site], mode: Mode)(implicit messages: Messages): List[SummaryListRow] =
+    warehouseList.map { warehouse =>
+      SummaryListRow(
+        key =
+          Key(HtmlContent(AddressFormattingHelper.addressFormatting(warehouse._2.address, warehouse._2.tradingName))),
+        classes = "govuk-!-font-weight-regular govuk-!-width-two-thirds",
+        actions = Some(
+          Actions(
+            "",
+            Seq(
+              ActionItemViewModel(
+                "site.remove",
+                routes.RemoveWarehouseDetailsController.onPageLoad(mode, warehouse._1).url
+              )
+                .withVisuallyHiddenText(
+                  messages(
+                    "correctReturn.secondaryWarehouseDetails.remove.hidden",
+                    warehouse._2.tradingName.getOrElse(""),
+                    warehouse._2.address.lines.head
+                  )
+                )
+            )
+          )
         )
-    }
-  }.toList
+      )
+    }.toList
 }

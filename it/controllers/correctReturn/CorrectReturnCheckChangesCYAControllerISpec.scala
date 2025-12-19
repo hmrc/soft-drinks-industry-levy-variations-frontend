@@ -27,12 +27,13 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
     "when the userAnswers contains no data for correct return " - {
       "should redirect to select return controller" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(
           emptyUserAnswersForSelectChange(CorrectReturn)
-            .set(CorrectReturnBaseCYAPage, true).success.value
+            .set(CorrectReturnBaseCYAPage, true)
+            .success
+            .value
             .copy(correctReturnPeriod = None)
         )
 
@@ -50,11 +51,16 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
     "when the user has changed all pages including litres" - {
       "should render the check changes page with all sections" in {
         val userAnswers = userAnswerWithLitresForAllPagesNilSdilReturn
-          .set(CorrectReturnBaseCYAPage, true).success.value
-          .set(CorrectionReasonPage, "I forgot something").success.value
-          .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-        build
-          .commonPrecondition
+          .set(CorrectReturnBaseCYAPage, true)
+          .success
+          .value
+          .set(CorrectionReasonPage, "I forgot something")
+          .success
+          .value
+          .set(RepaymentMethodPage, RepaymentMethod.values.head)
+          .success
+          .value
+        build.commonPrecondition
 
         setUpForCorrectReturn(userAnswers)
 
@@ -82,7 +88,11 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             val contractPackedForSmallProducers = page.getElementsByClass("govuk-summary-list").get(2)
 
             page.getElementsByTag("h2").get(2).text() mustBe "Contract packed for registered small producers"
-            validateContractPackedForSmallProducersWithLitresSummaryList(contractPackedForSmallProducers, smallProducerLitres, true)
+            validateContractPackedForSmallProducersWithLitresSummaryList(
+              contractPackedForSmallProducers,
+              smallProducerLitres,
+              true
+            )
 
             val imports = page.getElementsByClass("govuk-summary-list").get(3)
 
@@ -109,8 +119,16 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             page.getElementsByTag("h2").get(7).text() mustBe "UK site details"
             validateSiteDetailsSummary(userAnswers, aSubscription, siteDetailsSummaryListItem, 0, 2, true)
 
-            page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
-            page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm details and send correction"
+            page
+              .getElementsByTag("form")
+              .first()
+              .attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
+            page
+              .getElementsByTag("form")
+              .first()
+              .getElementsByTag("button")
+              .first()
+              .text() mustBe "Confirm details and send correction"
           }
         }
       }
@@ -118,12 +136,17 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
       "and they have changed all answers to no and have no litres" - {
         "should render the check changes page with all summary items" in {
           val userAnswers = userAnswerWithAllNosWithOriginalSdilReturn
-            .set(CorrectReturnBaseCYAPage, true).success.value
-            .set(CorrectionReasonPage, "I forgot something").success.value
-            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+            .set(CorrectReturnBaseCYAPage, true)
+            .success
+            .value
+            .set(CorrectionReasonPage, "I forgot something")
+            .success
+            .value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head)
+            .success
+            .value
 
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(userAnswers, Some(populatedReturn))
 
@@ -171,8 +194,16 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               page.getElementsByTag("h2").get(6).text() mustBe "Lost or destroyed"
               validateLostOrDamagedWithNoLitresSummaryList(lostOrDamaged, true)
 
-              page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
-              page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm details and send correction"
+              page
+                .getElementsByTag("form")
+                .first()
+                .attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
+              page
+                .getElementsByTag("form")
+                .first()
+                .getElementsByTag("button")
+                .first()
+                .text() mustBe "Confirm details and send correction"
             }
           }
         }
@@ -183,13 +214,21 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
       s"when the user has changed answers on $OperatePackagingSiteOwnBrandsPage" - {
         "should render the check changes page with only the own brands section" in {
           val correctReturnData = nilCorrectReturnUAData
-            .copy(operatePackagingSiteOwnBrands = true, howManyOperatePackagingSiteOwnBrands = Some(operatePackagingSiteLitres))
+            .copy(
+              operatePackagingSiteOwnBrands = true,
+              howManyOperatePackagingSiteOwnBrands = Some(operatePackagingSiteLitres)
+            )
           val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
-            .set(CorrectReturnBaseCYAPage, true).success.value
-            .set(CorrectionReasonPage, "I forgot something").success.value
-            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-          build
-            .commonPrecondition
+            .set(CorrectReturnBaseCYAPage, true)
+            .success
+            .value
+            .set(CorrectionReasonPage, "I forgot something")
+            .success
+            .value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head)
+            .success
+            .value
+          build.commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
@@ -208,8 +247,16 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               page.getElementsByTag("h2").get(0).text() mustBe "Own brands packaged at your own site"
               validateOperatePackagingSitesWithLitresSummaryList(operatePackagingSites, LitresInBands(1000, 2000), true)
 
-              page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
-              page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm details and send correction"
+              page
+                .getElementsByTag("form")
+                .first()
+                .attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
+              page
+                .getElementsByTag("form")
+                .first()
+                .getElementsByTag("button")
+                .first()
+                .text() mustBe "Confirm details and send correction"
             }
           }
         }
@@ -220,11 +267,16 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
           val correctReturnData = nilCorrectReturnUAData
             .copy(packagedAsContractPacker = true, howManyPackagedAsContractPacker = Some(operatePackagingSiteLitres))
           val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
-            .set(CorrectReturnBaseCYAPage, true).success.value
-            .set(CorrectionReasonPage, "I forgot something").success.value
-            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-          build
-            .commonPrecondition
+            .set(CorrectReturnBaseCYAPage, true)
+            .success
+            .value
+            .set(CorrectionReasonPage, "I forgot something")
+            .success
+            .value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head)
+            .success
+            .value
+          build.commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
@@ -243,8 +295,16 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               page.getElementsByTag("h2").get(0).text() mustBe "Contract packed at your own site"
               validateContractPackingWithLitresSummaryList(contractPacking, LitresInBands(1000, 2000), true)
 
-              page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
-              page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm details and send correction"
+              page
+                .getElementsByTag("form")
+                .first()
+                .attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
+              page
+                .getElementsByTag("form")
+                .first()
+                .getElementsByTag("button")
+                .first()
+                .text() mustBe "Confirm details and send correction"
             }
           }
         }
@@ -255,9 +315,15 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
           val correctReturnData = nilCorrectReturnUAData
             .copy(broughtIntoUK = true, howManyBroughtIntoUK = Some(operatePackagingSiteLitres))
           val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
-            .set(CorrectReturnBaseCYAPage, true).success.value
-            .set(CorrectionReasonPage, "I forgot something").success.value
-            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+            .set(CorrectReturnBaseCYAPage, true)
+            .success
+            .value
+            .set(CorrectionReasonPage, "I forgot something")
+            .success
+            .value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head)
+            .success
+            .value
           build
             .commonPreconditionChangeSubscription(diffSubscriptionWithWarehouses)
 
@@ -279,8 +345,16 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               page.getElementsByTag("h2").get(0).text() mustBe "Brought into the UK"
               validateImportsWithLitresSummaryList(contractPacking, LitresInBands(1000, 2000), true)
 
-              page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
-              page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm details and send correction"
+              page
+                .getElementsByTag("form")
+                .first()
+                .attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
+              page
+                .getElementsByTag("form")
+                .first()
+                .getElementsByTag("button")
+                .first()
+                .text() mustBe "Confirm details and send correction"
             }
           }
         }
@@ -289,11 +363,20 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
       s"when the user has changed answers on $BroughtIntoUkFromSmallProducersPage" - {
         "should render the check changes page with only the Brought into the UK from small producers section" in {
           val correctReturnData = nilCorrectReturnUAData
-            .copy(broughtIntoUkFromSmallProducers = true, howManyBroughtIntoUkFromSmallProducers = Some(operatePackagingSiteLitres))
+            .copy(
+              broughtIntoUkFromSmallProducers = true,
+              howManyBroughtIntoUkFromSmallProducers = Some(operatePackagingSiteLitres)
+            )
           val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
-            .set(CorrectReturnBaseCYAPage, true).success.value
-            .set(CorrectionReasonPage, "I forgot something").success.value
-            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+            .set(CorrectReturnBaseCYAPage, true)
+            .success
+            .value
+            .set(CorrectionReasonPage, "I forgot something")
+            .success
+            .value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head)
+            .success
+            .value
           build
             .commonPreconditionChangeSubscription(diffSubscriptionWithWarehouses)
 
@@ -314,8 +397,16 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               page.getElementsByTag("h2").get(0).text() mustBe "Brought into the UK from small producers"
               validateImportsFromSmallProducersWithLitresSummaryList(contractPacking, LitresInBands(1000, 2000), true)
 
-              page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
-              page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm details and send correction"
+              page
+                .getElementsByTag("form")
+                .first()
+                .attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
+              page
+                .getElementsByTag("form")
+                .first()
+                .getElementsByTag("button")
+                .first()
+                .text() mustBe "Confirm details and send correction"
             }
           }
         }
@@ -326,11 +417,16 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
           val correctReturnData = nilCorrectReturnUAData
             .copy(claimCreditsForExports = true, howManyClaimCreditsForExports = Some(operatePackagingSiteLitres))
           val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
-            .set(CorrectReturnBaseCYAPage, true).success.value
-            .set(CorrectionReasonPage, "I forgot something").success.value
-            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-          build
-            .commonPrecondition
+            .set(CorrectReturnBaseCYAPage, true)
+            .success
+            .value
+            .set(CorrectionReasonPage, "I forgot something")
+            .success
+            .value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head)
+            .success
+            .value
+          build.commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
@@ -349,8 +445,16 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               page.getElementsByTag("h2").get(0).text() mustBe "Exported"
               validateExportsWithLitresSummaryList(contractPacking, LitresInBands(1000, 2000), true)
 
-              page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
-              page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm details and send correction"
+              page
+                .getElementsByTag("form")
+                .first()
+                .attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
+              page
+                .getElementsByTag("form")
+                .first()
+                .getElementsByTag("button")
+                .first()
+                .text() mustBe "Confirm details and send correction"
             }
           }
         }
@@ -361,11 +465,16 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
           val correctReturnData = nilCorrectReturnUAData
             .copy(claimCreditsForLostDamaged = true, howManyCreditsForLostDamaged = Some(operatePackagingSiteLitres))
           val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
-            .set(CorrectReturnBaseCYAPage, true).success.value
-            .set(CorrectionReasonPage, "I forgot something").success.value
-            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-          build
-            .commonPrecondition
+            .set(CorrectReturnBaseCYAPage, true)
+            .success
+            .value
+            .set(CorrectionReasonPage, "I forgot something")
+            .success
+            .value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head)
+            .success
+            .value
+          build.commonPrecondition
 
           build.sdilBackend.balance(userAnswers.id, false)
           setUpForCorrectReturn(userAnswers)
@@ -384,8 +493,16 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               page.getElementsByTag("h2").get(0).text() mustBe "Lost or destroyed"
               validateLostOrDamagedWithLitresSummaryList(contractPacking, LitresInBands(1000, 2000), true)
 
-              page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
-              page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm details and send correction"
+              page
+                .getElementsByTag("form")
+                .first()
+                .attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
+              page
+                .getElementsByTag("form")
+                .first()
+                .getElementsByTag("button")
+                .first()
+                .text() mustBe "Confirm details and send correction"
             }
           }
         }
@@ -394,11 +511,16 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
       s"when the user has changed answers on $ExemptionsForSmallProducersPage" - {
         "should render the check changes page with only the exemptions from small producers section" in {
           val userAnswers = userAnswerWithExemptionSmallProducerPageUpdatedAndNilSdilReturn
-            .set(CorrectReturnBaseCYAPage, true).success.value
-            .set(CorrectionReasonPage, "I forgot something").success.value
-            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-          build
-            .commonPrecondition
+            .set(CorrectReturnBaseCYAPage, true)
+            .success
+            .value
+            .set(CorrectionReasonPage, "I forgot something")
+            .success
+            .value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head)
+            .success
+            .value
+          build.commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
@@ -415,10 +537,22 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               val contractPackedForSmallProducers = page.getElementsByClass("govuk-summary-list").get(0)
 
               page.getElementsByTag("h2").get(0).text() mustBe "Contract packed for registered small producers"
-              validateContractPackedForSmallProducersWithLitresSummaryList(contractPackedForSmallProducers, smallProducerLitres, true)
+              validateContractPackedForSmallProducersWithLitresSummaryList(
+                contractPackedForSmallProducers,
+                smallProducerLitres,
+                true
+              )
 
-              page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
-              page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm details and send correction"
+              page
+                .getElementsByTag("form")
+                .first()
+                .attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
+              page
+                .getElementsByTag("form")
+                .first()
+                .getElementsByTag("button")
+                .first()
+                .text() mustBe "Confirm details and send correction"
             }
           }
         }
@@ -430,11 +564,16 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             .copy(broughtIntoUK = true, howManyBroughtIntoUK = Some(operatePackagingSiteLitres))
           val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
             .copy(warehouseList = warehousesFromSubscription)
-            .set(CorrectReturnBaseCYAPage, true).success.value
-            .set(CorrectionReasonPage, "I forgot something").success.value
-            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-          build
-            .commonPrecondition
+            .set(CorrectReturnBaseCYAPage, true)
+            .success
+            .value
+            .set(CorrectionReasonPage, "I forgot something")
+            .success
+            .value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head)
+            .success
+            .value
+          build.commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
@@ -457,10 +596,25 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
               val siteDetailsSummaryListItem = page.getElementsByClass("govuk-summary-list").get(1)
 
               page.getElementsByTag("h2").get(1).text() mustBe "UK site details"
-              validateSiteDetailsSummary(userAnswers, aSubscription, siteDetailsSummaryListItem, 0, numberOfWarehouses = 2, isCheckAnswers = true)
+              validateSiteDetailsSummary(
+                userAnswers,
+                aSubscription,
+                siteDetailsSummaryListItem,
+                0,
+                numberOfWarehouses = 2,
+                isCheckAnswers = true
+              )
 
-              page.getElementsByTag("form").first().attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
-              page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm details and send correction"
+              page
+                .getElementsByTag("form")
+                .first()
+                .attr("action") mustBe routes.CorrectReturnCheckChangesCYAController.onSubmit.url
+              page
+                .getElementsByTag("form")
+                .first()
+                .getElementsByTag("button")
+                .first()
+                .text() mustBe "Confirm details and send correction"
             }
           }
         }
@@ -472,12 +626,19 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             .copy(broughtIntoUK = true, howManyBroughtIntoUK = Some(operatePackagingSiteLitres))
           val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
             .copy(warehouseList = warehousesFromSubscription)
-            .set(CorrectReturnBaseCYAPage, true).success.value
-            .set(BalanceRepaymentRequired, true).success.value
-            .set(CorrectionReasonPage, "I forgot something").success.value
-            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-          build
-            .commonPrecondition
+            .set(CorrectReturnBaseCYAPage, true)
+            .success
+            .value
+            .set(BalanceRepaymentRequired, true)
+            .success
+            .value
+            .set(CorrectionReasonPage, "I forgot something")
+            .success
+            .value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head)
+            .success
+            .value
+          build.commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
@@ -494,15 +655,33 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
               page.getElementsByTag("h2").get(3).text() mustBe "Balance"
               page.getElementsByClass("govuk-summary-list__key").get(8).text() mustBe "Original return total"
-              page.getElementsByClass("govuk-summary-list__value  original-return-total sdil-right-align--desktop").get(0).text() mustBe "£0.00"
+              page
+                .getElementsByClass("govuk-summary-list__value  original-return-total sdil-right-align--desktop")
+                .get(0)
+                .text() mustBe "£0.00"
               page.getElementsByClass("govuk-summary-list__key").get(9).text() mustBe "New return total"
-              page.getElementsByClass("govuk-summary-list__value  new-return-total sdil-right-align--desktop").get(0).text() mustBe "£660.00"
+              page
+                .getElementsByClass("govuk-summary-list__value  new-return-total sdil-right-align--desktop")
+                .get(0)
+                .text() mustBe "£660.00"
               page.getElementsByClass("govuk-summary-list__key").get(10).text() mustBe "Account balance"
-              page.getElementsByClass("govuk-summary-list__value  balance-brought-forward sdil-right-align--desktop").get(0).text() mustBe "−£1,000.00"
+              page
+                .getElementsByClass("govuk-summary-list__value  balance-brought-forward sdil-right-align--desktop")
+                .get(0)
+                .text() mustBe "−£1,000.00"
               page.getElementsByClass("govuk-summary-list__key").get(11).text() mustBe "Net adjusted amount"
-              page.getElementsByClass("govuk-summary-list__value  net-adjusted-amount sdil-right-align--desktop govuk-!-font-weight-bold")
-                .get(0).text() mustBe "−£340.00"
-              page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm details and send correction"
+              page
+                .getElementsByClass(
+                  "govuk-summary-list__value  net-adjusted-amount sdil-right-align--desktop govuk-!-font-weight-bold"
+                )
+                .get(0)
+                .text() mustBe "−£340.00"
+              page
+                .getElementsByTag("form")
+                .first()
+                .getElementsByTag("button")
+                .first()
+                .text() mustBe "Confirm details and send correction"
             }
           }
         }
@@ -512,11 +691,16 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             .copy(broughtIntoUK = true, howManyBroughtIntoUK = Some(operatePackagingSiteLitres))
           val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
             .copy(warehouseList = warehousesFromSubscription)
-            .set(CorrectReturnBaseCYAPage, true).success.value
-            .set(BalanceRepaymentRequired, false).success.value
-            .set(CorrectionReasonPage, "I forgot something").success.value
-          build
-            .commonPrecondition
+            .set(CorrectReturnBaseCYAPage, true)
+            .success
+            .value
+            .set(BalanceRepaymentRequired, false)
+            .success
+            .value
+            .set(CorrectionReasonPage, "I forgot something")
+            .success
+            .value
+          build.commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
@@ -533,15 +717,33 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
               page.getElementsByTag("h2").get(3).text() mustBe "Balance"
               page.getElementsByClass("govuk-summary-list__key").get(7).text() mustBe "Original return total"
-              page.getElementsByClass("govuk-summary-list__value  original-return-total sdil-right-align--desktop").get(0).text() mustBe "£0.00"
+              page
+                .getElementsByClass("govuk-summary-list__value  original-return-total sdil-right-align--desktop")
+                .get(0)
+                .text() mustBe "£0.00"
               page.getElementsByClass("govuk-summary-list__key").get(8).text() mustBe "New return total"
-              page.getElementsByClass("govuk-summary-list__value  new-return-total sdil-right-align--desktop").get(0).text() mustBe "£660.00"
+              page
+                .getElementsByClass("govuk-summary-list__value  new-return-total sdil-right-align--desktop")
+                .get(0)
+                .text() mustBe "£660.00"
               page.getElementsByClass("govuk-summary-list__key").get(9).text() mustBe "Account balance"
-              page.getElementsByClass("govuk-summary-list__value  balance-brought-forward sdil-right-align--desktop").get(0).text() mustBe "−£500.00"
+              page
+                .getElementsByClass("govuk-summary-list__value  balance-brought-forward sdil-right-align--desktop")
+                .get(0)
+                .text() mustBe "−£500.00"
               page.getElementsByClass("govuk-summary-list__key").get(10).text() mustBe "Net adjusted amount"
-              page.getElementsByClass("govuk-summary-list__value  net-adjusted-amount sdil-right-align--desktop govuk-!-font-weight-bold")
-                .get(0).text() mustBe "£160.00"
-              page.getElementsByTag("form").first().getElementsByTag("button").first().text() mustBe "Confirm details and send correction"
+              page
+                .getElementsByClass(
+                  "govuk-summary-list__value  net-adjusted-amount sdil-right-align--desktop govuk-!-font-weight-bold"
+                )
+                .get(0)
+                .text() mustBe "£160.00"
+              page
+                .getElementsByTag("form")
+                .first()
+                .getElementsByTag("button")
+                .first()
+                .text() mustBe "Confirm details and send correction"
             }
           }
         }
@@ -553,11 +755,16 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
             .copy(broughtIntoUK = true, howManyBroughtIntoUK = Some(operatePackagingSiteLitres))
           val userAnswers = userAnswerWithOnePageChangedAndNilSdilReturn(correctReturnData)
             .copy(warehouseList = warehousesFromSubscription)
-            .set(CorrectReturnBaseCYAPage, true).success.value
-            .set(CorrectionReasonPage, "I forgot something").success.value
-            .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
-          build
-            .commonPrecondition
+            .set(CorrectReturnBaseCYAPage, true)
+            .success
+            .value
+            .set(CorrectionReasonPage, "I forgot something")
+            .success
+            .value
+            .set(RepaymentMethodPage, RepaymentMethod.values.head)
+            .success
+            .value
+          build.commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
@@ -580,16 +787,24 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
 
   "POST " + routes.CorrectReturnCheckChangesCYAController.onSubmit.url - {
     "should redirect to correct return update done page when balance repayment required" in {
-      build
-        .commonPrecondition
-        .sdilBackend.submitSdilReturnsVary("XKSDIL000000022")
-        .sdilBackend.submitReturnVariations("XKSDIL000000022")
+      build.commonPrecondition.sdilBackend
+        .submitSdilReturnsVary("XKSDIL000000022")
+        .sdilBackend
+        .submitReturnVariations("XKSDIL000000022")
 
       val userAnswers = userAnswerWithLitresForAllPagesNilSdilReturn
-        .set(CorrectReturnBaseCYAPage, true).success.value
-        .set(BalanceRepaymentRequired, true).success.value
-        .set(CorrectionReasonPage, "No longer sell drinks").success.value
-        .set(RepaymentMethodPage, BankAccount).success.value
+        .set(CorrectReturnBaseCYAPage, true)
+        .success
+        .value
+        .set(BalanceRepaymentRequired, true)
+        .success
+        .value
+        .set(CorrectionReasonPage, "No longer sell drinks")
+        .success
+        .value
+        .set(RepaymentMethodPage, BankAccount)
+        .success
+        .value
       setUpForCorrectReturn(userAnswers)
 
       WsTestClient.withClient { client =>
@@ -604,15 +819,21 @@ class CorrectReturnCheckChangesCYAControllerISpec extends CorrectReturnBaseCYASu
     }
 
     "should redirect to correct return update done page when balance repayment not required" in {
-      build
-        .commonPrecondition
-        .sdilBackend.submitSdilReturnsVary("XKSDIL000000022")
-        .sdilBackend.submitReturnVariations("XKSDIL000000022")
+      build.commonPrecondition.sdilBackend
+        .submitSdilReturnsVary("XKSDIL000000022")
+        .sdilBackend
+        .submitReturnVariations("XKSDIL000000022")
 
       val userAnswers = userAnswerWithLitresForAllPagesNilSdilReturn
-        .set(CorrectReturnBaseCYAPage, true).success.value
-        .set(BalanceRepaymentRequired, false).success.value
-        .set(CorrectionReasonPage, "No longer sell drinks").success.value
+        .set(CorrectReturnBaseCYAPage, true)
+        .success
+        .value
+        .set(BalanceRepaymentRequired, false)
+        .success
+        .value
+        .set(CorrectionReasonPage, "No longer sell drinks")
+        .success
+        .value
       setUpForCorrectReturn(userAnswers)
 
       WsTestClient.withClient { client =>

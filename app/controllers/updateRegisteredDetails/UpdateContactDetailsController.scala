@@ -25,25 +25,26 @@ import models.SelectChange.UpdateRegisteredDetails
 import navigation._
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import services.SessionService
 import utilities.GenericLogger
 import views.html.updateRegisteredDetails.UpdateContactDetailsView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class UpdateContactDetailsController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       val sessionService: SessionService,
-                                       val navigator: NavigatorForUpdateRegisteredDetails,
-                                       controllerActions: ControllerActions,
-                                       formProvider: UpdateContactDetailsFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: UpdateContactDetailsView,
-                                       val genericLogger: GenericLogger,
-                                       val errorHandler: ErrorHandler
-                                     )(implicit val ec: ExecutionContext) extends ControllerHelper {
+class UpdateContactDetailsController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForUpdateRegisteredDetails,
+  controllerActions: ControllerActions,
+  formProvider: UpdateContactDetailsFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: UpdateContactDetailsView,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper {
 
   val form = formProvider()
 
@@ -51,24 +52,23 @@ class UpdateContactDetailsController @Inject()(
     implicit request =>
 
       val preparedForm = request.userAnswers.get(UpdateContactDetailsPage) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails).async {
-    implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
-        value => {
-          val updatedAnswers = request.userAnswers.set(UpdateContactDetailsPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, UpdateContactDetailsPage, mode)
-        }
-      )
-  }
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    controllerActions.withRequiredJourneyData(UpdateRegisteredDetails).async { implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value => {
+            val updatedAnswers = request.userAnswers.set(UpdateContactDetailsPage, value)
+            updateDatabaseAndRedirect(updatedAnswers, UpdateContactDetailsPage, mode)
+          }
+        )
+    }
 }

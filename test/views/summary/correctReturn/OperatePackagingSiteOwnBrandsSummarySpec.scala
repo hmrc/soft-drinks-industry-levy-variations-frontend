@@ -18,8 +18,8 @@ package views.summary.correctReturn
 
 import base.SpecBase
 import models.TaxRateUtil.levyValues
-import models.{CheckMode, LitresInBands, ReturnPeriod}
-import pages.correctReturn.{HowManyOperatePackagingSiteOwnBrandsPage, OperatePackagingSiteOwnBrandsPage}
+import models.{ CheckMode, LitresInBands, ReturnPeriod }
+import pages.correctReturn.{ HowManyOperatePackagingSiteOwnBrandsPage, OperatePackagingSiteOwnBrandsPage }
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
 
@@ -37,18 +37,25 @@ class OperatePackagingSiteOwnBrandsSummarySpec extends SpecBase {
       (taxYear2025ReturnPeriod, "- 2025 tax year rates")
     )
 
-    returnPeriods.foreach(returnPeriod => {
+    returnPeriods.foreach { returnPeriod =>
       s"should return correct elements when passed in with TRUE and litres provided and check answers is true ${returnPeriod._2}" in {
-        val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
-          .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-          .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(lowLitres, highLitres)).success.value
+        val userAnswers = emptyUserAnswersForCorrectReturn
+          .copy(correctReturnPeriod = Some(returnPeriod._1))
+          .set(OperatePackagingSiteOwnBrandsPage, true)
+          .success
+          .value
+          .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(lowLitres, highLitres))
+          .success
+          .value
 
         val res = OperatePackagingSiteOwnBrandsSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)
         res.rows.head.key.content.asHtml mustBe Html("Reporting own brands packaged at your own sites?")
         res.rows.head.key.classes mustBe ""
         res.rows.head.value.content.asHtml mustBe Html("Yes")
         res.rows.head.value.classes.trim mustBe "sdil-right-align--desktop"
-        res.rows.head.actions.head.items.head.href mustBe controllers.correctReturn.routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
+        res.rows.head.actions.head.items.head.href mustBe controllers.correctReturn.routes.OperatePackagingSiteOwnBrandsController
+          .onPageLoad(CheckMode)
+          .url
         res.rows.head.actions.head.items.head.attributes mustBe Map("id" -> "change-operatePackagingSiteOwnBrands")
         res.rows.head.actions.head.items.head.content.asHtml mustBe Html("Change")
 
@@ -56,18 +63,40 @@ class OperatePackagingSiteOwnBrandsSummarySpec extends SpecBase {
         res.rows(1).key.classes mustBe ""
         res.rows(1).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(lowLitres))
         res.rows(1).value.classes.trim mustBe "sdil-right-align--desktop"
-        res.rows(1).actions.head.items.head.href mustBe controllers.correctReturn.routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
-        res.rows(1).actions.head.items.head.attributes mustBe Map("id" -> "change-lowband-litreage-operatePackagingSiteOwnBrands")
+        res
+          .rows(1)
+          .actions
+          .head
+          .items
+          .head
+          .href mustBe controllers.correctReturn.routes.HowManyOperatePackagingSiteOwnBrandsController
+          .onPageLoad(CheckMode)
+          .url
+        res.rows(1).actions.head.items.head.attributes mustBe Map(
+          "id" -> "change-lowband-litreage-operatePackagingSiteOwnBrands"
+        )
         res.rows(1).actions.head.items.head.content.asHtml mustBe Html("Change")
 
         val highLitresRowIndex = 3
 
         res.rows(highLitresRowIndex).key.content.asHtml mustBe Html("Litres in the high band")
         res.rows(highLitresRowIndex).key.classes mustBe ""
-        res.rows(highLitresRowIndex).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(highLitres))
+        res.rows(highLitresRowIndex).value.content.asHtml mustBe Html(
+          java.text.NumberFormat.getInstance.format(highLitres)
+        )
         res.rows(highLitresRowIndex).value.classes.trim mustBe "sdil-right-align--desktop"
-        res.rows(highLitresRowIndex).actions.head.items.head.href mustBe controllers.correctReturn.routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
-        res.rows(highLitresRowIndex).actions.head.items.head.attributes mustBe Map("id" -> "change-highband-litreage-operatePackagingSiteOwnBrands")
+        res
+          .rows(highLitresRowIndex)
+          .actions
+          .head
+          .items
+          .head
+          .href mustBe controllers.correctReturn.routes.HowManyOperatePackagingSiteOwnBrandsController
+          .onPageLoad(CheckMode)
+          .url
+        res.rows(highLitresRowIndex).actions.head.items.head.attributes mustBe Map(
+          "id" -> "change-highband-litreage-operatePackagingSiteOwnBrands"
+        )
         res.rows(highLitresRowIndex).actions.head.items.head.content.asHtml mustBe Html("Change")
 
         res.rows(2).key.content.asHtml mustBe Html("Low band levy")
@@ -83,9 +112,14 @@ class OperatePackagingSiteOwnBrandsSummarySpec extends SpecBase {
         res.rows.size mustBe 5
       }
       s"should return correct elements when passed in with TRUE and litres provided and check answers is false ${returnPeriod._2}" in {
-        val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
-          .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-          .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(lowLitres, highLitres)).success.value
+        val userAnswers = emptyUserAnswersForCorrectReturn
+          .copy(correctReturnPeriod = Some(returnPeriod._1))
+          .set(OperatePackagingSiteOwnBrandsPage, true)
+          .success
+          .value
+          .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(lowLitres, highLitres))
+          .success
+          .value
 
         val res = OperatePackagingSiteOwnBrandsSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = false)
         res.rows.head.key.content.asHtml mustBe Html("Reporting own brands packaged at your own sites?")
@@ -104,7 +138,9 @@ class OperatePackagingSiteOwnBrandsSummarySpec extends SpecBase {
 
         res.rows(highLitresRowIndex).key.content.asHtml mustBe Html("Litres in the high band")
         res.rows(highLitresRowIndex).key.classes mustBe ""
-        res.rows(highLitresRowIndex).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(highLitres))
+        res.rows(highLitresRowIndex).value.content.asHtml mustBe Html(
+          java.text.NumberFormat.getInstance.format(highLitres)
+        )
         res.rows(highLitresRowIndex).value.classes.trim mustBe "sdil-right-align--desktop"
         res.rows(highLitresRowIndex).actions mustBe None
 
@@ -121,26 +157,31 @@ class OperatePackagingSiteOwnBrandsSummarySpec extends SpecBase {
         res.rows.size mustBe 5
       }
       s"should return correct elements when passed in with FALSE and NO litres provided ${returnPeriod._2}" in {
-        val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
-          .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+        val userAnswers = emptyUserAnswersForCorrectReturn
+          .copy(correctReturnPeriod = Some(returnPeriod._1))
+          .set(OperatePackagingSiteOwnBrandsPage, false)
+          .success
+          .value
 
         val res = OperatePackagingSiteOwnBrandsSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)
         res.rows.head.key.content.asHtml mustBe Html("Reporting own brands packaged at your own sites?")
         res.rows.head.key.classes mustBe ""
         res.rows.head.value.content.asHtml mustBe Html("No")
         res.rows.head.value.classes.trim mustBe "sdil-right-align--desktop"
-        res.rows.head.actions.head.items.head.href mustBe controllers.correctReturn.routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
+        res.rows.head.actions.head.items.head.href mustBe controllers.correctReturn.routes.OperatePackagingSiteOwnBrandsController
+          .onPageLoad(CheckMode)
+          .url
         res.rows.head.actions.head.items.head.attributes mustBe Map("id" -> "change-operatePackagingSiteOwnBrands")
         res.rows.head.actions.head.items.head.content.asHtml mustBe Html("Change")
 
         res.rows.size mustBe 1
       }
       s"should return correct elements when no elements provided ${returnPeriod._2}" in {
-          val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
+        val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
 
-          val res = OperatePackagingSiteOwnBrandsSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)
-          res.rows.size mustBe 0
-        }
-    })
+        val res = OperatePackagingSiteOwnBrandsSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)
+        res.rows.size mustBe 0
+      }
+    }
   }
 }

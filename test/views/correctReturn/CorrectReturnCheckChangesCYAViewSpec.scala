@@ -18,19 +18,19 @@ package views.correctReturn
 
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
-import play.api.mvc.{Call, Request}
+import play.api.mvc.{ Call, Request }
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.Value
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ SummaryList, SummaryListRow }
 import views.ViewSpecHelper
 import views.html.correctReturn.CorrectReturnCheckChangesCYAView
 
 class CorrectReturnCheckChangesCYAViewSpec extends ViewSpecHelper {
 
   val view: CorrectReturnCheckChangesCYAView = application.injector.instanceOf[CorrectReturnCheckChangesCYAView]
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val body = "govuk-body"
@@ -45,17 +45,16 @@ class CorrectReturnCheckChangesCYAViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val summaryList: Seq[(String, SummaryList)] = {
+    val summaryList: Seq[(String, SummaryList)] =
       Seq(
-        "foo" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bar"))))),
-        "wizz" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bang"))))),
+        "foo"     -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bar"))))),
+        "wizz"    -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bang"))))),
         "Balance" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("£1.00")))))
       )
-    }
-    val call = Call("GET","/foo")
+    val call = Call("GET", "/foo")
 
     val orgName: String = " " + aSubscription.orgName
-    val html: HtmlFormat.Appendable = view(orgName, summaryList, call)(request, messages(application))
+    val html: HtmlFormat.Appendable = view(orgName, summaryList, call)(using request, messages(application))
     val document: Document = doc(html)
 
     "should have the expected heading" in {
@@ -72,29 +71,37 @@ class CorrectReturnCheckChangesCYAViewSpec extends ViewSpecHelper {
 
     "contain the correct summary lists" in {
       document.getElementsByClass(Selectors.summaryListHeading).get(0).text() mustBe "foo"
-      document.getElementsByClass(Selectors.summaryList)
+      document
+        .getElementsByClass(Selectors.summaryList)
         .first()
         .getElementsByClass(Selectors.summaryRow)
         .first()
-        .getElementsByClass(Selectors.summaryValue).first().text() mustBe "bar"
+        .getElementsByClass(Selectors.summaryValue)
+        .first()
+        .text() mustBe "bar"
       document.getElementsByClass(Selectors.summaryListHeading).get(1).text() mustBe "wizz"
-      document.getElementsByClass(Selectors.summaryList)
+      document
+        .getElementsByClass(Selectors.summaryList)
         .get(1)
         .getElementsByClass(Selectors.summaryRow)
         .first()
-        .getElementsByClass(Selectors.summaryValue).first().text() mustBe "bang"
+        .getElementsByClass(Selectors.summaryValue)
+        .first()
+        .text() mustBe "bang"
     }
     "contains a balance section" in {
       document.getElementsByClass(Selectors.summaryListHeading).get(2).text() mustBe "Balance"
     }
 
     "should have the expected inset rounding help text" in {
-      document.getElementsByClass(Selectors.insetText).get(0).text() mustEqual Messages("checkYourAnswers.roundingHelpText")
+      document.getElementsByClass(Selectors.insetText).get(0).text() mustEqual Messages(
+        "checkYourAnswers.roundingHelpText"
+      )
     }
 
     "contain a section before the submit action that contains the correct text" in {
       document.getElementsByClass(Selectors.body).get(1).text() mustBe
-      "By sending this correction you are confirming that, to the best of your knowledge, the details you are providing are correct."
+        "By sending this correction you are confirming that, to the best of your knowledge, the details you are providing are correct."
     }
 
     "contains a form with the correct action" in {

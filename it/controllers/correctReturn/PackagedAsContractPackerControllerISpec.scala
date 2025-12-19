@@ -1,15 +1,15 @@
 package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
-import models.{CheckMode, NormalMode}
+import models.{ CheckMode, NormalMode }
 import models.SelectChange.CorrectReturn
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers._
 import pages.correctReturn.PackagedAsContractPackerPage
 import play.api.http.HeaderNames
-import play.api.i18n.{Messages, MessagesApi}
+import play.api.i18n.{ Messages, MessagesApi }
 import play.api.libs.json.Json
-import play.api.test.{WsTestClient, FakeRequest}
+import play.api.test.{ FakeRequest, WsTestClient }
 
 class PackagedAsContractPackerControllerISpec extends ControllerITTestHelper {
 
@@ -18,12 +18,11 @@ class PackagedAsContractPackerControllerISpec extends ControllerITTestHelper {
 
   given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   given messages: Messages = messagesApi.preferred(FakeRequest())
-  
+
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the PackagedAsContractPacker page with no data populated" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
@@ -48,8 +47,7 @@ class PackagedAsContractPackerControllerISpec extends ControllerITTestHelper {
     userAnswersForCorrectReturnPackagedAsContractPackerPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
@@ -80,8 +78,7 @@ class PackagedAsContractPackerControllerISpec extends ControllerITTestHelper {
   s"GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the PackagedAsContractPacker page with no data populated" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
@@ -106,8 +103,7 @@ class PackagedAsContractPackerControllerISpec extends ControllerITTestHelper {
     userAnswersForCorrectReturnPackagedAsContractPackerPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
@@ -117,7 +113,7 @@ class PackagedAsContractPackerControllerISpec extends ControllerITTestHelper {
             whenReady(result1) { res =>
               res.status mustBe 200
               val page = Jsoup.parse(res.body)
-                page.title mustBe "Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
+              page.title mustBe "Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
@@ -141,14 +137,15 @@ class PackagedAsContractPackerControllerISpec extends ControllerITTestHelper {
       "when the user selects " + key - {
         "should update the session with the new value and redirect to the index controller" - {
           "when the session contains no data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> yesSelected.toString)
+                client,
+                correctReturnBaseUrl + normalRoutePath,
+                Json.obj("value" -> yesSelected.toString)
               )
 
               whenReady(result) { res =>
@@ -159,7 +156,8 @@ class PackagedAsContractPackerControllerISpec extends ControllerITTestHelper {
                   routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode).url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagedAsContractPackerPage))
+                val dataStoredForPage =
+                  getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagedAsContractPackerPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe yesSelected
               }
@@ -167,14 +165,15 @@ class PackagedAsContractPackerControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setUpForCorrectReturn(userAnswers)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> yesSelected.toString)
+                client,
+                correctReturnBaseUrl + normalRoutePath,
+                Json.obj("value" -> yesSelected.toString)
               )
 
               whenReady(result) { res =>
@@ -185,7 +184,8 @@ class PackagedAsContractPackerControllerISpec extends ControllerITTestHelper {
                   routes.ExemptionsForSmallProducersController.onPageLoad(NormalMode).url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagedAsContractPackerPage))
+                val dataStoredForPage =
+                  getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagedAsContractPackerPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe yesSelected
               }
@@ -197,32 +197,41 @@ class PackagedAsContractPackerControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> "")
+            client,
+            correctReturnBaseUrl + normalRoutePath,
+            Json.obj("value" -> "")
           )
 
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + "Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK")
-            val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
+            page.title must include(
+              "Error: " + "Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
+            )
+            val errorSummary = page
+              .getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe "Select yes if are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?"
+            errorSummary
+              .text() mustBe "Select yes if are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?"
           }
         }
       }
     }
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+      CorrectReturn,
+      correctReturnBaseUrl + normalRoutePath,
+      Some(Json.obj("value" -> "true"))
+    )
   }
 
   s"POST " + checkRoutePath - {
@@ -231,39 +240,14 @@ class PackagedAsContractPackerControllerISpec extends ControllerITTestHelper {
         val yesSelected = key == "yes"
         "should update the session with the new value and redirect to the checkAnswers controller" - {
           "when the session contains no data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> yesSelected.toString)
-              )
-
-              whenReady(result) { res =>
-                res.status mustBe 303
-                val expectedLocation = if(yesSelected) {
-                  routes.HowManyPackagedAsContractPackerController.onPageLoad(CheckMode).url
-                } else {
-                  routes.CorrectReturnCYAController.onPageLoad.url
-                }
-                res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagedAsContractPackerPage))
-                dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe yesSelected
-              }
-            }
-          }
-
-          "when the session already contains data for page" in {
-            build
-              .commonPrecondition
-
-            setUpForCorrectReturn(userAnswers)
-            WsTestClient.withClient { client =>
-              val yesSelected = key == "yes"
-              val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> yesSelected.toString)
+                client,
+                correctReturnBaseUrl + checkRoutePath,
+                Json.obj("value" -> yesSelected.toString)
               )
 
               whenReady(result) { res =>
@@ -274,7 +258,36 @@ class PackagedAsContractPackerControllerISpec extends ControllerITTestHelper {
                   routes.CorrectReturnCYAController.onPageLoad.url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagedAsContractPackerPage))
+                val dataStoredForPage =
+                  getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagedAsContractPackerPage))
+                dataStoredForPage.nonEmpty mustBe true
+                dataStoredForPage.get mustBe yesSelected
+              }
+            }
+          }
+
+          "when the session already contains data for page" in {
+            build.commonPrecondition
+
+            setUpForCorrectReturn(userAnswers)
+            WsTestClient.withClient { client =>
+              val yesSelected = key == "yes"
+              val result = createClientRequestPOST(
+                client,
+                correctReturnBaseUrl + checkRoutePath,
+                Json.obj("value" -> yesSelected.toString)
+              )
+
+              whenReady(result) { res =>
+                res.status mustBe 303
+                val expectedLocation = if (yesSelected) {
+                  routes.HowManyPackagedAsContractPackerController.onPageLoad(CheckMode).url
+                } else {
+                  routes.CorrectReturnCYAController.onPageLoad.url
+                }
+                res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
+                val dataStoredForPage =
+                  getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(PackagedAsContractPackerPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe yesSelected
               }
@@ -286,31 +299,41 @@ class PackagedAsContractPackerControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> "")
+            client,
+            correctReturnBaseUrl + checkRoutePath,
+            Json.obj("value" -> "")
           )
 
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
-            page.title must include("Error: " + "Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK")
-            val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
+            page.title must include(
+              "Error: " + "Are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate? - Soft Drinks Industry Levy - GOV.UK"
+            )
+            val errorSummary = page
+              .getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe messages("Select yes if are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?")
+            errorSummary.text() mustBe messages(
+              "Select yes if are you reporting liable drinks you have packaged as a third party or contract packer at UK sites you operate?"
+            )
           }
         }
       }
     }
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+      CorrectReturn,
+      correctReturnBaseUrl + checkRoutePath,
+      Some(Json.obj("value" -> "true"))
+    )
   }
 }

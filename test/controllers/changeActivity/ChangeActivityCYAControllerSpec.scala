@@ -21,10 +21,10 @@ import controllers.changeActivity.routes._
 import generators.ChangeActivityCYAGenerators._
 import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced.Large
-import models.{DataHelper, LitresInBands}
+import models.{ DataHelper, LitresInBands }
 import orchestrators.ChangeActivityOrchestrator
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{when, mock}
+import org.mockito.Mockito.{ mock, when }
 import pages.changeActivity._
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -59,40 +59,58 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency w
             " " + aSubscription.orgName,
             ChangeActivitySummary.summaryListsAndHeadings(userAnswers, isCheckAnswers = true),
             routes.ChangeActivityCYAController.onSubmit
-          )(request, messages(application)).toString
+          )(using request, messages(application)).toString
         }
       }
     }
 
     "must redirect to return sent page on submit" in {
-      val userAnswers = emptyUserAnswersForChangeActivity.set(AmountProducedPage, Large).success.value
-        .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100L, 100L)).success.value
-        .set(ContractPackingPage, true).success.value
-        .set(HowManyContractPackingPage, LitresInBands(100 , 100)).success.value
-        .set(ImportsPage, true).success.value
-        .set(HowManyImportsPage, LitresInBands(100, 100)).success.value
-        .copy(packagingSiteList = Map.empty,
-              warehouseList = Map.empty)
+      val userAnswers = emptyUserAnswersForChangeActivity
+        .set(AmountProducedPage, Large)
+        .success
+        .value
+        .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100L, 100L))
+        .success
+        .value
+        .set(ContractPackingPage, true)
+        .success
+        .value
+        .set(HowManyContractPackingPage, LitresInBands(100, 100))
+        .success
+        .value
+        .set(ImportsPage, true)
+        .success
+        .value
+        .set(HowManyImportsPage, LitresInBands(100, 100))
+        .success
+        .value
+        .copy(packagingSiteList = Map.empty, warehouseList = Map.empty)
 
       val mockOrchestrator: ChangeActivityOrchestrator = mock(classOf[ChangeActivityOrchestrator])
 
-      when(mockOrchestrator.submitVariation(any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
+      when(mockOrchestrator.submitVariation(any(), any())(any(), any())).thenReturn(
+        createSuccessVariationResult(
+          (): Unit
+        )
+      )
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
-        .overrides(
-          bind[ChangeActivityOrchestrator].toInstance(mockOrchestrator)
-        )
-        .build()
+          .overrides(
+            bind[ChangeActivityOrchestrator].toInstance(mockOrchestrator)
+          )
+          .build()
 
       running(application) {
         val request =
-        FakeRequest(POST, ChangeActivityCYAController.onPageLoad().url)
+          FakeRequest(POST, ChangeActivityCYAController.onPageLoad().url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-variations-frontend/change-activity/variation-done"
+        redirectLocation(
+          result
+        ).value mustEqual "/soft-drinks-industry-levy-variations-frontend/change-activity/variation-done"
       }
     }
 

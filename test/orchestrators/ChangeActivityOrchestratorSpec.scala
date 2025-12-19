@@ -19,9 +19,9 @@ package orchestrators
 import base.SpecBase
 import connectors.SoftDrinksIndustryLevyConnector
 import models.backend.RetrievedActivity
-import models.changeActivity.{AmountProduced, ChangeActivityData}
-import models.submission.{Activity, Litreage, SdilActivity}
-import models.{LitresInBands, VariationsSubmissionDataHelper}
+import models.changeActivity.{ AmountProduced, ChangeActivityData }
+import models.submission.{ Activity, Litreage, SdilActivity }
+import models.{ LitresInBands, VariationsSubmissionDataHelper }
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -32,7 +32,7 @@ import utilities.GenericLogger
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class ChangeActivityOrchestratorSpec extends SpecBase with MockitoSugar with VariationsSubmissionDataHelper{
+class ChangeActivityOrchestratorSpec extends SpecBase with MockitoSugar with VariationsSubmissionDataHelper {
 
   val mockConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
   val localDate: LocalDate = LocalDate.of(2023, 5, 6)
@@ -62,7 +62,6 @@ class ChangeActivityOrchestratorSpec extends SpecBase with MockitoSugar with Var
     voluntaryRegistration = true
   )
 
-
   val retrievedActivityLiableNoneProducer = RetrievedActivity(
     smallProducer = false,
     largeProducer = false,
@@ -87,10 +86,14 @@ class ChangeActivityOrchestratorSpec extends SpecBase with MockitoSugar with Var
           )
           val expectedSubscription = testVariationSubmission(sdilActivity = Some(expectedSdilActivity))
 
-          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
-          val res = changeActivityOrchestrator.submitVariation(getSubscription(retrievedActivityLiableLargeProducer), userAnswers)(hc, ec)
+          val res = changeActivityOrchestrator.submitVariation(
+            getSubscription(retrievedActivityLiableLargeProducer),
+            userAnswers
+          )(hc, ec)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -109,10 +112,14 @@ class ChangeActivityOrchestratorSpec extends SpecBase with MockitoSugar with Var
           )
           val expectedSubscription = testVariationSubmission(sdilActivity = Some(expectedSdilActivity))
 
-          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
-          val res = changeActivityOrchestrator.submitVariation(getSubscription(retrievedActivityLiableLargeProducer), userAnswers)(hc, ec)
+          val res = changeActivityOrchestrator.submitVariation(
+            getSubscription(retrievedActivityLiableLargeProducer),
+            userAnswers
+          )(hc, ec)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -130,10 +137,14 @@ class ChangeActivityOrchestratorSpec extends SpecBase with MockitoSugar with Var
           )
           val expectedSubscription = testVariationSubmission(sdilActivity = Some(expectedSdilActivity))
 
-          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
-          val res = changeActivityOrchestrator.submitVariation(getSubscription(retrievedActivityLiableLargeProducer), userAnswers)(hc, ec)
+          val res = changeActivityOrchestrator.submitVariation(
+            getSubscription(retrievedActivityLiableLargeProducer),
+            userAnswers
+          )(hc, ec)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -152,10 +163,14 @@ class ChangeActivityOrchestratorSpec extends SpecBase with MockitoSugar with Var
           )
           val expectedSubscription = testVariationSubmission(sdilActivity = Some(expectedSdilActivity))
 
-          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
-          val res = changeActivityOrchestrator.submitVariation(getSubscription(retrievedActivityLiableLargeProducer), userAnswers)(hc, ec)
+          val res = changeActivityOrchestrator.submitVariation(
+            getSubscription(retrievedActivityLiableLargeProducer),
+            userAnswers
+          )(hc, ec)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -176,10 +191,14 @@ class ChangeActivityOrchestratorSpec extends SpecBase with MockitoSugar with Var
           )
           val expectedSubscription = testVariationSubmission(sdilActivity = Some(expectedSdilActivity))
 
-          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
-          val res = changeActivityOrchestrator.submitVariation(getSubscription(retrievedActivityLiableSmallProducer), userAnswers)(hc, ec)
+          val res = changeActivityOrchestrator.submitVariation(
+            getSubscription(retrievedActivityLiableSmallProducer),
+            userAnswers
+          )(hc, ec)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -199,10 +218,14 @@ class ChangeActivityOrchestratorSpec extends SpecBase with MockitoSugar with Var
           )
           val expectedSubscription = testVariationSubmission(sdilActivity = Some(expectedSdilActivity))
 
-          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
-          val res = changeActivityOrchestrator.submitVariation(getSubscription(retrievedActivityLiableSmallProducer), userAnswers)(hc, ec)
+          val res = changeActivityOrchestrator.submitVariation(
+            getSubscription(retrievedActivityLiableSmallProducer),
+            userAnswers
+          )(hc, ec)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -221,10 +244,14 @@ class ChangeActivityOrchestratorSpec extends SpecBase with MockitoSugar with Var
           )
           val expectedSubscription = testVariationSubmission(sdilActivity = Some(expectedSdilActivity))
 
-          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
-          val res = changeActivityOrchestrator.submitVariation(getSubscription(retrievedActivityLiableSmallProducer), userAnswers)(hc, ec)
+          val res = changeActivityOrchestrator.submitVariation(
+            getSubscription(retrievedActivityLiableSmallProducer),
+            userAnswers
+          )(hc, ec)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -244,10 +271,14 @@ class ChangeActivityOrchestratorSpec extends SpecBase with MockitoSugar with Var
           )
           val expectedSubscription = testVariationSubmission(sdilActivity = Some(expectedSdilActivity))
 
-          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
-          val res = changeActivityOrchestrator.submitVariation(getSubscription(retrievedActivityLiableSmallProducer), userAnswers)(hc, ec)
+          val res = changeActivityOrchestrator.submitVariation(
+            getSubscription(retrievedActivityLiableSmallProducer),
+            userAnswers
+          )(hc, ec)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -268,10 +299,14 @@ class ChangeActivityOrchestratorSpec extends SpecBase with MockitoSugar with Var
           )
           val expectedSubscription = testVariationSubmission(sdilActivity = Some(expectedSdilActivity))
 
-          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
-          val res = changeActivityOrchestrator.submitVariation(getSubscription(retrievedActivityLiableNoneProducer), userAnswers)(hc, ec)
+          val res = changeActivityOrchestrator.submitVariation(
+            getSubscription(retrievedActivityLiableNoneProducer),
+            userAnswers
+          )(hc, ec)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -281,12 +316,22 @@ class ChangeActivityOrchestratorSpec extends SpecBase with MockitoSugar with Var
           override val isVoluntary: Boolean = false
           override val newAmountProduced: AmountProduced = AmountProduced.Small
           override val expectedSdilActivity = SdilActivity(
-            Some(expectedNewActivity), None, None, None, None, None, None
+            Some(expectedNewActivity),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None
           )
           val expectedSubscription = testVariationSubmission(sdilActivity = Some(expectedSdilActivity))
-          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
 
-          val res = changeActivityOrchestrator.submitVariation(getSubscription(retrievedActivityLiableNoneProducer), userAnswers)(hc, ec)
+          val res = changeActivityOrchestrator.submitVariation(
+            getSubscription(retrievedActivityLiableNoneProducer),
+            userAnswers
+          )(hc, ec)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -303,10 +348,14 @@ class ChangeActivityOrchestratorSpec extends SpecBase with MockitoSugar with Var
             None
           )
           val expectedSubscription = testVariationSubmission(sdilActivity = Some(expectedSdilActivity))
-          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
-          val res = changeActivityOrchestrator.submitVariation(getSubscription(retrievedActivityLiableNoneProducer), userAnswers)(hc, ec)
+          val res = changeActivityOrchestrator.submitVariation(
+            getSubscription(retrievedActivityLiableNoneProducer),
+            userAnswers
+          )(hc, ec)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -324,10 +373,14 @@ class ChangeActivityOrchestratorSpec extends SpecBase with MockitoSugar with Var
             None
           )
           val expectedSubscription = testVariationSubmission(sdilActivity = Some(expectedSdilActivity))
-          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc)).thenReturn(createSuccessVariationResult((): Unit))
+          when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc))
+            .thenReturn(createSuccessVariationResult((): Unit))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
-          val res = changeActivityOrchestrator.submitVariation(getSubscription(retrievedActivityLiableNoneProducer), userAnswers)(hc, ec)
+          val res = changeActivityOrchestrator.submitVariation(
+            getSubscription(retrievedActivityLiableNoneProducer),
+            userAnswers
+          )(hc, ec)
           whenReady(res.value) { result =>
             result mustEqual Right((): Unit)
           }
@@ -341,8 +394,8 @@ class ChangeActivityOrchestratorSpec extends SpecBase with MockitoSugar with Var
     val isVoluntary: Boolean
     val expectedSdilActivity: SdilActivity
 
-    def changeActivityData: ChangeActivityData = {
-      if(isVoluntary) {
+    def changeActivityData: ChangeActivityData =
+      if (isVoluntary) {
         ChangeActivityData(newAmountProduced, Some(true))
       } else {
         val ownBrandsLitreage = if (newAmountProduced == AmountProduced.None) {
@@ -361,8 +414,7 @@ class ChangeActivityOrchestratorSpec extends SpecBase with MockitoSugar with Var
           Some(litresInBands)
         )
       }
-    }
-    def expectedNewActivity = {
+    def expectedNewActivity =
       if (isVoluntary) {
         Activity(
           Copackee = Some(Litreage(1, 1)),
@@ -378,10 +430,10 @@ class ChangeActivityOrchestratorSpec extends SpecBase with MockitoSugar with Var
           ownBrandsLitreage,
           Some(litreage),
           Some(litreage),
-          None, newAmountProduced == AmountProduced.Large
+          None,
+          newAmountProduced == AmountProduced.Large
         )
       }
-    }
 
     def userAnswers = emptyUserAnswersForChangeActivity.copy(
       data = Json.obj(

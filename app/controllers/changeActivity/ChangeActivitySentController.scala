@@ -21,37 +21,40 @@ import config.FrontendAppConfig
 import controllers.actions.ControllerActions
 import controllers.routes
 import models.SelectChange.ChangeActivity
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilities.GenericLogger
 import views.html.changeActivity.ChangeActivitySentView
 import views.summary.changeActivity.ChangeActivitySummary
 
-import java.time.{LocalDateTime, ZoneId}
+import java.time.{ LocalDateTime, ZoneId }
 import java.time.format.DateTimeFormatter
 
-class ChangeActivitySentController @Inject()(
-                                     override val messagesApi: MessagesApi,
-                                     controllerActions: ControllerActions,
-                                     implicit val config: FrontendAppConfig,
-                                     val controllerComponents: MessagesControllerComponents,
-                                     view: ChangeActivitySentView,
-                                     genericLogger: GenericLogger
-                                   ) extends FrontendBaseController with I18nSupport {
+class ChangeActivitySentController @Inject() (
+  override val messagesApi: MessagesApi,
+  controllerActions: ControllerActions,
+  implicit val config: FrontendAppConfig,
+  val controllerComponents: MessagesControllerComponents,
+  view: ChangeActivitySentView,
+  genericLogger: GenericLogger
+) extends FrontendBaseController with I18nSupport {
 
- def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyDataPostSubmission(ChangeActivity) {
-  implicit request =>
-    request.userAnswers.submittedOn match {
-      case Some(submittedOnDate) =>
-        val getSentDateTime = LocalDateTime.ofInstant(submittedOnDate, ZoneId.of("Europe/London"))
-        val formattedDate = getSentDateTime.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-        val formattedTime = getSentDateTime.format(DateTimeFormatter.ofPattern("h:mma"))
-        val alias: String = request.subscription.orgName
-        val sections = ChangeActivitySummary.summaryListsAndHeadings(request.userAnswers, isCheckAnswers = false)
-        Ok(view(alias: String, formattedDate, formattedTime, sections))
-      case None => genericLogger.logger.error(s"[SoftDrinksIndustryLevyService [submitVariation] - unexpected response while attempting to retreive userAnswers submittedOnDate")
-        Redirect(routes.SelectChangeController.onPageLoad)
-    }
- }
+  def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyDataPostSubmission(ChangeActivity) {
+    implicit request =>
+      request.userAnswers.submittedOn match {
+        case Some(submittedOnDate) =>
+          val getSentDateTime = LocalDateTime.ofInstant(submittedOnDate, ZoneId.of("Europe/London"))
+          val formattedDate = getSentDateTime.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+          val formattedTime = getSentDateTime.format(DateTimeFormatter.ofPattern("h:mma"))
+          val alias: String = request.subscription.orgName
+          val sections = ChangeActivitySummary.summaryListsAndHeadings(request.userAnswers, isCheckAnswers = false)
+          Ok(view(alias: String, formattedDate, formattedTime, sections))
+        case None =>
+          genericLogger.logger.error(
+            s"[SoftDrinksIndustryLevyService [submitVariation] - unexpected response while attempting to retreive userAnswers submittedOnDate"
+          )
+          Redirect(routes.SelectChangeController.onPageLoad)
+      }
+  }
 }

@@ -21,12 +21,12 @@ import controllers.actions._
 import forms.updateRegisteredDetails.PackagingSiteDetailsFormProvider
 import handlers.ErrorHandler
 import models.SelectChange.UpdateRegisteredDetails
-import models.{CheckMode, Mode}
+import models.{ CheckMode, Mode }
 import navigation._
 import play.api.data.Form
-import play.api.i18n.{Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, RequestHeader}
-import services.{AddressLookupService, PackingDetails, SessionService}
+import play.api.i18n.{ Messages, MessagesApi }
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents, RequestHeader }
+import services.{ AddressLookupService, PackingDetails, SessionService }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.http.HeaderCarrier
 import utilities.GenericLogger
@@ -35,20 +35,21 @@ import views.html.updateRegisteredDetails.PackagingSiteDetailsView
 import views.summary.updateRegisteredDetails.PackagingSiteDetailsSummary
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class PackagingSiteDetailsController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       val sessionService: SessionService,
-                                       val navigator: NavigatorForUpdateRegisteredDetails,
-                                       controllerActions: ControllerActions,
-                                       formProvider: PackagingSiteDetailsFormProvider,
-                                       addressLookupService: AddressLookupService,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: PackagingSiteDetailsView,
-                                       val genericLogger: GenericLogger,
-                                       val errorHandler: ErrorHandler
-                                     )(implicit val ec: ExecutionContext) extends ControllerHelper with SummaryListFluency {
+class PackagingSiteDetailsController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForUpdateRegisteredDetails,
+  controllerActions: ControllerActions,
+  formProvider: PackagingSiteDetailsFormProvider,
+  addressLookupService: AddressLookupService,
+  val controllerComponents: MessagesControllerComponents,
+  view: PackagingSiteDetailsView,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper with SummaryListFluency {
 
   val form: Form[Boolean] = formProvider()
 
@@ -61,32 +62,41 @@ class PackagingSiteDetailsController @Inject()(
       Ok(view(form, mode, siteList))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(UpdateRegisteredDetails).async {
-    implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    controllerActions.withRequiredJourneyData(UpdateRegisteredDetails).async { implicit request =>
 
       val siteList: SummaryList = SummaryListViewModel(
         rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList, mode)
       )
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
+          value => getOnwardUrl(value, mode).map(Redirect(_))
+        )
+    }
 
-        value =>
-          getOnwardUrl(value, mode).map(Redirect(_))
-      )
-  }
-
-  private def getOnwardUrl(value: Boolean, mode: Mode)(implicit hc: HeaderCarrier, ec: ExecutionContext, messages: Messages,
-                                                       requestHeader: RequestHeader): Future[String] = {
+  private def getOnwardUrl(value: Boolean, mode: Mode)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext,
+    messages: Messages,
+    requestHeader: RequestHeader
+  ): Future[String] =
     if (value) {
-      addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode)(hc, ec, messages, requestHeader)
+      addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode)(using
+        hc,
+        ec,
+        messages,
+        requestHeader
+      )
     } else {
       if (mode == CheckMode) {
-        Future.successful(controllers.updateRegisteredDetails.routes.UpdateRegisteredDetailsCYAController.onPageLoad.url)
+        Future.successful(
+          controllers.updateRegisteredDetails.routes.UpdateRegisteredDetailsCYAController.onPageLoad.url
+        )
       } else {
         Future.successful(controllers.updateRegisteredDetails.routes.WarehouseDetailsController.onPageLoad(mode).url)
       }
     }
-  }
 
 }

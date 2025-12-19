@@ -47,8 +47,11 @@ object LevyCalculator extends Logging {
 
   // Map tax years to their corresponding band rates using the Rates object
   private def bandRatesByTaxYear(implicit frontendAppConfig: FrontendAppConfig): Map[TaxYear, BandRates] = Map(
-    Pre2025  -> BandRates(frontendAppConfig.lowerBandCostPerLitre, frontendAppConfig.higherBandCostPerLitre),
-    Year2025 -> BandRates(frontendAppConfig.lowerBandCostPerLitrePostApril2025, frontendAppConfig.higherBandCostPerLitrePostApril2025)
+    Pre2025 -> BandRates(frontendAppConfig.lowerBandCostPerLitre, frontendAppConfig.higherBandCostPerLitre),
+    Year2025 -> BandRates(
+      frontendAppConfig.lowerBandCostPerLitrePostApril2025,
+      frontendAppConfig.higherBandCostPerLitrePostApril2025
+    )
     // Add more years as needed
   )
 
@@ -66,12 +69,16 @@ object LevyCalculator extends Logging {
       throw new IllegalArgumentException(s"No band rates found for tax year: ${taxYear.toString}")
     )
 
-  def getLevyCalculation(lowLitres: Long, highLitres: Long, returnPeriod: ReturnPeriod)(implicit frontendAppConfig: FrontendAppConfig): LevyCalculation = {
+  def getLevyCalculation(lowLitres: Long, highLitres: Long, returnPeriod: ReturnPeriod)(implicit
+    frontendAppConfig: FrontendAppConfig
+  ): LevyCalculation = {
     val taxYear: TaxYear = getTaxYear(returnPeriod)
     val bandRates: BandRates = getBandRates(taxYear)
     val lowLevy = lowLitres * bandRates.lowerBandCostPerLitre
     val highLevy = highLitres * bandRates.higherBandCostPerLitre
-    logger.info(s"getLevyCalculation called with returnPeriod year ${returnPeriod.year} quarter ${returnPeriod.quarter} using bandRates lower ${bandRates.lowerBandCostPerLitre} higher ${bandRates.higherBandCostPerLitre}")
+    logger.info(
+      s"getLevyCalculation called with returnPeriod year ${returnPeriod.year} quarter ${returnPeriod.quarter} using bandRates lower ${bandRates.lowerBandCostPerLitre} higher ${bandRates.higherBandCostPerLitre}"
+    )
     LevyCalculation(lowLevy, highLevy)
   }
 

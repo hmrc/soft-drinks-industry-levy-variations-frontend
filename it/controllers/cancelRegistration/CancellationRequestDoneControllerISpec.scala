@@ -4,11 +4,11 @@ import controllers.ControllerITTestHelper
 import models.SelectChange.CancelRegistration
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers._
-import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
+import pages.cancelRegistration.{ CancelRegistrationDatePage, ReasonPage }
 import play.api.http.Status.SEE_OTHER
 import play.api.test.WsTestClient
 
-import java.time.{Instant, LocalDate}
+import java.time.{ Instant, LocalDate }
 
 class CancellationRequestDoneControllerISpec extends ControllerITTestHelper {
 
@@ -18,12 +18,15 @@ class CancellationRequestDoneControllerISpec extends ControllerITTestHelper {
 
   "GET " + normalRoutePath - {
     "should return OK and render the CancellationRequestDone page" in {
-      build
-        .commonPrecondition
+      build.commonPrecondition
       val testTime = Instant.now()
       val userAnswers = emptyUserAnswersForCancelRegistration
-        .set(ReasonPage, "No longer sell drinks").success.value
-        .set(CancelRegistrationDatePage, LocalDate.now()).success.value
+        .set(ReasonPage, "No longer sell drinks")
+        .success
+        .value
+        .set(CancelRegistrationDatePage, LocalDate.now())
+        .success
+        .value
       setAnswers(userAnswers.copy(submitted = true, submittedOn = Some(testTime)))
 
       WsTestClient.withClient { client =>
@@ -38,11 +41,14 @@ class CancellationRequestDoneControllerISpec extends ControllerITTestHelper {
     }
 
     "must redirect if there is no submission date" in {
-      build
-        .commonPrecondition
+      build.commonPrecondition
       val userAnswers = emptyUserAnswersForCancelRegistration
-        .set(ReasonPage, "No longer sell drinks").success.value
-        .set(CancelRegistrationDatePage, LocalDate.now()).success.value
+        .set(ReasonPage, "No longer sell drinks")
+        .success
+        .value
+        .set(CancelRegistrationDatePage, LocalDate.now())
+        .success
+        .value
       setAnswers(userAnswers)
 
       WsTestClient.withClient { client =>
@@ -56,7 +62,10 @@ class CancellationRequestDoneControllerISpec extends ControllerITTestHelper {
 
     testUnauthorisedUser(cancelRegistrationBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(cancelRegistrationBaseUrl + normalRoutePath)
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CancelRegistration, cancelRegistrationBaseUrl + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+      CancelRegistration,
+      cancelRegistrationBaseUrl + normalRoutePath
+    )
 
   }
 }

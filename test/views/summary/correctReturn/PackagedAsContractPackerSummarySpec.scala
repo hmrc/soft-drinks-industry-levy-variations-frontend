@@ -17,8 +17,8 @@
 package views.summary.correctReturn
 
 import base.SpecBase
-import models.{CheckMode, LitresInBands, ReturnPeriod}
-import pages.correctReturn.{PackagedAsContractPackerPage, HowManyPackagedAsContractPackerPage}
+import models.{ CheckMode, LitresInBands, ReturnPeriod }
+import pages.correctReturn.{ HowManyPackagedAsContractPackerPage, PackagedAsContractPackerPage }
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
 import controllers.correctReturn.routes
@@ -47,18 +47,25 @@ class PackagedAsContractPackerSummarySpec extends SpecBase {
       (taxYear2025ReturnPeriod, "- 2025 tax year rates")
     )
 
-    returnPeriodsWithLabels.foreach(returnPeriod => {
+    returnPeriodsWithLabels.foreach { returnPeriod =>
       s"must show correct rows when packaged as contractor is true, litres provided, and checkAnswers is true ${returnPeriod._2}" in {
-        val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
-          .set(PackagedAsContractPackerPage, true).success.value
-          .set(HowManyPackagedAsContractPackerPage, LitresInBands(lowLitres, highLitres)).success.value
+        val userAnswers = emptyUserAnswersForCorrectReturn
+          .copy(correctReturnPeriod = Some(returnPeriod._1))
+          .set(PackagedAsContractPackerPage, true)
+          .success
+          .value
+          .set(HowManyPackagedAsContractPackerPage, LitresInBands(lowLitres, highLitres))
+          .success
+          .value
 
         val res = PackagedAsContractPackerSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)
         res.rows.head.key.content.asHtml mustBe Html("Reporting contract packed at your own sites?")
         res.rows.head.key.classes mustBe ""
         res.rows.head.value.content.asHtml mustBe Html("Yes")
         res.rows.head.value.classes.trim mustBe "sdil-right-align--desktop"
-        res.rows.head.actions.head.items.head.href mustBe routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
+        res.rows.head.actions.head.items.head.href mustBe routes.PackagedAsContractPackerController
+          .onPageLoad(CheckMode)
+          .url
         res.rows.head.actions.head.items.head.attributes mustBe Map("id" -> "change-packagedAsContractPacker")
         res.rows.head.actions.head.items.head.content.asHtml mustBe Html("Change")
 
@@ -66,10 +73,13 @@ class PackagedAsContractPackerSummarySpec extends SpecBase {
         res.rows(1).key.classes mustBe ""
         res.rows(1).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(lowLitres))
         res.rows(1).value.classes.trim mustBe "sdil-right-align--desktop"
-        res.rows(1).actions.head.items.head.href mustBe routes.HowManyPackagedAsContractPackerController.onPageLoad(CheckMode).url
-        res.rows(1).actions.head.items.head.attributes mustBe Map("id" -> "change-lowband-litreage-packagedAsContractPacker")
+        res.rows(1).actions.head.items.head.href mustBe routes.HowManyPackagedAsContractPackerController
+          .onPageLoad(CheckMode)
+          .url
+        res.rows(1).actions.head.items.head.attributes mustBe Map(
+          "id" -> "change-lowband-litreage-packagedAsContractPacker"
+        )
         res.rows(1).actions.head.items.head.content.asHtml mustBe Html("Change")
-
 
         res.rows(2).key.content.asHtml mustBe Html("Low band levy")
         res.rows(2).key.classes mustBe ""
@@ -80,10 +90,13 @@ class PackagedAsContractPackerSummarySpec extends SpecBase {
         res.rows(3).key.classes mustBe ""
         res.rows(3).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(highLitres))
         res.rows(3).value.classes.trim mustBe "sdil-right-align--desktop"
-        res.rows(3).actions.head.items.head.href mustBe routes.HowManyPackagedAsContractPackerController.onPageLoad(CheckMode).url
-        res.rows(3).actions.head.items.head.attributes mustBe Map("id" -> "change-highband-litreage-packagedAsContractPacker")
+        res.rows(3).actions.head.items.head.href mustBe routes.HowManyPackagedAsContractPackerController
+          .onPageLoad(CheckMode)
+          .url
+        res.rows(3).actions.head.items.head.attributes mustBe Map(
+          "id" -> "change-highband-litreage-packagedAsContractPacker"
+        )
         res.rows(3).actions.head.items.head.content.asHtml mustBe Html("Change")
-
 
         res.rows(4).key.content.asHtml mustBe Html("High band levy")
         res.rows(4).key.classes mustBe ""
@@ -94,9 +107,14 @@ class PackagedAsContractPackerSummarySpec extends SpecBase {
       }
 
       s"must show correct rows when packaged as contractor is true, litres provided, and checkAnswers is false ${returnPeriod._2}" in {
-        val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
-          .set(PackagedAsContractPackerPage, true).success.value
-          .set(HowManyPackagedAsContractPackerPage, LitresInBands(lowLitres, highLitres)).success.value
+        val userAnswers = emptyUserAnswersForCorrectReturn
+          .copy(correctReturnPeriod = Some(returnPeriod._1))
+          .set(PackagedAsContractPackerPage, true)
+          .success
+          .value
+          .set(HowManyPackagedAsContractPackerPage, LitresInBands(lowLitres, highLitres))
+          .success
+          .value
 
         val res = PackagedAsContractPackerSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = false)
         res.rows.head.key.content.asHtml mustBe Html("Reporting contract packed at your own sites?")
@@ -131,8 +149,11 @@ class PackagedAsContractPackerSummarySpec extends SpecBase {
       }
 
       s"should return correct elements when packaged as contractor is false and NO litres provided  ${returnPeriod._2}" in {
-        val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
-          .set(PackagedAsContractPackerPage, false).success.value
+        val userAnswers = emptyUserAnswersForCorrectReturn
+          .copy(correctReturnPeriod = Some(returnPeriod._1))
+          .set(PackagedAsContractPackerPage, false)
+          .success
+          .value
 
         val res = PackagedAsContractPackerSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)
 
@@ -140,7 +161,9 @@ class PackagedAsContractPackerSummarySpec extends SpecBase {
         res.rows.head.key.classes mustBe ""
         res.rows.head.value.content.asHtml mustBe Html("No")
         res.rows.head.value.classes.trim mustBe "sdil-right-align--desktop"
-        res.rows.head.actions.head.items.head.href mustBe controllers.correctReturn.routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
+        res.rows.head.actions.head.items.head.href mustBe controllers.correctReturn.routes.PackagedAsContractPackerController
+          .onPageLoad(CheckMode)
+          .url
         res.rows.head.actions.head.items.head.attributes mustBe Map("id" -> "change-packagedAsContractPacker")
         res.rows.head.actions.head.items.head.content.asHtml mustBe Html("Change")
 
@@ -154,7 +177,7 @@ class PackagedAsContractPackerSummarySpec extends SpecBase {
         res.rows.size mustBe 0
       }
 
-    })
+    }
   }
 
 }

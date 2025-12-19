@@ -17,7 +17,7 @@
 package views.summary.correctReturn
 
 import base.SpecBase
-import models.{CheckMode, ReturnPeriod}
+import models.{ CheckMode, ReturnPeriod }
 import pages.correctReturn.ExemptionsForSmallProducersPage
 import play.twirl.api.Html
 import controllers.correctReturn.routes
@@ -34,11 +34,14 @@ class ExemptionsForSmallProducersSummarySpec extends SpecBase {
       (taxYear2025ReturnPeriod, "- 2025 tax year rates")
     )
 
-    returnPeriodsWithLabels.foreach(returnPeriod => {
+    returnPeriodsWithLabels.foreach { returnPeriod =>
       s"must show correct row when Exemptions For Small Producers is true and checkAnswers is true for ${returnPeriod._2}" in {
         val userAnswers =
-          emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
-            .set(ExemptionsForSmallProducersPage, true).success.value
+          emptyUserAnswersForCorrectReturn
+            .copy(correctReturnPeriod = Some(returnPeriod._1))
+            .set(ExemptionsForSmallProducersPage, true)
+            .success
+            .value
 
         val res = ExemptionsForSmallProducersSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)
 
@@ -47,15 +50,20 @@ class ExemptionsForSmallProducersSummarySpec extends SpecBase {
         val row = res.rows.head
         row.key.content.asHtml mustBe Html("Exemptions for registered small producers?")
         row.value.content.asHtml mustBe Html("Yes")
-        res.rows.head.actions.head.items.head.href mustBe routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
+        res.rows.head.actions.head.items.head.href mustBe routes.ExemptionsForSmallProducersController
+          .onPageLoad(CheckMode)
+          .url
         row.actions.head.items.head.attributes mustBe Map("id" -> "change-exemptionsForSmallProducers")
         row.actions.head.items.head.content.asHtml mustBe Html("Change")
       }
 
       s"must show correct row when Exemptions For Small Producers is true and checkAnswers is false for ${returnPeriod._2}" in {
         val userAnswers =
-          emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
-            .set(ExemptionsForSmallProducersPage, false).success.value
+          emptyUserAnswersForCorrectReturn
+            .copy(correctReturnPeriod = Some(returnPeriod._1))
+            .set(ExemptionsForSmallProducersPage, false)
+            .success
+            .value
 
         val res = ExemptionsForSmallProducersSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)
 
@@ -64,15 +72,20 @@ class ExemptionsForSmallProducersSummarySpec extends SpecBase {
         val row = res.rows.head
         row.key.content.asHtml mustBe Html("Exemptions for registered small producers?")
         row.value.content.asHtml mustBe Html("No")
-        res.rows.head.actions.head.items.head.href mustBe routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
+        res.rows.head.actions.head.items.head.href mustBe routes.ExemptionsForSmallProducersController
+          .onPageLoad(CheckMode)
+          .url
         row.actions.head.items.head.attributes mustBe Map("id" -> "change-exemptionsForSmallProducers")
         row.actions.head.items.head.content.asHtml mustBe Html("Change")
       }
 
       s"must show correct row when Exemptions For Small Producers is false for ${returnPeriod._2}" in {
         val userAnswers =
-          emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
-            .set(ExemptionsForSmallProducersPage, false).success.value
+          emptyUserAnswersForCorrectReturn
+            .copy(correctReturnPeriod = Some(returnPeriod._1))
+            .set(ExemptionsForSmallProducersPage, false)
+            .success
+            .value
 
         val res = ExemptionsForSmallProducersSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)
 
@@ -81,7 +94,9 @@ class ExemptionsForSmallProducersSummarySpec extends SpecBase {
         val row = res.rows.head
         row.key.content.asHtml mustBe Html("Exemptions for registered small producers?")
         row.value.content.asHtml mustBe Html("No")
-        res.rows.head.actions.head.items.head.href mustBe routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
+        res.rows.head.actions.head.items.head.href mustBe routes.ExemptionsForSmallProducersController
+          .onPageLoad(CheckMode)
+          .url
         row.actions.head.items.head.attributes mustBe Map("id" -> "change-exemptionsForSmallProducers")
         row.actions.head.items.head.content.asHtml mustBe Html("Change")
       }
@@ -93,6 +108,6 @@ class ExemptionsForSmallProducersSummarySpec extends SpecBase {
         res.rows.size mustBe 0
       }
 
-    })
+    }
   }
 }

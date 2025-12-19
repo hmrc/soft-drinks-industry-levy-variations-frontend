@@ -19,37 +19,52 @@ package views.summary.correctReturn
 import models.backend.Site
 import models.Mode
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, HtmlContent, Key}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{ Actions, HtmlContent, Key }
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ SummaryList, SummaryListRow }
 import viewmodels.AddressFormattingHelper
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object PackagingSiteDetailsSummary  {
+object PackagingSiteDetailsSummary {
 
-  def summaryList(packagingSiteList: Map[String, Site], mode: Mode)(implicit messages: Messages): SummaryList = {
+  def summaryList(packagingSiteList: Map[String, Site], mode: Mode)(implicit messages: Messages): SummaryList =
     SummaryListViewModel(
       rows = row2(packagingSiteList, mode)
     )
-  }
 
-  def row2(packagingSiteList: Map[String, Site], mode: Mode)(implicit messages: Messages): List[SummaryListRow] = {
-    packagingSiteList.map {
-      packagingSite =>
-        SummaryListRow(
-          key = Key(
-            content = HtmlContent(AddressFormattingHelper.addressFormatting(packagingSite._2.address, packagingSite._2.tradingName)),
-            classes = "govuk-!-font-weight-regular govuk-!-width-full"
+  def row2(packagingSiteList: Map[String, Site], mode: Mode)(implicit messages: Messages): List[SummaryListRow] =
+    packagingSiteList.map { packagingSite =>
+      SummaryListRow(
+        key = Key(
+          content = HtmlContent(
+            AddressFormattingHelper.addressFormatting(packagingSite._2.address, packagingSite._2.tradingName)
           ),
-          actions = if (packagingSiteList.size > 1) {
-            Some(Actions("", Seq(
-              ActionItemViewModel("site.remove", controllers.correctReturn.routes.RemovePackagingSiteConfirmController.onPageLoad(mode, packagingSite._1).url)
-                .withVisuallyHiddenText(messages("correctReturn.packagingSiteDetails.remove.hidden",
-                  packagingSite._2.tradingName.getOrElse(""), packagingSite._2.address.lines.head))
-            )))} else {
-            None
-          }
-        )
+          classes = "govuk-!-font-weight-regular govuk-!-width-full"
+        ),
+        actions = if (packagingSiteList.size > 1) {
+          Some(
+            Actions(
+              "",
+              Seq(
+                ActionItemViewModel(
+                  "site.remove",
+                  controllers.correctReturn.routes.RemovePackagingSiteConfirmController
+                    .onPageLoad(mode, packagingSite._1)
+                    .url
+                )
+                  .withVisuallyHiddenText(
+                    messages(
+                      "correctReturn.packagingSiteDetails.remove.hidden",
+                      packagingSite._2.tradingName.getOrElse(""),
+                      packagingSite._2.address.lines.head
+                    )
+                  )
+              )
+            )
+          )
+        } else {
+          None
+        }
+      )
     }.toList
-  }
 }

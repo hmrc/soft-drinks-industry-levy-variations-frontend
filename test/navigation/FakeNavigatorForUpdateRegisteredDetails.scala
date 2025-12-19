@@ -18,12 +18,18 @@ package navigation
 
 import models.backend.RetrievedSubscription
 import models.changeActivity.AmountProduced
-import models.{Mode, UserAnswers}
+import models.{ Mode, UserAnswers }
 import pages.Page
 import play.api.mvc.Call
 
 class FakeNavigatorForUpdateRegisteredDetails(desiredRoute: Call) extends NavigatorForUpdateRegisteredDetails {
 
-  override def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers, amountProduced: Option[AmountProduced] = None, subscription: Option[RetrievedSubscription] = None): Call =
+  override def nextPage(
+    page: Page,
+    mode: Mode,
+    userAnswers: UserAnswers,
+    amountProduced: Option[AmountProduced] = None,
+    subscription: Option[RetrievedSubscription] = None
+  ): Call =
     desiredRoute
 }

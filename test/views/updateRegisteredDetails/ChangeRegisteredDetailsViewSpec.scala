@@ -33,7 +33,7 @@ class ChangeRegisteredDetailsViewSpec extends ViewSpecHelper {
   val isVoluntary: Boolean = false
   val form: Form[Seq[ChangeRegisteredDetails]] = formProvider.apply(isVoluntary)
 
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-fieldset__heading"
@@ -50,7 +50,7 @@ class ChangeRegisteredDetailsViewSpec extends ViewSpecHelper {
   }
 
   "Change Registered Details View" - {
-    val html = view(form, isVoluntary)(request, messages(application))
+    val html = view(form, isVoluntary)(using request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
       document.title() mustBe "What do you need to update? - Soft Drinks Industry Levy - GOV.UK"
@@ -87,7 +87,7 @@ class ChangeRegisteredDetailsViewSpec extends ViewSpecHelper {
     }
 
     ChangeRegisteredDetails.values.foreach { checkbox =>
-      val html1 = view(form.fill(Seq(checkbox)), isVoluntary)(request, messages(application))
+      val html1 = view(form.fill(Seq(checkbox)), isVoluntary)(using request, messages(application))
       val document1 = doc(html1)
 
       s"when the form is preoccupied with " + checkbox.toString + "selected and has no errors" - {
@@ -125,23 +125,24 @@ class ChangeRegisteredDetailsViewSpec extends ViewSpecHelper {
     }
 
     s"when the form is preoccupied with all checkboxes selected and has no errors" - {
-      val htmlAllSelected = view(form.fill(ChangeRegisteredDetails.values), isVoluntary)(request, messages(application))
+      val htmlAllSelected =
+        view(form.fill(ChangeRegisteredDetails.values), isVoluntary)(using request, messages(application))
       val documentAllSelected = doc(htmlAllSelected)
       "should have checkboxes" - {
         val checkboxes = documentAllSelected.getElementsByClass(Selectors.checkboxesItems)
         ChangeRegisteredDetails.values.zipWithIndex.foreach { case (checkbox1, index) =>
-            s"that has the option to select " + checkbox1.toString + " and is checked" in {
-              val checkboxes1 = checkboxes
-                .get(index)
-              val input = checkboxes1
-                .getElementsByClass(Selectors.checkboxesInput)
+          s"that has the option to select " + checkbox1.toString + " and is checked" in {
+            val checkboxes1 = checkboxes
+              .get(index)
+            val input = checkboxes1
+              .getElementsByClass(Selectors.checkboxesInput)
 
-              input.attr("value") mustBe checkbox1.toString
-              input.hasAttr("checked") mustBe true
-            }
+            input.attr("value") mustBe checkbox1.toString
+            input.hasAttr("checked") mustBe true
           }
         }
       }
+    }
 
     "contain the correct button" - {
       document.getElementsByClass(Selectors.button).text() mustBe "Save and continue"
@@ -149,16 +150,18 @@ class ChangeRegisteredDetailsViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
       "when in NormalMode" in {
-        val htmlAllSelected = view(form.fill(ChangeRegisteredDetails.values), isVoluntary)(request, messages(application))
+        val htmlAllSelected =
+          view(form.fill(ChangeRegisteredDetails.values), isVoluntary)(using request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
-        documentAllSelected.select(Selectors.form)
+        documentAllSelected
+          .select(Selectors.form)
           .attr("action") mustEqual routes.ChangeRegisteredDetailsController.onSubmit().url
       }
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), isVoluntary)(request, messages(application))
+      val htmlWithErrors = view(form.bind(Map("value" -> "")), isVoluntary)(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
@@ -184,7 +187,7 @@ class ChangeRegisteredDetailsViewSpec extends ViewSpecHelper {
   }
 
   "Change Registered Details View when user has the activity status of voluntary registered = true" - {
-    val html = view(form, isVoluntary = true)(request, messages(application))
+    val html = view(form, isVoluntary = true)(using request, messages(application))
     val document = doc(html)
 
     "should include the expected check boxes" - {

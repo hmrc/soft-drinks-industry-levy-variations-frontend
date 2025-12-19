@@ -20,26 +20,26 @@ import base.SpecBase
 import forms.changeActivity.PackagingSiteDetailsFormProvider
 import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced.Small
-import models.{CheckMode, LitresInBands, NormalMode}
+import models.{ CheckMode, LitresInBands, NormalMode }
 import navigation._
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{when, times, verify}
+import org.mockito.Mockito.{ times, verify, when }
 import org.scalatestplus.mockito.MockitoSugar
 import pages.changeActivity._
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{status, _}
-import services.{AddressLookupService, PackingDetails, SessionService}
+import play.api.test.Helpers.{ status, _ }
+import services.{ AddressLookupService, PackingDetails, SessionService }
 import viewmodels.govuk.SummaryListFluency
 import views.html.changeActivity.PackagingSiteDetailsView
 import views.summary.changeActivity.PackagingSiteDetailsSummary
 
 import scala.concurrent.Future
 
-class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with SummaryListFluency{
+class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with SummaryListFluency {
 
   def onwardRoute: Call = Call("GET", "/foo")
 
@@ -52,12 +52,24 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
   "PackagingSiteDetails Controller" - {
     val completedUserAnswers = emptyUserAnswersForChangeActivity
       .copy(packagingSiteList = packingSiteMap)
-      .set(AmountProducedPage, Small).success.value
-      .set(ThirdPartyPackagersPage, false).success.value
-      .set(OperatePackagingSiteOwnBrandsPage, false).success.value
-      .set(ContractPackingPage, true).success.value
-      .set(HowManyContractPackingPage, LitresInBands(1, 1)).success.value
-      .set(ImportsPage, false).success.value
+      .set(AmountProducedPage, Small)
+      .success
+      .value
+      .set(ThirdPartyPackagersPage, false)
+      .success
+      .value
+      .set(OperatePackagingSiteOwnBrandsPage, false)
+      .success
+      .value
+      .set(ContractPackingPage, true)
+      .success
+      .value
+      .set(HowManyContractPackingPage, LitresInBands(1, 1))
+      .success
+      .value
+      .set(ImportsPage, false)
+      .success
+      .value
 
     "must return OK and the correct view for a GET in NormalMode and all previous questions have been answered" in {
       val application = applicationBuilder(userAnswers = Some(completedUserAnswers)).build()
@@ -73,7 +85,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         val view = application.injector.instanceOf[PackagingSiteDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, summary)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, summary)(using request, messages(application)).toString
       }
     }
 
@@ -83,8 +95,8 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         rows = PackagingSiteDetailsSummary.row2(completedUserAnswers.packagingSiteList, NormalMode)
       )
 
-
-      val application = applicationBuilder(Some(completedUserAnswers.set(PackagingSiteDetailsPage, false).success.value)).build()
+      val application =
+        applicationBuilder(Some(completedUserAnswers.set(PackagingSiteDetailsPage, false).success.value)).build()
 
       running(application) {
         val request = FakeRequest(GET, packagingSiteDetailsRoute)
@@ -93,7 +105,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, summary)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode, summary)(using request, messages(application)).toString
       }
     }
 
@@ -106,12 +118,15 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         val mockAddressLookupService = mock[AddressLookupService]
         val onwardUrlForALF = "foobarwizz"
 
-        when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
-        when(mockAddressLookupService.initJourneyAndReturnOnRampUrl(
-          ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-          ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any()))
+        when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
+        when(
+          mockAddressLookupService.initJourneyAndReturnOnRampUrl(
+            ArgumentMatchers.eq(PackingDetails),
+            ArgumentMatchers.any(),
+            ArgumentMatchers.any()
+          )(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+        )
           .thenReturn(Future.successful(onwardUrlForALF))
-
 
         val application =
           applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
@@ -133,8 +148,10 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
           redirectLocation(result).value mustEqual onwardUrlForALF
 
           verify(mockAddressLookupService, times(1)).initJourneyAndReturnOnRampUrl(
-            ArgumentMatchers.eq(PackingDetails), ArgumentMatchers.any(), ArgumentMatchers.any())(
-            ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+            ArgumentMatchers.eq(PackingDetails),
+            ArgumentMatchers.any(),
+            ArgumentMatchers.any()
+          )(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
         }
       }
 
@@ -158,14 +175,19 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
           val result = route(application, request).value
 
           status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual view(boundForm, mode, summary)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(boundForm, mode, summary)(using
+            request,
+            messages(application)
+          ).toString
         }
       }
     }
 
     "must redirect to PackAtBusinessAddress when packaging site list empty and in CheckMode" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity.copy(packagingSiteList = Map.empty))).build()
+      val application = applicationBuilder(userAnswers =
+        Some(emptyUserAnswersForChangeActivity.copy(packagingSiteList = Map.empty))
+      ).build()
 
       running(application) {
         val request = FakeRequest(GET, packagingSiteDetailsCheckRoute)

@@ -40,7 +40,7 @@ class LiterageModelSpec extends SpecBase with MockitoSugar {
   "Litreage.fromLitresInBands" - {
     "should convert a litresInBands to literage" in {
       val litresInBands = LitresInBands(100, 200)
-      Litreage.fromLitresInBands(litresInBands) mustBe Litreage(100,200)
+      Litreage.fromLitresInBands(litresInBands) mustBe Litreage(100, 200)
     }
   }
 

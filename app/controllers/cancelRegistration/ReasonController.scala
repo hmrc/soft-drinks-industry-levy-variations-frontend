@@ -20,55 +20,55 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.cancelRegistration.ReasonFormProvider
 import handlers.ErrorHandler
-import models.{Mode, SelectChange}
+import models.{ Mode, SelectChange }
 import navigation._
 import pages.cancelRegistration.ReasonPage
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import services.SessionService
 import utilities.GenericLogger
 import views.html.cancelRegistration.ReasonView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class ReasonController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       val sessionService: SessionService,
-                                       val navigator: NavigatorForCancelRegistration,
-                                       controllerActions: ControllerActions,
-                                       formProvider: ReasonFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: ReasonView,
-                                       val genericLogger: GenericLogger,
-                                       val errorHandler: ErrorHandler
-                                     )(implicit val ec: ExecutionContext) extends ControllerHelper {
+class ReasonController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForCancelRegistration,
+  controllerActions: ControllerActions,
+  formProvider: ReasonFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: ReasonView,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper {
 
   val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration) {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration) { implicit request =>
 
       val preparedForm = request.userAnswers.get(ReasonPage) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       Ok(view(preparedForm, mode))
-  }
+    }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration).async {
-    implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
-        value => {
-          val updatedAnswers = request.userAnswers.set(ReasonPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, ReasonPage, mode)
-        }
-      )
-  }
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    controllerActions.withRequiredJourneyData(SelectChange.CancelRegistration).async { implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value => {
+            val updatedAnswers = request.userAnswers.set(ReasonPage, value)
+            updateDatabaseAndRedirect(updatedAnswers, ReasonPage, mode)
+          }
+        )
+    }
 }

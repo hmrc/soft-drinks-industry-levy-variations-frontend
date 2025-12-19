@@ -17,13 +17,15 @@
 package models.requests
 
 import models.backend.RetrievedSubscription
-import models.{ReturnPeriod, SdilReturn, UserAnswers}
-import play.api.mvc.{Request, WrappedRequest}
+import models.{ ReturnPeriod, SdilReturn, UserAnswers }
+import play.api.mvc.{ Request, WrappedRequest }
 
-case class OptionalDataRequest[A] (request: Request[A],
-                                   sdilEnrolment: String,
-                                   subscription: RetrievedSubscription,
-                                   userAnswers: Option[UserAnswers]) extends WrappedRequest[A](request)
+case class OptionalDataRequest[A](
+  request: Request[A],
+  sdilEnrolment: String,
+  subscription: RetrievedSubscription,
+  userAnswers: Option[UserAnswers]
+) extends WrappedRequest[A](request)
 
 abstract class DataRequest[A](request: Request[A]) extends WrappedRequest[A](request) {
   val sdilEnrolment: String
@@ -31,14 +33,18 @@ abstract class DataRequest[A](request: Request[A]) extends WrappedRequest[A](req
   val userAnswers: UserAnswers
 }
 
-case class RequiredDataRequest[A] (request: Request[A],
-                           sdilEnrolment: String,
-                           subscription: RetrievedSubscription,
-                           userAnswers: UserAnswers) extends DataRequest[A](request)
+case class RequiredDataRequest[A](
+  request: Request[A],
+  sdilEnrolment: String,
+  subscription: RetrievedSubscription,
+  userAnswers: UserAnswers
+) extends DataRequest[A](request)
 
-case class CorrectReturnDataRequest[A] (request: Request[A],
-                                        sdilEnrolment: String,
-                                        subscription: RetrievedSubscription,
-                                        userAnswers: UserAnswers,
-                                        returnPeriod: ReturnPeriod,
-                                        originalSdilReturn: SdilReturn) extends DataRequest[A](request)
+case class CorrectReturnDataRequest[A](
+  request: Request[A],
+  sdilEnrolment: String,
+  subscription: RetrievedSubscription,
+  userAnswers: UserAnswers,
+  returnPeriod: ReturnPeriod,
+  originalSdilReturn: SdilReturn
+) extends DataRequest[A](request)

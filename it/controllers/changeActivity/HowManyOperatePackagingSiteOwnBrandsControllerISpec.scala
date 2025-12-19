@@ -2,7 +2,7 @@ package controllers.changeActivity
 
 import controllers.LitresISpecHelper
 import models.SelectChange.ChangeActivity
-import models.{CheckMode, LitresInBands, NormalMode, UserAnswers}
+import models.{ CheckMode, LitresInBands, NormalMode, UserAnswers }
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers._
 import pages.changeActivity.HowManyOperatePackagingSiteOwnBrandsPage
@@ -10,16 +10,16 @@ import play.api.http.HeaderNames
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
 
-
 class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHelper {
 
   val normalRoutePath = "/how-many-own-brands-next-12-months"
   val checkRoutePath = "/change-how-many-own-brands-next-12-months"
 
-  val userAnswers: UserAnswers = emptyUserAnswersForChangeActivity.set(HowManyOperatePackagingSiteOwnBrandsPage, litresInBands).success.value
+  val userAnswers: UserAnswers =
+    emptyUserAnswersForChangeActivity.set(HowManyOperatePackagingSiteOwnBrandsPage, litresInBands).success.value
 
   List(NormalMode, CheckMode).foreach { mode =>
-    val (path, redirectLocation) = if(mode == NormalMode) {
+    val (path, redirectLocation) = if (mode == NormalMode) {
       (normalRoutePath, routes.ContractPackingController.onPageLoad(NormalMode).url)
     } else {
       (checkRoutePath, routes.ChangeActivityCYAController.onPageLoad().url)
@@ -28,8 +28,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
     "GET " + path - {
       "when the userAnswers contains no data" - {
         "should return OK and render the litres page for OperatePackagingSiteOwnBrands with no data populated" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setAnswers(emptyUserAnswersForChangeActivity)
 
@@ -48,8 +47,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
 
       s"when the userAnswers contains data for the page" - {
         s"should return OK and render the page with fields populated" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setAnswers(userAnswers)
 
@@ -74,19 +72,21 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
       "when the user populates all litres fields" - {
         "should update the session with the new values and redirect to " + redirectLocation - {
           "when the session contains no data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setAnswers(emptyUserAnswersForChangeActivity)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + path, Json.toJson(litresInBandsObj)
+                client,
+                changeActivityBaseUrl + path,
+                Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(redirectLocation)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyOperatePackagingSiteOwnBrandsPage))
+                val dataStoredForPage = getAnswers(userAnswers.id)
+                  .fold[Option[LitresInBands]](None)(_.get(HowManyOperatePackagingSiteOwnBrandsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBands
               }
@@ -94,19 +94,21 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
           }
 
           "when the session already contains data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + path, Json.toJson(litresInBandsDiffObj)
+                client,
+                changeActivityBaseUrl + path,
+                Json.toJson(litresInBandsDiffObj)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(redirectLocation)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyOperatePackagingSiteOwnBrandsPage))
+                val dataStoredForPage = getAnswers(userAnswers.id)
+                  .fold[Option[LitresInBands]](None)(_.get(HowManyOperatePackagingSiteOwnBrandsPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBandsDiff
               }
@@ -116,16 +118,18 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
       }
 
       "should return 400 with required error" - {
-        val errorTitle = "Error: How many litres of your own brands will you package in the next 12 months? - Soft Drinks Industry Levy - GOV.UK"
+        val errorTitle =
+          "Error: How many litres of your own brands will you package in the next 12 months? - Soft Drinks Industry Levy - GOV.UK"
 
         "when no questions are answered" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setAnswers(emptyUserAnswersForChangeActivity)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, changeActivityBaseUrl + path, emptyJson
+              client,
+              changeActivityBaseUrl + path,
+              emptyJson
             )
 
             whenReady(result) { res =>
@@ -137,13 +141,14 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
         }
 
         "when the user answers with no numeric answers" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setAnswers(emptyUserAnswersForChangeActivity)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, changeActivityBaseUrl + path, jsonWithNoNumeric
+              client,
+              changeActivityBaseUrl + path,
+              jsonWithNoNumeric
             )
 
             whenReady(result) { res =>
@@ -155,13 +160,14 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
         }
 
         "when the user answers with negative numbers" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setAnswers(emptyUserAnswersForChangeActivity)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, changeActivityBaseUrl + path, jsonWithNegativeNumber
+              client,
+              changeActivityBaseUrl + path,
+              jsonWithNegativeNumber
             )
 
             whenReady(result) { res =>
@@ -173,13 +179,14 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
         }
 
         "when the user answers with decimal numbers" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setAnswers(emptyUserAnswersForChangeActivity)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, changeActivityBaseUrl + path, jsonWithDecimalNumber
+              client,
+              changeActivityBaseUrl + path,
+              jsonWithDecimalNumber
             )
 
             whenReady(result) { res =>
@@ -191,13 +198,14 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
         }
 
         "when the user answers with out of max range numbers" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setAnswers(emptyUserAnswersForChangeActivity)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, changeActivityBaseUrl + path, jsonWithOutOfRangeNumber
+              client,
+              changeActivityBaseUrl + path,
+              jsonWithOutOfRangeNumber
             )
 
             whenReady(result) { res =>
@@ -209,13 +217,14 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
         }
 
         "when the user answers with 0" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setAnswers(emptyUserAnswersForChangeActivity)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, changeActivityBaseUrl + path, jsonWith0
+              client,
+              changeActivityBaseUrl + path,
+              jsonWith0
             )
 
             whenReady(result) { res =>
@@ -229,7 +238,11 @@ class HowManyOperatePackagingSiteOwnBrandsControllerISpec extends LitresISpecHel
 
       testUnauthorisedUser(changeActivityBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
       testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
-      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + path, Some(Json.toJson(litresInBandsDiff)))
+      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+        ChangeActivity,
+        changeActivityBaseUrl + path,
+        Some(Json.toJson(litresInBandsDiff))
+      )
     }
   }
 }

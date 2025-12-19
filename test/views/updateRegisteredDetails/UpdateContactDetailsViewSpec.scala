@@ -19,23 +19,21 @@ package views.updateRegisteredDetails
 import controllers.updateRegisteredDetails.routes
 import forms.updateRegisteredDetails.UpdateContactDetailsFormProvider
 import models.updateRegisteredDetails.ContactDetails
-import models.{CheckMode, NormalMode}
+import models.{ CheckMode, NormalMode }
 import org.jsoup.Jsoup
 import play.api.i18n.Messages
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json.{ JsObject, JsValue, Json }
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import views.ViewSpecHelper
 import views.html.updateRegisteredDetails.UpdateContactDetailsView
-
-
 
 class UpdateContactDetailsViewSpec extends ViewSpecHelper {
 
   val view = application.injector.instanceOf[UpdateContactDetailsView]
   val formProvider = new UpdateContactDetailsFormProvider
   val form = formProvider.apply()
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-heading-l"
@@ -48,18 +46,22 @@ class UpdateContactDetailsViewSpec extends ViewSpecHelper {
 
   val contactdetails: ContactDetails = ContactDetails("Full Name", "job position", "012345678901", "email@test.com")
   val contactdetailsJsObject: collection.Map[String, JsValue] = Json.toJson(contactdetails).as[JsObject].value
-  val contactdetailsMap: Map[String, String] = Map("fullName" -> "Full Name",
-    "position" -> "job position",
-  "phoneNumber" -> "012345678901",
-  "email" -> "email@test.com")
+  val contactdetailsMap: Map[String, String] = Map(
+    "fullName"    -> "Full Name",
+    "position"    -> "job position",
+    "phoneNumber" -> "012345678901",
+    "email"       -> "email@test.com"
+  )
 
-  val fieldNameToLabel: Map[String, String] = Map("fullName" -> "Full name",
-    "position" -> "Job title",
+  val fieldNameToLabel: Map[String, String] = Map(
+    "fullName"    -> "Full name",
+    "position"    -> "Job title",
     "phoneNumber" -> "Telephone number",
-    "email" -> "Email address")
+    "email"       -> "Email address"
+  )
 
   "View" - {
-    val html = view(form, NormalMode)(request, messages(application))
+    val html = view(form, NormalMode)(using request, messages(application))
     val document = doc(html)
     val questionItems = document.getElementsByClass(Selectors.formGroup)
     "should contain the expected title" in {
@@ -67,7 +69,9 @@ class UpdateContactDetailsViewSpec extends ViewSpecHelper {
     }
 
     "should have the expected heading" in {
-      document.getElementsByClass(Selectors.heading).text() mustEqual Messages("updateRegisteredDetails.updateContactDetails" + ".heading")
+      document.getElementsByClass(Selectors.heading).text() mustEqual Messages(
+        "updateRegisteredDetails.updateContactDetails" + ".heading"
+      )
     }
 
     "should contain" + contactdetailsMap.size + " questions" in {
@@ -75,7 +79,6 @@ class UpdateContactDetailsViewSpec extends ViewSpecHelper {
     }
 
     contactdetailsMap.zipWithIndex.foreach { case ((fieldName, fieldValue), index) =>
-
       "when the form is not prepopulated and has no errors" - {
         "should include the expected question fields" - {
 
@@ -96,39 +99,42 @@ class UpdateContactDetailsViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
       "when in CheckMode" in {
-        val htmlAllSelected = view(form.fill(contactdetails), CheckMode)(request, messages(application))
+        val htmlAllSelected = view(form.fill(contactdetails), CheckMode)(using request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
-        documentAllSelected.select(Selectors.form)
+        documentAllSelected
+          .select(Selectors.form)
           .attr("action") mustEqual routes.UpdateContactDetailsController.onSubmit(CheckMode).url
       }
 
       "when in NormalMode" in {
-        val htmlAllSelected = view(form.fill(contactdetails), NormalMode)(request, messages(application))
+        val htmlAllSelected = view(form.fill(contactdetails), NormalMode)(using request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
-        documentAllSelected.select(Selectors.form)
+        documentAllSelected
+          .select(Selectors.form)
           .attr("action") mustEqual routes.UpdateContactDetailsController.onSubmit(NormalMode).url
       }
     }
 
-
     contactdetailsMap.foreach { case (fieldName, fieldValue) =>
-      val fieldWithError: Map[String, String] = contactdetailsMap.map{
-        case(k,v) => if(k == fieldName) {(k -> "")} else {(k -> v)}
+      val fieldWithError: Map[String, String] = contactdetailsMap.map { case (k, v) =>
+        if (k == fieldName) { k -> "" }
+        else { k -> v }
       }
 
-      val fieldWithFormatError: Map[String, String] = contactdetailsMap.map {
-        case (k, v) => if (k == fieldName) {
-          (k -> "****%%%%%**(())(")
+      val fieldWithFormatError: Map[String, String] = contactdetailsMap.map { case (k, v) =>
+        if (k == fieldName) {
+          k -> "****%%%%%**(())("
         } else {
-          (k -> v)
+          k -> v
         }
       }
-      val htmlWithErrors = view(form.bind(fieldWithError), NormalMode)(request, messages(application))
+      val htmlWithErrors = view(form.bind(fieldWithError), NormalMode)(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
-      val htmlWithInvalidErrors = view(form.bind(fieldWithFormatError), NormalMode)(request, messages(application))
+      val htmlWithInvalidErrors =
+        view(form.bind(fieldWithFormatError), NormalMode)(using request, messages(application))
       val documentWithInvalidErrors = doc(htmlWithInvalidErrors)
 
       "when " + fieldNameToLabel(fieldName) + " is empty" - {
@@ -144,7 +150,9 @@ class UpdateContactDetailsViewSpec extends ViewSpecHelper {
           errorSummary
             .select("a")
             .attr("href") mustBe "#" + fieldName
-          errorSummary.text() must include(Messages("updateRegisteredDetails.updateContactDetails.error." + fieldName + ".required"))
+          errorSummary.text() must include(
+            Messages("updateRegisteredDetails.updateContactDetails.error." + fieldName + ".required")
+          )
         }
       }
 
@@ -161,7 +169,9 @@ class UpdateContactDetailsViewSpec extends ViewSpecHelper {
           errorSummary
             .select("a")
             .attr("href") mustBe "#" + fieldName
-          errorSummary.text() mustBe Jsoup.parse(Messages("updateRegisteredDetails.updateContactDetails.error." + fieldName + ".invalid")).text()
+          errorSummary.text() mustBe Jsoup
+            .parse(Messages("updateRegisteredDetails.updateContactDetails.error." + fieldName + ".invalid"))
+            .text()
         }
       }
     }

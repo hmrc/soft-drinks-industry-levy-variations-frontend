@@ -17,19 +17,18 @@
 package models.submission
 
 import models.LitresInBands
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{ Json, OFormat }
 
-case class Litreage(lower: Long = 0L,
-                    higher: Long = 0L
-                   ) {
-  val total: BigDecimal = (lower + higher)
+case class Litreage(lower: Long = 0L, higher: Long = 0L) {
+  val total: BigDecimal = lower + higher
 
   def combineN(n: Int): Litreage = Litreage(lower * n, higher * n)
 }
 
 object Litreage {
   def fromLitresInBands(litresInBands: LitresInBands): Litreage = Litreage(
-    lower = litresInBands.lowBand, higher = litresInBands.highBand
+    lower = litresInBands.lowBand,
+    higher = litresInBands.highBand
   )
 
   def sum(litreages: List[Litreage]): Litreage = {

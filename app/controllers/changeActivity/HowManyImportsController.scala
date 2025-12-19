@@ -21,56 +21,57 @@ import controllers.actions._
 import forms.HowManyLitresFormProvider
 import handlers.ErrorHandler
 import models.SelectChange.ChangeActivity
-import models.{LitresInBands, Mode}
+import models.{ LitresInBands, Mode }
 import navigation._
 import pages.changeActivity.HowManyImportsPage
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import services.SessionService
 import utilities.GenericLogger
 import views.html.changeActivity.HowManyImportsView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class HowManyImportsController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         val sessionService: SessionService,
-                                         val navigator: NavigatorForChangeActivity,
-                                         controllerActions: ControllerActions,
-                                         requiredUserAnswers: RequiredUserAnswersForChangeActivity,
-                                         formProvider: HowManyLitresFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: HowManyImportsView,
-                                         val genericLogger: GenericLogger,
-                                         val errorHandler: ErrorHandler
-                                 )(implicit val ec: ExecutionContext) extends ControllerHelper {
+class HowManyImportsController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForChangeActivity,
+  controllerActions: ControllerActions,
+  requiredUserAnswers: RequiredUserAnswersForChangeActivity,
+  formProvider: HowManyLitresFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: HowManyImportsView,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper {
 
   val form: Form[LitresInBands] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    controllerActions.withRequiredJourneyData(ChangeActivity).async { implicit request =>
       requiredUserAnswers.requireData(HowManyImportsPage, request.userAnswers, request.subscription) {
         val preparedForm = request.userAnswers.get(HowManyImportsPage) match {
-          case None => form
+          case None        => form
           case Some(value) => form.fill(value)
         }
 
         Future.successful(Ok(view(preparedForm, mode)))
       }
-  }
+    }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
-    implicit request =>
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
-        value => {
-          val updatedAnswers = request.userAnswers.set(HowManyImportsPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, HowManyImportsPage, mode)
-        }
-      )
-  }
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    controllerActions.withRequiredJourneyData(ChangeActivity).async { implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value => {
+            val updatedAnswers = request.userAnswers.set(HowManyImportsPage, value)
+            updateDatabaseAndRedirect(updatedAnswers, HowManyImportsPage, mode)
+          }
+        )
+    }
 }

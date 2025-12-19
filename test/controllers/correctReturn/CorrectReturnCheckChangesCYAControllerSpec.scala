@@ -24,21 +24,21 @@ import errors.UnexpectedResponseFromSDIL
 import models.TaxRateUtil._
 import models.backend.RetrievedSubscription
 import models.correctReturn.RepaymentMethod.BankAccount
-import models.correctReturn.{AddASmallProducer, ChangedPage, RepaymentMethod}
+import models.correctReturn.{ AddASmallProducer, ChangedPage, RepaymentMethod }
 import models.submission.Litreage
-import models.{Amounts, CheckMode, LitresInBands, ReturnPeriod, SdilReturn, SmallProducer, UserAnswers}
-import navigation.{FakeNavigatorForCorrectReturn, NavigatorForCorrectReturn}
+import models.{ Amounts, CheckMode, LitresInBands, ReturnPeriod, SdilReturn, SmallProducer, UserAnswers }
+import navigation.{ FakeNavigatorForCorrectReturn, NavigatorForCorrectReturn }
 import orchestrators.CorrectReturnOrchestrator
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{when, mock}
+import org.mockito.Mockito.{ mock, when }
 import pages.Page
 import pages.correctReturn._
 import play.api.i18n.Messages
 import play.api.inject
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{Call, Result}
+import play.api.mvc.{ Call, Result }
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
@@ -53,16 +53,21 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
   val mockSdilConnector = mock(classOf[SoftDrinksIndustryLevyConnector])
   val mockConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
 
-  def correctReturnAction(userAnswers: Option[UserAnswers],
-                          optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn),
-                          subscription: Option[RetrievedSubscription] = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)
-                         ): GuiceApplicationBuilder = {
+  def correctReturnAction(
+    userAnswers: Option[UserAnswers],
+    optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn),
+    subscription: Option[RetrievedSubscription] = Some(updatedSubscriptionWithChangedActivityToNewImporterAndPacker)
+  ): GuiceApplicationBuilder = {
     lazy val requiredAnswers: RequiredUserAnswersForCorrectReturn = new RequiredUserAnswersForCorrectReturn() {
-      override def requireData(page: Page, userAnswers: UserAnswers, subscription: RetrievedSubscription)
-                              (action: => Future[Result]): Future[Result] = action
+      override def requireData(page: Page, userAnswers: UserAnswers, subscription: RetrievedSubscription)(
+        action: => Future[Result]
+      ): Future[Result] = action
     }
-    when(mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts)
-    when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    when(
+      mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())
+    ).thenReturn(createSuccessVariationResult(amounts))
+    when(mockSdilConnector.getReturn(any(), any())(any()))
+      .thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers, subscription = subscription)
       .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
       .overrides(bind[RequiredUserAnswersForCorrectReturn].to(requiredAnswers))
@@ -75,22 +80,53 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
 
   val litresInBands = LitresInBands(2000, 4000)
   val filledUserAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
-    .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
-      smallProducerList = List(SmallProducer("", "XZSDIL000000234", Litreage(2000, 4000))))
-    .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-    .set(HowManyOperatePackagingSiteOwnBrandsPage, litresInBands).success.value
-    .set(PackagedAsContractPackerPage, true).success.value
-    .set(HowManyPackagedAsContractPackerPage, litresInBands).success.value
-    .set(ExemptionsForSmallProducersPage, true).success.value
-    .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", litresInBands)).success.value
-    .set(BroughtIntoUKPage, true).success.value
-    .set(HowManyBroughtIntoUKPage, litresInBands).success.value
-    .set(BroughtIntoUkFromSmallProducersPage, true).success.value
-    .set(HowManyBroughtIntoUkFromSmallProducersPage, litresInBands).success.value
-    .set(ClaimCreditsForExportsPage, true).success.value
-    .set(HowManyClaimCreditsForExportsPage, litresInBands).success.value
-    .set(ClaimCreditsForLostDamagedPage, true).success.value
-    .set(HowManyCreditsForLostDamagedPage, litresInBands).success.value
+    .copy(
+      packagingSiteList = Map.empty,
+      warehouseList = Map.empty,
+      smallProducerList = List(SmallProducer("", "XZSDIL000000234", Litreage(2000, 4000)))
+    )
+    .set(OperatePackagingSiteOwnBrandsPage, true)
+    .success
+    .value
+    .set(HowManyOperatePackagingSiteOwnBrandsPage, litresInBands)
+    .success
+    .value
+    .set(PackagedAsContractPackerPage, true)
+    .success
+    .value
+    .set(HowManyPackagedAsContractPackerPage, litresInBands)
+    .success
+    .value
+    .set(ExemptionsForSmallProducersPage, true)
+    .success
+    .value
+    .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", litresInBands))
+    .success
+    .value
+    .set(BroughtIntoUKPage, true)
+    .success
+    .value
+    .set(HowManyBroughtIntoUKPage, litresInBands)
+    .success
+    .value
+    .set(BroughtIntoUkFromSmallProducersPage, true)
+    .success
+    .value
+    .set(HowManyBroughtIntoUkFromSmallProducersPage, litresInBands)
+    .success
+    .value
+    .set(ClaimCreditsForExportsPage, true)
+    .success
+    .value
+    .set(HowManyClaimCreditsForExportsPage, litresInBands)
+    .success
+    .value
+    .set(ClaimCreditsForLostDamagedPage, true)
+    .success
+    .value
+    .set(HowManyCreditsForLostDamagedPage, litresInBands)
+    .success
+    .value
 
   def onwardRoute: Call = Call("GET", "/foo")
 
@@ -98,9 +134,15 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
 
     "must return OK and the correct view for a GET" in {
       val userAnswers = filledUserAnswers
-        .set(CorrectReturnBaseCYAPage, true).success.value
-        .set(CorrectionReasonPage, "foo").success.value
-        .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+        .set(CorrectReturnBaseCYAPage, true)
+        .success
+        .value
+        .set(CorrectionReasonPage, "foo")
+        .success
+        .value
+        .set(RepaymentMethodPage, RepaymentMethod.values.head)
+        .success
+        .value
 
       val changedPages = List(
         ChangedPage(OperatePackagingSiteOwnBrandsPage, answerChanged = true),
@@ -115,24 +157,36 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         ChangedPage(HowManyClaimCreditsForExportsPage, answerChanged = true),
         ChangedPage(ClaimCreditsForLostDamagedPage, answerChanged = true),
         ChangedPage(HowManyCreditsForLostDamagedPage, answerChanged = true),
-        ChangedPage(ExemptionsForSmallProducersPage, answerChanged = true))
+        ChangedPage(ExemptionsForSmallProducersPage, answerChanged = true)
+      )
 
-      val application = correctReturnAction(userAnswers = Some(userAnswers), subscription = Some(aSubscription)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator))
+      val application = correctReturnAction(userAnswers = Some(userAnswers), subscription = Some(aSubscription))
+        .overrides(bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator))
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
-        when(mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(),any())) thenReturn createSuccessVariationResult(amounts)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        when(
+          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())
+        ).thenReturn(createSuccessVariationResult(amounts))
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[CorrectReturnCheckChangesCYAView]
         val orgName = " Super Lemonade Plc"
-        val section = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(userAnswers, aSubscription, changedPages,
-          isCheckAnswers = true, amounts)
+        val section = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(
+          userAnswers,
+          aSubscription,
+          changedPages,
+          isCheckAnswers = true,
+          amounts
+        )
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(orgName, section,
-          controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onSubmit)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(
+          orgName,
+          section,
+          controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onSubmit
+        )(using request, messages(application)).toString
       }
     }
 
@@ -140,15 +194,21 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       val amounts1 = Amounts(40200.00, 4200.00, -300.00, 4500.00, -35700.00)
       val userAnswers = filledUserAnswers.remove(CorrectReturnBaseCYAPage).success.value
 
-      when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(Some(emptySdilReturn)))
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
+      when(mockSdilConnector.getReturn(any(), any())(any()))
+        .thenReturn(createSuccessVariationResult(Some(emptySdilReturn)))
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
           bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector),
-          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator))
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+        )
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
-        when(mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        when(
+          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())
+        ).thenReturn(createSuccessVariationResult(amounts1))
 
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
@@ -157,41 +217,60 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must not show own brands packaged when user is a small producer" in {
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+      val userAnswers =
+        userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
 
-      val application = correctReturnAction(Some(userAnswers), subscription = Some(subscriptionSmallProducer)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application = correctReturnAction(Some(userAnswers), subscription = Some(subscriptionSmallProducer))
+        .overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+        )
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementsByTag("h2").text() mustNot include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader"))
-        page.getElementsByTag("dt").text() mustNot include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() mustNot include(
+          Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader")
+        )
+        page.getElementsByTag("dt").text() mustNot include(
+          Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersLabel")
+        )
       }
     }
 
     "must show own brands packaged at own site row when present and answer is no" in {
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
-        .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(OperatePackagingSiteOwnBrandsPage, false)
+        .success
+        .value
 
-      val application = correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(ownBrand = basicLitreage))).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application =
+        correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(ownBrand = basicLitreage)))
+          .overrides(
+            bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+          )
+          .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementsByTag("h2").text() must include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader"))
-        page.getElementsByTag("dt").text() must include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(
+          Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader")
+        )
+        page.getElementsByTag("dt").text() must include(
+          Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersLabel")
+        )
         page.getElementById("change-operatePackagingSiteOwnBrands").attributes().get("href") mustEqual
           controllers.correctReturn.routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
 
@@ -204,23 +283,35 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
       when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
-        .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-        .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(10000, 20000)).success.value
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(OperatePackagingSiteOwnBrandsPage, true)
+        .success
+        .value
+        .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(10000, 20000))
+        .success
+        .value
 
-      val application = correctReturnAction(Some(userAnswers)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application = correctReturnAction(Some(userAnswers))
+        .overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+        )
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementsByTag("h2").text() must include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader"))
-        page.getElementsByTag("dt").text() must include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(
+          Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader")
+        )
+        page.getElementsByTag("dt").text() must include(
+          Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersLabel")
+        )
         page.getElementById("change-operatePackagingSiteOwnBrands").attributes().get("href") mustEqual
           controllers.correctReturn.routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
 
@@ -244,23 +335,35 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
-        .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-        .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(10001, 20002)).success.value
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
+        .set(OperatePackagingSiteOwnBrandsPage, true)
+        .success
+        .value
+        .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(10001, 20002))
+        .success
+        .value
 
-      val application = correctReturnAction(Some(userAnswers)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application = correctReturnAction(Some(userAnswers))
+        .overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+        )
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementsByTag("h2").text() must include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader"))
-        page.getElementsByTag("dt").text() must include(Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(
+          Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersSectionHeader")
+        )
+        page.getElementsByTag("dt").text() must include(
+          Messages("correctReturn.operatePackagingSiteOwnBrands.checkYourAnswersLabel")
+        )
         page.getElementById("change-operatePackagingSiteOwnBrands").attributes().get("href") mustEqual
           controllers.correctReturn.routes.OperatePackagingSiteOwnBrandsController.onPageLoad(CheckMode).url
 
@@ -281,22 +384,33 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show packaged as contract packer row when present and answer is no" in {
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
-        .set(PackagedAsContractPackerPage, false).success.value
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(PackagedAsContractPackerPage, false)
+        .success
+        .value
 
-      val application = correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(packLarge = basicLitreage))).overrides(
+      val application = correctReturnAction(
+        Some(userAnswers),
+        optOriginalReturn = Some(emptySdilReturn.copy(packLarge = basicLitreage))
+      ).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementsByTag("h2").text() must include(Messages("correctReturn.packagedAsContractPacker.checkYourAnswersSectionHeader"))
-        page.getElementsByTag("dt").text() must include(Messages("correctReturn.packagedAsContractPacker.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(
+          Messages("correctReturn.packagedAsContractPacker.checkYourAnswersSectionHeader")
+        )
+        page.getElementsByTag("dt").text() must include(
+          Messages("correctReturn.packagedAsContractPacker.checkYourAnswersLabel")
+        )
         page.getElementById("change-packagedAsContractPacker").attributes().get("href") mustEqual
           controllers.correctReturn.routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
 
@@ -309,23 +423,35 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
       when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
-        .set(PackagedAsContractPackerPage, true).success.value
-        .set(HowManyPackagedAsContractPackerPage, LitresInBands(10000, 20000)).success.value
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(PackagedAsContractPackerPage, true)
+        .success
+        .value
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(10000, 20000))
+        .success
+        .value
 
-      val application = correctReturnAction(Some(userAnswers)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application = correctReturnAction(Some(userAnswers))
+        .overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+        )
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementsByTag("h2").text() must include(Messages("correctReturn.packagedAsContractPacker.checkYourAnswersSectionHeader"))
-        page.getElementsByTag("dt").text() must include(Messages("correctReturn.packagedAsContractPacker.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(
+          Messages("correctReturn.packagedAsContractPacker.checkYourAnswersSectionHeader")
+        )
+        page.getElementsByTag("dt").text() must include(
+          Messages("correctReturn.packagedAsContractPacker.checkYourAnswersLabel")
+        )
         page.getElementById("change-packagedAsContractPacker").attributes().get("href") mustEqual
           controllers.correctReturn.routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
 
@@ -349,23 +475,35 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
-        .set(PackagedAsContractPackerPage, true).success.value
-        .set(HowManyPackagedAsContractPackerPage, LitresInBands(10001, 20002)).success.value
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
+        .set(PackagedAsContractPackerPage, true)
+        .success
+        .value
+        .set(HowManyPackagedAsContractPackerPage, LitresInBands(10001, 20002))
+        .success
+        .value
 
-      val application = correctReturnAction(Some(userAnswers)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application = correctReturnAction(Some(userAnswers))
+        .overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+        )
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementsByTag("h2").text() must include(Messages("correctReturn.packagedAsContractPacker.checkYourAnswersSectionHeader"))
-        page.getElementsByTag("dt").text() must include(Messages("correctReturn.packagedAsContractPacker.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(
+          Messages("correctReturn.packagedAsContractPacker.checkYourAnswersSectionHeader")
+        )
+        page.getElementsByTag("dt").text() must include(
+          Messages("correctReturn.packagedAsContractPacker.checkYourAnswersLabel")
+        )
         page.getElementById("change-packagedAsContractPacker").attributes().get("href") mustEqual
           controllers.correctReturn.routes.PackagedAsContractPackerController.onPageLoad(CheckMode).url
 
@@ -386,22 +524,33 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show exemptions for small producers row when present and answer is no" in {
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
-        .set(ExemptionsForSmallProducersPage, false).success.value
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(ExemptionsForSmallProducersPage, false)
+        .success
+        .value
 
-      val application = correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(packSmall = smallProducerList))).overrides(
+      val application = correctReturnAction(
+        Some(userAnswers),
+        optOriginalReturn = Some(emptySdilReturn.copy(packSmall = smallProducerList))
+      ).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementsByTag("h2").text() must include(Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersSectionHeader"))
-        page.getElementsByTag("dt").text() must include(Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(
+          Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersSectionHeader")
+        )
+        page.getElementsByTag("dt").text() must include(
+          Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersLabel")
+        )
         page.getElementById("change-exemptionsForSmallProducers").attributes().get("href") mustEqual
           controllers.correctReturn.routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
 
@@ -414,26 +563,38 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
       when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
-        .set(ExemptionsForSmallProducersPage, true).success.value
-        .copy(smallProducerList = List(
-          SmallProducer("", "XZSDIL000000234", Litreage(5000, 10000)),
-          SmallProducer("", "XZSDIL000001234", Litreage(5000, 10000)),
-        ))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(ExemptionsForSmallProducersPage, true)
+        .success
+        .value
+        .copy(smallProducerList =
+          List(
+            SmallProducer("", "XZSDIL000000234", Litreage(5000, 10000)),
+            SmallProducer("", "XZSDIL000001234", Litreage(5000, 10000))
+          )
+        )
 
-      val application = correctReturnAction(Some(userAnswers)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application = correctReturnAction(Some(userAnswers))
+        .overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+        )
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementsByTag("h2").text() must include(Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersSectionHeader"))
-        page.getElementsByTag("dt").text() must include(Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(
+          Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersSectionHeader")
+        )
+        page.getElementsByTag("dt").text() must include(
+          Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersLabel")
+        )
         page.getElementById("change-exemptionsForSmallProducers").attributes().get("href") mustEqual
           controllers.correctReturn.routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
 
@@ -457,26 +618,38 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
-        .set(ExemptionsForSmallProducersPage, true).success.value
-        .copy(smallProducerList = List(
-          SmallProducer("", "XZSDIL000000234", Litreage(5001, 10001)),
-          SmallProducer("", "XZSDIL000001234", Litreage(5000, 10001)),
-        ))
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
+        .set(ExemptionsForSmallProducersPage, true)
+        .success
+        .value
+        .copy(smallProducerList =
+          List(
+            SmallProducer("", "XZSDIL000000234", Litreage(5001, 10001)),
+            SmallProducer("", "XZSDIL000001234", Litreage(5000, 10001))
+          )
+        )
 
-      val application = correctReturnAction(Some(userAnswers)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application = correctReturnAction(Some(userAnswers))
+        .overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+        )
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementsByTag("h2").text() must include(Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersSectionHeader"))
-        page.getElementsByTag("dt").text() must include(Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(
+          Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersSectionHeader")
+        )
+        page.getElementsByTag("dt").text() must include(
+          Messages("correctReturn.exemptionsForSmallProducers.checkYourAnswersLabel")
+        )
         page.getElementById("change-exemptionsForSmallProducers").attributes().get("href") mustEqual
           controllers.correctReturn.routes.ExemptionsForSmallProducersController.onPageLoad(CheckMode).url
 
@@ -497,21 +670,30 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show brought into UK row when present and answer is no" in {
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
-        .set(BroughtIntoUKPage, false).success.value
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(BroughtIntoUKPage, false)
+        .success
+        .value
 
-      val application = correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(importLarge = basicLitreage))).overrides(
+      val application = correctReturnAction(
+        Some(userAnswers),
+        optOriginalReturn = Some(emptySdilReturn.copy(importLarge = basicLitreage))
+      ).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementsByTag("h2").text() must include(Messages("correctReturn.broughtIntoUK.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("h2").text() must include(
+          Messages("correctReturn.broughtIntoUK.checkYourAnswersSectionHeader")
+        )
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.broughtIntoUK.checkYourAnswersLabel"))
         page.getElementById("change-broughtIntoUK").attributes().get("href") mustEqual
           controllers.correctReturn.routes.BroughtIntoUKController.onPageLoad(CheckMode).url
@@ -525,22 +707,32 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
       when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
-        .set(BroughtIntoUKPage, true).success.value
-        .set(HowManyBroughtIntoUKPage, LitresInBands(10000, 20000)).success.value
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(BroughtIntoUKPage, true)
+        .success
+        .value
+        .set(HowManyBroughtIntoUKPage, LitresInBands(10000, 20000))
+        .success
+        .value
 
-      val application = correctReturnAction(Some(userAnswers)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application = correctReturnAction(Some(userAnswers))
+        .overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+        )
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementsByTag("h2").text() must include(Messages("correctReturn.broughtIntoUK.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("h2").text() must include(
+          Messages("correctReturn.broughtIntoUK.checkYourAnswersSectionHeader")
+        )
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.broughtIntoUK.checkYourAnswersLabel"))
         page.getElementById("change-broughtIntoUK").attributes().get("href") mustEqual
           controllers.correctReturn.routes.BroughtIntoUKController.onPageLoad(CheckMode).url
@@ -565,22 +757,32 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
-        .set(BroughtIntoUKPage, true).success.value
-        .set(HowManyBroughtIntoUKPage, LitresInBands(10001, 20002)).success.value
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
+        .set(BroughtIntoUKPage, true)
+        .success
+        .value
+        .set(HowManyBroughtIntoUKPage, LitresInBands(10001, 20002))
+        .success
+        .value
 
-      val application = correctReturnAction(Some(userAnswers)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application = correctReturnAction(Some(userAnswers))
+        .overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+        )
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementsByTag("h2").text() must include(Messages("correctReturn.broughtIntoUK.checkYourAnswersSectionHeader"))
+        page.getElementsByTag("h2").text() must include(
+          Messages("correctReturn.broughtIntoUK.checkYourAnswersSectionHeader")
+        )
         page.getElementsByTag("dt").text() must include(Messages("correctReturn.broughtIntoUK.checkYourAnswersLabel"))
         page.getElementById("change-broughtIntoUK").attributes().get("href") mustEqual
           controllers.correctReturn.routes.BroughtIntoUKController.onPageLoad(CheckMode).url
@@ -602,22 +804,33 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show brought into UK from small producers row when present and answer is no" in {
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
-        .set(BroughtIntoUkFromSmallProducersPage, false).success.value
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(BroughtIntoUkFromSmallProducersPage, false)
+        .success
+        .value
 
-      val application = correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(importSmall = basicLitreage))).overrides(
+      val application = correctReturnAction(
+        Some(userAnswers),
+        optOriginalReturn = Some(emptySdilReturn.copy(importSmall = basicLitreage))
+      ).overrides(
         bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
       ).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementsByTag("h2").text() must include(Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersSectionHeader"))
-        page.getElementsByTag("dt").text() must include(Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(
+          Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersSectionHeader")
+        )
+        page.getElementsByTag("dt").text() must include(
+          Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersLabel")
+        )
         page.getElementById("change-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
           controllers.correctReturn.routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
 
@@ -630,36 +843,54 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
       when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
-        .set(BroughtIntoUkFromSmallProducersPage, true).success.value
-        .set(HowManyBroughtIntoUkFromSmallProducersPage, LitresInBands(10000, 20000)).success.value
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(BroughtIntoUkFromSmallProducersPage, true)
+        .success
+        .value
+        .set(HowManyBroughtIntoUkFromSmallProducersPage, LitresInBands(10000, 20000))
+        .success
+        .value
 
-      val application = correctReturnAction(Some(userAnswers)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application = correctReturnAction(Some(userAnswers))
+        .overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+        )
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementsByTag("h2").text() must include(Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersSectionHeader"))
-        page.getElementsByTag("dt").text() must include(Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(
+          Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersSectionHeader")
+        )
+        page.getElementsByTag("dt").text() must include(
+          Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersLabel")
+        )
         page.getElementById("change-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
           controllers.correctReturn.routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,000")
-        page.getElementById("change-lowband-litreage-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
+        page
+          .getElementById("change-lowband-litreage-broughtIntoUkFromSmallProducers")
+          .attributes()
+          .get("href") mustEqual
           controllers.correctReturn.routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£0.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
-        page.getElementById("change-highband-litreage-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
+        page
+          .getElementById("change-highband-litreage-broughtIntoUkFromSmallProducers")
+          .attributes()
+          .get("href") mustEqual
           controllers.correctReturn.routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£0.00")
@@ -670,36 +901,54 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
-        .set(BroughtIntoUkFromSmallProducersPage, true).success.value
-        .set(HowManyBroughtIntoUkFromSmallProducersPage, LitresInBands(10001, 20002)).success.value
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
+        .set(BroughtIntoUkFromSmallProducersPage, true)
+        .success
+        .value
+        .set(HowManyBroughtIntoUkFromSmallProducersPage, LitresInBands(10001, 20002))
+        .success
+        .value
 
-      val application = correctReturnAction(Some(userAnswers)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application = correctReturnAction(Some(userAnswers))
+        .overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+        )
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementsByTag("h2").text() must include(Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersSectionHeader"))
-        page.getElementsByTag("dt").text() must include(Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(
+          Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersSectionHeader")
+        )
+        page.getElementsByTag("dt").text() must include(
+          Messages("correctReturn.broughtIntoUkFromSmallProducers.checkYourAnswersLabel")
+        )
         page.getElementById("change-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
           controllers.correctReturn.routes.BroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,001")
-        page.getElementById("change-lowband-litreage-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
+        page
+          .getElementById("change-lowband-litreage-broughtIntoUkFromSmallProducers")
+          .attributes()
+          .get("href") mustEqual
           controllers.correctReturn.routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("£0.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,002")
-        page.getElementById("change-highband-litreage-broughtIntoUkFromSmallProducers").attributes().get("href") mustEqual
+        page
+          .getElementById("change-highband-litreage-broughtIntoUkFromSmallProducers")
+          .attributes()
+          .get("href") mustEqual
           controllers.correctReturn.routes.HowManyBroughtIntoUkFromSmallProducersController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("£0.00")
@@ -707,22 +956,33 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show claim credits for exports row when present and answer is no" in {
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
-        .set(ClaimCreditsForExportsPage, false).success.value
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(ClaimCreditsForExportsPage, false)
+        .success
+        .value
 
-      val application = correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(`export` = basicLitreage))).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application =
+        correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(`export` = basicLitreage)))
+          .overrides(
+            bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+          )
+          .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementsByTag("h2").text() must include(Messages("correctReturn.claimCreditsForExports.checkYourAnswersSectionHeader"))
-        page.getElementsByTag("dt").text() must include(Messages("correctReturn.claimCreditsForExports.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(
+          Messages("correctReturn.claimCreditsForExports.checkYourAnswersSectionHeader")
+        )
+        page.getElementsByTag("dt").text() must include(
+          Messages("correctReturn.claimCreditsForExports.checkYourAnswersLabel")
+        )
         page.getElementById("change-claimCreditsForExports").attributes().get("href") mustEqual
           controllers.correctReturn.routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url
 
@@ -735,36 +995,54 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
       when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
-        .set(ClaimCreditsForExportsPage, true).success.value
-        .set(HowManyClaimCreditsForExportsPage, LitresInBands(10000, 20000)).success.value
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(ClaimCreditsForExportsPage, true)
+        .success
+        .value
+        .set(HowManyClaimCreditsForExportsPage, LitresInBands(10000, 20000))
+        .success
+        .value
 
-      val application = correctReturnAction(Some(userAnswers)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application = correctReturnAction(Some(userAnswers))
+        .overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+        )
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementsByTag("h2").text() must include(Messages("correctReturn.claimCreditsForExports.checkYourAnswersSectionHeader"))
-        page.getElementsByTag("dt").text() must include(Messages("correctReturn.claimCreditsForExports.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(
+          Messages("correctReturn.claimCreditsForExports.checkYourAnswersSectionHeader")
+        )
+        page.getElementsByTag("dt").text() must include(
+          Messages("correctReturn.claimCreditsForExports.checkYourAnswersLabel")
+        )
         page.getElementById("change-claimCreditsForExports").attributes().get("href") mustEqual
           controllers.correctReturn.routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,000")
-        page.getElementById("change-lowband-litreage-correctReturn.claimCreditsForExports").attributes().get("href") mustEqual
+        page
+          .getElementById("change-lowband-litreage-correctReturn.claimCreditsForExports")
+          .attributes()
+          .get("href") mustEqual
           controllers.correctReturn.routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("−£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
-        page.getElementById("change-highband-litreage-correctReturn.claimCreditsForExports").attributes().get("href") mustEqual
+        page
+          .getElementById("change-highband-litreage-correctReturn.claimCreditsForExports")
+          .attributes()
+          .get("href") mustEqual
           controllers.correctReturn.routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("−£4,800.00")
@@ -775,36 +1053,54 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
-        .set(ClaimCreditsForExportsPage, true).success.value
-        .set(HowManyClaimCreditsForExportsPage, LitresInBands(10001, 20002)).success.value
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
+        .set(ClaimCreditsForExportsPage, true)
+        .success
+        .value
+        .set(HowManyClaimCreditsForExportsPage, LitresInBands(10001, 20002))
+        .success
+        .value
 
-      val application = correctReturnAction(Some(userAnswers)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application = correctReturnAction(Some(userAnswers))
+        .overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+        )
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementsByTag("h2").text() must include(Messages("correctReturn.claimCreditsForExports.checkYourAnswersSectionHeader"))
-        page.getElementsByTag("dt").text() must include(Messages("correctReturn.claimCreditsForExports.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(
+          Messages("correctReturn.claimCreditsForExports.checkYourAnswersSectionHeader")
+        )
+        page.getElementsByTag("dt").text() must include(
+          Messages("correctReturn.claimCreditsForExports.checkYourAnswersLabel")
+        )
         page.getElementById("change-claimCreditsForExports").attributes().get("href") mustEqual
           controllers.correctReturn.routes.ClaimCreditsForExportsController.onPageLoad(CheckMode).url
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,001")
-        page.getElementById("change-lowband-litreage-correctReturn.claimCreditsForExports").attributes().get("href") mustEqual
+        page
+          .getElementById("change-lowband-litreage-correctReturn.claimCreditsForExports")
+          .attributes()
+          .get("href") mustEqual
           controllers.correctReturn.routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("−£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,002")
-        page.getElementById("change-highband-litreage-correctReturn.claimCreditsForExports").attributes().get("href") mustEqual
+        page
+          .getElementById("change-highband-litreage-correctReturn.claimCreditsForExports")
+          .attributes()
+          .get("href") mustEqual
           controllers.correctReturn.routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("−£5,180.52")
@@ -812,22 +1108,33 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     }
 
     "must show claim credits for lost or damaged row when present and answer is no" in {
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
-        .set(ClaimCreditsForLostDamagedPage, false).success.value
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(ClaimCreditsForLostDamagedPage, false)
+        .success
+        .value
 
-      val application = correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(wastage = basicLitreage))).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application =
+        correctReturnAction(Some(userAnswers), optOriginalReturn = Some(emptySdilReturn.copy(wastage = basicLitreage)))
+          .overrides(
+            bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+          )
+          .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementsByTag("h2").text() must include(Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersSectionHeader"))
-        page.getElementsByTag("dt").text() must include(Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(
+          Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersSectionHeader")
+        )
+        page.getElementsByTag("dt").text() must include(
+          Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersLabel")
+        )
         page.getElementById("change-claimCreditsForLostDamaged").attributes().get("href") mustEqual
           controllers.correctReturn.routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url
 
@@ -840,36 +1147,54 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
       when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
-        .set(ClaimCreditsForLostDamagedPage, true).success.value
-        .set(HowManyCreditsForLostDamagedPage, LitresInBands(10000, 20000)).success.value
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
+        .set(ClaimCreditsForLostDamagedPage, true)
+        .success
+        .value
+        .set(HowManyCreditsForLostDamagedPage, LitresInBands(10000, 20000))
+        .success
+        .value
 
-      val application = correctReturnAction(Some(userAnswers)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application = correctReturnAction(Some(userAnswers))
+        .overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+        )
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementsByTag("h2").text() must include(Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersSectionHeader"))
-        page.getElementsByTag("dt").text() must include(Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(
+          Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersSectionHeader")
+        )
+        page.getElementsByTag("dt").text() must include(
+          Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersLabel")
+        )
         page.getElementById("change-claimCreditsForLostDamaged").attributes().get("href") mustEqual
           controllers.correctReturn.routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,000")
-        page.getElementById("change-lowband-litreage-correctReturn.claimCreditsForLostDamaged").attributes().get("href") mustEqual
+        page
+          .getElementById("change-lowband-litreage-correctReturn.claimCreditsForLostDamaged")
+          .attributes()
+          .get("href") mustEqual
           controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("−£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
-        page.getElementById("change-highband-litreage-correctReturn.claimCreditsForLostDamaged").attributes().get("href") mustEqual
+        page
+          .getElementById("change-highband-litreage-correctReturn.claimCreditsForLostDamaged")
+          .attributes()
+          .get("href") mustEqual
           controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("−£4,800.00")
@@ -880,36 +1205,54 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
       when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
 
-      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn.copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
-        .set(ClaimCreditsForLostDamagedPage, true).success.value
-        .set(HowManyCreditsForLostDamagedPage, LitresInBands(10001, 20002)).success.value
+      val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
+        .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
+        .set(ClaimCreditsForLostDamagedPage, true)
+        .success
+        .value
+        .set(HowManyCreditsForLostDamagedPage, LitresInBands(10001, 20002))
+        .success
+        .value
 
-      val application = correctReturnAction(Some(userAnswers)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-      ).build()
+      val application = correctReturnAction(Some(userAnswers))
+        .overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+        )
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual OK
         val page = Jsoup.parse(contentAsString(result))
 
-        page.getElementsByTag("h2").text() must include(Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersSectionHeader"))
-        page.getElementsByTag("dt").text() must include(Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersLabel"))
+        page.getElementsByTag("h2").text() must include(
+          Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersSectionHeader")
+        )
+        page.getElementsByTag("dt").text() must include(
+          Messages("correctReturn.claimCreditsForLostDamaged.checkYourAnswersLabel")
+        )
         page.getElementById("change-claimCreditsForLostDamaged").attributes().get("href") mustEqual
           controllers.correctReturn.routes.ClaimCreditsForLostDamagedController.onPageLoad(CheckMode).url
 
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBand"))
         page.getElementsByTag("dd").text() must include("10,001")
-        page.getElementById("change-lowband-litreage-correctReturn.claimCreditsForLostDamaged").attributes().get("href") mustEqual
+        page
+          .getElementById("change-lowband-litreage-correctReturn.claimCreditsForLostDamaged")
+          .attributes()
+          .get("href") mustEqual
           controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
         page.getElementsByTag("dd").text() must include("−£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,002")
-        page.getElementById("change-highband-litreage-correctReturn.claimCreditsForLostDamaged").attributes().get("href") mustEqual
+        page
+          .getElementById("change-highband-litreage-correctReturn.claimCreditsForLostDamaged")
+          .attributes()
+          .get("href") mustEqual
           controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
         page.getElementsByTag("dd").text() must include("−£5,180.52")
@@ -919,16 +1262,23 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     "must return OK and contain correct net adjusted amount when prior return total was £0" in {
       val amounts1 = Amounts(0.00, 4200.00, -300.00, 4500.00, 4500.00)
       val userAnswers = filledUserAnswers
-        .set(CorrectReturnBaseCYAPage, true).success.value
-        .set(CorrectionReasonPage, "Changed the amount packaged as a contract packer").success.value
+        .set(CorrectReturnBaseCYAPage, true)
+        .success
+        .value
+        .set(CorrectionReasonPage, "Changed the amount packaged as a contract packer")
+        .success
+        .value
 
-      val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator))
+      val application = correctReturnAction(userAnswers = Some(userAnswers))
+        .overrides(bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator))
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
-        when(mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        when(
+          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())
+        ).thenReturn(createSuccessVariationResult(amounts1))
 
         val result = route(application, request).value
 
@@ -950,16 +1300,23 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     "must return OK and contain correct net adjusted amount when prior return total is less than new return total" in {
       val amounts1 = Amounts(4000.00, 4200.00, -300.00, 4500.00, 500.00)
       val userAnswers = filledUserAnswers
-        .set(CorrectReturnBaseCYAPage, true).success.value
-        .set(CorrectionReasonPage, "Changed the amount packaged as a contract packer").success.value
+        .set(CorrectReturnBaseCYAPage, true)
+        .success
+        .value
+        .set(CorrectionReasonPage, "Changed the amount packaged as a contract packer")
+        .success
+        .value
 
-      val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator))
+      val application = correctReturnAction(userAnswers = Some(userAnswers))
+        .overrides(bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator))
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
-        when(mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        when(
+          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())
+        ).thenReturn(createSuccessVariationResult(amounts1))
 
         val result = route(application, request).value
 
@@ -981,17 +1338,26 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     "must return OK and contain correct net adjusted amount when prior return total is more than new return total when repayment method answered" in {
       val amounts1 = Amounts(40200.00, 4200.00, -300.00, 4500.00, -35700.00)
       val userAnswers = filledUserAnswers
-        .set(CorrectReturnBaseCYAPage, true).success.value
-        .set(CorrectionReasonPage, "Changed the amount packaged as a contract packer").success.value
-        .set(RepaymentMethodPage, BankAccount).success.value
+        .set(CorrectReturnBaseCYAPage, true)
+        .success
+        .value
+        .set(CorrectionReasonPage, "Changed the amount packaged as a contract packer")
+        .success
+        .value
+        .set(RepaymentMethodPage, BankAccount)
+        .success
+        .value
 
-      val application = correctReturnAction(userAnswers = Some(userAnswers)).overrides(
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator))
+      val application = correctReturnAction(userAnswers = Some(userAnswers))
+        .overrides(bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator))
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
-        when(mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        when(
+          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())
+        ).thenReturn(createSuccessVariationResult(amounts1))
 
         val result = route(application, request).value
 
@@ -1012,18 +1378,28 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
     "must redirect to RepaymentMethod and contain correct net adjusted amount when prior return total is more than new return total when repayment method is not answered" in {
       val amounts1 = Amounts(40200.00, 4200.00, -300.00, 4500.00, -35700.00)
       val userAnswers = filledUserAnswers
-        .set(CorrectReturnBaseCYAPage, true).success.value
-        .set(CorrectionReasonPage, "Changed the amount packaged as a contract packer").success.value
+        .set(CorrectReturnBaseCYAPage, true)
+        .success
+        .value
+        .set(CorrectionReasonPage, "Changed the amount packaged as a contract packer")
+        .success
+        .value
 
-      when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(Some(emptySdilReturn)))
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector),
-        bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator))
+      when(mockSdilConnector.getReturn(any(), any())(any()))
+        .thenReturn(createSuccessVariationResult(Some(emptySdilReturn)))
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector),
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+        )
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
-        when(mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult(amounts1)
+        val request =
+          FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+        when(
+          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())
+        ).thenReturn(createSuccessVariationResult(amounts1))
 
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
@@ -1033,19 +1409,25 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
 
     "must submit successfully " in {
       val application = correctReturnAction(userAnswers = Some(emptyUserAnswersForCorrectReturn))
-          .overrides(
-            bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
-          )
-          .build()
+        .overrides(
+          bind[CorrectReturnOrchestrator].toInstance(mockOrchestrator)
+        )
+        .build()
 
       running(application) {
-        val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url).withFormUrlEncodedBody()
-        when (mockOrchestrator.submitReturn(any(), any(), any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
+        val request =
+          FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+            .withFormUrlEncodedBody()
+        when(
+          mockOrchestrator.submitReturn(any(), any(), any(), any())(any(), any())
+        ).thenReturn(createSuccessVariationResult((): Unit))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.correctReturn.routes.CorrectReturnUpdateDoneController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.correctReturn.routes.CorrectReturnUpdateDoneController
+          .onPageLoad()
+          .url
       }
     }
 
@@ -1057,9 +1439,13 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         .build()
 
       running(application) {
-        when (mockOrchestrator.submitReturn(any(), any(), any(), any())(any(), any())) thenReturn createFailureVariationResult(UnexpectedResponseFromSDIL)
+        when(
+          mockOrchestrator.submitReturn(any(), any(), any(), any())(any(), any())
+        ).thenReturn(createFailureVariationResult(UnexpectedResponseFromSDIL))
 
-        val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url).withFormUrlEncodedBody()
+        val request =
+          FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+            .withFormUrlEncodedBody()
 
         val result = route(application, request).value
 
@@ -1075,7 +1461,9 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
           )
           .build()
       running(application) {
-        val request = FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url).withFormUrlEncodedBody()
+        val request =
+          FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
+            .withFormUrlEncodedBody()
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.SelectChangeController.onPageLoad.url

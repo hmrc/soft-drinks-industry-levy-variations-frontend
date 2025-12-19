@@ -22,52 +22,52 @@ import forms.correctReturn.BroughtIntoUKFormProvider
 import handlers.ErrorHandler
 import models.Mode
 import navigation._
-import pages.correctReturn.{BroughtIntoUKPage, HowManyBroughtIntoUKPage}
+import pages.correctReturn.{ BroughtIntoUKPage, HowManyBroughtIntoUKPage }
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import services.SessionService
 import utilities.GenericLogger
 import views.html.correctReturn.BroughtIntoUKView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class BroughtIntoUKController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         val sessionService: SessionService,
-                                         val navigator: NavigatorForCorrectReturn,
-                                         controllerActions: ControllerActions,
-                                         formProvider: BroughtIntoUKFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: BroughtIntoUKView,
-                                          val genericLogger: GenericLogger,
-                                          val errorHandler: ErrorHandler
-                                 )(implicit val ec: ExecutionContext) extends ControllerHelper {
+class BroughtIntoUKController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForCorrectReturn,
+  controllerActions: ControllerActions,
+  formProvider: BroughtIntoUKFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: BroughtIntoUKView,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper {
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
-    implicit request =>
-      val preparedForm = request.userAnswers.get(BroughtIntoUKPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData { implicit request =>
+    val preparedForm = request.userAnswers.get(BroughtIntoUKPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
-      Ok(view(preparedForm, mode))
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
-        value => {
-          val updatedAnswers = request.userAnswers.setAndRemoveLitresIfReq(BroughtIntoUKPage, HowManyBroughtIntoUKPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, BroughtIntoUKPage, mode)
-        }
-      )
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value => {
+            val updatedAnswers =
+              request.userAnswers.setAndRemoveLitresIfReq(BroughtIntoUKPage, HowManyBroughtIntoUKPage, value)
+            updateDatabaseAndRedirect(updatedAnswers, BroughtIntoUKPage, mode)
+          }
+        )
   }
 }

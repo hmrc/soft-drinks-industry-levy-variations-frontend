@@ -53,8 +53,7 @@ class ChangeRegisteredDetailsControllerSpec extends SpecBase with MockitoSugar {
 
     "must return OK and the correct view for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails
-      ) ).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)).build()
 
       running(application) {
         val request = FakeRequest(GET, changeRegisteredDetailsRoute)
@@ -62,13 +61,15 @@ class ChangeRegisteredDetailsControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[ChangeRegisteredDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, isVoluntary)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, isVoluntary)(using request, messages(application)).toString
       }
     }
 
     "must return OK and the correct view for a GET when the user is voluntarily registered" in {
-      val applicationVoluntarySetup = applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails),
-        subscription = Some(voluntarySubscription)).build()
+      val applicationVoluntarySetup = applicationBuilder(
+        userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails),
+        subscription = Some(voluntarySubscription)
+      ).build()
 
       running(applicationVoluntarySetup) {
         val request = FakeRequest(GET, changeRegisteredDetailsRoute)
@@ -76,13 +77,15 @@ class ChangeRegisteredDetailsControllerSpec extends SpecBase with MockitoSugar {
         val view = applicationVoluntarySetup.injector.instanceOf[ChangeRegisteredDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, isVoluntary = true)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, isVoluntary = true)(using request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val userAnswers = emptyUserAnswersForUpdateRegisteredDetails
-      .set(ChangeRegisteredDetailsPage, ChangeRegisteredDetails.values).success.value
+        .set(ChangeRegisteredDetailsPage, ChangeRegisteredDetails.values)
+        .success
+        .value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -91,28 +94,31 @@ class ChangeRegisteredDetailsControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(ChangeRegisteredDetails.values), isVoluntary)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(ChangeRegisteredDetails.values), isVoluntary)(
+          request,
+          messages(application)
+        ).toString
       }
     }
 
     "must redirect to the next page when valid data is submitted" in {
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
           .overrides(
-            bind[NavigatorForUpdateRegisteredDetails].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
+            bind[NavigatorForUpdateRegisteredDetails]
+              .toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           )
           .build()
 
       running(application) {
         val request =
-          FakeRequest(POST, changeRegisteredDetailsRoute
-        )
-        .withFormUrlEncodedBody(("value[0]", ChangeRegisteredDetails.values.head.toString))
+          FakeRequest(POST, changeRegisteredDetailsRoute)
+            .withFormUrlEncodedBody(("value[0]", ChangeRegisteredDetails.values.head.toString))
 
         val result = route(application, request).value
 
@@ -128,14 +134,14 @@ class ChangeRegisteredDetailsControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         val request =
           FakeRequest(POST, changeRegisteredDetailsRoute)
-        .withFormUrlEncodedBody(("value", "invalid value"))
+            .withFormUrlEncodedBody(("value", "invalid value"))
 
         val boundForm = form.bind(Map("value" -> "invalid value"))
         val view = application.injector.instanceOf[ChangeRegisteredDetailsView]
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, isVoluntary)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, isVoluntary)(using request, messages(application)).toString
       }
     }
 
@@ -145,13 +151,14 @@ class ChangeRegisteredDetailsControllerSpec extends SpecBase with MockitoSugar {
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(UpdateRegisteredDetails))).build()
+      val application = applicationBuilder(userAnswers =
+        Some(userDetailsWithSetMethodsReturningFailure(UpdateRegisteredDetails))
+      ).build()
 
       running(application) {
         val request =
-          FakeRequest(POST, changeRegisteredDetailsRoute
-        )
-        .withFormUrlEncodedBody(("value[0]", ChangeRegisteredDetails.values.head.toString))
+          FakeRequest(POST, changeRegisteredDetailsRoute)
+            .withFormUrlEncodedBody(("value[0]", ChangeRegisteredDetails.values.head.toString))
 
         val result = route(application, request).value
 
@@ -163,12 +170,13 @@ class ChangeRegisteredDetailsControllerSpec extends SpecBase with MockitoSugar {
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
           .overrides(
-            bind[NavigatorForUpdateRegisteredDetails].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
+            bind[NavigatorForUpdateRegisteredDetails]
+              .toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
           )
           .build()
@@ -176,16 +184,16 @@ class ChangeRegisteredDetailsControllerSpec extends SpecBase with MockitoSugar {
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           running(application) {
-            val request = FakeRequest(POST, changeRegisteredDetailsRoute
-            )
-            .withFormUrlEncodedBody(("value[0]", ChangeRegisteredDetails.values.head.toString))
+            val request = FakeRequest(POST, changeRegisteredDetailsRoute)
+              .withFormUrlEncodedBody(("value[0]", ChangeRegisteredDetails.values.head.toString))
 
             await(route(application, request).value)
-            events.collectFirst {
-              case event =>
+            events
+              .collectFirst { case event =>
                 event.getLevel.levelStr mustBe "ERROR"
                 event.getMessage mustEqual "Failed to set value in session repository while attempting set on changeRegisteredDetails"
-            }.getOrElse(fail("No logging captured"))
+              }
+              .getOrElse(fail("No logging captured"))
           }
         }
       }

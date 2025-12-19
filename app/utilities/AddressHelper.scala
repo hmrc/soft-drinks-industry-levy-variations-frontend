@@ -18,7 +18,6 @@ package utilities
 
 trait AddressHelper {
 
-  def generateId: String = {
+  def generateId: String =
     java.util.UUID.randomUUID().toString
-  }
 }

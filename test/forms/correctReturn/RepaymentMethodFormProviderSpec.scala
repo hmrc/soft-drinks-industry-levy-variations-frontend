@@ -32,7 +32,7 @@ class RepaymentMethodFormProviderSpec extends OptionFieldBehaviours {
     behave like optionsField[RepaymentMethod](
       form,
       fieldName,
-      validValues  = RepaymentMethod.values,
+      validValues = RepaymentMethod.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

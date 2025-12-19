@@ -24,7 +24,9 @@ import play.api.data.Form
 class WarehouseDetailsFormProvider @Inject() extends Mappings {
 
   def apply(hasWarehouses: Boolean): Form[Boolean] = {
-    val requiredKey = if (hasWarehouses) "updateRegisteredDetails.warehouseDetails.error.required" else "updateRegisteredDetails.warehouseDetails.error.requiredNoWarehouses"
+    val requiredKey =
+      if (hasWarehouses) "updateRegisteredDetails.warehouseDetails.error.required"
+      else "updateRegisteredDetails.warehouseDetails.error.requiredNoWarehouses"
     Form(
       "value" -> boolean(requiredKey)
     )

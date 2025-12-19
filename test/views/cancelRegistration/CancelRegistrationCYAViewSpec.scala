@@ -16,18 +16,18 @@
 
 package views.cancelRegistration
 
-import play.api.mvc.{Call, Request}
+import play.api.mvc.{ Call, Request }
 import play.api.test.FakeRequest
 import uk.gov.hmrc.govukfrontend.views.Aliases.Value
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ SummaryList, SummaryListRow }
 import views.ViewSpecHelper
 import views.html.cancelRegistration.CancelRegistrationCYAView
 
 class CancelRegistrationCYAViewSpec extends ViewSpecHelper {
 
   val view: CancelRegistrationCYAView = application.injector.instanceOf[CancelRegistrationCYAView]
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val POST_HEADER_CAPTION = "govuk-body"
@@ -39,15 +39,14 @@ class CancelRegistrationCYAViewSpec extends ViewSpecHelper {
     val form = "form"
   }
   "View" - {
-    val summaryList: Seq[(String, SummaryList)] = {
+    val summaryList: Seq[(String, SummaryList)] =
       Seq(
         "foo" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("no longer sell drinks"))))),
         "bar" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bang")))))
       )
-    }
-    val call = Call("GET","/foo")
+    val call = Call("GET", "/foo")
     val ALIAS = "ALIAS"
-    val html = view(ALIAS, summaryList, call)(request, messages(application))
+    val html = view(ALIAS, summaryList, call)(using request, messages(application))
     val document = doc(html)
 
     "should have the expected heading" in {
@@ -63,16 +62,22 @@ class CancelRegistrationCYAViewSpec extends ViewSpecHelper {
     }
 
     "contain the correct summary lists" in {
-      document.getElementsByClass(Selectors.summaryList)
+      document
+        .getElementsByClass(Selectors.summaryList)
         .first()
         .getElementsByClass(Selectors.summaryRow)
         .first()
-        .getElementsByClass(Selectors.summaryValue).first().text() mustBe "no longer sell drinks"
-      document.getElementsByClass(Selectors.summaryList)
+        .getElementsByClass(Selectors.summaryValue)
+        .first()
+        .text() mustBe "no longer sell drinks"
+      document
+        .getElementsByClass(Selectors.summaryList)
         .last()
         .getElementsByClass(Selectors.summaryRow)
         .first()
-        .getElementsByClass(Selectors.summaryValue).first().text() mustBe "bang"
+        .getElementsByClass(Selectors.summaryValue)
+        .first()
+        .text() mustBe "bang"
     }
 
     "contains a form with the correct action" in {

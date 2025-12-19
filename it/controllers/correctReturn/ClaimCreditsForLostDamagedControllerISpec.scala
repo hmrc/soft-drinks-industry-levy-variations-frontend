@@ -2,7 +2,7 @@ package controllers.correctReturn
 
 import controllers.ControllerITTestHelper
 import models.SelectChange.CorrectReturn
-import models.{CheckMode, NormalMode}
+import models.{ CheckMode, NormalMode }
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers._
 import pages.correctReturn.ClaimCreditsForLostDamagedPage
@@ -18,8 +18,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the ClaimCreditsForLostDamaged page with no data populated" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
@@ -44,8 +43,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
     userAnswersForCorrectReturnClaimCreditsForLostDamagedPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
@@ -76,8 +74,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
   s"GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the ClaimCreditsForLostDamaged page with no data populated" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
@@ -102,8 +99,7 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
     userAnswersForCorrectReturnClaimCreditsForLostDamagedPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
         s"should return OK and render the page with " + key + " radio checked" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
@@ -137,14 +133,15 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
       "when the user selects " + key - {
         "should update the session with the new value and redirect to the index controller" - {
           "when the session contains no data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> yesSelected.toString)
+                client,
+                correctReturnBaseUrl + normalRoutePath,
+                Json.obj("value" -> yesSelected.toString)
               )
 
               whenReady(result) { res =>
@@ -155,7 +152,8 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
                   routes.CorrectReturnCYAController.onPageLoad.url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ClaimCreditsForLostDamagedPage))
+                val dataStoredForPage =
+                  getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ClaimCreditsForLostDamagedPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe yesSelected
               }
@@ -163,14 +161,15 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setUpForCorrectReturn(userAnswers)
             WsTestClient.withClient { client =>
               val yesSelected = key == "yes"
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> yesSelected.toString)
+                client,
+                correctReturnBaseUrl + normalRoutePath,
+                Json.obj("value" -> yesSelected.toString)
               )
 
               whenReady(result) { res =>
@@ -181,7 +180,8 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
                   routes.CorrectReturnCYAController.onPageLoad.url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ClaimCreditsForLostDamagedPage))
+                val dataStoredForPage =
+                  getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ClaimCreditsForLostDamagedPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe yesSelected
               }
@@ -193,13 +193,14 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> "")
+            client,
+            correctReturnBaseUrl + normalRoutePath,
+            Json.obj("value" -> "")
           )
 
           whenReady(result) { res =>
@@ -207,19 +208,25 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
             val page = Jsoup.parse(res.body)
             page.title mustBe
               "Error: Lost or destroyed drinks - Soft Drinks Industry Levy - GOV.UK"
-            val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
+            val errorSummary = page
+              .getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe "Select yes if you want to claim a credit for any liable drinks that have been lost or destroyed"
+            errorSummary
+              .text() mustBe "Select yes if you want to claim a credit for any liable drinks that have been lost or destroyed"
           }
         }
       }
     }
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+      CorrectReturn,
+      correctReturnBaseUrl + normalRoutePath,
+      Some(Json.obj("value" -> "true"))
+    )
   }
 
   s"POST " + checkRoutePath - {
@@ -228,39 +235,14 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
         val yesSelected = key == "yes"
         "should update the session with the new value and redirect to the checkAnswers controller" - {
           "when the session contains no data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> yesSelected.toString)
-              )
-
-              whenReady(result) { res =>
-                res.status mustBe 303
-                val expectedLocation = if(yesSelected) {
-                  routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
-                } else {
-                  routes.CorrectReturnCYAController.onPageLoad.url
-                }
-                res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ClaimCreditsForLostDamagedPage))
-                dataStoredForPage.nonEmpty mustBe true
-                dataStoredForPage.get mustBe yesSelected
-              }
-            }
-          }
-
-          "when the session already contains data for page" in {
-            build
-              .commonPrecondition
-
-            setUpForCorrectReturn(userAnswers)
-            WsTestClient.withClient { client =>
-              val yesSelected = key == "yes"
-              val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> yesSelected.toString)
+                client,
+                correctReturnBaseUrl + checkRoutePath,
+                Json.obj("value" -> yesSelected.toString)
               )
 
               whenReady(result) { res =>
@@ -271,7 +253,36 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
                   routes.CorrectReturnCYAController.onPageLoad.url
                 }
                 res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ClaimCreditsForLostDamagedPage))
+                val dataStoredForPage =
+                  getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ClaimCreditsForLostDamagedPage))
+                dataStoredForPage.nonEmpty mustBe true
+                dataStoredForPage.get mustBe yesSelected
+              }
+            }
+          }
+
+          "when the session already contains data for page" in {
+            build.commonPrecondition
+
+            setUpForCorrectReturn(userAnswers)
+            WsTestClient.withClient { client =>
+              val yesSelected = key == "yes"
+              val result = createClientRequestPOST(
+                client,
+                correctReturnBaseUrl + checkRoutePath,
+                Json.obj("value" -> yesSelected.toString)
+              )
+
+              whenReady(result) { res =>
+                res.status mustBe 303
+                val expectedLocation = if (yesSelected) {
+                  routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
+                } else {
+                  routes.CorrectReturnCYAController.onPageLoad.url
+                }
+                res.header(HeaderNames.LOCATION) mustBe Some(expectedLocation)
+                val dataStoredForPage =
+                  getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(ClaimCreditsForLostDamagedPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe yesSelected
               }
@@ -283,13 +294,14 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select yes or no" - {
       "should return 400 with required error" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, correctReturnBaseUrl + checkRoutePath, Json.obj("value" -> "")
+            client,
+            correctReturnBaseUrl + checkRoutePath,
+            Json.obj("value" -> "")
           )
 
           whenReady(result) { res =>
@@ -297,19 +309,25 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
             val page = Jsoup.parse(res.body)
             page.title mustBe
               "Error: Lost or destroyed drinks - Soft Drinks Industry Levy - GOV.UK"
-            val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
+            val errorSummary = page
+              .getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value"
-            errorSummary.text() mustBe "Select yes if you want to claim a credit for any liable drinks that have been lost or destroyed"
+            errorSummary
+              .text() mustBe "Select yes if you want to claim a credit for any liable drinks that have been lost or destroyed"
           }
         }
       }
     }
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+      CorrectReturn,
+      correctReturnBaseUrl + checkRoutePath,
+      Some(Json.obj("value" -> "true"))
+    )
   }
 
   "Post - when user is a new importer or new packer " - {
@@ -321,12 +339,16 @@ class ClaimCreditsForLostDamagedControllerISpec extends ControllerITTestHelper {
 
       WsTestClient.withClient { client =>
         val result = createClientRequestPOST(
-          client, correctReturnBaseUrl + normalRoutePath, Json.obj("value" -> false)
+          client,
+          correctReturnBaseUrl + normalRoutePath,
+          Json.obj("value" -> false)
         )
 
         whenReady(result) { res =>
           res.status mustBe 303
-          res.header(HeaderNames.LOCATION) mustBe Some(routes.ReturnChangeRegistrationController.onPageLoad(NormalMode).url)
+          res.header(HeaderNames.LOCATION) mustBe Some(
+            routes.ReturnChangeRegistrationController.onPageLoad(NormalMode).url
+          )
         }
       }
     }

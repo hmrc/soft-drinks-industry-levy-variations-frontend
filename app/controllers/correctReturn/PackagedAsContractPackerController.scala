@@ -22,51 +22,51 @@ import forms.correctReturn.PackagedAsContractPackerFormProvider
 import handlers.ErrorHandler
 import models.Mode
 import navigation._
-import pages.correctReturn.{HowManyPackagedAsContractPackerPage, PackagedAsContractPackerPage}
+import pages.correctReturn.{ HowManyPackagedAsContractPackerPage, PackagedAsContractPackerPage }
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import services.SessionService
 import utilities.GenericLogger
 import views.html.correctReturn.PackagedAsContractPackerView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class PackagedAsContractPackerController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         val sessionService: SessionService,
-                                         val navigator: NavigatorForCorrectReturn,
-                                         controllerActions: ControllerActions,
-                                         formProvider: PackagedAsContractPackerFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: PackagedAsContractPackerView,
-                                          val genericLogger: GenericLogger,
-                                          val errorHandler: ErrorHandler
-                                 )(implicit val ec: ExecutionContext) extends ControllerHelper {
+class PackagedAsContractPackerController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForCorrectReturn,
+  controllerActions: ControllerActions,
+  formProvider: PackagedAsContractPackerFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: PackagedAsContractPackerView,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
-    implicit request =>
-      val preparedForm = request.userAnswers.get(PackagedAsContractPackerPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData { implicit request =>
+    val preparedForm = request.userAnswers.get(PackagedAsContractPackerPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
-      Ok(view(preparedForm, mode))
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
-        value => {
-          val updatedAnswers = request.userAnswers.setAndRemoveLitresIfReq(PackagedAsContractPackerPage, HowManyPackagedAsContractPackerPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, PackagedAsContractPackerPage, mode)
-        }
-      )
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value => {
+            val updatedAnswers = request.userAnswers
+              .setAndRemoveLitresIfReq(PackagedAsContractPackerPage, HowManyPackagedAsContractPackerPage, value)
+            updateDatabaseAndRedirect(updatedAnswers, PackagedAsContractPackerPage, mode)
+          }
+        )
   }
 }

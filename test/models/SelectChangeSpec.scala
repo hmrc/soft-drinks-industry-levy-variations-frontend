@@ -22,7 +22,7 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.OptionValues
-import play.api.libs.json.{JsError, JsString, Json}
+import play.api.libs.json.{ JsError, JsString, Json }
 
 class SelectChangeSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues {
 
@@ -32,10 +32,8 @@ class SelectChangeSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
       val gen = Gen.oneOf(SelectChange.values.toSeq)
 
-      forAll(gen) {
-        selectChange =>
-
-          JsString(selectChange.toString).validate[SelectChange].asOpt.value mustEqual selectChange
+      forAll(gen) { selectChange =>
+        JsString(selectChange.toString).validate[SelectChange].asOpt.value mustEqual selectChange
       }
     }
 
@@ -43,10 +41,8 @@ class SelectChangeSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
       val gen = arbitrary[String] suchThat (!SelectChange.values.map(_.toString).contains(_))
 
-      forAll(gen) {
-        invalidValue =>
-
-          JsString(invalidValue).validate[SelectChange] mustEqual JsError("error.invalid")
+      forAll(gen) { invalidValue =>
+        JsString(invalidValue).validate[SelectChange] mustEqual JsError("error.invalid")
       }
     }
 
@@ -54,10 +50,8 @@ class SelectChangeSpec extends AnyFreeSpec with Matchers with ScalaCheckProperty
 
       val gen = Gen.oneOf(SelectChange.values.toSeq)
 
-      forAll(gen) {
-        selectChange =>
-
-          Json.toJson(selectChange) mustEqual JsString(selectChange.toString)
+      forAll(gen) { selectChange =>
+        Json.toJson(selectChange) mustEqual JsString(selectChange.toString)
       }
     }
   }

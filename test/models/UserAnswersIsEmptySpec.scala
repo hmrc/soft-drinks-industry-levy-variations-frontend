@@ -25,51 +25,50 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json._
 
-class UserAnswersIsEmptySpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with ModelGenerators {
+class UserAnswersIsEmptySpec
+    extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with ModelGenerators {
 
   val nonEmptyAlphaStr: Gen[String] = Gen.alphaStr.suchThat(_.nonEmpty)
 
-  def nonEmptyJsPaths(keys: List[String], change: String): List[JsPath] = {
-    keys.foldLeft(List(JsPath(List(KeyPathNode(change)))))((acc, d) => {
+  def nonEmptyJsPaths(keys: List[String], change: String): List[JsPath] =
+    keys.foldLeft(List(JsPath(List(KeyPathNode(change))))) { (acc, d) =>
       acc :+ JsPath(acc.last.path :+ KeyPathNode(d))
-    })
-  }
+    }
 
   "UserAnswers" - {
     "isEmpty" - {
       "must return true when there is no data on user answers at that path" in {
         val gen = for {
-          keys <- Gen.nonEmptyListOf(nonEmptyAlphaStr)
-          value <- nonEmptyAlphaStr
+          keys      <- Gen.nonEmptyListOf(nonEmptyAlphaStr)
+          value     <- nonEmptyAlphaStr
           wrongPath <- nonEmptyAlphaStr
         } yield (keys, value, wrongPath)
 
-        forAll(gen) {
-          case (keys: List[String], value: String, wrongPath: String) =>
-            SelectChange.values.foreach(change => {
-              val pathNodes = (List(change.toString) ++ keys).map(play.api.libs.json.KeyPathNode.apply)
-              val data = Json.obj().set(JsPath(pathNodes), JsString(value)).asOpt.value.asInstanceOf[JsObject]
-              val userAnswers = UserAnswers("sdilId", change, contactAddress = contactAddress, data = data)
-              val emptyJsPaths = nonEmptyJsPaths(keys, change.toString).map(path => JsPath(path.path :+ KeyPathNode(wrongPath)))
-              emptyJsPaths.foreach(userAnswers.isEmptyAtPath(_) mustEqual true)
-            })
+        forAll(gen) { case (keys: List[String], value: String, wrongPath: String) =>
+          SelectChange.values.foreach { change =>
+            val pathNodes = (List(change.toString) ++ keys).map(play.api.libs.json.KeyPathNode.apply)
+            val data = Json.obj().set(JsPath(pathNodes), JsString(value)).asOpt.value.asInstanceOf[JsObject]
+            val userAnswers = UserAnswers("sdilId", change, contactAddress = contactAddress, data = data)
+            val emptyJsPaths =
+              nonEmptyJsPaths(keys, change.toString).map(path => JsPath(path.path :+ KeyPathNode(wrongPath)))
+            emptyJsPaths.foreach(userAnswers.isEmptyAtPath(_) mustEqual true)
+          }
         }
       }
 
       "must return false when there is data on user answers at that path" in {
         val gen = for {
-          keys <- Gen.nonEmptyListOf(nonEmptyAlphaStr)
+          keys  <- Gen.nonEmptyListOf(nonEmptyAlphaStr)
           value <- nonEmptyAlphaStr
         } yield (keys, value)
 
-        forAll(gen) {
-          case (keys: List[String], value: String) =>
-            SelectChange.values.foreach(change => {
-              val pathNodes = (List(change.toString) ++ keys).map(play.api.libs.json.KeyPathNode.apply)
-              val data = Json.obj().set(JsPath(pathNodes), JsString(value)).asOpt.value.asInstanceOf[JsObject]
-              val userAnswers = UserAnswers("sdilId", change, contactAddress = contactAddress, data = data)
-              nonEmptyJsPaths(keys, change.toString).foreach(userAnswers.isEmptyAtPath(_) mustEqual false)
-            })
+        forAll(gen) { case (keys: List[String], value: String) =>
+          SelectChange.values.foreach { change =>
+            val pathNodes = (List(change.toString) ++ keys).map(play.api.libs.json.KeyPathNode.apply)
+            val data = Json.obj().set(JsPath(pathNodes), JsString(value)).asOpt.value.asInstanceOf[JsObject]
+            val userAnswers = UserAnswers("sdilId", change, contactAddress = contactAddress, data = data)
+            nonEmptyJsPaths(keys, change.toString).foreach(userAnswers.isEmptyAtPath(_) mustEqual false)
+          }
         }
       }
     }

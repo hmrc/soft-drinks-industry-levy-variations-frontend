@@ -19,8 +19,8 @@ package controllers.changeActivity
 import base.SpecBase
 import forms.changeActivity.SecondaryWarehouseDetailsFormProvider
 import models.SelectChange.ChangeActivity
-import models.backend.{Site, UkAddress}
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.backend.{ Site, UkAddress }
+import models.{ CheckMode, NormalMode, UserAnswers }
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -63,7 +63,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
           val view = application.injector.instanceOf[SecondaryWarehouseDetailsView]
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form, None, mode)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(form, None, mode)(using request, messages(application)).toString
         }
       }
 
@@ -81,15 +81,17 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form, None, mode)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(form, None, mode)(using request, messages(application)).toString
         }
       }
 
       s"must populate the view correctly on a GET when the question has previously been answered with a single warehouse in the list in $mode" in {
 
-        val summaryList = Some(SummaryListViewModel(
-          rows = SecondaryWarehouseDetailsSummary.summaryRows(Map("1" -> warehouse), mode)
-        ))
+        val summaryList = Some(
+          SummaryListViewModel(
+            rows = SecondaryWarehouseDetailsSummary.summaryRows(Map("1" -> warehouse), mode)
+          )
+        )
 
         val userAnswers = warehouseAddedToUserAnswersForChangeActivity
 
@@ -103,15 +105,18 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual  view(form, summaryList, mode)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(form, summaryList, mode)(using request, messages(application)).toString
         }
       }
 
       s"must populate the view correctly on a GET when the question has previously been answered with multiple warehouses in the list in $mode" in {
-        val warehouses = Map("1" -> warehouse, "2" -> Site(UkAddress(List("34 Rhes Priordy"),"WR53 7CX"), Some("DEF Ltd")))
-        val summaryList = Some(SummaryListViewModel(rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouses, mode)))
+        val warehouses =
+          Map("1" -> warehouse, "2" -> Site(UkAddress(List("34 Rhes Priordy"), "WR53 7CX"), Some("DEF Ltd")))
+        val summaryList =
+          Some(SummaryListViewModel(rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouses, mode)))
 
-        val userAnswers = UserAnswers(userAnswersId, ChangeActivity, warehouseList = warehouses, contactAddress = contactAddress)
+        val userAnswers =
+          UserAnswers(userAnswersId, ChangeActivity, warehouseList = warehouses, contactAddress = contactAddress)
 
         val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -123,7 +128,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
           val result = route(application, request).value
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form, summaryList, mode)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(form, summaryList, mode)(using request, messages(application)).toString
         }
       }
 
@@ -131,7 +136,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
         val mockSessionService = mock[SessionService]
 
-        when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+        when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
         val applicationSetup =
           applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
@@ -156,7 +161,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
         val mockSessionService = mock[SessionService]
 
-        when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+        when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
         val application =
           applicationBuilder(userAnswers = Some(warehouseAddedToUserAnswersForChangeActivity))
@@ -189,7 +194,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
           val result = route(application, request).value
 
           status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual view(boundForm, None, mode)(request, messages(application)).toString
+          contentAsString(result) mustEqual view(boundForm, None, mode)(using request, messages(application)).toString
         }
       }
     }

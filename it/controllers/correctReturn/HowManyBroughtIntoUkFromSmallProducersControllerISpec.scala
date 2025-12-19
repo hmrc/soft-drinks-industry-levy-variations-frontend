@@ -1,14 +1,14 @@
 package controllers.correctReturn
 
 import controllers.LitresISpecHelper
-import models.{CheckMode, LitresInBands, NormalMode}
+import models.{ CheckMode, LitresInBands, NormalMode }
 import models.SelectChange.CorrectReturn
 import org.jsoup.Jsoup
 import pages.correctReturn.HowManyBroughtIntoUkFromSmallProducersPage
 import play.api.http.HeaderNames
-import play.api.i18n.{Messages, MessagesApi}
+import play.api.i18n.{ Messages, MessagesApi }
 import play.api.libs.json.Json
-import play.api.test.{WsTestClient, FakeRequest}
+import play.api.test.{ FakeRequest, WsTestClient }
 import org.scalatest.matchers.must.Matchers._
 
 class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecHelper {
@@ -16,10 +16,11 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
   val normalRoutePath = "/how-many-into-uk-small-producers"
   val checkRoutePath = "/change-how-many-into-uk-small-producers"
 
-  val userAnswers = emptyUserAnswersForCorrectReturn.set(HowManyBroughtIntoUkFromSmallProducersPage, litresInBands).success.value
+  val userAnswers =
+    emptyUserAnswersForCorrectReturn.set(HowManyBroughtIntoUkFromSmallProducersPage, litresInBands).success.value
 
   List(NormalMode, CheckMode).foreach { mode =>
-    val (path, redirectLocation) = if(mode == NormalMode) {
+    val (path, redirectLocation) = if (mode == NormalMode) {
       (normalRoutePath, routes.ClaimCreditsForExportsController.onPageLoad(mode).url)
     } else {
       (checkRoutePath, routes.CorrectReturnCYAController.onPageLoad.url)
@@ -27,12 +28,11 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
 
     given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
     given messages: Messages = messagesApi.preferred(FakeRequest())
-    
+
     "GET " + path - {
       "when the userAnswers contains no data" - {
         "should return OK and render the litres page for BroughtIntoUkFromSmallProducers with no data populated" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
 
@@ -51,8 +51,7 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
 
       s"when the userAnswers contains data for the page" - {
         s"should return OK and render the page with fields populated" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(userAnswers)
 
@@ -78,19 +77,21 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
       "when the user populates all litres fields" - {
         "should update the session with the new values and redirect to " + redirectLocation - {
           "when the session contains no data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + path, Json.toJson(litresInBandsObj)
+                client,
+                correctReturnBaseUrl + path,
+                Json.toJson(litresInBandsObj)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(redirectLocation)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyBroughtIntoUkFromSmallProducersPage))
+                val dataStoredForPage = getAnswers(userAnswers.id)
+                  .fold[Option[LitresInBands]](None)(_.get(HowManyBroughtIntoUkFromSmallProducersPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBands
               }
@@ -98,19 +99,21 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
           }
 
           "when the session already contains data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setUpForCorrectReturn(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, correctReturnBaseUrl + path, Json.toJson(litresInBandsDiffObj)
+                client,
+                correctReturnBaseUrl + path,
+                Json.toJson(litresInBandsDiffObj)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(redirectLocation)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[LitresInBands]](None)(_.get(HowManyBroughtIntoUkFromSmallProducersPage))
+                val dataStoredForPage = getAnswers(userAnswers.id)
+                  .fold[Option[LitresInBands]](None)(_.get(HowManyBroughtIntoUkFromSmallProducersPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe litresInBandsDiff
               }
@@ -123,13 +126,14 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
         val errorTitle = "Error: " + messages("correctReturn.howManyBroughtIntoUkFromSmallProducers.title")
 
         "when no questions are answered" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, correctReturnBaseUrl + path, emptyJson
+              client,
+              correctReturnBaseUrl + path,
+              emptyJson
             )
 
             whenReady(result) { res =>
@@ -141,13 +145,14 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
         }
 
         "when the user answers with no numeric answers" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, correctReturnBaseUrl + path, jsonWithNoNumeric
+              client,
+              correctReturnBaseUrl + path,
+              jsonWithNoNumeric
             )
 
             whenReady(result) { res =>
@@ -159,13 +164,14 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
         }
 
         "when the user answers with negative numbers" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, correctReturnBaseUrl + path, jsonWithNegativeNumber
+              client,
+              correctReturnBaseUrl + path,
+              jsonWithNegativeNumber
             )
 
             whenReady(result) { res =>
@@ -177,13 +183,14 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
         }
 
         "when the user answers with decimal numbers" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, correctReturnBaseUrl + path, jsonWithDecimalNumber
+              client,
+              correctReturnBaseUrl + path,
+              jsonWithDecimalNumber
             )
 
             whenReady(result) { res =>
@@ -195,13 +202,14 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
         }
 
         "when the user answers with out of max range numbers" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, correctReturnBaseUrl + path, jsonWithOutOfRangeNumber
+              client,
+              correctReturnBaseUrl + path,
+              jsonWithOutOfRangeNumber
             )
 
             whenReady(result) { res =>
@@ -213,13 +221,14 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
         }
 
         "when the user answers with 0" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           setUpForCorrectReturn(emptyUserAnswersForCorrectReturn)
           WsTestClient.withClient { client =>
             val result = createClientRequestPOST(
-              client, correctReturnBaseUrl + path, jsonWith0
+              client,
+              correctReturnBaseUrl + path,
+              jsonWith0
             )
 
             whenReady(result) { res =>
@@ -233,7 +242,11 @@ class HowManyBroughtIntoUkFromSmallProducersControllerISpec extends LitresISpecH
 
       testUnauthorisedUser(correctReturnBaseUrl + path, Some(Json.toJson(litresInBandsDiffObj)))
       testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + path, Some(Json.toJson(litresInBandsDiffObj)))
-      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + path, Some(Json.toJson(litresInBandsDiffObj)))
+      testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+        CorrectReturn,
+        correctReturnBaseUrl + path,
+        Some(Json.toJson(litresInBandsDiffObj))
+      )
     }
   }
 }

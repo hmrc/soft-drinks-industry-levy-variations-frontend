@@ -20,55 +20,55 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.correctReturn.SmallProducerDetailsFormProvider
 import handlers.ErrorHandler
-import models.{Mode, SmallProducer}
+import models.{ Mode, SmallProducer }
 import navigation._
 import pages.correctReturn.SmallProducerDetailsPage
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import services.SessionService
 import utilities.GenericLogger
 import views.html.correctReturn.SmallProducerDetailsView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class SmallProducerDetailsController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       val sessionService: SessionService,
-                                       val navigator: NavigatorForCorrectReturn,
-                                       controllerActions: ControllerActions,
-                                       formProvider: SmallProducerDetailsFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: SmallProducerDetailsView,
-                                       val genericLogger: GenericLogger,
-                                       val errorHandler: ErrorHandler
-                                     )(implicit val ec: ExecutionContext) extends ControllerHelper {
+class SmallProducerDetailsController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForCorrectReturn,
+  controllerActions: ControllerActions,
+  formProvider: SmallProducerDetailsFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: SmallProducerDetailsView,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper {
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
-    implicit request =>
-      val smallProducerList:List[SmallProducer] = request.userAnswers.smallProducerList
-      val preparedForm = request.userAnswers.get(SmallProducerDetailsPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData { implicit request =>
+    val smallProducerList: List[SmallProducer] = request.userAnswers.smallProducerList
+    val preparedForm = request.userAnswers.get(SmallProducerDetailsPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
-      Ok(view(preparedForm, mode, smallProducerList))
+    Ok(view(preparedForm, mode, smallProducerList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
       val smallProducerList: List[SmallProducer] = request.userAnswers.smallProducerList
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, smallProducerList))),
-
-        value => {
-          val updatedAnswers = request.userAnswers.set(SmallProducerDetailsPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, SmallProducerDetailsPage, mode)
-        }
-      )
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, smallProducerList))),
+          value => {
+            val updatedAnswers = request.userAnswers.set(SmallProducerDetailsPage, value)
+            updateDatabaseAndRedirect(updatedAnswers, SmallProducerDetailsPage, mode)
+          }
+        )
   }
 }

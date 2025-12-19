@@ -37,6 +37,30 @@ Run the code from source using
 Run other services required for running this service via the service manager. (*You need to be on the VPN*)
 `sm2 --start SDIL_ALL`
 
+## Code formatting (scalafmt)
+
+This project uses [scalafmt](https://scalameta.org/scalafmt/) via the `sbt-scalafmt` plugin.
+
+- To format the main and test source code:
+
+  ```bash
+  sbt scalafmtAll
+  ```
+
+- To format only the main sources:
+
+  ```bash
+  sbt scalafmt
+  ```
+
+- To format only the test sources:
+
+  ```bash
+  sbt test:scalafmt
+  ```
+
+Formatting is **not** wired into `compile` by default. Run `scalafmt`/`scalafmtAll` separately (for example, before committing or as part of a CI check), and use `compile` just for compilation.
+
 ## Adding 2026 rates
 
 1. Make sure you have your NEW_LOWER_BAND_VALUE and NEW_HIGHER_BAND_VALUE band rate values for 2026 tax year

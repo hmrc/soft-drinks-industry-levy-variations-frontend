@@ -4,14 +4,14 @@ import controllers.ControllerITTestHelper
 import models.NormalMode
 import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced
-import models.changeActivity.AmountProduced.{Large, Small}
+import models.changeActivity.AmountProduced.{ Large, Small }
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers._
 import pages.changeActivity.AmountProducedPage
 import play.api.http.HeaderNames
-import play.api.i18n.{Messages, MessagesApi}
+import play.api.i18n.{ Messages, MessagesApi }
 import play.api.libs.json.Json
-import play.api.test.{WsTestClient, FakeRequest}
+import play.api.test.{ FakeRequest, WsTestClient }
 
 class AmountProducedControllerISpec extends ControllerITTestHelper {
 
@@ -20,12 +20,11 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
 
   given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   given messages: Messages = messagesApi.preferred(FakeRequest())
-  
+
   "GET " + normalRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the AmountProduced page with no data populated" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
 
@@ -51,8 +50,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
     AmountProduced.values.zipWithIndex.foreach { case (radio, index) =>
       s"when the userAnswers contains data for the page with " + radio.toString + " selected" - {
         s"should return OK and render the page with " + radio.toString + " radio checked" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           val userAnswers = emptyUserAnswersForChangeActivity.set(AmountProducedPage, radio).success.value
 
@@ -85,8 +83,7 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
   s"GET " + checkRoutePath - {
     "when the userAnswers contains no data" - {
       "should return OK and render the AmountProduced page with no data populated" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
 
@@ -112,11 +109,9 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
     AmountProduced.values.zipWithIndex.foreach { case (radio, index) =>
       s"when the userAnswers contains data for the page with " + radio.toString + " selected" - {
         s"should return OK and render the page with " + radio.toString + " radio checked" in {
-          build
-            .commonPrecondition
+          build.commonPrecondition
 
           val userAnswers = emptyUserAnswersForChangeActivity.set(AmountProducedPage, radio).success.value
-
 
           setAnswers(userAnswers)
 
@@ -149,25 +144,33 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
       "when the user selects " + radio.toString - {
         "should update the session with the new value and redirect to the index controller" - {
           "when the session contains no data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setAnswers(emptyUserAnswersForChangeActivity)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> radio)
+                client,
+                changeActivityBaseUrl + normalRoutePath,
+                Json.obj("value" -> radio)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
                 if (radio == Large) {
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url)
+                  res.header(HeaderNames.LOCATION) mustBe Some(
+                    routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
+                  )
                 } else if (radio == Small) {
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url)
+                  res.header(HeaderNames.LOCATION) mustBe Some(
+                    routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url
+                  )
                 } else {
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ContractPackingController.onPageLoad(NormalMode).url)
+                  res.header(HeaderNames.LOCATION) mustBe Some(
+                    routes.ContractPackingController.onPageLoad(NormalMode).url
+                  )
                 }
-                val dataStoredForPage = getAnswers(sdilNumber).fold[Option[AmountProduced]](None)(_.get(AmountProducedPage))
+                val dataStoredForPage =
+                  getAnswers(sdilNumber).fold[Option[AmountProduced]](None)(_.get(AmountProducedPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
               }
@@ -175,28 +178,36 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
           }
 
           "when the session already contains data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             val userAnswers = emptyUserAnswersForChangeActivity.set(AmountProducedPage, radio).success.value
 
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> radio)
+                client,
+                changeActivityBaseUrl + normalRoutePath,
+                Json.obj("value" -> radio)
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
                 if (radio == Large) {
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url)
+                  res.header(HeaderNames.LOCATION) mustBe Some(
+                    routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
+                  )
                 } else if (radio == Small) {
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url)
+                  res.header(HeaderNames.LOCATION) mustBe Some(
+                    routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url
+                  )
                 } else {
-                  res.header(HeaderNames.LOCATION) mustBe Some(routes.ContractPackingController.onPageLoad(NormalMode).url)
+                  res.header(HeaderNames.LOCATION) mustBe Some(
+                    routes.ContractPackingController.onPageLoad(NormalMode).url
+                  )
                 }
 
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[AmountProduced]](None)(_.get(AmountProducedPage))
+                val dataStoredForPage =
+                  getAnswers(userAnswers.id).fold[Option[AmountProduced]](None)(_.get(AmountProducedPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
               }
@@ -208,32 +219,39 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select an option" - {
       "should return 400 with required error" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, changeActivityBaseUrl + normalRoutePath, Json.obj("value" -> "")
+            client,
+            changeActivityBaseUrl + normalRoutePath,
+            Json.obj("value" -> "")
           )
 
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
             page.title must include("Error: " + messages("changeActivity.amountProduced" + ".title"))
-            val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
+            val errorSummary = page
+              .getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value_0"
-            errorSummary.text() mustBe "Select how many litres of your own brands of liable drinks have been packaged globally in the past 12 months"
+            errorSummary
+              .text() mustBe "Select how many litres of your own brands of liable drinks have been packaged globally in the past 12 months"
           }
         }
       }
     }
     testUnauthorisedUser(changeActivityBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + normalRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+      ChangeActivity,
+      changeActivityBaseUrl + normalRoutePath,
+      Some(Json.obj("value" -> "true"))
+    )
   }
 
   s"POST " + checkRoutePath - {
@@ -242,50 +260,70 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
       "when the user selects " + radio.toString - {
         "should update the session with the new value and redirect to the corresponding next page" - {
           "when the session contains no data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             radio match {
-              case AmountProduced.Large => setAnswers(emptyUserAnswersForChangeActivity.set(AmountProducedPage, AmountProduced.Small).success.value)
-              case AmountProduced.Small => setAnswers(emptyUserAnswersForChangeActivity.set(AmountProducedPage, AmountProduced.None).success.value)
-              case AmountProduced.None => setAnswers(emptyUserAnswersForChangeActivity.set(AmountProducedPage, AmountProduced.Large).success.value)
+              case AmountProduced.Large =>
+                setAnswers(
+                  emptyUserAnswersForChangeActivity.set(AmountProducedPage, AmountProduced.Small).success.value
+                )
+              case AmountProduced.Small =>
+                setAnswers(emptyUserAnswersForChangeActivity.set(AmountProducedPage, AmountProduced.None).success.value)
+              case AmountProduced.None =>
+                setAnswers(
+                  emptyUserAnswersForChangeActivity.set(AmountProducedPage, AmountProduced.Large).success.value
+                )
             }
 
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + checkRoutePath, Json.obj("value" -> Json.toJson(radio))
+                client,
+                changeActivityBaseUrl + checkRoutePath,
+                Json.obj("value" -> Json.toJson(radio))
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
                 radio match {
-                  case AmountProduced.Large => res.header(HeaderNames.LOCATION) mustBe Some(routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url)
-                  case AmountProduced.Small => res.header(HeaderNames.LOCATION) mustBe Some(routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url)
-                  case AmountProduced.None => res.header(HeaderNames.LOCATION) mustBe Some(routes.ContractPackingController.onPageLoad(NormalMode).url)
+                  case AmountProduced.Large =>
+                    res.header(HeaderNames.LOCATION) mustBe Some(
+                      routes.OperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
+                    )
+                  case AmountProduced.Small =>
+                    res.header(HeaderNames.LOCATION) mustBe Some(
+                      routes.ThirdPartyPackagersController.onPageLoad(NormalMode).url
+                    )
+                  case AmountProduced.None =>
+                    res.header(HeaderNames.LOCATION) mustBe Some(
+                      routes.ContractPackingController.onPageLoad(NormalMode).url
+                    )
                 }
 
-                val dataStoredForPage = getAnswers(sdilNumber).fold[Option[AmountProduced]](None)(_.get(AmountProducedPage))
+                val dataStoredForPage =
+                  getAnswers(sdilNumber).fold[Option[AmountProduced]](None)(_.get(AmountProducedPage))
                 dataStoredForPage.nonEmpty mustBe true
               }
             }
           }
 
           "when the session already contains data for page" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             val userAnswers = emptyUserAnswersForChangeActivity.set(AmountProducedPage, radio).success.value
 
             setAnswers(userAnswers)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + checkRoutePath, Json.obj("value" -> Json.toJson(radio))
+                client,
+                changeActivityBaseUrl + checkRoutePath,
+                Json.obj("value" -> Json.toJson(radio))
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
                 res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
-                val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[AmountProduced]](None)(_.get(AmountProducedPage))
+                val dataStoredForPage =
+                  getAnswers(userAnswers.id).fold[Option[AmountProduced]](None)(_.get(AmountProducedPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
               }
@@ -294,24 +332,29 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
         }
         "should update the session with the new value and redirect check your answers controller" - {
           "when the session matches what the user has submitted" in {
-            build
-              .commonPrecondition
+            build.commonPrecondition
 
             setAnswers(emptyUserAnswersForChangeActivity.set(AmountProducedPage, radio).success.value)
             WsTestClient.withClient { client =>
               val result = createClientRequestPOST(
-                client, changeActivityBaseUrl + checkRoutePath, Json.obj("value" -> Json.toJson(radio))
+                client,
+                changeActivityBaseUrl + checkRoutePath,
+                Json.obj("value" -> Json.toJson(radio))
               )
 
               whenReady(result) { res =>
                 res.status mustBe 303
                 radio match {
-                  case AmountProduced.Large => res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
-                  case AmountProduced.Small => res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
-                  case AmountProduced.None => res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
+                  case AmountProduced.Large =>
+                    res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
+                  case AmountProduced.Small =>
+                    res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
+                  case AmountProduced.None =>
+                    res.header(HeaderNames.LOCATION) mustBe Some(routes.ChangeActivityCYAController.onPageLoad().url)
                 }
 
-                val dataStoredForPage = getAnswers(sdilNumber).fold[Option[AmountProduced]](None)(_.get(AmountProducedPage))
+                val dataStoredForPage =
+                  getAnswers(sdilNumber).fold[Option[AmountProduced]](None)(_.get(AmountProducedPage))
                 dataStoredForPage.nonEmpty mustBe true
                 dataStoredForPage.get mustBe radio
               }
@@ -323,31 +366,38 @@ class AmountProducedControllerISpec extends ControllerITTestHelper {
 
     "when the user does not select an option" - {
       "should return 400 with required error" in {
-        build
-          .commonPrecondition
+        build.commonPrecondition
 
         setAnswers(emptyUserAnswersForChangeActivity)
         WsTestClient.withClient { client =>
           val result = createClientRequestPOST(
-            client, changeActivityBaseUrl + checkRoutePath, Json.obj("value" -> "")
+            client,
+            changeActivityBaseUrl + checkRoutePath,
+            Json.obj("value" -> "")
           )
 
           whenReady(result) { res =>
             res.status mustBe 400
             val page = Jsoup.parse(res.body)
             page.title must include("Error: " + messages("changeActivity.amountProduced" + ".title"))
-            val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
+            val errorSummary = page
+              .getElementsByClass("govuk-list govuk-error-summary__list")
               .first()
             errorSummary
               .select("a")
               .attr("href") mustBe "#value_0"
-            errorSummary.text() mustBe "Select how many litres of your own brands of liable drinks have been packaged globally in the past 12 months"
+            errorSummary
+              .text() mustBe "Select how many litres of your own brands of liable drinks have been packaged globally in the past 12 months"
           }
         }
       }
     }
     testUnauthorisedUser(changeActivityBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
     testAuthenticatedUserButNoUserAnswers(changeActivityBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(ChangeActivity, changeActivityBaseUrl + checkRoutePath, Some(Json.obj("value" -> "true")))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+      ChangeActivity,
+      changeActivityBaseUrl + checkRoutePath,
+      Some(Json.obj("value" -> "true"))
+    )
   }
 }

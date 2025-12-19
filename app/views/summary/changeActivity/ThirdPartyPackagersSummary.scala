@@ -17,7 +17,7 @@
 package views.summary.changeActivity
 
 import controllers.changeActivity.routes
-import models.{CheckMode, UserAnswers}
+import models.{ CheckMode, UserAnswers }
 import pages.changeActivity.ThirdPartyPackagersPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -27,19 +27,18 @@ import viewmodels.implicits._
 object ThirdPartyPackagersSummary {
 
   def row(answers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(ThirdPartyPackagersPage).map {
-      answer =>
-        val value = if (answer) "site.yes" else "site.no"
+    answers.get(ThirdPartyPackagersPage).map { answer =>
+      val value = if (answer) "site.yes" else "site.no"
 
-        SummaryListRowViewModel(
-          key     = "changeActivity.thirdPartyPackagers.checkYourAnswersLabel",
-          value   = ValueViewModel(value).withCssClass("sdil-right-align--desktop"),
-          actions = if(isCheckAnswers) {
-            Seq(
-              ActionItemViewModel("site.change", routes.ThirdPartyPackagersController.onPageLoad(CheckMode).url)
-                .withVisuallyHiddenText(messages("changeActivity.thirdPartyPackagers.change.hidden"))
-            )
-          }else{Seq.empty}
-        )
+      SummaryListRowViewModel(
+        key = "changeActivity.thirdPartyPackagers.checkYourAnswersLabel",
+        value = ValueViewModel(value).withCssClass("sdil-right-align--desktop"),
+        actions = if (isCheckAnswers) {
+          Seq(
+            ActionItemViewModel("site.change", routes.ThirdPartyPackagersController.onPageLoad(CheckMode).url)
+              .withVisuallyHiddenText(messages("changeActivity.thirdPartyPackagers.change.hidden"))
+          )
+        } else { Seq.empty }
+      )
     }
 }

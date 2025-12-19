@@ -18,7 +18,7 @@ package views.cancelRegistration
 
 import controllers.cancelRegistration.routes
 import forms.cancelRegistration.ReasonFormProvider
-import models.{CheckMode, NormalMode}
+import models.{ CheckMode, NormalMode }
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
@@ -33,7 +33,7 @@ class ReasonViewSpec extends ViewSpecHelper {
   val view: ReasonView = application.injector.instanceOf[ReasonView]
   val formProvider = new ReasonFormProvider
   val form: Form[String] = formProvider.apply()
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val formGroup = "govuk-form-group"
@@ -46,7 +46,7 @@ class ReasonViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view(form, NormalMode)(request, messages(application))
+    val html = view(form, NormalMode)(using request, messages(application))
     val document = doc(html)
     val formGroup = document.getElementsByClass(Selectors.formGroup)
     "should contain the expected title" in {
@@ -55,7 +55,9 @@ class ReasonViewSpec extends ViewSpecHelper {
 
     "should contain a govuk form group" - {
       "that contains the page heading" in {
-        formGroup.get(0).getElementsByClass(Selectors.labelAsHeading)
+        formGroup
+          .get(0)
+          .getElementsByClass(Selectors.labelAsHeading)
           .text() mustBe "Why do you need to cancel your registration?"
       }
 
@@ -70,18 +72,20 @@ class ReasonViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
       "when in CheckMode" in {
-        val htmlAllSelected = view(form.fill("testing"), CheckMode)(request, messages(application))
+        val htmlAllSelected = view(form.fill("testing"), CheckMode)(using request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
-        documentAllSelected.select(Selectors.form)
+        documentAllSelected
+          .select(Selectors.form)
           .attr("action") mustEqual routes.ReasonController.onSubmit(CheckMode).url
       }
 
       "when in NormalMode" in {
-        val htmlAllSelected = view(form.fill("testing"), NormalMode)(request, messages(application))
+        val htmlAllSelected = view(form.fill("testing"), NormalMode)(using request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
-        documentAllSelected.select(Selectors.form)
+        documentAllSelected
+          .select(Selectors.form)
           .attr("action") mustEqual routes.ReasonController.onSubmit(NormalMode).url
       }
     }
@@ -89,7 +93,8 @@ class ReasonViewSpec extends ViewSpecHelper {
     "when a form error exists" - {
       val valueOutOfMaxRange = Random.nextString(255 + 1)
 
-      val htmlWithErrors = view(form.bind(Map("value" -> valueOutOfMaxRange)), NormalMode)(request, messages(application))
+      val htmlWithErrors =
+        view(form.bind(Map("value" -> valueOutOfMaxRange)), NormalMode)(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
       "should have a title containing error" in {
         val titleMessage = Messages("Why do you need to cancel your registration? - Soft Drinks Industry Levy - GOV.UK")

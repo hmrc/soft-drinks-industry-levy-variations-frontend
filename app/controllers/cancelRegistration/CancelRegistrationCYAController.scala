@@ -22,10 +22,10 @@ import handlers.ErrorHandler
 import models.SelectChange.CancelRegistration
 import models.backend.RetrievedSubscription
 import models.requests.DataRequest
-import models.{NormalMode, UserAnswers}
+import models.{ NormalMode, UserAnswers }
 import orchestrators.CancelRegistrationOrchestrator
-import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
-import play.api.i18n.{I18nSupport, MessagesApi}
+import pages.cancelRegistration.{ CancelRegistrationDatePage, ReasonPage }
+import play.api.i18n.{ I18nSupport, MessagesApi }
 import play.api.mvc._
 import services.SessionService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -33,28 +33,32 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import views.html.cancelRegistration.CancelRegistrationCYAView
-import views.summary.cancelRegistration.{CancelRegistrationDateSummary, ReasonSummary}
+import views.summary.cancelRegistration.{ CancelRegistrationDateSummary, ReasonSummary }
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class CancelRegistrationCYAController @Inject()(
-                                                 override val messagesApi: MessagesApi,
-                                                 controllerActions: ControllerActions,
-                                                 cancelRegistrationOrchestrator: CancelRegistrationOrchestrator,
-                                                 val controllerComponents: MessagesControllerComponents,
-                                                 view: CancelRegistrationCYAView,
-                                                 sessionService : SessionService,
-                                                 errorHandler: ErrorHandler,
-                                                 genericLogger: GenericLogger
-                                          )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport with SummaryListFluency {
+class CancelRegistrationCYAController @Inject() (
+  override val messagesApi: MessagesApi,
+  controllerActions: ControllerActions,
+  cancelRegistrationOrchestrator: CancelRegistrationOrchestrator,
+  val controllerComponents: MessagesControllerComponents,
+  view: CancelRegistrationCYAView,
+  sessionService: SessionService,
+  errorHandler: ErrorHandler,
+  genericLogger: GenericLogger
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController with I18nSupport with SummaryListFluency {
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyData(CancelRegistration) {
     implicit request =>
       withRequiredUserAnswers match {
         case Right(_) =>
           val orgName: String = " " + request.subscription.orgName
-          val cancelRegistrationSummary: (String, SummaryList) = ("", SummaryListViewModel(
-            rows = Seq(ReasonSummary.row(request.userAnswers), CancelRegistrationDateSummary.row(request.userAnswers)))
+          val cancelRegistrationSummary: (String, SummaryList) = (
+            "",
+            SummaryListViewModel(
+              rows = Seq(ReasonSummary.row(request.userAnswers), CancelRegistrationDateSummary.row(request.userAnswers))
+            )
           )
           val list = Seq(cancelRegistrationSummary)
           Ok(view(orgName, list, routes.CancelRegistrationCYAController.onSubmit))
@@ -62,26 +66,28 @@ class CancelRegistrationCYAController @Inject()(
       }
   }
 
-  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(CancelRegistration).async { implicit request =>
-    withRequiredUserAnswers match {
-      case Right(_) =>
-        val subscription = request.subscription
-        val userAnswers = request.userAnswers
-        submitUserAnswers(userAnswers, subscription)
-      case Left(call) => Future.successful(Redirect(call))
+  def onSubmit: Action[AnyContent] =
+    controllerActions.withRequiredJourneyData(CancelRegistration).async { implicit request =>
+      withRequiredUserAnswers match {
+        case Right(_) =>
+          val subscription = request.subscription
+          val userAnswers = request.userAnswers
+          submitUserAnswers(userAnswers, subscription)
+        case Left(call) => Future.successful(Redirect(call))
+      }
     }
-  }
 
-  private def submitUserAnswers(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit request: DataRequest[AnyContent]):Future[Result]  = {
+  private def submitUserAnswers(userAnswers: UserAnswers, subscription: RetrievedSubscription)(implicit
+    request: DataRequest[AnyContent]
+  ): Future[Result] =
     cancelRegistrationOrchestrator.submitVariationAndUpdateSession(subscription, userAnswers).value.flatMap {
-      case Right(_) => Future.successful(
-        Redirect(routes.CancellationRequestDoneController.onPageLoad().url))
-      case Left(_) => genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to cancel registration")
+      case Right(_) => Future.successful(Redirect(routes.CancellationRequestDoneController.onPageLoad().url))
+      case Left(_) =>
+        genericLogger.logger.error(s"${getClass.getName} - ${request.userAnswers.id} - failed to cancel registration")
         errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
     }
-  }
 
-  private def withRequiredUserAnswers(implicit request: DataRequest[AnyContent]): Either[Call, Unit] = {
+  private def withRequiredUserAnswers(implicit request: DataRequest[AnyContent]): Either[Call, Unit] =
     (request.userAnswers.get(CancelRegistrationDatePage), request.userAnswers.get(ReasonPage)) match {
       case (None, None) =>
         Left(controllers.routes.SelectChangeController.onPageLoad)
@@ -91,5 +97,4 @@ class CancelRegistrationCYAController @Inject()(
         Left(routes.CancelRegistrationDateController.onPageLoad(NormalMode))
       case _ => Right((): Unit)
     }
-  }
 }

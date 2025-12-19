@@ -18,7 +18,7 @@ package pages.changeActivity
 
 import controllers.changeActivity.routes
 import play.api.libs.json.JsPath
-import models.{LitresInBands, Mode}
+import models.{ LitresInBands, Mode }
 import pages.QuestionPage
 
 case object HowManyContractPackingPage extends QuestionPage[LitresInBands] {

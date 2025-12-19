@@ -30,7 +30,7 @@ class SelectChangeViewSpec extends ViewSpecHelper {
   val view: SelectChangeView = application.injector.instanceOf[SelectChangeView]
   val formProvider = new SelectChangeFormProvider
   val form: Form[SelectChange] = formProvider.apply()
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-fieldset__heading"
@@ -46,9 +46,9 @@ class SelectChangeViewSpec extends ViewSpecHelper {
     val form = "form"
   }
 
-  val htmlNoReturns = view(form, hasCorrectableReturns = false)(request, messages(application))
+  val htmlNoReturns = view(form, hasCorrectableReturns = false)(using request, messages(application))
   val documentNoReturns = doc(htmlNoReturns)
-  val htmlWithReturns = view(form, hasCorrectableReturns = true)(request, messages(application))
+  val htmlWithReturns = view(form, hasCorrectableReturns = true)(using request, messages(application))
   val documentWithReturns = doc(htmlWithReturns)
 
   "View" - {
@@ -118,7 +118,7 @@ class SelectChangeViewSpec extends ViewSpecHelper {
     }
 
     SelectChange.values.foreach { radio =>
-      val html1 = view(form.fill(radio), true)(request, messages(application))
+      val html1 = view(form.fill(radio), true)(using request, messages(application))
       val document1 = doc(html1)
 
       s"when the form is preoccupied with " + radio.toString + "selected and has no errors" - {
@@ -156,15 +156,16 @@ class SelectChangeViewSpec extends ViewSpecHelper {
     }
 
     "contains a form with the correct action" in {
-      val htmlAllSelected = view(form.fill(SelectChange.values.head), true)(request, messages(application))
+      val htmlAllSelected = view(form.fill(SelectChange.values.head), true)(using request, messages(application))
       val documentAllSelected = doc(htmlAllSelected)
 
-      documentAllSelected.select(Selectors.form)
+      documentAllSelected
+        .select(Selectors.form)
         .attr("action") mustEqual routes.SelectChangeController.onSubmit.url
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), true)(request, messages(application))
+      val htmlWithErrors = view(form.bind(Map("value" -> "")), true)(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {

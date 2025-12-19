@@ -18,11 +18,13 @@ package views.summary.correctReturn
 
 import base.SpecBase
 import models.submission.Litreage
-import models.{NormalMode, SmallProducer}
+import models.{ NormalMode, SmallProducer }
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 
 class SmallProducerDetailsSummarySpec extends SpecBase {
-  override val smallProducerList: List[SmallProducer] = List(SmallProducer("Super Cola Plc", "XCSDIL000000069", Litreage(20, 10)))
+  override val smallProducerList: List[SmallProducer] = List(
+    SmallProducer("Super Cola Plc", "XCSDIL000000069", Litreage(20, 10))
+  )
   lazy val smallProducerListWithTwoProducers: List[SmallProducer] = List(
     SmallProducer("Super Cola Plc", "XCSDIL000000069", Litreage(20, 10)),
     SmallProducer("Soft Juice", "XMSDIL000000113", Litreage(25, 80))
@@ -44,7 +46,8 @@ class SmallProducerDetailsSummarySpec extends SpecBase {
     "should return a summary list row with the correct information and action links" in {
       val userAnswersWithSmallProducers = emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducerList)
 
-      val smallProducerDetailsSummaryRow = SmallProducerDetailsSummary.producerList(NormalMode, userAnswersWithSmallProducers.smallProducerList)
+      val smallProducerDetailsSummaryRow =
+        SmallProducerDetailsSummary.producerList(NormalMode, userAnswersWithSmallProducers.smallProducerList)
       val rowActionListItems = smallProducerDetailsSummaryRow.rows.head.actions.toList.head.items
 
       smallProducerDetailsSummaryRow.rows.head.key.content.asHtml.toString mustBe "XCSDIL000000069"
@@ -57,22 +60,27 @@ class SmallProducerDetailsSummarySpec extends SpecBase {
 
   "row should contain the same number of rows as the number of small producers" - {
     "should have 2 rows" in {
-    val userAnswersWith2SmallProducers = emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducerListWithTwoProducers)
-    val smallProducerDetailsSummaryRow = SmallProducerDetailsSummary.producerList(NormalMode, userAnswersWith2SmallProducers.smallProducerList)
+      val userAnswersWith2SmallProducers =
+        emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducerListWithTwoProducers)
+      val smallProducerDetailsSummaryRow =
+        SmallProducerDetailsSummary.producerList(NormalMode, userAnswersWith2SmallProducers.smallProducerList)
 
-    smallProducerDetailsSummaryRow.rows.size mustBe 2
+      smallProducerDetailsSummaryRow.rows.size mustBe 2
     }
 
     "should have 1 row" in {
       val userAnswersWithSmallProducers = emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducerList)
-      val smallProducerDetailsSummaryRow = SmallProducerDetailsSummary.producerList(NormalMode, userAnswersWithSmallProducers.smallProducerList)
+      val smallProducerDetailsSummaryRow =
+        SmallProducerDetailsSummary.producerList(NormalMode, userAnswersWithSmallProducers.smallProducerList)
 
       smallProducerDetailsSummaryRow.rows.size mustBe 1
     }
 
     "should have 3 rows" in {
-      val userAnswersWith3SmallProducers = emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducerListWithThreeProducers)
-      val smallProducerDetailsSummaryRow = SmallProducerDetailsSummary.producerList(NormalMode, userAnswersWith3SmallProducers.smallProducerList)
+      val userAnswersWith3SmallProducers =
+        emptyUserAnswersForCorrectReturn.copy(smallProducerList = smallProducerListWithThreeProducers)
+      val smallProducerDetailsSummaryRow =
+        SmallProducerDetailsSummary.producerList(NormalMode, userAnswersWith3SmallProducers.smallProducerList)
 
       smallProducerDetailsSummaryRow.rows.size mustBe 3
     }

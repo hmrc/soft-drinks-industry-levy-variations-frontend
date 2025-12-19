@@ -20,7 +20,7 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.HowManyLitresFormProvider
 import models.SelectChange.ChangeActivity
-import models.{LitresInBands, NormalMode}
+import models.{ LitresInBands, NormalMode }
 import navigation._
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -44,7 +44,8 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
   val formProvider = new HowManyLitresFormProvider
   val form = formProvider()
 
-  lazy val howManyOperatePackagingSiteOwnBrandsRoute = routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
+  lazy val howManyOperatePackagingSiteOwnBrandsRoute =
+    routes.HowManyOperatePackagingSiteOwnBrandsController.onPageLoad(NormalMode).url
 
   "HowManyOperatePackagingSiteOwnBrands Controller" - {
 
@@ -60,13 +61,16 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
         val view = application.injector.instanceOf[HowManyOperatePackagingSiteOwnBrandsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(using request, messages(application)).toString
       }
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
-      val userAnswers = emptyUserAnswersForChangeActivity.set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 200)).success.value
+      val userAnswers = emptyUserAnswersForChangeActivity
+        .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(100, 200))
+        .success
+        .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -78,7 +82,10 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(LitresInBands(100, 200)), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(LitresInBands(100, 200)), NormalMode)(
+          request,
+          messages(application)
+        ).toString
       }
     }
 
@@ -86,7 +93,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
 
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
@@ -124,7 +131,7 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -134,12 +141,13 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
 
     "must fail if the setting of userAnswers fails" in {
 
-      val application = applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(ChangeActivity))).build()
+      val application =
+        applicationBuilder(userAnswers = Some(userDetailsWithSetMethodsReturningFailure(ChangeActivity))).build()
 
       running(application) {
         val request =
           FakeRequest(POST, howManyOperatePackagingSiteOwnBrandsRoute)
-        .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
+            .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
 
         val result = route(application, request).value
 
@@ -152,27 +160,29 @@ class HowManyOperatePackagingSiteOwnBrandsControllerSpec extends SpecBase with M
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForChangeActivity))
           .overrides(
-            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity (onwardRoute)),
+            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
-          ).build()
+          )
+          .build()
 
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request =
             FakeRequest(POST, howManyOperatePackagingSiteOwnBrandsRoute)
-          .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
+              .withFormUrlEncodedBody(("litres.lowBand", "1000"), ("litres.highBand", "2000"))
 
           await(route(application, request).value)
-          events.collectFirst {
-            case event =>
+          events
+            .collectFirst { case event =>
               event.getLevel.levelStr mustBe "ERROR"
               event.getMessage mustEqual "Failed to set value in session repository while attempting set on howManyOperatePackagingSiteOwnBrands"
-          }.getOrElse(fail("No logging captured"))
+            }
+            .getOrElse(fail("No logging captured"))
         }
       }
     }

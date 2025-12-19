@@ -1,40 +1,36 @@
 package testSupport
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock.{configureFor, reset, resetAllScenarios}
+import com.github.tomakehurst.wiremock.client.WireMock.{ configureFor, reset, resetAllScenarios }
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import controllers.actions._
 import models.UserAnswers
 import org.mongodb.scala.bson.BsonDocument
-import org.scalatest.concurrent.{IntegrationPatience, PatienceConfiguration}
-import org.scalatest.time.{Millis, Seconds, Span}
-import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach, Suite, TestSuite}
+import org.scalatest.concurrent.{ IntegrationPatience, PatienceConfiguration }
+import org.scalatest.time.{ Millis, Seconds, Span }
+import org.scalatest.{ BeforeAndAfterAll, BeforeAndAfterEach, Suite, TestSuite }
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
-import play.api.i18n.{Lang, MessagesApi, MessagesImpl}
+import play.api.i18n.{ Lang, MessagesApi, MessagesImpl }
 import play.api.inject._
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{CookieHeaderEncoding, MessagesControllerComponents, Session, SessionCookieBaker}
-import play.api.test.Helpers.{await, defaultAwaitTimeout}
-import play.api.{Application, Environment, Mode, Play}
-import repositories.{SDILSessionCache, SDILSessionCacheRepository, SessionRepository}
+import play.api.mvc.{ CookieHeaderEncoding, MessagesControllerComponents, Session, SessionCookieBaker }
+import play.api.test.Helpers.{ await, defaultAwaitTimeout }
+import play.api.{ Application, Environment, Mode, Play }
+import repositories.{ SDILSessionCache, SDILSessionCacheRepository, SessionRepository }
 import testSupport.databases.SessionDatabaseOperations
 import uk.gov.hmrc.crypto.PlainText
 import uk.gov.hmrc.play.bootstrap.frontend.filters.crypto.SessionCookieCrypto
 
-import java.time.{Clock, ZoneOffset}
+import java.time.{ Clock, ZoneOffset }
 import java.util.concurrent.TimeUnit
 import scala.concurrent.duration.Duration
-import scala.concurrent.{Await, ExecutionContext}
+import scala.concurrent.{ Await, ExecutionContext }
 import scala.jdk.CollectionConverters._
 import org.mongodb.scala.SingleObservableFuture
 
 trait TestConfiguration
-  extends GuiceOneServerPerSuite
-    with IntegrationPatience
-    with PatienceConfiguration
-    with BeforeAndAfterEach
-    with BeforeAndAfterAll
-    with SessionDatabaseOperations {
+    extends GuiceOneServerPerSuite with IntegrationPatience with PatienceConfiguration with BeforeAndAfterEach
+    with BeforeAndAfterAll with SessionDatabaseOperations {
 
   me: Suite with TestSuite =>
 
@@ -66,7 +62,7 @@ trait TestConfiguration
     cookieHeaderEncoding.encodeCookieHeader(Seq(encryptedSessionCookie))
   }
   val authData = Map("authToken" -> AUTHORIZE_HEADER_VALUE)
-  val sessionAndAuth  = Map("authToken" -> AUTHORIZE_HEADER_VALUE, "sessionId" -> sessionId)
+  val sessionAndAuth = Map("authToken" -> AUTHORIZE_HEADER_VALUE, "sessionId" -> sessionId)
 
   lazy val sessionRespository: SessionRepository = app.injector.instanceOf[SessionRepository]
   lazy val sdilSessionCacheRepo: SDILSessionCacheRepository = app.injector.instanceOf[SDILSessionCacheRepository]
@@ -76,32 +72,30 @@ trait TestConfiguration
   val authAndSessionCookie: String = createSessionCookieAsString(sessionAndAuth).substring(5)
 
   abstract override implicit val patienceConfig: PatienceConfig =
-    PatienceConfig(
-      timeout = Span(5, Seconds),
-      interval = Span(50, Millis))
+    PatienceConfig(timeout = Span(5, Seconds), interval = Span(50, Millis))
 
-   lazy val config = Map(
-    s"microservice.services.address-lookup-frontend.host" -> s"$wiremockHost",
-    s"microservice.services.address-lookup-frontend.port" -> s"$wiremockPort",
-    s"microservice.services.auth.host" -> s"$wiremockHost",
-    s"microservice.services.auth.port" -> s"$wiremockPort",
-    s"microservice.services.bas-gateway.host" -> s"$wiremockHost",
-    s"microservice.services.bas-gateway.port" -> s"$wiremockPort",
-    s"microservice.services.soft-drinks-industry-levy.host" -> s"$wiremockHost",
-    s"microservice.services.soft-drinks-industry-levy.port" -> s"$wiremockPort",
+  lazy val config = Map(
+    s"microservice.services.address-lookup-frontend.host"     -> s"$wiremockHost",
+    s"microservice.services.address-lookup-frontend.port"     -> s"$wiremockPort",
+    s"microservice.services.auth.host"                        -> s"$wiremockHost",
+    s"microservice.services.auth.port"                        -> s"$wiremockPort",
+    s"microservice.services.bas-gateway.host"                 -> s"$wiremockHost",
+    s"microservice.services.bas-gateway.port"                 -> s"$wiremockPort",
+    s"microservice.services.soft-drinks-industry-levy.host"   -> s"$wiremockHost",
+    s"microservice.services.soft-drinks-industry-levy.port"   -> s"$wiremockPort",
     "play.filters.csrf.header.bypassHeaders.X-Requested-With" -> "*",
-    "play.filters.csrf.header.bypassHeaders.Csrf-Token" -> "nocheck",
-    "json.encryption.key" -> "fqpLDZ4sumDsekHkeEBlCA==",
-    "json.encryption.previousKeys" -> "[]",
-    "play.http.router" -> "testOnlyDoNotUseInAppConf.Routes",
-    "addressLookupFrontendTest.enabled" -> "false"
+    "play.filters.csrf.header.bypassHeaders.Csrf-Token"       -> "nocheck",
+    "json.encryption.key"                                     -> "fqpLDZ4sumDsekHkeEBlCA==",
+    "json.encryption.previousKeys"                            -> "[]",
+    "play.http.router"                                        -> "testOnlyDoNotUseInAppConf.Routes",
+    "addressLookupFrontendTest.enabled"                       -> "false"
   )
 
   override implicit lazy val app: Application = appBuilder().build()
 
   def configParams: Map[String, Any] = Map()
 
-  protected def appBuilder(): GuiceApplicationBuilder = {
+  protected def appBuilder(): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .in(Environment.simple(mode = Mode.Dev))
       .configure(config ++ configParams)
@@ -110,10 +104,8 @@ trait TestConfiguration
         bind[IdentifierAction].to[AuthenticatedIdentifierAction],
         bind[Clock].toInstance(Clock.systemDefaultZone().withZone(ZoneOffset.UTC))
       )
-  }
 
-
-  def setUpData(userAnswers: UserAnswers): Unit  ={
+  def setUpData(userAnswers: UserAnswers): Unit = {
     val res = sessionRespository.set(userAnswers)
     await(res)
   }
@@ -126,8 +118,8 @@ trait TestConfiguration
   }
 
   override def beforeEach(): Unit = {
-    Await.result(sessionRespository.collection.deleteMany(BsonDocument()).toFuture(),Duration(3,TimeUnit.SECONDS))
-    Await.result(sdilSessionCacheRepo.collection.deleteMany(BsonDocument()).toFuture(),Duration(3,TimeUnit.SECONDS))
+    Await.result(sessionRespository.collection.deleteMany(BsonDocument()).toFuture(), Duration(3, TimeUnit.SECONDS))
+    Await.result(sdilSessionCacheRepo.collection.deleteMany(BsonDocument()).toFuture(), Duration(3, TimeUnit.SECONDS))
     resetAllScenarios()
     reset()
 
@@ -138,13 +130,13 @@ trait TestConfiguration
     Play.stop(app)
   }
 
-  override def afterEach(): Unit = {
-    if(false) {
+  override def afterEach(): Unit =
+    if (false) {
       wireMockServer.getAllServeEvents.asScala.toList
         .sortBy(_.getRequest.getLoggedDate)
-        .map(_.getRequest).foreach(r => s"${r.getLoggedDate.toInstant.toEpochMilli}\t${r.getMethod}\t${r.getUrl}")
+        .map(_.getRequest)
+        .foreach(r => s"${r.getLoggedDate.toInstant.toEpochMilli}\t${r.getMethod}\t${r.getUrl}")
     }
-  }
 
   lazy val messagesAPI: MessagesApi = app.injector.instanceOf[MessagesApi]
   lazy val messagesProvider: MessagesImpl = MessagesImpl(Lang("en"), messagesAPI)
