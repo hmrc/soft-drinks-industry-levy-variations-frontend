@@ -18,13 +18,13 @@ package views.correctReturn
 
 import controllers.correctReturn.routes
 import forms.correctReturn.PackagingSiteDetailsFormProvider
-import models.backend.{Site, UkAddress}
-import models.{CheckMode, NormalMode}
+import models.backend.{ Site, UkAddress }
+import models.{ CheckMode, NormalMode }
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import uk.gov.hmrc.govukfrontend.views.Aliases.{HtmlContent, SummaryList, SummaryListRow, Value}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{ HtmlContent, SummaryList, SummaryListRow, Value }
 import viewmodels.govuk.SummaryListFluency
 import views.ViewSpecHelper
 import views.html.correctReturn.PackagingSiteDetailsView
@@ -37,7 +37,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper with SummaryListFluenc
   val view: PackagingSiteDetailsView = application.injector.instanceOf[PackagingSiteDetailsView]
   val formProvider = new PackagingSiteDetailsFormProvider
   val form: Form[Boolean] = formProvider.apply()
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-heading-l"
@@ -54,7 +54,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper with SummaryListFluenc
   }
 
   "View" - {
-    val html = view(form, NormalMode, SummaryList())(request, messages(application))
+    val html = view(form, NormalMode, SummaryList())(using request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
       document.title() mustBe "You added 0 UK packaging sites - Soft Drinks Industry Levy - GOV.UK"
@@ -107,7 +107,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper with SummaryListFluenc
     }
 
     "when the form is preoccupied with yes and has no errors" - {
-      val html1 = view(form.fill(true), NormalMode, SummaryList())(request, messages(application))
+      val html1 = view(form.fill(true), NormalMode, SummaryList())(using request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -142,7 +142,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper with SummaryListFluenc
     }
 
     "when the form is preoccupied with no and has no errors" - {
-      val html1 = view(form.fill(false), NormalMode, SummaryList())(request, messages(application))
+      val html1 = view(form.fill(false), NormalMode, SummaryList())(using request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -182,42 +182,47 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper with SummaryListFluenc
 
     "contains a form with the correct action" - {
       "when in CheckMode" - {
-        val htmlYesSelected = view(form.fill(true), CheckMode, SummaryList())(request, messages(application))
+        val htmlYesSelected = view(form.fill(true), CheckMode, SummaryList())(using request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), CheckMode, SummaryList())(request, messages(application))
+        val htmlNoSelected = view(form.fill(false), CheckMode, SummaryList())(using request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
-          documentYesSelected.select(Selectors.form)
+          documentYesSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.PackagingSiteDetailsController.onSubmit(CheckMode).url
         }
 
         "and no is selected" in {
-          documentNoSelected.select(Selectors.form)
+          documentNoSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.PackagingSiteDetailsController.onSubmit(CheckMode).url
         }
       }
 
       "when in NormalMode" - {
-        val htmlYesSelected = view(form.fill(true), NormalMode, SummaryList())(request, messages(application))
+        val htmlYesSelected = view(form.fill(true), NormalMode, SummaryList())(using request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), NormalMode, SummaryList())(request, messages(application))
+        val htmlNoSelected = view(form.fill(false), NormalMode, SummaryList())(using request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
-          documentYesSelected.select(Selectors.form)
+          documentYesSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.PackagingSiteDetailsController.onSubmit(NormalMode).url
         }
 
         "and no is selected" in {
-          documentNoSelected.select(Selectors.form)
+          documentNoSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.PackagingSiteDetailsController.onSubmit(NormalMode).url
         }
       }
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode, SummaryList())(request, messages(application))
+      val htmlWithErrors =
+        view(form.bind(Map("value" -> "")), NormalMode, SummaryList())(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
@@ -246,27 +251,32 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper with SummaryListFluenc
       UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
       Some("Wild Lemonade Group"),
       Some("88"),
-      Some(LocalDate.of(2018, 2, 26)))
+      Some(LocalDate.of(2018, 2, 26))
+    )
     lazy val pSite2 = Site(
       UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
       None,
       Some("88"),
-      Some(LocalDate.of(2018, 2, 26)))
+      Some(LocalDate.of(2018, 2, 26))
+    )
     lazy val packagingSites2 = Map("000001" -> pSite, "00002" -> pSite2)
     lazy val packagingSites = Map("00213" -> pSite)
 
-
-    val html1 = view(form.fill(true), NormalMode, SummaryList())(request, messages(application))
+    val html1 = view(form.fill(true), NormalMode, SummaryList())(using request, messages(application))
     val document1 = doc(html1)
     val heading1 = document1.getElementsByClass("govuk-heading-l").get(0).text()
-    val html2 = view(form.fill(true), NormalMode, SummaryListViewModel(
-      rows = PackagingSiteDetailsSummary.row2(packagingSites, NormalMode))
-    )(request, messages(application))
+    val html2 = view(
+      form.fill(true),
+      NormalMode,
+      SummaryListViewModel(rows = PackagingSiteDetailsSummary.row2(packagingSites, NormalMode))
+    )(using request, messages(application))
     val document2 = doc(html2)
     val heading2 = document2.getElementsByClass("govuk-heading-l").get(0).text()
-    val html3 = view(form.fill(true), NormalMode, SummaryListViewModel(
-      rows = PackagingSiteDetailsSummary.row2(packagingSites2, NormalMode))
-    )(request, messages(application))
+    val html3 = view(
+      form.fill(true),
+      NormalMode,
+      SummaryListViewModel(rows = PackagingSiteDetailsSummary.row2(packagingSites2, NormalMode))
+    )(using request, messages(application))
     val document3 = doc(html3)
     val heading3 = document3.getElementsByClass("govuk-heading-l").get(0).text()
 
@@ -291,21 +301,28 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper with SummaryListFluenc
     }
 
     "when there is one packaging site only" - {
-      val summaryListWithOneRow = SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("Packaging Site")))))
-      val htmlWithOneSummaryListRow = view(form, NormalMode, summaryListWithOneRow)(request, messages(application))
+      val summaryListWithOneRow =
+        SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("Packaging Site")))))
+      val htmlWithOneSummaryListRow =
+        view(form, NormalMode, summaryListWithOneRow)(using request, messages(application))
       val documentWithOneSummaryListRow = doc(htmlWithOneSummaryListRow)
       val expectedDetails = Map(
-        Messages("correctReturn.packagingSiteDetails.detailsLink") -> Messages("correctReturn.packagingSiteDetails.detailsInfo")
+        Messages("correctReturn.packagingSiteDetails.detailsLink") -> Messages(
+          "correctReturn.packagingSiteDetails.detailsInfo"
+        )
       )
       testDetails(documentWithOneSummaryListRow, expectedDetails)
     }
 
     "when there is more than one packaging site" - {
-      val summaryListWithTwoRows = SummaryList(Seq(
-        SummaryListRow(value = Value(content = HtmlContent("Packaging Site"))),
-        SummaryListRow(value = Value(content = HtmlContent("Another Packaging Site")))
-      ))
-      val htmlWithTwoSummaryListRows = view(form, NormalMode, summaryListWithTwoRows)(request, messages(application))
+      val summaryListWithTwoRows = SummaryList(
+        Seq(
+          SummaryListRow(value = Value(content = HtmlContent("Packaging Site"))),
+          SummaryListRow(value = Value(content = HtmlContent("Another Packaging Site")))
+        )
+      )
+      val htmlWithTwoSummaryListRows =
+        view(form, NormalMode, summaryListWithTwoRows)(using request, messages(application))
       val documentWithTwoSummaryListRows = doc(htmlWithTwoSummaryListRows)
       testDetails(documentWithTwoSummaryListRows, Map.empty)
     }

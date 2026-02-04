@@ -24,55 +24,60 @@ import models.Mode
 import navigation._
 import pages.correctReturn.AskSecondaryWarehouseInReturnPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{AddressLookupService, SessionService, WarehouseDetails}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
+import services.{ AddressLookupService, SessionService, WarehouseDetails }
 import utilities.GenericLogger
 import views.html.correctReturn.AskSecondaryWarehouseInReturnView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class AskSecondaryWarehouseInReturnController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       val sessionService: SessionService,
-                                       val navigator: NavigatorForCorrectReturn,
-                                       controllerActions: ControllerActions,
-                                       formProvider: AskSecondaryWarehouseInReturnFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: AskSecondaryWarehouseInReturnView,
-                                       addressLookupService: AddressLookupService,
-                                       val genericLogger: GenericLogger,
-                                       val errorHandler: ErrorHandler
-                                     )(implicit val ec: ExecutionContext) extends ControllerHelper {
+class AskSecondaryWarehouseInReturnController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForCorrectReturn,
+  controllerActions: ControllerActions,
+  formProvider: AskSecondaryWarehouseInReturnFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: AskSecondaryWarehouseInReturnView,
+  addressLookupService: AddressLookupService,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData { implicit request =>
 
-      val preparedForm = request.userAnswers.get(AskSecondaryWarehouseInReturnPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+    val preparedForm = request.userAnswers.get(AskSecondaryWarehouseInReturnPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
-      Ok(view(preparedForm, mode))
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
-        value =>
-          if (value) {
-            val alsOnRampUrl = updateDatabaseWithoutRedirect(request.userAnswers.set(AskSecondaryWarehouseInReturnPage, value), AskSecondaryWarehouseInReturnPage).flatMap(_ =>
-              addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = mode))
-            alsOnRampUrl.map(Redirect(_))
-          } else {
-            updateDatabaseAndRedirect(request.userAnswers.set(AskSecondaryWarehouseInReturnPage, value), AskSecondaryWarehouseInReturnPage, mode)
-          }
-      )
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value =>
+            if (value) {
+              val alsOnRampUrl = updateDatabaseWithoutRedirect(
+                request.userAnswers.set(AskSecondaryWarehouseInReturnPage, value),
+                AskSecondaryWarehouseInReturnPage
+              ).flatMap(_ => addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = mode))
+              alsOnRampUrl.map(Redirect(_))
+            } else {
+              updateDatabaseAndRedirect(
+                request.userAnswers.set(AskSecondaryWarehouseInReturnPage, value),
+                AskSecondaryWarehouseInReturnPage,
+                mode
+              )
+            }
+        )
   }
 }

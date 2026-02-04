@@ -22,7 +22,7 @@ import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsError, JsString, Json}
+import play.api.libs.json.{ JsError, JsString, Json }
 
 class RepaymentMethodSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues {
 
@@ -32,10 +32,8 @@ class RepaymentMethodSpec extends AnyFreeSpec with Matchers with ScalaCheckPrope
 
       val gen = Gen.oneOf(RepaymentMethod.values.toSeq)
 
-      forAll(gen) {
-        repaymentMethod =>
-
-          JsString(repaymentMethod.toString).validate[RepaymentMethod].asOpt.value mustEqual repaymentMethod
+      forAll(gen) { repaymentMethod =>
+        JsString(repaymentMethod.toString).validate[RepaymentMethod].asOpt.value mustEqual repaymentMethod
       }
     }
 
@@ -43,10 +41,8 @@ class RepaymentMethodSpec extends AnyFreeSpec with Matchers with ScalaCheckPrope
 
       val gen = arbitrary[String] suchThat (!RepaymentMethod.values.map(_.toString).contains(_))
 
-      forAll(gen) {
-        invalidValue =>
-
-          JsString(invalidValue).validate[RepaymentMethod] mustEqual JsError("error.invalid")
+      forAll(gen) { invalidValue =>
+        JsString(invalidValue).validate[RepaymentMethod] mustEqual JsError("error.invalid")
       }
     }
 
@@ -54,10 +50,8 @@ class RepaymentMethodSpec extends AnyFreeSpec with Matchers with ScalaCheckPrope
 
       val gen = Gen.oneOf(RepaymentMethod.values.toSeq)
 
-      forAll(gen) {
-        repaymentMethod =>
-
-          Json.toJson(repaymentMethod) mustEqual JsString(repaymentMethod.toString)
+      forAll(gen) { repaymentMethod =>
+        Json.toJson(repaymentMethod) mustEqual JsString(repaymentMethod.toString)
       }
     }
   }

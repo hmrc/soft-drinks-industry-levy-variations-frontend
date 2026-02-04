@@ -24,50 +24,49 @@ import models.Mode
 import navigation._
 import pages.correctReturn.ExemptionsForSmallProducersPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import services.SessionService
 import utilities.GenericLogger
 import views.html.correctReturn.ExemptionsForSmallProducersView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class ExemptionsForSmallProducersController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       val sessionService: SessionService,
-                                       val navigator: NavigatorForCorrectReturn,
-                                        controllerActions: ControllerActions,
-                                       formProvider: ExemptionsForSmallProducersFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: ExemptionsForSmallProducersView,
-                                       val genericLogger: GenericLogger,
-                                       val errorHandler: ErrorHandler
-                                     )(implicit val ec: ExecutionContext) extends ControllerHelper {
+class ExemptionsForSmallProducersController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForCorrectReturn,
+  controllerActions: ControllerActions,
+  formProvider: ExemptionsForSmallProducersFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: ExemptionsForSmallProducersView,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData { implicit request =>
 
-      val preparedForm = request.userAnswers.get(ExemptionsForSmallProducersPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+    val preparedForm = request.userAnswers.get(ExemptionsForSmallProducersPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
-      Ok(view(preparedForm, mode))
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
-        value => {
-          val updatedAnswers = request.userAnswers.set(ExemptionsForSmallProducersPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, ExemptionsForSmallProducersPage, mode)
-        }
-      )
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value => {
+            val updatedAnswers = request.userAnswers.set(ExemptionsForSmallProducersPage, value)
+            updateDatabaseAndRedirect(updatedAnswers, ExemptionsForSmallProducersPage, mode)
+          }
+        )
   }
 }

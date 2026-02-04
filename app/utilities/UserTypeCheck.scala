@@ -19,20 +19,15 @@ package utilities
 import models.UserAnswers
 import models.backend.RetrievedSubscription
 
-
 object UserTypeCheck {
   def isNewImporter(userAnswers: UserAnswers, subscription: RetrievedSubscription): Boolean = {
     val userIsNotAlreadyAnImporter = !subscription.activity.importer
     val totalImported = userAnswers.getCorrectReturnData.map(_.totalImported)
-    totalImported.fold(false)(imported =>
-      (imported.lower > 0L && imported.higher > 0L) && userIsNotAlreadyAnImporter
-    )
-}
+    totalImported.fold(false)(imported => (imported.lower > 0L && imported.higher > 0L) && userIsNotAlreadyAnImporter)
+  }
   def isNewPacker(userAnswers: UserAnswers, subscription: RetrievedSubscription): Boolean = {
     val userIsNotAlreadyAPacker = !subscription.activity.contractPacker
     val totalPacked = userAnswers.getCorrectReturnData.map(_.totalPacked(userAnswers.smallProducerList))
-    totalPacked.fold(false)(packed =>
-      (packed.lower > 0L && packed.higher > 0L) && userIsNotAlreadyAPacker
-    )
+    totalPacked.fold(false)(packed => (packed.lower > 0L && packed.higher > 0L) && userIsNotAlreadyAPacker)
   }
 }

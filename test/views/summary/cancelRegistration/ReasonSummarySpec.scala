@@ -16,7 +16,7 @@
 
 package views.summary.cancelRegistration
 
-import models.{SelectChange, UserAnswers}
+import models.{ SelectChange, UserAnswers }
 import base.SpecBase
 import play.api.libs.json.Json
 
@@ -24,8 +24,12 @@ class ReasonSummarySpec extends SpecBase {
 
   "row" - {
     "should return a summary list row with the appropriate cancellation reason if an answer has been added" in {
-      val userAnswersWithCancelReason = UserAnswers(sdilNumber, SelectChange.CancelRegistration,
-        Json.obj("cancelRegistration" -> Json.obj("reason" -> "incorrectly registered")), contactAddress = contactAddress)
+      val userAnswersWithCancelReason = UserAnswers(
+        sdilNumber,
+        SelectChange.CancelRegistration,
+        Json.obj("cancelRegistration" -> Json.obj("reason" -> "incorrectly registered")),
+        contactAddress = contactAddress
+      )
 
       val cancelReasonSummaryRow = ReasonSummary.row(userAnswersWithCancelReason)
 

@@ -16,15 +16,11 @@
 
 package models.backend
 
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{ Format, Json }
 
-
-case class UkAddress(lines: List[String],
-                     postCode: String,
-                     alfId: Option[String] = None) {
-  def isSame(address: UkAddress): Boolean = {
+case class UkAddress(lines: List[String], postCode: String, alfId: Option[String] = None) {
+  def isSame(address: UkAddress): Boolean =
     lines.head == address.lines.head && postCode == address.postCode
-  }
 }
 
 object UkAddress {

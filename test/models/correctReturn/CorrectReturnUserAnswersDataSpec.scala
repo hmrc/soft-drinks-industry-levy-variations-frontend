@@ -17,31 +17,39 @@
 package models.correctReturn
 
 import models.submission.Litreage
-import models.{LitresInBands, SdilReturn, SmallProducer}
+import models.{ LitresInBands, SdilReturn, SmallProducer }
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 
 class CorrectReturnUserAnswersDataSpec extends AnyFreeSpec with Matchers {
 
   "CorrectReturnUserAnswersData" - {
-    val correctReturnDataAllNo = CorrectReturnUserAnswersData(
-      false, None, false, None, false, false, None, false,
-      None, false, None, false, None)
+    val correctReturnDataAllNo =
+      CorrectReturnUserAnswersData(false, None, false, None, false, false, None, false, None, false, None, false, None)
     val litresInBands = LitresInBands(100, 200)
     val correctReturnDataAllYes = CorrectReturnUserAnswersData(
-      true, Some(litresInBands), true, Some(litresInBands), true, true,
-      Some(litresInBands), true, Some(litresInBands), true, Some(litresInBands),
-      true, Some(litresInBands))
+      true,
+      Some(litresInBands),
+      true,
+      Some(litresInBands),
+      true,
+      true,
+      Some(litresInBands),
+      true,
+      Some(litresInBands),
+      true,
+      Some(litresInBands),
+      true,
+      Some(litresInBands)
+    )
     val litreage0 = Litreage(0, 0)
     val litreageOneItem = Litreage(100, 200)
     val smallProducer = SmallProducer("", "", litreageOneItem)
 
-
     "fromSdilReturn" - {
       "when the sdilReturn has all 0 values" - {
         "must return a correctReturnData model with None LitresInBands and all false" in {
-          val sdilReturn = SdilReturn(litreage0, litreage0, List(),
-            litreage0, litreage0, litreage0, litreage0, None)
+          val sdilReturn = SdilReturn(litreage0, litreage0, List(), litreage0, litreage0, litreage0, litreage0, None)
 
           val res = CorrectReturnUserAnswersData.fromSdilReturn(sdilReturn)
           res mustBe correctReturnDataAllNo
@@ -50,8 +58,16 @@ class CorrectReturnUserAnswersDataSpec extends AnyFreeSpec with Matchers {
 
       "when the sdilReturn has all litreage values" - {
         "must return a correctReturnData model with None LitresInBands and all false" in {
-          val sdilReturn = SdilReturn(litreageOneItem, litreageOneItem, List(smallProducer),
-            litreageOneItem, litreageOneItem, litreageOneItem, litreageOneItem, None)
+          val sdilReturn = SdilReturn(
+            litreageOneItem,
+            litreageOneItem,
+            List(smallProducer),
+            litreageOneItem,
+            litreageOneItem,
+            litreageOneItem,
+            litreageOneItem,
+            None
+          )
 
           val res = CorrectReturnUserAnswersData.fromSdilReturn(sdilReturn)
           res mustBe correctReturnDataAllYes

@@ -18,7 +18,7 @@ package views.summary.changeActivity
 
 import base.SpecBase
 import models.LitresInBands
-import pages.changeActivity.{ContractPackingPage, HowManyContractPackingPage}
+import pages.changeActivity.{ ContractPackingPage, HowManyContractPackingPage }
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
 
@@ -29,8 +29,12 @@ class ContractPackingSummarySpec extends SpecBase {
     val highLitres = 2000
     s"should return correct elements when passed in with TRUE and litres provided and check answers is true" in {
       val userAnswers = emptyUserAnswersForChangeActivity
-        .set(ContractPackingPage, true).success.value
-        .set(HowManyContractPackingPage, LitresInBands(lowLitres, highLitres)).success.value
+        .set(ContractPackingPage, true)
+        .success
+        .value
+        .set(HowManyContractPackingPage, LitresInBands(lowLitres, highLitres))
+        .success
+        .value
 
       val res = ContractPackingSummary.summaryListWithoutBandLevyRows(userAnswers, isCheckAnswers = true)
       res.rows.head.key.content.asHtml mustBe Html("Package for customers at your own sites?")
@@ -45,7 +49,13 @@ class ContractPackingSummarySpec extends SpecBase {
       res.rows(1).key.classes mustBe ""
       res.rows(1).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(lowLitres))
       res.rows(1).value.classes.trim mustBe "sdil-right-align--desktop"
-      res.rows(1).actions.head.items.head.href mustBe "/soft-drinks-industry-levy-variations-frontend/change-activity/change-how-many-contract-packing-next-12-months"
+      res
+        .rows(1)
+        .actions
+        .head
+        .items
+        .head
+        .href mustBe "/soft-drinks-industry-levy-variations-frontend/change-activity/change-how-many-contract-packing-next-12-months"
       res.rows(1).actions.head.items.head.attributes mustBe Map("id" -> "change-lowband-litreage-contractPacking")
       res.rows(1).actions.head.items.head.content.asHtml mustBe Html("Change")
 
@@ -53,18 +63,32 @@ class ContractPackingSummarySpec extends SpecBase {
 
       res.rows(highLitresRowIndex).key.content.asHtml mustBe Html("Litres in the high band")
       res.rows(highLitresRowIndex).key.classes mustBe ""
-      res.rows(highLitresRowIndex).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(highLitres))
+      res.rows(highLitresRowIndex).value.content.asHtml mustBe Html(
+        java.text.NumberFormat.getInstance.format(highLitres)
+      )
       res.rows(highLitresRowIndex).value.classes.trim mustBe "sdil-right-align--desktop"
-      res.rows(highLitresRowIndex).actions.head.items.head.href mustBe "/soft-drinks-industry-levy-variations-frontend/change-activity/change-how-many-contract-packing-next-12-months"
-      res.rows(highLitresRowIndex).actions.head.items.head.attributes mustBe Map("id" -> "change-highband-litreage-contractPacking")
+      res
+        .rows(highLitresRowIndex)
+        .actions
+        .head
+        .items
+        .head
+        .href mustBe "/soft-drinks-industry-levy-variations-frontend/change-activity/change-how-many-contract-packing-next-12-months"
+      res.rows(highLitresRowIndex).actions.head.items.head.attributes mustBe Map(
+        "id" -> "change-highband-litreage-contractPacking"
+      )
       res.rows(highLitresRowIndex).actions.head.items.head.content.asHtml mustBe Html("Change")
 
       res.rows.size mustBe 3
     }
     s"should return correct elements when passed in with TRUE and litres provided and check answers is false" in {
       val userAnswers = emptyUserAnswersForChangeActivity
-        .set(ContractPackingPage, true).success.value
-        .set(HowManyContractPackingPage, LitresInBands(lowLitres, highLitres)).success.value
+        .set(ContractPackingPage, true)
+        .success
+        .value
+        .set(HowManyContractPackingPage, LitresInBands(lowLitres, highLitres))
+        .success
+        .value
 
       val res = ContractPackingSummary.summaryListWithoutBandLevyRows(userAnswers, isCheckAnswers = false)
       res.rows.head.key.content.asHtml mustBe Html("Package for customers at your own sites?")
@@ -83,7 +107,9 @@ class ContractPackingSummarySpec extends SpecBase {
 
       res.rows(highLitresRowIndex).key.content.asHtml mustBe Html("Litres in the high band")
       res.rows(highLitresRowIndex).key.classes mustBe ""
-      res.rows(highLitresRowIndex).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(highLitres))
+      res.rows(highLitresRowIndex).value.content.asHtml mustBe Html(
+        java.text.NumberFormat.getInstance.format(highLitres)
+      )
       res.rows(highLitresRowIndex).value.classes.trim mustBe "sdil-right-align--desktop"
       res.rows(highLitresRowIndex).actions mustBe None
 
@@ -91,7 +117,9 @@ class ContractPackingSummarySpec extends SpecBase {
     }
     s"should return correct elements when passed in with FALSE and NO litres provided" in {
       val userAnswers = emptyUserAnswersForChangeActivity
-        .set(ContractPackingPage, false).success.value
+        .set(ContractPackingPage, false)
+        .success
+        .value
 
       val res = ContractPackingSummary.summaryListWithoutBandLevyRows(userAnswers, isCheckAnswers = true)
       res.rows.head.key.content.asHtml mustBe Html("Package for customers at your own sites?")

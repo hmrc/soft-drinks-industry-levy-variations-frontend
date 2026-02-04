@@ -19,8 +19,8 @@ package controllers.actions
 import base.SpecBase
 import errors.SessionDatabaseGetError
 import handlers.ErrorHandler
-import models.requests.{IdentifierRequest, OptionalDataRequest}
-import models.{SelectChange, UserAnswers}
+import models.requests.{ IdentifierRequest, OptionalDataRequest }
+import models.{ SelectChange, UserAnswers }
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
@@ -34,7 +34,8 @@ import scala.concurrent.Future
 
 class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
 
-  class Harness(sessionService: SessionService, errorHandler: ErrorHandler) extends DataRetrievalActionImpl(sessionService, errorHandler) {
+  class Harness(sessionService: SessionService, errorHandler: ErrorHandler)
+      extends DataRetrievalActionImpl(sessionService, errorHandler) {
     def callRefine[A](request: IdentifierRequest[A]): Future[Either[Result, OptionalDataRequest[A]]] = refine(request)
   }
 
@@ -46,7 +47,7 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
 
         val sessionService = mock[SessionService]
         val errorHandler = mock[ErrorHandler]
-        when(sessionService.get("id")) thenReturn Future(Right(None))
+        when(sessionService.get("id")).thenReturn(Future(Right(None)))
         val action = new Harness(sessionService, errorHandler)
 
         val result = action.callRefine(IdentifierRequest(FakeRequest(), "id", aSubscription)).futureValue
@@ -61,7 +62,11 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
 
         val sessionService = mock[SessionService]
         val errorHandler = mock[ErrorHandler]
-        when(sessionService.get("id")) thenReturn Future(Right(Some(UserAnswers("id", SelectChange.UpdateRegisteredDetails, contactAddress = contactAddress))))
+        when(sessionService.get("id")).thenReturn(
+          Future(
+            Right(Some(UserAnswers("id", SelectChange.UpdateRegisteredDetails, contactAddress = contactAddress)))
+          )
+        )
         val action = new Harness(sessionService, errorHandler)
 
         val result = action.callRefine(new IdentifierRequest(FakeRequest(), "id", aSubscription)).futureValue
@@ -74,8 +79,8 @@ class DataRetrievalActionSpec extends SpecBase with MockitoSugar {
       "must render the internal error page" in {
         val sessionService = mock[SessionService]
         val errorHandler = mock[ErrorHandler]
-        when(sessionService.get("id")) thenReturn Future(Left(SessionDatabaseGetError))
-        when(errorHandler.internalServerErrorTemplate(any())) thenReturn(Future.successful(Html("error")))
+        when(sessionService.get("id")).thenReturn(Future(Left(SessionDatabaseGetError)))
+        when(errorHandler.internalServerErrorTemplate(any())).thenReturn(Future.successful(Html("error")))
         val action = new Harness(sessionService, errorHandler)
 
         val result = action.callRefine(new IdentifierRequest(FakeRequest(), "id", aSubscription)).futureValue

@@ -21,8 +21,8 @@ import connectors.SoftDrinksIndustryLevyConnector
 import errors.SessionDatabaseInsertError
 import forms.correctReturn.RemovePackagingSiteConfirmFormProvider
 import models.SelectChange.CorrectReturn
-import models.backend.{Site, UkAddress}
-import models.{NormalMode, SdilReturn, UserAnswers}
+import models.backend.{ Site, UkAddress }
+import models.{ NormalMode, SdilReturn, UserAnswers }
 import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -47,18 +47,23 @@ class RemovePackagingSiteConfirmControllerSpec extends SpecBase with MockitoSuga
   val form = formProvider()
 
   val indexOfPackingSiteToBeRemoved: String = "foobar"
-  lazy val packingSiteDetailsRemoveRoute = routes.RemovePackagingSiteConfirmController.onPageLoad(NormalMode, indexOfPackingSiteToBeRemoved).url
-  val addressOfPackingSite: UkAddress = UkAddress(List("foo"),"bar", None)
+  lazy val packingSiteDetailsRemoveRoute =
+    routes.RemovePackagingSiteConfirmController.onPageLoad(NormalMode, indexOfPackingSiteToBeRemoved).url
+  val addressOfPackingSite: UkAddress = UkAddress(List("foo"), "bar", None)
   val packingSiteTradingName: String = "a name for a packing site here"
   val userAnswersWithPackingSite: UserAnswers = emptyUserAnswersForCorrectReturn
-    .copy(packagingSiteList = Map(indexOfPackingSiteToBeRemoved -> Site(addressOfPackingSite, Some(packingSiteTradingName), None, None)))
+    .copy(packagingSiteList =
+      Map(indexOfPackingSiteToBeRemoved -> Site(addressOfPackingSite, Some(packingSiteTradingName), None, None))
+    )
   val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
-  def correctReturnAction(userAnswers: Option[UserAnswers], optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)): GuiceApplicationBuilder = {
+  def correctReturnAction(
+    userAnswers: Option[UserAnswers],
+    optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)
+  ): GuiceApplicationBuilder = {
     when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers)
-      .overrides(
-        bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
+      .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
   }
   "RemovePackagingSiteConfirm Controller" - {
 
@@ -75,8 +80,12 @@ class RemovePackagingSiteConfirmControllerSpec extends SpecBase with MockitoSuga
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(form, NormalMode, AddressFormattingHelper.addressFormatting(addressOfPackingSite,
-            Some(packingSiteTradingName)), indexOfPackingSiteToBeRemoved)(request, messages(application)).toString
+          view(
+            form,
+            NormalMode,
+            AddressFormattingHelper.addressFormatting(addressOfPackingSite, Some(packingSiteTradingName)),
+            indexOfPackingSiteToBeRemoved
+          )(using request, messages(application)).toString
       }
     }
 
@@ -84,7 +93,7 @@ class RemovePackagingSiteConfirmControllerSpec extends SpecBase with MockitoSuga
 
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         correctReturnAction(userAnswers = Some(userAnswersWithPackingSite))
@@ -123,9 +132,12 @@ class RemovePackagingSiteConfirmControllerSpec extends SpecBase with MockitoSuga
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode, AddressFormattingHelper.addressFormatting(addressOfPackingSite,
-            Some(packingSiteTradingName)),
-            indexOfPackingSiteToBeRemoved)(request, messages(application)).toString
+          view(
+            boundForm,
+            NormalMode,
+            AddressFormattingHelper.addressFormatting(addressOfPackingSite, Some(packingSiteTradingName)),
+            indexOfPackingSiteToBeRemoved
+          )(using request, messages(application)).toString
       }
     }
 
@@ -136,14 +148,15 @@ class RemovePackagingSiteConfirmControllerSpec extends SpecBase with MockitoSuga
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
 
       val application =
         correctReturnAction(userAnswers = Some(userAnswersWithPackingSite))
           .overrides(
             bind[NavigatorForCorrectReturn].toInstance(new FakeNavigatorForCorrectReturn(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
-          ).build()
+          )
+          .build()
 
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
@@ -152,11 +165,12 @@ class RemovePackagingSiteConfirmControllerSpec extends SpecBase with MockitoSuga
               .withFormUrlEncodedBody(("value", "true"))
 
           await(route(application, request).value)
-          events.collectFirst {
-            case event =>
+          events
+            .collectFirst { case event =>
               event.getLevel.levelStr mustBe "ERROR"
               event.getMessage mustEqual "Failed to set value in session repository while attempting set on removePackagingSiteConfirm"
-          }.getOrElse(fail("No logging captured"))
+            }
+            .getOrElse(fail("No logging captured"))
         }
       }
     }

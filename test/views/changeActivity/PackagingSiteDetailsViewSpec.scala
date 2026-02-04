@@ -18,11 +18,11 @@ package views.changeActivity
 
 import controllers.changeActivity.routes
 import forms.changeActivity.PackagingSiteDetailsFormProvider
-import models.{CheckMode, NormalMode}
+import models.{ CheckMode, NormalMode }
 import play.api.data.Form
 import play.api.mvc.Request
 import play.api.test.FakeRequest
-import uk.gov.hmrc.govukfrontend.views.Aliases.{SummaryList, Value}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{ SummaryList, Value }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import views.html.changeActivity.PackagingSiteDetailsView
@@ -32,7 +32,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
   val view: PackagingSiteDetailsView = application.injector.instanceOf[PackagingSiteDetailsView]
   val formProvider = new PackagingSiteDetailsFormProvider
   val form: Form[Boolean] = formProvider.apply()
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-heading-l"
@@ -48,7 +48,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view(form, NormalMode, SummaryList())(request, messages(application))
+    val html = view(form, NormalMode, SummaryList())(using request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
       document.title() mustBe "UK packaging site details - Soft Drinks Industry Levy - GOV.UK"
@@ -101,7 +101,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with yes and has no errors" - {
-      val html1 = view(form.fill(true), NormalMode, SummaryList())(request, messages(application))
+      val html1 = view(form.fill(true), NormalMode, SummaryList())(using request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -136,7 +136,7 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with no and has no errors" - {
-      val html1 = view(form.fill(false), NormalMode, SummaryList())(request, messages(application))
+      val html1 = view(form.fill(false), NormalMode, SummaryList())(using request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -176,42 +176,47 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
       "when in CheckMode" - {
-        val htmlYesSelected = view(form.fill(true), CheckMode, SummaryList())(request, messages(application))
+        val htmlYesSelected = view(form.fill(true), CheckMode, SummaryList())(using request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), CheckMode, SummaryList())(request, messages(application))
+        val htmlNoSelected = view(form.fill(false), CheckMode, SummaryList())(using request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
-          documentYesSelected.select(Selectors.form)
+          documentYesSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.PackagingSiteDetailsController.onSubmit(CheckMode).url
         }
 
         "and no is selected" in {
-          documentNoSelected.select(Selectors.form)
+          documentNoSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.PackagingSiteDetailsController.onSubmit(CheckMode).url
         }
       }
 
       "when in NormalMode" - {
-        val htmlYesSelected = view(form.fill(true), NormalMode, SummaryList())(request, messages(application))
+        val htmlYesSelected = view(form.fill(true), NormalMode, SummaryList())(using request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), NormalMode, SummaryList())(request, messages(application))
+        val htmlNoSelected = view(form.fill(false), NormalMode, SummaryList())(using request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
-          documentYesSelected.select(Selectors.form)
+          documentYesSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.PackagingSiteDetailsController.onSubmit(NormalMode).url
         }
 
         "and no is selected" in {
-          documentNoSelected.select(Selectors.form)
+          documentNoSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.PackagingSiteDetailsController.onSubmit(NormalMode).url
         }
       }
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode, SummaryList())(request, messages(application))
+      val htmlWithErrors =
+        view(form.bind(Map("value" -> "")), NormalMode, SummaryList())(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
@@ -231,22 +236,28 @@ class PackagingSiteDetailsViewSpec extends ViewSpecHelper {
     }
 
     "when there is one packaging site only" - {
-      val summaryListWithOneRow = SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("Packaging Site")))))
-      val htmlWithOneSummaryListRow = view(form, NormalMode, summaryListWithOneRow)(request, messages(application))
+      val summaryListWithOneRow =
+        SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("Packaging Site")))))
+      val htmlWithOneSummaryListRow =
+        view(form, NormalMode, summaryListWithOneRow)(using request, messages(application))
       val documentWithOneSummaryListRow = doc(htmlWithOneSummaryListRow)
       val detailsLink = "I want to remove this UK packaging site"
-      val detailsInfo = "You must add another site first. Once you have added the other site, you will be able to remove one. You must always have at least one packaging site added."
+      val detailsInfo =
+        "You must add another site first. Once you have added the other site, you will be able to remove one. You must always have at least one packaging site added."
       val expectedDetails = Map(detailsLink -> detailsInfo)
 
       testDetails(documentWithOneSummaryListRow, expectedDetails)
     }
 
     "when there is more than one packaging site" - {
-      val summaryListWithTwoRows = SummaryList(Seq(
-        SummaryListRow(value = Value(content = HtmlContent("Packaging Site"))),
-        SummaryListRow(value = Value(content = HtmlContent("Another Packaging Site")))
-      ))
-      val htmlWithTwoSummaryListRows = view(form, NormalMode, summaryListWithTwoRows)(request, messages(application))
+      val summaryListWithTwoRows = SummaryList(
+        Seq(
+          SummaryListRow(value = Value(content = HtmlContent("Packaging Site"))),
+          SummaryListRow(value = Value(content = HtmlContent("Another Packaging Site")))
+        )
+      )
+      val htmlWithTwoSummaryListRows =
+        view(form, NormalMode, summaryListWithTwoRows)(using request, messages(application))
       val documentWithTwoSummaryListRows = doc(htmlWithTwoSummaryListRows)
       testDetails(documentWithTwoSummaryListRows, Map.empty)
     }

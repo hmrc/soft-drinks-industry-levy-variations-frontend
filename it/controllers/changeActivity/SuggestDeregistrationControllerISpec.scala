@@ -3,10 +3,10 @@ package controllers.changeActivity
 import controllers.ControllerITTestHelper
 import models.SelectChange.ChangeActivity
 import models.changeActivity.AmountProduced
-import models.{NormalMode, UserAnswers}
+import models.{ NormalMode, UserAnswers }
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
-import pages.changeActivity.{AmountProducedPage, ContractPackingPage, ImportsPage}
+import org.scalatest.matchers.must.Matchers._
+import pages.changeActivity.{ AmountProducedPage, ContractPackingPage, ImportsPage }
 import play.api.http.HeaderNames
 import play.api.libs.json.Json
 import play.api.test.WsTestClient
@@ -15,14 +15,19 @@ class SuggestDeregistrationControllerISpec extends ControllerITTestHelper {
 
   val normalRoutePath = "/suggest-deregistration"
   val completedUserAnswers: UserAnswers = emptyUserAnswersForChangeActivity
-    .set(AmountProducedPage, AmountProduced.None).success.value
-    .set(ContractPackingPage, false).success.value
-    .set(ImportsPage, false).success.value
+    .set(AmountProducedPage, AmountProduced.None)
+    .success
+    .value
+    .set(ContractPackingPage, false)
+    .success
+    .value
+    .set(ImportsPage, false)
+    .success
+    .value
 
   "GET " + normalRoutePath - {
     "should return OK and render the SuggestDeregistration page" in {
-      given
-        .commonPrecondition
+      build.commonPrecondition
 
       setAnswers(completedUserAnswers)
 
@@ -43,52 +48,58 @@ class SuggestDeregistrationControllerISpec extends ControllerITTestHelper {
 
   s"POST " + normalRoutePath - {
     "should redirect to Cancel Registration - File return before deregistration" in {
-        given
-          .commonPrecondition
-
-        setAnswers(completedUserAnswers)
-        WsTestClient.withClient { client =>
-          val result = createClientRequestPOST(
-            client, changeActivityBaseUrl + normalRoutePath, Json.obj()
-          )
-          whenReady(result) { res =>
-            res.status mustBe 303
-            res.header(HeaderNames.LOCATION) mustBe Some(controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad().url)
-          }
-        }
-      }
-
-    "should redirect to Cancel Registration - Reason Controller, when no returns are pending" in {
-      given
-        .returnPendingNotFoundPreCondition
+      build.commonPrecondition
 
       setAnswers(completedUserAnswers)
       WsTestClient.withClient { client =>
         val result = createClientRequestPOST(
-          client, changeActivityBaseUrl + normalRoutePath, Json.obj()
+          client,
+          changeActivityBaseUrl + normalRoutePath,
+          Json.obj()
         )
         whenReady(result) { res =>
           res.status mustBe 303
-          res.header(HeaderNames.LOCATION) mustBe Some(controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode).url)
+          res.header(HeaderNames.LOCATION) mustBe Some(
+            controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad().url
+          )
+        }
+      }
+    }
+
+    "should redirect to Cancel Registration - Reason Controller, when no returns are pending" in {
+      build.returnPendingNotFoundPreCondition
+
+      setAnswers(completedUserAnswers)
+      WsTestClient.withClient { client =>
+        val result = createClientRequestPOST(
+          client,
+          changeActivityBaseUrl + normalRoutePath,
+          Json.obj()
+        )
+        whenReady(result) { res =>
+          res.status mustBe 303
+          res.header(HeaderNames.LOCATION) mustBe Some(
+            controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode).url
+          )
         }
       }
     }
 
     "should return an internal server error if it fails while trying to get missing returns list" in {
-      given
-        .commonPrecondition
-        .sdilBackend.returns_pending_error("0000001611")
+      build.commonPrecondition.sdilBackend.returns_pending_error("0000001611")
 
       setAnswers(completedUserAnswers)
 
       WsTestClient.withClient { client =>
         val result = createClientRequestPOST(
-          client, changeActivityBaseUrl + normalRoutePath, Json.obj()
+          client,
+          changeActivityBaseUrl + normalRoutePath,
+          Json.obj()
         )
         whenReady(result) { res =>
           res.status mustBe 500
           val page = Jsoup.parse(res.body)
-          page.title() mustBe "Sorry, there is a problem with the service - 500 - Soft Drinks Industry Levy - GOV.UK"
+          page.title() mustBe "Sorry, there is a problem with the service - Soft Drinks Industry Levy - GOV.UK"
         }
       }
     }

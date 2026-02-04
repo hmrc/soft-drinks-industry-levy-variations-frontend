@@ -16,38 +16,26 @@
 
 package forms.behaviours
 
-import play.api.data.{Form, FormError}
+import play.api.data.{ Form, FormError }
 
 trait SDILReferenceFieldBehaviours extends FieldBehaviours {
 
-  def invalidSDILFormat(form: Form[_],
-                       fieldName: String,
-                       requiredError: FormError): Unit = {
-
+  def invalidSDILFormat(form: Form[_], fieldName: String, requiredError: FormError): Unit =
     "not bind when SDIL reference has invalid format" in {
 
-      forAll(invalidSdilFormatGen -> "sdilRef") {
-        sdilRef =>
-          val result = form.bind(Map(fieldName -> sdilRef)).apply(fieldName)
-          result.errors mustEqual Seq(requiredError)
+      forAll(invalidSdilFormatGen -> "sdilRef") { sdilRef =>
+        val result = form.bind(Map(fieldName -> sdilRef)).apply(fieldName)
+        result.errors mustEqual Seq(requiredError)
       }
     }
 
-  }
-
-  def invalidSDILRef(form: Form[_],
-                       fieldName: String,
-                       requiredError: FormError): Unit = {
-
+  def invalidSDILRef(form: Form[_], fieldName: String, requiredError: FormError): Unit =
     "not bind when SDIL reference has invalid ref" in {
 
-      forAll(invalidSDILRefGen -> "sdilRef") {
-        sdilRef =>
-          val result = form.bind(Map(fieldName -> sdilRef)).apply(fieldName)
-          result.errors mustEqual Seq(requiredError)
+      forAll(invalidSDILRefGen -> "sdilRef") { sdilRef =>
+        val result = form.bind(Map(fieldName -> sdilRef)).apply(fieldName)
+        result.errors mustEqual Seq(requiredError)
       }
     }
-
-  }
 
 }

@@ -20,55 +20,59 @@ import controllers.ControllerHelper
 import controllers.actions._
 import forms.HowManyLitresFormProvider
 import handlers.ErrorHandler
-import models.{LitresInBands, Mode, NormalMode}
+import models.{ LitresInBands, Mode, NormalMode }
 import navigation._
 import pages.correctReturn.HowManyCreditsForLostDamagedPage
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import services.SessionService
 import utilities.GenericLogger
 import views.html.correctReturn.HowManyCreditsForLostDamagedView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class HowManyCreditsForLostDamagedController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         val sessionService: SessionService,
-                                         val navigator: NavigatorForCorrectReturn,
-                                         controllerActions: ControllerActions,
-                                         formProvider: HowManyLitresFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: HowManyCreditsForLostDamagedView,
-                                         val genericLogger: GenericLogger,
-                                         val errorHandler: ErrorHandler
-                                 )(implicit val ec: ExecutionContext) extends ControllerHelper {
+class HowManyCreditsForLostDamagedController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForCorrectReturn,
+  controllerActions: ControllerActions,
+  formProvider: HowManyLitresFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: HowManyCreditsForLostDamagedView,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper {
 
   val form: Form[LitresInBands] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
-    implicit request =>
-      val preparedForm = request.userAnswers.get(HowManyCreditsForLostDamagedPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData { implicit request =>
+    val preparedForm = request.userAnswers.get(HowManyCreditsForLostDamagedPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
-      Ok(view(preparedForm, mode))
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
-        value => {
-          val updatedAnswers = request.userAnswers.set(HowManyCreditsForLostDamagedPage, value)
-          val subscription = if (mode == NormalMode) Some(request.subscription) else None
-          updateDatabaseAndRedirect(updatedAnswers, HowManyCreditsForLostDamagedPage, mode, subscription = subscription)
-        }
-      )
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value => {
+            val updatedAnswers = request.userAnswers.set(HowManyCreditsForLostDamagedPage, value)
+            val subscription = if (mode == NormalMode) Some(request.subscription) else None
+            updateDatabaseAndRedirect(
+              updatedAnswers,
+              HowManyCreditsForLostDamagedPage,
+              mode,
+              subscription = subscription
+            )
+          }
+        )
   }
 }

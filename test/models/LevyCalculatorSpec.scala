@@ -19,6 +19,7 @@ package models
 import base.SpecBase
 import config.FrontendAppConfig
 import models.LevyCalculator._
+import models.TaxRateUtil._
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
@@ -29,10 +30,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
   override implicit val frontendAppConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
   "getTaxYear" - {
-    val janToMarInt = Gen.choose(1, 3)
-    val aprToDecInt = Gen.choose(4, 12)
-
-    (2018 to 2024).foreach(year => {
+    (2018 to 2024).foreach { year =>
       s"return Pre2025 when in April - December $year" in {
         forAll(aprToDecInt) { month =>
           val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
@@ -46,7 +44,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
           getTaxYear(returnPeriod) mustBe Pre2025
         }
       }
-    })
+    }
 
     "return Year2025 when in April - December 2025" in {
       forAll(aprToDecInt) { month =>
@@ -78,21 +76,21 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
   }
 
   "getBandRates" - {
-    (2018 to 2024).foreach(taxYear => {
+    (2018 to 2024).foreach { taxYear =>
       val bandRates: BandRates = getBandRates(TaxYear.fromYear(taxYear))(frontendAppConfig)
 
       s"return 0.18 for lower band when tax year is $taxYear" in {
-        bandRates.lowerBandCostPerLites mustBe BigDecimal("0.18")
+        bandRates.lowerBandCostPerLitre mustBe lowerBandCostPerLitre
       }
 
       s"return 0.24 for higher band when tax year is $taxYear" in {
-        bandRates.higherBandCostPerLitre mustBe BigDecimal("0.24")
+        bandRates.higherBandCostPerLitre mustBe higherBandCostPerLitre
       }
-    })
+    }
 
     "return 0.194 for lower band when tax year is 2025" in {
       val bandRates: BandRates = getBandRates(TaxYear.fromYear(2025))(frontendAppConfig)
-      bandRates.lowerBandCostPerLites mustBe BigDecimal("0.194")
+      bandRates.lowerBandCostPerLitre mustBe BigDecimal("0.194")
     }
 
     "return 0.259 for higher band when tax year is 2025" in {
@@ -102,16 +100,10 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
   }
 
   "getLevyCalculation" - {
-
     val smallPosInts = Gen.choose(0, 1000)
     val largePosInts = Gen.choose(1000, 10000000)
-    val janToMarInt = Gen.choose(1, 3)
-    val aprToDecInt = Gen.choose(4, 12)
 
-    (2018 to 2024).foreach(year => {
-
-      val lowerBandCostPerLitre = BigDecimal("0.18")
-      val higherBandCostPerLitre = BigDecimal("0.24")
+    (2018 to 2024).foreach { year =>
 
       s"calculate low levy, high levy, and total correctly with zero litres totals using original rates for Apr - Dec $year" in {
         forAll(aprToDecInt) { month =>
@@ -202,14 +194,9 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
           }
         }
       }
-    })
+    }
 
-    (2025 to 2025).foreach(year => {
-
-      val lowerBandCostPerLitreMap: Map[Int, BigDecimal] = Map(2025 -> BigDecimal("0.194"))
-
-      val higherBandCostPerLitreMap: Map[Int, BigDecimal] = Map(2025 -> BigDecimal("0.259"))
-
+    (2025 to 2025).foreach { year =>
       s"calculate low levy, high levy, and total correctly with zero litres totals using $year rates for Apr - Dec $year" in {
         forAll(aprToDecInt) { month =>
           val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
@@ -231,8 +218,10 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
               val expectedHighLevy = higherBandCostPerLitreMap(year) * highLitres
               levyCalculation.lowLevy mustBe expectedLowLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
               levyCalculation.highLevy mustBe expectedHighLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
-              levyCalculation.total mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
-              levyCalculation.totalRoundedDown mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.DOWN)
+              levyCalculation.total mustBe (expectedLowLevy + expectedHighLevy)
+                .setScale(2, BigDecimal.RoundingMode.HALF_UP)
+              levyCalculation.totalRoundedDown mustBe (expectedLowLevy + expectedHighLevy)
+                .setScale(2, BigDecimal.RoundingMode.DOWN)
             }
           }
         }
@@ -248,8 +237,10 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
               val expectedHighLevy = higherBandCostPerLitreMap(year) * highLitres
               levyCalculation.lowLevy mustBe expectedLowLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
               levyCalculation.highLevy mustBe expectedHighLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
-              levyCalculation.total mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
-              levyCalculation.totalRoundedDown mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.DOWN)
+              levyCalculation.total mustBe (expectedLowLevy + expectedHighLevy)
+                .setScale(2, BigDecimal.RoundingMode.HALF_UP)
+              levyCalculation.totalRoundedDown mustBe (expectedLowLevy + expectedHighLevy)
+                .setScale(2, BigDecimal.RoundingMode.DOWN)
             }
           }
         }
@@ -276,8 +267,10 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
               val expectedHighLevy = higherBandCostPerLitreMap(year) * highLitres
               levyCalculation.lowLevy mustBe expectedLowLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
               levyCalculation.highLevy mustBe expectedHighLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
-              levyCalculation.total mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
-              levyCalculation.totalRoundedDown mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.DOWN)
+              levyCalculation.total mustBe (expectedLowLevy + expectedHighLevy)
+                .setScale(2, BigDecimal.RoundingMode.HALF_UP)
+              levyCalculation.totalRoundedDown mustBe (expectedLowLevy + expectedHighLevy)
+                .setScale(2, BigDecimal.RoundingMode.DOWN)
             }
           }
         }
@@ -293,14 +286,16 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
               val expectedHighLevy = higherBandCostPerLitreMap(year) * highLitres
               levyCalculation.lowLevy mustBe expectedLowLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
               levyCalculation.highLevy mustBe expectedHighLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
-              levyCalculation.total mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
-              levyCalculation.totalRoundedDown mustBe (expectedLowLevy + expectedHighLevy).setScale(2, BigDecimal.RoundingMode.DOWN)
+              levyCalculation.total mustBe (expectedLowLevy + expectedHighLevy)
+                .setScale(2, BigDecimal.RoundingMode.HALF_UP)
+              levyCalculation.totalRoundedDown mustBe (expectedLowLevy + expectedHighLevy)
+                .setScale(2, BigDecimal.RoundingMode.DOWN)
             }
           }
         }
       }
 
-    })
+    }
 
   }
 

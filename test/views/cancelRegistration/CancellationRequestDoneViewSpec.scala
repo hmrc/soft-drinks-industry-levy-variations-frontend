@@ -22,17 +22,17 @@ import play.api.mvc.Request
 import play.api.test.FakeRequest
 import uk.gov.hmrc.govukfrontend.views.Aliases.Value
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ SummaryList, SummaryListRow }
 import views.ViewSpecHelper
 import views.html.cancelRegistration.CancellationRequestDoneView
 
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDateTime, ZoneId}
+import java.time.{ LocalDateTime, ZoneId }
 
 class CancellationRequestDoneViewSpec extends ViewSpecHelper {
 
   val view: CancellationRequestDoneView = application.injector.instanceOf[CancellationRequestDoneView]
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   val getSentDateTime: LocalDateTime = LocalDateTime.now(ZoneId.of("UTC"))
   val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
@@ -67,13 +67,21 @@ class CancellationRequestDoneViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val summaryList: Seq[(String, SummaryList)] = {
+    val summaryList: Seq[(String, SummaryList)] =
       Seq(
         "foo" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("no longer sell drinks"))))),
         "bar" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bang")))))
       )
-    }
-    val html = view(formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd, deadlineStart, deadlineEnd, orgName, summaryList)(request, messages(application), config)
+    val html = view(
+      formattedDate,
+      formattedTime,
+      returnPeriodStart,
+      returnPeriodEnd,
+      deadlineStart,
+      deadlineEnd,
+      orgName,
+      summaryList
+    )(request, messages(application), config)
     val document = doc(html)
     "should contain the expected title" in {
       document.title() mustBe "Cancellation request sent - Soft Drinks Industry Levy - GOV.UK"
@@ -82,7 +90,9 @@ class CancellationRequestDoneViewSpec extends ViewSpecHelper {
     "should include the expected panel" in {
       val panel = document.getElementsByClass(Selectors.panel).get(0)
       panel.getElementsByClass(Selectors.panel_title).text() mustEqual "Cancellation request sent"
-      panel.getElementsByClass(Selectors.panel_body).text() mustEqual "We have received the update to your Soft Drinks Industry Levy details"
+      panel
+        .getElementsByClass(Selectors.panel_body)
+        .text() mustEqual "We have received the update to your Soft Drinks Industry Levy details"
     }
 
     "should include a link to print page" in {
@@ -101,7 +111,8 @@ class CancellationRequestDoneViewSpec extends ViewSpecHelper {
 
       "that has the expected body" in {
         val bodyP1 = document.getElementById("whatNextTextP1")
-        bodyP1.text() mustEqual s"You need to send a final return for the period $returnPeriodStart to $returnPeriodEnd and make any outstanding payments."
+        bodyP1
+          .text() mustEqual s"You need to send a final return for the period $returnPeriodStart to $returnPeriodEnd and make any outstanding payments."
         val bodyP2 = document.getElementById("whatNextTextP2")
         bodyP2.text() mustEqual s"You will be able to send the final return from $deadlineStart until $deadlineEnd."
         val bodyP3 = document.getElementById("whatNextTextP3")

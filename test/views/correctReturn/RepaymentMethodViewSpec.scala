@@ -19,7 +19,7 @@ package views.correctReturn
 import controllers.correctReturn.routes
 import forms.correctReturn.RepaymentMethodFormProvider
 import models.correctReturn.RepaymentMethod
-import models.{CheckMode, NormalMode}
+import models.{ CheckMode, NormalMode }
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
@@ -32,7 +32,7 @@ class RepaymentMethodViewSpec extends ViewSpecHelper {
   val view: RepaymentMethodView = application.injector.instanceOf[RepaymentMethodView]
   val formProvider = new RepaymentMethodFormProvider
   val form: Form[RepaymentMethod] = formProvider.apply()
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-fieldset__heading"
@@ -49,7 +49,7 @@ class RepaymentMethodViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view(form, NormalMode)(request, messages(application))
+    val html = view(form, NormalMode)(using request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
       document.title() must include("How do you want the credit to be repaid?")
@@ -58,7 +58,9 @@ class RepaymentMethodViewSpec extends ViewSpecHelper {
     "should include a legend with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.heading)
+      legend
+        .get(0)
+        .getElementsByClass(Selectors.heading)
         .text() mustEqual "How do you want the credit to be repaid?"
     }
 
@@ -87,7 +89,7 @@ class RepaymentMethodViewSpec extends ViewSpecHelper {
     }
 
     RepaymentMethod.values.foreach { radio =>
-      val html1 = view(form.fill(radio), NormalMode)(request, messages(application))
+      val html1 = view(form.fill(radio), NormalMode)(using request, messages(application))
       val document1 = doc(html1)
 
       s"when the form is preoccupied with " + radio.toString + "selected and has no errors" - {
@@ -130,24 +132,28 @@ class RepaymentMethodViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
       "when in CheckMode" in {
-        val htmlAllSelected = view(form.fill(RepaymentMethod.values.head), CheckMode)(request, messages(application))
+        val htmlAllSelected =
+          view(form.fill(RepaymentMethod.values.head), CheckMode)(using request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
-        documentAllSelected.select(Selectors.form)
+        documentAllSelected
+          .select(Selectors.form)
           .attr("action") mustEqual routes.RepaymentMethodController.onSubmit(CheckMode).url
       }
 
       "when in NormalMode" in {
-        val htmlAllSelected = view(form.fill(RepaymentMethod.values.head), NormalMode)(request, messages(application))
+        val htmlAllSelected =
+          view(form.fill(RepaymentMethod.values.head), NormalMode)(using request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
-        documentAllSelected.select(Selectors.form)
+        documentAllSelected
+          .select(Selectors.form)
           .attr("action") mustEqual routes.RepaymentMethodController.onSubmit(NormalMode).url
       }
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode)(request, messages(application))
+      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode)(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {

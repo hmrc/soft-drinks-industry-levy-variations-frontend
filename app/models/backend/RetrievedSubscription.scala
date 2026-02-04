@@ -18,29 +18,29 @@ package models.backend
 
 import models.Contact
 import models.submission.SdilActivity
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.{ Json, OFormat }
 
 import java.time.LocalDate
 
 case class RetrievedSubscription(
-                                  utr: String,
-                                  sdilRef: String,
-                                  orgName: String,
-                                  address: UkAddress,
-                                  activity: RetrievedActivity,
-                                  liabilityDate: LocalDate,
-                                  productionSites: List[Site],
-                                  warehouseSites: List[Site],
-                                  contact: Contact,
-                                  deregDate: Option[LocalDate] = None) {
+  utr: String,
+  sdilRef: String,
+  orgName: String,
+  address: UkAddress,
+  activity: RetrievedActivity,
+  liabilityDate: LocalDate,
+  productionSites: List[Site],
+  warehouseSites: List[Site],
+  contact: Contact,
+  deregDate: Option[LocalDate] = None
+) {
 
-  val defaultSdilAcivity: Option[SdilActivity] = if(
-    activity.largeProducer || activity.importer || activity.contractPacker || activity.voluntaryRegistration
-  ) {
-    Some(SdilActivity())
-  } else {
-    None
-  }
+  val defaultSdilAcivity: Option[SdilActivity] =
+    if (activity.largeProducer || activity.importer || activity.contractPacker || activity.voluntaryRegistration) {
+      Some(SdilActivity())
+    } else {
+      None
+    }
 }
 
 object RetrievedSubscription {

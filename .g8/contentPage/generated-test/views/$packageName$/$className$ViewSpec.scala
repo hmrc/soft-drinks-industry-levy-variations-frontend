@@ -25,14 +25,14 @@ import views.ViewSpecHelper
 class $className$ViewSpec extends ViewSpecHelper {
 
   val view = application.injector.instanceOf[$className$View]
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-heading-l"
   }
 
   "View" - {
-    val html = view()(request, messages(application))
+    val html = view()(using request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
       document.title() must include(Messages("$packageName$.$className;format="decap"$" + ".title"))

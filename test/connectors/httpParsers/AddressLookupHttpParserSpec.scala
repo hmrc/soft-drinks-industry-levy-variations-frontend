@@ -17,11 +17,11 @@
 package connectors.httpParsers
 
 import base.SpecBase
-import connectors.httpParsers.AddressLookupHttpParser.{AddressLookupGetAddressReads, AddressLookupInitJourneyReads}
-import models.alf.{AlfAddress, AlfResponse}
+import connectors.httpParsers.AddressLookupHttpParser.{ AddressLookupGetAddressReads, AddressLookupInitJourneyReads }
+import models.alf.{ AlfAddress, AlfResponse }
 import models.core.ErrorModel
 import play.api.http.Status
-import play.api.libs.json.{JsObject, Json}
+import play.api.libs.json.{ JsObject, Json }
 import play.mvc.Http.HeaderNames
 import uk.gov.hmrc.http.HttpResponse
 
@@ -29,88 +29,106 @@ class AddressLookupHttpParserSpec extends SpecBase {
 
   val errorModel: ErrorModel = ErrorModel(Status.BAD_REQUEST, "Error Message")
 
-    val organisation = "soft drinks ltd"
-    val addressLine1 = "line 1"
-    val addressLine2 = "line 2"
-    val addressLine3 = "line 3"
-    val addressLine4 = "line 4"
-    val postcode = "aa1 1aa"
-    val countryCode = "UK"
-    val customerAddressMaxJson = Json.toJson(AlfResponse(
+  val organisation = "soft drinks ltd"
+  val addressLine1 = "line 1"
+  val addressLine2 = "line 2"
+  val addressLine3 = "line 3"
+  val addressLine4 = "line 4"
+  val postcode = "aa1 1aa"
+  val countryCode = "UK"
+  val customerAddressMaxJson = Json.toJson(
+    AlfResponse(
       AlfAddress(
         Some(organisation),
         List(addressLine1, addressLine2, addressLine3, addressLine4),
         Some(postcode),
         Some(countryCode)
-      )))
-    val customerAddressMax: AlfResponse = AlfResponse(
-      AlfAddress(
-        Some(organisation),
-        List(addressLine1, addressLine2, addressLine3, addressLine4),
-        Some(postcode),
-        Some(countryCode)
-      ))
-    val customerAddressJsonError: JsObject = Json.obj(
-      "address" -> Json.obj(
-        "lines" -> 4
       )
     )
+  )
+  val customerAddressMax: AlfResponse = AlfResponse(
+    AlfAddress(
+      Some(organisation),
+      List(addressLine1, addressLine2, addressLine3, addressLine4),
+      Some(postcode),
+      Some(countryCode)
+    )
+  )
+  val customerAddressJsonError: JsObject = Json.obj(
+    "address" -> Json.obj(
+      "lines" -> 4
+    )
+  )
 
-    "The AddressLookupGetAddressReads" - {
+  "The AddressLookupGetAddressReads" - {
 
     "the http response status is OK with valid Json" - {
 
       "return a AddressLookupModel" in {
-        AddressLookupGetAddressReads.read("", "",
-          HttpResponse(Status.OK, customerAddressMaxJson, Map.empty[String, Seq[String]])) mustBe Right(customerAddressMax)
+        AddressLookupGetAddressReads.read(
+          "",
+          "",
+          HttpResponse(Status.OK, customerAddressMaxJson, Map.empty[String, Seq[String]])
+        ) mustBe Right(customerAddressMax)
       }
     }
 
     "the http response status is OK with invalid Json" - {
 
       "return an ErrorModel" in {
-        AddressLookupGetAddressReads.read("", "",
-          HttpResponse(Status.OK, customerAddressJsonError, Map.empty[String, Seq[String]])) mustBe
-          Left(ErrorModel(Status.INTERNAL_SERVER_ERROR,"Invalid Json returned from Address Lookup"))
+        AddressLookupGetAddressReads.read(
+          "",
+          "",
+          HttpResponse(Status.OK, customerAddressJsonError, Map.empty[String, Seq[String]])
+        ) mustBe
+          Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Invalid Json returned from Address Lookup"))
       }
     }
 
     "the http response status is BAD_REQUEST" - {
 
       "return an ErrorModel" in {
-        AddressLookupGetAddressReads.read("", "",
-          HttpResponse(Status.BAD_REQUEST, "")) mustBe
-          Left(ErrorModel(Status.BAD_REQUEST,"Downstream error returned when retrieving CustomerAddressModel from AddressLookup"))
+        AddressLookupGetAddressReads.read("", "", HttpResponse(Status.BAD_REQUEST, "")) mustBe
+          Left(
+            ErrorModel(
+              Status.BAD_REQUEST,
+              "Downstream error returned when retrieving CustomerAddressModel from AddressLookup"
+            )
+          )
       }
     }
 
     "the http response status unexpected" - {
 
       "return an ErrorModel" in {
-        AddressLookupGetAddressReads.read("", "",
-          HttpResponse(Status.SEE_OTHER, "")) mustBe
-          Left(ErrorModel(Status.SEE_OTHER,"Downstream error returned when retrieving CustomerAddressModel from AddressLookup"))
+        AddressLookupGetAddressReads.read("", "", HttpResponse(Status.SEE_OTHER, "")) mustBe
+          Left(
+            ErrorModel(
+              Status.SEE_OTHER,
+              "Downstream error returned when retrieving CustomerAddressModel from AddressLookup"
+            )
+          )
       }
     }
   }
   "The AddressLookupInitJourneyReads" - {
     s"should return url if ${Status.ACCEPTED} returned and ${HeaderNames.LOCATION} exists" in {
-      AddressLookupInitJourneyReads.read("", "",
-        HttpResponse(Status.ACCEPTED, "", Map(HeaderNames.LOCATION -> Seq("foo")))) mustBe Right("foo")
+      AddressLookupInitJourneyReads.read(
+        "",
+        "",
+        HttpResponse(Status.ACCEPTED, "", Map(HeaderNames.LOCATION -> Seq("foo")))
+      ) mustBe Right("foo")
     }
     s"return Left if ${Status.ACCEPTED} but no header exists" in {
-      AddressLookupInitJourneyReads.read("", "",
-        HttpResponse(Status.ACCEPTED, "", Map.empty)) mustBe
+      AddressLookupInitJourneyReads.read("", "", HttpResponse(Status.ACCEPTED, "", Map.empty)) mustBe
         Left(ErrorModel(Status.ACCEPTED, s"No ${HeaderNames.LOCATION} key in response from init response from ALF"))
     }
     s"return Left if status is ${Status.BAD_REQUEST}" in {
-      AddressLookupInitJourneyReads.read("", "",
-        HttpResponse(Status.BAD_REQUEST, "foo", Map.empty)) mustBe
+      AddressLookupInitJourneyReads.read("", "", HttpResponse(Status.BAD_REQUEST, "foo", Map.empty)) mustBe
         Left(ErrorModel(Status.BAD_REQUEST, "foo returned from ALF"))
     }
     "return Left if status not accepted statuses from API" in {
-      AddressLookupInitJourneyReads.read("", "",
-        HttpResponse(Status.INTERNAL_SERVER_ERROR, "foo", Map.empty)) mustBe
+      AddressLookupInitJourneyReads.read("", "", HttpResponse(Status.INTERNAL_SERVER_ERROR, "foo", Map.empty)) mustBe
         Left(ErrorModel(Status.INTERNAL_SERVER_ERROR, "Unexpected error occurred when init journey from ALF"))
     }
   }

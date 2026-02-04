@@ -24,50 +24,49 @@ import models.Mode
 import navigation._
 import pages.correctReturn.HowManyOperatePackagingSiteOwnBrandsPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import services.SessionService
 import utilities.GenericLogger
 import views.html.correctReturn.HowManyOperatePackagingSiteOwnBrandsView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class HowManyOperatePackagingSiteOwnBrandsController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         val sessionService: SessionService,
-                                         val navigator: NavigatorForCorrectReturn,
-                                         controllerActions: ControllerActions,
-                                         formProvider: HowManyLitresFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: HowManyOperatePackagingSiteOwnBrandsView,
-                                         val genericLogger: GenericLogger,
-                                         val errorHandler: ErrorHandler
-                                 )(implicit val ec: ExecutionContext) extends ControllerHelper {
+class HowManyOperatePackagingSiteOwnBrandsController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForCorrectReturn,
+  controllerActions: ControllerActions,
+  formProvider: HowManyLitresFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: HowManyOperatePackagingSiteOwnBrandsView,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData { implicit request =>
 
-      val preparedForm = request.userAnswers.get(HowManyOperatePackagingSiteOwnBrandsPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+    val preparedForm = request.userAnswers.get(HowManyOperatePackagingSiteOwnBrandsPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
-      Ok(view(preparedForm, mode))
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
-        value => {
-          val updatedAnswers = request.userAnswers.set(HowManyOperatePackagingSiteOwnBrandsPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, HowManyOperatePackagingSiteOwnBrandsPage, mode)
-        }
-      )
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value => {
+            val updatedAnswers = request.userAnswers.set(HowManyOperatePackagingSiteOwnBrandsPage, value)
+            updateDatabaseAndRedirect(updatedAnswers, HowManyOperatePackagingSiteOwnBrandsPage, mode)
+          }
+        )
   }
 }

@@ -22,33 +22,32 @@ import controllers.routes
 import handlers.ErrorHandler
 import models.ReturnPeriod
 import models.SelectChange.CancelRegistration
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import views.html.cancelRegistration.CancellationRequestDoneView
-import views.summary.cancelRegistration.{CancelRegistrationDateSummary, ReasonSummary}
+import views.summary.cancelRegistration.{ CancelRegistrationDateSummary, ReasonSummary }
 
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDateTime, ZoneId}
+import java.time.{ LocalDateTime, ZoneId }
 import javax.inject.Inject
 
-
-class CancellationRequestDoneController @Inject()(
-                                                   override val messagesApi: MessagesApi,
-                                                   controllerActions: ControllerActions,
-                                                   val controllerComponents: MessagesControllerComponents,
-                                                   view: CancellationRequestDoneView,
-                                                   genericLogger: GenericLogger,
-                                                   val errorHandler: ErrorHandler
-                                                 )(implicit config: FrontendAppConfig) extends FrontendBaseController with I18nSupport with SummaryListFluency {
+class CancellationRequestDoneController @Inject() (
+  override val messagesApi: MessagesApi,
+  controllerActions: ControllerActions,
+  val controllerComponents: MessagesControllerComponents,
+  view: CancellationRequestDoneView,
+  genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit config: FrontendAppConfig)
+    extends FrontendBaseController with I18nSupport with SummaryListFluency {
 
   def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyDataPostSubmission(CancelRegistration) {
 
     implicit request =>
-
       request.userAnswers.submittedOn match {
         case Some(submittedOnDate) =>
           val getSentDateTime = LocalDateTime.ofInstant(submittedOnDate, ZoneId.of("Europe/London"))
@@ -66,20 +65,33 @@ class CancellationRequestDoneController @Inject()(
           val deadlineEndFormat = DateTimeFormatter.ofPattern("d MMMM yyyy")
           val deadlineEnd = nextReturnPeriod.deadline.format(deadlineEndFormat)
 
-          val cancelRegistrationSummary: (String, SummaryList) = ("", SummaryListViewModel(
-            rows = Seq(
-              ReasonSummary.row(request.userAnswers, isCheckAnswers = false),
-              CancelRegistrationDateSummary.row(request.userAnswers, isCheckAnswers = false)
-            ))
+          val cancelRegistrationSummary: (String, SummaryList) = (
+            "",
+            SummaryListViewModel(
+              rows = Seq(
+                ReasonSummary.row(request.userAnswers, isCheckAnswers = false),
+                CancelRegistrationDateSummary.row(request.userAnswers, isCheckAnswers = false)
+              )
+            )
           )
 
-          Ok(view(
-            formattedDate, formattedTime,
-            returnPeriodStart, returnPeriodEnd,
-            deadlineStart, deadlineEnd,
-            request.subscription.orgName, Seq(cancelRegistrationSummary)))
+          Ok(
+            view(
+              formattedDate,
+              formattedTime,
+              returnPeriodStart,
+              returnPeriodEnd,
+              deadlineStart,
+              deadlineEnd,
+              request.subscription.orgName,
+              Seq(cancelRegistrationSummary)
+            )
+          )
 
-        case None => genericLogger.logger.error(s"[SoftDrinksIndustryLevyService [submitVariation] - unexpected response while attempting to retreive userAnswers submittedOnDate")
+        case None =>
+          genericLogger.logger.error(
+            s"[SoftDrinksIndustryLevyService [submitVariation] - unexpected response while attempting to retreive userAnswers submittedOnDate"
+          )
           Redirect(routes.SelectChangeController.onPageLoad)
       }
   }

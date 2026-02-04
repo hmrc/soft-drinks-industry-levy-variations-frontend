@@ -22,52 +22,52 @@ import forms.correctReturn.ClaimCreditsForExportsFormProvider
 import handlers.ErrorHandler
 import models.Mode
 import navigation._
-import pages.correctReturn.{ClaimCreditsForExportsPage, HowManyClaimCreditsForExportsPage}
+import pages.correctReturn.{ ClaimCreditsForExportsPage, HowManyClaimCreditsForExportsPage }
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import services.SessionService
 import utilities.GenericLogger
 import views.html.correctReturn.ClaimCreditsForExportsView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class ClaimCreditsForExportsController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         val sessionService: SessionService,
-                                         val navigator: NavigatorForCorrectReturn,
-                                         controllerActions: ControllerActions,
-                                         formProvider: ClaimCreditsForExportsFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: ClaimCreditsForExportsView,
-                                          val genericLogger: GenericLogger,
-                                          val errorHandler: ErrorHandler
-                                 )(implicit val ec: ExecutionContext) extends ControllerHelper {
+class ClaimCreditsForExportsController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForCorrectReturn,
+  controllerActions: ControllerActions,
+  formProvider: ClaimCreditsForExportsFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: ClaimCreditsForExportsView,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData { implicit request =>
 
-      val preparedForm = request.userAnswers.get(ClaimCreditsForExportsPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+    val preparedForm = request.userAnswers.get(ClaimCreditsForExportsPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
-      Ok(view(preparedForm, mode))
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
-        value => {
-          val updatedAnswers = request.userAnswers.setAndRemoveLitresIfReq(ClaimCreditsForExportsPage, HowManyClaimCreditsForExportsPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, ClaimCreditsForExportsPage, mode)
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value => {
+            val updatedAnswers = request.userAnswers
+              .setAndRemoveLitresIfReq(ClaimCreditsForExportsPage, HowManyClaimCreditsForExportsPage, value)
+            updateDatabaseAndRedirect(updatedAnswers, ClaimCreditsForExportsPage, mode)
           }
-      )
+        )
   }
 }

@@ -17,63 +17,75 @@
 package controllers.addressLookupFrontend
 
 import controllers.actions.ControllerActions
-import models.{Mode, SelectChange}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import models.{ Mode, SelectChange }
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import repositories.SessionRepository
-import services.{AddressLookupService, ContactDetails, PackingDetails, WarehouseDetails}
+import services.{ AddressLookupService, ContactDetails, PackingDetails, WarehouseDetails }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class RampOffController @Inject()(controllerActions: ControllerActions,
-                                  addressLookupService: AddressLookupService,
-                                  sessionRepository: SessionRepository,
-                                  val controllerComponents: MessagesControllerComponents)
-                                 (implicit val ex: ExecutionContext) extends FrontendBaseController {
+class RampOffController @Inject() (
+  controllerActions: ControllerActions,
+  addressLookupService: AddressLookupService,
+  sessionRepository: SessionRepository,
+  val controllerComponents: MessagesControllerComponents
+)(implicit val ex: ExecutionContext)
+    extends FrontendBaseController {
 
-  def secondaryWareHouseDetailsOffRamp(sdilId: String, alfId: String, mode: Mode): Action[AnyContent] = controllerActions.withRequiredData.async {
-    implicit request =>
+  def secondaryWareHouseDetailsOffRamp(sdilId: String, alfId: String, mode: Mode): Action[AnyContent] =
+    controllerActions.withRequiredData.async { implicit request =>
       for {
         alfResponse <- addressLookupService.getAddress(alfId)
-        updatedUserAnswers = addressLookupService.addAddressUserAnswers(WarehouseDetails, alfResponse.address, request.userAnswers, sdilId, alfId)
+        updatedUserAnswers =
+          addressLookupService
+            .addAddressUserAnswers(WarehouseDetails, alfResponse.address, request.userAnswers, sdilId, alfId)
         _ <- sessionRepository.set(updatedUserAnswers)
       } yield {
         val redirectUrl = updatedUserAnswers.journeyType match {
-          case SelectChange.UpdateRegisteredDetails => controllers.updateRegisteredDetails.routes.WarehouseDetailsController.onPageLoad(mode)
-          case SelectChange.ChangeActivity => controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
-          case SelectChange.CorrectReturn => controllers.correctReturn.routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
+          case SelectChange.UpdateRegisteredDetails =>
+            controllers.updateRegisteredDetails.routes.WarehouseDetailsController.onPageLoad(mode)
+          case SelectChange.ChangeActivity =>
+            controllers.changeActivity.routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
+          case SelectChange.CorrectReturn =>
+            controllers.correctReturn.routes.SecondaryWarehouseDetailsController.onPageLoad(mode)
           case _ => controllers.routes.SelectChangeController.onPageLoad
         }
         Redirect(redirectUrl)
       }
-  }
+    }
 
-  def packingSiteDetailsOffRamp(sdilId: String, alfId: String, mode: Mode): Action[AnyContent] = controllerActions.withRequiredData.async {
-    implicit request =>
+  def packingSiteDetailsOffRamp(sdilId: String, alfId: String, mode: Mode): Action[AnyContent] =
+    controllerActions.withRequiredData.async { implicit request =>
       for {
         alfResponse <- addressLookupService.getAddress(alfId)
-        updatedUserAnswers = addressLookupService.addAddressUserAnswers(PackingDetails, alfResponse.address, request.userAnswers, sdilId, alfId)
+        updatedUserAnswers =
+          addressLookupService
+            .addAddressUserAnswers(PackingDetails, alfResponse.address, request.userAnswers, sdilId, alfId)
         _ <- sessionRepository.set(updatedUserAnswers)
       } yield {
         val redirectUrl = updatedUserAnswers.journeyType match {
-          case SelectChange.ChangeActivity => controllers.changeActivity.routes.PackagingSiteDetailsController.onPageLoad(mode)
-          case SelectChange.UpdateRegisteredDetails => controllers.updateRegisteredDetails.routes.PackagingSiteDetailsController.onPageLoad(mode)
-          case SelectChange.CorrectReturn => controllers.correctReturn.routes.PackagingSiteDetailsController.onPageLoad(mode)
+          case SelectChange.ChangeActivity =>
+            controllers.changeActivity.routes.PackagingSiteDetailsController.onPageLoad(mode)
+          case SelectChange.UpdateRegisteredDetails =>
+            controllers.updateRegisteredDetails.routes.PackagingSiteDetailsController.onPageLoad(mode)
+          case SelectChange.CorrectReturn =>
+            controllers.correctReturn.routes.PackagingSiteDetailsController.onPageLoad(mode)
           case _ => controllers.routes.SelectChangeController.onPageLoad
         }
         Redirect(redirectUrl)
       }
-  }
+    }
 
-  def contactDetailsOffRamp(sdilId: String, alfId: String, mode: Mode): Action[AnyContent] = controllerActions.withRequiredData.async {
-    implicit request =>
+  def contactDetailsOffRamp(sdilId: String, alfId: String, mode: Mode): Action[AnyContent] =
+    controllerActions.withRequiredData.async { implicit request =>
       for {
         alfResponse <- addressLookupService.getAddress(alfId)
-        updatedUserAnswers = addressLookupService.addAddressUserAnswers(ContactDetails, alfResponse.address, request.userAnswers, sdilId, alfId)
+        updatedUserAnswers =
+          addressLookupService
+            .addAddressUserAnswers(ContactDetails, alfResponse.address, request.userAnswers, sdilId, alfId)
         _ <- sessionRepository.set(updatedUserAnswers)
-      } yield {
-        Redirect(controllers.updateRegisteredDetails.routes.BusinessAddressController.onPageLoad())
-      }
-  }
+      } yield Redirect(controllers.updateRegisteredDetails.routes.BusinessAddressController.onPageLoad())
+    }
 }

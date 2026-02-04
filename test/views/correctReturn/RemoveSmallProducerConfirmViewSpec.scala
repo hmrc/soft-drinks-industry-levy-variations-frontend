@@ -31,7 +31,7 @@ class RemoveSmallProducerConfirmViewSpec extends ViewSpecHelper {
   val formProvider = new RemoveSmallProducerConfirmFormProvider
   val form: Form[Boolean] = formProvider.apply()
   val smallProducerName = "Super Lemonade Plc"
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-fieldset__heading"
@@ -47,20 +47,20 @@ class RemoveSmallProducerConfirmViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view(form, NormalMode, sdilNumber, smallProducerName)(request, messages(application))
+    val html = view(form, NormalMode, sdilNumber, smallProducerName)(using request, messages(application))
     val document = doc(html)
 
     "should contain the expected title" in {
       document.title() must include(Messages("correctReturn.removeSmallProducerConfirm" + ".title"))
     }
 
-
     "should include a legend with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("correctReturn.removeSmallProducerConfirm.heading")
+      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages(
+        "correctReturn.removeSmallProducerConfirm.heading"
+      )
     }
-
 
     "when the form is not preoccupied and has no errors" - {
 
@@ -97,7 +97,7 @@ class RemoveSmallProducerConfirmViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with yes and has no errors" - {
-      val html1 = view(form.fill(true), NormalMode, sdilNumber, smallProducerName)(request, messages(application))
+      val html1 = view(form.fill(true), NormalMode, sdilNumber, smallProducerName)(using request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -132,7 +132,8 @@ class RemoveSmallProducerConfirmViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with no and has no errors" - {
-      val html1 = view(form.fill(false), NormalMode, sdilNumber, smallProducerName)(request, messages(application))
+      val html1 =
+        view(form.fill(false), NormalMode, sdilNumber, smallProducerName)(using request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -169,25 +170,33 @@ class RemoveSmallProducerConfirmViewSpec extends ViewSpecHelper {
     "contains a form with the correct action" - {
 
       "when in NormalMode" - {
-        val htmlYesSelected = view(form.fill(true), NormalMode, sdilNumber, smallProducerName)(request, messages(application))
+        val htmlYesSelected =
+          view(form.fill(true), NormalMode, sdilNumber, smallProducerName)(using request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), NormalMode, sdilNumber, smallProducerName)(request, messages(application))
+        val htmlNoSelected =
+          view(form.fill(false), NormalMode, sdilNumber, smallProducerName)(using request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
-          documentYesSelected.select(Selectors.form)
+          documentYesSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.RemoveSmallProducerConfirmController.onSubmit(NormalMode, sdilNumber).url
         }
 
         "and no is selected" in {
-          documentNoSelected.select(Selectors.form)
+          documentNoSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.RemoveSmallProducerConfirmController.onSubmit(NormalMode, sdilNumber).url
         }
       }
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode, sdilNumber, smallProducerName)(request, messages(application))
+      val htmlWithErrors =
+        view(form.bind(Map("value" -> "")), NormalMode, sdilNumber, smallProducerName)(using
+          request,
+          messages(application)
+        )
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {

@@ -21,7 +21,7 @@ import connectors.SoftDrinksIndustryLevyConnector
 import models.UserAnswers
 import models.backend.RetrievedSubscription
 import models.submission.VariationsSubmission
-import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
+import pages.cancelRegistration.{ CancelRegistrationDatePage, ReasonPage }
 import service.VariationResult
 import services.SessionService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -30,11 +30,15 @@ import java.time.Instant
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class CancelRegistrationOrchestrator @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector,
-                                               sessionService: SessionService) {
+class CancelRegistrationOrchestrator @Inject() (
+  sdilConnector: SoftDrinksIndustryLevyConnector,
+  sessionService: SessionService
+) {
 
-  private def getVariationToBeSubmitted(subscription: RetrievedSubscription,
-                                        userAnswers: UserAnswers): VariationsSubmission = {
+  private def getVariationToBeSubmitted(
+    subscription: RetrievedSubscription,
+    userAnswers: UserAnswers
+  ): VariationsSubmission =
     VariationsSubmission(
       displayOrgName = subscription.orgName,
       ppobAddress = subscription.address,
@@ -42,14 +46,15 @@ class CancelRegistrationOrchestrator @Inject()(sdilConnector: SoftDrinksIndustry
       deregistrationDate = userAnswers.get(CancelRegistrationDatePage),
       sdilActivity = subscription.defaultSdilAcivity
     )
-  }
 
-  def submitVariationAndUpdateSession(subscription: RetrievedSubscription, userAnswers: UserAnswers)
-                                     (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = {
+  def submitVariationAndUpdateSession(subscription: RetrievedSubscription, userAnswers: UserAnswers)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): VariationResult[Unit] = {
     val cancelRegistrationVariation = getVariationToBeSubmitted(subscription, userAnswers)
     for {
       variation <- sdilConnector.submitVariation(cancelRegistrationVariation, subscription.sdilRef)
-      _ <- EitherT(sessionService.set(userAnswers.copy(submitted = true, submittedOn = Some(Instant.now))))
+      _         <- EitherT(sessionService.set(userAnswers.copy(submitted = true, submittedOn = Some(Instant.now))))
     } yield variation
   }
 }

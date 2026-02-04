@@ -18,11 +18,11 @@ package views.summary
 
 import config.FrontendAppConfig
 import models.LevyCalculator.getLevyCalculation
-import models.{LevyCalculation, LitresInBands, ReturnPeriod}
+import models.{ LevyCalculation, LitresInBands, ReturnPeriod }
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Actions, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ Actions, SummaryListRow }
 import utilities.CurrencyFormatter
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
@@ -35,15 +35,21 @@ trait SummaryListRowLitresHelper {
   val hasZeroLevy: Boolean = false
   val isNegativeLevy: Boolean = false
 
-
   val lowBand = "lowband"
   val highBand = "highband"
 
-  def rows(litresInBands: LitresInBands, isCheckAnswers: Boolean, correctReturnPeriod: Option[ReturnPeriod] = None, includeLevyRows: Boolean = true)
-          (implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
-    val levyCalculation: Option[LevyCalculation] = correctReturnPeriod.map(getLevyCalculation(litresInBands.lowBand, litresInBands.highBand, _))
-    val lowBandLevyRow: Option[SummaryListRow] = if (includeLevyRows) levyCalculation.map(calc => bandLevyRow(calc.lowLevy, lowBand)) else None
-    val highBandLevyRow: Option[SummaryListRow] = if (includeLevyRows) levyCalculation.map(calc => bandLevyRow(calc.highLevy, highBand)) else None
+  def rows(
+    litresInBands: LitresInBands,
+    isCheckAnswers: Boolean,
+    correctReturnPeriod: Option[ReturnPeriod] = None,
+    includeLevyRows: Boolean = true
+  )(implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
+    val levyCalculation: Option[LevyCalculation] =
+      correctReturnPeriod.map(getLevyCalculation(litresInBands.lowBand, litresInBands.highBand, _))
+    val lowBandLevyRow: Option[SummaryListRow] =
+      if (includeLevyRows) levyCalculation.map(calc => bandLevyRow(calc.lowLevy, lowBand)) else None
+    val highBandLevyRow: Option[SummaryListRow] =
+      if (includeLevyRows) levyCalculation.map(calc => bandLevyRow(calc.highLevy, highBand)) else None
     Seq(
       Option(bandRow(litresInBands.lowBand, lowBand, isCheckAnswers, includeLevyRows)),
       lowBandLevyRow,
@@ -52,7 +58,9 @@ trait SummaryListRowLitresHelper {
     ).flatten
   }
 
-  private def bandRow(litres: Long, band: String, isCheckAnswers: Boolean, noBorder: Boolean)(implicit messages: Messages): SummaryListRow = {
+  private def bandRow(litres: Long, band: String, isCheckAnswers: Boolean, noBorder: Boolean)(implicit
+    messages: Messages
+  ): SummaryListRow = {
     val key = if (band == lowBand) {
       "litres.lowBand"
     } else {
@@ -74,7 +82,10 @@ trait SummaryListRowLitresHelper {
       "litres.highBandLevy"
     }
 
-    val value = HtmlFormat.escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy(levyAmount))).toString.replace("-", "&minus;")
+    val value = HtmlFormat
+      .escape(CurrencyFormatter.formatAmountOfMoneyWithPoundSign(levy(levyAmount)))
+      .toString
+      .replace("-", "&minus;")
     SummaryListRowViewModel(
       key = key,
       value = ValueViewModel(HtmlContent(value)).withCssClass("sdil-right-align--desktop"),
@@ -82,7 +93,7 @@ trait SummaryListRowLitresHelper {
     ).withCssClass("govuk-summary-list__row--no-actions")
   }
 
-  private def levy(levyAmount: BigDecimal): BigDecimal = {
+  private def levy(levyAmount: BigDecimal): BigDecimal =
     if (hasZeroLevy) {
       0
     } else if (isNegativeLevy) {
@@ -90,15 +101,20 @@ trait SummaryListRowLitresHelper {
     } else {
       levyAmount.toDouble
     }
-  }
 
-  def action(isCheckAnswers: Boolean, band: String)(implicit messages: Messages): Option[Actions] = if (isCheckAnswers) {
-    Some(Actions("",
-      items =
-        Seq(
+  def action(isCheckAnswers: Boolean, band: String)(implicit messages: Messages): Option[Actions] = if (
+    isCheckAnswers
+  ) {
+    Some(
+      Actions(
+        "",
+        items = Seq(
           ActionItemViewModel("site.change", actionUrl)
             .withAttribute(("id", s"change-$band-litreage-$bandActionIdKey"))
-            .withVisuallyHiddenText(messages(s"${bandHiddenKey}.$band.litres.hidden")))))
+            .withVisuallyHiddenText(messages(s"$bandHiddenKey.$band.litres.hidden"))
+        )
+      )
+    )
   } else {
     None
   }

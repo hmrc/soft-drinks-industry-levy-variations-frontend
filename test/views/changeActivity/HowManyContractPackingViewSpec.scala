@@ -18,7 +18,7 @@ package views.changeActivity
 
 import config.FrontendAppConfig
 import controllers.changeActivity.routes
-import models.{CheckMode, NormalMode}
+import models.{ CheckMode, NormalMode }
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
@@ -26,14 +26,15 @@ import views.LitresSpecHelper
 import views.html.changeActivity.HowManyContractPackingView
 class HowManyContractPackingViewSpec extends LitresSpecHelper {
 
-  val howManyContractPackingView: HowManyContractPackingView = application.injector.instanceOf[HowManyContractPackingView]
+  val howManyContractPackingView: HowManyContractPackingView =
+    application.injector.instanceOf[HowManyContractPackingView]
 
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
   implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
   "HowManyContractPackingView" - {
     List(NormalMode, CheckMode).foreach { mode =>
-      "when in " + mode +" mode" - {
+      "when in " + mode + " mode" - {
         val html: HtmlFormat.Appendable = howManyContractPackingView(form, mode)
         val document = doc(html)
         val htmlWithValidData: HtmlFormat.Appendable = howManyContractPackingView(formWithHighAndLowBands, mode)
@@ -51,7 +52,7 @@ class HowManyContractPackingViewSpec extends LitresSpecHelper {
 
         "should have the expected title" in {
           document.title() mustBe
-          "How many litres will you package as a third party or contract packer in the next 12 months? - Soft Drinks Industry Levy - GOV.UK"
+            "How many litres will you package as a third party or contract packer in the next 12 months? - Soft Drinks Industry Levy - GOV.UK"
         }
 
         "should have the expected heading" in {
@@ -60,7 +61,9 @@ class HowManyContractPackingViewSpec extends LitresSpecHelper {
         }
 
         "should include a govuk body with the expected content" in {
-          document.getElementsByClass(Selectors.body).text() mustBe "If you do not have the exact volumes you can enter an estimate."
+          document
+            .getElementsByClass(Selectors.body)
+            .text() mustBe "If you do not have the exact volumes you can enter an estimate."
         }
 
         testLitresInBandsNoPrepopulatedData(document)

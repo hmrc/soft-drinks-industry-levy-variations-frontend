@@ -19,24 +19,25 @@ package views.summary.cancelRegistration
 import java.time.format.DateTimeFormatter
 
 import controllers.cancelRegistration.routes
-import models.{CheckMode, UserAnswers}
+import models.{ CheckMode, UserAnswers }
 import pages.cancelRegistration.CancelRegistrationDatePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object CancelRegistrationDateSummary  {
+object CancelRegistrationDateSummary {
 
   def row(answers: UserAnswers, isCheckAnswers: Boolean = true)(implicit messages: Messages): SummaryListRow =
-    answers.get(CancelRegistrationDatePage).map {
-      answer =>
+    answers
+      .get(CancelRegistrationDatePage)
+      .map { answer =>
 
         val dateFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
         SummaryListRowViewModel(
-          key     = "cancelRegistration.cancelRegistrationDate.checkYourAnswersLabel",
-          value   = ValueViewModel(answer.format(dateFormatter)),
+          key = "cancelRegistration.cancelRegistrationDate.checkYourAnswersLabel",
+          value = ValueViewModel(answer.format(dateFormatter)),
           actions = if (isCheckAnswers) {
             Seq(
               ActionItemViewModel("site.change", routes.CancelRegistrationDateController.onPageLoad(CheckMode).url)
@@ -44,5 +45,6 @@ object CancelRegistrationDateSummary  {
             )
           } else Seq.empty
         )
-    }.getOrElse(throw new IllegalArgumentException(s"No end date inputted"))
+      }
+      .getOrElse(throw new IllegalArgumentException(s"No end date inputted"))
 }

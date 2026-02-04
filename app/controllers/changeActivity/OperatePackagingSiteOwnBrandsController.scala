@@ -22,56 +22,60 @@ import forms.changeActivity.OperatePackagingSiteOwnBrandsFormProvider
 import handlers.ErrorHandler
 import models.Mode
 import navigation._
-import pages.changeActivity.{HowManyOperatePackagingSiteOwnBrandsPage, OperatePackagingSiteOwnBrandsPage}
+import pages.changeActivity.{ HowManyOperatePackagingSiteOwnBrandsPage, OperatePackagingSiteOwnBrandsPage }
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import services.SessionService
 import utilities.GenericLogger
 import views.html.changeActivity.OperatePackagingSiteOwnBrandsView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import models.SelectChange.ChangeActivity
 import play.api.data.Form
 
-class OperatePackagingSiteOwnBrandsController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         val sessionService: SessionService,
-                                         val navigator: NavigatorForChangeActivity,
-                                         controllerActions: ControllerActions,
-                                         requiredUserAnswers: RequiredUserAnswersForChangeActivity,
-                                         formProvider: OperatePackagingSiteOwnBrandsFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: OperatePackagingSiteOwnBrandsView,
-                                          val genericLogger: GenericLogger,
-                                          val errorHandler: ErrorHandler
-                                 )(implicit val ec: ExecutionContext) extends ControllerHelper {
+class OperatePackagingSiteOwnBrandsController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForChangeActivity,
+  controllerActions: ControllerActions,
+  requiredUserAnswers: RequiredUserAnswersForChangeActivity,
+  formProvider: OperatePackagingSiteOwnBrandsFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: OperatePackagingSiteOwnBrandsView,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper {
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    controllerActions.withRequiredJourneyData(ChangeActivity).async { implicit request =>
       requiredUserAnswers.requireData(OperatePackagingSiteOwnBrandsPage, request.userAnswers, request.subscription) {
         val preparedForm = request.userAnswers.get(OperatePackagingSiteOwnBrandsPage) match {
-          case None => form
+          case None        => form
           case Some(value) => form.fill(value)
         }
 
         Future.successful(Ok(view(preparedForm, mode)))
       }
-  }
+    }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
-    implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
-        value => {
-          val updatedAnswers = request.userAnswers.setAndRemoveLitresIfReq(OperatePackagingSiteOwnBrandsPage, HowManyOperatePackagingSiteOwnBrandsPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, OperatePackagingSiteOwnBrandsPage, mode)
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    controllerActions.withRequiredJourneyData(ChangeActivity).async { implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value => {
+            val updatedAnswers = request.userAnswers.setAndRemoveLitresIfReq(
+              OperatePackagingSiteOwnBrandsPage,
+              HowManyOperatePackagingSiteOwnBrandsPage,
+              value
+            )
+            updateDatabaseAndRedirect(updatedAnswers, OperatePackagingSiteOwnBrandsPage, mode)
           }
-      )
-  }
+        )
+    }
 }

@@ -16,18 +16,14 @@
 
 package models
 
-import play.api.libs.json.{Json, Reads, Writes}
-import cats.implicits._
+import play.api.libs.json.{ Json, Reads, Writes }
 import models.submission.Litreage
-case class SmallProducer(alias: String,
-                         sdilRef: String,
-                         litreage: Litreage) {
+case class SmallProducer(alias: String, sdilRef: String, litreage: Litreage) {
 
   def getNameAndRef: String =
     if (alias.nonEmpty) {
       alias ++ "</br>" ++ sdilRef
-    }
-    else {
+    } else {
       sdilRef
     }
 

@@ -17,9 +17,9 @@
 package views.summary.correctReturn
 
 import base.SpecBase
-import models.correctReturn.{AddASmallProducer, RepaymentMethod}
+import models.correctReturn.{ AddASmallProducer, RepaymentMethod }
 import models.submission.Litreage
-import models.{LitresInBands, SmallProducer}
+import models.{ LitresInBands, SmallProducer }
 import pages.correctReturn._
 
 class CorrectReturnCheckChangesSummarySpec extends SpecBase {
@@ -30,24 +30,59 @@ class CorrectReturnCheckChangesSummarySpec extends SpecBase {
     val litres = LitresInBands(lowLitres, highLitres)
 
     val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
-      .copy(packagingSiteList = Map.empty, warehouseList = Map.empty,
-        smallProducerList = List(SmallProducer("", "XZSDIL000000234", Litreage(2000, 4000))))
-      .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-      .set(HowManyOperatePackagingSiteOwnBrandsPage, litres).success.value
-      .set(PackagedAsContractPackerPage, true).success.value
-      .set(HowManyPackagedAsContractPackerPage, litres).success.value
-      .set(ExemptionsForSmallProducersPage, true).success.value
-      .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", litres)).success.value
-      .set(BroughtIntoUKPage, true).success.value
-      .set(HowManyBroughtIntoUKPage, litres).success.value
-      .set(BroughtIntoUkFromSmallProducersPage, true).success.value
-      .set(HowManyBroughtIntoUkFromSmallProducersPage, litres).success.value
-      .set(ClaimCreditsForExportsPage, true).success.value
-      .set(HowManyClaimCreditsForExportsPage, litres).success.value
-      .set(ClaimCreditsForLostDamagedPage, true).success.value
-      .set(HowManyCreditsForLostDamagedPage, litres).success.value
-      .set(CorrectionReasonPage, "foo").success.value
-      .set(RepaymentMethodPage, RepaymentMethod.values.head).success.value
+      .copy(
+        packagingSiteList = Map.empty,
+        warehouseList = Map.empty,
+        smallProducerList = List(SmallProducer("", "XZSDIL000000234", Litreage(2000, 4000)))
+      )
+      .set(OperatePackagingSiteOwnBrandsPage, true)
+      .success
+      .value
+      .set(HowManyOperatePackagingSiteOwnBrandsPage, litres)
+      .success
+      .value
+      .set(PackagedAsContractPackerPage, true)
+      .success
+      .value
+      .set(HowManyPackagedAsContractPackerPage, litres)
+      .success
+      .value
+      .set(ExemptionsForSmallProducersPage, true)
+      .success
+      .value
+      .set(AddASmallProducerPage, AddASmallProducer(None, "XZSDIL000000234", litres))
+      .success
+      .value
+      .set(BroughtIntoUKPage, true)
+      .success
+      .value
+      .set(HowManyBroughtIntoUKPage, litres)
+      .success
+      .value
+      .set(BroughtIntoUkFromSmallProducersPage, true)
+      .success
+      .value
+      .set(HowManyBroughtIntoUkFromSmallProducersPage, litres)
+      .success
+      .value
+      .set(ClaimCreditsForExportsPage, true)
+      .success
+      .value
+      .set(HowManyClaimCreditsForExportsPage, litres)
+      .success
+      .value
+      .set(ClaimCreditsForLostDamagedPage, true)
+      .success
+      .value
+      .set(HowManyCreditsForLostDamagedPage, litres)
+      .success
+      .value
+      .set(CorrectionReasonPage, "foo")
+      .success
+      .value
+      .set(RepaymentMethodPage, RepaymentMethod.values.head)
+      .success
+      .value
 
     "should return a summary list row with the selected answer if Correction reason page has been answered" in {
       val correctionReasonSummaryRow = CorrectionReasonSummary.row(userAnswers)

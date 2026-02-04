@@ -18,51 +18,64 @@ package generators
 
 import org.scalacheck.Arbitrary
 import pages._
-import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
+import pages.cancelRegistration.{ CancelRegistrationDatePage, ReasonPage }
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 
 trait PageGenerators {
 
-  implicit lazy val arbitraryUpdateRegisteredDetailsChangeRegisteredDetailsPage: Arbitrary[updateRegisteredDetails.ChangeRegisteredDetailsPage.type] =
+  implicit lazy val arbitraryUpdateRegisteredDetailsChangeRegisteredDetailsPage
+    : Arbitrary[updateRegisteredDetails.ChangeRegisteredDetailsPage.type] =
     Arbitrary(updateRegisteredDetails.ChangeRegisteredDetailsPage)
 
-  implicit lazy val arbitraryCorrectReturnRemovePackagingSiteConfirmPage: Arbitrary[correctReturn.RemovePackagingSiteConfirmPage.type] =
+  implicit lazy val arbitraryCorrectReturnRemovePackagingSiteConfirmPage
+    : Arbitrary[correctReturn.RemovePackagingSiteConfirmPage.type] =
     Arbitrary(correctReturn.RemovePackagingSiteConfirmPage)
 
-  implicit lazy val arbitraryCorrectReturnSecondaryWarehouseDetailsPage: Arbitrary[correctReturn.SecondaryWarehouseDetailsPage.type] =
+  implicit lazy val arbitraryCorrectReturnSecondaryWarehouseDetailsPage
+    : Arbitrary[correctReturn.SecondaryWarehouseDetailsPage.type] =
     Arbitrary(correctReturn.SecondaryWarehouseDetailsPage)
 
-  implicit lazy val arbitraryCorrectReturnRemoveWarehouseConfirmPage: Arbitrary[correctReturn.RemoveWarehouseDetailsPage.type] =
+  implicit lazy val arbitraryCorrectReturnRemoveWarehouseConfirmPage
+    : Arbitrary[correctReturn.RemoveWarehouseDetailsPage.type] =
     Arbitrary(correctReturn.RemoveWarehouseDetailsPage)
 
-  implicit lazy val arbitraryCorrectReturnAskSecondaryWarehouseInReturnPage: Arbitrary[correctReturn.AskSecondaryWarehouseInReturnPage.type] =
+  implicit lazy val arbitraryCorrectReturnAskSecondaryWarehouseInReturnPage
+    : Arbitrary[correctReturn.AskSecondaryWarehouseInReturnPage.type] =
     Arbitrary(correctReturn.AskSecondaryWarehouseInReturnPage)
 
-  implicit lazy val arbitraryCorrectReturnSmallProducerDetailsPage: Arbitrary[correctReturn.SmallProducerDetailsPage.type] =
+  implicit lazy val arbitraryCorrectReturnSmallProducerDetailsPage
+    : Arbitrary[correctReturn.SmallProducerDetailsPage.type] =
     Arbitrary(correctReturn.SmallProducerDetailsPage)
 
-  implicit lazy val arbitraryCorrectReturnPackagingSiteDetailsPage: Arbitrary[correctReturn.PackagingSiteDetailsPage.type] =
+  implicit lazy val arbitraryCorrectReturnPackagingSiteDetailsPage
+    : Arbitrary[correctReturn.PackagingSiteDetailsPage.type] =
     Arbitrary(correctReturn.PackagingSiteDetailsPage)
 
-  implicit lazy val arbitraryCorrectReturnPackAtBusinessAddressPage: Arbitrary[correctReturn.PackAtBusinessAddressPage.type] =
+  implicit lazy val arbitraryCorrectReturnPackAtBusinessAddressPage
+    : Arbitrary[correctReturn.PackAtBusinessAddressPage.type] =
     Arbitrary(correctReturn.PackAtBusinessAddressPage)
 
-  implicit lazy val arbitraryCorrectReturnBroughtIntoUkFromSmallProducersPage: Arbitrary[correctReturn.BroughtIntoUkFromSmallProducersPage.type] =
+  implicit lazy val arbitraryCorrectReturnBroughtIntoUkFromSmallProducersPage
+    : Arbitrary[correctReturn.BroughtIntoUkFromSmallProducersPage.type] =
     Arbitrary(correctReturn.BroughtIntoUkFromSmallProducersPage)
 
-  implicit lazy val arbitraryCorrectReturnClaimCreditsForExportsPage: Arbitrary[correctReturn.ClaimCreditsForExportsPage.type] =
+  implicit lazy val arbitraryCorrectReturnClaimCreditsForExportsPage
+    : Arbitrary[correctReturn.ClaimCreditsForExportsPage.type] =
     Arbitrary(correctReturn.ClaimCreditsForExportsPage)
 
   implicit lazy val arbitraryCorrectReturnBroughtIntoUKPage: Arbitrary[correctReturn.BroughtIntoUKPage.type] =
     Arbitrary(correctReturn.BroughtIntoUKPage)
 
-  implicit lazy val arbitraryCorrectReturnExemptionsForSmallProducersPage: Arbitrary[correctReturn.ExemptionsForSmallProducersPage.type] =
+  implicit lazy val arbitraryCorrectReturnExemptionsForSmallProducersPage
+    : Arbitrary[correctReturn.ExemptionsForSmallProducersPage.type] =
     Arbitrary(correctReturn.ExemptionsForSmallProducersPage)
 
-  implicit lazy val arbitraryCorrectReturnRemoveSmallProducerConfirmPage: Arbitrary[correctReturn.RemoveSmallProducerConfirmPage.type] =
+  implicit lazy val arbitraryCorrectReturnRemoveSmallProducerConfirmPage
+    : Arbitrary[correctReturn.RemoveSmallProducerConfirmPage.type] =
     Arbitrary(correctReturn.RemoveSmallProducerConfirmPage)
 
-  implicit lazy val arbitraryCorrectReturnPackagedAsContractPackerPage: Arbitrary[correctReturn.PackagedAsContractPackerPage.type] =
+  implicit lazy val arbitraryCorrectReturnPackagedAsContractPackerPage
+    : Arbitrary[correctReturn.PackagedAsContractPackerPage.type] =
     Arbitrary(correctReturn.PackagedAsContractPackerPage)
 
   implicit lazy val arbitraryCorrectReturnCorrectionReasonPage: Arbitrary[correctReturn.CorrectionReasonPage.type] =
@@ -77,25 +90,32 @@ trait PageGenerators {
   implicit lazy val arbitraryCorrectReturnRepaymentMethodPage: Arbitrary[correctReturn.RepaymentMethodPage.type] =
     Arbitrary(correctReturn.RepaymentMethodPage)
 
-  implicit lazy val arbitraryChangeActivityPackAtBusinessAddressPage: Arbitrary[changeActivity.PackAtBusinessAddressPage.type] =
+  implicit lazy val arbitraryChangeActivityPackAtBusinessAddressPage
+    : Arbitrary[changeActivity.PackAtBusinessAddressPage.type] =
     Arbitrary(changeActivity.PackAtBusinessAddressPage)
 
-  implicit lazy val arbitraryChangeActivityPackagingSiteDetailsPage: Arbitrary[changeActivity.PackagingSiteDetailsPage.type] =
+  implicit lazy val arbitraryChangeActivityPackagingSiteDetailsPage
+    : Arbitrary[changeActivity.PackagingSiteDetailsPage.type] =
     Arbitrary(changeActivity.PackagingSiteDetailsPage)
 
-  implicit lazy val arbitraryChangeActivityRemovePackagingSiteDetailsPage: Arbitrary[changeActivity.RemovePackagingSiteDetailsPage.type] =
+  implicit lazy val arbitraryChangeActivityRemovePackagingSiteDetailsPage
+    : Arbitrary[changeActivity.RemovePackagingSiteDetailsPage.type] =
     Arbitrary(changeActivity.RemovePackagingSiteDetailsPage)
 
-  implicit lazy val arbitraryChangeActivityRemoveWarehouseDetailsPage: Arbitrary[changeActivity.SecondaryWarehouseDetailsPage.type] =
+  implicit lazy val arbitraryChangeActivityRemoveWarehouseDetailsPage
+    : Arbitrary[changeActivity.SecondaryWarehouseDetailsPage.type] =
     Arbitrary(changeActivity.SecondaryWarehouseDetailsPage)
 
-  implicit lazy val arbitraryUpdateRegisteredDetailsPackagingSiteDetailsPage: Arbitrary[updateRegisteredDetails.PackagingSiteDetailsPage.type] =
+  implicit lazy val arbitraryUpdateRegisteredDetailsPackagingSiteDetailsPage
+    : Arbitrary[updateRegisteredDetails.PackagingSiteDetailsPage.type] =
     Arbitrary(updateRegisteredDetails.PackagingSiteDetailsPage)
 
-  implicit lazy val arbitraryUpdateRegisteredDetailsRemoveWarehouseDetailsPage: Arbitrary[updateRegisteredDetails.RemoveWarehouseDetailsPage.type] =
+  implicit lazy val arbitraryUpdateRegisteredDetailsRemoveWarehouseDetailsPage
+    : Arbitrary[updateRegisteredDetails.RemoveWarehouseDetailsPage.type] =
     Arbitrary(updateRegisteredDetails.RemoveWarehouseDetailsPage)
 
-  implicit lazy val arbitraryUpdateRegisteredDetailsPackingSiteDetailsRemovePage: Arbitrary[updateRegisteredDetails.PackingSiteDetailsRemovePage.type] =
+  implicit lazy val arbitraryUpdateRegisteredDetailsPackingSiteDetailsRemovePage
+    : Arbitrary[updateRegisteredDetails.PackingSiteDetailsRemovePage.type] =
     Arbitrary(updateRegisteredDetails.PackingSiteDetailsRemovePage)
 
   implicit lazy val arbitraryCancelRegistrationCancelRegistrationDatePage: Arbitrary[CancelRegistrationDatePage.type] =
@@ -104,19 +124,23 @@ trait PageGenerators {
   implicit lazy val arbitraryChangeActivityContractPackingPage: Arbitrary[changeActivity.ContractPackingPage.type] =
     Arbitrary(changeActivity.ContractPackingPage)
 
-  implicit lazy val arbitraryUpdateRegisteredDetailsWarehouseDetailsPage: Arbitrary[updateRegisteredDetails.WarehouseDetailsPage.type] =
+  implicit lazy val arbitraryUpdateRegisteredDetailsWarehouseDetailsPage
+    : Arbitrary[updateRegisteredDetails.WarehouseDetailsPage.type] =
     Arbitrary(updateRegisteredDetails.WarehouseDetailsPage)
 
   implicit lazy val arbitraryChangeActivityImportsPage: Arbitrary[changeActivity.ImportsPage.type] =
     Arbitrary(changeActivity.ImportsPage)
 
-  implicit lazy val arbitraryChangeActivityOperatePackagingSiteOwnBrandsPage: Arbitrary[changeActivity.OperatePackagingSiteOwnBrandsPage.type] =
+  implicit lazy val arbitraryChangeActivityOperatePackagingSiteOwnBrandsPage
+    : Arbitrary[changeActivity.OperatePackagingSiteOwnBrandsPage.type] =
     Arbitrary(changeActivity.OperatePackagingSiteOwnBrandsPage)
 
-  implicit lazy val arbitraryCorrectReturnOperatePackagingSiteOwnBrandsPage: Arbitrary[correctReturn.OperatePackagingSiteOwnBrandsPage.type] =
+  implicit lazy val arbitraryCorrectReturnOperatePackagingSiteOwnBrandsPage
+    : Arbitrary[correctReturn.OperatePackagingSiteOwnBrandsPage.type] =
     Arbitrary(correctReturn.OperatePackagingSiteOwnBrandsPage)
 
-  implicit lazy val arbitraryCorrectReturnClaimCreditsForLostDamagedPage: Arbitrary[correctReturn.ClaimCreditsForLostDamagedPage.type] =
+  implicit lazy val arbitraryCorrectReturnClaimCreditsForLostDamagedPage
+    : Arbitrary[correctReturn.ClaimCreditsForLostDamagedPage.type] =
     Arbitrary(correctReturn.ClaimCreditsForLostDamagedPage)
 
   implicit lazy val arbitraryCancelRegistrationReasonPage: Arbitrary[ReasonPage.type] =

@@ -19,7 +19,7 @@ package views.cancelRegistration
 import config.FrontendAppConfig
 import controllers.cancelRegistration.routes
 import forms.cancelRegistration.CancelRegistrationDateFormProvider
-import models.{CheckMode, NormalMode}
+import models.{ CheckMode, NormalMode }
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
@@ -30,7 +30,6 @@ import views.html.cancelRegistration.CancelRegistrationDateView
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-
 class CancelRegistrationDateViewSpec extends ViewSpecHelper {
 
   val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
@@ -38,7 +37,7 @@ class CancelRegistrationDateViewSpec extends ViewSpecHelper {
   val view: CancelRegistrationDateView = application.injector.instanceOf[CancelRegistrationDateView]
   val formProvider = new CancelRegistrationDateFormProvider(appConfig)
   val form: Form[LocalDate] = formProvider.apply()
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
   val currentDate: String = LocalDate.now.format(DateTimeFormatter.ofPattern("d M yyyy"))
 
   object Selectors {
@@ -53,7 +52,7 @@ class CancelRegistrationDateViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view(form, NormalMode)(request, messages(application))
+    val html = view(form, NormalMode)(using request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
       document.title() must include(Messages("cancelRegistration.cancelRegistrationDate" + ".title"))
@@ -62,7 +61,9 @@ class CancelRegistrationDateViewSpec extends ViewSpecHelper {
     "should include a legend with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("cancelRegistration.cancelRegistrationDate" + ".heading")
+      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages(
+        "cancelRegistration.cancelRegistrationDate" + ".heading"
+      )
     }
 
     "should include a hint with the acceptable date range" in {
@@ -115,24 +116,27 @@ class CancelRegistrationDateViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
       "when in CheckMode" in {
-        val htmlAllSelected = view(form.fill(LocalDate.now()), CheckMode)(request, messages(application))
+        val htmlAllSelected = view(form.fill(LocalDate.now()), CheckMode)(using request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
-        documentAllSelected.select(Selectors.form)
+        documentAllSelected
+          .select(Selectors.form)
           .attr("action") mustEqual routes.CancelRegistrationDateController.onSubmit(CheckMode).url
       }
 
       "when in NormalMode" in {
-        val htmlAllSelected = view(form.fill(LocalDate.now()), NormalMode)(request, messages(application))
+        val htmlAllSelected = view(form.fill(LocalDate.now()), NormalMode)(using request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
-        documentAllSelected.select(Selectors.form)
+        documentAllSelected
+          .select(Selectors.form)
           .attr("action") mustEqual routes.CancelRegistrationDateController.onSubmit(NormalMode).url
       }
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(form.bind(Map("cancelRegistrationDate" -> "")), NormalMode)(request, messages(application))
+      val htmlWithErrors =
+        view(form.bind(Map("cancelRegistrationDate" -> "")), NormalMode)(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {

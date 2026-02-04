@@ -24,17 +24,17 @@ import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.Value
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ SummaryList, SummaryListRow }
 import views.ViewSpecHelper
 import views.html.correctReturn.CorrectReturnUpdateDoneView
 
-import java.time.{LocalDateTime, ZoneId}
+import java.time.{ LocalDateTime, ZoneId }
 import java.time.format.DateTimeFormatter
 
 class CorrectReturnUpdateDoneViewSpec extends ViewSpecHelper {
 
   val view: CorrectReturnUpdateDoneView = application.injector.instanceOf[CorrectReturnUpdateDoneView]
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   val getSentDateTime: LocalDateTime = LocalDateTime.now(ZoneId.of("UTC"))
   val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
@@ -60,16 +60,19 @@ class CorrectReturnUpdateDoneViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val summaryList: Seq[(String, SummaryList)] = {
+    val summaryList: Seq[(String, SummaryList)] =
       Seq(
-        "foo" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bar"))))),
+        "foo"  -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bar"))))),
         "wizz" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bang")))))
       )
-    }
 
     val orgName: String = " " + aSubscription.orgName
-    val html: HtmlFormat.Appendable = view(orgName, summaryList,
-      formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd)(request, messages(application), frontendAppConfig)
+    val html: HtmlFormat.Appendable =
+      view(orgName, summaryList, formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd)(
+        request,
+        messages(application),
+        frontendAppConfig
+      )
     val document: Document = doc(html)
 
     "should have the expected heading" in {
@@ -86,21 +89,29 @@ class CorrectReturnUpdateDoneViewSpec extends ViewSpecHelper {
 
     "contain the correct summary lists" in {
       document.getElementsByClass(Selectors.summaryListHeading).get(1).text() mustBe "foo"
-      document.getElementsByClass(Selectors.summaryList)
+      document
+        .getElementsByClass(Selectors.summaryList)
         .first()
         .getElementsByClass(Selectors.summaryRow)
         .first()
-        .getElementsByClass(Selectors.summaryValue).first().text() mustBe "bar"
+        .getElementsByClass(Selectors.summaryValue)
+        .first()
+        .text() mustBe "bar"
       document.getElementsByClass(Selectors.summaryListHeading).get(2).text() mustBe "wizz"
-      document.getElementsByClass(Selectors.summaryList)
+      document
+        .getElementsByClass(Selectors.summaryList)
         .last()
         .getElementsByClass(Selectors.summaryRow)
         .first()
-        .getElementsByClass(Selectors.summaryValue).first().text() mustBe "bang"
+        .getElementsByClass(Selectors.summaryValue)
+        .first()
+        .text() mustBe "bang"
     }
 
     "should have the expected inset rounding help text" in {
-      document.getElementsByClass(Selectors.insetText).get(0).text() mustEqual Messages("checkYourAnswers.roundingHelpText")
+      document.getElementsByClass(Selectors.insetText).get(0).text() mustEqual Messages(
+        "checkYourAnswers.roundingHelpText"
+      )
     }
 
     "contain a section before the submit action that contains the correct text" in {

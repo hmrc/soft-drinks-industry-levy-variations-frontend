@@ -26,74 +26,79 @@ import models.backend.Site
 import navigation._
 import pages.changeActivity.PackAtBusinessAddressPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{AddressLookupService, PackingDetails, SessionService}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
+import services.{ AddressLookupService, PackingDetails, SessionService }
 import utilities.GenericLogger
 import viewmodels.AddressFormattingHelper
 import views.html.changeActivity.PackAtBusinessAddressView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.Try
 
-class PackAtBusinessAddressController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       val sessionService: SessionService,
-                                       val navigator: NavigatorForChangeActivity,
-                                       controllerActions: ControllerActions,
-                                       formProvider: PackAtBusinessAddressFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: PackAtBusinessAddressView,
-                                       addressLookupService: AddressLookupService,
-                                       val genericLogger: GenericLogger,
-                                       val errorHandler: ErrorHandler
-                                     )(implicit val ec: ExecutionContext) extends ControllerHelper {
+class PackAtBusinessAddressController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForChangeActivity,
+  controllerActions: ControllerActions,
+  formProvider: PackAtBusinessAddressFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: PackAtBusinessAddressView,
+  addressLookupService: AddressLookupService,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper {
 
   val form = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
     implicit request =>
-      val formattedAddress = AddressFormattingHelper.addressFormatting(request.subscription.address, Option(request.subscription.orgName))
+      val formattedAddress =
+        AddressFormattingHelper.addressFormatting(request.subscription.address, Option(request.subscription.orgName))
       val preparedForm = request.userAnswers.get(PackAtBusinessAddressPage) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       Ok(view(preparedForm, mode, formattedAddress))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
-    implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    controllerActions.withRequiredJourneyData(ChangeActivity).async { implicit request =>
       val businessName = request.subscription.orgName
       val businessAddress = request.subscription.address
       val formattedAddress = AddressFormattingHelper.addressFormatting(businessAddress, Option(businessName))
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, formattedAddress))),
-
-        value =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(PackAtBusinessAddressPage, value))
-            onwardUrl <-
-              if (value) {
-                updateDatabaseWithoutRedirect(Try(updatedAnswers.copy(
-                  packagingSiteList = updatedAnswers.packagingSiteList ++ Map(
-                    "1" ->
-                      Site(
-                        address = request.subscription.address,
-                        ref = None,
-                        tradingName = Some(request.subscription.orgName),
-                        closureDate = None
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, formattedAddress))),
+          value =>
+            for {
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(PackAtBusinessAddressPage, value))
+              onwardUrl <-
+                if (value) {
+                  updateDatabaseWithoutRedirect(
+                    Try(
+                      updatedAnswers.copy(
+                        packagingSiteList = updatedAnswers.packagingSiteList ++ Map(
+                          "1" ->
+                            Site(
+                              address = request.subscription.address,
+                              ref = None,
+                              tradingName = Some(request.subscription.orgName),
+                              closureDate = None
+                            )
+                        )
                       )
-                  ))), PackAtBusinessAddressPage).flatMap(_ =>
-                  Future.successful(routes.PackagingSiteDetailsController.onPageLoad(mode).url))
-              } else {
-                updateDatabaseWithoutRedirect(Try(updatedAnswers), PackAtBusinessAddressPage).flatMap(_ =>
-                  addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode))
-              }
-          } yield {
-            Redirect(onwardUrl)
-          }
-      )
-  }
+                    ),
+                    PackAtBusinessAddressPage
+                  ).flatMap(_ => Future.successful(routes.PackagingSiteDetailsController.onPageLoad(mode).url))
+                } else {
+                  updateDatabaseWithoutRedirect(Try(updatedAnswers), PackAtBusinessAddressPage)
+                    .flatMap(_ => addressLookupService.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode))
+                }
+            } yield Redirect(onwardUrl)
+        )
+    }
 }

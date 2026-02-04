@@ -33,7 +33,7 @@ class $className$ViewSpec extends ViewSpecHelper {
   val view = application.injector.instanceOf[$className$View]
   val formProvider = new $className$FormProvider
   val form = formProvider.apply()
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-fieldset__heading"
@@ -50,7 +50,7 @@ class $className$ViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view(form, NormalMode)(request, messages(application))
+    val html = view(form, NormalMode)(using request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
       document.title() must include(Messages("$packageName$.$className;format="decap"$" + ".title"))
@@ -87,7 +87,7 @@ class $className$ViewSpec extends ViewSpecHelper {
     }
 
     $className$.values.foreach { checkbox =>
-      val html1 = view(form.fill(Set(checkbox)), NormalMode)(request, messages(application))
+      val html1 = view(form.fill(Set(checkbox)), NormalMode)(using request, messages(application))
       val document1 = doc(html1)
 
       s"when the form is preoccupied with " + checkbox.toString + "selected and has no errors" - {
@@ -125,7 +125,7 @@ class $className$ViewSpec extends ViewSpecHelper {
     }
 
     s"when the form is preoccupied with all checkboxes selected and has no errors" - {
-      val htmlAllSelected = view(form.fill($className$.values.toSet), CheckMode)(request, messages(application))
+      val htmlAllSelected = view(form.fill($className$.values.toSet), CheckMode)(using request, messages(application))
       val documentAllSelected = doc(htmlAllSelected)
       "should have checkboxes" - {
         val checkboxes = documentAllSelected.getElementsByClass(Selectors.checkboxesItems)
@@ -149,7 +149,7 @@ class $className$ViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
       "when in CheckMode" in {
-        val htmlAllSelected = view(form.fill($className$.values.toSet), CheckMode)(request, messages(application))
+        val htmlAllSelected = view(form.fill($className$.values.toSet), CheckMode)(using request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
         documentAllSelected.select(Selectors.form)
@@ -157,7 +157,7 @@ class $className$ViewSpec extends ViewSpecHelper {
       }
 
       "when in NormalMode" in {
-        val htmlAllSelected = view(form.fill($className$.values.toSet), NormalMode)(request, messages(application))
+        val htmlAllSelected = view(form.fill($className$.values.toSet), NormalMode)(using request, messages(application))
         val documentAllSelected = doc(htmlAllSelected)
 
         documentAllSelected.select(Selectors.form)
@@ -166,7 +166,7 @@ class $className$ViewSpec extends ViewSpecHelper {
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode)(request, messages(application))
+      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode)(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {

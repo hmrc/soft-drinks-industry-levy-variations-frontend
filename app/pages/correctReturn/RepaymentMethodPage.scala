@@ -18,9 +18,9 @@ package pages.correctReturn
 
 import controllers.correctReturn.routes
 import models.backend.RetrievedSubscription
-import models.{Mode, UserAnswers}
+import models.{ Mode, UserAnswers }
 import models.correctReturn.RepaymentMethod
-import pages.{QuestionPage, RequiredPage}
+import pages.{ QuestionPage, RequiredPage }
 import play.api.libs.json.JsPath
 
 case object RepaymentMethodPage extends QuestionPage[RepaymentMethod] {

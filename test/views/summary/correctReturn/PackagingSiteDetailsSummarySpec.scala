@@ -18,7 +18,7 @@ package views.summary.correctReturn
 
 import base.SpecBase
 import models.NormalMode
-import models.backend.{Site, UkAddress}
+import models.backend.{ Site, UkAddress }
 
 import java.time.LocalDate
 
@@ -27,12 +27,14 @@ class PackagingSiteDetailsSummarySpec extends SpecBase {
     UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
     Some("Wild Lemonade Group"),
     Some("88"),
-    Some(LocalDate.of(2018, 2, 26)))
+    Some(LocalDate.of(2018, 2, 26))
+  )
   lazy val pSite2: Site = Site(
     UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
     None,
     Some("88"),
-    Some(LocalDate.of(2018, 2, 26)))
+    Some(LocalDate.of(2018, 2, 26))
+  )
   lazy val packagingSites2: Map[String, Site] = Map("000001" -> pSite, "00002" -> pSite2)
   lazy val packagingSite1: Map[String, Site] = Map("00213" -> pSite)
   lazy val packagingSites3: Map[String, Site] = Map("000001" -> pSite, "00002" -> pSite2, "00213" -> pSite)

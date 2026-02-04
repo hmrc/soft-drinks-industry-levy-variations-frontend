@@ -25,26 +25,27 @@ import navigation._
 import pages.correctReturn.CorrectionReasonPage
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import services.SessionService
 import utilities.GenericLogger
 import views.html.correctReturn.CorrectionReasonView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class CorrectionReasonController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       val sessionService: SessionService,
-                                       val navigator: NavigatorForCorrectReturn,
-                                        controllerActions: ControllerActions,
-                                       formProvider: CorrectionReasonFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val requiredUserAnswers: RequiredUserAnswersForCorrectReturn,
-                                       view: CorrectionReasonView,
-                                       val genericLogger: GenericLogger,
-                                       val errorHandler: ErrorHandler
-                                     )(implicit val ec: ExecutionContext) extends ControllerHelper {
+class CorrectionReasonController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForCorrectReturn,
+  controllerActions: ControllerActions,
+  formProvider: CorrectionReasonFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  val requiredUserAnswers: RequiredUserAnswersForCorrectReturn,
+  view: CorrectionReasonView,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper {
 
   val form: Form[String] = formProvider()
 
@@ -52,7 +53,7 @@ class CorrectionReasonController @Inject()(
     implicit request =>
       requiredUserAnswers.requireData(CorrectionReasonPage, request.userAnswers, request.subscription) {
         val preparedForm = request.userAnswers.get(CorrectionReasonPage) match {
-          case None => form
+          case None        => form
           case Some(value) => form.fill(value)
         }
         Future.successful(Ok(view(preparedForm, mode)))
@@ -61,15 +62,14 @@ class CorrectionReasonController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
-        value => {
-          val updatedAnswers = request.userAnswers.set(CorrectionReasonPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, CorrectionReasonPage, mode)
-        }
-      )
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value => {
+            val updatedAnswers = request.userAnswers.set(CorrectionReasonPage, value)
+            updateDatabaseAndRedirect(updatedAnswers, CorrectionReasonPage, mode)
+          }
+        )
   }
 }

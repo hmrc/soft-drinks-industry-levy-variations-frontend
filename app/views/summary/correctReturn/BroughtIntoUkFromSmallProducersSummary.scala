@@ -17,12 +17,12 @@
 package views.summary.correctReturn
 
 import controllers.correctReturn.routes
-import models.{CheckMode, LitresInBands}
-import pages.correctReturn.{HowManyBroughtIntoUkFromSmallProducersPage, BroughtIntoUkFromSmallProducersPage}
+import models.{ CheckMode, LitresInBands }
+import pages.correctReturn.{ BroughtIntoUkFromSmallProducersPage, HowManyBroughtIntoUkFromSmallProducersPage }
 import pages.QuestionPage
-import views.summary.{ReturnDetailsSummaryListWithLitres, SummaryListRowLitresHelper}
+import views.summary.{ ReturnDetailsSummaryListWithLitres, SummaryListRowLitresHelper }
 
-object BroughtIntoUkFromSmallProducersSummary extends ReturnDetailsSummaryListWithLitres  {
+object BroughtIntoUkFromSmallProducersSummary extends ReturnDetailsSummaryListWithLitres {
 
   override val page: QuestionPage[Boolean] = BroughtIntoUkFromSmallProducersPage
   override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyBroughtIntoUkFromSmallProducersPage)

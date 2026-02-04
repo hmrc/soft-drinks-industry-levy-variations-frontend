@@ -34,17 +34,25 @@ class NavigatorForUpdateRegisteredDetailsSpec extends SpecBase {
       "must go from a page that doesn't exist in the route map to Index" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id", SelectChange.UpdateRegisteredDetails, contactAddress = contactAddress)) mustBe defaultCall
+        navigator.nextPage(
+          UnknownPage,
+          NormalMode,
+          UserAnswers("id", SelectChange.UpdateRegisteredDetails, contactAddress = contactAddress)
+        ) mustBe defaultCall
       }
 
       "must go from ChangeRegisteredDetailsPage to WarehouseDetailsPage " - {
         "when user selects Sites on ChangeRegisteredDetailsPage and packaging site list is empty" in {
           val changeSiteDetails: Seq[ChangeRegisteredDetails] = ChangeRegisteredDetails.values
           val userAnswersWithSitesSelectedToChange: UserAnswers = emptyUserAnswersForUpdateRegisteredDetails
-            .set(ChangeRegisteredDetailsPage, changeSiteDetails).success.value
+            .set(ChangeRegisteredDetailsPage, changeSiteDetails)
+            .success
+            .value
             .copy(packagingSiteList = Map.empty)
 
-          navigator.nextPage(ChangeRegisteredDetailsPage, NormalMode,
+          navigator.nextPage(
+            ChangeRegisteredDetailsPage,
+            NormalMode,
             userAnswersWithSitesSelectedToChange
           ) mustBe routes.WarehouseDetailsController.onPageLoad(NormalMode)
         }
@@ -56,7 +64,11 @@ class NavigatorForUpdateRegisteredDetailsSpec extends SpecBase {
       "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
 
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, emptyUserAnswersForUpdateRegisteredDetails) mustBe routes.UpdateRegisteredDetailsCYAController.onPageLoad
+        navigator.nextPage(
+          UnknownPage,
+          CheckMode,
+          emptyUserAnswersForUpdateRegisteredDetails
+        ) mustBe routes.UpdateRegisteredDetailsCYAController.onPageLoad
       }
     }
   }

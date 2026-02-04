@@ -3,7 +3,7 @@ package controllers.updateRegisteredDetails
 import controllers.ControllerITTestHelper
 import models.SelectChange.UpdateRegisteredDetails
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
+import org.scalatest.matchers.must.Matchers._
 import play.api.test.WsTestClient
 
 import java.time.Instant
@@ -16,8 +16,7 @@ class UpdateDoneControllerISpec extends ControllerITTestHelper {
 
   "GET " + normalRoutePath - {
     "should return OK and render the UpdateDone page" in {
-      given
-        .commonPrecondition
+      build.commonPrecondition
 
       val testTime = Instant.now()
       setAnswers(emptyUserAnswersForUpdateRegisteredDetails.copy(submitted = true, submittedOn = Some(testTime)))
@@ -33,8 +32,7 @@ class UpdateDoneControllerISpec extends ControllerITTestHelper {
       }
     }
     "should redirect when no submitted on time is present" in {
-      given
-        .commonPrecondition
+      build.commonPrecondition
       setAnswers(emptyUserAnswersForUpdateRegisteredDetails)
 
       WsTestClient.withClient { client =>
@@ -47,7 +45,10 @@ class UpdateDoneControllerISpec extends ControllerITTestHelper {
     }
     testUnauthorisedUser(updateRegisteredDetailsBaseUrl + normalRoutePath)
     testAuthenticatedUserButNoUserAnswers(updateRegisteredDetailsBaseUrl + normalRoutePath)
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(UpdateRegisteredDetails, updateRegisteredDetailsBaseUrl + normalRoutePath)
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+      UpdateRegisteredDetails,
+      updateRegisteredDetailsBaseUrl + normalRoutePath
+    )
 
   }
 }

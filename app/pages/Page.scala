@@ -17,12 +17,12 @@
 package pages
 
 import models.backend.RetrievedSubscription
-import models.{Mode, UserAnswers}
+import models.{ Mode, UserAnswers }
 import queries.Query
 
 import scala.language.implicitConversions
 
-case class RequiredPage(page: Page with Query, additionalPreconditions: List[Boolean] = List.empty)
+case class RequiredPage(page: Page & Query, additionalPreconditions: List[Boolean] = List.empty)
 
 trait Page {
   val url: Mode => String = mode => controllers.routes.SelectChangeController.onPageLoad.url

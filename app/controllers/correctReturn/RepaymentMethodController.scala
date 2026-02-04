@@ -26,26 +26,27 @@ import navigation._
 import pages.correctReturn.RepaymentMethodPage
 import play.api.data.Form
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import services.SessionService
 import utilities.GenericLogger
 import views.html.correctReturn.RepaymentMethodView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class RepaymentMethodController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       val sessionService: SessionService,
-                                       val navigator: NavigatorForCorrectReturn,
-                                       controllerActions: ControllerActions,
-                                       formProvider: RepaymentMethodFormProvider,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val requiredUserAnswers: RequiredUserAnswersForCorrectReturn,
-                                       view: RepaymentMethodView,
-                                       val genericLogger: GenericLogger,
-                                       val errorHandler: ErrorHandler
-                                     )(implicit val ec: ExecutionContext) extends ControllerHelper {
+class RepaymentMethodController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForCorrectReturn,
+  controllerActions: ControllerActions,
+  formProvider: RepaymentMethodFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  val requiredUserAnswers: RequiredUserAnswersForCorrectReturn,
+  view: RepaymentMethodView,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper {
 
   val form: Form[RepaymentMethod] = formProvider()
 
@@ -53,7 +54,7 @@ class RepaymentMethodController @Inject()(
     implicit request =>
       requiredUserAnswers.requireData(RepaymentMethodPage, request.userAnswers, request.subscription) {
         val preparedForm = request.userAnswers.get(RepaymentMethodPage) match {
-          case None => form
+          case None        => form
           case Some(value) => form.fill(value)
         }
         Future.successful(Ok(view(preparedForm, mode)))
@@ -62,15 +63,14 @@ class RepaymentMethodController @Inject()(
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
     implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
-        value => {
-          val updatedAnswers = request.userAnswers.set(RepaymentMethodPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, RepaymentMethodPage, mode)
-        }
-      )
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value => {
+            val updatedAnswers = request.userAnswers.set(RepaymentMethodPage, value)
+            updateDatabaseAndRedirect(updatedAnswers, RepaymentMethodPage, mode)
+          }
+        )
   }
 }

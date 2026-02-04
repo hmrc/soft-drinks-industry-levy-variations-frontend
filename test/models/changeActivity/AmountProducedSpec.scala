@@ -22,7 +22,7 @@ import org.scalatest.OptionValues
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import play.api.libs.json.{JsError, JsString, Json}
+import play.api.libs.json.{ JsError, JsString, Json }
 
 class AmountProducedSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues {
 
@@ -32,10 +32,8 @@ class AmountProducedSpec extends AnyFreeSpec with Matchers with ScalaCheckProper
 
       val gen = Gen.oneOf(AmountProduced.values.toSeq)
 
-      forAll(gen) {
-        amountProduced =>
-
-          JsString(amountProduced.toString).validate[AmountProduced].asOpt.value mustEqual amountProduced
+      forAll(gen) { amountProduced =>
+        JsString(amountProduced.toString).validate[AmountProduced].asOpt.value mustEqual amountProduced
       }
     }
 
@@ -43,10 +41,8 @@ class AmountProducedSpec extends AnyFreeSpec with Matchers with ScalaCheckProper
 
       val gen = arbitrary[String] suchThat (!AmountProduced.values.map(_.toString).contains(_))
 
-      forAll(gen) {
-        invalidValue =>
-
-          JsString(invalidValue).validate[AmountProduced] mustEqual JsError("error.invalid")
+      forAll(gen) { invalidValue =>
+        JsString(invalidValue).validate[AmountProduced] mustEqual JsError("error.invalid")
       }
     }
 
@@ -54,10 +50,8 @@ class AmountProducedSpec extends AnyFreeSpec with Matchers with ScalaCheckProper
 
       val gen = Gen.oneOf(AmountProduced.values.toSeq)
 
-      forAll(gen) {
-        amountProduced =>
-
-          Json.toJson(amountProduced) mustEqual JsString(amountProduced.toString)
+      forAll(gen) { amountProduced =>
+        Json.toJson(amountProduced) mustEqual JsString(amountProduced.toString)
       }
     }
   }

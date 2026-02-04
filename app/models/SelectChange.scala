@@ -30,26 +30,30 @@ object SelectChange extends Enumerable.Implicits {
   case object CorrectReturn extends WithName("correctReturn") with SelectChange
 
   val values: Seq[SelectChange] = Seq(
-    UpdateRegisteredDetails, ChangeActivity, CancelRegistration, CorrectReturn
+    UpdateRegisteredDetails,
+    ChangeActivity,
+    CancelRegistration,
+    CorrectReturn
   )
 
   val valuesWithOutCorrectReturns: Seq[SelectChange] = values.filterNot(_ == CorrectReturn)
 
   val valuesWithOnlyCorrectReturns: Seq[SelectChange] = values.filter(_ == CorrectReturn)
 
-
   def options(hasCorrectableReturns: Boolean, isDeregistered: Boolean)(implicit messages: Messages): Seq[RadioItem] = {
-    val valuesList = if (isDeregistered) valuesWithOnlyCorrectReturns else if (hasCorrectableReturns) values else valuesWithOutCorrectReturns
-    valuesList.zipWithIndex.map {
-      case (value, index) =>
-        RadioItem(
-          content = Text(messages(s"selectChange.${value.toString}")),
-          value = Some(value.toString),
-          id = Some(s"value_$index")
-        )
+    val valuesList =
+      if (isDeregistered) valuesWithOnlyCorrectReturns
+      else if (hasCorrectableReturns) values
+      else valuesWithOutCorrectReturns
+    valuesList.zipWithIndex.map { case (value, index) =>
+      RadioItem(
+        content = Text(messages(s"selectChange.${value.toString}")),
+        value = Some(value.toString),
+        id = Some(s"value_$index")
+      )
     }
   }
 
   implicit val enumerable: Enumerable[SelectChange] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+    Enumerable(values.map(v => v.toString -> v)*)
 }

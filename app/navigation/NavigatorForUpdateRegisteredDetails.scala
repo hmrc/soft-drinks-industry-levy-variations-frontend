@@ -18,32 +18,32 @@ package navigation
 
 import controllers.updateRegisteredDetails.routes
 import models.updateRegisteredDetails.ChangeRegisteredDetails
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{ CheckMode, NormalMode, UserAnswers }
 import pages.Page
 import pages.updateRegisteredDetails._
 import play.api.mvc.Call
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 
 @Singleton
-class NavigatorForUpdateRegisteredDetails @Inject()() extends Navigator {
+class NavigatorForUpdateRegisteredDetails @Inject() () extends Navigator {
 
   override val normalRoutes: Page => UserAnswers => Call = {
-    case ChangeRegisteredDetailsPage => userAnswers => changeRegisteredDetailNavigation(userAnswers)
-    case RemoveWarehouseDetailsPage => _ => routes.WarehouseDetailsController.onPageLoad(NormalMode)
+    case ChangeRegisteredDetailsPage  => userAnswers => changeRegisteredDetailNavigation(userAnswers)
+    case RemoveWarehouseDetailsPage   => _ => routes.WarehouseDetailsController.onPageLoad(NormalMode)
     case PackingSiteDetailsRemovePage => _ => routes.PackagingSiteDetailsController.onPageLoad(NormalMode)
-    case UpdateContactDetailsPage => userAnswers => updateContactDetailsNavigation(userAnswers)
-    case _ => _ => defaultCall
+    case UpdateContactDetailsPage     => userAnswers => updateContactDetailsNavigation(userAnswers)
+    case _                            => _ => defaultCall
   }
 
   override val checkRouteMap: Page => UserAnswers => Call = {
-    case RemoveWarehouseDetailsPage => _ => routes.WarehouseDetailsController.onPageLoad(CheckMode)
+    case RemoveWarehouseDetailsPage   => _ => routes.WarehouseDetailsController.onPageLoad(CheckMode)
     case PackingSiteDetailsRemovePage => _ => routes.PackagingSiteDetailsController.onPageLoad(CheckMode)
-    case _ => _ => routes.UpdateRegisteredDetailsCYAController.onPageLoad
+    case _                            => _ => routes.UpdateRegisteredDetailsCYAController.onPageLoad
   }
 
-  override val editRouteMap: Page => UserAnswers => Call = {
-    case _ => _ => defaultCall
+  override val editRouteMap: Page => UserAnswers => Call = { case _ =>
+    _ => defaultCall
   }
 
   private def updateContactDetailsNavigation(userAnswers: UserAnswers): Call = {

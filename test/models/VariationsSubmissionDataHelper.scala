@@ -18,7 +18,7 @@ package models
 
 import models.backend.UkAddress
 import models.enums.SiteTypes
-import models.submission.{Activity, ClosedSite, Litreage, SdilActivity, VariationsContact, VariationsPersonalDetails, VariationsSite, VariationsSubmission}
+import models.submission.{ Activity, ClosedSite, Litreage, SdilActivity, VariationsContact, VariationsPersonalDetails, VariationsSite, VariationsSubmission }
 
 import java.time.LocalDate
 
@@ -67,12 +67,14 @@ trait VariationsSubmissionDataHelper {
     taxObligationStartDate = None
   )
 
-  def testVariationSubmission(variationContact: Option[VariationsContact] = None,
-                              variationsPersonalDetails: Option[VariationsPersonalDetails] = None,
-                              sdilActivity: Option[SdilActivity] = Some(SdilActivity()),
-                              newSites: List[VariationsSite] = List.empty,
-                              closeSites: List[ClosedSite] = List.empty,
-                              isDeregistered: Boolean = false): VariationsSubmission = VariationsSubmission(
+  def testVariationSubmission(
+    variationContact: Option[VariationsContact] = None,
+    variationsPersonalDetails: Option[VariationsPersonalDetails] = None,
+    sdilActivity: Option[SdilActivity] = Some(SdilActivity()),
+    newSites: List[VariationsSite] = List.empty,
+    closeSites: List[ClosedSite] = List.empty,
+    isDeregistered: Boolean = false
+  ): VariationsSubmission = VariationsSubmission(
     tradingName = None,
     displayOrgName = ORG_NAME,
     ppobAddress = ORIGINAL_ADDRESS,
@@ -80,8 +82,10 @@ trait VariationsSubmissionDataHelper {
     correspondenceContact = variationContact,
     primaryPersonContact = variationsPersonalDetails,
     sdilActivity = sdilActivity,
-    deregistrationText = if (isDeregistered) {Some(DEREG_REASON)} else {None},
-    deregistrationDate = if (isDeregistered) {Some(DEREG_DATE)} else {None},
+    deregistrationText = if (isDeregistered) { Some(DEREG_REASON) }
+    else { None },
+    deregistrationDate = if (isDeregistered) { Some(DEREG_DATE) }
+    else { None },
     newSites = newSites,
     closeSites = closeSites
   )

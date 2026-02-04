@@ -18,17 +18,19 @@ package views.summary.correctReturn
 
 import controllers.correctReturn.routes
 import models.backend.RetrievedSubscription
-import models.{CheckMode, UserAnswers}
+import models.{ CheckMode, UserAnswers }
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.{SummaryList, Value}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{ SummaryList, Value }
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ Key, SummaryListRow }
 import utilities.UserTypeCheck
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object UKSitesSummary {
 
-  private def getPackAtBusinessAddressRow(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages): SummaryListRow = {
+  private def getPackAtBusinessAddressRow(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit
+    messages: Messages
+  ): SummaryListRow = {
     val key = if (userAnswers.packagingSiteList.size != 1) {
       messages("checkYourAnswers.packing.checkYourAnswersLabel.multiple", userAnswers.packagingSiteList.size.toString)
     } else {
@@ -64,11 +66,13 @@ object UKSitesSummary {
     )
   }
 
-  private def getAskSecondaryWarehouseRow (userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages): SummaryListRow = {
+  private def getAskSecondaryWarehouseRow(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit
+    messages: Messages
+  ): SummaryListRow = {
     val key = if (userAnswers.warehouseList.size != 1) {
       messages("checkYourAnswers.warehouse.checkYourAnswersLabel.multiple", userAnswers.warehouseList.size.toString)
     } else {
-      messages("checkYourAnswers.warehouse.checkYourAnswersLabel.one", {userAnswers.warehouseList.size.toString})
+      messages("checkYourAnswers.warehouse.checkYourAnswersLabel.one", userAnswers.warehouseList.size.toString)
     }
     SummaryListRowViewModel(
       key = Key(
@@ -93,7 +97,7 @@ object UKSitesSummary {
               .withAttribute(("id", "change-warehouse-sites"))
               .withVisuallyHiddenText(messages("checkYourAnswers.sites.warehouse.change.hidden.one"))
           }
-      )
+        )
 
       } else {
         Seq.empty
@@ -101,37 +105,41 @@ object UKSitesSummary {
     )
   }
 
-  def getHeadingAndSummary(userAnswers: UserAnswers, isCheckAnswers: Boolean, subscription: RetrievedSubscription)
-                          (implicit messages: Messages): Option[(String, SummaryList)] = {
+  def getHeadingAndSummary(userAnswers: UserAnswers, isCheckAnswers: Boolean, subscription: RetrievedSubscription)(
+    implicit messages: Messages
+  ): Option[(String, SummaryList)] = {
     val optSummaryList = (
       UserTypeCheck.isNewPacker(userAnswers, subscription) && subscription.productionSites.isEmpty,
       UserTypeCheck.isNewImporter(userAnswers, subscription) && subscription.warehouseSites.isEmpty
     ) match {
-      case (true, false) => Option(
-        SummaryListViewModel(
-          Seq(
-            getPackAtBusinessAddressRow(userAnswers, isCheckAnswers)
+      case (true, false) =>
+        Option(
+          SummaryListViewModel(
+            Seq(
+              getPackAtBusinessAddressRow(userAnswers, isCheckAnswers)
+            )
           )
         )
-      )
-      case (false, true) => Option(
-        SummaryListViewModel(
-          Seq(
-            getAskSecondaryWarehouseRow(userAnswers, isCheckAnswers)
+      case (false, true) =>
+        Option(
+          SummaryListViewModel(
+            Seq(
+              getAskSecondaryWarehouseRow(userAnswers, isCheckAnswers)
+            )
           )
         )
-      )
-      case (true, true) => Option(
-        SummaryListViewModel(
-          Seq(
-            getPackAtBusinessAddressRow(userAnswers, isCheckAnswers),
-            getAskSecondaryWarehouseRow(userAnswers, isCheckAnswers)
+      case (true, true) =>
+        Option(
+          SummaryListViewModel(
+            Seq(
+              getPackAtBusinessAddressRow(userAnswers, isCheckAnswers),
+              getAskSecondaryWarehouseRow(userAnswers, isCheckAnswers)
+            )
           )
         )
-      )
       case _ => None
     }
-      optSummaryList.map(list => "checkYourAnswers.sites" -> list)
-    }
-
+    optSummaryList.map(list => "checkYourAnswers.sites" -> list)
   }
+
+}

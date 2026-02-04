@@ -17,50 +17,52 @@
 package views.summary.updateRegisteredDetails
 
 import controllers.updateRegisteredDetails.routes
-import models.{CheckMode, UserAnswers}
+import models.{ CheckMode, UserAnswers }
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ActionItem, Actions, SummaryList, SummaryListRow, Value}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ ActionItem, Actions, SummaryList, SummaryListRow, Value }
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object UpdateContactDetailsSummary {
 
-  def rows(answers: UserAnswers, isCheckAnswers: Boolean = true)(implicit messages: Messages): Option[(String, SummaryList)] = {
-      answers.get(UpdateContactDetailsPage).fold(Option.empty[(String, SummaryList)]) {
-        answer =>
-          Some(
-            messages("updateRegisteredDetails.checkYourAnswers.updateContactDetails.title") ->
-              SummaryList(
-              rows = Seq(
-            createSummaryListItem("fullName", answer.fullName, isCheckAnswers),
-            createSummaryListItem("position", answer.position, isCheckAnswers),
-            createSummaryListItem("phoneNumber", answer.phoneNumber, isCheckAnswers),
-            createSummaryListItem("email", answer.email, isCheckAnswers)
-          )
+  def rows(answers: UserAnswers, isCheckAnswers: Boolean = true)(implicit
+    messages: Messages
+  ): Option[(String, SummaryList)] =
+    answers.get(UpdateContactDetailsPage).fold(Option.empty[(String, SummaryList)]) { answer =>
+      Some(
+        messages("updateRegisteredDetails.checkYourAnswers.updateContactDetails.title") ->
+          SummaryList(
+            rows = Seq(
+              createSummaryListItem("fullName", answer.fullName, isCheckAnswers),
+              createSummaryListItem("position", answer.position, isCheckAnswers),
+              createSummaryListItem("phoneNumber", answer.phoneNumber, isCheckAnswers),
+              createSummaryListItem("email", answer.email, isCheckAnswers)
             )
           )
-      }
-  }
+      )
+    }
 
-  private def createSummaryListItem(fieldName: String, fieldValue: String, isCheckAnswers: Boolean)
-                                   (implicit messages: Messages): SummaryListRow = {
+  private def createSummaryListItem(fieldName: String, fieldValue: String, isCheckAnswers: Boolean)(implicit
+    messages: Messages
+  ): SummaryListRow =
     SummaryListRow(
       key = s"updateRegisteredDetails.updateContactDetails.$fieldName",
       value = Value(Text(fieldValue)),
       actions = Some(
         Actions(
           items = if (isCheckAnswers) {
-            Seq(ActionItem(routes.UpdateContactDetailsController.onPageLoad(CheckMode).url, "site.change")
-              .withVisuallyHiddenText(messages("updateRegisteredDetails.updateContactDetails.change.hidden"))
-              .withAttribute(("id", "change-contactDetailsAdd")))
+            Seq(
+              ActionItem(routes.UpdateContactDetailsController.onPageLoad(CheckMode).url, "site.change")
+                .withVisuallyHiddenText(messages("updateRegisteredDetails.updateContactDetails.change.hidden"))
+                .withAttribute(("id", "change-contactDetailsAdd"))
+            )
           } else {
             Seq.empty
           }
         )
       )
     )
-  }
 
 }

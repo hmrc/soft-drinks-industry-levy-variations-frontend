@@ -22,9 +22,10 @@ import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.OptionValues
-import play.api.libs.json.{JsError, JsString, Json}
+import play.api.libs.json.{ JsError, JsString, Json }
 
-class ChangeRegisteredDetailsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with ModelGenerators {
+class ChangeRegisteredDetailsSpec
+    extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with ModelGenerators {
 
   "ChangeRegisteredDetails" - {
 
@@ -32,10 +33,11 @@ class ChangeRegisteredDetailsSpec extends AnyFreeSpec with Matchers with ScalaCh
 
       val gen = arbitrary[ChangeRegisteredDetails]
 
-      forAll(gen) {
-        changeRegisteredDetails =>
-
-          JsString(changeRegisteredDetails.toString).validate[ChangeRegisteredDetails].asOpt.value mustEqual changeRegisteredDetails
+      forAll(gen) { changeRegisteredDetails =>
+        JsString(changeRegisteredDetails.toString)
+          .validate[ChangeRegisteredDetails]
+          .asOpt
+          .value mustEqual changeRegisteredDetails
       }
     }
 
@@ -43,10 +45,8 @@ class ChangeRegisteredDetailsSpec extends AnyFreeSpec with Matchers with ScalaCh
 
       val gen = arbitrary[String] suchThat (!ChangeRegisteredDetails.values.map(_.toString).contains(_))
 
-      forAll(gen) {
-        invalidValue =>
-
-          JsString(invalidValue).validate[ChangeRegisteredDetails] mustEqual JsError("error.invalid")
+      forAll(gen) { invalidValue =>
+        JsString(invalidValue).validate[ChangeRegisteredDetails] mustEqual JsError("error.invalid")
       }
     }
 
@@ -54,10 +54,8 @@ class ChangeRegisteredDetailsSpec extends AnyFreeSpec with Matchers with ScalaCh
 
       val gen = arbitrary[ChangeRegisteredDetails]
 
-      forAll(gen) {
-        changeRegisteredDetails =>
-
-          Json.toJson(changeRegisteredDetails) mustEqual JsString(changeRegisteredDetails.toString)
+      forAll(gen) { changeRegisteredDetails =>
+        Json.toJson(changeRegisteredDetails) mustEqual JsString(changeRegisteredDetails.toString)
       }
     }
   }

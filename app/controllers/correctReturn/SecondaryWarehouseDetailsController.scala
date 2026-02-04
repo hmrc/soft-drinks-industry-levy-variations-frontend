@@ -24,8 +24,8 @@ import models.Mode
 import navigation._
 import pages.correctReturn.SecondaryWarehouseDetailsPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.{AddressLookupService, SessionService, WarehouseDetails}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
+import services.{ AddressLookupService, SessionService, WarehouseDetails }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utilities.GenericLogger
 import viewmodels.govuk.summarylist._
@@ -33,36 +33,36 @@ import views.html.correctReturn.SecondaryWarehouseDetailsView
 import views.summary.correctReturn.SecondaryWarehouseDetailsSummary
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class SecondaryWarehouseDetailsController @Inject()(
-                                                     override val messagesApi: MessagesApi,
-                                                     val sessionService: SessionService,
-                                                     val navigator: NavigatorForCorrectReturn,
-                                                     controllerActions: ControllerActions,
-                                                     formProvider: SecondaryWarehouseDetailsFormProvider,
-                                                     val controllerComponents: MessagesControllerComponents,
-                                                     view: SecondaryWarehouseDetailsView,
-                                                     addressLookupService: AddressLookupService,
-                                                     val genericLogger: GenericLogger,
-                                                     val errorHandler: ErrorHandler
-                                                   )(implicit val ec: ExecutionContext) extends ControllerHelper {
+class SecondaryWarehouseDetailsController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForCorrectReturn,
+  controllerActions: ControllerActions,
+  formProvider: SecondaryWarehouseDetailsFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: SecondaryWarehouseDetailsView,
+  addressLookupService: AddressLookupService,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper {
 
   private val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData {
-    implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData { implicit request =>
 
-      val preparedForm = request.userAnswers.get(SecondaryWarehouseDetailsPage) match {
-        case None => form
-        case Some(value) => form.fill(value)
-      }
+    val preparedForm = request.userAnswers.get(SecondaryWarehouseDetailsPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
 
-      val siteList: SummaryList = SummaryListViewModel(
-        rows = SecondaryWarehouseDetailsSummary.row2(request.userAnswers.warehouseList, mode)
-      )
+    val siteList: SummaryList = SummaryListViewModel(
+      rows = SecondaryWarehouseDetailsSummary.row2(request.userAnswers.warehouseList, mode)
+    )
 
-      Ok(view(preparedForm, mode, siteList))
+    Ok(view(preparedForm, mode, siteList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async {
@@ -72,17 +72,17 @@ class SecondaryWarehouseDetailsController @Inject()(
         rows = SecondaryWarehouseDetailsSummary.row2(request.userAnswers.warehouseList, mode)
       )
 
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
-
-        value =>
-          if (value) {
-            addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = mode).map(Redirect(_))
-          } else {
-            Future.successful(Redirect(navigator.nextPage(SecondaryWarehouseDetailsPage, mode, request.userAnswers)))
-          }
-      )
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
+          value =>
+            if (value) {
+              addressLookupService.initJourneyAndReturnOnRampUrl(WarehouseDetails, mode = mode).map(Redirect(_))
+            } else {
+              Future.successful(Redirect(navigator.nextPage(SecondaryWarehouseDetailsPage, mode, request.userAnswers)))
+            }
+        )
   }
 
 }

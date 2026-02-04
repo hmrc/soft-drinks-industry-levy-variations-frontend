@@ -30,7 +30,7 @@ object SDILSessionKeys {
   def previousSubmittedReturn(utr: String, returnPeriod: ReturnPeriod) = {
     val year = returnPeriod.year
     val quarter = returnPeriod.quarter
-    s"PREVIOUS_SUBMITTED_RETURNS_UTR_${utr}_YEAR${year}_QUARTER_${quarter}"
+    s"PREVIOUS_SUBMITTED_RETURNS_UTR_${utr}_YEAR${year}_QUARTER_$quarter"
   }
 
   def balance(withAssessment: Boolean) = if (withAssessment) {

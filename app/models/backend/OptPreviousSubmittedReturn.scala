@@ -17,7 +17,7 @@
 package models.backend
 
 import models.SdilReturn
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{ Format, Json }
 
 case class OptPreviousSubmittedReturn(optReturn: Option[SdilReturn])
 

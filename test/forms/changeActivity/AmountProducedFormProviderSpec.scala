@@ -32,7 +32,7 @@ class AmountProducedFormProviderSpec extends OptionFieldBehaviours {
     behave like optionsField[AmountProduced](
       form,
       fieldName,
-      validValues  = AmountProduced.values,
+      validValues = AmountProduced.values,
       invalidError = FormError(fieldName, "error.invalid")
     )
 

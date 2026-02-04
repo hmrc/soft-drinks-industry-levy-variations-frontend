@@ -19,9 +19,9 @@ package viewmodels.govuk
 import play.api.data.Field
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.{Fieldset, Legend}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.{ Fieldset, Legend }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
-import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.{RadioItem, Radios}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.{ RadioItem, Radios }
 import viewmodels.ErrorMessageAwareness
 
 object radios extends RadiosFluency
@@ -31,23 +31,23 @@ trait RadiosFluency {
   object RadiosViewModel extends ErrorMessageAwareness with FieldsetFluency {
 
     def apply(
-               field: Field,
-               items: Seq[RadioItem],
-               legend: Legend,
-               noErrorRequired: Boolean = false
-             )(implicit messages: Messages): Radios =
+      field: Field,
+      items: Seq[RadioItem],
+      legend: Legend,
+      noErrorRequired: Boolean = false
+    )(implicit messages: Messages): Radios =
       apply(
-        field    = field,
-        items    = items,
+        field = field,
+        items = items,
         fieldset = FieldsetViewModel(legend),
         noError = noErrorRequired
       )
 
     def apply(
-               field: Field,
-               items: Seq[RadioItem],
-               noErrorRequired: Boolean
-             )(implicit messages: Messages): Radios =
+      field: Field,
+      items: Seq[RadioItem],
+      noErrorRequired: Boolean
+    )(implicit messages: Messages): Radios =
       apply(
         field = field,
         items = items,
@@ -56,11 +56,11 @@ trait RadiosFluency {
       )
 
     def apply(
-               field: Field,
-               items: Seq[RadioItem],
-               fieldset: Fieldset,
-               noError: Boolean
-             )(implicit messages: Messages): Radios =
+      field: Field,
+      items: Seq[RadioItem],
+      fieldset: Fieldset,
+      noError: Boolean
+    )(implicit messages: Messages): Radios =
       apply(
         field = field,
         items = items,
@@ -69,25 +69,27 @@ trait RadiosFluency {
       )
 
     def apply(
-               field: Field,
-               items: Seq[RadioItem],
-               fieldset: Option[Fieldset],
-               noError: Boolean
-             )(implicit messages: Messages): Radios =
+      field: Field,
+      items: Seq[RadioItem],
+      fieldset: Option[Fieldset],
+      noError: Boolean
+    )(implicit messages: Messages): Radios =
       Radios(
         fieldset = fieldset,
         name = field.name,
-        items = items map (item => item copy (checked = field.value.isDefined && field.value == item.value)),
-        errorMessage = if (noError) None else {
-          errorMessage(field)
-        }
+        items = items.map(item => item.copy(checked = field.value.isDefined && field.value == item.value)),
+        errorMessage =
+          if (noError) None
+          else {
+            errorMessage(field)
+          }
       )
 
     def yesNo(
-               field: Field,
-               legend: Legend,
-               hint: Option[Hint]
-             )(implicit messages: Messages): Radios =
+      field: Field,
+      legend: Legend,
+      hint: Option[Hint]
+    )(implicit messages: Messages): Radios =
       yesNo(
         field = field,
         fieldset = FieldsetViewModel(legend),
@@ -95,10 +97,10 @@ trait RadiosFluency {
       )
 
     def yesNo(
-               field: Field,
-               fieldset: Fieldset,
-               hint: Option[Hint]
-             )(implicit messages: Messages): Radios = {
+      field: Field,
+      fieldset: Fieldset,
+      hint: Option[Hint]
+    )(implicit messages: Messages): Radios = {
 
       val items = Seq(
         RadioItem(
@@ -134,16 +136,16 @@ trait RadiosFluency {
   implicit class FluentRadios(radios: Radios) {
 
     def withHint(hint: Hint): Radios =
-      radios copy (hint = Some(hint))
+      radios.copy(hint = Some(hint))
 
     def withIdPrefix(prefix: String): Radios =
-      radios copy (idPrefix = Some(prefix))
+      radios.copy(idPrefix = Some(prefix))
 
     def withCssClass(newClass: String): Radios =
-      radios copy (classes = s"${radios.classes} $newClass")
+      radios.copy(classes = s"${radios.classes} $newClass")
 
     def withAttribute(attribute: (String, String)): Radios =
-      radios copy (attributes = radios.attributes + attribute)
+      radios.copy(attributes = radios.attributes + attribute)
 
     def inline(): Radios =
       radios.withCssClass("govuk-radios--inline")

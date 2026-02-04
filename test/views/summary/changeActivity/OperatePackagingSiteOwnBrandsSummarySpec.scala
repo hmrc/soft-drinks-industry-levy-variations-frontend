@@ -18,7 +18,7 @@ package views.summary.changeActivity
 
 import base.SpecBase
 import models.LitresInBands
-import pages.changeActivity.{HowManyOperatePackagingSiteOwnBrandsPage, OperatePackagingSiteOwnBrandsPage}
+import pages.changeActivity.{ HowManyOperatePackagingSiteOwnBrandsPage, OperatePackagingSiteOwnBrandsPage }
 import play.twirl.api.Html
 import uk.gov.hmrc.govukfrontend.views.Aliases.Actions
 
@@ -29,8 +29,12 @@ class OperatePackagingSiteOwnBrandsSummarySpec extends SpecBase {
     val highLitres = 2000
     s"should return correct elements when passed in with TRUE and litres provided and check answers is true" in {
       val userAnswers = emptyUserAnswersForChangeActivity
-        .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-        .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(lowLitres, highLitres)).success.value
+        .set(OperatePackagingSiteOwnBrandsPage, true)
+        .success
+        .value
+        .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(lowLitres, highLitres))
+        .success
+        .value
 
       val res = OperatePackagingSiteOwnBrandsSummary.summaryListWithoutBandLevyRows(userAnswers, isCheckAnswers = true)
       res.rows.head.key.content.asHtml mustBe Html("Package your own brand at your own sites?")
@@ -45,26 +49,48 @@ class OperatePackagingSiteOwnBrandsSummarySpec extends SpecBase {
       res.rows(1).key.classes mustBe ""
       res.rows(1).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(lowLitres))
       res.rows(1).value.classes.trim mustBe "sdil-right-align--desktop"
-      res.rows(1).actions.head.items.head.href mustBe "/soft-drinks-industry-levy-variations-frontend/change-activity/change-how-many-own-brands-next-12-months"
-      res.rows(1).actions.head.items.head.attributes mustBe Map("id" -> "change-lowband-litreage-operatePackagingSiteOwnBrands")
+      res
+        .rows(1)
+        .actions
+        .head
+        .items
+        .head
+        .href mustBe "/soft-drinks-industry-levy-variations-frontend/change-activity/change-how-many-own-brands-next-12-months"
+      res.rows(1).actions.head.items.head.attributes mustBe Map(
+        "id" -> "change-lowband-litreage-operatePackagingSiteOwnBrands"
+      )
       res.rows(1).actions.head.items.head.content.asHtml mustBe Html("Change")
 
       val highLitresRowIndex = 2
 
       res.rows(highLitresRowIndex).key.content.asHtml mustBe Html("Litres in the high band")
       res.rows(highLitresRowIndex).key.classes mustBe ""
-      res.rows(highLitresRowIndex).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(highLitres))
+      res.rows(highLitresRowIndex).value.content.asHtml mustBe Html(
+        java.text.NumberFormat.getInstance.format(highLitres)
+      )
       res.rows(highLitresRowIndex).value.classes.trim mustBe "sdil-right-align--desktop"
-      res.rows(highLitresRowIndex).actions.head.items.head.href mustBe "/soft-drinks-industry-levy-variations-frontend/change-activity/change-how-many-own-brands-next-12-months"
-      res.rows(highLitresRowIndex).actions.head.items.head.attributes mustBe Map("id" -> "change-highband-litreage-operatePackagingSiteOwnBrands")
+      res
+        .rows(highLitresRowIndex)
+        .actions
+        .head
+        .items
+        .head
+        .href mustBe "/soft-drinks-industry-levy-variations-frontend/change-activity/change-how-many-own-brands-next-12-months"
+      res.rows(highLitresRowIndex).actions.head.items.head.attributes mustBe Map(
+        "id" -> "change-highband-litreage-operatePackagingSiteOwnBrands"
+      )
       res.rows(highLitresRowIndex).actions.head.items.head.content.asHtml mustBe Html("Change")
 
       res.rows.size mustBe 3
     }
     s"should return correct elements when passed in with TRUE and litres provided and check answers is false" in {
       val userAnswers = emptyUserAnswersForChangeActivity
-        .set(OperatePackagingSiteOwnBrandsPage, true).success.value
-        .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(lowLitres, highLitres)).success.value
+        .set(OperatePackagingSiteOwnBrandsPage, true)
+        .success
+        .value
+        .set(HowManyOperatePackagingSiteOwnBrandsPage, LitresInBands(lowLitres, highLitres))
+        .success
+        .value
 
       val res = OperatePackagingSiteOwnBrandsSummary.summaryListWithoutBandLevyRows(userAnswers, isCheckAnswers = false)
       res.rows.head.key.content.asHtml mustBe Html("Package your own brand at your own sites?")
@@ -83,7 +109,9 @@ class OperatePackagingSiteOwnBrandsSummarySpec extends SpecBase {
 
       res.rows(highLitresRowIndex).key.content.asHtml mustBe Html("Litres in the high band")
       res.rows(highLitresRowIndex).key.classes mustBe ""
-      res.rows(highLitresRowIndex).value.content.asHtml mustBe Html(java.text.NumberFormat.getInstance.format(highLitres))
+      res.rows(highLitresRowIndex).value.content.asHtml mustBe Html(
+        java.text.NumberFormat.getInstance.format(highLitres)
+      )
       res.rows(highLitresRowIndex).value.classes.trim mustBe "sdil-right-align--desktop"
       res.rows(highLitresRowIndex).actions mustBe None
 
@@ -91,7 +119,9 @@ class OperatePackagingSiteOwnBrandsSummarySpec extends SpecBase {
     }
     s"should return correct elements when passed in with FALSE and NO litres provided" in {
       val userAnswers = emptyUserAnswersForChangeActivity
-        .set(OperatePackagingSiteOwnBrandsPage, false).success.value
+        .set(OperatePackagingSiteOwnBrandsPage, false)
+        .success
+        .value
 
       val res = OperatePackagingSiteOwnBrandsSummary.summaryListWithoutBandLevyRows(userAnswers, isCheckAnswers = true)
       res.rows.head.key.content.asHtml mustBe Html("Package your own brand at your own sites?")
@@ -105,10 +135,10 @@ class OperatePackagingSiteOwnBrandsSummarySpec extends SpecBase {
       res.rows.size mustBe 1
     }
     s"should return correct elements when no elements provided" in {
-        val userAnswers = emptyUserAnswersForChangeActivity
+      val userAnswers = emptyUserAnswersForChangeActivity
 
-        val res = OperatePackagingSiteOwnBrandsSummary.summaryListWithoutBandLevyRows(userAnswers, isCheckAnswers = true)
-        res.rows.size mustBe 0
-      }
+      val res = OperatePackagingSiteOwnBrandsSummary.summaryListWithoutBandLevyRows(userAnswers, isCheckAnswers = true)
+      res.rows.size mustBe 0
+    }
   }
 }

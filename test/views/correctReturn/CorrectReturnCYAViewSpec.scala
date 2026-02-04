@@ -19,20 +19,19 @@ package views.correctReturn
 import models.Amounts
 import org.jsoup.nodes.Document
 import play.api.i18n.Messages
-import play.api.mvc.{Call, Request}
+import play.api.mvc.{ Call, Request }
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.Value
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{SummaryList, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ SummaryList, SummaryListRow }
 import views.ViewSpecHelper
 import views.html.correctReturn.CorrectReturnCYAView
-
 
 class CorrectReturnCYAViewSpec extends ViewSpecHelper {
 
   val view: CorrectReturnCYAView = application.injector.instanceOf[CorrectReturnCYAView]
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
   val summaryAmounts: Amounts = Amounts(1000, -100, 500, -600, -400)
   object Selectors {
     val body = "govuk-body"
@@ -47,16 +46,16 @@ class CorrectReturnCYAViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val summaryList: Seq[(String, SummaryList)] = {
+    val summaryList: Seq[(String, SummaryList)] =
       Seq(
-        "foo" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bar"))))),
+        "foo"  -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bar"))))),
         "wizz" -> SummaryList(Seq(SummaryListRow(value = Value(content = HtmlContent("bang")))))
       )
-    }
-    val call = Call("GET","/foo")
+    val call = Call("GET", "/foo")
 
     val orgName: String = " " + aSubscription.orgName
-    val html: HtmlFormat.Appendable = view(orgName, summaryAmounts, summaryList, call)(request, messages(application))
+    val html: HtmlFormat.Appendable =
+      view(orgName, summaryAmounts, summaryList, call)(using request, messages(application))
     val document: Document = doc(html)
 
     "should have the expected heading" in {
@@ -68,7 +67,10 @@ class CorrectReturnCYAViewSpec extends ViewSpecHelper {
     }
 
     "should have the expected inset text" in {
-      document.getElementsByClass(Selectors.insetText).get(0).text() mustEqual "Your Soft Drinks Levy Account will be credited £600.00"
+      document
+        .getElementsByClass(Selectors.insetText)
+        .get(0)
+        .text() mustEqual "Your Soft Drinks Levy Account will be credited £600.00"
     }
 
     "contain the correct button" in {
@@ -77,21 +79,29 @@ class CorrectReturnCYAViewSpec extends ViewSpecHelper {
 
     "contain the correct summary lists" in {
       document.getElementsByClass(Selectors.summaryListHeading).get(0).text() mustBe "foo"
-      document.getElementsByClass(Selectors.summaryList)
+      document
+        .getElementsByClass(Selectors.summaryList)
         .first()
         .getElementsByClass(Selectors.summaryRow)
         .first()
-        .getElementsByClass(Selectors.summaryValue).first().text() mustBe "bar"
+        .getElementsByClass(Selectors.summaryValue)
+        .first()
+        .text() mustBe "bar"
       document.getElementsByClass(Selectors.summaryListHeading).get(1).text() mustBe "wizz"
-      document.getElementsByClass(Selectors.summaryList)
+      document
+        .getElementsByClass(Selectors.summaryList)
         .last()
         .getElementsByClass(Selectors.summaryRow)
         .first()
-        .getElementsByClass(Selectors.summaryValue).first().text() mustBe "bang"
+        .getElementsByClass(Selectors.summaryValue)
+        .first()
+        .text() mustBe "bang"
     }
 
     "should have the expected inset rounding help text" in {
-      document.getElementsByClass(Selectors.insetText).get(1).text() mustEqual Messages("checkYourAnswers.roundingHelpText")
+      document.getElementsByClass(Selectors.insetText).get(1).text() mustEqual Messages(
+        "checkYourAnswers.roundingHelpText"
+      )
     }
 
     "contains a form with the correct action" in {

@@ -18,7 +18,7 @@ package views.updateRegisteredDetails
 
 import controllers.updateRegisteredDetails.routes
 import forms.updateRegisteredDetails.PackingSiteDetailsRemoveFormProvider
-import models.{CheckMode, NormalMode}
+import models.{ CheckMode, NormalMode }
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
@@ -31,7 +31,7 @@ class PackingSiteDetailsRemoveViewSpec extends ViewSpecHelper {
   val view: PackingSiteDetailsRemoveView = application.injector.instanceOf[PackingSiteDetailsRemoveView]
   val formProvider = new PackingSiteDetailsRemoveFormProvider
   val form: Form[Boolean] = formProvider.apply()
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-fieldset__heading"
@@ -50,7 +50,7 @@ class PackingSiteDetailsRemoveViewSpec extends ViewSpecHelper {
   val index: String = "bar"
 
   "View" - {
-    val document = doc(view(form, NormalMode, html, index)(request, messages(application)))
+    val document = doc(view(form, NormalMode, html, index)(using request, messages(application)))
 
     "should contain the expected title" in {
       document.title() must include(Messages("updateRegisteredDetails.packingSiteDetailsRemove" + ".title"))
@@ -91,7 +91,7 @@ class PackingSiteDetailsRemoveViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with yes and has no errors" - {
-      val html1 = view(form.fill(true), NormalMode, html, index)(request, messages(application))
+      val html1 = view(form.fill(true), NormalMode, html, index)(using request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -126,7 +126,7 @@ class PackingSiteDetailsRemoveViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with no and has no errors" - {
-      val html1 = view(form.fill(false), NormalMode, html, index)(request, messages(application))
+      val html1 = view(form.fill(false), NormalMode, html, index)(using request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -166,42 +166,47 @@ class PackingSiteDetailsRemoveViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
       "when in CheckMode" - {
-        val htmlYesSelected = view(form.fill(true), CheckMode, html, index)(request, messages(application))
+        val htmlYesSelected = view(form.fill(true), CheckMode, html, index)(using request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(true), CheckMode, html, index)(request, messages(application))
+        val htmlNoSelected = view(form.fill(true), CheckMode, html, index)(using request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
-          documentYesSelected.select(Selectors.form)
+          documentYesSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.PackingSiteDetailsRemoveController.onSubmit(CheckMode, index).url
         }
 
         "and no is selected" in {
-          documentNoSelected.select(Selectors.form)
+          documentNoSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.PackingSiteDetailsRemoveController.onSubmit(CheckMode, index).url
         }
       }
 
       "when in NormalMode" - {
-        val htmlYesSelected = view(form.fill(true), NormalMode, html, index)(request, messages(application))
+        val htmlYesSelected = view(form.fill(true), NormalMode, html, index)(using request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), NormalMode, html, index)(request, messages(application))
+        val htmlNoSelected = view(form.fill(false), NormalMode, html, index)(using request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
-          documentYesSelected.select(Selectors.form)
+          documentYesSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.PackingSiteDetailsRemoveController.onSubmit(NormalMode, index).url
         }
 
         "and no is selected" in {
-          documentNoSelected.select(Selectors.form)
+          documentNoSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.PackingSiteDetailsRemoveController.onSubmit(NormalMode, index).url
         }
       }
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode, html, index)(request, messages(application))
+      val htmlWithErrors =
+        view(form.bind(Map("value" -> "")), NormalMode, html, index)(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {

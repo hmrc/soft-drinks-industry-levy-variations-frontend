@@ -18,7 +18,7 @@ package pages.correctReturn
 
 import controllers.correctReturn.routes
 import play.api.libs.json.JsPath
-import models.{LitresInBands, Mode}
+import models.{ LitresInBands, Mode }
 import pages.QuestionPage
 
 case object HowManyPackagedAsContractPackerPage extends QuestionPage[LitresInBands] {

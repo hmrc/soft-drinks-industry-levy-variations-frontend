@@ -21,30 +21,33 @@ import controllers.cancelRegistration.routes._
 import models.SelectChange.CancelRegistration
 import orchestrators.CancelRegistrationOrchestrator
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.mock
-import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
+import org.mockito.Mockito.{ mock, when }
+import pages.cancelRegistration.{ CancelRegistrationDatePage, ReasonPage }
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.SummaryListFluency
 import views.html.cancelRegistration.CancelRegistrationCYAView
-import views.summary.cancelRegistration.{CancelRegistrationDateSummary, ReasonSummary}
+import views.summary.cancelRegistration.{ CancelRegistrationDateSummary, ReasonSummary }
 
 import java.time.LocalDate
 
 class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluency {
 
-  val cyaRoute: String = CancelRegistrationCYAController.onPageLoad.url
+  val cyaRoute: String = CancelRegistrationCYAController.onPageLoad().url
 
   "Cancel Registration Check Your Answers Controller" - {
 
     "must return OK and the correct view for a GET" in {
 
       val userAnswers = emptyUserAnswersForCancelRegistration
-        .set(ReasonPage, "No longer sell drinks").success.value
-        .set(CancelRegistrationDatePage, LocalDate.now()).success.value
+        .set(ReasonPage, "No longer sell drinks")
+        .success
+        .value
+        .set(CancelRegistrationDatePage, LocalDate.now())
+        .success
+        .value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -55,8 +58,11 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
 
         val view = application.injector.instanceOf[CancelRegistrationCYAView]
 
-        val cancelRegistrationSummary : (String, SummaryList) = ("",SummaryListViewModel(
-          rows = Seq(ReasonSummary.row(userAnswers), CancelRegistrationDateSummary.row(userAnswers)))
+        val cancelRegistrationSummary: (String, SummaryList) = (
+          "",
+          SummaryListViewModel(
+            rows = Seq(ReasonSummary.row(userAnswers), CancelRegistrationDateSummary.row(userAnswers))
+          )
         )
 
         val list = Seq(cancelRegistrationSummary)
@@ -64,13 +70,18 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
         val orgName = " Super Lemonade Plc"
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(orgName, list, routes.CancelRegistrationCYAController.onSubmit)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(orgName, list, routes.CancelRegistrationCYAController.onSubmit)(
+          request,
+          messages(application)
+        ).toString
       }
     }
 
     "must return Redirect to reason page when no user answers are present for the reason page" - {
       val userAnswers = emptyUserAnswersForCancelRegistration
-        .set(CancelRegistrationDatePage, LocalDate.now()).success.value
+        .set(CancelRegistrationDatePage, LocalDate.now())
+        .success
+        .value
       def application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       "on a GET" in {
         running(application) {
@@ -79,7 +90,9 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-variations-frontend/cancel-registration/reason"
+          redirectLocation(
+            result
+          ).value mustEqual "/soft-drinks-industry-levy-variations-frontend/cancel-registration/reason"
         }
       }
 
@@ -90,14 +103,18 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-variations-frontend/cancel-registration/reason"
+          redirectLocation(
+            result
+          ).value mustEqual "/soft-drinks-industry-levy-variations-frontend/cancel-registration/reason"
         }
       }
     }
 
     "must return Redirect to cancellation date page when no user answers are present for the cancellation date page" - {
       val userAnswers = emptyUserAnswersForCancelRegistration
-        .set(ReasonPage, "No longer sell drinks").success.value
+        .set(ReasonPage, "No longer sell drinks")
+        .success
+        .value
 
       def application = applicationBuilder(userAnswers = Some(userAnswers)).build()
       "on a GET" in {
@@ -107,7 +124,9 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-variations-frontend/cancel-registration/date"
+          redirectLocation(
+            result
+          ).value mustEqual "/soft-drinks-industry-levy-variations-frontend/cancel-registration/date"
         }
       }
 
@@ -118,7 +137,9 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual "/soft-drinks-industry-levy-variations-frontend/cancel-registration/date"
+          redirectLocation(
+            result
+          ).value mustEqual "/soft-drinks-industry-levy-variations-frontend/cancel-registration/date"
         }
       }
     }
@@ -151,33 +172,36 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
       }
     }
 
-
     "must redirect to cancel registration done when data is correct for POST" in {
-      val mockOrchestrator: CancelRegistrationOrchestrator = mock[CancelRegistrationOrchestrator]
+      val mockOrchestrator: CancelRegistrationOrchestrator = mock(classOf[CancelRegistrationOrchestrator])
       val userAnswers = emptyUserAnswersForCancelRegistration
-        .set(ReasonPage, "No longer sell drinks").success.value
-        .set(CancelRegistrationDatePage, LocalDate.now()).success.value
-      val application = applicationBuilder(
-        userAnswers = Some(userAnswers),
-        subscription = Some(aSubscription))
+        .set(ReasonPage, "No longer sell drinks")
+        .success
+        .value
+        .set(CancelRegistrationDatePage, LocalDate.now())
+        .success
+        .value
+      val application = applicationBuilder(userAnswers = Some(userAnswers), subscription = Some(aSubscription))
         .overrides(
           bind[CancelRegistrationOrchestrator].toInstance(mockOrchestrator)
         )
         .build()
 
       running(application) {
-        val request = FakeRequest(POST, CancelRegistrationCYAController.onPageLoad.url).withFormUrlEncodedBody()
-        when(mockOrchestrator.submitVariationAndUpdateSession(any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
+        val request = FakeRequest(POST, CancelRegistrationCYAController.onPageLoad().url).withFormUrlEncodedBody()
+        when(
+          mockOrchestrator.submitVariationAndUpdateSession(any(), any())(any(), any())
+        ).thenReturn(createSuccessVariationResult((): Unit))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual CancellationRequestDoneController.onPageLoad.url
+        redirectLocation(result).value mustEqual CancellationRequestDoneController.onPageLoad().url
       }
     }
 
-    testInvalidJourneyType(CancelRegistration, CancelRegistrationCYAController.onPageLoad.url, false)
-    testRedirectToPostSubmissionIfRequired(CancelRegistration, CancelRegistrationCYAController.onPageLoad.url)
-    testNoUserAnswersError(CancelRegistrationCYAController.onPageLoad.url, false)
+    testInvalidJourneyType(CancelRegistration, CancelRegistrationCYAController.onPageLoad().url, false)
+    testRedirectToPostSubmissionIfRequired(CancelRegistration, CancelRegistrationCYAController.onPageLoad().url)
+    testNoUserAnswersError(CancelRegistrationCYAController.onPageLoad().url, false)
   }
 }

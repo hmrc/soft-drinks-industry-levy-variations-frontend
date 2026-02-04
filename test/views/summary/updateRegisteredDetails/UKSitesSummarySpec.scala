@@ -17,7 +17,7 @@
 package views.summary.updateRegisteredDetails
 
 import base.SpecBase
-import models.backend.{Site, UkAddress}
+import models.backend.{ Site, UkAddress }
 
 import java.time.LocalDate
 
@@ -26,12 +26,14 @@ class UKSitesSummarySpec extends SpecBase {
     UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
     Some("Wild Lemonade Group"),
     Some("88"),
-    Some(LocalDate.of(2018, 2, 26)))
+    Some(LocalDate.of(2018, 2, 26))
+  )
   lazy val pSite2: Site = Site(
     UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
     None,
     Some("88"),
-    Some(LocalDate.of(2018, 2, 26)))
+    Some(LocalDate.of(2018, 2, 26))
+  )
   lazy val packagingSites2: Map[String, Site] = Map("000001" -> pSite, "00002" -> pSite2)
   lazy val packagingSites1: Map[String, Site] = Map("00213" -> pSite)
   lazy val packagingSites3: Map[String, Site] = Map("000001" -> pSite, "00002" -> pSite2, "00213" -> pSite)
@@ -40,12 +42,14 @@ class UKSitesSummarySpec extends SpecBase {
     UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
     Some("Wild Lemonade Group"),
     Some("88"),
-    Some(LocalDate.of(2018, 2, 26)))
+    Some(LocalDate.of(2018, 2, 26))
+  )
   lazy val warehouse2: Site = Site(
     UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP"),
     None,
     Some("88"),
-    Some(LocalDate.of(2018, 2, 26)))
+    Some(LocalDate.of(2018, 2, 26))
+  )
   lazy val warehouses2: Map[String, Site] = Map("000001" -> warehouse1, "00002" -> warehouse2)
   lazy val warehouses1: Map[String, Site] = Map("00213" -> warehouse1)
   lazy val warehouses3: Map[String, Site] = Map("000001" -> warehouse1, "00002" -> warehouse2, "00213" -> warehouse1)
@@ -54,33 +58,36 @@ class UKSitesSummarySpec extends SpecBase {
   lazy val warehousesValues = List(Map.empty[String, Site], warehouses1, warehouses2, warehouses3)
 
   "getHeadingAndSummary" - {
-    List(true, false).foreach(isCheckAnswers => {
-      s"should return the numbers of packaging sites and warehouses with ${if (isCheckAnswers) "a Change link action" else "no actions"} " +
+    List(true, false).foreach { isCheckAnswers =>
+      s"should return the numbers of packaging sites and warehouses with ${
+          if (isCheckAnswers) "a Change link action" else "no actions"
+        } " +
         s"when isCheckAnswers $isCheckAnswers" - {
-        packagingSitesValues.foreach(packagingSites => {
-          warehousesValues.foreach(warehouses => {
-            s"when ${packagingSites.size} packaging sites and ${warehouses.size} warehouses" in {
-              val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.copy(
-                packagingSiteList = packagingSites, warehouseList = warehouses
-              )
-              val ukSitesSummary = UKSitesSummary.getHeadingAndSummary(userAnswers, isCheckAnswers)
-              ukSitesSummary.head._2.rows.size mustEqual 2
-              ukSitesSummary.head._2.rows(0).key.content.asHtml.toString mustBe
-                s"You have ${packagingSites.size} packaging site${if (packagingSites.size != 1) "s" else ""}"
-              ukSitesSummary.head._2.rows(1).key.content.asHtml.toString mustBe
-                s"You have ${warehouses.size} warehouse${if (warehouses.size != 1) "s" else ""}"
-              if (isCheckAnswers) {
-                ukSitesSummary.head._2.rows(0).actions.toList.head.items.head.content.asHtml.toString mustBe "Change"
-                ukSitesSummary.head._2.rows(1).actions.toList.head.items.head.content.asHtml.toString mustBe "Change"
-              } else {
-                ukSitesSummary.head._2.rows(0).actions.head.items.isEmpty mustBe true
-                ukSitesSummary.head._2.rows(1).actions.head.items.isEmpty mustBe true
+          packagingSitesValues.foreach { packagingSites =>
+            warehousesValues.foreach { warehouses =>
+              s"when ${packagingSites.size} packaging sites and ${warehouses.size} warehouses" in {
+                val userAnswers = emptyUserAnswersForUpdateRegisteredDetails.copy(
+                  packagingSiteList = packagingSites,
+                  warehouseList = warehouses
+                )
+                val ukSitesSummary = UKSitesSummary.getHeadingAndSummary(userAnswers, isCheckAnswers)
+                ukSitesSummary.head._2.rows.size mustEqual 2
+                ukSitesSummary.head._2.rows(0).key.content.asHtml.toString mustBe
+                  s"You have ${packagingSites.size} packaging site${if (packagingSites.size != 1) "s" else ""}"
+                ukSitesSummary.head._2.rows(1).key.content.asHtml.toString mustBe
+                  s"You have ${warehouses.size} warehouse${if (warehouses.size != 1) "s" else ""}"
+                if (isCheckAnswers) {
+                  ukSitesSummary.head._2.rows(0).actions.toList.head.items.head.content.asHtml.toString mustBe "Change"
+                  ukSitesSummary.head._2.rows(1).actions.toList.head.items.head.content.asHtml.toString mustBe "Change"
+                } else {
+                  ukSitesSummary.head._2.rows(0).actions.head.items.isEmpty mustBe true
+                  ukSitesSummary.head._2.rows(1).actions.head.items.isEmpty mustBe true
+                }
               }
             }
-          })
-        })
-      }
-    })
+          }
+        }
+    }
   }
 
 }

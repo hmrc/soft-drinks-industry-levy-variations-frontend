@@ -18,7 +18,6 @@ package pages.cancelRegistration
 
 import pages.behaviours.PageBehaviours
 
-
 class ReasonPageSpec extends PageBehaviours {
 
   "ReasonPage" - {

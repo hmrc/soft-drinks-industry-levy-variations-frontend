@@ -17,12 +17,12 @@
 package views.summary.changeActivity
 
 import controllers.changeActivity.routes
-import models.{CheckMode, LitresInBands}
-import pages.changeActivity.{HowManyContractPackingPage, ContractPackingPage}
+import models.{ CheckMode, LitresInBands }
+import pages.changeActivity.{ ContractPackingPage, HowManyContractPackingPage }
 import pages.QuestionPage
-import views.summary.{ReturnDetailsSummaryListWithLitres, SummaryListRowLitresHelper}
+import views.summary.{ ReturnDetailsSummaryListWithLitres, SummaryListRowLitresHelper }
 
-object ContractPackingSummary extends ReturnDetailsSummaryListWithLitres  {
+object ContractPackingSummary extends ReturnDetailsSummaryListWithLitres {
 
   override val page: QuestionPage[Boolean] = ContractPackingPage
   override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyContractPackingPage)

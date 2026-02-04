@@ -21,21 +21,21 @@ import play.api.data.format.Formatter
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import scala.util.{Failure, Success, Try}
+import scala.util.{ Failure, Success, Try }
 
 private[mappings] class LocalDateFormatter(
-                                            invalidKey: String,
-                                            allRequiredKey: String,
-                                            twoRequiredKey: String,
-                                            requiredKey: String,
-                                            invalidDay: String,
-                                            invalidDayLength: String,
-                                            invalidMonth: String,
-                                            invalidMonthLength: String,
-                                            invalidYear: String,
-                                            invalidYearLength: String,
-                                            args: Seq[String] = Seq.empty
-                                          ) extends Formatter[LocalDate] with Formatters {
+  invalidKey: String,
+  allRequiredKey: String,
+  twoRequiredKey: String,
+  requiredKey: String,
+  invalidDay: String,
+  invalidDayLength: String,
+  invalidMonth: String,
+  invalidMonthLength: String,
+  invalidYear: String,
+  invalidYearLength: String,
+  args: Seq[String] = Seq.empty
+) extends Formatter[LocalDate] with Formatters {
 
   private val fieldKeys: List[String] = List("day", "month", "year")
 
@@ -45,9 +45,17 @@ private[mappings] class LocalDateFormatter(
       case Success(date) =>
         Right(date)
       case Failure(_) =>
-        Left(Seq(FormError(key,
-          Seq(s"The date you are cancelling your registration must be a real date, like <span style='white-space: nowrap'>$theCurrentDate</span>"),
-          args)))
+        Left(
+          Seq(
+            FormError(
+              key,
+              Seq(
+                s"The date you are cancelling your registration must be a real date, like <span style='white-space: nowrap'>$theCurrentDate</span>"
+              ),
+              args
+            )
+          )
+        )
     }
   }
 
@@ -77,8 +85,8 @@ private[mappings] class LocalDateFormatter(
       args
     )
 
-    val dataWithRemovedWhitespace = data.map {
-      case (k, v) => k -> v.filterNot(char => char.isWhitespace)
+    val dataWithRemovedWhitespace = data.map { case (k, v) =>
+      k -> v.filterNot(char => char.isWhitespace)
     }
 
     val bindedDay: Either[Seq[FormError], Int] = intDay.bind(s"$key.day", dataWithRemovedWhitespace)
@@ -86,13 +94,13 @@ private[mappings] class LocalDateFormatter(
     val bindedYear: Either[Seq[FormError], Int] = intYear.bind(s"$key.year", dataWithRemovedWhitespace)
 
     (bindedDay, bindedMonth, bindedYear) match {
-      case (Left(dayError), Left(monthError), Left(yearError))=> Left(Seq(FormError(key, s"$key.error.invalid", args)))
-      case (Left(dayError), Left(monthError), Right(_)) => Left(Seq(FormError(key, s"$key.error.dayMonth.invalid", args)))
-      case (Right(_), Left(monthError), Left(yearError)) => Left(Seq(FormError(key, s"$key.error.monthYear.invalid", args)))
-      case (Left(dayError), Right(_), Left(yearError)) => Left(Seq(FormError(key, s"$key.error.dayYear.invalid", args)))
-      case (Left(dayError), Right(_), Right(_)) => Left(dayError)
-      case (Right(_), Left(monthError), Right(_)) => Left(monthError)
-      case (Right(_), Right(_), Left(yearError)) => Left(yearError)
+      case (Left(_), Left(_), Left(_))             => Left(Seq(FormError(key, s"$key.error.invalid", args)))
+      case (Left(_), Left(_), Right(_))            => Left(Seq(FormError(key, s"$key.error.dayMonth.invalid", args)))
+      case (Right(_), Left(_), Left(_))            => Left(Seq(FormError(key, s"$key.error.monthYear.invalid", args)))
+      case (Left(_), Right(_), Left(_))            => Left(Seq(FormError(key, s"$key.error.dayYear.invalid", args)))
+      case (Left(dayError), Right(_), Right(_))    => Left(dayError)
+      case (Right(_), Left(monthError), Right(_))  => Left(monthError)
+      case (Right(_), Right(_), Left(yearError))   => Left(yearError)
       case (Right(day), Right(month), Right(year)) => toDate(key, day, month, year)
     }
 
@@ -100,9 +108,8 @@ private[mappings] class LocalDateFormatter(
 
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
 
-    val fields = fieldKeys.map {
-      field =>
-        field -> data.get(s"$key.$field").filter(_.nonEmpty)
+    val fields = fieldKeys.map { field =>
+      field -> data.get(s"$key.$field").filter(_.nonEmpty)
     }.toMap
 
     lazy val missingFields = fields
@@ -126,8 +133,8 @@ private[mappings] class LocalDateFormatter(
 
   override def unbind(key: String, value: LocalDate): Map[String, String] =
     Map(
-      s"$key.day" -> value.getDayOfMonth.toString,
+      s"$key.day"   -> value.getDayOfMonth.toString,
       s"$key.month" -> value.getMonthValue.toString,
-      s"$key.year" -> value.getYear.toString
+      s"$key.year"  -> value.getYear.toString
     )
 }

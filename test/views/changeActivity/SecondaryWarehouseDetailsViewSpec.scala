@@ -33,9 +33,11 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
   val formProvider = new SecondaryWarehouseDetailsFormProvider
   val formWithWarehouses: Form[Boolean] = formProvider.apply(true)
   val formWithNoWarehouses: Form[Boolean] = formProvider.apply(false)
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
   val warehousesInSummaryList: SummaryList = SummaryList(
-    rows = SecondaryWarehouseDetailsSummary.summaryRows(warehouseAddedToUserAnswersForChangeActivity.warehouseList, NormalMode))
+    rows = SecondaryWarehouseDetailsSummary
+      .summaryRows(warehouseAddedToUserAnswersForChangeActivity.warehouseList, NormalMode)
+  )
 
   object Selectors {
     val heading = "govuk-fieldset__heading"
@@ -51,7 +53,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
   }
 
   "View - when there are warehouses" - {
-    val html = view(formWithWarehouses, Some(warehousesInSummaryList), NormalMode)(request, messages(application))
+    val html = view(formWithWarehouses, Some(warehousesInSummaryList), NormalMode)(using request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
       document.title() mustBe "UK warehouse details - Soft Drinks Industry Levy - GOV.UK"
@@ -98,7 +100,11 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with yes and has no errors" - {
-      val html1 = view(formWithWarehouses.fill(true), Some(warehousesInSummaryList), NormalMode)(request, messages(application))
+      val html1 =
+        view(formWithWarehouses.fill(true), Some(warehousesInSummaryList), NormalMode)(using
+          request,
+          messages(application)
+        )
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -133,7 +139,11 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with no and has no errors" - {
-      val html1 = view(formWithWarehouses.fill(false), Some(warehousesInSummaryList), NormalMode)(request, messages(application))
+      val html1 =
+        view(formWithWarehouses.fill(false), Some(warehousesInSummaryList), NormalMode)(using
+          request,
+          messages(application)
+        )
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -184,24 +194,37 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
 
-      val htmlYesSelected = view(formWithWarehouses.fill(true), Some(warehousesInSummaryList), NormalMode)(request, messages(application))
+      val htmlYesSelected =
+        view(formWithWarehouses.fill(true), Some(warehousesInSummaryList), NormalMode)(using
+          request,
+          messages(application)
+        )
       val documentYesSelected = doc(htmlYesSelected)
 
-      val htmlNoSelected = view(formWithWarehouses.fill(false), Some(warehousesInSummaryList), NormalMode)(request, messages(application))
+      val htmlNoSelected =
+        view(formWithWarehouses.fill(false), Some(warehousesInSummaryList), NormalMode)(using
+          request,
+          messages(application)
+        )
       val documentNoSelected = doc(htmlNoSelected)
       "and yes is selected" in {
-        documentYesSelected.select(Selectors.form)
+        documentYesSelected
+          .select(Selectors.form)
           .attr("action") mustEqual routes.SecondaryWarehouseDetailsController.onSubmit(NormalMode).url
       }
 
       "and no is selected" in {
-        documentNoSelected.select(Selectors.form)
+        documentNoSelected
+          .select(Selectors.form)
           .attr("action") mustEqual routes.SecondaryWarehouseDetailsController.onSubmit(NormalMode).url
       }
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(formWithWarehouses.bind(Map("value" -> "")), Some(warehousesInSummaryList), NormalMode)(request, messages(application))
+      val htmlWithErrors = view(formWithWarehouses.bind(Map("value" -> "")), Some(warehousesInSummaryList), NormalMode)(
+        request,
+        messages(application)
+      )
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
@@ -226,7 +249,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
   }
 
   "View - when there are no warehouses" - {
-    val html = view(formWithNoWarehouses, None, NormalMode)(request, messages(application))
+    val html = view(formWithNoWarehouses, None, NormalMode)(using request, messages(application))
 
     val documentNoWarehouses = doc(html)
     "should contain the expected title" in {
@@ -241,23 +264,28 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
 
-      val htmlYesSelected = view(formWithNoWarehouses.fill(true), None, NormalMode)(request, messages(application))
+      val htmlYesSelected =
+        view(formWithNoWarehouses.fill(true), None, NormalMode)(using request, messages(application))
       val documentYesSelected = doc(htmlYesSelected)
-      val htmlNoSelected = view(formWithNoWarehouses.fill(false), None, NormalMode)(request, messages(application))
+      val htmlNoSelected =
+        view(formWithNoWarehouses.fill(false), None, NormalMode)(using request, messages(application))
       val documentNoSelected = doc(htmlNoSelected)
       "and yes is selected" in {
-        documentYesSelected.select(Selectors.form)
+        documentYesSelected
+          .select(Selectors.form)
           .attr("action") mustEqual routes.SecondaryWarehouseDetailsController.onSubmit(NormalMode).url
       }
 
       "and no is selected" in {
-        documentNoSelected.select(Selectors.form)
+        documentNoSelected
+          .select(Selectors.form)
           .attr("action") mustEqual routes.SecondaryWarehouseDetailsController.onSubmit(NormalMode).url
       }
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(formWithNoWarehouses.bind(Map("value" -> "")), None, NormalMode)(request, messages(application))
+      val htmlWithErrors =
+        view(formWithNoWarehouses.bind(Map("value" -> "")), None, NormalMode)(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {

@@ -3,14 +3,15 @@ package controllers.correctReturn
 import controllers.ControllerITTestHelper
 import models.SelectChange.CorrectReturn
 import models.submission.Litreage
-import models.{CheckMode, NormalMode, ReturnPeriod, SmallProducer}
+import models.{ CheckMode, NormalMode, ReturnPeriod, SmallProducer }
 import org.jsoup.Jsoup
-import org.scalatest.matchers.must.Matchers.{convertToAnyMustWrapper, include}
-import play.api.i18n.Messages
+import org.scalatest.matchers.must.Matchers._
+import play.api.i18n.{ Messages, MessagesApi }
 import play.api.libs.json.Json
 import play.api.libs.ws.DefaultWSCookie
-import play.api.test.WsTestClient
+import play.api.test.{ FakeRequest, WsTestClient }
 import play.mvc.Http.HeaderNames
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
@@ -19,23 +20,32 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
   private val sdilRefSuperCola = "XZSDIL000000235"
   private val aliasSuperCola = "Super Cola"
-  
+
   private val litres = 1000L
 
-  private val validAddASmallProducer = Json.obj("producerName" -> aliasSuperCola, "referenceNumber" -> sdilRefSuperCola, "litres.lowBand" -> litres.toString, "litres.highBand" -> litres.toString)
+  private val validAddASmallProducer = Json.obj(
+    "producerName"    -> aliasSuperCola,
+    "referenceNumber" -> sdilRefSuperCola,
+    "litres.lowBand"  -> litres.toString,
+    "litres.highBand" -> litres.toString
+  )
 
   private val returnPeriod: ReturnPeriod = ReturnPeriod(2018, 1)
   private def userAnswersWithSmallProducersSet = emptyUserAnswersForCorrectReturn
     .copy(smallProducerList = List(SmallProducer(aliasSuperCola, sdilRefSuperCola, Litreage(100, 200))))
 
+  given messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  given messages: Messages = messagesApi.preferred(FakeRequest())
+
   "GET " + normalRoutePath - {
     "Ask user to input a registered small producer's details" in {
       val userAnswers = emptyUserAnswersForCorrectReturn
       setUpForCorrectReturn(userAnswers)
-      given.commonPreconditionChangeSubscription(diffSubscription)
+      build.commonPreconditionChangeSubscription(diffSubscription)
 
       WsTestClient.withClient { client =>
-        val result1 = client.url(correctReturnBaseUrl + normalRoutePath)
+        val result1 = client
+          .url(correctReturnBaseUrl + normalRoutePath)
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
@@ -55,10 +65,11 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
     "Ask user to input a registered small producer's details" in {
       val userAnswers = emptyUserAnswersForCorrectReturn
       setUpForCorrectReturn(userAnswers)
-      given.commonPreconditionChangeSubscription(diffSubscription)
+      build.commonPreconditionChangeSubscription(diffSubscription)
 
       WsTestClient.withClient { client =>
-        val result1 = client.url(correctReturnBaseUrl + checkRoutePath)
+        val result1 = client
+          .url(correctReturnBaseUrl + checkRoutePath)
           .withFollowRedirects(false)
           .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
           .get()
@@ -76,7 +87,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
   }
   "POST " + normalRoutePath - {
     "Post the new form data and return form with error if SDIL reference number already exists as a small producer" in {
-      given
+      build
         .commonPreconditionChangeSubscription(diffSubscription)
 
       val userAnswers = userAnswersWithSmallProducersSet
@@ -84,23 +95,24 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
       WsTestClient.withClient { client =>
         val result =
-          client.url(correctReturnBaseUrl + normalRoutePath)
+          client
+            .url(correctReturnBaseUrl + normalRoutePath)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
             .post(validAddASmallProducer)
 
         whenReady(result) { res =>
           res.status mustBe 400
           val page = Jsoup.parse(res.body)
-          page.title must include("Error: " + Messages("correctReturn.addASmallProducer.title"))
-          val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
+          page.title must include("Error: " + messages("correctReturn.addASmallProducer.title"))
+          val errorSummary = page
+            .getElementsByClass("govuk-list govuk-error-summary__list")
             .first()
           errorSummary
             .select("a")
             .attr("href") mustBe "#referenceNumber"
-          errorSummary.text() mustBe Messages("correctReturn.addASmallProducer.error.referenceNumber.exists")
+          errorSummary.text() mustBe messages("correctReturn.addASmallProducer.error.referenceNumber.exists")
         }
 
       }
@@ -108,7 +120,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
     }
 
     "Redirect to Select controller if return period has not been set" in {
-      given
+      build
         .commonPreconditionChangeSubscription(diffSubscription)
 
       val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None)
@@ -116,10 +128,10 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
       WsTestClient.withClient { client =>
         val result =
-          client.url(correctReturnBaseUrl + normalRoutePath)
+          client
+            .url(correctReturnBaseUrl + normalRoutePath)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
             .post(validAddASmallProducer)
 
@@ -134,7 +146,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
     }
 
     "Post the new form data and return form with error if SDIL reference number is not a valid small producer" in {
-      given
+      build
         .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = false)
 
@@ -143,23 +155,24 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
       WsTestClient.withClient { client =>
         val result =
-          client.url(correctReturnBaseUrl + normalRoutePath)
+          client
+            .url(correctReturnBaseUrl + normalRoutePath)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
             .post(validAddASmallProducer)
 
         whenReady(result) { res =>
           res.status mustBe 400
           val page = Jsoup.parse(res.body)
-          page.title must include("Error: " + Messages("correctReturn.addASmallProducer.title"))
-          val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
+          page.title must include("Error: " + messages("correctReturn.addASmallProducer.title"))
+          val errorSummary = page
+            .getElementsByClass("govuk-list govuk-error-summary__list")
             .first()
           errorSummary
             .select("a")
             .attr("href") mustBe "#referenceNumber"
-          errorSummary.text() mustBe Messages("correctReturn.addASmallProducer.error.referenceNumber.notASmallProducer")
+          errorSummary.text() mustBe messages("correctReturn.addASmallProducer.error.referenceNumber.notASmallProducer")
         }
 
       }
@@ -168,10 +181,11 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
     "Post the new form data and navigate to small producer details page" in {
 
-      val expectedResult: Some[List[SmallProducer]] = Some(List(SmallProducer(alias = aliasSuperCola,
-        sdilRef = sdilRefSuperCola, litreage = Litreage(litres, litres))))
+      val expectedResult: Some[List[SmallProducer]] = Some(
+        List(SmallProducer(alias = aliasSuperCola, sdilRef = sdilRefSuperCola, litreage = Litreage(litres, litres)))
+      )
 
-      given
+      build
         .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = true)
 
@@ -180,10 +194,10 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
       WsTestClient.withClient { client =>
         val result =
-          client.url(correctReturnBaseUrl + normalRoutePath)
+          client
+            .url(correctReturnBaseUrl + normalRoutePath)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
             .post(validAddASmallProducer)
 
@@ -199,11 +213,15 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
     testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + normalRoutePath, Some(validAddASmallProducer))
     testUnauthorisedUser(correctReturnBaseUrl + normalRoutePath, Some(validAddASmallProducer))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + normalRoutePath, Some(validAddASmallProducer))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + normalRoutePath, Some(validAddASmallProducer))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+      CorrectReturn,
+      correctReturnBaseUrl + normalRoutePath,
+      Some(validAddASmallProducer)
+    )
   }
   "POST " + checkRoutePath - {
     "Post the new form data and return form with error if SDIL reference number already exists as a small producer" in {
-      given
+      build
         .commonPreconditionChangeSubscription(diffSubscription)
 
       val userAnswers = userAnswersWithSmallProducersSet
@@ -211,23 +229,24 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
       WsTestClient.withClient { client =>
         val result =
-          client.url(correctReturnBaseUrl + checkRoutePath)
+          client
+            .url(correctReturnBaseUrl + checkRoutePath)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
             .post(validAddASmallProducer)
 
         whenReady(result) { res =>
           res.status mustBe 400
           val page = Jsoup.parse(res.body)
-          page.title must include("Error: " + Messages("correctReturn.addASmallProducer.title"))
-          val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
+          page.title must include("Error: " + messages("correctReturn.addASmallProducer.title"))
+          val errorSummary = page
+            .getElementsByClass("govuk-list govuk-error-summary__list")
             .first()
           errorSummary
             .select("a")
             .attr("href") mustBe "#referenceNumber"
-          errorSummary.text() mustBe Messages("correctReturn.addASmallProducer.error.referenceNumber.exists")
+          errorSummary.text() mustBe messages("correctReturn.addASmallProducer.error.referenceNumber.exists")
         }
 
       }
@@ -235,7 +254,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
     }
 
     "Redirect to select controller if return period has not been set" in {
-      given
+      build
         .commonPreconditionChangeSubscription(diffSubscription)
 
       val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = None)
@@ -243,10 +262,10 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
       WsTestClient.withClient { client =>
         val result =
-          client.url(correctReturnBaseUrl + checkRoutePath)
+          client
+            .url(correctReturnBaseUrl + checkRoutePath)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
             .post(validAddASmallProducer)
 
@@ -261,7 +280,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
     }
 
     "Post the new form data and return form with error if SDIL reference number is not a valid small producer" in {
-      given
+      build
         .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = false)
 
@@ -270,23 +289,24 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
       WsTestClient.withClient { client =>
         val result =
-          client.url(correctReturnBaseUrl + checkRoutePath)
+          client
+            .url(correctReturnBaseUrl + checkRoutePath)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
             .post(validAddASmallProducer)
 
         whenReady(result) { res =>
           res.status mustBe 400
           val page = Jsoup.parse(res.body)
-          page.title must include("Error: " + Messages("correctReturn.addASmallProducer.title"))
-          val errorSummary = page.getElementsByClass("govuk-list govuk-error-summary__list")
+          page.title must include("Error: " + messages("correctReturn.addASmallProducer.title"))
+          val errorSummary = page
+            .getElementsByClass("govuk-list govuk-error-summary__list")
             .first()
           errorSummary
             .select("a")
             .attr("href") mustBe "#referenceNumber"
-          errorSummary.text() mustBe Messages("correctReturn.addASmallProducer.error.referenceNumber.notASmallProducer")
+          errorSummary.text() mustBe messages("correctReturn.addASmallProducer.error.referenceNumber.notASmallProducer")
         }
 
       }
@@ -295,10 +315,11 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
     "Post the new form data and navigate to small producer details page" in {
 
-      val expectedResult: Some[List[SmallProducer]] = Some(List(SmallProducer(alias = aliasSuperCola,
-        sdilRef = sdilRefSuperCola, litreage = Litreage(litres, litres))))
+      val expectedResult: Some[List[SmallProducer]] = Some(
+        List(SmallProducer(alias = aliasSuperCola, sdilRef = sdilRefSuperCola, litreage = Litreage(litres, litres)))
+      )
 
-      given
+      build
         .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatus(sdilRefSuperCola, returnPeriod, smallProducerStatus = true)
 
@@ -307,10 +328,10 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
       WsTestClient.withClient { client =>
         val result =
-          client.url(correctReturnBaseUrl + checkRoutePath)
+          client
+            .url(correctReturnBaseUrl + checkRoutePath)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
             .post(validAddASmallProducer)
 
@@ -324,7 +345,7 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
     "render the error page when the call to get small producer status fails" in {
 
-      given
+      build
         .commonPreconditionChangeSubscription(diffSubscription)
         .smallProducerStatusError(sdilRefSuperCola, returnPeriod)
 
@@ -333,24 +354,27 @@ class AddASmallProducerControllerISpec extends ControllerITTestHelper {
 
       WsTestClient.withClient { client =>
         val result =
-          client.url(correctReturnBaseUrl + checkRoutePath)
+          client
+            .url(correctReturnBaseUrl + checkRoutePath)
             .addCookies(DefaultWSCookie("mdtp", authAndSessionCookie))
-            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022",
-              "Csrf-Token" -> "nocheck")
+            .withHttpHeaders("X-Session-ID" -> "XKSDIL000000022", "Csrf-Token" -> "nocheck")
             .withFollowRedirects(false)
             .post(validAddASmallProducer)
 
         whenReady(result) { res =>
           res.status mustBe 500
           val page = Jsoup.parse(res.body)
-          page.title() mustBe "Sorry, there is a problem with the service - 500 - Soft Drinks Industry Levy - GOV.UK"
+          page.title() mustBe "Sorry, there is a problem with the service - Soft Drinks Industry Levy - GOV.UK"
         }
       }
     }
     testRequiredCorrectReturnDataMissing(correctReturnBaseUrl + checkRoutePath, Some(validAddASmallProducer))
     testUnauthorisedUser(correctReturnBaseUrl + checkRoutePath, Some(validAddASmallProducer))
     testAuthenticatedUserButNoUserAnswers(correctReturnBaseUrl + checkRoutePath, Some(validAddASmallProducer))
-    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(CorrectReturn, correctReturnBaseUrl + checkRoutePath, Some(validAddASmallProducer))
+    testAuthenticatedWithUserAnswersForUnsupportedJourneyType(
+      CorrectReturn,
+      correctReturnBaseUrl + checkRoutePath,
+      Some(validAddASmallProducer)
+    )
   }
 }
-

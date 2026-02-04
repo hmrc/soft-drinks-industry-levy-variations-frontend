@@ -21,10 +21,9 @@ import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import forms.cancelRegistration.CancelRegistrationDateFormProvider
 import models.SelectChange.CancelRegistration
-import navigation.{FakeNavigatorForCancelRegistration, NavigatorForCancelRegistration}
+import navigation.{ FakeNavigatorForCancelRegistration, NavigatorForCancelRegistration }
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.mock
+import org.mockito.Mockito.{ mock, when }
 import play.api.inject
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -37,23 +36,25 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
 
   lazy val fileReturnBeforDeregRoute: String = routes.FileReturnBeforeDeregController.onPageLoad().url
 
-  val mockConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
+  val mockConnector: SoftDrinksIndustryLevyConnector = mock(classOf[SoftDrinksIndustryLevyConnector])
 
   val appConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
   val formProvider = new CancelRegistrationDateFormProvider(appConfig)
 
   def onwardRoute = Call("GET", "/foo")
 
-
   "FileReturnBeforeDereg Controller" - {
 
     "must return OK and the correct view and message when there is more than one pending return for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCancelRegistration)).overrides(
-        inject.bind[SoftDrinksIndustryLevyConnector].toInstance(mockConnector)
-      ).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCancelRegistration))
+        .overrides(
+          inject.bind[SoftDrinksIndustryLevyConnector].toInstance(mockConnector)
+        )
+        .build()
 
-      when(mockConnector.getPendingReturnsFromCache(any())(any())).thenReturn(createSuccessVariationResult(returnPeriods))
+      when(mockConnector.getPendingReturnsFromCache(any())(any()))
+        .thenReturn(createSuccessVariationResult(returnPeriods))
 
       running(application) {
         val config = application.injector.instanceOf[FrontendAppConfig]
@@ -65,17 +66,22 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[FileReturnBeforeDeregView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(Html(s"Before you can cancel your registration, you must send ${2} returns and make any payments due."))(request, messages(application), config).toString
+        contentAsString(result) mustEqual view(
+          Html(s"Before you can cancel your registration, you must send ${2} returns and make any payments due.")
+        )(request, messages(application), config).toString
       }
     }
 
     "must display correct message when there is one pending return for a GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCancelRegistration)).overrides(
-        inject.bind[SoftDrinksIndustryLevyConnector].toInstance(mockConnector)
-      ).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCancelRegistration))
+        .overrides(
+          inject.bind[SoftDrinksIndustryLevyConnector].toInstance(mockConnector)
+        )
+        .build()
 
-      when(mockConnector.getPendingReturnsFromCache(any())(any())).thenReturn(createSuccessVariationResult(returnPeriod))
+      when(mockConnector.getPendingReturnsFromCache(any())(any()))
+        .thenReturn(createSuccessVariationResult(returnPeriod))
 
       running(application) {
         val config = application.injector.instanceOf[FrontendAppConfig]
@@ -87,15 +93,21 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[FileReturnBeforeDeregView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(Html(s"Before you can cancel your registration, you must send a return for April to April 2018 and make any payments due."))(request, messages(application), config).toString
+        contentAsString(result) mustEqual view(
+          Html(
+            s"Before you can cancel your registration, you must send a return for April to April 2018 and make any payments due."
+          )
+        )(request, messages(application), config).toString
       }
     }
 
     "must redirect when there are no pending returns GET" in {
 
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCancelRegistration)).overrides(
-        inject.bind[SoftDrinksIndustryLevyConnector].toInstance(mockConnector)
-      ).build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswersForCancelRegistration))
+        .overrides(
+          inject.bind[SoftDrinksIndustryLevyConnector].toInstance(mockConnector)
+        )
+        .build()
 
       when(mockConnector.getPendingReturnsFromCache(any())(any())).thenReturn(createSuccessVariationResult(List.empty))
 
@@ -114,9 +126,10 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val mockSessionService = mock[SessionService]
+      val mockSessionService = mock(classOf[SessionService])
 
-      when(mockConnector.getPendingReturnsFromCache(any())(any())).thenReturn(createSuccessVariationResult(returnPeriods))
+      when(mockConnector.getPendingReturnsFromCache(any())(any()))
+        .thenReturn(createSuccessVariationResult(returnPeriods))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersForCancelRegistration))

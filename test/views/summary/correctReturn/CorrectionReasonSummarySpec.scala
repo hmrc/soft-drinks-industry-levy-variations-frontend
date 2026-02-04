@@ -17,7 +17,7 @@
 package views.summary.correctReturn
 
 import base.SpecBase
-import models.{SelectChange, UserAnswers}
+import models.{ SelectChange, UserAnswers }
 import play.api.libs.json.Json
 
 class CorrectionReasonSummarySpec extends SpecBase {
@@ -31,8 +31,16 @@ class CorrectionReasonSummarySpec extends SpecBase {
     }
 
     "should return a summary list row with the appropriate cancellation reason if an answer has been added" in {
-      val userAnswersWithCorrectionReason = UserAnswers(sdilNumber, SelectChange.CorrectReturn,
-        Json.obj("correctReturn" -> Json.obj("correctionReason" -> "I was not paying close enough attention and I entered the wrong value")), contactAddress = contactAddress)
+      val userAnswersWithCorrectionReason = UserAnswers(
+        sdilNumber,
+        SelectChange.CorrectReturn,
+        Json.obj(
+          "correctReturn" -> Json.obj(
+            "correctionReason" -> "I was not paying close enough attention and I entered the wrong value"
+          )
+        ),
+        contactAddress = contactAddress
+      )
 
       val correctionReasonSummaryRow = CorrectionReasonSummary.row(userAnswersWithCorrectionReason)
 

@@ -20,8 +20,8 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.changeActivity.RemovePackagingSiteDetailsFormProvider
 import models.SelectChange.ChangeActivity
-import models.backend.{Site, UkAddress}
-import models.{NormalMode, UserAnswers}
+import models.backend.{ Site, UkAddress }
+import models.{ NormalMode, UserAnswers }
 import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -45,11 +45,14 @@ class RemovePackagingSiteDetailsControllerSpec extends SpecBase with MockitoSuga
   val form = formProvider()
 
   val indexOfPackingSiteToBeRemoved: String = "foobar"
-  lazy val packingSiteDetailsRemoveRoute = routes.RemovePackagingSiteDetailsController.onPageLoad(NormalMode, indexOfPackingSiteToBeRemoved).url
-  val addressOfPackingSite: UkAddress = UkAddress(List("foo"),"bar", None)
+  lazy val packingSiteDetailsRemoveRoute =
+    routes.RemovePackagingSiteDetailsController.onPageLoad(NormalMode, indexOfPackingSiteToBeRemoved).url
+  val addressOfPackingSite: UkAddress = UkAddress(List("foo"), "bar", None)
   val packingSiteTradingName: String = "a name for a packing site here"
   val userAnswersWithPackingSite: UserAnswers = emptyUserAnswersForChangeActivity
-    .copy(packagingSiteList = Map(indexOfPackingSiteToBeRemoved -> Site(addressOfPackingSite, Some(packingSiteTradingName), None, None)))
+    .copy(packagingSiteList =
+      Map(indexOfPackingSiteToBeRemoved -> Site(addressOfPackingSite, Some(packingSiteTradingName), None, None))
+    )
 
   "RemovePackagingSiteDetails Controller" - {
 
@@ -66,8 +69,12 @@ class RemovePackagingSiteDetailsControllerSpec extends SpecBase with MockitoSuga
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(form, NormalMode, AddressFormattingHelper.addressFormatting(addressOfPackingSite,
-            Some(packingSiteTradingName)), indexOfPackingSiteToBeRemoved)(request, messages(application)).toString
+          view(
+            form,
+            NormalMode,
+            AddressFormattingHelper.addressFormatting(addressOfPackingSite, Some(packingSiteTradingName)),
+            indexOfPackingSiteToBeRemoved
+          )(using request, messages(application)).toString
       }
     }
 
@@ -75,7 +82,7 @@ class RemovePackagingSiteDetailsControllerSpec extends SpecBase with MockitoSuga
 
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswersWithPackingSite))
@@ -114,9 +121,12 @@ class RemovePackagingSiteDetailsControllerSpec extends SpecBase with MockitoSuga
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual
-          view(boundForm, NormalMode, AddressFormattingHelper.addressFormatting(addressOfPackingSite,
-            Some(packingSiteTradingName)),
-            indexOfPackingSiteToBeRemoved)(request, messages(application)).toString
+          view(
+            boundForm,
+            NormalMode,
+            AddressFormattingHelper.addressFormatting(addressOfPackingSite, Some(packingSiteTradingName)),
+            indexOfPackingSiteToBeRemoved
+          )(using request, messages(application)).toString
       }
     }
 
@@ -127,27 +137,29 @@ class RemovePackagingSiteDetailsControllerSpec extends SpecBase with MockitoSuga
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswersWithPackingSite))
           .overrides(
-            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity (onwardRoute)),
+            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
-          ).build()
+          )
+          .build()
 
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request =
             FakeRequest(POST, packingSiteDetailsRemoveRoute)
-          .withFormUrlEncodedBody(("value", "true"))
+              .withFormUrlEncodedBody(("value", "true"))
 
           await(route(application, request).value)
-          events.collectFirst {
-            case event =>
+          events
+            .collectFirst { case event =>
               event.getLevel.levelStr mustBe "ERROR"
               event.getMessage mustEqual "Failed to set value in session repository while attempting set on packingSiteDetailsRemove"
-          }.getOrElse(fail("No logging captured"))
+            }
+            .getOrElse(fail("No logging captured"))
         }
       }
     }

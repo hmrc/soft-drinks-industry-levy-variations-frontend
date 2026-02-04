@@ -24,21 +24,21 @@ import forms.mappings.Mappings
 import javax.inject.Inject
 import play.api.data.Form
 
-class CancelRegistrationDateFormProvider @Inject()(config:FrontendAppConfig) extends Mappings {
+class CancelRegistrationDateFormProvider @Inject() (config: FrontendAppConfig) extends Mappings {
 
   def apply(): Form[LocalDate] =
     Form(
       "cancelRegistrationDate" -> localDate(
-        invalidKey         = "cancelRegistrationDate.error.invalid",
-        allRequiredKey     = "cancelRegistrationDate.error.required.all",
-        twoRequiredKey     = "cancelRegistrationDate.error.required.two",
-        requiredKey        = "cancelRegistrationDate.error.required",
-        invalidDay         = "cancelRegistrationDate.error.day.nan",
-        invalidDayLength   = "cancelRegistrationDate.error.day.length",
-        invalidMonth       = "cancelRegistrationDate.error.month.nan",
+        invalidKey = "cancelRegistrationDate.error.invalid",
+        allRequiredKey = "cancelRegistrationDate.error.required.all",
+        twoRequiredKey = "cancelRegistrationDate.error.required.two",
+        requiredKey = "cancelRegistrationDate.error.required",
+        invalidDay = "cancelRegistrationDate.error.day.nan",
+        invalidDayLength = "cancelRegistrationDate.error.day.length",
+        invalidMonth = "cancelRegistrationDate.error.month.nan",
         invalidMonthLength = "cancelRegistrationDate.error.month.length",
-        invalidYear        = "cancelRegistrationDate.error.year.nan",
-        invalidYearLength  = "cancelRegistrationDate.error.year.length"
+        invalidYear = "cancelRegistrationDate.error.year.nan",
+        invalidYearLength = "cancelRegistrationDate.error.year.length"
       ).verifying(
         minDate(LocalDate.now(), "cancelRegistrationDate.error.registration-date.min"),
         maxDate(config.cancelRegistrationDateMaxDaysInFuture, "cancelRegistrationDate.error.registration-date.max")

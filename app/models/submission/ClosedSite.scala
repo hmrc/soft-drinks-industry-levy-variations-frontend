@@ -17,7 +17,7 @@
 package models.submission
 
 import models.backend.Site
-import play.api.libs.json.{Json, Writes}
+import play.api.libs.json.{ Json, Writes }
 
 object ClosedSite {
 

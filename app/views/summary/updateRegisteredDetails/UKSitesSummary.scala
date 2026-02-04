@@ -17,16 +17,18 @@
 package views.summary.updateRegisteredDetails
 
 import controllers.updateRegisteredDetails.routes
-import models.{CheckMode, UserAnswers}
+import models.{ CheckMode, UserAnswers }
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.{SummaryList, Value}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{ SummaryList, Value }
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ Key, SummaryListRow }
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object UKSitesSummary {
 
-  private def getPackagingSiteRow(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages): SummaryListRow = {
+  private def getPackagingSiteRow(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit
+    messages: Messages
+  ): SummaryListRow = {
     val key = if (userAnswers.packagingSiteList.size != 1) {
       messages("checkYourAnswers.packing.checkYourAnswersLabel.multiple", userAnswers.packagingSiteList.size.toString)
     } else {
@@ -58,11 +60,13 @@ object UKSitesSummary {
     )
   }
 
-  private def getWarehousesRow (userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages): SummaryListRow = {
+  private def getWarehousesRow(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit
+    messages: Messages
+  ): SummaryListRow = {
     val key = if (userAnswers.warehouseList.size != 1) {
       messages("checkYourAnswers.warehouse.checkYourAnswersLabel.multiple", userAnswers.warehouseList.size.toString)
     } else {
-      messages("checkYourAnswers.warehouse.checkYourAnswersLabel.one", {userAnswers.warehouseList.size.toString})
+      messages("checkYourAnswers.warehouse.checkYourAnswersLabel.one", userAnswers.warehouseList.size.toString)
     }
     SummaryListRowViewModel(
       key = Key(
@@ -91,8 +95,9 @@ object UKSitesSummary {
     )
   }
 
-  def getHeadingAndSummary(userAnswers: UserAnswers, isCheckAnswers: Boolean)
-                          (implicit messages: Messages): Option[(String, SummaryList)] = {
+  def getHeadingAndSummary(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit
+    messages: Messages
+  ): Option[(String, SummaryList)] = {
     val optSummaryList = Option(
       SummaryListViewModel(
         Seq(
@@ -105,4 +110,3 @@ object UKSitesSummary {
   }
 
 }
-

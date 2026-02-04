@@ -18,8 +18,8 @@ package pages.changeActivity
 
 import controllers.changeActivity.routes
 import models.backend.RetrievedSubscription
-import models.{Mode, UserAnswers}
-import pages.{QuestionPage, RequiredPage}
+import models.{ Mode, UserAnswers }
+import pages.{ QuestionPage, RequiredPage }
 import play.api.libs.json.JsPath
 
 case object ThirdPartyPackagersPage extends QuestionPage[Boolean] {

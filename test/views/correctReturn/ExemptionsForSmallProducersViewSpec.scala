@@ -18,7 +18,7 @@ package views.correctReturn
 
 import controllers.correctReturn.routes
 import forms.correctReturn.ExemptionsForSmallProducersFormProvider
-import models.{CheckMode, NormalMode}
+import models.{ CheckMode, NormalMode }
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.api.mvc.Request
@@ -30,7 +30,7 @@ class ExemptionsForSmallProducersViewSpec extends ViewSpecHelper {
   val view: ExemptionsForSmallProducersView = application.injector.instanceOf[ExemptionsForSmallProducersView]
   val formProvider = new ExemptionsForSmallProducersFormProvider
   val form: Form[Boolean] = formProvider.apply()
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
 
   object Selectors {
     val heading = "govuk-fieldset__heading"
@@ -46,7 +46,7 @@ class ExemptionsForSmallProducersViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view(form, NormalMode)(request, messages(application))
+    val html = view(form, NormalMode)(using request, messages(application))
     val document = doc(html)
     "should contain the expected title" in {
       document.title() must include(Messages("correctReturn.exemptionsForSmallProducers" + ".title"))
@@ -55,13 +55,21 @@ class ExemptionsForSmallProducersViewSpec extends ViewSpecHelper {
     "should include a legend with the expected heading" in {
       val legend = document.getElementsByClass(Selectors.legend)
       legend.size() mustBe 1
-      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages("correctReturn.exemptionsForSmallProducers" + ".heading")
+      legend.get(0).getElementsByClass(Selectors.heading).text() mustEqual Messages(
+        "correctReturn.exemptionsForSmallProducers" + ".heading"
+      )
     }
     "should include correct content" in {
       val content = document.getElementById("whatIsASmallProducer")
       content.getElementsByClass("govuk-body").first().text() mustBe "A business is a small producer if it:"
-      content.getElementsByTag("li").first().text() mustBe "has had less than 1 million litres of its own brands of liable drinks packaged globally in the past 12 months"
-      content.getElementsByTag("li").last().text() mustBe "will not have more than 1 million litres of its own brands of liable drinks packaged globally in the next 30 days"
+      content
+        .getElementsByTag("li")
+        .first()
+        .text() mustBe "has had less than 1 million litres of its own brands of liable drinks packaged globally in the past 12 months"
+      content
+        .getElementsByTag("li")
+        .last()
+        .text() mustBe "will not have more than 1 million litres of its own brands of liable drinks packaged globally in the next 30 days"
     }
 
     "when the form is not preoccupied and has no errors" - {
@@ -99,7 +107,7 @@ class ExemptionsForSmallProducersViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with yes and has no errors" - {
-      val html1 = view(form.fill(true), NormalMode)(request, messages(application))
+      val html1 = view(form.fill(true), NormalMode)(using request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -134,7 +142,7 @@ class ExemptionsForSmallProducersViewSpec extends ViewSpecHelper {
     }
 
     "when the form is preoccupied with no and has no errors" - {
-      val html1 = view(form.fill(false), NormalMode)(request, messages(application))
+      val html1 = view(form.fill(false), NormalMode)(using request, messages(application))
       val document1 = doc(html1)
       "should have radio buttons" - {
         val radioButtons = document1.getElementsByClass(Selectors.radios)
@@ -174,46 +182,52 @@ class ExemptionsForSmallProducersViewSpec extends ViewSpecHelper {
 
     "contains a form with the correct action" - {
       "when in CheckMode" - {
-        val htmlYesSelected = view(form.fill(true), CheckMode)(request, messages(application))
+        val htmlYesSelected = view(form.fill(true), CheckMode)(using request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), CheckMode)(request, messages(application))
+        val htmlNoSelected = view(form.fill(false), CheckMode)(using request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
-          documentYesSelected.select(Selectors.form)
+          documentYesSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.ExemptionsForSmallProducersController.onSubmit(CheckMode).url
         }
 
         "and no is selected" in {
-          documentNoSelected.select(Selectors.form)
+          documentNoSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.ExemptionsForSmallProducersController.onSubmit(CheckMode).url
         }
       }
 
       "when in NormalMode" - {
-        val htmlYesSelected = view(form.fill(true), NormalMode)(request, messages(application))
+        val htmlYesSelected = view(form.fill(true), NormalMode)(using request, messages(application))
         val documentYesSelected = doc(htmlYesSelected)
 
-        val htmlNoSelected = view(form.fill(false), NormalMode)(request, messages(application))
+        val htmlNoSelected = view(form.fill(false), NormalMode)(using request, messages(application))
         val documentNoSelected = doc(htmlNoSelected)
         "and yes is selected" in {
-          documentYesSelected.select(Selectors.form)
+          documentYesSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.ExemptionsForSmallProducersController.onSubmit(NormalMode).url
         }
 
         "and no is selected" in {
-          documentNoSelected.select(Selectors.form)
+          documentNoSelected
+            .select(Selectors.form)
             .attr("action") mustEqual routes.ExemptionsForSmallProducersController.onSubmit(NormalMode).url
         }
       }
     }
 
     "when there are form errors" - {
-      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode)(request, messages(application))
+      val htmlWithErrors = view(form.bind(Map("value" -> "")), NormalMode)(using request, messages(application))
       val documentWithErrors = doc(htmlWithErrors)
 
       "should have a title containing error" in {
-        documentWithErrors.title must include("Error: Do you need to claim an exemption for any of the liable drinks you have packaged for registered small producers? - Soft Drinks Industry Levy - GOV.UK")
+        documentWithErrors.title must include(
+          "Error: Do you need to claim an exemption for any of the liable drinks you have packaged for registered small producers? - Soft Drinks Industry Levy - GOV.UK"
+        )
       }
 
       "contains a message that links to field with error" in {
@@ -223,7 +237,8 @@ class ExemptionsForSmallProducersViewSpec extends ViewSpecHelper {
         errorSummary
           .select("a")
           .attr("href") mustBe "#value"
-        errorSummary.text() mustBe "Select yes if you need to claim an exemption for any of the liable drinks you have packaged for registered small producers"
+        errorSummary
+          .text() mustBe "Select yes if you need to claim an exemption for any of the liable drinks you have packaged for registered small producers"
       }
     }
 

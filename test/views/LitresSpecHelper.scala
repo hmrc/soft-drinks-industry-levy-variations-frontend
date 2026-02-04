@@ -24,7 +24,6 @@ import play.api.i18n.Messages
 
 trait LitresSpecHelper extends ViewSpecHelper {
 
-
   val lowBandValue: Long = 1000
   val highBandValue: Long = 2000
   val litresInBands: LitresInBands = LitresInBands(lowBandValue, highBandValue)
@@ -38,7 +37,8 @@ trait LitresSpecHelper extends ViewSpecHelper {
   val formWithNoNumeric: Form[LitresInBands] = form.bind(Map("litres.lowBand" -> "x", "litres.highBand" -> "y"))
   val formWithNegativeNumber: Form[LitresInBands] = form.bind(Map("litres.lowBand" -> "-1", "litres.highBand" -> "-2"))
   val formWithDecimalNumber: Form[LitresInBands] = form.bind(Map("litres.lowBand" -> "1.8", "litres.highBand" -> "2.3"))
-  val formWithOutOfRangeNumber: Form[LitresInBands] = form.bind(Map("litres.lowBand" -> "110000000000000", "litres.highBand" -> "120000000000000"))
+  val formWithOutOfRangeNumber: Form[LitresInBands] =
+    form.bind(Map("litres.lowBand" -> "110000000000000", "litres.highBand" -> "120000000000000"))
 
   object Selectors {
     val heading = "govuk-heading-l"
@@ -51,7 +51,7 @@ trait LitresSpecHelper extends ViewSpecHelper {
     val form = "form"
   }
 
-  def testLitresInBandsWithPrepopulatedData(document: Document): Unit = {
+  def testLitresInBandsWithPrepopulatedData(document: Document): Unit =
     "should include form groups for litres" - {
       "when the form is not prepopulated and has no errors" - {
         val formGroups = document.getElementsByClass(Selectors.govukFormGroup)
@@ -74,9 +74,8 @@ trait LitresSpecHelper extends ViewSpecHelper {
         }
       }
     }
-  }
 
-  def testLitresInBandsNoPrepopulatedData(document: Document): Unit = {
+  def testLitresInBandsNoPrepopulatedData(document: Document): Unit =
     "should include form groups for litres" - {
       "when the form is populated and has no errors" - {
         val formGroups = document.getElementsByClass(Selectors.govukFormGroup)
@@ -97,22 +96,20 @@ trait LitresSpecHelper extends ViewSpecHelper {
         }
       }
     }
-  }
 
-  def testButton(document: Document): Unit = {
+  def testButton(document: Document): Unit =
     "should contain the correct button" in {
       document.getElementsByClass(Selectors.button).text() mustBe Messages("site.saveContinue")
     }
-  }
 
-  def testAction(document: Document, expectedAction: String): Unit = {
+  def testAction(document: Document, expectedAction: String): Unit =
     "should contains a form with the correct action" in {
-      document.select(Selectors.form)
+      document
+        .select(Selectors.form)
         .attr("action") mustEqual expectedAction
     }
-  }
 
-  def testEmptyFormErrors(document: Document, errorTitle: String): Unit = {
+  def testEmptyFormErrors(document: Document, errorTitle: String): Unit =
     "due to the form being empty" - {
       "should contain the title with error" in {
         document.title() must include(errorTitle)
@@ -135,9 +132,8 @@ trait LitresSpecHelper extends ViewSpecHelper {
         }
       }
     }
-  }
 
-  def testNoNumericFormErrors(document: Document, errorTitle: String): Unit = {
+  def testNoNumericFormErrors(document: Document, errorTitle: String): Unit =
     "due to the form containing no numeric values" - {
       "should contain the title with error" in {
         document.title() must include(errorTitle)
@@ -160,9 +156,8 @@ trait LitresSpecHelper extends ViewSpecHelper {
         }
       }
     }
-  }
 
-  def testNegativeFormErrors(document: Document, errorTitle: String): Unit = {
+  def testNegativeFormErrors(document: Document, errorTitle: String): Unit =
     "due to the form containing no negative values" - {
       "should contain the title with error" in {
         document.title() must include(errorTitle)
@@ -183,9 +178,8 @@ trait LitresSpecHelper extends ViewSpecHelper {
         }
       }
     }
-  }
 
-  def testDecimalFormErrors(document: Document, errorTitle: String): Unit = {
+  def testDecimalFormErrors(document: Document, errorTitle: String): Unit =
     "due to the form containing decimal values" - {
       "should contain the title with error" in {
         document.title() must include(errorTitle)
@@ -208,9 +202,8 @@ trait LitresSpecHelper extends ViewSpecHelper {
         }
       }
     }
-  }
 
-  def testOutOfMaxValFormErrors(document: Document, errorTitle: String): Unit = {
+  def testOutOfMaxValFormErrors(document: Document, errorTitle: String): Unit =
     "due to the form containing values out of max range" - {
       "should contain the title with error" in {
         document.title() must include(errorTitle)
@@ -233,5 +226,4 @@ trait LitresSpecHelper extends ViewSpecHelper {
         }
       }
     }
-  }
 }

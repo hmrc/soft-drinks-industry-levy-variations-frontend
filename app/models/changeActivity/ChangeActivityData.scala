@@ -17,18 +17,18 @@
 package models.changeActivity
 
 import models.LitresInBands
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{ Format, Json }
 
 case class ChangeActivityData(
-                               amountProduced: AmountProduced,
-                               thirdPartyPackagers: Option[Boolean] = None,
-                               operatePackagingSiteOwnBrands: Option[Boolean] = None,
-                               howManyOperatePackagingSiteOwnBrands: Option[LitresInBands] = None,
-                               contractPacking: Option[Boolean] = None,
-                               howManyContractPacking: Option[LitresInBands] = None,
-                               imports: Option[Boolean] = None,
-                               howManyImports: Option[LitresInBands] = None
-                             ) {
+  amountProduced: AmountProduced,
+  thirdPartyPackagers: Option[Boolean] = None,
+  operatePackagingSiteOwnBrands: Option[Boolean] = None,
+  howManyOperatePackagingSiteOwnBrands: Option[LitresInBands] = None,
+  contractPacking: Option[Boolean] = None,
+  howManyContractPacking: Option[LitresInBands] = None,
+  imports: Option[Boolean] = None,
+  howManyImports: Option[LitresInBands] = None
+) {
   def isLarge: Boolean = amountProduced == AmountProduced.Large
   def isSmall: Boolean = amountProduced == AmountProduced.Small
 
@@ -45,13 +45,12 @@ case class ChangeActivityData(
     None
   }
 
-  def operatePackagingSitesOrContractPacking: Boolean = {
+  def operatePackagingSitesOrContractPacking: Boolean =
     (operatePackagingSiteOwnBrands, contractPacking) match {
       case (Some(true), _) => true
       case (_, Some(true)) => true
-      case _ => false
+      case _               => false
     }
-  }
 
   def imported: Option[LitresInBands] = getOptLitres(imports, howManyImports)
   def copackerAll: Option[LitresInBands] = getOptLitres(contractPacking, howManyContractPacking)

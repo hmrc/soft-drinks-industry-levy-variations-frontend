@@ -20,7 +20,7 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.checkboxes.CheckboxItem
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import viewmodels.govuk.checkbox._
-import models.{Enumerable, WithName}
+import models.{ Enumerable, WithName }
 
 sealed trait ChangeRegisteredDetails
 
@@ -42,31 +42,29 @@ object ChangeRegisteredDetails extends Enumerable.Implicits {
   )
 
   def checkboxItems(implicit messages: Messages): Seq[CheckboxItem] =
-    values.zipWithIndex.map {
-      case (value, index) =>
-        CheckboxItemViewModel(
-          content = Text(messages(s"updateRegisteredDetails.changeRegisteredDetails.${value.toString}")),
-          fieldId = "value",
-          index   = index,
-          value   = value.toString
-        )
+    values.zipWithIndex.map { case (value, index) =>
+      CheckboxItemViewModel(
+        content = Text(messages(s"updateRegisteredDetails.changeRegisteredDetails.${value.toString}")),
+        fieldId = "value",
+        index = index,
+        value = value.toString
+      )
     }
 
   def voluntaryCheckboxItems(implicit messages: Messages): Seq[CheckboxItem] =
-    voluntaryValues.zipWithIndex.map {
-      case (value, index) =>
-        CheckboxItemViewModel(
-          content = Text(messages(s"updateRegisteredDetails.changeRegisteredDetails.${value.toString}")),
-          fieldId = "value",
-          index = index,
-          value = value.toString
-        )
+    voluntaryValues.zipWithIndex.map { case (value, index) =>
+      CheckboxItemViewModel(
+        content = Text(messages(s"updateRegisteredDetails.changeRegisteredDetails.${value.toString}")),
+        fieldId = "value",
+        index = index,
+        value = value.toString
+      )
     }
 
   implicit val enumerableNonVoluntary: Enumerable[ChangeRegisteredDetails] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+    Enumerable(values.map(v => v.toString -> v)*)
 
   val enumerableVoluntary: Enumerable[ChangeRegisteredDetails] =
-    Enumerable(voluntaryValues.map(v => v.toString -> v): _*)
+    Enumerable(voluntaryValues.map(v => v.toString -> v)*)
 
 }

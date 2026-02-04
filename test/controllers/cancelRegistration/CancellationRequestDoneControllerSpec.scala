@@ -18,17 +18,17 @@ package controllers.cancelRegistration
 
 import base.SpecBase
 import config.FrontendAppConfig
-import models.{NormalMode, ReturnPeriod}
-import pages.cancelRegistration.{CancelRegistrationDatePage, ReasonPage}
+import models.{ NormalMode, ReturnPeriod }
+import pages.cancelRegistration.{ CancelRegistrationDatePage, ReasonPage }
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.SummaryListFluency
 import views.html.cancelRegistration.CancellationRequestDoneView
-import views.summary.cancelRegistration.{CancelRegistrationDateSummary, ReasonSummary}
+import views.summary.cancelRegistration.{ CancelRegistrationDateSummary, ReasonSummary }
 
 import java.time.format.DateTimeFormatter
-import java.time.{Instant, LocalDate, LocalDateTime, ZoneId}
+import java.time.{ Instant, LocalDate, LocalDateTime, ZoneId }
 
 class CancellationRequestDoneControllerSpec extends SpecBase with SummaryListFluency {
 
@@ -53,9 +53,14 @@ class CancellationRequestDoneControllerSpec extends SpecBase with SummaryListFlu
   val orgName: String = aSubscription.orgName
   val config: FrontendAppConfig = frontendAppConfig
 
-  val userAnswers = emptyUserAnswersForCancelRegistration.copy(submitted = true)
-    .set(ReasonPage, "No longer sell drinks").success.value
-    .set(CancelRegistrationDatePage, LocalDate.now()).success.value
+  val userAnswers = emptyUserAnswersForCancelRegistration
+    .copy(submitted = true)
+    .set(ReasonPage, "No longer sell drinks")
+    .success
+    .value
+    .set(CancelRegistrationDatePage, LocalDate.now())
+    .success
+    .value
 
   "CancellationRequestDone Controller" - {
 
@@ -70,17 +75,29 @@ class CancellationRequestDoneControllerSpec extends SpecBase with SummaryListFlu
 
         val view = application.injector.instanceOf[CancellationRequestDoneView]
 
-        val cancelRegistrationSummary: (String, SummaryList) = ("", SummaryListViewModel(
-          rows = Seq(
-            ReasonSummary.row(userAnswers, isCheckAnswers = false),
-            CancelRegistrationDateSummary.row(userAnswers, isCheckAnswers = false)
-          ))
+        val cancelRegistrationSummary: (String, SummaryList) = (
+          "",
+          SummaryListViewModel(
+            rows = Seq(
+              ReasonSummary.row(userAnswers, isCheckAnswers = false),
+              CancelRegistrationDateSummary.row(userAnswers, isCheckAnswers = false)
+            )
+          )
         )
 
         val list = Seq(cancelRegistrationSummary)
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formattedDate, LocalDateTime.ofInstant(testTime, ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")), returnPeriodStart, returnPeriodEnd, deadlineStart, deadlineEnd, orgName, list)(request, messages(application), config).toString
+        contentAsString(result) mustEqual view(
+          formattedDate,
+          LocalDateTime.ofInstant(testTime, ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")),
+          returnPeriodStart,
+          returnPeriodEnd,
+          deadlineStart,
+          deadlineEnd,
+          orgName,
+          list
+        )(request, messages(application), config).toString
       }
     }
 

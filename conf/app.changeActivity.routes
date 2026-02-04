@@ -1,6 +1,6 @@
 # change the activity specific routes
 
-GET        /check-your-answers                                  controllers.changeActivity.ChangeActivityCYAController.onPageLoad
+GET        /check-your-answers                                  controllers.changeActivity.ChangeActivityCYAController.onPageLoad()
 POST       /check-your-answers                                  controllers.changeActivity.ChangeActivityCYAController.onSubmit
 
 GET        /amount-produced                                     controllers.changeActivity.AmountProducedController.onPageLoad(mode: Mode = NormalMode)
@@ -68,4 +68,4 @@ POST       /third-party-packagers                               controllers.chan
 GET        /change-third-party-packagers                        controllers.changeActivity.ThirdPartyPackagersController.onPageLoad(mode: Mode = CheckMode)
 POST       /change-third-party-packagers                        controllers.changeActivity.ThirdPartyPackagersController.onSubmit(mode: Mode = CheckMode)
 
-GET        /variation-done                                      controllers.changeActivity.ChangeActivitySentController.onPageLoad
+GET        /variation-done                                      controllers.changeActivity.ChangeActivitySentController.onPageLoad()

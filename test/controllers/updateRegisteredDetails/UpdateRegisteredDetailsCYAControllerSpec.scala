@@ -23,8 +23,7 @@ import models.backend.UkAddress
 import models.updateRegisteredDetails.ContactDetails
 import orchestrators.UpdateRegisteredDetailsOrchestrator
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import org.mockito.MockitoSugar.mock
+import org.mockito.Mockito.{ mock, when }
 import pages.updateRegisteredDetails.UpdateContactDetailsPage
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -32,7 +31,7 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.SummaryListFluency
 import views.html.updateRegisteredDetails.UpdateRegisteredDetailsCYAView
-import views.summary.updateRegisteredDetails.{BusinessAddressSummary, UKSitesSummary, UpdateContactDetailsSummary}
+import views.summary.updateRegisteredDetails.{ BusinessAddressSummary, UKSitesSummary, UpdateContactDetailsSummary }
 
 class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryListFluency {
 
@@ -42,8 +41,14 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
       val contactDetails = ContactDetails("foo", "bar", "wizz", "bang")
       val businessAddress: UkAddress = UkAddress(List("33 Rhes Priordy", "East London"), "E73 2RP")
       val userAnswers = emptyUserAnswersForUpdateRegisteredDetails
-        .copy(contactAddress = businessAddress, packagingSiteList = Map("1" -> packingSite), warehouseList = Map("1" -> warehouse))
-        .set(UpdateContactDetailsPage,contactDetails).success.value
+        .copy(
+          contactAddress = businessAddress,
+          packagingSiteList = Map("1" -> packingSite),
+          warehouseList = Map("1" -> warehouse)
+        )
+        .set(UpdateContactDetailsPage, contactDetails)
+        .success
+        .value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
@@ -60,16 +65,20 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
         val orgName = " " + aSubscription.orgName
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(orgName, list, routes.UpdateRegisteredDetailsCYAController.onSubmit)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(orgName, list, routes.UpdateRegisteredDetailsCYAController.onSubmit)(
+          request,
+          messages(application)
+        ).toString
       }
     }
 
     "must redirect to update done when data is correct for POST" in {
-      val mockOrchestrator: UpdateRegisteredDetailsOrchestrator = mock[UpdateRegisteredDetailsOrchestrator]
+      val mockOrchestrator: UpdateRegisteredDetailsOrchestrator = mock(classOf[UpdateRegisteredDetailsOrchestrator])
 
       val application = applicationBuilder(
         userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails),
-        subscription = Some(aSubscription))
+        subscription = Some(aSubscription)
+      )
         .overrides(
           bind[UpdateRegisteredDetailsOrchestrator].toInstance(mockOrchestrator)
         )
@@ -77,12 +86,16 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
 
       running(application) {
         val request = FakeRequest(POST, UpdateRegisteredDetailsCYAController.onPageLoad.url).withFormUrlEncodedBody()
-        when(mockOrchestrator.submitVariation(any(), any())(any(), any())) thenReturn createSuccessVariationResult((): Unit)
+        when(mockOrchestrator.submitVariation(any(), any())(any(), any())).thenReturn(
+          createSuccessVariationResult(
+            (): Unit
+          )
+        )
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual UpdateDoneController.onPageLoad.url
+        redirectLocation(result).value mustEqual UpdateDoneController.onPageLoad().url
       }
     }
     testInvalidJourneyType(UpdateRegisteredDetails, UpdateRegisteredDetailsCYAController.onPageLoad.url)

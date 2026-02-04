@@ -24,6 +24,6 @@ case object CorrectReturnUpdateDonePage extends Page {
 
   def journeyType: String = "correctReturn"
   override def toString: String = "checkChanges"
-  override val url: Mode => String = _ => routes.CorrectReturnCheckChangesCYAController.onPageLoad.url
+  override val url: Mode => String = _ => routes.CorrectReturnCheckChangesCYAController.onPageLoad().url
 
 }

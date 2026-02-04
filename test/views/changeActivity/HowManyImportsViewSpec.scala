@@ -17,7 +17,7 @@
 package views.changeActivity
 
 import config.FrontendAppConfig
-import models.{CheckMode, NormalMode}
+import models.{ CheckMode, NormalMode }
 import play.api.mvc.Request
 import play.api.test.FakeRequest
 import play.twirl.api.HtmlFormat
@@ -27,12 +27,12 @@ class HowManyImportsViewSpec extends LitresSpecHelper {
 
   val howManyImportsView: HowManyImportsView = application.injector.instanceOf[HowManyImportsView]
 
-  implicit val request: Request[_] = FakeRequest()
+  implicit val request: Request[?] = FakeRequest()
   implicit val config: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
   "HowManyImportsView" - {
     List(NormalMode, CheckMode).foreach { mode =>
-      "when in " + mode +" mode" - {
+      "when in " + mode + " mode" - {
         val html: HtmlFormat.Appendable = howManyImportsView(form, mode)
         val document = doc(html)
         val htmlWithValidData: HtmlFormat.Appendable = howManyImportsView(formWithHighAndLowBands, mode)
@@ -60,12 +60,11 @@ class HowManyImportsViewSpec extends LitresSpecHelper {
 
         "should include a govuk body with the expected content" in {
           document.getElementsByClass(Selectors.body).text() mustBe
-          "If you do not have the exact volumes you can enter an estimate."
+            "If you do not have the exact volumes you can enter an estimate."
         }
 
         testLitresInBandsNoPrepopulatedData(document)
         testLitresInBandsWithPrepopulatedData(documentWithValidData)
-
 
         "and the form has errors" - {
           val errorTitle = "Error: How many litres will you bring into the UK in the next 12 months?"

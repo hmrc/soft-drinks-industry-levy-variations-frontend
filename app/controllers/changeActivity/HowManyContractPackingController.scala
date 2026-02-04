@@ -24,26 +24,27 @@ import models.Mode
 import navigation._
 import pages.changeActivity.HowManyContractPackingPage
 import play.api.i18n.MessagesApi
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import services.SessionService
 import utilities.GenericLogger
 import views.html.changeActivity.HowManyContractPackingView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import models.SelectChange.ChangeActivity
 
-class HowManyContractPackingController @Inject()(
-                                         override val messagesApi: MessagesApi,
-                                         val sessionService: SessionService,
-                                         val navigator: NavigatorForChangeActivity,
-                                         controllerActions: ControllerActions,
-                                         formProvider: HowManyLitresFormProvider,
-                                         val controllerComponents: MessagesControllerComponents,
-                                         view: HowManyContractPackingView,
-                                         val genericLogger: GenericLogger,
-                                         val errorHandler: ErrorHandler
-                                 )(implicit val ec: ExecutionContext) extends ControllerHelper {
+class HowManyContractPackingController @Inject() (
+  override val messagesApi: MessagesApi,
+  val sessionService: SessionService,
+  val navigator: NavigatorForChangeActivity,
+  controllerActions: ControllerActions,
+  formProvider: HowManyLitresFormProvider,
+  val controllerComponents: MessagesControllerComponents,
+  view: HowManyContractPackingView,
+  val genericLogger: GenericLogger,
+  val errorHandler: ErrorHandler
+)(implicit val ec: ExecutionContext)
+    extends ControllerHelper {
 
   val form = formProvider()
 
@@ -51,24 +52,23 @@ class HowManyContractPackingController @Inject()(
     implicit request =>
 
       val preparedForm = request.userAnswers.get(HowManyContractPackingPage) match {
-        case None => form
+        case None        => form
         case Some(value) => form.fill(value)
       }
 
       Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
-    implicit request =>
-
-      form.bindFromRequest().fold(
-        formWithErrors =>
-          Future.successful(BadRequest(view(formWithErrors, mode))),
-
-        value => {
-          val updatedAnswers = request.userAnswers.set(HowManyContractPackingPage, value)
-          updateDatabaseAndRedirect(updatedAnswers, HowManyContractPackingPage, mode)
-        }
-      )
-  }
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    controllerActions.withRequiredJourneyData(ChangeActivity).async { implicit request =>
+      form
+        .bindFromRequest()
+        .fold(
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
+          value => {
+            val updatedAnswers = request.userAnswers.set(HowManyContractPackingPage, value)
+            updateDatabaseAndRedirect(updatedAnswers, HowManyContractPackingPage, mode)
+          }
+        )
+    }
 }

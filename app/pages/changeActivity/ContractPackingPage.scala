@@ -18,9 +18,9 @@ package pages.changeActivity
 
 import controllers.changeActivity.routes
 import models.backend.RetrievedSubscription
-import models.{Mode, UserAnswers}
+import models.{ Mode, UserAnswers }
 import play.api.libs.json.JsPath
-import pages.{QuestionPage, RequiredPage}
+import pages.{ QuestionPage, RequiredPage }
 
 case object ContractPackingPage extends QuestionPage[Boolean] {
 
@@ -34,7 +34,13 @@ case object ContractPackingPage extends QuestionPage[Boolean] {
   override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (userAnswers, _) =>
     List(
       RequiredPage(AmountProducedPage),
-      RequiredPage(ThirdPartyPackagersPage, additionalPreconditions = List(userAnswers.getChangeActivityData.exists(_.isSmall))),
-      RequiredPage(OperatePackagingSiteOwnBrandsPage, additionalPreconditions = List(userAnswers.getChangeActivityData.exists(_.isLargeOrSmall)))
+      RequiredPage(
+        ThirdPartyPackagersPage,
+        additionalPreconditions = List(userAnswers.getChangeActivityData.exists(_.isSmall))
+      ),
+      RequiredPage(
+        OperatePackagingSiteOwnBrandsPage,
+        additionalPreconditions = List(userAnswers.getChangeActivityData.exists(_.isLargeOrSmall))
+      )
     )
 }

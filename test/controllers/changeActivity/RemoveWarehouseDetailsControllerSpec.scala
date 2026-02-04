@@ -20,8 +20,8 @@ import base.SpecBase
 import errors.SessionDatabaseInsertError
 import forms.changeActivity.RemoveWarehouseDetailsFormProvider
 import models.SelectChange.ChangeActivity
-import models.backend.{Site, UkAddress}
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.backend.{ Site, UkAddress }
+import models.{ CheckMode, NormalMode, UserAnswers }
 import navigation._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -45,12 +45,16 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
   val form = formProvider()
 
   val indexOfWarehouseToBeRemoved: String = "foobar"
-  lazy val warehouseDetailsRemoveRoute = routes.RemoveWarehouseDetailsController.onPageLoad(indexOfWarehouseToBeRemoved, NormalMode).url
-  lazy val warehouseDetailsRemoveCheckRoute = routes.RemoveWarehouseDetailsController.onPageLoad(indexOfWarehouseToBeRemoved, CheckMode).url
-  val addressOfWarehouse: UkAddress = UkAddress(List("foo"),"bar", None)
+  lazy val warehouseDetailsRemoveRoute =
+    routes.RemoveWarehouseDetailsController.onPageLoad(indexOfWarehouseToBeRemoved, NormalMode).url
+  lazy val warehouseDetailsRemoveCheckRoute =
+    routes.RemoveWarehouseDetailsController.onPageLoad(indexOfWarehouseToBeRemoved, CheckMode).url
+  val addressOfWarehouse: UkAddress = UkAddress(List("foo"), "bar", None)
   val warehouseTradingName: String = "a name for a packing site here"
   val userAnswersWithWarehouse: UserAnswers = emptyUserAnswersForChangeActivity
-    .copy(warehouseList = Map(indexOfWarehouseToBeRemoved -> Site(addressOfWarehouse, Some(warehouseTradingName), None, None)))
+    .copy(warehouseList =
+      Map(indexOfWarehouseToBeRemoved -> Site(addressOfWarehouse, Some(warehouseTradingName), None, None))
+    )
 
   "RemoveWarehouseDetails Controller" - {
 
@@ -69,9 +73,12 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
           val view = application.injector.instanceOf[RemoveWarehouseDetailsView]
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form,
+          contentAsString(result) mustEqual view(
+            form,
             AddressFormattingHelper.addressFormatting(addressOfWarehouse, Some(warehouseTradingName)),
-            indexOfWarehouseToBeRemoved, mode)(request, messages(application)).toString
+            indexOfWarehouseToBeRemoved,
+            mode
+          )(using request, messages(application)).toString
         }
       }
 
@@ -79,7 +86,7 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
 
         val mockSessionService = mock[SessionService]
 
-        when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+        when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
         val application =
           applicationBuilder(userAnswers = Some(userAnswersWithWarehouse))
@@ -117,9 +124,12 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
           val result = route(application, request).value
 
           status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual view(boundForm,
+          contentAsString(result) mustEqual view(
+            boundForm,
             AddressFormattingHelper.addressFormatting(addressOfWarehouse, Some(warehouseTradingName)),
-            indexOfWarehouseToBeRemoved, mode)(request, messages(application)).toString
+            indexOfWarehouseToBeRemoved,
+            mode
+          )(using request, messages(application)).toString
         }
       }
     }
@@ -131,27 +141,29 @@ class RemoveWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar {
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswersWithWarehouse))
           .overrides(
-            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity (onwardRoute)),
+            bind[NavigatorForChangeActivity].toInstance(new FakeNavigatorForChangeActivity(onwardRoute)),
             bind[SessionService].toInstance(mockSessionService)
-          ).build()
+          )
+          .build()
 
       running(application) {
         withCaptureOfLoggingFrom(application.injector.instanceOf[GenericLogger].logger) { events =>
           val request =
             FakeRequest(POST, warehouseDetailsRemoveRoute)
-          .withFormUrlEncodedBody(("value", "true"))
+              .withFormUrlEncodedBody(("value", "true"))
 
           await(route(application, request).value)
-          events.collectFirst {
-            case event =>
+          events
+            .collectFirst { case event =>
               event.getLevel.levelStr mustBe "ERROR"
               event.getMessage mustEqual "Failed to set value in session repository while attempting set on removeWarehouseDetails"
-          }.getOrElse(fail("No logging captured"))
+            }
+            .getOrElse(fail("No logging captured"))
         }
       }
     }

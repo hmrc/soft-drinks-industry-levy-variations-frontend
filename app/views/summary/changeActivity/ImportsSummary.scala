@@ -17,12 +17,12 @@
 package views.summary.changeActivity
 
 import controllers.changeActivity.routes
-import models.{CheckMode, LitresInBands}
-import pages.changeActivity.{HowManyImportsPage, ImportsPage}
+import models.{ CheckMode, LitresInBands }
+import pages.changeActivity.{ HowManyImportsPage, ImportsPage }
 import pages.QuestionPage
-import views.summary.{ReturnDetailsSummaryListWithLitres, SummaryListRowLitresHelper}
+import views.summary.{ ReturnDetailsSummaryListWithLitres, SummaryListRowLitresHelper }
 
-object ImportsSummary extends ReturnDetailsSummaryListWithLitres  {
+object ImportsSummary extends ReturnDetailsSummaryListWithLitres {
 
   override val page: QuestionPage[Boolean] = ImportsPage
   override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyImportsPage)

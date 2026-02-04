@@ -22,38 +22,39 @@ import handlers.ErrorHandler
 import models.NormalMode
 import models.SelectChange.ChangeActivity
 import navigation.NavigatorForChangeActivity
-import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.i18n.{ I18nSupport, MessagesApi }
+import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents }
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.changeActivity.SuggestDeregistrationView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 
-class SuggestDeregistrationController @Inject()(
-                                       override val messagesApi: MessagesApi,
-                                       controllerActions: ControllerActions,
-                                       val navigator: NavigatorForChangeActivity,
-                                       connector: SoftDrinksIndustryLevyConnector,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       val errorHandler: ErrorHandler,
-                                       view: SuggestDeregistrationView
-                                     )(implicit ec: ExecutionContext) extends FrontendBaseController with I18nSupport {
+class SuggestDeregistrationController @Inject() (
+  override val messagesApi: MessagesApi,
+  controllerActions: ControllerActions,
+  val navigator: NavigatorForChangeActivity,
+  connector: SoftDrinksIndustryLevyConnector,
+  val controllerComponents: MessagesControllerComponents,
+  val errorHandler: ErrorHandler,
+  view: SuggestDeregistrationView
+)(implicit ec: ExecutionContext)
+    extends FrontendBaseController with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) {
-    implicit request =>
-      Ok(view())
+  def onPageLoad: Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity) { implicit request =>
+    Ok(view())
   }
 
-  def onSubmit: Action[AnyContent] = controllerActions.withRequiredJourneyData(ChangeActivity).async {
-    implicit request =>
+  def onSubmit: Action[AnyContent] =
+    controllerActions.withRequiredJourneyData(ChangeActivity).async { implicit request =>
       connector.returnsPending(request.subscription.utr).value.flatMap {
-        case Right(returns) if returns.nonEmpty => Future.successful(
-            Redirect(controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad()))
-        case Right(_) => Future.successful(
-          Redirect(controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode)))
+        case Right(returns) if returns.nonEmpty =>
+          Future
+            .successful(Redirect(controllers.cancelRegistration.routes.FileReturnBeforeDeregController.onPageLoad()))
+        case Right(_) =>
+          Future.successful(Redirect(controllers.cancelRegistration.routes.ReasonController.onPageLoad(NormalMode)))
         case _ =>
           errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
       }
-  }
+    }
 }

@@ -17,21 +17,23 @@
 package pages.correctReturn
 
 import controllers.correctReturn.routes
-import models.{Mode, UserAnswers}
+import models.{ Mode, UserAnswers }
 import models.backend.RetrievedSubscription
-import pages.{Page, RequiredPage}
+import pages.{ Page, RequiredPage }
 
 case object CorrectReturnCheckChangesPage extends Page {
 
   def journeyType: String = "correctReturn"
   override def toString: String = "checkChanges"
-  override val url: Mode => String = _ => routes.CorrectReturnCheckChangesCYAController.onPageLoad.url
+  override val url: Mode => String = _ => routes.CorrectReturnCheckChangesCYAController.onPageLoad().url
 
-  override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (userAnswers, _) => {
+  override val previousPagesRequired: (UserAnswers, RetrievedSubscription) => List[RequiredPage] = (userAnswers, _) =>
     List(
       RequiredPage(CorrectReturnBaseCYAPage),
       RequiredPage(CorrectionReasonPage),
-      RequiredPage(RepaymentMethodPage, additionalPreconditions = List(userAnswers.get(BalanceRepaymentRequired).contains(true)))
+      RequiredPage(
+        RepaymentMethodPage,
+        additionalPreconditions = List(userAnswers.get(BalanceRepaymentRequired).contains(true))
+      )
     )
-  }
 }

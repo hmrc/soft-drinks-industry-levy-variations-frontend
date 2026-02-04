@@ -45,6 +45,6 @@ class UpdateContactDetailsFormProvider @Inject() extends Mappings {
       "email" -> text("updateRegisteredDetails.updateContactDetails.error.email.required")
         .verifying(maxLength(132, "updateRegisteredDetails.updateContactDetails.error.email.length"))
         .verifying(regexp(emailRegex, "updateRegisteredDetails.updateContactDetails.error.email.invalid"))
-    )(ContactDetails.apply)(ContactDetails.unapply)
+    )(ContactDetails.apply)((cd: ContactDetails) => Some((cd.fullName, cd.position, cd.phoneNumber, cd.email)))
   )
 }

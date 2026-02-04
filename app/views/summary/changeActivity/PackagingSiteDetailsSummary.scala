@@ -18,40 +18,53 @@ package views.summary.changeActivity
 
 import controllers.changeActivity.routes
 import models.backend.Site
-import models.{CheckMode, Mode, UserAnswers}
+import models.{ CheckMode, Mode, UserAnswers }
 import play.api.i18n.Messages
-import uk.gov.hmrc.govukfrontend.views.Aliases.{Actions, Value}
+import uk.gov.hmrc.govukfrontend.views.Aliases.{ Actions, Value }
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryList, SummaryListRow}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ Key, SummaryList, SummaryListRow }
 import viewmodels.AddressFormattingHelper
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
-object PackagingSiteDetailsSummary  {
+object PackagingSiteDetailsSummary {
 
-  def row2(packingSiteList: Map[String, Site], mode: Mode)(implicit messages: Messages): List[SummaryListRow] = {
-    packingSiteList.map {
-        packingSite =>
-          SummaryListRow(
-            key     = Key(
-              content = HtmlContent(AddressFormattingHelper.addressFormatting(packingSite._2.address, packingSite._2.tradingName)),
-              classes = "govuk-!-font-weight-regular govuk-!-width-full"
-            ),
-            actions = if (packingSiteList.size > 1) {
-              Some(Actions("", Seq(
-                ActionItemViewModel("site.remove", controllers.changeActivity.routes.RemovePackagingSiteDetailsController.onPageLoad(mode, packingSite._1).url)
-                  .withVisuallyHiddenText(messages("changeActivity.packagingSiteDetails.remove.hidden", packingSite._2.tradingName.getOrElse(""),
-                    packingSite._2.address.lines.head))
-              )))
-            } else {
-              None
-            }
+  def row2(packingSiteList: Map[String, Site], mode: Mode)(implicit messages: Messages): List[SummaryListRow] =
+    packingSiteList.map { packingSite =>
+      SummaryListRow(
+        key = Key(
+          content =
+            HtmlContent(AddressFormattingHelper.addressFormatting(packingSite._2.address, packingSite._2.tradingName)),
+          classes = "govuk-!-font-weight-regular govuk-!-width-full"
+        ),
+        actions = if (packingSiteList.size > 1) {
+          Some(
+            Actions(
+              "",
+              Seq(
+                ActionItemViewModel(
+                  "site.remove",
+                  controllers.changeActivity.routes.RemovePackagingSiteDetailsController
+                    .onPageLoad(mode, packingSite._1)
+                    .url
+                )
+                  .withVisuallyHiddenText(
+                    messages(
+                      "changeActivity.packagingSiteDetails.remove.hidden",
+                      packingSite._2.tradingName.getOrElse(""),
+                      packingSite._2.address.lines.head
+                    )
+                  )
+              )
+            )
           )
-      }.toList
-    }
+        } else {
+          None
+        }
+      )
+    }.toList
 
-  def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)
-                 (implicit messages: Messages): SummaryList = {
+  def summaryList(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit messages: Messages): SummaryList = {
     val key = if (userAnswers.warehouseList.size != 1) {
       messages("checkYourAnswers.packing.checkYourAnswersLabel.multiple", userAnswers.packagingSiteList.size.toString)
     } else {
@@ -64,22 +77,24 @@ object PackagingSiteDetailsSummary  {
     }
 
     SummaryListViewModel(
-      rows = Seq(SummaryListRowViewModel(
-        key = Key(
-          content = key,
-          classes = "govuk-!-width-full"
-        ),
-        value = Value(),
-        actions = if (isCheckAnswers) {
-          Seq(
-            ActionItemViewModel("site.change", routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
-              .withAttribute(("id", "change-packaging-sites"))
-              .withVisuallyHiddenText(visuallyHiddenChangeText)
-          )
-        } else {
-          Seq.empty
-        }
-      ))
+      rows = Seq(
+        SummaryListRowViewModel(
+          key = Key(
+            content = key,
+            classes = "govuk-!-width-full"
+          ),
+          value = Value(),
+          actions = if (isCheckAnswers) {
+            Seq(
+              ActionItemViewModel("site.change", routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url)
+                .withAttribute(("id", "change-packaging-sites"))
+                .withVisuallyHiddenText(visuallyHiddenChangeText)
+            )
+          } else {
+            Seq.empty
+          }
+        )
+      )
     )
   }
 }

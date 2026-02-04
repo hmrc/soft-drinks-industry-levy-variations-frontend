@@ -18,28 +18,30 @@ package services
 
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
-import models.backend.{FinancialLineItem, RetrievedSubscription}
-import models.correctReturn.{CorrectReturnUserAnswersData, ReturnsVariation}
+import models.backend.{ FinancialLineItem, RetrievedSubscription }
+import models.correctReturn.{ CorrectReturnUserAnswersData, ReturnsVariation }
 import models.submission.ReturnVariationData
-import models.{Amounts, ReturnPeriod, SdilReturn, UserAnswers}
-import pages.correctReturn.{BalanceRepaymentRequired, CorrectionReasonPage, RepaymentMethodPage}
+import models.{ Amounts, ReturnPeriod, SdilReturn, UserAnswers }
+import pages.correctReturn.{ BalanceRepaymentRequired, CorrectionReasonPage, RepaymentMethodPage }
 import service.VariationResult
 import uk.gov.hmrc.http.HeaderCarrier
 import utilities.UserTypeCheck
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{ Inject, Singleton }
 import scala.concurrent.ExecutionContext
 
 @Singleton
-class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector)(implicit config: FrontendAppConfig) {
-  private def extractTotal(l: List[(FinancialLineItem, BigDecimal)]): BigDecimal = l.headOption.fold(BigDecimal(0))(_._2)
+class ReturnService @Inject() (sdilConnector: SoftDrinksIndustryLevyConnector)(implicit config: FrontendAppConfig) {
+  private def extractTotal(l: List[(FinancialLineItem, BigDecimal)]): BigDecimal =
+    l.headOption.fold(BigDecimal(0))(_._2)
 
   private def listItemsWithTotal(items: List[FinancialLineItem]): List[(FinancialLineItem, BigDecimal)] =
     items.distinct.foldLeft(List.empty[(FinancialLineItem, BigDecimal)]) { (acc, n) =>
       (n, acc.headOption.fold(n.amount)(_._2 + n.amount)) :: acc
-  }
-  def getBalanceBroughtForward(sdilRef: String)
-                              (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[BigDecimal] = {
+    }
+  def getBalanceBroughtForward(
+    sdilRef: String
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[BigDecimal] =
     if (config.balanceAllEnabled) {
       sdilConnector.balanceHistory(sdilRef, withAssessment = false).map { financialItem =>
         extractTotal(listItemsWithTotal(financialItem))
@@ -47,28 +49,30 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector)(im
     } else {
       sdilConnector.balance(sdilRef, withAssessment = false)
     }
-  }
 
-  def calculateAmounts(sdilRef: String,
-                       userAnswers: UserAnswers,
-                       returnPeriod: ReturnPeriod,
-                       originalReturn: SdilReturn)
-                      (implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Amounts] = {
+  def calculateAmounts(
+    sdilRef: String,
+    userAnswers: UserAnswers,
+    returnPeriod: ReturnPeriod,
+    originalReturn: SdilReturn
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Amounts] =
     for {
-      isSmallProducer <- sdilConnector.checkSmallProducerStatus(sdilRef, returnPeriod)
+      isSmallProducer       <- sdilConnector.checkSmallProducerStatus(sdilRef, returnPeriod)
       balanceBroughtForward <- getBalanceBroughtForward(sdilRef)
-    } yield getAmounts(userAnswers, originalReturn, balanceBroughtForward, isSmallProducer.getOrElse(false))(returnPeriod)
-  }
+    } yield getAmounts(userAnswers, originalReturn, balanceBroughtForward, isSmallProducer.getOrElse(false))(using
+      returnPeriod
+    )
 
-  def submitSdilReturnsVary(subscription: RetrievedSubscription,
-                             userAnswers: UserAnswers,
-                             originalReturn: SdilReturn,
-                             returnPeriod: ReturnPeriod,
-                             revisedReturn: SdilReturn)
-                           (implicit hc: HeaderCarrier): VariationResult[Unit] = {
+  def submitSdilReturnsVary(
+    subscription: RetrievedSubscription,
+    userAnswers: UserAnswers,
+    originalReturn: SdilReturn,
+    returnPeriod: ReturnPeriod,
+    revisedReturn: SdilReturn
+  )(implicit hc: HeaderCarrier): VariationResult[Unit] = {
     val repaymentMethod = userAnswers.get(BalanceRepaymentRequired) match {
       case Some(true) => userAnswers.get(RepaymentMethodPage).map(_.toString)
-      case _ => None
+      case _          => None
     }
     val returnsVariation = ReturnVariationData(
       original = originalReturn,
@@ -83,12 +87,13 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector)(im
     sdilConnector.submitSdilReturnsVary(subscription.sdilRef, returnsVariation)
   }
 
-  def submitReturnVariation(subscription: RetrievedSubscription,
-                            sdilReturn: SdilReturn,
-                            userAnswers: UserAnswers,
-                            correctReturnData: CorrectReturnUserAnswersData,
-                            returnPeriod: ReturnPeriod)
-                           (implicit hc: HeaderCarrier): VariationResult[Unit] = {
+  def submitReturnVariation(
+    subscription: RetrievedSubscription,
+    sdilReturn: SdilReturn,
+    userAnswers: UserAnswers,
+    correctReturnData: CorrectReturnUserAnswersData,
+    returnPeriod: ReturnPeriod
+  )(implicit hc: HeaderCarrier): VariationResult[Unit] = {
     implicit val rp: ReturnPeriod = returnPeriod
     val isNewImporter = UserTypeCheck.isNewImporter(userAnswers, subscription)
     val isNewPacker = UserTypeCheck.isNewPacker(userAnswers, subscription)
@@ -115,13 +120,23 @@ class ReturnService @Inject()(sdilConnector: SoftDrinksIndustryLevyConnector)(im
     sdilConnector.submitReturnVariation(subscription.sdilRef, returnVariation)
   }
 
-  private def getAmounts(userAnswers: UserAnswers, originalReturn: SdilReturn, balanceBroughtForward: BigDecimal, isSmallProducer: Boolean)
-                        (implicit returnPeriod: ReturnPeriod): Amounts = {
+  private def getAmounts(
+    userAnswers: UserAnswers,
+    originalReturn: SdilReturn,
+    balanceBroughtForward: BigDecimal,
+    isSmallProducer: Boolean
+  )(implicit returnPeriod: ReturnPeriod): Amounts = {
     val originalReturnTotal: BigDecimal = originalReturn.total
     val totalForQuarter = SdilReturn.generateFromUserAnswers(userAnswers).total
     val totalForQuarterLessForwardBalance = totalForQuarter - balanceBroughtForward
     val netAdjustedAmount: BigDecimal = (totalForQuarter - originalReturnTotal) - balanceBroughtForward
-    Amounts(originalReturnTotal, totalForQuarter, balanceBroughtForward, totalForQuarterLessForwardBalance, netAdjustedAmount)
+    Amounts(
+      originalReturnTotal,
+      totalForQuarter,
+      balanceBroughtForward,
+      totalForQuarterLessForwardBalance,
+      netAdjustedAmount
+    )
   }
 
 }

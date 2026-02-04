@@ -18,29 +18,31 @@ package models.submission
 
 import models.backend.RetrievedSubscription
 import models.updateRegisteredDetails.ContactDetails
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{ Format, Json }
 
 case class VariationsPersonalDetails(
-                                      name: Option[String] = None,
-                                      position: Option[String] = None,
-                                      telephoneNumber: Option[String] = None,
-                                      emailAddress: Option[String] = None) {
+  name: Option[String] = None,
+  position: Option[String] = None,
+  telephoneNumber: Option[String] = None,
+  emailAddress: Option[String] = None
+) {
   def nonEmpty: Boolean = Seq(name, position, telephoneNumber, emailAddress).flatten.nonEmpty
 }
 
 object VariationsPersonalDetails extends VariationSubmissionHelper {
 
-  def apply(updatedContactDetails: ContactDetails,
-            subscription: RetrievedSubscription): Option[VariationsPersonalDetails] = {
+  def apply(
+    updatedContactDetails: ContactDetails,
+    subscription: RetrievedSubscription
+  ): Option[VariationsPersonalDetails] = {
     val updatedPDs = VariationsPersonalDetails(
-      name = updatedContactDetails.fullName ifDifferentTo subscription.contact.name.getOrElse(""),
-      position = updatedContactDetails.position ifDifferentTo subscription.contact.positionInCompany.getOrElse(""),
-      telephoneNumber = updatedContactDetails.phoneNumber ifDifferentTo subscription.contact.phoneNumber,
-      emailAddress = updatedContactDetails.email ifDifferentTo subscription.contact.email
+      name = updatedContactDetails.fullName.ifDifferentTo(subscription.contact.name.getOrElse("")),
+      position = updatedContactDetails.position.ifDifferentTo(subscription.contact.positionInCompany.getOrElse("")),
+      telephoneNumber = updatedContactDetails.phoneNumber.ifDifferentTo(subscription.contact.phoneNumber),
+      emailAddress = updatedContactDetails.email.ifDifferentTo(subscription.contact.email)
     )
     if (updatedPDs.nonEmpty) Some(updatedPDs) else None
   }
 
   implicit val format: Format[VariationsPersonalDetails] = Json.format[VariationsPersonalDetails]
 }
-

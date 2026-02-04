@@ -17,7 +17,7 @@
 package controllers.actions
 
 import models.backend.RetrievedSubscription
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{ CheckMode, NormalMode, UserAnswers }
 import pages.Page
 import pages.correctReturn._
 import play.api.mvc.Result
@@ -26,8 +26,9 @@ import javax.inject.Inject
 import scala.concurrent.Future
 
 class RequiredUserAnswersForCorrectReturn @Inject() extends RequiredUserAnswersHelper {
-  private[controllers] def requireData(page: Page, userAnswers: UserAnswers, subscription: RetrievedSubscription)
-                                      (action: => Future[Result]): Future[Result] = {
+  private[controllers] def requireData(page: Page, userAnswers: UserAnswers, subscription: RetrievedSubscription)(
+    action: => Future[Result]
+  ): Future[Result] = {
     val mode = if (List(CorrectReturnBaseCYAPage, CorrectReturnCheckChangesPage).contains(page)) {
       CheckMode
     } else {

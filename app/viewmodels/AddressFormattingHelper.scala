@@ -17,43 +17,55 @@
 package viewmodels
 
 import models.backend.UkAddress
-import play.twirl.api.{Html, HtmlFormat}
+import play.twirl.api.{ Html, HtmlFormat }
 
 object AddressFormattingHelper {
   def addressFormatting(address: UkAddress, tradingName: Option[String]): Html = {
     val addressFormat = determineAddressFormat(address, tradingName)
 
-    val commaFormattedSiteAddress = address.lines.map(line => { if (line.isEmpty) "" else line + ", " })
+    val commaFormattedSiteAddress = address.lines.map(line => if (line.isEmpty) "" else line + ", ")
     val htmlSiteAddress = HtmlFormat.escape(commaFormattedSiteAddress.mkString("").dropRight(2))
     val htmlPostcode = HtmlFormat.escape(address.postCode)
     val htmlTradingName = HtmlFormat.escape(tradingName.getOrElse(""))
     val breakLine = Html("<br>")
 
     addressFormat match {
-      case SeparatePostCodeAddressNoTradingName =>  HtmlFormat.fill(Seq(
-        htmlSiteAddress,
-        breakLine,
-        htmlPostcode
-      ))
-      case AddressNoTradingName =>  HtmlFormat.fill(Seq(
-        htmlSiteAddress,
-        breakLine,
-        htmlPostcode
-      ))
-      case AddressWithTradingName => HtmlFormat.fill(Seq(
-        htmlTradingName,
-        breakLine,
-        htmlSiteAddress,
-        breakLine,
-        htmlPostcode
-      ))
-      case SeparatePostCodeAddressWithTradingName => HtmlFormat.fill(Seq(
-        htmlTradingName,
-        breakLine,
-        htmlSiteAddress,
-        breakLine,
-        htmlPostcode
-      ))
+      case SeparatePostCodeAddressNoTradingName =>
+        HtmlFormat.fill(
+          Seq(
+            htmlSiteAddress,
+            breakLine,
+            htmlPostcode
+          )
+        )
+      case AddressNoTradingName =>
+        HtmlFormat.fill(
+          Seq(
+            htmlSiteAddress,
+            breakLine,
+            htmlPostcode
+          )
+        )
+      case AddressWithTradingName =>
+        HtmlFormat.fill(
+          Seq(
+            htmlTradingName,
+            breakLine,
+            htmlSiteAddress,
+            breakLine,
+            htmlPostcode
+          )
+        )
+      case SeparatePostCodeAddressWithTradingName =>
+        HtmlFormat.fill(
+          Seq(
+            htmlTradingName,
+            breakLine,
+            htmlSiteAddress,
+            breakLine,
+            htmlPostcode
+          )
+        )
     }
   }
 

@@ -25,12 +25,17 @@ import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-class VariationsSiteSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with SpecBase{
+class VariationsSiteSpec
+    extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues with SpecBase {
 
-  "generateFromSite" -{
+  "generateFromSite" - {
     val site = Site(updatedContactAddress, Some("NAME"), Some("100"), None)
     val contactDetailsFromSubscription = ContactDetails.fromContact(aSubscription.contact)
-    val variationsContact = VariationsContact(Some(site.address), Some(contactDetailsFromSubscription.phoneNumber), Some(contactDetailsFromSubscription.email))
+    val variationsContact = VariationsContact(
+      Some(site.address),
+      Some(contactDetailsFromSubscription.phoneNumber),
+      Some(contactDetailsFromSubscription.email)
+    )
     "should return the expected model" - {
       "when the site type is Warehouse" in {
         val res = VariationsSite.generateFromSite(site, contactDetailsFromSubscription, 10, SiteTypes.WAREHOUSE)

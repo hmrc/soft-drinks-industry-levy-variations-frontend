@@ -17,7 +17,7 @@
 package models.changeActivity
 
 import play.api.i18n.Messages
-import models.{Enumerable, WithName}
+import models.{ Enumerable, WithName }
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
@@ -30,19 +30,19 @@ object AmountProduced extends Enumerable.Implicits {
   case object None extends WithName("none") with AmountProduced
 
   val values: Seq[AmountProduced] = Seq(
-    Large, Small, None
+    Large,
+    Small,
+    None
   )
 
-
-  def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {
-    case (value, index) =>
-      RadioItem(
-        content = Text(messages(s"changeActivity.amountProduced.${value.toString}")),
-        value   = Some(value.toString),
-        id      = Some(s"value_$index")
-      )
+  def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map { case (value, index) =>
+    RadioItem(
+      content = Text(messages(s"changeActivity.amountProduced.${value.toString}")),
+      value = Some(value.toString),
+      id = Some(s"value_$index")
+    )
   }
 
   implicit val enumerable: Enumerable[AmountProduced] =
-    Enumerable(values.map(v => v.toString -> v): _*)
+    Enumerable(values.map(v => v.toString -> v)*)
 }

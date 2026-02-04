@@ -17,12 +17,12 @@
 package views.summary.changeActivity
 
 import controllers.changeActivity.routes
-import models.{CheckMode, LitresInBands}
-import pages.changeActivity.{HowManyOperatePackagingSiteOwnBrandsPage, OperatePackagingSiteOwnBrandsPage}
+import models.{ CheckMode, LitresInBands }
+import pages.changeActivity.{ HowManyOperatePackagingSiteOwnBrandsPage, OperatePackagingSiteOwnBrandsPage }
 import pages.QuestionPage
-import views.summary.{ReturnDetailsSummaryListWithLitres, SummaryListRowLitresHelper}
+import views.summary.{ ReturnDetailsSummaryListWithLitres, SummaryListRowLitresHelper }
 
-object OperatePackagingSiteOwnBrandsSummary extends ReturnDetailsSummaryListWithLitres  {
+object OperatePackagingSiteOwnBrandsSummary extends ReturnDetailsSummaryListWithLitres {
 
   override val page: QuestionPage[Boolean] = OperatePackagingSiteOwnBrandsPage
   override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyOperatePackagingSiteOwnBrandsPage)

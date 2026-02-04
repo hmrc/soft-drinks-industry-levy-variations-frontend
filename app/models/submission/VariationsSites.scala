@@ -16,8 +16,8 @@
 
 package models.submission
 
-import models.backend.{RetrievedSubscription, Site}
-import models.enums.SiteTypes.{PRODUCTION_SITE, WAREHOUSE}
+import models.backend.{ RetrievedSubscription, Site }
+import models.enums.SiteTypes.{ PRODUCTION_SITE, WAREHOUSE }
 import models.updateRegisteredDetails.ContactDetails
 import models.UserAnswers
 
@@ -25,22 +25,24 @@ case class VariationsSites(newSites: List[VariationsSite] = List.empty, closedSi
 
 object VariationsSites extends VariationSubmissionHelper {
 
-  def fromUserAnswers(userAnswers: UserAnswers, subscription: RetrievedSubscription, contactDetails: ContactDetails): VariationsSites = {
+  def fromUserAnswers(
+    userAnswers: UserAnswers,
+    subscription: RetrievedSubscription,
+    contactDetails: ContactDetails
+  ): VariationsSites = {
     val (newPackagingSites, closedPackagingSites) = getNewAndClosedPackagingSites(userAnswers, subscription)
     val (newWarehouses, closedWarehouses) = getNewAndClosedWarehouses(userAnswers, subscription)
     val allOriginalSites = subscription.productionSites ++ subscription.warehouseSites
     val highestExistingRefNumber = getHighestRefNumber(allOriginalSites)
 
-    val newPSites = newPackagingSites.zipWithIndex.map {
-      case (site, id) =>
-        val newRef = highestExistingRefNumber + id + 1
-        VariationsSite.generateFromSite(site, contactDetails, newRef, PRODUCTION_SITE)
+    val newPSites = newPackagingSites.zipWithIndex.map { case (site, id) =>
+      val newRef = highestExistingRefNumber + id + 1
+      VariationsSite.generateFromSite(site, contactDetails, newRef, PRODUCTION_SITE)
     }
 
-    val newWSites = newWarehouses.zipWithIndex.map {
-      case (site, id) =>
-        val newRef = highestExistingRefNumber + id + 1 + newPackagingSites.size
-        VariationsSite.generateFromSite(site, contactDetails, newRef, WAREHOUSE)
+    val newWSites = newWarehouses.zipWithIndex.map { case (site, id) =>
+      val newRef = highestExistingRefNumber + id + 1 + newPackagingSites.size
+      VariationsSite.generateFromSite(site, contactDetails, newRef, WAREHOUSE)
     }
 
     val newSites = newPSites ++ newWSites
@@ -52,19 +54,25 @@ object VariationsSites extends VariationSubmissionHelper {
     )
   }
 
-  private def getNewAndClosedPackagingSites(userAnswers: UserAnswers, subscription: RetrievedSubscription): (List[Site], List[Site]) = {
+  private def getNewAndClosedPackagingSites(
+    userAnswers: UserAnswers,
+    subscription: RetrievedSubscription
+  ): (List[Site], List[Site]) = {
     val packagingSites = userAnswers.packagingSiteList.values.toList
     val originalPackagingSites = subscription.productionSites
     getNewAndClosedSites(originalPackagingSites, packagingSites)
   }
 
-  private def getNewAndClosedWarehouses(userAnswers: UserAnswers, subscription: RetrievedSubscription): (List[Site], List[Site]) = {
+  private def getNewAndClosedWarehouses(
+    userAnswers: UserAnswers,
+    subscription: RetrievedSubscription
+  ): (List[Site], List[Site]) = {
     val warehouses = userAnswers.warehouseList.values.toList
     val originalWarehouseSites = subscription.warehouseSites
     getNewAndClosedSites(originalWarehouseSites, warehouses)
   }
 
-  private def getNewAndClosedSites(originalSites: List[Site], updatedSites: List[Site]): (List[Site], List[Site]) = {
+  private def getNewAndClosedSites(originalSites: List[Site], updatedSites: List[Site]): (List[Site], List[Site]) =
     if (originalSites.nonEmpty && updatedSites.nonEmpty) {
       val newSites = updatedSites.filter(_.isNew(originalSites))
       val closedSites = originalSites.filter(_.isClosed(updatedSites))
@@ -72,5 +80,4 @@ object VariationsSites extends VariationSubmissionHelper {
     } else {
       (updatedSites, originalSites)
     }
-  }
 }

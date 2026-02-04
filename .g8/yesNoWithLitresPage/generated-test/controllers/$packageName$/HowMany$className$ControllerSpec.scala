@@ -43,7 +43,7 @@ class HowMany$className$ControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[HowMany$className$View]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -61,7 +61,7 @@ class HowMany$className$ControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(LitresInBands(100, 200)), NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(form.fill(LitresInBands(100, 200)), NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -69,7 +69,7 @@ class HowMany$className$ControllerSpec extends SpecBase with MockitoSugar {
 
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Right(true))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersFor$packageName;format="cap"$))
@@ -107,7 +107,7 @@ class HowMany$className$ControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(using request, messages(application)).toString
       }
     }
 
@@ -134,7 +134,7 @@ class HowMany$className$ControllerSpec extends SpecBase with MockitoSugar {
     "should log an error message when internal server error is returned when user answers are not set in session repository" in {
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())) thenReturn Future.successful(Left(SessionDatabaseInsertError))
+      when(mockSessionService.set(any())).thenReturn(Future.successful(Left(SessionDatabaseInsertError))
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswersFor$packageName;format="cap"$))

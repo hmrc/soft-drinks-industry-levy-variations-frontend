@@ -17,12 +17,12 @@
 package views.summary.correctReturn
 
 import controllers.correctReturn.routes
-import models.{CheckMode, LitresInBands}
+import models.{ CheckMode, LitresInBands }
 import pages.QuestionPage
-import pages.correctReturn.{HowManyOperatePackagingSiteOwnBrandsPage, OperatePackagingSiteOwnBrandsPage}
-import views.summary.{ReturnDetailsSummaryListWithLitres, SummaryListRowLitresHelper}
+import pages.correctReturn.{ HowManyOperatePackagingSiteOwnBrandsPage, OperatePackagingSiteOwnBrandsPage }
+import views.summary.{ ReturnDetailsSummaryListWithLitres, SummaryListRowLitresHelper }
 
-object OperatePackagingSiteOwnBrandsSummary extends ReturnDetailsSummaryListWithLitres  {
+object OperatePackagingSiteOwnBrandsSummary extends ReturnDetailsSummaryListWithLitres {
 
   override val page: QuestionPage[Boolean] = OperatePackagingSiteOwnBrandsPage
   override val optLitresPage: Option[QuestionPage[LitresInBands]] = Some(HowManyOperatePackagingSiteOwnBrandsPage)
