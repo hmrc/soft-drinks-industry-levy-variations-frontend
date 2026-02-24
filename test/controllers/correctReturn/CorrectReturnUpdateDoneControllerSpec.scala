@@ -22,13 +22,13 @@ import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.RequiredUserAnswersForCorrectReturn
 import controllers.correctReturn.routes.*
 import models.backend.RetrievedSubscription
-import models.correctReturn.{AddASmallProducer, ChangedPage, RepaymentMethod}
+import models.correctReturn.{ AddASmallProducer, ChangedPage, RepaymentMethod }
 import models.submission.Litreage
 import models.{ LitresInBands, ReturnPeriod, SdilReturn, SmallProducer, TaxRateUtil, UserAnswers }
 import orchestrators.CorrectReturnOrchestrator
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.{ mock, when }
 import pages.Page
 import pages.correctReturn.*
 import play.api.i18n.Messages
@@ -42,7 +42,7 @@ import views.html.correctReturn.CorrectReturnUpdateDoneView
 import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 
 import java.time.format.DateTimeFormatter
-import java.time.{Instant, LocalDateTime, ZoneId}
+import java.time.{ Instant, LocalDateTime, ZoneId }
 import scala.concurrent.Future
 
 class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFluency {

@@ -48,5 +48,5 @@ object TaxRateUtil {
     when(mockConfig.bandRatesForTaxYear(taxYear))
       .thenReturn(bandRatesForTaxYear(taxYear))
   }
-  
+
 }

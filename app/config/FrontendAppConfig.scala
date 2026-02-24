@@ -66,12 +66,12 @@ class FrontendAppConfig @Inject() (servicesConfig: ServicesConfig, configuration
   val cacheTtl: Int = servicesConfig.getInt("mongodb.timeToLiveInSeconds")
 
   private val sdilBandRatesConfig = new SdilBandRatesConfig(configuration)
-  
+
   def bandRatesForTaxYear(taxYear: Int): BandRates = {
     val taxYearStart: LocalDate = LocalDate.of(taxYear, 4, 1)
     sdilBandRatesConfig.bandRatesFor(taxYearStart)
   }
-  
+
   val balanceAllEnabled: Boolean = servicesConfig.getBoolean("balanceAll.enabled")
   val addressLookupService: String = servicesConfig.baseUrl("address-lookup-frontend")
   val addressLookUpFrontendTestEnabled: Boolean = servicesConfig.getBoolean("addressLookupFrontendTest.enabled")

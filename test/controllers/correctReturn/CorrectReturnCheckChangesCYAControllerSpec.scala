@@ -23,21 +23,21 @@ import controllers.actions.RequiredUserAnswersForCorrectReturn
 import errors.UnexpectedResponseFromSDIL
 import models.backend.RetrievedSubscription
 import models.correctReturn.RepaymentMethod.BankAccount
-import models.correctReturn.{AddASmallProducer, ChangedPage, RepaymentMethod}
+import models.correctReturn.{ AddASmallProducer, ChangedPage, RepaymentMethod }
 import models.submission.Litreage
 import models.{ Amounts, CheckMode, LitresInBands, ReturnPeriod, SdilReturn, SmallProducer, TaxRateUtil, UserAnswers }
 import navigation.{ FakeNavigatorForCorrectReturn, NavigatorForCorrectReturn }
 import orchestrators.CorrectReturnOrchestrator
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.{ mock, when }
 import pages.Page
 import pages.correctReturn.*
 import play.api.i18n.Messages
 import play.api.inject
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{Call, Result}
+import play.api.mvc.{ Call, Result }
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import viewmodels.govuk.SummaryListFluency

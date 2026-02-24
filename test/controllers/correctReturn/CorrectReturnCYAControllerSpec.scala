@@ -26,11 +26,11 @@ import models.TaxRateUtil.*
 import models.backend.RetrievedSubscription
 import models.correctReturn.AddASmallProducer
 import models.submission.Litreage
-import models.{Amounts, CheckMode, LitresInBands, ReturnPeriod, SdilReturn, SmallProducer, TaxRateUtil, UserAnswers}
+import models.{ Amounts, CheckMode, LitresInBands, ReturnPeriod, SdilReturn, SmallProducer, TaxRateUtil, UserAnswers }
 import orchestrators.CorrectReturnOrchestrator
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{mock, when}
+import org.mockito.Mockito.{ mock, when }
 import pages.Page
 import pages.correctReturn.*
 import play.api.i18n.Messages
@@ -889,7 +889,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
     "must show claim credits for exports row containing calculation when yes is selected - pre April 2025 rates" in {
       TaxRateUtil.stubBandRates(mockConfig, preApril2025ReturnPeriod)
-      
+
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(ClaimCreditsForExportsPage, true)

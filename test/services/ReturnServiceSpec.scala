@@ -22,7 +22,7 @@ import connectors.SoftDrinksIndustryLevyConnector
 import models.backend.CentralAssessment
 import models.correctReturn.{ CorrectReturnUserAnswersData, RepaymentMethod, ReturnsVariation }
 import models.submission.{ Litreage, ReturnVariationData }
-import models.{ LitresInBands, ReturnPeriod, TaxRateUtil, SdilReturn }
+import models.{ LitresInBands, ReturnPeriod, SdilReturn, TaxRateUtil }
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar

@@ -17,7 +17,7 @@
 package models
 
 import base.SpecBase
-import config.{BandRates, FrontendAppConfig}
+import config.{ BandRates, FrontendAppConfig }
 import models.LevyCalculator.*
 import models.TaxRateUtil.*
 import org.scalacheck.Gen

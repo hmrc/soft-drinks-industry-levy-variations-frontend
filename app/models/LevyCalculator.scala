@@ -16,9 +16,8 @@
 
 package models
 
-import config.{BandRates, FrontendAppConfig}
+import config.{ BandRates, FrontendAppConfig }
 import play.api.Logging
-
 
 case class LevyCalculation(low: BigDecimal, high: BigDecimal) {
   lazy val lowLevy = low.setScale(2, BigDecimal.RoundingMode.HALF_UP)
