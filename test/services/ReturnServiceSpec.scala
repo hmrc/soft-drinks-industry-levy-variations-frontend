@@ -19,11 +19,10 @@ package services
 import base.SpecBase
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
-import models.TaxRateUtil._
 import models.backend.CentralAssessment
 import models.correctReturn.{ CorrectReturnUserAnswersData, RepaymentMethod, ReturnsVariation }
 import models.submission.{ Litreage, ReturnVariationData }
-import models.{ LitresInBands, ReturnPeriod, SdilReturn }
+import models.{ LitresInBands, ReturnPeriod, TaxRateUtil, SdilReturn }
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -210,8 +209,7 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
           aSubscription.contact.email,
           504.00
         )
-        when(mockAppConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
-        when(mockAppConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
+        TaxRateUtil.stubBandRates(mockAppConfig, returnPeriod)
 
         when(mockSdilConnector.submitReturnVariation(aSubscription.sdilRef, expectedReturnsVariation)(hc))
           .thenReturn(createSuccessVariationResult((): Unit))
@@ -263,8 +261,7 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
           aSubscription.contact.email,
           336.00
         )
-        when(mockAppConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
-        when(mockAppConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
+        TaxRateUtil.stubBandRates(mockAppConfig, returnPeriod)
 
         when(mockSdilConnector.submitReturnVariation(aSubscription.sdilRef, expectedReturnsVariation)(hc))
           .thenReturn(createSuccessVariationResult((): Unit))
@@ -316,8 +313,7 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
           aSubscription.contact.email,
           336.00
         )
-        when(mockAppConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
-        when(mockAppConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
+        TaxRateUtil.stubBandRates(mockAppConfig, returnPeriod)
 
         when(mockSdilConnector.submitReturnVariation(aSubscription.sdilRef, expectedReturnsVariation)(hc))
           .thenReturn(createSuccessVariationResult((): Unit))

@@ -20,30 +20,29 @@ import base.SpecBase
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.RequiredUserAnswersForCorrectReturn
-import controllers.correctReturn.routes._
-import models.TaxRateUtil._
+import controllers.correctReturn.routes.*
 import models.backend.RetrievedSubscription
-import models.correctReturn.{ AddASmallProducer, ChangedPage, RepaymentMethod }
+import models.correctReturn.{AddASmallProducer, ChangedPage, RepaymentMethod}
 import models.submission.Litreage
-import models.{ LitresInBands, ReturnPeriod, SdilReturn, SmallProducer, UserAnswers }
+import models.{ LitresInBands, ReturnPeriod, SdilReturn, SmallProducer, TaxRateUtil, UserAnswers }
 import orchestrators.CorrectReturnOrchestrator
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{ mock, when }
+import org.mockito.Mockito.{mock, when}
 import pages.Page
-import pages.correctReturn._
+import pages.correctReturn.*
 import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.Result
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import viewmodels.govuk.SummaryListFluency
 import views.html.correctReturn.CorrectReturnUpdateDoneView
 import views.summary.correctReturn.CorrectReturnCheckChangesSummary
 
 import java.time.format.DateTimeFormatter
-import java.time.{ Instant, LocalDateTime, ZoneId }
+import java.time.{Instant, LocalDateTime, ZoneId}
 import scala.concurrent.Future
 
 class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFluency {
@@ -310,8 +309,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must show own brands packaged at own site row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
-      when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
+      TaxRateUtil.stubBandRates(mockConfig, preApril2025ReturnPeriod)
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
@@ -359,8 +357,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must show own brands packaged at own site row containing calculation when yes is selected - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      TaxRateUtil.stubBandRates(mockConfig, taxYear2025ReturnPeriod)
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
@@ -443,8 +440,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must show packaged as contract packer row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
-      when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
+      TaxRateUtil.stubBandRates(mockConfig, preApril2025ReturnPeriod)
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
@@ -492,8 +488,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must show packaged as contract packer row containing calculation when yes is selected - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      TaxRateUtil.stubBandRates(mockConfig, taxYear2025ReturnPeriod)
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
@@ -576,8 +571,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must show exemptions for small producers row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
-      when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
+      TaxRateUtil.stubBandRates(mockConfig, preApril2025ReturnPeriod)
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
@@ -628,8 +622,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must show exemptions for small producers row containing calculation when yes is selected - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      TaxRateUtil.stubBandRates(mockConfig, taxYear2025ReturnPeriod)
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
@@ -713,8 +706,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must show brought into UK row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
-      when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
+      TaxRateUtil.stubBandRates(mockConfig, preApril2025ReturnPeriod)
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
@@ -760,8 +752,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must show brought into UK row containing calculation when yes is selected - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      TaxRateUtil.stubBandRates(mockConfig, taxYear2025ReturnPeriod)
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
@@ -842,8 +833,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must show brought into UK from small producers row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
-      when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
+      TaxRateUtil.stubBandRates(mockConfig, preApril2025ReturnPeriod)
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
@@ -891,8 +881,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must show brought into UK from small producers row containing calculation when yes is selected - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      TaxRateUtil.stubBandRates(mockConfig, taxYear2025ReturnPeriod)
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
@@ -975,8 +964,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must show claim credits for exports row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
-      when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
+      TaxRateUtil.stubBandRates(mockConfig, preApril2025ReturnPeriod)
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
@@ -1024,8 +1012,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must show claim credits for exports row containing calculation when yes is selected - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      TaxRateUtil.stubBandRates(mockConfig, taxYear2025ReturnPeriod)
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
@@ -1108,8 +1095,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must show claim credits for lost or damaged row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
-      when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
+      TaxRateUtil.stubBandRates(mockConfig, preApril2025ReturnPeriod)
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
@@ -1157,8 +1143,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     }
 
     "must show claim credits for lost or damaged row containing calculation when yes is selected - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
+      TaxRateUtil.stubBandRates(mockConfig, taxYear2025ReturnPeriod)
 
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod), submitted = true, submittedOn = Some(testTime))
