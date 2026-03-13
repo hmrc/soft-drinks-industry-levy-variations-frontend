@@ -45,7 +45,8 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
       "should get the balance history, extract the total and return it" in {
         val fli = CentralAssessment(LocalDate.now(), 200)
         when(mockAppConfig.balanceAllEnabled).thenReturn(true)
-        when(mockSdilConnector.balanceHistory(any(), any())(using any())).thenReturn(createSuccessVariationResult(List(fli)))
+        when(mockSdilConnector.balanceHistory(any(), any())(using any()))
+          .thenReturn(createSuccessVariationResult(List(fli)))
 
         val res = returnService.getBalanceBroughtForward("sdilRef")
 
@@ -56,7 +57,8 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
 
       "and balance history is empty should return 0" in {
         when(mockAppConfig.balanceAllEnabled).thenReturn(true)
-        when(mockSdilConnector.balanceHistory(any(), any())(using any())).thenReturn(createSuccessVariationResult(List.empty))
+        when(mockSdilConnector.balanceHistory(any(), any())(using any()))
+          .thenReturn(createSuccessVariationResult(List.empty))
 
         val res = returnService.getBalanceBroughtForward("sdilRef")
 

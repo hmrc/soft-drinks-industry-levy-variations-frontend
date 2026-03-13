@@ -349,7 +349,10 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
     "should return response from connector" in {
       val journeyConfig = JourneyConfig(1, JourneyOptions(""), None, None)
       when(
-        mockALFConnector.initJourney(ArgumentMatchers.eq(journeyConfig))(using ArgumentMatchers.any(), ArgumentMatchers.any())
+        mockALFConnector.initJourney(ArgumentMatchers.eq(journeyConfig))(using
+          ArgumentMatchers.any(),
+          ArgumentMatchers.any()
+        )
       )
         .thenReturn(Future.successful(Right("foo")))
 
@@ -448,15 +451,15 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
         )
 
         when(
-          mockALFConnector.initJourney(ArgumentMatchers.eq(expectedJourneyConfigToBePassedToConnector))(
-            using ArgumentMatchers.any(),
+          mockALFConnector.initJourney(ArgumentMatchers.eq(expectedJourneyConfigToBePassedToConnector))(using
+            ArgumentMatchers.any(),
             ArgumentMatchers.any()
           )
         )
           .thenReturn(Future.successful(Right("foo")))
         whenReady(
-          service.initJourneyAndReturnOnRampUrl(PackingDetails, sdilId, mode)(
-            using implicitly,
+          service.initJourneyAndReturnOnRampUrl(PackingDetails, sdilId, mode)(using
+            implicitly,
             implicitly,
             implicitly,
             FakeRequest("foo", "bar")
@@ -553,15 +556,15 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
         )
 
         when(
-          mockALFConnector.initJourney(ArgumentMatchers.eq(expectedJourneyConfigToBePassedToConnector))(
-            using ArgumentMatchers.any(),
+          mockALFConnector.initJourney(ArgumentMatchers.eq(expectedJourneyConfigToBePassedToConnector))(using
+            ArgumentMatchers.any(),
             ArgumentMatchers.any()
           )
         )
           .thenReturn(Future.successful(Right("foo")))
         whenReady(
-          service.initJourneyAndReturnOnRampUrl(WarehouseDetails, sdilId, mode)(
-            using implicitly,
+          service.initJourneyAndReturnOnRampUrl(WarehouseDetails, sdilId, mode)(using
+            implicitly,
             implicitly,
             implicitly,
             FakeRequest("foo", "bar")
@@ -658,15 +661,15 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
         )
 
         when(
-          mockALFConnector.initJourney(ArgumentMatchers.eq(expectedJourneyConfigToBePassedToConnector))(
-            using ArgumentMatchers.any(),
+          mockALFConnector.initJourney(ArgumentMatchers.eq(expectedJourneyConfigToBePassedToConnector))(using
+            ArgumentMatchers.any(),
             ArgumentMatchers.any()
           )
         )
           .thenReturn(Future.successful(Right("foo")))
         whenReady(
-          service.initJourneyAndReturnOnRampUrl(ContactDetails, sdilId, mode)(
-            using implicitly,
+          service.initJourneyAndReturnOnRampUrl(ContactDetails, sdilId, mode)(using
+            implicitly,
             implicitly,
             implicitly,
             FakeRequest("foo", "bar")
@@ -681,8 +684,8 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
           .thenReturn(Future.successful(Left(ErrorModel(1, "foo"))))
         val res = intercept[Exception](
           await(
-            service.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode)(
-              using implicitly,
+            service.initJourneyAndReturnOnRampUrl(PackingDetails, mode = mode)(using
+              implicitly,
               implicitly,
               implicitly,
               FakeRequest("foo", "bar")
@@ -698,7 +701,8 @@ class AddressLookupServiceSpec extends SpecBase with FutureAwaits with DefaultAw
       s"should return a journey config for $WarehouseDetails" in {
         val request = FakeRequest("foo", "bar")
         val exampleSdilIdWeGenerate: String = "wizz"
-        val res = service.createJourneyConfig(WarehouseDetails, exampleSdilIdWeGenerate, mode)(using request, implicitly)
+        val res =
+          service.createJourneyConfig(WarehouseDetails, exampleSdilIdWeGenerate, mode)(using request, implicitly)
         val expected = JourneyConfig(
           version = 2,
           options = JourneyOptions(

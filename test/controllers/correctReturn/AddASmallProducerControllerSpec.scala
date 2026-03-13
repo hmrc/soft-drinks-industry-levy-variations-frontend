@@ -60,7 +60,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
     optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)
   ): GuiceApplicationBuilder =
     if (userAnswers.fold(false)(_.correctReturnPeriod.nonEmpty)) {
-      when(mockSdilConnector.getReturn(any(), any())(using any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+      when(mockSdilConnector.getReturn(any(), any())(using any()))
+        .thenReturn(createSuccessVariationResult(optOriginalReturn))
       applicationBuilder(userAnswers = userAnswers)
         .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
     } else {

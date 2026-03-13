@@ -70,8 +70,8 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
         val orgName = " Super Lemonade Plc"
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(orgName, list, routes.CancelRegistrationCYAController.onSubmit)(
-          using request,
+        contentAsString(result) mustEqual view(orgName, list, routes.CancelRegistrationCYAController.onSubmit)(using
+          request,
           messages(application)
         ).toString
       }

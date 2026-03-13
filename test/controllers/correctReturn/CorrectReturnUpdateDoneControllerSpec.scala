@@ -133,7 +133,8 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
     when(
       mockOrchestrator.calculateAmounts(any(), any(), any(), any())(using any(), any())
     ).thenReturn(createSuccessVariationResult(amounts))
-    when(mockSdilConnector.getReturn(any(), any())(using any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    when(mockSdilConnector.getReturn(any(), any())(using any()))
+      .thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers, subscription = subscription)
       .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
       .overrides(bind[RequiredUserAnswersForCorrectReturn].to(requiredAnswers))

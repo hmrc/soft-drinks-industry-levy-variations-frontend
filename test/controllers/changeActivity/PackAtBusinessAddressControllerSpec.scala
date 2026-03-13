@@ -88,8 +88,8 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual OK
         val address = AddressFormattingHelper.addressFormatting(businessAddress, Option(businessName))
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, address)(
-          using request,
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, address)(using
+          request,
           messages(application)
         ).toString
       }

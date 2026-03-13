@@ -63,7 +63,8 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
     subscription: Option[RetrievedSubscription] = Some(aSubscription),
     optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)
   ): GuiceApplicationBuilder = {
-    when(mockSdilConnector.getReturn(any(), any())(using any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    when(mockSdilConnector.getReturn(any(), any())(using any()))
+      .thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers, subscription = Some(aSubscription))
       .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
   }

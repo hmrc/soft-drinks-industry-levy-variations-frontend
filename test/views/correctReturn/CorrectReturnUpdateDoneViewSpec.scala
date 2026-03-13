@@ -68,8 +68,8 @@ class CorrectReturnUpdateDoneViewSpec extends ViewSpecHelper {
 
     val orgName: String = " " + aSubscription.orgName
     val html: HtmlFormat.Appendable =
-      view(orgName, summaryList, formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd)(
-        using request,
+      view(orgName, summaryList, formattedDate, formattedTime, returnPeriodStart, returnPeriodEnd)(using
+        request,
         messages(application),
         frontendAppConfig
       )

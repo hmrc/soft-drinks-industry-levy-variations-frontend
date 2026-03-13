@@ -54,7 +54,8 @@ class HowManyClaimCreditsForExportsControllerSpec extends SpecBase with MockitoS
     userAnswers: Option[UserAnswers],
     optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)
   ): GuiceApplicationBuilder = {
-    when(mockSdilConnector.getReturn(any(), any())(using any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    when(mockSdilConnector.getReturn(any(), any())(using any()))
+      .thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers)
       .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
   }
@@ -92,8 +93,8 @@ class HowManyClaimCreditsForExportsControllerSpec extends SpecBase with MockitoS
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(LitresInBands(100, 200)), NormalMode)(
-          using request,
+        contentAsString(result) mustEqual view(form.fill(LitresInBands(100, 200)), NormalMode)(using
+          request,
           messages(application)
         ).toString
       }

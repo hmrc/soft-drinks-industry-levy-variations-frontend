@@ -59,7 +59,8 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
     userAnswers: Option[UserAnswers],
     optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)
   ): GuiceApplicationBuilder = {
-    when(mockSdilConnector.getReturn(any(), any())(using any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    when(mockSdilConnector.getReturn(any(), any())(using any()))
+      .thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers)
       .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
   }
@@ -102,8 +103,8 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual OK
         val address = AddressFormattingHelper.addressFormatting(businessAddress, Option(businessName))
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, address)(
-          using request,
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, address)(using
+          request,
           messages(application)
         ).toString
       }

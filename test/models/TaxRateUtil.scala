@@ -14,11 +14,11 @@ object TaxRateUtil {
 
   case class LevyBands(low: String, high: String)
   def levyValues(returnPeriod: ReturnPeriod): LevyBands = returnPeriod match {
-      case ReturnPeriod(2025, 0) => LevyBands("£180.00", "£480.00")
-      case ReturnPeriod(2026, 0) => LevyBands("£194.00", "£518.00")
-      case _ =>
-        throw new IllegalArgumentException(
-          s"Unexpected ReturnPeriod: $returnPeriod"
-        )
-    }
+    case ReturnPeriod(2025, 0) => LevyBands("£180.00", "£480.00")
+    case ReturnPeriod(2026, 0) => LevyBands("£194.00", "£518.00")
+    case _ =>
+      throw new IllegalArgumentException(
+        s"Unexpected ReturnPeriod: $returnPeriod"
+      )
+  }
 }

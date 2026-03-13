@@ -222,7 +222,8 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper {
 
     "when there are form errors" - {
       val htmlWithErrors = view(formWithWarehouses.bind(Map("value" -> "")), Some(warehousesInSummaryList), NormalMode)(
-        using request,
+        using
+        request,
         messages(application)
       )
       val documentWithErrors = doc(htmlWithErrors)

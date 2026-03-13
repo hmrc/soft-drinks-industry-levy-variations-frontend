@@ -162,7 +162,10 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
             when(mockSessionService.set(expectedGeneratedUA)).thenReturn(Future.successful(Right(true)))
 
             val res =
-              orchestrator.setupUserAnswersForCorrectReturn(aSubscription, initialUserAnswers, returnPeriod)(using hc, ec)
+              orchestrator.setupUserAnswersForCorrectReturn(aSubscription, initialUserAnswers, returnPeriod)(using
+                hc,
+                ec
+              )
 
             whenReady(res.value) { result =>
               result mustBe Right((): Unit)
@@ -188,7 +191,10 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
           when(mockSdilConnector.getReturn(aSubscription.utr, returnPeriods.head)(using hc))
             .thenReturn(createSuccessVariationResult(Some(emptyReturn)))
           val res =
-            orchestrator.setupUserAnswersForCorrectReturn(aSubscription, failingUserAnswers, returnPeriods.head)(using hc, ec)
+            orchestrator.setupUserAnswersForCorrectReturn(aSubscription, failingUserAnswers, returnPeriods.head)(using
+              hc,
+              ec
+            )
 
           whenReady(res.value) { result =>
             result mustBe Left(FailedToAddDataToUserAnswers)
@@ -226,7 +232,8 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
 
         val res =
           orchestrator.setupUserAnswersForCorrectReturn(aSubscription, emptyUserAnswersForCorrectReturn, returnPeriod)(
-            using hc,
+            using
+            hc,
             ec
           )
 
@@ -309,7 +316,8 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
               ).thenReturn(EitherT.rightT[Future, VariationsErrors](()))
 
               when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
-              val res = orchestrator.submitReturn(userAnswers, aSubscription, returnPeriod, emptySdilReturn)(using hc, ec)
+              val res =
+                orchestrator.submitReturn(userAnswers, aSubscription, returnPeriod, emptySdilReturn)(using hc, ec)
 
               whenReady(res.value) { result =>
                 result mustBe Right(())

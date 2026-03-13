@@ -35,13 +35,13 @@ class ClaimCreditsForExportSummarySpec extends SpecBase {
     def lowBandLevyValue(returnPeriod: ReturnPeriod): String = returnPeriod match {
       case ReturnPeriod(2025, 0) => "&minus;£180.00"
       case ReturnPeriod(2026, 0) => "&minus;£194.00"
-      case other => throw new IllegalArgumentException(s"Unexpected ReturnPeriod: $other")
+      case other                 => throw new IllegalArgumentException(s"Unexpected ReturnPeriod: $other")
     }
 
     def highBandLevyValue(returnPeriod: ReturnPeriod): String = returnPeriod match {
       case ReturnPeriod(2025, 0) => "&minus;£480.00"
       case ReturnPeriod(2026, 0) => "&minus;£518.00"
-      case other => throw new IllegalArgumentException(s"Unexpected ReturnPeriod: $other")
+      case other                 => throw new IllegalArgumentException(s"Unexpected ReturnPeriod: $other")
     }
 
     val returnPeriodsWithLabels = List(

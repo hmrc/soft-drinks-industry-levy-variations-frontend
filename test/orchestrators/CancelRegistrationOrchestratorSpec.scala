@@ -52,7 +52,8 @@ class CancelRegistrationOrchestratorSpec extends SpecBase with MockitoSugar with
           .thenReturn(createSuccessVariationResult((): Unit))
         when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
-        val res = cancelRegistrationOrchestrator.submitVariationAndUpdateSession(aSubscription, userAnswers)(using hc, ec)
+        val res =
+          cancelRegistrationOrchestrator.submitVariationAndUpdateSession(aSubscription, userAnswers)(using hc, ec)
         whenReady(res.value) { result =>
           result mustEqual Right((): Unit)
         }

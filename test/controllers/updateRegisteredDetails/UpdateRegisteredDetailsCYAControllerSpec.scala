@@ -66,7 +66,8 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(orgName, list, routes.UpdateRegisteredDetailsCYAController.onSubmit)(
-          using request,
+          using
+          request,
           messages(application)
         ).toString
       }

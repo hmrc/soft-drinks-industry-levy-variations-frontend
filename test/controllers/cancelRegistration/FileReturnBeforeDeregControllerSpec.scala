@@ -109,7 +109,8 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
         )
         .build()
 
-      when(mockConnector.getPendingReturnsFromCache(any())(using any())).thenReturn(createSuccessVariationResult(List.empty))
+      when(mockConnector.getPendingReturnsFromCache(any())(using any()))
+        .thenReturn(createSuccessVariationResult(List.empty))
 
       running(application) {
         val request = FakeRequest(GET, fileReturnBeforDeregRoute)
