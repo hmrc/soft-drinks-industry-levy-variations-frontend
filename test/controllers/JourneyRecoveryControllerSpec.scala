@@ -42,7 +42,7 @@ class JourneyRecoveryControllerSpec extends SpecBase {
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual continueView(continueUrl.unsafeValue)(
-            using request,
+            request,
             messages(application)
           ).toString
         }
