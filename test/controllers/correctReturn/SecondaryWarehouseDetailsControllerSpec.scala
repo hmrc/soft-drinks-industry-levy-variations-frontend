@@ -56,7 +56,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
     userAnswers: Option[UserAnswers],
     optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)
   ): GuiceApplicationBuilder = {
-    when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    when(mockSdilConnector.getReturn(any(), any())(using any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers)
       .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
   }
@@ -71,7 +71,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
       running(application) {
 
         val warehouseSummaryList: List[SummaryListRow] =
-          SecondaryWarehouseDetailsSummary.row2(twoWarehouses, NormalMode)(messages(application))
+          SecondaryWarehouseDetailsSummary.row2(twoWarehouses, NormalMode)(using messages(application))
 
         val summaryList: SummaryList = SummaryListViewModel(
           rows = warehouseSummaryList
@@ -100,7 +100,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
       running(application) {
 
         val warehouseSummaryList: List[SummaryListRow] =
-          SecondaryWarehouseDetailsSummary.row2(twoWarehouses, NormalMode)(messages(application))
+          SecondaryWarehouseDetailsSummary.row2(twoWarehouses, NormalMode)(using messages(application))
 
         val summaryList: SummaryList = SummaryListViewModel(
           rows = warehouseSummaryList
@@ -114,7 +114,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form.fill(true), NormalMode, summaryList)(
-          request,
+          using request,
           messages(application)
         ).toString
       }
@@ -132,7 +132,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
           ArgumentMatchers.eq(WarehouseDetails),
           ArgumentMatchers.any(),
           ArgumentMatchers.any()
-        )(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+        )(using ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       )
         .thenReturn(Future.successful(onwardUrlForALF))
 
@@ -161,7 +161,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
           ArgumentMatchers.eq(WarehouseDetails),
           ArgumentMatchers.any(),
           ArgumentMatchers.any()
-        )(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+        )(using ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       }
     }
 
@@ -184,7 +184,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
           )
 
         val warehouseSummaryList: List[SummaryListRow] =
-          SecondaryWarehouseDetailsSummary.row2(WarhouseMap, NormalMode)(messages(application))
+          SecondaryWarehouseDetailsSummary.row2(WarhouseMap, NormalMode)(using messages(application))
 
         val summaryList: SummaryList = SummaryListViewModel(
           rows = warehouseSummaryList
@@ -202,7 +202,7 @@ class SecondaryWarehouseDetailsControllerSpec extends SpecBase with MockitoSugar
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode, summaryList)(
-          request,
+          using request,
           messages(application)
         ).toString
       }

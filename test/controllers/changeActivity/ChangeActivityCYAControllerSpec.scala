@@ -88,7 +88,7 @@ class ChangeActivityCYAControllerSpec extends SpecBase with SummaryListFluency w
 
       val mockOrchestrator: ChangeActivityOrchestrator = mock(classOf[ChangeActivityOrchestrator])
 
-      when(mockOrchestrator.submitVariation(any(), any())(any(), any())).thenReturn(
+      when(mockOrchestrator.submitVariation(any(), any())(using any(), any())).thenReturn(
         createSuccessVariationResult(
           (): Unit
         )

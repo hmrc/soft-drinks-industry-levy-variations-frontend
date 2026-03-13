@@ -59,7 +59,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
     userAnswers: Option[UserAnswers],
     optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)
   ): GuiceApplicationBuilder = {
-    when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    when(mockSdilConnector.getReturn(any(), any())(using any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers)
       .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
   }
@@ -72,7 +72,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request = FakeRequest(GET, packAtBusinessAddressRoute)
-        when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
+        when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(using any())).thenReturn {
           createSuccessVariationResult(Some(aSubscription))
         }
         val result = route(application, request).value
@@ -93,7 +93,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request = FakeRequest(GET, packAtBusinessAddressRoute)
-        when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
+        when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(using any())).thenReturn {
           createSuccessVariationResult(Some(aSubscription))
         }
         val view = application.injector.instanceOf[PackAtBusinessAddressView]
@@ -103,7 +103,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
         status(result) mustEqual OK
         val address = AddressFormattingHelper.addressFormatting(businessAddress, Option(businessName))
         contentAsString(result) mustEqual view(form.fill(true), NormalMode, address)(
-          request,
+          using request,
           messages(application)
         ).toString
       }

@@ -97,7 +97,7 @@ class CancellationRequestDoneControllerSpec extends SpecBase with SummaryListFlu
           deadlineEnd,
           orgName,
           list
-        )(request, messages(application), config).toString
+        )(using request, messages(application), config).toString
       }
     }
 

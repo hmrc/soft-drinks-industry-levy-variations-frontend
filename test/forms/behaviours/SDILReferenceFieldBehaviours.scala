@@ -20,7 +20,7 @@ import play.api.data.{ Form, FormError }
 
 trait SDILReferenceFieldBehaviours extends FieldBehaviours {
 
-  def invalidSDILFormat(form: Form[_], fieldName: String, requiredError: FormError): Unit =
+  def invalidSDILFormat(form: Form[?], fieldName: String, requiredError: FormError): Unit =
     "not bind when SDIL reference has invalid format" in {
 
       forAll(invalidSdilFormatGen -> "sdilRef") { sdilRef =>
@@ -29,7 +29,7 @@ trait SDILReferenceFieldBehaviours extends FieldBehaviours {
       }
     }
 
-  def invalidSDILRef(form: Form[_], fieldName: String, requiredError: FormError): Unit =
+  def invalidSDILRef(form: Form[?], fieldName: String, requiredError: FormError): Unit =
     "not bind when SDIL reference has invalid ref" in {
 
       forAll(invalidSDILRefGen -> "sdilRef") { sdilRef =>

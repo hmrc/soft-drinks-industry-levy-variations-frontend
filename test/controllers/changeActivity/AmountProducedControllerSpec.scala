@@ -83,7 +83,7 @@ class AmountProducedControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form.fill(AmountProduced.values.head), NormalMode)(
-          request,
+          using request,
           messages(application)
         ).toString
       }

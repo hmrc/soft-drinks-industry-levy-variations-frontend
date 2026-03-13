@@ -78,10 +78,10 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
   "getReturnPeriods" - {
     "when the call returns variable returnPeriods" - {
       "should return the variable returns" in {
-        when(mockSdilConnector.getVariableReturnsFromCache(aSubscription.utr)(hc))
+        when(mockSdilConnector.getVariableReturnsFromCache(aSubscription.utr)(using hc))
           .thenReturn(createSuccessVariationResult(returnPeriodList))
 
-        val res = orchestrator.getReturnPeriods(aSubscription)(hc, ec)
+        val res = orchestrator.getReturnPeriods(aSubscription)(using hc, ec)
 
         whenReady(res.value) { result =>
           result mustBe Right(returnPeriodList)
@@ -91,10 +91,10 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
 
     "when the call returns no variable returnPeriods" - {
       "should return a NoVariableReturns errors" in {
-        when(mockSdilConnector.getVariableReturnsFromCache(aSubscription.utr)(hc))
+        when(mockSdilConnector.getVariableReturnsFromCache(aSubscription.utr)(using hc))
           .thenReturn(createSuccessVariationResult(List()))
 
-        val res = orchestrator.getReturnPeriods(aSubscription)(hc, ec)
+        val res = orchestrator.getReturnPeriods(aSubscription)(using hc, ec)
 
         whenReady(res.value) { result =>
           result mustBe Left(NoVariableReturns)
@@ -104,10 +104,10 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
 
     "when the call fails for variable returnPeriods" - {
       "should return a UnexpectedResponseFromSDIL errors" in {
-        when(mockSdilConnector.getVariableReturnsFromCache(aSubscription.utr)(hc))
+        when(mockSdilConnector.getVariableReturnsFromCache(aSubscription.utr)(using hc))
           .thenReturn(createFailureVariationResult(UnexpectedResponseFromSDIL))
 
-        val res = orchestrator.getReturnPeriods(aSubscription)(hc, ec)
+        val res = orchestrator.getReturnPeriods(aSubscription)(using hc, ec)
 
         whenReady(res.value) { result =>
           result mustBe Left(UnexpectedResponseFromSDIL)
@@ -128,7 +128,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
               data = Json.obj(("correctReturn", Json.toJson(getExpectedUserAnswersCorrectReturnData(key)))),
               correctReturnPeriod = Some(returnPeriod)
             )
-            when(mockSdilConnector.getReturn(aSubscription.utr, returnPeriod)(hc))
+            when(mockSdilConnector.getReturn(aSubscription.utr, returnPeriod)(using hc))
               .thenReturn(createSuccessVariationResult(Some(sdilReturn)))
             when(mockSessionService.set(expectedGeneratedUA)).thenReturn(Future.successful(Right(true)))
 
@@ -136,7 +136,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
               aSubscription,
               emptyUserAnswersForCorrectReturn,
               returnPeriod
-            )(hc, ec)
+            )(using hc, ec)
 
             whenReady(res.value) { result =>
               result mustBe Right((): Unit)
@@ -157,12 +157,12 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
                 Json.obj(("correctReturn", Json.toJson(getExpectedUserAnswersCorrectReturnData(key)))),
               correctReturnPeriod = Some(returnPeriod)
             )
-            when(mockSdilConnector.getReturn(aSubscription.utr, returnPeriod)(hc))
+            when(mockSdilConnector.getReturn(aSubscription.utr, returnPeriod)(using hc))
               .thenReturn(createSuccessVariationResult(Some(sdilReturn)))
             when(mockSessionService.set(expectedGeneratedUA)).thenReturn(Future.successful(Right(true)))
 
             val res =
-              orchestrator.setupUserAnswersForCorrectReturn(aSubscription, initialUserAnswers, returnPeriod)(hc, ec)
+              orchestrator.setupUserAnswersForCorrectReturn(aSubscription, initialUserAnswers, returnPeriod)(using hc, ec)
 
             whenReady(res.value) { result =>
               result mustBe Right((): Unit)
@@ -185,10 +185,10 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
             )(implicit writes: Writes[CorrectReturnUserAnswersData]): Try[UserAnswers] =
               Failure[UserAnswers](new Exception(""))
           }
-          when(mockSdilConnector.getReturn(aSubscription.utr, returnPeriods.head)(hc))
+          when(mockSdilConnector.getReturn(aSubscription.utr, returnPeriods.head)(using hc))
             .thenReturn(createSuccessVariationResult(Some(emptyReturn)))
           val res =
-            orchestrator.setupUserAnswersForCorrectReturn(aSubscription, failingUserAnswers, returnPeriods.head)(hc, ec)
+            orchestrator.setupUserAnswersForCorrectReturn(aSubscription, failingUserAnswers, returnPeriods.head)(using hc, ec)
 
           whenReady(res.value) { result =>
             result mustBe Left(FailedToAddDataToUserAnswers)
@@ -200,7 +200,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
         "adding data to userAnswers fails" in {
           val returnPeriod = returnPeriodList.head
 
-          when(mockSdilConnector.getReturn(aSubscription.utr, returnPeriod)(hc))
+          when(mockSdilConnector.getReturn(aSubscription.utr, returnPeriod)(using hc))
             .thenReturn(createSuccessVariationResult(Some(emptyReturn)))
           when(mockSessionService.set(any())).thenReturn(Future.successful(Left(SessionDatabaseInsertError)))
 
@@ -208,7 +208,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
             aSubscription,
             emptyUserAnswersForCorrectReturn,
             returnPeriods.head
-          )(hc, ec)
+          )(using hc, ec)
 
           whenReady(res.value) { result =>
             result mustBe Left(SessionDatabaseInsertError)
@@ -221,12 +221,12 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
       "should return a NoSdilReturnForPeriod error" in {
         val returnPeriod = returnPeriodList.head
 
-        when(mockSdilConnector.getReturn(aSubscription.utr, returnPeriod)(hc))
+        when(mockSdilConnector.getReturn(aSubscription.utr, returnPeriod)(using hc))
           .thenReturn(createSuccessVariationResult(None))
 
         val res =
           orchestrator.setupUserAnswersForCorrectReturn(aSubscription, emptyUserAnswersForCorrectReturn, returnPeriod)(
-            hc,
+            using hc,
             ec
           )
 
@@ -295,7 +295,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
                   emptySdilReturn,
                   returnPeriod,
                   expectedRevisedReturn
-                )(hc)
+                )(using hc)
               ).thenReturn(EitherT.rightT[Future, VariationsErrors](()))
 
               when(
@@ -305,11 +305,11 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
                   userAnswers,
                   correctReturnUserAnswersData,
                   returnPeriod
-                )(hc)
+                )(using hc)
               ).thenReturn(EitherT.rightT[Future, VariationsErrors](()))
 
               when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
-              val res = orchestrator.submitReturn(userAnswers, aSubscription, returnPeriod, emptySdilReturn)(hc, ec)
+              val res = orchestrator.submitReturn(userAnswers, aSubscription, returnPeriod, emptySdilReturn)(using hc, ec)
 
               whenReady(res.value) { result =>
                 result mustBe Right(())
@@ -392,7 +392,7 @@ class CorrectReturnOrchestratorSpec extends SpecBase with MockitoSugar {
           userAnswersForCorrectReturnWithEmptySdilReturn,
           requestReturnPeriod,
           emptySdilReturn
-        )(hc, ec)
+        )(using hc, ec)
       ).thenReturn(createSuccessVariationResult(amounts))
       val res = orchestrator.calculateAmounts(
         sdilReference,

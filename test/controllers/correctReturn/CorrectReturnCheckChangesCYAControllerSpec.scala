@@ -64,9 +64,9 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       ): Future[Result] = action
     }
     when(
-      mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())
+      mockOrchestrator.calculateAmounts(any(), any(), any(), any())(using any(), any())
     ).thenReturn(createSuccessVariationResult(amounts))
-    when(mockSdilConnector.getReturn(any(), any())(any()))
+    when(mockSdilConnector.getReturn(any(), any())(using any()))
       .thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers, subscription = subscription)
       .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
@@ -168,7 +168,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         val request =
           FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         when(
-          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())
+          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(using any(), any())
         ).thenReturn(createSuccessVariationResult(amounts))
         val result = route(application, request).value
 
@@ -194,7 +194,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
       val amounts1 = Amounts(40200.00, 4200.00, -300.00, 4500.00, -35700.00)
       val userAnswers = filledUserAnswers.remove(CorrectReturnBaseCYAPage).success.value
 
-      when(mockSdilConnector.getReturn(any(), any())(any()))
+      when(mockSdilConnector.getReturn(any(), any())(using any()))
         .thenReturn(createSuccessVariationResult(Some(emptySdilReturn)))
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
@@ -207,7 +207,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         val request =
           FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         when(
-          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())
+          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(using any(), any())
         ).thenReturn(createSuccessVariationResult(amounts1))
 
         val result = route(application, request).value
@@ -1277,7 +1277,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         val request =
           FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         when(
-          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())
+          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(using any(), any())
         ).thenReturn(createSuccessVariationResult(amounts1))
 
         val result = route(application, request).value
@@ -1315,7 +1315,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         val request =
           FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         when(
-          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())
+          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(using any(), any())
         ).thenReturn(createSuccessVariationResult(amounts1))
 
         val result = route(application, request).value
@@ -1356,7 +1356,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         val request =
           FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         when(
-          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())
+          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(using any(), any())
         ).thenReturn(createSuccessVariationResult(amounts1))
 
         val result = route(application, request).value
@@ -1385,7 +1385,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         .success
         .value
 
-      when(mockSdilConnector.getReturn(any(), any())(any()))
+      when(mockSdilConnector.getReturn(any(), any())(using any()))
         .thenReturn(createSuccessVariationResult(Some(emptySdilReturn)))
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
@@ -1398,7 +1398,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
         val request =
           FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
         when(
-          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())
+          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(using any(), any())
         ).thenReturn(createSuccessVariationResult(amounts1))
 
         val result = route(application, request).value
@@ -1419,7 +1419,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
           FakeRequest(POST, controllers.correctReturn.routes.CorrectReturnCheckChangesCYAController.onPageLoad().url)
             .withFormUrlEncodedBody()
         when(
-          mockOrchestrator.submitReturn(any(), any(), any(), any())(any(), any())
+          mockOrchestrator.submitReturn(any(), any(), any(), any())(using any(), any())
         ).thenReturn(createSuccessVariationResult((): Unit))
 
         val result = route(application, request).value
@@ -1440,7 +1440,7 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
 
       running(application) {
         when(
-          mockOrchestrator.submitReturn(any(), any(), any(), any())(any(), any())
+          mockOrchestrator.submitReturn(any(), any(), any(), any())(using any(), any())
         ).thenReturn(createFailureVariationResult(UnexpectedResponseFromSDIL))
 
         val request =

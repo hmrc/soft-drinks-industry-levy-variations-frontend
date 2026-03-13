@@ -66,7 +66,7 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(orgName, list, routes.UpdateRegisteredDetailsCYAController.onSubmit)(
-          request,
+          using request,
           messages(application)
         ).toString
       }
@@ -86,7 +86,7 @@ class UpdateRegisteredDetailsCYAControllerSpec extends SpecBase with SummaryList
 
       running(application) {
         val request = FakeRequest(POST, UpdateRegisteredDetailsCYAController.onPageLoad.url).withFormUrlEncodedBody()
-        when(mockOrchestrator.submitVariation(any(), any())(any(), any())).thenReturn(
+        when(mockOrchestrator.submitVariation(any(), any())(using any(), any())).thenReturn(
           createSuccessVariationResult(
             (): Unit
           )

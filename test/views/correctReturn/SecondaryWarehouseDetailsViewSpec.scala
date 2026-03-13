@@ -58,7 +58,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
       )
 
     val warehouseSummaryList: List[SummaryListRow] =
-      SecondaryWarehouseDetailsSummary.row2(WarehouseMap, NormalMode)(messages(application))
+      SecondaryWarehouseDetailsSummary.row2(WarehouseMap, NormalMode)(using messages(application))
 
     val summaryList: SummaryList = SummaryListViewModel(
       rows = warehouseSummaryList
@@ -127,7 +127,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
         )
 
       val warehouseSummaryList: List[SummaryListRow] =
-        SecondaryWarehouseDetailsSummary.row2(WarehouseMap, NormalMode)(messages(application))
+        SecondaryWarehouseDetailsSummary.row2(WarehouseMap, NormalMode)(using messages(application))
 
       val summaryList: SummaryList = SummaryListViewModel(
         rows = warehouseSummaryList
@@ -181,7 +181,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
         )
 
       val warehouseSummaryList: List[SummaryListRow] =
-        SecondaryWarehouseDetailsSummary.row2(WarehouseMap, NormalMode)(messages(application))
+        SecondaryWarehouseDetailsSummary.row2(WarehouseMap, NormalMode)(using messages(application))
 
       val summaryList: SummaryList = SummaryListViewModel(
         rows = warehouseSummaryList
@@ -240,7 +240,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
           )
 
         val warehouseSummaryList: List[SummaryListRow] =
-          SecondaryWarehouseDetailsSummary.row2(WarhouseMap, NormalMode)(messages(application))
+          SecondaryWarehouseDetailsSummary.row2(WarhouseMap, NormalMode)(using messages(application))
 
         val summaryList: SummaryList = SummaryListViewModel(
           rows = warehouseSummaryList
@@ -278,7 +278,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
           )
 
         val warehouseSummaryList: List[SummaryListRow] =
-          SecondaryWarehouseDetailsSummary.row2(WarhouseMap, NormalMode)(messages(application))
+          SecondaryWarehouseDetailsSummary.row2(WarhouseMap, NormalMode)(using messages(application))
 
         val summaryList: SummaryList = SummaryListViewModel(
           rows = warehouseSummaryList
@@ -317,7 +317,7 @@ class SecondaryWarehouseDetailsViewSpec extends ViewSpecHelper with SummaryListF
         )
 
       val warehouseSummaryList: List[SummaryListRow] =
-        SecondaryWarehouseDetailsSummary.row2(WarehouseMap, NormalMode)(messages(application))
+        SecondaryWarehouseDetailsSummary.row2(WarehouseMap, NormalMode)(using messages(application))
 
       val summaryList: SummaryList = SummaryListViewModel(
         rows = warehouseSummaryList

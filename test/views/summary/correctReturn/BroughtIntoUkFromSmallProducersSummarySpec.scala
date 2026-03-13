@@ -35,11 +35,13 @@ class BroughtIntoUkFromSmallProducersSummarySpec extends SpecBase {
     def lowBandLevyValue(returnPeriod: ReturnPeriod): String = returnPeriod match {
       case ReturnPeriod(2025, 0) => "£0.00"
       case ReturnPeriod(2026, 0) => "£0.00"
+      case other => throw new IllegalArgumentException(s"Unexpected ReturnPeriod: $other")
     }
 
     def highBandLevyValue(returnPeriod: ReturnPeriod): String = returnPeriod match {
       case ReturnPeriod(2025, 0) => "£0.00"
       case ReturnPeriod(2026, 0) => "£0.00"
+      case other => throw new IllegalArgumentException(s"Unexpected ReturnPeriod: $other")
     }
 
     val returnPeriodsWithLabels = List(

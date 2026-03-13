@@ -63,9 +63,9 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
     val amounts1 = Amounts(0.00, 4200.00, -300.00, 4500.00, 4500.00)
     when(
-      mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())
+      mockOrchestrator.calculateAmounts(any(), any(), any(), any())(using any(), any())
     ).thenReturn(createSuccessVariationResult(amounts1))
-    when(mockSdilConnector.getReturn(any(), any())(any()))
+    when(mockSdilConnector.getReturn(any(), any())(using any()))
       .thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers, subscription = subscription)
       .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
@@ -126,7 +126,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
         .build()
       running(application) {
         when(
-          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())
+          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(using any(), any())
         ).thenReturn(createSuccessVariationResult(amounts1))
         val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
         val result = route(application, request).value
@@ -1213,7 +1213,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
         .build()
       running(application) {
         when(
-          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())
+          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(using any(), any())
         ).thenReturn(createSuccessVariationResult(amounts1))
         val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
         val result = route(application, request).value
@@ -1293,7 +1293,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
         .build()
       running(application) {
         when(
-          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())
+          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(using any(), any())
         ).thenReturn(createSuccessVariationResult(amounts1))
         val request = FakeRequest(GET, controllers.correctReturn.routes.CorrectReturnCYAController.onPageLoad.url)
         val result = route(application, request).value

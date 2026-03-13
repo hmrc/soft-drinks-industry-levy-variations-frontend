@@ -248,7 +248,7 @@ trait SpecBase
     val application = selectChange match {
       case CorrectReturn =>
         val mockSdilConnector = mock(classOf[SoftDrinksIndustryLevyConnector])
-        when(mockSdilConnector.getReturn(any(), any())(any()))
+        when(mockSdilConnector.getReturn(any(), any())(using any()))
           .thenReturn(createSuccessVariationResult(Some(emptySdilReturn)))
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))

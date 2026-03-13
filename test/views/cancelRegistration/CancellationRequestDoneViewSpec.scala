@@ -81,7 +81,7 @@ class CancellationRequestDoneViewSpec extends ViewSpecHelper {
       deadlineEnd,
       orgName,
       summaryList
-    )(request, messages(application), config)
+    )(using request, messages(application), config)
     val document = doc(html)
     "should contain the expected title" in {
       document.title() mustBe "Cancellation request sent - Soft Drinks Industry Levy - GOV.UK"

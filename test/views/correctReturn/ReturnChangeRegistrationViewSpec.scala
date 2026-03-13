@@ -49,7 +49,7 @@ class ReturnChangeRegistrationViewSpec extends ViewSpecHelper {
     "should render correctly with Packaged Contract Packer link when coPacker is false but coPacker data was completed" in {
       val urlLink: String =
         controllers.correctReturn.routes.PackagedAsContractPackerController.onPageLoad(NormalMode).url
-      val renderedView = Jsoup.parse(view(NormalMode, urlLink)(FakeRequest(), implicitly).body)
+      val renderedView = Jsoup.parse(view(NormalMode, urlLink)(using FakeRequest(), implicitly).body)
       renderedView.title() mustBe "You changed your soft drinks business activity - Soft Drinks Industry Levy - GOV.UK"
       renderedView.getElementsByTag("h1").text() mustBe "You changed your soft drinks business activity"
       renderedView.getElementsByTag("h1").attr("class") mustBe "govuk-heading-l"
@@ -69,7 +69,7 @@ class ReturnChangeRegistrationViewSpec extends ViewSpecHelper {
 
     "should render correctly with Brought into UK link when importer is false but import data was completed" in {
       val urlLink: String = controllers.correctReturn.routes.BroughtIntoUKController.onPageLoad(NormalMode).url
-      val renderedView = Jsoup.parse(view(NormalMode, urlLink)(FakeRequest(), implicitly).body)
+      val renderedView = Jsoup.parse(view(NormalMode, urlLink)(using FakeRequest(), implicitly).body)
       renderedView.title() mustBe "You changed your soft drinks business activity - Soft Drinks Industry Levy - GOV.UK"
       renderedView.getElementsByTag("h1").text() mustBe "You changed your soft drinks business activity"
       renderedView.getElementsByTag("h1").attr("class") mustBe "govuk-heading-l"

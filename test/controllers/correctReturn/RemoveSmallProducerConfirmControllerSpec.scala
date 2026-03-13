@@ -59,7 +59,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
     userAnswers: Option[UserAnswers],
     optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)
   ): GuiceApplicationBuilder = {
-    when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    when(mockSdilConnector.getReturn(any(), any())(using any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers)
       .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
   }
@@ -89,7 +89,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
               "Are you sure you want to remove this small producer?"
             )
             contentAsString(result) mustEqual view(form, mode, sdilReferenceParty, producerNameParty)(
-              request,
+              using request,
               messages(application)
             ).toString
           }
@@ -146,7 +146,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
             status(result) mustEqual OK
             contentAsString(result) mustEqual view(form, mode, sdilReferenceParty, producerNameParty)(
-              request,
+              using request,
               messages(application)
             ).toString
           }
@@ -217,7 +217,7 @@ class RemoveSmallProducerConfirmControllerSpec extends SpecBase with MockitoSuga
 
             status(result) mustEqual BAD_REQUEST
             contentAsString(result) mustEqual view(boundForm, mode, sdilReferenceParty, producerNameParty)(
-              request,
+              using request,
               messages(application)
             ).toString
           }

@@ -114,7 +114,7 @@ class HowManyImportsControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form.fill(LitresInBands(100, 200)), NormalMode)(
-          request,
+          using request,
           messages(application)
         ).toString
       }

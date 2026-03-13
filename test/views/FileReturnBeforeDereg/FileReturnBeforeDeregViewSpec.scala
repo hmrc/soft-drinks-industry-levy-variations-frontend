@@ -33,7 +33,7 @@ class FileReturnBeforeDeregViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view(Html(""))(request, messages(application), frontendAppConfig)
+    val html = view(Html(""))(using request, messages(application), frontendAppConfig)
     val document = doc(html)
     "should contain the expected title" in {
       document.title() must include(

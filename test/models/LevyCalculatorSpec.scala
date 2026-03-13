@@ -77,7 +77,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
 
   "getBandRates" - {
     (2018 to 2024).foreach { taxYear =>
-      val bandRates: BandRates = getBandRates(TaxYear.fromYear(taxYear))(frontendAppConfig)
+      val bandRates: BandRates = getBandRates(TaxYear.fromYear(taxYear))(using frontendAppConfig)
 
       s"return 0.18 for lower band when tax year is $taxYear" in {
         bandRates.lowerBandCostPerLitre mustBe lowerBandCostPerLitre
@@ -89,12 +89,12 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
     }
 
     "return 0.194 for lower band when tax year is 2025" in {
-      val bandRates: BandRates = getBandRates(TaxYear.fromYear(2025))(frontendAppConfig)
+      val bandRates: BandRates = getBandRates(TaxYear.fromYear(2025))(using frontendAppConfig)
       bandRates.lowerBandCostPerLitre mustBe BigDecimal("0.194")
     }
 
     "return 0.259 for higher band when tax year is 2025" in {
-      val bandRates: BandRates = getBandRates(TaxYear.fromYear(2025))(frontendAppConfig)
+      val bandRates: BandRates = getBandRates(TaxYear.fromYear(2025))(using frontendAppConfig)
       bandRates.higherBandCostPerLitre mustBe BigDecimal("0.259")
     }
   }
@@ -108,7 +108,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
       s"calculate low levy, high levy, and total correctly with zero litres totals using original rates for Apr - Dec $year" in {
         forAll(aprToDecInt) { month =>
           val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-          val levyCalculation = getLevyCalculation(0, 0, returnPeriod)(frontendAppConfig)
+          val levyCalculation = getLevyCalculation(0, 0, returnPeriod)(using frontendAppConfig)
           levyCalculation.lowLevy mustBe BigDecimal("0.00")
           levyCalculation.highLevy mustBe BigDecimal("0.00")
           levyCalculation.total mustBe BigDecimal("0.00")
@@ -121,7 +121,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
           forAll(smallPosInts) { highLitres =>
             forAll(aprToDecInt) { month =>
               val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val levyCalculation = getLevyCalculation(lowLitres, highLitres, returnPeriod)(frontendAppConfig)
+              val levyCalculation = getLevyCalculation(lowLitres, highLitres, returnPeriod)(using frontendAppConfig)
               val expectedLowLevy = lowerBandCostPerLitre * lowLitres
               val expectedHighLevy = higherBandCostPerLitre * highLitres
               levyCalculation.lowLevy mustBe expectedLowLevy
@@ -138,7 +138,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
           forAll(largePosInts) { highLitres =>
             forAll(aprToDecInt) { month =>
               val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val levyCalculation = getLevyCalculation(lowLitres, highLitres, returnPeriod)(frontendAppConfig)
+              val levyCalculation = getLevyCalculation(lowLitres, highLitres, returnPeriod)(using frontendAppConfig)
               val expectedLowLevy = lowerBandCostPerLitre * lowLitres
               val expectedHighLevy = higherBandCostPerLitre * highLitres
               levyCalculation.lowLevy mustBe expectedLowLevy
@@ -153,7 +153,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
       s"calculate low levy, high levy, and total correctly with zero litres totals using original rates for Jan - Mar ${year + 1}" in {
         forAll(janToMarInt) { month =>
           val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-          val levyCalculation = getLevyCalculation(0, 0, returnPeriod)(frontendAppConfig)
+          val levyCalculation = getLevyCalculation(0, 0, returnPeriod)(using frontendAppConfig)
           levyCalculation.lowLevy mustBe BigDecimal("0.00")
           levyCalculation.highLevy mustBe BigDecimal("0.00")
           levyCalculation.total mustBe BigDecimal("0.00")
@@ -166,7 +166,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
           forAll(smallPosInts) { highLitres =>
             forAll(janToMarInt) { month =>
               val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-              val levyCalculation = getLevyCalculation(lowLitres, highLitres, returnPeriod)(frontendAppConfig)
+              val levyCalculation = getLevyCalculation(lowLitres, highLitres, returnPeriod)(using frontendAppConfig)
               val expectedLowLevy = lowerBandCostPerLitre * lowLitres
               val expectedHighLevy = higherBandCostPerLitre * highLitres
               levyCalculation.lowLevy mustBe expectedLowLevy
@@ -183,7 +183,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
           forAll(largePosInts) { highLitres =>
             forAll(janToMarInt) { month =>
               val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-              val levyCalculation = getLevyCalculation(lowLitres, highLitres, returnPeriod)(frontendAppConfig)
+              val levyCalculation = getLevyCalculation(lowLitres, highLitres, returnPeriod)(using frontendAppConfig)
               val expectedLowLevy = lowerBandCostPerLitre * lowLitres
               val expectedHighLevy = higherBandCostPerLitre * highLitres
               levyCalculation.lowLevy mustBe expectedLowLevy
@@ -200,7 +200,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
       s"calculate low levy, high levy, and total correctly with zero litres totals using $year rates for Apr - Dec $year" in {
         forAll(aprToDecInt) { month =>
           val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-          val levyCalculation = getLevyCalculation(0, 0, returnPeriod)(frontendAppConfig)
+          val levyCalculation = getLevyCalculation(0, 0, returnPeriod)(using frontendAppConfig)
           levyCalculation.lowLevy mustBe BigDecimal("0.00")
           levyCalculation.highLevy mustBe BigDecimal("0.00")
           levyCalculation.total mustBe BigDecimal("0.00")
@@ -213,7 +213,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
           forAll(smallPosInts) { lowLitres =>
             forAll(smallPosInts) { highLitres =>
               val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val levyCalculation = getLevyCalculation(lowLitres, highLitres, returnPeriod)(frontendAppConfig)
+              val levyCalculation = getLevyCalculation(lowLitres, highLitres, returnPeriod)(using frontendAppConfig)
               val expectedLowLevy = lowerBandCostPerLitreMap(year) * lowLitres
               val expectedHighLevy = higherBandCostPerLitreMap(year) * highLitres
               levyCalculation.lowLevy mustBe expectedLowLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
@@ -232,7 +232,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
           forAll(largePosInts) { lowLitres =>
             forAll(largePosInts) { highLitres =>
               val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val levyCalculation = getLevyCalculation(lowLitres, highLitres, returnPeriod)(frontendAppConfig)
+              val levyCalculation = getLevyCalculation(lowLitres, highLitres, returnPeriod)(using frontendAppConfig)
               val expectedLowLevy = lowerBandCostPerLitreMap(year) * lowLitres
               val expectedHighLevy = higherBandCostPerLitreMap(year) * highLitres
               levyCalculation.lowLevy mustBe expectedLowLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
@@ -249,7 +249,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
       s"calculate low levy, high levy, and total correctly with zero litres totals using $year rates for Jan - Mar ${year + 1}" in {
         forAll(janToMarInt) { month =>
           val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-          val levyCalculation = getLevyCalculation(0, 0, returnPeriod)(frontendAppConfig)
+          val levyCalculation = getLevyCalculation(0, 0, returnPeriod)(using frontendAppConfig)
           levyCalculation.lowLevy mustBe BigDecimal("0.00")
           levyCalculation.highLevy mustBe BigDecimal("0.00")
           levyCalculation.total mustBe BigDecimal("0.00")
@@ -262,7 +262,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
           forAll(smallPosInts) { lowLitres =>
             forAll(smallPosInts) { highLitres =>
               val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-              val levyCalculation = getLevyCalculation(lowLitres, highLitres, returnPeriod)(frontendAppConfig)
+              val levyCalculation = getLevyCalculation(lowLitres, highLitres, returnPeriod)(using frontendAppConfig)
               val expectedLowLevy = lowerBandCostPerLitreMap(year) * lowLitres
               val expectedHighLevy = higherBandCostPerLitreMap(year) * highLitres
               levyCalculation.lowLevy mustBe expectedLowLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)
@@ -281,7 +281,7 @@ class LevyCalculatorSpec extends SpecBase with ScalaCheckPropertyChecks {
           forAll(largePosInts) { lowLitres =>
             forAll(largePosInts) { highLitres =>
               val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-              val levyCalculation = getLevyCalculation(lowLitres, highLitres, returnPeriod)(frontendAppConfig)
+              val levyCalculation = getLevyCalculation(lowLitres, highLitres, returnPeriod)(using frontendAppConfig)
               val expectedLowLevy = lowerBandCostPerLitreMap(year) * lowLitres
               val expectedHighLevy = higherBandCostPerLitreMap(year) * highLitres
               levyCalculation.lowLevy mustBe expectedLowLevy.setScale(2, BigDecimal.RoundingMode.HALF_UP)

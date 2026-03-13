@@ -48,7 +48,7 @@ class SoftDrinksIndustryLevyConnectorSpec
 
       val identifierType: String = "sdil"
       val sdilNumber: String = "XKSDIL000000022"
-      when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(), any())(any()))
+      when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(), any())(using any()))
         .thenReturn(Future.successful(Some(OptRetrievedSubscription(Some(aSubscription)))))
       val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
 
@@ -62,10 +62,10 @@ class SoftDrinksIndustryLevyConnectorSpec
     "when there is no subscription in cache" in {
       val identifierType: String = "sdil"
       val sdilNumber: String = "XKSDIL000000022"
-      when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(), any())(any()))
+      when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(), any())(using any()))
         .thenReturn(Future.successful(None))
       when(requestBuilderExecute[Option[RetrievedSubscription]]).thenReturn(Future.successful(Some(aSubscription)))
-      when(mockSDILSessionCache.save[OptRetrievedSubscription](any(), any(), any())(any()))
+      when(mockSDILSessionCache.save[OptRetrievedSubscription](any(), any(), any())(using any()))
         .thenReturn(Future.successful(CacheMap("foo", Map("bar" -> Json.obj("wizz" -> "bang2")))))
       val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
 
@@ -79,10 +79,10 @@ class SoftDrinksIndustryLevyConnectorSpec
     "when there is no subscription in cache and no subscription in the database" in {
       val identifierType: String = "sdil"
       val sdilNumber: String = "XKSDIL000000022"
-      when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(), any())(any()))
+      when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(), any())(using any()))
         .thenReturn(Future.successful(None))
       when(requestBuilderExecute[Option[RetrievedSubscription]]).thenReturn(Future.successful(None))
-      when(mockSDILSessionCache.save[OptRetrievedSubscription](any, any, any)(any()))
+      when(mockSDILSessionCache.save[OptRetrievedSubscription](any, any, any)(using any()))
         .thenReturn(Future.successful(CacheMap("foo", Map("bar" -> Json.obj("wizz" -> "bang2")))))
       val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
 
