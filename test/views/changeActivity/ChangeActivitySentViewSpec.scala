@@ -66,7 +66,7 @@ class ChangeActivitySentViewSpec extends ViewSpecHelper {
 
     val orgName: String = " " + aSubscription.orgName
     val html: HtmlFormat.Appendable =
-      view(orgName, formattedDate, formattedTime, summaryList)(request, messages(application), frontendAppConfig)
+      view(orgName, formattedDate, formattedTime, summaryList)(using request, messages(application), frontendAppConfig)
     val document: Document = doc(html)
 
     "should contain the expected title" in {

@@ -55,7 +55,8 @@ class RepaymentMethodControllerSpec extends SpecBase with MockitoSugar {
     userAnswers: Option[UserAnswers],
     optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)
   ): GuiceApplicationBuilder = {
-    when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    when(mockSdilConnector.getReturn(any(), any())(using any()))
+      .thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers)
       .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
   }
@@ -109,7 +110,7 @@ class RepaymentMethodControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[RepaymentMethodView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(RepaymentMethod.values.head), NormalMode)(
+        contentAsString(result) mustEqual view(form.fill(RepaymentMethod.values.head), NormalMode)(using
           request,
           messages(application)
         ).toString

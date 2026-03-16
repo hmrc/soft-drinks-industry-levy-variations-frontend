@@ -124,7 +124,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
             ArgumentMatchers.eq(PackingDetails),
             ArgumentMatchers.any(),
             ArgumentMatchers.any()
-          )(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+          )(using ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
         )
           .thenReturn(Future.successful(onwardUrlForALF))
 
@@ -151,7 +151,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
             ArgumentMatchers.eq(PackingDetails),
             ArgumentMatchers.any(),
             ArgumentMatchers.any()
-          )(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+          )(using ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
         }
       }
 

@@ -60,7 +60,8 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
     optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)
   ): GuiceApplicationBuilder =
     if (userAnswers.fold(false)(_.correctReturnPeriod.nonEmpty)) {
-      when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+      when(mockSdilConnector.getReturn(any(), any())(using any()))
+        .thenReturn(createSuccessVariationResult(optOriginalReturn))
       applicationBuilder(userAnswers = userAnswers)
         .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
     } else {
@@ -119,7 +120,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
         val mockSessionService = mock[SessionService]
 
         when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
-        when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())).thenReturn(
+        when(mockSdilConnector.checkSmallProducerStatus(any(), any())(using any())).thenReturn(
           createSuccessVariationResult(
             Some(true)
           )
@@ -245,7 +246,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
       }
 
       s"must return a Bad Request and errors when data with small producer status false is submitted in $mode" in {
-        when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())).thenReturn(
+        when(mockSdilConnector.checkSmallProducerStatus(any(), any())(using any())).thenReturn(
           createSuccessVariationResult(
             Some(false)
           )
@@ -295,7 +296,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
 
         val mockSessionService = mock[SessionService]
 
-        when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())).thenReturn(
+        when(mockSdilConnector.checkSmallProducerStatus(any(), any())(using any())).thenReturn(
           createFailureVariationResult(
             UnexpectedResponseFromSDIL
           )
@@ -338,7 +339,7 @@ class AddASmallProducerControllerSpec extends SpecBase with MockitoSugar {
             )
             .build()
 
-        when(mockSdilConnector.checkSmallProducerStatus(any(), any())(any())).thenReturn(
+        when(mockSdilConnector.checkSmallProducerStatus(any(), any())(using any())).thenReturn(
           createSuccessVariationResult(
             Some(true)
           )

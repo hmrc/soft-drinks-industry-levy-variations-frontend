@@ -71,7 +71,7 @@ class UpdateDoneControllerSpec extends SpecBase {
           formattedDate,
           LocalDateTime.ofInstant(testTime, ZoneId.of("Europe/London")).format(DateTimeFormatter.ofPattern("h:mma")),
           orgName
-        )(request, messages(application), config).toString
+        )(using request, messages(application), config).toString
       }
     }
 

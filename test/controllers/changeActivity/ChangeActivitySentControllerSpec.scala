@@ -84,7 +84,7 @@ class ChangeActivitySentControllerSpec extends SpecBase {
             .ofInstant(testTime, ZoneId.of("Europe/London"))
             .format(DateTimeFormatter.ofPattern("h:mma")),
           sections
-        )(request, messages(application), config).toString
+        )(using request, messages(application), config).toString
       }
     }
 

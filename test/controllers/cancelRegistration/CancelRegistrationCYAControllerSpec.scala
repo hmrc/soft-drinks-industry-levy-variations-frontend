@@ -70,7 +70,7 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
         val orgName = " Super Lemonade Plc"
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(orgName, list, routes.CancelRegistrationCYAController.onSubmit)(
+        contentAsString(result) mustEqual view(orgName, list, routes.CancelRegistrationCYAController.onSubmit)(using
           request,
           messages(application)
         ).toString
@@ -190,7 +190,7 @@ class CancelRegistrationCYAControllerSpec extends SpecBase with SummaryListFluen
       running(application) {
         val request = FakeRequest(POST, CancelRegistrationCYAController.onPageLoad().url).withFormUrlEncodedBody()
         when(
-          mockOrchestrator.submitVariationAndUpdateSession(any(), any())(any(), any())
+          mockOrchestrator.submitVariationAndUpdateSession(any(), any())(using any(), any())
         ).thenReturn(createSuccessVariationResult((): Unit))
 
         val result = route(application, request).value

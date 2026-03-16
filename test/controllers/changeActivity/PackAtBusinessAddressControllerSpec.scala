@@ -58,7 +58,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request = FakeRequest(GET, packAtBusinessAddressRoute)
-        when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
+        when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(using any())).thenReturn {
           createSuccessVariationResult(Some(aSubscription))
         }
         val result = route(application, request).value
@@ -79,7 +79,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
       running(application) {
         val request = FakeRequest(GET, packAtBusinessAddressRoute)
-        when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(any())).thenReturn {
+        when(mockSdilConnector.retrieveSubscription(matching("XCSDIL000000002"), anyString())(using any())).thenReturn {
           createSuccessVariationResult(Some(aSubscription))
         }
         val view = application.injector.instanceOf[PackAtBusinessAddressView]
@@ -88,7 +88,7 @@ class PackAtBusinessAddressControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual OK
         val address = AddressFormattingHelper.addressFormatting(businessAddress, Option(businessName))
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, address)(
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, address)(using
           request,
           messages(application)
         ).toString

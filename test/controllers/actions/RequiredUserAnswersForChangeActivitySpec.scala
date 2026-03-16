@@ -904,7 +904,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             res.get mustBe eachPage.url(CheckMode)
           }
       }
-      List[QuestionPage[_]](
+      List[QuestionPage[?]](
         AmountProducedPage,
         ContractPackingPage,
         HowManyContractPackingPage,
@@ -959,7 +959,7 @@ class RequiredUserAnswersForChangeActivitySpec extends SpecBase with DefaultAwai
             res.get mustBe eachPage.url(CheckMode)
           }
       }
-      List[QuestionPage[_]](
+      List[QuestionPage[?]](
         AmountProducedPage,
         ContractPackingPage,
         ImportsPage,

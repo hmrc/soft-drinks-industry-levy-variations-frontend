@@ -59,7 +59,7 @@ class UpdateDoneViewSpec extends ViewSpecHelper {
   }
 
   "View" - {
-    val html = view(summaryList, formattedDate, formattedTime, orgName)(request, messages(application), config)
+    val html = view(summaryList, formattedDate, formattedTime, orgName)(using request, messages(application), config)
     val document = doc(html)
     "should contain the expected title" in {
       document.title() mustBe "Update sent - Soft Drinks Industry Levy - GOV.UK"

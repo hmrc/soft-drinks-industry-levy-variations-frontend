@@ -37,7 +37,7 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
   val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
   val mockAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
-  val returnService = new ReturnService(mockSdilConnector)(mockAppConfig)
+  val returnService = new ReturnService(mockSdilConnector)(using mockAppConfig)
 
   "getBalanceBroughtForward" - {
 
@@ -45,7 +45,8 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
       "should get the balance history, extract the total and return it" in {
         val fli = CentralAssessment(LocalDate.now(), 200)
         when(mockAppConfig.balanceAllEnabled).thenReturn(true)
-        when(mockSdilConnector.balanceHistory(any(), any())(any())).thenReturn(createSuccessVariationResult(List(fli)))
+        when(mockSdilConnector.balanceHistory(any(), any())(using any()))
+          .thenReturn(createSuccessVariationResult(List(fli)))
 
         val res = returnService.getBalanceBroughtForward("sdilRef")
 
@@ -56,7 +57,8 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
 
       "and balance history is empty should return 0" in {
         when(mockAppConfig.balanceAllEnabled).thenReturn(true)
-        when(mockSdilConnector.balanceHistory(any(), any())(any())).thenReturn(createSuccessVariationResult(List.empty))
+        when(mockSdilConnector.balanceHistory(any(), any())(using any()))
+          .thenReturn(createSuccessVariationResult(List.empty))
 
         val res = returnService.getBalanceBroughtForward("sdilRef")
 
@@ -69,7 +71,7 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
     "when balanceAll is disabled" - {
       "should return the current balance" in {
         when(mockAppConfig.balanceAllEnabled).thenReturn(false)
-        when(mockSdilConnector.balance(any(), any())(any())).thenReturn(createSuccessVariationResult(200))
+        when(mockSdilConnector.balance(any(), any())(using any())).thenReturn(createSuccessVariationResult(200))
 
         val res = returnService.getBalanceBroughtForward("sdilRef")
 
@@ -105,7 +107,7 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
           "testing",
           Some(RepaymentMethod.BankAccount.toString)
         )
-        when(mockSdilConnector.submitSdilReturnsVary(aSubscription.sdilRef, expectedReturnVariation)(hc))
+        when(mockSdilConnector.submitSdilReturnsVary(aSubscription.sdilRef, expectedReturnVariation)(using hc))
           .thenReturn(createSuccessVariationResult((): Unit))
 
         val res =
@@ -133,7 +135,7 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
           "testing",
           None
         )
-        when(mockSdilConnector.submitSdilReturnsVary(aSubscription.sdilRef, expectedReturnVariation)(hc))
+        when(mockSdilConnector.submitSdilReturnsVary(aSubscription.sdilRef, expectedReturnVariation)(using hc))
           .thenReturn(createSuccessVariationResult((): Unit))
 
         val res =
@@ -155,7 +157,7 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
           "",
           None
         )
-        when(mockSdilConnector.submitSdilReturnsVary(aSubscription.sdilRef, expectedReturnVariation)(hc))
+        when(mockSdilConnector.submitSdilReturnsVary(aSubscription.sdilRef, expectedReturnVariation)(using hc))
           .thenReturn(createSuccessVariationResult((): Unit))
 
         val res =
@@ -213,7 +215,7 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
         when(mockAppConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
         when(mockAppConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
 
-        when(mockSdilConnector.submitReturnVariation(aSubscription.sdilRef, expectedReturnsVariation)(hc))
+        when(mockSdilConnector.submitReturnVariation(aSubscription.sdilRef, expectedReturnsVariation)(using hc))
           .thenReturn(createSuccessVariationResult((): Unit))
 
         val res =
@@ -266,7 +268,7 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
         when(mockAppConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
         when(mockAppConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
 
-        when(mockSdilConnector.submitReturnVariation(aSubscription.sdilRef, expectedReturnsVariation)(hc))
+        when(mockSdilConnector.submitReturnVariation(aSubscription.sdilRef, expectedReturnsVariation)(using hc))
           .thenReturn(createSuccessVariationResult((): Unit))
 
         val res =
@@ -319,7 +321,7 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
         when(mockAppConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
         when(mockAppConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
 
-        when(mockSdilConnector.submitReturnVariation(aSubscription.sdilRef, expectedReturnsVariation)(hc))
+        when(mockSdilConnector.submitReturnVariation(aSubscription.sdilRef, expectedReturnsVariation)(using hc))
           .thenReturn(createSuccessVariationResult((): Unit))
 
         val res =

@@ -56,7 +56,8 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar {
     userAnswers: Option[UserAnswers],
     optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)
   ): GuiceApplicationBuilder = {
-    when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    when(mockSdilConnector.getReturn(any(), any())(using any()))
+      .thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers)
       .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
   }
@@ -75,7 +76,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[SmallProducerDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode, smallProducerList)(
+        contentAsString(result) mustEqual view(form, NormalMode, smallProducerList)(using
           request,
           messages(application)
         ).toString
@@ -96,7 +97,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(true), NormalMode, smallProducerList)(
+        contentAsString(result) mustEqual view(form.fill(true), NormalMode, smallProducerList)(using
           request,
           messages(application)
         ).toString
@@ -145,7 +146,7 @@ class SmallProducerDetailsControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, smallProducerList)(
+        contentAsString(result) mustEqual view(boundForm, NormalMode, smallProducerList)(using
           request,
           messages(application)
         ).toString

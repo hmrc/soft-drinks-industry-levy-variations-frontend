@@ -147,7 +147,7 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
           ArgumentMatchers.eq(WarehouseDetails),
           ArgumentMatchers.any(),
           ArgumentMatchers.any()
-        )(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+        )(using ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       )
         .thenReturn(Future.successful(onwardUrlForALF))
 
@@ -179,7 +179,7 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
           ArgumentMatchers.eq(WarehouseDetails),
           ArgumentMatchers.any(),
           ArgumentMatchers.any()
-        )(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+        )(using ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       }
     }
 
@@ -220,7 +220,7 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
           ArgumentMatchers.any(),
           ArgumentMatchers.any(),
           ArgumentMatchers.any()
-        )(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+        )(using ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       }
     }
 

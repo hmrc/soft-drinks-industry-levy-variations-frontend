@@ -48,11 +48,12 @@ class CancelRegistrationOrchestratorSpec extends SpecBase with MockitoSugar with
 
         val expectedSubscription = testVariationSubmission(isDeregistered = true)
 
-        when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(hc))
+        when(mockConnector.submitVariation(expectedSubscription, aSubscription.sdilRef)(using hc))
           .thenReturn(createSuccessVariationResult((): Unit))
         when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
 
-        val res = cancelRegistrationOrchestrator.submitVariationAndUpdateSession(aSubscription, userAnswers)(hc, ec)
+        val res =
+          cancelRegistrationOrchestrator.submitVariationAndUpdateSession(aSubscription, userAnswers)(using hc, ec)
         whenReady(res.value) { result =>
           result mustEqual Right((): Unit)
         }

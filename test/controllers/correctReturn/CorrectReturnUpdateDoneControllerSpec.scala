@@ -131,9 +131,10 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
       ): Future[Result] = action
     }
     when(
-      mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())
+      mockOrchestrator.calculateAmounts(any(), any(), any(), any())(using any(), any())
     ).thenReturn(createSuccessVariationResult(amounts))
-    when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    when(mockSdilConnector.getReturn(any(), any())(using any()))
+      .thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers, subscription = subscription)
       .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
       .overrides(bind[RequiredUserAnswersForCorrectReturn].to(requiredAnswers))
@@ -170,7 +171,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
         userAnswers: Option[UserAnswers],
         optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)
       ): GuiceApplicationBuilder = {
-        when(mockSdilConnector.getReturn(any(), any())(any()))
+        when(mockSdilConnector.getReturn(any(), any())(using any()))
           .thenReturn(createSuccessVariationResult(optOriginalReturn))
         applicationBuilder(userAnswers = userAnswers)
           .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
@@ -187,7 +188,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
         val request = FakeRequest(GET, CorrectReturnUpdateDoneController.onPageLoad().url)
 
         when(
-          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(any(), any())
+          mockOrchestrator.calculateAmounts(any(), any(), any(), any())(using any(), any())
         ).thenReturn(createSuccessVariationResult(amounts))
 
         val result = route(application, request).value
@@ -215,7 +216,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
             .format(DateTimeFormatter.ofPattern("h:mma")),
           returnPeriodStart,
           returnPeriodEnd
-        )(request, messages(application), frontendAppConfig).toString
+        )(using request, messages(application), frontendAppConfig).toString
       }
     }
 
@@ -224,7 +225,7 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
         userAnswers: Option[UserAnswers],
         optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)
       ): GuiceApplicationBuilder = {
-        when(mockSdilConnector.getReturn(any(), any())(any()))
+        when(mockSdilConnector.getReturn(any(), any())(using any()))
           .thenReturn(createSuccessVariationResult(optOriginalReturn))
         applicationBuilder(userAnswers = userAnswers)
           .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))

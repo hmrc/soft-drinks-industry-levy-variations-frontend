@@ -63,7 +63,8 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
     subscription: Option[RetrievedSubscription] = Some(aSubscription),
     optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn)
   ): GuiceApplicationBuilder = {
-    when(mockSdilConnector.getReturn(any(), any())(any())).thenReturn(createSuccessVariationResult(optOriginalReturn))
+    when(mockSdilConnector.getReturn(any(), any())(using any()))
+      .thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers, subscription = Some(aSubscription))
       .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
   }
@@ -126,7 +127,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         val mockSdilConnector = mock[SoftDrinksIndustryLevyConnector]
 
         when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
-        when(mockSdilConnector.retrieveSubscription(any(), any())(any())).thenReturn(
+        when(mockSdilConnector.retrieveSubscription(any(), any())(using any())).thenReturn(
           createSuccessVariationResult(
             Some(aSubscription)
           )
@@ -193,7 +194,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
           ArgumentMatchers.eq(PackingDetails),
           ArgumentMatchers.any(),
           ArgumentMatchers.any()
-        )(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+        )(using ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       )
         .thenReturn(Future.successful(onwardUrlForALF))
 
@@ -221,7 +222,7 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
           ArgumentMatchers.eq(PackingDetails),
           ArgumentMatchers.any(),
           ArgumentMatchers.any()
-        )(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+        )(using ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       }
     }
 

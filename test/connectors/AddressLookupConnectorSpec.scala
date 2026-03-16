@@ -83,7 +83,7 @@ class AddressLookupConnectorSpec extends SpecBase with MockitoSugar with HttpCli
     "getAddress" - {
 
       def getAddressResult: Future[HttpResult[AlfResponse]] =
-        testAddressLookupConnector.getAddress(id)(implicitly, implicitly)
+        testAddressLookupConnector.getAddress(id)(using implicitly, implicitly)
 
       "return a AlfResponse Model" in {
         setupMockHttp(Right(customerAddressMax))

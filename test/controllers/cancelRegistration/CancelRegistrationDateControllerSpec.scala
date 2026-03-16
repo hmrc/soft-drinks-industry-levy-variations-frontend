@@ -73,7 +73,7 @@ class CancelRegistrationDateControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[CancelRegistrationDateView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(getRequest(), messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(using getRequest(), messages(application)).toString
       }
     }
 
@@ -89,7 +89,7 @@ class CancelRegistrationDateControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, getRequest()).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(
+        contentAsString(result) mustEqual view(form.fill(validAnswer), NormalMode)(using
           getRequest(),
           messages(application)
         ).toString

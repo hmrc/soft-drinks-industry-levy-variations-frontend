@@ -78,7 +78,7 @@ class UpdateContactDetailsViewSpec extends ViewSpecHelper {
       questionItems.size() mustBe contactdetailsMap.size
     }
 
-    contactdetailsMap.zipWithIndex.foreach { case ((fieldName, fieldValue), index) =>
+    contactdetailsMap.zipWithIndex.foreach { case ((fieldName, _), index) =>
       "when the form is not prepopulated and has no errors" - {
         "should include the expected question fields" - {
 
@@ -117,7 +117,7 @@ class UpdateContactDetailsViewSpec extends ViewSpecHelper {
       }
     }
 
-    contactdetailsMap.foreach { case (fieldName, fieldValue) =>
+    contactdetailsMap.foreach { case (fieldName, _) =>
       val fieldWithError: Map[String, String] = contactdetailsMap.map { case (k, v) =>
         if (k == fieldName) { k -> "" }
         else { k -> v }

@@ -41,7 +41,7 @@ class JourneyRecoveryControllerSpec extends SpecBase {
           val continueView = application.injector.instanceOf[JourneyRecoveryContinueView]
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual continueView(continueUrl.unsafeValue)(
+          contentAsString(result) mustEqual continueView(continueUrl.unsafeValue)(using
             request,
             messages(application)
           ).toString

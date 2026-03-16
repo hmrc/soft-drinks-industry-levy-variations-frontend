@@ -52,7 +52,7 @@ class BusinessAddressControllerSpec extends SpecBase {
             ArgumentMatchers.eq(ContactDetails),
             ArgumentMatchers.any(),
             ArgumentMatchers.any()
-          )(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+          )(using ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       ).thenReturn(Future.successful("woohooherewegoo!"))
 
       running(application) {
@@ -78,7 +78,7 @@ class BusinessAddressControllerSpec extends SpecBase {
             ArgumentMatchers.eq(ContactDetails),
             ArgumentMatchers.any(),
             ArgumentMatchers.any()
-          )(ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+          )(using ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
       ).thenReturn(Future.failed(new Exception("uh oh spagetio")))
 
       running(application) {

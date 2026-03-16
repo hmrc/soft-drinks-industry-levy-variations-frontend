@@ -94,7 +94,7 @@ class ChangeRegisteredDetailsControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(ChangeRegisteredDetails.values), isVoluntary)(
+        contentAsString(result) mustEqual view(form.fill(ChangeRegisteredDetails.values), isVoluntary)(using
           request,
           messages(application)
         ).toString

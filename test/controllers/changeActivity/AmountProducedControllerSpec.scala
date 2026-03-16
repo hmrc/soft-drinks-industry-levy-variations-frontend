@@ -82,7 +82,7 @@ class AmountProducedControllerSpec extends SpecBase with MockitoSugar {
         val view = application.injector.instanceOf[AmountProducedView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form.fill(AmountProduced.values.head), NormalMode)(
+        contentAsString(result) mustEqual view(form.fill(AmountProduced.values.head), NormalMode)(using
           request,
           messages(application)
         ).toString

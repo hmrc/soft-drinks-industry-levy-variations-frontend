@@ -53,7 +53,7 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
         )
         .build()
 
-      when(mockConnector.getPendingReturnsFromCache(any())(any()))
+      when(mockConnector.getPendingReturnsFromCache(any())(using any()))
         .thenReturn(createSuccessVariationResult(returnPeriods))
 
       running(application) {
@@ -68,7 +68,7 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
           Html(s"Before you can cancel your registration, you must send ${2} returns and make any payments due.")
-        )(request, messages(application), config).toString
+        )(using request, messages(application), config).toString
       }
     }
 
@@ -80,7 +80,7 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
         )
         .build()
 
-      when(mockConnector.getPendingReturnsFromCache(any())(any()))
+      when(mockConnector.getPendingReturnsFromCache(any())(using any()))
         .thenReturn(createSuccessVariationResult(returnPeriod))
 
       running(application) {
@@ -97,7 +97,7 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
           Html(
             s"Before you can cancel your registration, you must send a return for April to April 2018 and make any payments due."
           )
-        )(request, messages(application), config).toString
+        )(using request, messages(application), config).toString
       }
     }
 
@@ -109,7 +109,8 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
         )
         .build()
 
-      when(mockConnector.getPendingReturnsFromCache(any())(any())).thenReturn(createSuccessVariationResult(List.empty))
+      when(mockConnector.getPendingReturnsFromCache(any())(using any()))
+        .thenReturn(createSuccessVariationResult(List.empty))
 
       running(application) {
         val request = FakeRequest(GET, fileReturnBeforDeregRoute)
@@ -128,7 +129,7 @@ class FileReturnBeforeDeregControllerSpec extends SpecBase {
 
       val mockSessionService = mock(classOf[SessionService])
 
-      when(mockConnector.getPendingReturnsFromCache(any())(any()))
+      when(mockConnector.getPendingReturnsFromCache(any())(using any()))
         .thenReturn(createSuccessVariationResult(returnPeriods))
 
       val application =
