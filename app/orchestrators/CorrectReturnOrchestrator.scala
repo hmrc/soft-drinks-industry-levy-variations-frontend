@@ -22,7 +22,7 @@ import connectors.SoftDrinksIndustryLevyConnector
 import errors.{ FailedToAddDataToUserAnswers, MissingRequiredAnswers, NoSdilReturnForPeriod, NoVariableReturns }
 import models.backend.RetrievedSubscription
 import models.correctReturn.CorrectReturnUserAnswersData
-import models.{ Amounts, ReturnPeriod, SdilReturn, UserAnswers }
+import models.{ Amounts, LevyCalculation, ReturnPeriod, SdilReturn, UserAnswers }
 import service.VariationResult
 import services.{ ReturnService, SessionService }
 import uk.gov.hmrc.http.HeaderCarrier
@@ -140,4 +140,10 @@ class CorrectReturnOrchestrator @Inject() (
     originalReturn: SdilReturn
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Amounts] =
     returnService.calculateAmounts(sdilRef, userAnswers, returnPeriod, originalReturn)
+
+  def calculateLevyCalculations(sdilRef: String, userAnswers: UserAnswers)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Map[(Long, Long), LevyCalculation]] =
+    returnService.calculateLevyCalculations(sdilRef, userAnswers)
 }

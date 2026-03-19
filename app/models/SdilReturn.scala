@@ -16,13 +16,14 @@
 
 package models
 
-import config.FrontendAppConfig
-import models.LevyCalculator.getLevyCalculation
+import connectors.SoftDrinksIndustryLevyConnector
 import models.submission.Litreage
 import pages.correctReturn.ExemptionsForSmallProducersPage
 import play.api.libs.json.{ Json, OFormat }
+import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.{ Instant, LocalDateTime, ZoneId }
+import scala.concurrent.{ ExecutionContext, Future }
 
 case class SdilReturn(
   ownBrand: Litreage,
@@ -38,25 +39,24 @@ case class SdilReturn(
 
   private[models] val creditedLitreage: Litreage = Litreage.sum(List(`export`, wastage))
 
-  private[models] def calculatelevy(
-    litreage: Litreage
-  )(implicit config: FrontendAppConfig, returnPeriod: ReturnPeriod): BigDecimal = {
-    val levyCalculation: LevyCalculation =
-      getLevyCalculation(litreage.lower, litreage.higher, returnPeriod)(using config)
-    levyCalculation.totalRoundedDown
-  }
-
-  def total(implicit config: FrontendAppConfig, returnPeriod: ReturnPeriod): BigDecimal = {
+  def total(sdilRef: String, connector: SoftDrinksIndustryLevyConnector, returnPeriod: ReturnPeriod)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[BigDecimal] = {
     val totalLiterage = Litreage(
       leviedLitreage.lower - creditedLitreage.lower,
       leviedLitreage.higher - creditedLitreage.higher
     )
-    calculatelevy(totalLiterage)
+    connector.calculateLevy(sdilRef, totalLiterage.lower, totalLiterage.higher, returnPeriod).map(_.totalRoundedDown)
   }
 
-  def taxEstimation(implicit config: FrontendAppConfig, returnPeriod: ReturnPeriod): BigDecimal = calculatelevy(
-    leviedLitreage.combineN(4)
-  )
+  def taxEstimation(sdilRef: String, connector: SoftDrinksIndustryLevyConnector, returnPeriod: ReturnPeriod)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[BigDecimal] = {
+    val annualLitreage = leviedLitreage.combineN(4)
+    connector.calculateLevy(sdilRef, annualLitreage.lower, annualLitreage.higher, returnPeriod).map(_.totalRoundedDown)
+  }
 }
 
 object SdilReturn {

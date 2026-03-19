@@ -39,6 +39,9 @@ object SDILSessionKeys {
     "BALANCE_WITH_NO_ASSESSMENT"
   }
 
+  def levyCalculation(lowLitres: Long, highLitres: Long, returnPeriod: ReturnPeriod) =
+    s"LEVY_CALC_${lowLitres}_${highLitres}_YEAR_${returnPeriod.year}_QUARTER_${returnPeriod.quarter}"
+
   def balanceHistory(withAssessment: Boolean) = if (withAssessment) {
     "BALANCE_HISTORY_WITH_ASSESSMENT"
   } else {

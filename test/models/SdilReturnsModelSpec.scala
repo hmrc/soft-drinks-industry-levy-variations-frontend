@@ -17,18 +17,18 @@
 package models
 
 import base.SpecBase
-import config.FrontendAppConfig
-import models.TaxRateUtil._
+import connectors.SoftDrinksIndustryLevyConnector
 import models.submission.Litreage
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalacheck.Gen
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import pages.correctReturn._
 
-import java.time.LocalDate
+import scala.concurrent.Future
 
 class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper with ScalaCheckPropertyChecks {
-  override implicit val frontendAppConfig: FrontendAppConfig = application.injector.instanceOf[FrontendAppConfig]
 
   private def getRandomLitres: Long = Math.floor(Math.random() * 1000000).toLong
   private def getRandomLitreage: Litreage = Litreage(getRandomLitres, getRandomLitres)
@@ -56,6 +56,10 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
       submittedOn = None
     )
   }
+
+  val mockConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
+  val testSdilRef = "XKSDIL000000022"
+  val testReturnPeriod: ReturnPeriod = ReturnPeriod(2022, 3)
 
   "SdilReturn" - {
     "generateFromUserAnswers with userAnswers should default if all answers empty" in {
@@ -127,783 +131,78 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 
     val posLitresInts = Gen.choose(1000, 10000000)
 
-    (2018 to 2024).foreach { year =>
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres packed at own site using original rates for Apr - Dec $year" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn = getSdilReturn(ownBrand = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage(lowLitres, highLitres)
-              val expectedCreditedLitreage = Litreage()
-              val expectedTotal = lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres
-              val expectedTaxEstimation = 4 * (lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres)
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres contract packed using original rates for Apr - Dec $year" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn = getSdilReturn(packLarge = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage(lowLitres, highLitres)
-              val expectedCreditedLitreage = Litreage()
-              val expectedTotal = lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres
-              val expectedTaxEstimation = 4 * (lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres)
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with exemptions for small producers using original rates for Apr - Dec $year" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn = getSdilReturn(numberOfPackSmall = 2)
-              val expectedLeviedLitreage = Litreage()
-              val expectedCreditedLitreage = Litreage()
-              val expectedTotal = BigDecimal("0.00")
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres brought into the uk using original rates for Apr - Dec $year" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn = getSdilReturn(importLarge = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage(lowLitres, highLitres)
-              val expectedCreditedLitreage = Litreage()
-              val expectedTotal = lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres
-              val expectedTaxEstimation = 4 * (lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres)
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres brought into the uk from small producers using original rates for Apr - Dec $year" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn = getSdilReturn(importSmall = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage()
-              val expectedCreditedLitreage = Litreage()
-              val expectedTotal = BigDecimal("0.00")
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with credits for litres exported using original rates for Apr - Dec $year" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn = getSdilReturn(`export` = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage()
-              val expectedCreditedLitreage = Litreage(lowLitres, highLitres)
-              val expectedTotal = -1 * (lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres)
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with credits for litres lost or damaged using original rates for Apr - Dec $year" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn = getSdilReturn(wastage = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage()
-              val expectedCreditedLitreage = Litreage(lowLitres, highLitres)
-              val expectedTotal = -1 * (lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres)
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount is 0 using original rates for Apr - Dec $year" in {
-        forAll(aprToDecInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-          val sdilReturn = getSdilReturn()
-          val expectedLeviedLitreage = Litreage()
-          val expectedCreditedLitreage = Litreage()
-          val expectedTotal = BigDecimal("0.00")
-          val expectedTaxEstimation = BigDecimal("0.00")
-          sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-          sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-          sdilReturn.total mustBe expectedTotal
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount to pay using original rates for Apr - Dec $year" in {
-        forAll(aprToDecInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-          val ownBrandLitres = getRandomLitreage
-          val packLargeLitres = getRandomLitreage
-          val importLargeLitres = getRandomLitreage
-          val sdilReturn =
-            getSdilReturn(ownBrand = ownBrandLitres, packLarge = packLargeLitres, importLarge = importLargeLitres)
-          val expectedLeviedLitreage = Litreage.sum(List(ownBrandLitres, packLargeLitres, importLargeLitres))
-          val expectedCreditedLitreage = Litreage()
-          val expectedTotal =
-            lowerBandCostPerLitre * expectedLeviedLitreage.lower + higherBandCostPerLitre * expectedLeviedLitreage.higher
-          val expectedTaxEstimation =
-            4 * (lowerBandCostPerLitre * expectedLeviedLitreage.lower + higherBandCostPerLitre * expectedLeviedLitreage.higher)
-          sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-          sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-          sdilReturn.total mustBe expectedTotal
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount is negative using original rates for Apr - Dec $year" in {
-        forAll(aprToDecInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-          val exportLitres = getRandomLitreage
-          val wastageLitres = getRandomLitreage
-          val sdilReturn = getSdilReturn(`export` = exportLitres, wastage = wastageLitres)
-          val expectedLeviedLitreage = Litreage()
-          val expectedCreditedLitreage = Litreage.sum(List(exportLitres, wastageLitres))
-          val expectedTotal =
-            -1 * (lowerBandCostPerLitre * expectedCreditedLitreage.lower + higherBandCostPerLitre * expectedCreditedLitreage.higher)
-          val expectedTaxEstimation = BigDecimal("0.00")
-          sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-          sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-          sdilReturn.total mustBe expectedTotal
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres packed at own site using original rates for Jan - Mar ${year + 1}" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn = getSdilReturn(ownBrand = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage(lowLitres, highLitres)
-              val expectedCreditedLitreage = Litreage()
-              val expectedTotal = lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres
-              val expectedTaxEstimation = 4 * (lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres)
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres contract packed using original rates for Jan - Mar ${year + 1}" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn = getSdilReturn(packLarge = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage(lowLitres, highLitres)
-              val expectedCreditedLitreage = Litreage()
-              val expectedTotal = lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres
-              val expectedTaxEstimation = 4 * (lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres)
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with exemptions for small producers using original rates for Jan - Mar ${year + 1}" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn = getSdilReturn(numberOfPackSmall = 2)
-              val expectedLeviedLitreage = Litreage()
-              val expectedCreditedLitreage = Litreage()
-              val expectedTotal = BigDecimal("0.00")
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres brought into the uk using original rates for Jan - Mar ${year + 1}" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn = getSdilReturn(importLarge = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage(lowLitres, highLitres)
-              val expectedCreditedLitreage = Litreage()
-              val expectedTotal = lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres
-              val expectedTaxEstimation = 4 * (lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres)
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres brought into the uk from small producers using original rates for Jan - Mar ${year + 1}" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn = getSdilReturn(importSmall = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage()
-              val expectedCreditedLitreage = Litreage()
-              val expectedTotal = BigDecimal("0.00")
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with credits for litres exported using original rates for Jan - Mar ${year + 1}" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn = getSdilReturn(`export` = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage()
-              val expectedCreditedLitreage = Litreage(lowLitres, highLitres)
-              val expectedTotal = -1 * (lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres)
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with credits for litres lost or damaged using original rates for Jan - Mar ${year + 1}" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn = getSdilReturn(wastage = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage()
-              val expectedCreditedLitreage = Litreage(lowLitres, highLitres)
-              val expectedTotal = -1 * (lowerBandCostPerLitre * lowLitres + higherBandCostPerLitre * highLitres)
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount is 0 using original rates for Jan - Mar ${year + 1}" in {
-        forAll(janToMarInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-          val sdilReturn = getSdilReturn()
-          val expectedLeviedLitreage = Litreage()
-          val expectedCreditedLitreage = Litreage()
-          val expectedTotal = BigDecimal("0.00")
-          val expectedTaxEstimation = BigDecimal("0.00")
-          sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-          sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-          sdilReturn.total mustBe expectedTotal
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount to pay using original rates for Jan - Mar ${year + 1}" in {
-        forAll(janToMarInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-          val ownBrandLitres = getRandomLitreage
-          val packLargeLitres = getRandomLitreage
-          val importLargeLitres = getRandomLitreage
-          val sdilReturn =
-            getSdilReturn(ownBrand = ownBrandLitres, packLarge = packLargeLitres, importLarge = importLargeLitres)
-          val expectedLeviedLitreage = Litreage.sum(List(ownBrandLitres, packLargeLitres, importLargeLitres))
-          val expectedCreditedLitreage = Litreage()
-          val expectedTotal =
-            lowerBandCostPerLitre * expectedLeviedLitreage.lower + higherBandCostPerLitre * expectedLeviedLitreage.higher
-          val expectedTaxEstimation =
-            4 * (lowerBandCostPerLitre * expectedLeviedLitreage.lower + higherBandCostPerLitre * expectedLeviedLitreage.higher)
-          sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-          sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-          sdilReturn.total mustBe expectedTotal
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount is negative using original rates for Jan - Mar ${year + 1}" in {
-        forAll(janToMarInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-          val exportLitres = getRandomLitreage
-          val wastageLitres = getRandomLitreage
-          val sdilReturn = getSdilReturn(`export` = exportLitres, wastage = wastageLitres)
-          val expectedLeviedLitreage = Litreage()
-          val expectedCreditedLitreage = Litreage.sum(List(exportLitres, wastageLitres))
-          val expectedTotal =
-            -1 * (lowerBandCostPerLitre * expectedCreditedLitreage.lower + higherBandCostPerLitre * expectedCreditedLitreage.higher)
-          val expectedTaxEstimation = BigDecimal("0.00")
-          sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-          sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-          sdilReturn.total mustBe expectedTotal
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation
+    "calculate leviedLitreage correctly with litres packed at own site" in {
+      forAll(posLitresInts) { lowLitres =>
+        forAll(posLitresInts) { highLitres =>
+          val sdilReturn = getSdilReturn(ownBrand = Litreage(lowLitres, highLitres))
+          sdilReturn.leviedLitreage mustBe Litreage(lowLitres, highLitres)
+          sdilReturn.creditedLitreage mustBe Litreage()
         }
       }
     }
 
-    (2025 to 2025).foreach { year =>
-
-      val lowerBandCostPerLitreMap: Map[Int, BigDecimal] = Map(2025 -> BigDecimal("0.194"))
-      val higherBandCostPerLitreMap: Map[Int, BigDecimal] = Map(2025 -> BigDecimal("0.259"))
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres packed at own site using $year rates for Apr - Dec $year" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn = getSdilReturn(ownBrand = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage(lowLitres, highLitres)
-              val expectedCreditedLitreage = Litreage()
-              val expectedTotal =
-                lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres
-              val expectedTaxEstimation =
-                4 * (lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres)
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal.setScale(2, BigDecimal.RoundingMode.DOWN)
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres contract packed using $year rates for Apr - Dec $year" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn = getSdilReturn(packLarge = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage(lowLitres, highLitres)
-              val expectedCreditedLitreage = Litreage()
-              val expectedTotal =
-                lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres
-              val expectedTaxEstimation =
-                4 * (lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres)
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal.setScale(2, BigDecimal.RoundingMode.DOWN)
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with exemptions for small producers using $year rates for Apr - Dec $year" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn = getSdilReturn(numberOfPackSmall = 2)
-              val expectedLeviedLitreage = Litreage()
-              val expectedCreditedLitreage = Litreage()
-              val expectedTotal = BigDecimal("0.00")
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal.setScale(2, BigDecimal.RoundingMode.DOWN)
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres brought into the uk using $year rates for Apr - Dec $year" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn = getSdilReturn(importLarge = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage(lowLitres, highLitres)
-              val expectedCreditedLitreage = Litreage()
-              val expectedTotal =
-                lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres
-              val expectedTaxEstimation =
-                4 * (lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres)
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal.setScale(2, BigDecimal.RoundingMode.DOWN)
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres brought into the uk from small producers using $year rates for Apr - Dec $year" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn = getSdilReturn(importSmall = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage()
-              val expectedCreditedLitreage = Litreage()
-              val expectedTotal = BigDecimal("0.00")
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal.setScale(2, BigDecimal.RoundingMode.DOWN)
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with credits for litres exported using $year rates for Apr - Dec $year" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn = getSdilReturn(`export` = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage()
-              val expectedCreditedLitreage = Litreage(lowLitres, highLitres)
-              val expectedTotal =
-                -1 * (lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres)
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal.setScale(2, BigDecimal.RoundingMode.DOWN)
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with credits for litres lost or damaged using $year rates for Apr - Dec $year" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(aprToDecInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-              val sdilReturn = getSdilReturn(wastage = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage()
-              val expectedCreditedLitreage = Litreage(lowLitres, highLitres)
-              val expectedTotal =
-                -1 * (lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres)
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal.setScale(2, BigDecimal.RoundingMode.DOWN)
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount is 0 using $year rates for Apr - Dec $year" in {
-        forAll(aprToDecInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-          val sdilReturn = getSdilReturn()
-          val expectedLeviedLitreage = Litreage()
-          val expectedCreditedLitreage = Litreage()
-          val expectedTotal = BigDecimal("0.00")
-          val expectedTaxEstimation = BigDecimal("0.00")
-          sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-          sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-          sdilReturn.total mustBe expectedTotal
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount to pay using $year rates for Apr - Dec $year" in {
-        forAll(aprToDecInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-          val ownBrandLitres = getRandomLitreage
-          val packLargeLitres = getRandomLitreage
-          val importLargeLitres = getRandomLitreage
-          val sdilReturn =
-            getSdilReturn(ownBrand = ownBrandLitres, packLarge = packLargeLitres, importLarge = importLargeLitres)
-          val expectedLeviedLitreage = Litreage.sum(List(ownBrandLitres, packLargeLitres, importLargeLitres))
-          val expectedCreditedLitreage = Litreage()
-          val expectedTotal = lowerBandCostPerLitreMap(year) * expectedLeviedLitreage.lower + higherBandCostPerLitreMap(
-            year
-          ) * expectedLeviedLitreage.higher
-          val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(
-            year
-          ) * expectedLeviedLitreage.lower + higherBandCostPerLitreMap(year) * expectedLeviedLitreage.higher)
-          sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-          sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-          sdilReturn.total mustBe expectedTotal.setScale(2, BigDecimal.RoundingMode.DOWN)
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount is negative using $year rates for Apr - Dec $year" in {
-        forAll(aprToDecInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year, month, 1))
-          val exportLitres = getRandomLitreage
-          val wastageLitres = getRandomLitreage
-          val sdilReturn = getSdilReturn(`export` = exportLitres, wastage = wastageLitres)
-          val expectedLeviedLitreage = Litreage()
-          val expectedCreditedLitreage = Litreage.sum(List(exportLitres, wastageLitres))
-          val expectedTotal = -1 * (lowerBandCostPerLitreMap(
-            year
-          ) * expectedCreditedLitreage.lower + higherBandCostPerLitreMap(year) * expectedCreditedLitreage.higher)
-          val expectedTaxEstimation = BigDecimal("0.00")
-          sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-          sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-          sdilReturn.total mustBe expectedTotal.setScale(2, BigDecimal.RoundingMode.DOWN)
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres packed at own site using $year rates for Jan - Mar ${year + 1}" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-              val sdilReturn = getSdilReturn(ownBrand = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage(lowLitres, highLitres)
-              val expectedCreditedLitreage = Litreage()
-              val expectedTotal =
-                lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres
-              val expectedTaxEstimation =
-                4 * (lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres)
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal.setScale(2, BigDecimal.RoundingMode.DOWN)
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres contract packed using $year rates for Jan - Mar ${year + 1}" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-              val sdilReturn = getSdilReturn(packLarge = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage(lowLitres, highLitres)
-              val expectedCreditedLitreage = Litreage()
-              val expectedTotal =
-                lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres
-              val expectedTaxEstimation =
-                4 * (lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres)
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal.setScale(2, BigDecimal.RoundingMode.DOWN)
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with exemptions for small producers using $year rates for Jan - Mar ${year + 1}" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-              val sdilReturn = getSdilReturn(numberOfPackSmall = 2)
-              val expectedLeviedLitreage = Litreage()
-              val expectedCreditedLitreage = Litreage()
-              val expectedTotal = BigDecimal("0.00")
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal.setScale(2, BigDecimal.RoundingMode.DOWN)
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres brought into the uk using $year rates for Jan - Mar ${year + 1}" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-              val sdilReturn = getSdilReturn(importLarge = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage(lowLitres, highLitres)
-              val expectedCreditedLitreage = Litreage()
-              val expectedTotal =
-                lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres
-              val expectedTaxEstimation =
-                4 * (lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres)
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal.setScale(2, BigDecimal.RoundingMode.DOWN)
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with litres brought into the uk from small producers using $year rates for Jan - Mar ${year + 1}" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-              val sdilReturn = getSdilReturn(importSmall = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage()
-              val expectedCreditedLitreage = Litreage()
-              val expectedTotal = BigDecimal("0.00")
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal.setScale(2, BigDecimal.RoundingMode.DOWN)
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with credits for litres exported using $year rates for Jan - Mar ${year + 1}" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-              val sdilReturn = getSdilReturn(`export` = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage()
-              val expectedCreditedLitreage = Litreage(lowLitres, highLitres)
-              val expectedTotal =
-                -1 * (lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres)
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal.setScale(2, BigDecimal.RoundingMode.DOWN)
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals with credits for litres lost or damaged using $year rates for Jan - Mar ${year + 1}" in {
-        forAll(posLitresInts) { lowLitres =>
-          forAll(posLitresInts) { highLitres =>
-            forAll(janToMarInt) { month =>
-              implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-              val sdilReturn = getSdilReturn(wastage = Litreage(lowLitres, highLitres))
-              val expectedLeviedLitreage = Litreage()
-              val expectedCreditedLitreage = Litreage(lowLitres, highLitres)
-              val expectedTotal =
-                -1 * (lowerBandCostPerLitreMap(year) * lowLitres + higherBandCostPerLitreMap(year) * highLitres)
-              val expectedTaxEstimation = BigDecimal("0.00")
-              sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-              sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-              sdilReturn.total mustBe expectedTotal.setScale(2, BigDecimal.RoundingMode.DOWN)
-              sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-            }
-          }
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount is 0 using $year rates for Jan - Mar ${year + 1}" in {
-        forAll(janToMarInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-          val sdilReturn = getSdilReturn()
-          val expectedLeviedLitreage = Litreage()
-          val expectedCreditedLitreage = Litreage()
-          val expectedTotal = BigDecimal("0.00")
-          val expectedTaxEstimation = BigDecimal("0.00")
-          sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-          sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-          sdilReturn.total mustBe expectedTotal
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount to pay using $year rates for Jan - Mar ${year + 1}" in {
-        forAll(janToMarInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-          val ownBrandLitres = getRandomLitreage
-          val packLargeLitres = getRandomLitreage
-          val importLargeLitres = getRandomLitreage
-          val sdilReturn =
-            getSdilReturn(ownBrand = ownBrandLitres, packLarge = packLargeLitres, importLarge = importLargeLitres)
-          val expectedLeviedLitreage = Litreage.sum(List(ownBrandLitres, packLargeLitres, importLargeLitres))
-          val expectedCreditedLitreage = Litreage()
-          val expectedTotal = lowerBandCostPerLitreMap(year) * expectedLeviedLitreage.lower + higherBandCostPerLitreMap(
-            year
-          ) * expectedLeviedLitreage.higher
-          val expectedTaxEstimation = 4 * (lowerBandCostPerLitreMap(
-            year
-          ) * expectedLeviedLitreage.lower + higherBandCostPerLitreMap(year) * expectedLeviedLitreage.higher)
-          sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-          sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-          sdilReturn.total mustBe expectedTotal.setScale(2, BigDecimal.RoundingMode.DOWN)
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
-        }
-      }
-
-      s"calculate leviedLitreage, creditedLitreage, total levy for quarter, and tax estimation correctly with non-zero litres totals when return amount is negative using $year rates for Jan - Mar ${year + 1}" in {
-        forAll(janToMarInt) { month =>
-          implicit val returnPeriod = ReturnPeriod(LocalDate.of(year + 1, month, 1))
-          val exportLitres = getRandomLitreage
-          val wastageLitres = getRandomLitreage
-          val sdilReturn = getSdilReturn(`export` = exportLitres, wastage = wastageLitres)
-          val expectedLeviedLitreage = Litreage()
-          val expectedCreditedLitreage = Litreage.sum(List(exportLitres, wastageLitres))
-          val expectedTotal = -1 * (lowerBandCostPerLitreMap(
-            year
-          ) * expectedCreditedLitreage.lower + higherBandCostPerLitreMap(year) * expectedCreditedLitreage.higher)
-          val expectedTaxEstimation = BigDecimal("0.00")
-          sdilReturn.leviedLitreage mustBe expectedLeviedLitreage
-          sdilReturn.creditedLitreage mustBe expectedCreditedLitreage
-          sdilReturn.total mustBe expectedTotal.setScale(2, BigDecimal.RoundingMode.DOWN)
-          sdilReturn.taxEstimation mustBe expectedTaxEstimation.setScale(2, BigDecimal.RoundingMode.DOWN)
+    "calculate leviedLitreage correctly with litres contract packed" in {
+      forAll(posLitresInts) { lowLitres =>
+        forAll(posLitresInts) { highLitres =>
+          val sdilReturn = getSdilReturn(packLarge = Litreage(lowLitres, highLitres))
+          sdilReturn.leviedLitreage mustBe Litreage(lowLitres, highLitres)
+          sdilReturn.creditedLitreage mustBe Litreage()
         }
       }
     }
 
+    "calculate leviedLitreage correctly with litres brought into the uk" in {
+      forAll(posLitresInts) { lowLitres =>
+        forAll(posLitresInts) { highLitres =>
+          val sdilReturn = getSdilReturn(importLarge = Litreage(lowLitres, highLitres))
+          sdilReturn.leviedLitreage mustBe Litreage(lowLitres, highLitres)
+          sdilReturn.creditedLitreage mustBe Litreage()
+        }
+      }
+    }
+
+    "calculate creditedLitreage correctly with credits for exports" in {
+      forAll(posLitresInts) { lowLitres =>
+        forAll(posLitresInts) { highLitres =>
+          val sdilReturn = getSdilReturn(`export` = Litreage(lowLitres, highLitres))
+          sdilReturn.leviedLitreage mustBe Litreage()
+          sdilReturn.creditedLitreage mustBe Litreage(lowLitres, highLitres)
+        }
+      }
+    }
+
+    "calculate creditedLitreage correctly with credits for wastage" in {
+      forAll(posLitresInts) { lowLitres =>
+        forAll(posLitresInts) { highLitres =>
+          val sdilReturn = getSdilReturn(wastage = Litreage(lowLitres, highLitres))
+          sdilReturn.leviedLitreage mustBe Litreage()
+          sdilReturn.creditedLitreage mustBe Litreage(lowLitres, highLitres)
+        }
+      }
+    }
+
+    "total should call connector and return totalRoundedDown" in {
+      val sdilReturn = getSdilReturn(ownBrand = Litreage(1000, 2000))
+      val expectedCalc = LevyCalculation(BigDecimal("180.00"), BigDecimal("480.00"), BigDecimal("660.00"), BigDecimal("660.00"))
+      when(mockConnector.calculateLevy(any(), any(), any(), any())(using any()))
+        .thenReturn(Future.successful(expectedCalc))
+
+      val result = sdilReturn.total(testSdilRef, mockConnector, testReturnPeriod)
+      whenReady(result) { total =>
+        total mustBe BigDecimal("660.00")
+      }
+    }
+
+    "taxEstimation should call connector with combineN(4) litreage and return totalRoundedDown" in {
+      val sdilReturn = getSdilReturn(ownBrand = Litreage(1000, 2000))
+      val expectedCalc = LevyCalculation(BigDecimal("720.00"), BigDecimal("1920.00"), BigDecimal("2640.00"), BigDecimal("2640.00"))
+      when(mockConnector.calculateLevy(any(), any(), any(), any())(using any()))
+        .thenReturn(Future.successful(expectedCalc))
+
+      val result = sdilReturn.taxEstimation(testSdilRef, mockConnector, testReturnPeriod)
+      whenReady(result) { estimation =>
+        estimation mustBe BigDecimal("2640.00")
+      }
+    }
   }
 }

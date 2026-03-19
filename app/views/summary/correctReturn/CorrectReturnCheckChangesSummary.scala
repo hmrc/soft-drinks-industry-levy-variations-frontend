@@ -16,7 +16,7 @@
 
 package views.summary.correctReturn
 
-import config.FrontendAppConfig
+import models.LevyCalculation
 import models.backend.RetrievedSubscription
 import models.correctReturn.ChangedPage
 import models.{ Amounts, UserAnswers }
@@ -31,10 +31,12 @@ object CorrectReturnCheckChangesSummary {
     subscription: RetrievedSubscription,
     changedPages: List[ChangedPage],
     isCheckAnswers: Boolean = true,
-    amounts: Amounts
-  )(implicit messages: Messages, frontendAppConfig: FrontendAppConfig): Seq[(String, SummaryList)] = {
+    amounts: Amounts,
+    levyCalculations: Map[(Long, Long), LevyCalculation]
+  )(implicit messages: Messages): Seq[(String, SummaryList)] = {
     val mainSection =
-      CorrectReturnBaseCYASummary.changedSummaryListAndHeadings(userAnswers, subscription, changedPages, isCheckAnswers)
+      CorrectReturnBaseCYASummary
+        .changedSummaryListAndHeadings(userAnswers, subscription, changedPages, isCheckAnswers, levyCalculations)
     val correctionDetailsSection = correctionSection(userAnswers, isCheckAnswers)
     val balanceSection = Map(
       "correctReturn.checkChanges.balanceHeader" -> AmountToPaySummary.amountToPayBalance(amounts)

@@ -16,7 +16,6 @@
 
 package views.summary.changeActivity
 
-import config.FrontendAppConfig
 import models.UserAnswers
 import models.changeActivity.AmountProduced.Small
 import pages.changeActivity.AmountProducedPage
@@ -26,8 +25,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{ SummaryList, Sum
 object ChangeActivitySummary {
 
   def summaryListsAndHeadings(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit
-    messages: Messages,
-    frontendAppConfig: FrontendAppConfig
+    messages: Messages
   ): Seq[(String, SummaryList)] = {
     val amountProducedSummary: Option[SummaryListRow] = AmountProducedSummary.row(userAnswers, isCheckAnswers)
     val thirdPartyPackagersSummary: Option[SummaryListRow] = ThirdPartyPackagersSummary.row(userAnswers, isCheckAnswers)

@@ -17,7 +17,6 @@
 package controllers.changeActivity
 
 import com.google.inject.Inject
-import config.FrontendAppConfig
 import controllers.actions.{ ControllerActions, RequiredUserAnswersForChangeActivity }
 import handlers.ErrorHandler
 import models.SelectChange.ChangeActivity
@@ -39,7 +38,6 @@ class ChangeActivityCYAController @Inject() (
   override val messagesApi: MessagesApi,
   controllerActions: ControllerActions,
   requiredUserAnswers: RequiredUserAnswersForChangeActivity,
-  implicit val config: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
   changeActivityOrchestrator: ChangeActivityOrchestrator,
   genericLogger: GenericLogger,
