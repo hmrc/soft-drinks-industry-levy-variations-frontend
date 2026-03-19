@@ -62,14 +62,14 @@ class ReturnService @Inject() (sdilConnector: SoftDrinksIndustryLevyConnector, c
       _                     <- sdilConnector.checkSmallProducerStatus(sdilRef, returnPeriod)
       balanceBroughtForward <- getBalanceBroughtForward(sdilRef)
       amounts <- EitherT.right[VariationsErrors](
-        getAmounts(
-          sdilRef,
-          userAnswers,
-          originalReturn,
-          balanceBroughtForward,
-          returnPeriod
-        )
-      )
+                   getAmounts(
+                     sdilRef,
+                     userAnswers,
+                     originalReturn,
+                     balanceBroughtForward,
+                     returnPeriod
+                   )
+                 )
     } yield amounts
 
   def submitSdilReturnsVary(
@@ -105,8 +105,9 @@ class ReturnService @Inject() (sdilConnector: SoftDrinksIndustryLevyConnector, c
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = {
     val isNewImporter = UserTypeCheck.isNewImporter(userAnswers, subscription)
     val isNewPacker = UserTypeCheck.isNewPacker(userAnswers, subscription)
-    EitherT.right[VariationsErrors](sdilReturn.taxEstimation(subscription.sdilRef, sdilConnector, returnPeriod)).flatMap {
-      taxEstimation =>
+    EitherT
+      .right[VariationsErrors](sdilReturn.taxEstimation(subscription.sdilRef, sdilConnector, returnPeriod))
+      .flatMap { taxEstimation =>
         val returnVariation = ReturnsVariation(
           orgName = subscription.orgName,
           ppobAddress = subscription.address,
@@ -128,7 +129,7 @@ class ReturnService @Inject() (sdilConnector: SoftDrinksIndustryLevyConnector, c
         )
 
         sdilConnector.submitReturnVariation(subscription.sdilRef, returnVariation)
-    }
+      }
   }
 
   def calculateLevyCalculations(sdilRef: String, userAnswers: UserAnswers)(implicit

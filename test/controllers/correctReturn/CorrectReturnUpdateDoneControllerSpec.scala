@@ -60,7 +60,6 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
   val mockOrchestrator: CorrectReturnOrchestrator = mock(classOf[CorrectReturnOrchestrator])
   val mockSdilConnector = mock(classOf[SoftDrinksIndustryLevyConnector])
 
-
   val litresInBands = LitresInBands(2000, 4000)
   val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
     .copy(submitted = true, submittedOn = Some(Instant.now()))
@@ -146,7 +145,12 @@ class CorrectReturnUpdateDoneControllerSpec extends SpecBase with SummaryListFlu
 
   private val levyCalculationsMap = Map(
     (10000L, 20000L) -> LevyCalculation(BigDecimal("1800"), BigDecimal("4800"), BigDecimal("6600"), BigDecimal("6600")),
-    (10001L, 20002L) -> LevyCalculation(BigDecimal("1940.194"), BigDecimal("5180.518"), BigDecimal("7120.712"), BigDecimal("7120.71"))
+    (10001L, 20002L) -> LevyCalculation(
+      BigDecimal("1940.194"),
+      BigDecimal("5180.518"),
+      BigDecimal("7120.712"),
+      BigDecimal("7120.71")
+    )
   )
 
   private val basicLitreage = Litreage(1, 1)

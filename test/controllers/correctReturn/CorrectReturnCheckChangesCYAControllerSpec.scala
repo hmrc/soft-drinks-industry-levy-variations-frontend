@@ -50,7 +50,6 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
   val mockOrchestrator: CorrectReturnOrchestrator = mock(classOf[CorrectReturnOrchestrator])
   val mockSdilConnector = mock(classOf[SoftDrinksIndustryLevyConnector])
 
-
   def correctReturnAction(
     userAnswers: Option[UserAnswers],
     optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn),
@@ -79,7 +78,12 @@ class CorrectReturnCheckChangesCYAControllerSpec extends SpecBase with SummaryLi
 
   private val levyCalculationsMap = Map(
     (10000L, 20000L) -> LevyCalculation(BigDecimal("1800"), BigDecimal("4800"), BigDecimal("6600"), BigDecimal("6600")),
-    (10001L, 20002L) -> LevyCalculation(BigDecimal("1940.194"), BigDecimal("5180.518"), BigDecimal("7120.712"), BigDecimal("7120.71"))
+    (10001L, 20002L) -> LevyCalculation(
+      BigDecimal("1940.194"),
+      BigDecimal("5180.518"),
+      BigDecimal("7120.712"),
+      BigDecimal("7120.71")
+    )
   )
 
   private val basicLitreage = Litreage(1, 1)

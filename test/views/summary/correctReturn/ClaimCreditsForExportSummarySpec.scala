@@ -61,7 +61,11 @@ class ClaimCreditsForExportSummarySpec extends SpecBase {
 
     "must return empty when page not answered" in {
       val res =
-        ClaimCreditsForExportsSummary.summaryListWithBandLevyRows(emptyUserAnswersForCorrectReturn, isCheckAnswers = true, levyCalculations)
+        ClaimCreditsForExportsSummary.summaryListWithBandLevyRows(
+          emptyUserAnswersForCorrectReturn,
+          isCheckAnswers = true,
+          levyCalculations
+        )
       res.rows.size mustBe 0
     }
   }

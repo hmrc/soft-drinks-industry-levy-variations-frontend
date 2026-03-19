@@ -183,7 +183,8 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 
     "total should call connector and return totalRoundedDown" in {
       val sdilReturn = getSdilReturn(ownBrand = Litreage(1000, 2000))
-      val expectedCalc = LevyCalculation(BigDecimal("180.00"), BigDecimal("480.00"), BigDecimal("660.00"), BigDecimal("660.00"))
+      val expectedCalc =
+        LevyCalculation(BigDecimal("180.00"), BigDecimal("480.00"), BigDecimal("660.00"), BigDecimal("660.00"))
       when(mockConnector.calculateLevy(any(), any(), any(), any())(using any()))
         .thenReturn(Future.successful(expectedCalc))
 
@@ -195,7 +196,8 @@ class SdilReturnsModelSpec extends SpecBase with MockitoSugar with DataHelper wi
 
     "taxEstimation should call connector with combineN(4) litreage and return totalRoundedDown" in {
       val sdilReturn = getSdilReturn(ownBrand = Litreage(1000, 2000))
-      val expectedCalc = LevyCalculation(BigDecimal("720.00"), BigDecimal("1920.00"), BigDecimal("2640.00"), BigDecimal("2640.00"))
+      val expectedCalc =
+        LevyCalculation(BigDecimal("720.00"), BigDecimal("1920.00"), BigDecimal("2640.00"), BigDecimal("2640.00"))
       when(mockConnector.calculateLevy(any(), any(), any(), any())(using any()))
         .thenReturn(Future.successful(expectedCalc))
 

@@ -48,7 +48,6 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
   val mockOrchestrator: CorrectReturnOrchestrator = mock(classOf[CorrectReturnOrchestrator])
   val mockSdilConnector = mock(classOf[SoftDrinksIndustryLevyConnector])
 
-
   def correctReturnAction(
     userAnswers: Option[UserAnswers],
     optOriginalReturn: Option[SdilReturn] = Some(emptySdilReturn),
@@ -77,7 +76,12 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
   private val taxYear2025ReturnPeriod = ReturnPeriod(2026, 0)
   private val levyCalculationsMap = Map(
     (10000L, 20000L) -> LevyCalculation(BigDecimal("1800"), BigDecimal("4800"), BigDecimal("6600"), BigDecimal("6600")),
-    (10001L, 20002L) -> LevyCalculation(BigDecimal("1940.194"), BigDecimal("5180.518"), BigDecimal("7120.712"), BigDecimal("7120.71"))
+    (10001L, 20002L) -> LevyCalculation(
+      BigDecimal("1940.194"),
+      BigDecimal("5180.518"),
+      BigDecimal("7120.712"),
+      BigDecimal("7120.71")
+    )
   )
 
   "Check Your Answers Controller" - {
@@ -139,7 +143,8 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
         val view = application.injector.instanceOf[CorrectReturnCYAView]
         val orgName = " Super Lemonade Plc"
-        val section = CorrectReturnBaseCYASummary.summaryListAndHeadings(userAnswers, aSubscription, amounts1, levyCalculationsMap)
+        val section =
+          CorrectReturnBaseCYASummary.summaryListAndHeadings(userAnswers, aSubscription, amounts1, levyCalculationsMap)
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
