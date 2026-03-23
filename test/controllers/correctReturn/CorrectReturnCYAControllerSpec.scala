@@ -17,16 +17,14 @@
 package controllers.correctReturn
 
 import base.SpecBase
-import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
 import controllers.actions.RequiredUserAnswersForCorrectReturn
 import controllers.correctReturn.routes._
 import models.SelectChange.CorrectReturn
-import models.TaxRateUtil._
 import models.backend.RetrievedSubscription
 import models.correctReturn.AddASmallProducer
 import models.submission.Litreage
-import models.{ Amounts, CheckMode, LitresInBands, ReturnPeriod, SdilReturn, SmallProducer, UserAnswers }
+import models.{ Amounts, CheckMode, LevyCalculation, LitresInBands, ReturnPeriod, SdilReturn, SmallProducer, UserAnswers }
 import orchestrators.CorrectReturnOrchestrator
 import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
@@ -49,7 +47,6 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
   val mockOrchestrator: CorrectReturnOrchestrator = mock(classOf[CorrectReturnOrchestrator])
   val mockSdilConnector = mock(classOf[SoftDrinksIndustryLevyConnector])
-  val mockConfig: FrontendAppConfig = mock(classOf[FrontendAppConfig])
 
   def correctReturnAction(
     userAnswers: Option[UserAnswers],
@@ -65,14 +62,27 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     when(
       mockOrchestrator.calculateAmounts(any(), any(), any(), any())(using any(), any())
     ).thenReturn(createSuccessVariationResult(amounts1))
+    when(
+      mockOrchestrator.calculateLevyCalculations(any(), any())(using any(), any())
+    ).thenReturn(Future.successful(levyCalculationsMap))
     when(mockSdilConnector.getReturn(any(), any())(using any()))
       .thenReturn(createSuccessVariationResult(optOriginalReturn))
     applicationBuilder(userAnswers = userAnswers, subscription = subscription)
       .overrides(bind[SoftDrinksIndustryLevyConnector].toInstance(mockSdilConnector))
       .overrides(bind[RequiredUserAnswersForCorrectReturn].to(requiredAnswers))
   }
+
   private val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
   private val taxYear2025ReturnPeriod = ReturnPeriod(2026, 0)
+  private val levyCalculationsMap = Map(
+    (10000L, 20000L) -> LevyCalculation(BigDecimal("1800"), BigDecimal("4800"), BigDecimal("6600"), BigDecimal("6600")),
+    (10001L, 20002L) -> LevyCalculation(
+      BigDecimal("1940.194"),
+      BigDecimal("5180.518"),
+      BigDecimal("7120.712"),
+      BigDecimal("7120.71")
+    )
+  )
 
   "Check Your Answers Controller" - {
 
@@ -133,7 +143,8 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
 
         val view = application.injector.instanceOf[CorrectReturnCYAView]
         val orgName = " Super Lemonade Plc"
-        val section = CorrectReturnBaseCYASummary.summaryListAndHeadings(userAnswers, aSubscription, amounts1)
+        val section =
+          CorrectReturnBaseCYASummary.summaryListAndHeadings(userAnswers, aSubscription, amounts1, levyCalculationsMap)
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
@@ -206,9 +217,6 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show own brands packaged at own site row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
-      when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
-
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(OperatePackagingSiteOwnBrandsPage, true)
@@ -257,9 +265,6 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show own brands packaged at own site row containing calculation when yes is selected - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
-
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
         .set(OperatePackagingSiteOwnBrandsPage, true)
@@ -342,9 +347,6 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show packaged as contract packer row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
-      when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
-
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(PackagedAsContractPackerPage, true)
@@ -393,9 +395,6 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show packaged as contract packer row containing calculation when yes is selected - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
-
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
         .set(PackagedAsContractPackerPage, true)
@@ -478,9 +477,6 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show exemptions for small producers row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
-      when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
-
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(ExemptionsForSmallProducersPage, true)
@@ -532,9 +528,6 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show exemptions for small producers row containing calculation when yes is selected - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
-
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
         .set(ExemptionsForSmallProducersPage, true)
@@ -618,9 +611,6 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show brought into UK row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
-      when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
-
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(BroughtIntoUKPage, true)
@@ -667,9 +657,6 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show brought into UK row containing calculation when yes is selected - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
-
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
         .set(BroughtIntoUKPage, true)
@@ -750,9 +737,6 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show brought into UK from small producers row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
-      when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
-
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(BroughtIntoUkFromSmallProducersPage, true)
@@ -807,9 +791,6 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show brought into UK from small producers row containing calculation when yes is selected - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
-
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
         .set(BroughtIntoUkFromSmallProducersPage, true)
@@ -898,8 +879,6 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show claim credits for exports row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
-      when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(ClaimCreditsForExportsPage, true)
@@ -939,7 +918,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
           .get("href") mustEqual
           controllers.correctReturn.routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("−£1,800.00")
+        page.getElementsByTag("dd").text() must include("\u2212£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
@@ -949,14 +928,11 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
           .get("href") mustEqual
           controllers.correctReturn.routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
-        page.getElementsByTag("dd").text() must include("−£4,800.00")
+        page.getElementsByTag("dd").text() must include("\u2212£4,800.00")
       }
     }
 
     "must show claim credits for exports row containing calculation when yes is selected - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
-
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
         .set(ClaimCreditsForExportsPage, true)
@@ -996,7 +972,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
           .get("href") mustEqual
           controllers.correctReturn.routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("−£1,940.19")
+        page.getElementsByTag("dd").text() must include("\u2212£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,002")
@@ -1006,7 +982,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
           .get("href") mustEqual
           controllers.correctReturn.routes.HowManyClaimCreditsForExportsController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
-        page.getElementsByTag("dd").text() must include("−£5,180.52")
+        page.getElementsByTag("dd").text() must include("\u2212£5,180.52")
       }
     }
 
@@ -1045,9 +1021,6 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "must show claim credits for lost or damaged row containing calculation when yes is selected - pre April 2025 rates" in {
-      when(mockConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
-      when(mockConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
-
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(preApril2025ReturnPeriod))
         .set(ClaimCreditsForLostDamagedPage, true)
@@ -1087,7 +1060,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
           .get("href") mustEqual
           controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("−£1,800.00")
+        page.getElementsByTag("dd").text() must include("\u2212£1,800.00")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,000")
@@ -1097,14 +1070,11 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
           .get("href") mustEqual
           controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
-        page.getElementsByTag("dd").text() must include("−£4,800.00")
+        page.getElementsByTag("dd").text() must include("\u2212£4,800.00")
       }
     }
 
     "must show claim credits for lost or damaged row containing calculation when yes is selected - 2025 tax year rates" in {
-      when(mockConfig.lowerBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.194"))
-      when(mockConfig.higherBandCostPerLitrePostApril2025).thenReturn(BigDecimal("0.259"))
-
       val userAnswers = userAnswersForCorrectReturnWithEmptySdilReturn
         .copy(correctReturnPeriod = Some(taxYear2025ReturnPeriod))
         .set(ClaimCreditsForLostDamagedPage, true)
@@ -1144,7 +1114,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
           .get("href") mustEqual
           controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.lowBandLevy"))
-        page.getElementsByTag("dd").text() must include("−£1,940.19")
+        page.getElementsByTag("dd").text() must include("\u2212£1,940.19")
 
         page.getElementsByTag("dt").text() must include(Messages("litres.highBand"))
         page.getElementsByTag("dd").text() must include("20,002")
@@ -1154,7 +1124,7 @@ class CorrectReturnCYAControllerSpec extends SpecBase with SummaryListFluency {
           .get("href") mustEqual
           controllers.correctReturn.routes.HowManyCreditsForLostDamagedController.onPageLoad(CheckMode).url
         page.getElementsByTag("dt").text() must include(Messages("litres.highBandLevy"))
-        page.getElementsByTag("dd").text() must include("−£5,180.52")
+        page.getElementsByTag("dd").text() must include("\u2212£5,180.52")
       }
     }
 

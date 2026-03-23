@@ -22,7 +22,7 @@ import errors.UnexpectedResponseFromSDIL
 import models.backend._
 import models.correctReturn.ReturnsVariation
 import models.submission.{ ReturnVariationData, VariationsSubmission }
-import models.{ ReturnPeriod, SdilReturn }
+import models.{ LevyCalculation, LevyCalculationRequest, ReturnPeriod, SdilReturn }
 import play.api.http.Status.NO_CONTENT
 import play.api.libs.json.Json
 import repositories.{ SDILSessionCache, SDILSessionKeys }
@@ -280,6 +280,26 @@ class SoftDrinksIndustryLevyConnector @Inject() (
         )
         Left(UnexpectedResponseFromSDIL)
       }
+  }
+
+  def calculateLevy(sdilRef: String, lowLitres: Long, highLitres: Long, returnPeriod: ReturnPeriod)(implicit
+    hc: HeaderCarrier
+  ): Future[LevyCalculation] = {
+    val cacheKey = SDILSessionKeys.levyCalculation(lowLitres, highLitres, returnPeriod)
+    sdilSessionCache.fetchEntry[LevyCalculation](sdilRef, cacheKey).flatMap {
+      case Some(calc) => Future.successful(calc)
+      case None =>
+        val calcUrl = s"$sdilUrl/levy/calculate"
+        http
+          .post(url"$calcUrl")
+          .withBody(Json.toJson(LevyCalculationRequest(lowLitres, highLitres, returnPeriod)))
+          .execute[LevyCalculation]
+          .flatMap { calc =>
+            sdilSessionCache
+              .save[LevyCalculation](sdilRef, cacheKey, calc)
+              .map(_ => calc)
+          }
+    }
   }
 
   def submitReturnVariation(sdilRef: String, variation: ReturnsVariation)(implicit

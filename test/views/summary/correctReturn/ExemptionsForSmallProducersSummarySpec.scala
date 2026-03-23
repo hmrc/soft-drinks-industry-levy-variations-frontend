@@ -16,98 +16,49 @@
 
 package views.summary.correctReturn
 
-import base.SpecBase
-import models.{ CheckMode, ReturnPeriod }
+import base.{ LevyCalculationTestHelper, SpecBase }
+import models.SmallProducer
+import models.submission.Litreage
 import pages.correctReturn.ExemptionsForSmallProducersPage
 import play.twirl.api.Html
-import controllers.correctReturn.routes
 
 class ExemptionsForSmallProducersSummarySpec extends SpecBase {
 
   "ExemptionsForSmallProducersSummary" - {
+    val levyCalc = LevyCalculationTestHelper.levyCalculation(BigDecimal("180.00"), BigDecimal("480.00"))
+    val levyCalculations = Map((2000L, 4000L) -> levyCalc)
 
-    val preApril2025ReturnPeriod = ReturnPeriod(2025, 0)
-    val taxYear2025ReturnPeriod = ReturnPeriod(2026, 0)
+    "must show Yes with small producer litres and zero levy when exemptions selected" in {
+      val userAnswers = emptyUserAnswersForCorrectReturn
+        .set(ExemptionsForSmallProducersPage, true)
+        .success
+        .value
+        .copy(smallProducerList = List(SmallProducer("", "XZSDIL000000234", Litreage(2000, 4000))))
 
-    val returnPeriodsWithLabels = List(
-      (preApril2025ReturnPeriod, "- pre April 2025 rates"),
-      (taxYear2025ReturnPeriod, "- 2025 tax year rates")
-    )
+      val res = ExemptionsForSmallProducersSummary
+        .summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true, levyCalculations)
+      res.rows.head.value.content.asHtml mustBe Html("Yes")
+      res.rows(2).value.content.asHtml mustBe Html("£0.00")
+      res.rows(4).value.content.asHtml mustBe Html("£0.00")
+      res.rows.size mustBe 5
+    }
 
-    returnPeriodsWithLabels.foreach { returnPeriod =>
-      s"must show correct row when Exemptions For Small Producers is true and checkAnswers is true for ${returnPeriod._2}" in {
-        val userAnswers =
-          emptyUserAnswersForCorrectReturn
-            .copy(correctReturnPeriod = Some(returnPeriod._1))
-            .set(ExemptionsForSmallProducersPage, true)
-            .success
-            .value
+    "must show No when exemptions not selected" in {
+      val userAnswers = emptyUserAnswersForCorrectReturn
+        .set(ExemptionsForSmallProducersPage, false)
+        .success
+        .value
 
-        val res = ExemptionsForSmallProducersSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)
+      val res = ExemptionsForSmallProducersSummary
+        .summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true, levyCalculations)
+      res.rows.head.value.content.asHtml mustBe Html("No")
+      res.rows.size mustBe 1
+    }
 
-        res.rows.size mustBe 1
-
-        val row = res.rows.head
-        row.key.content.asHtml mustBe Html("Exemptions for registered small producers?")
-        row.value.content.asHtml mustBe Html("Yes")
-        res.rows.head.actions.head.items.head.href mustBe routes.ExemptionsForSmallProducersController
-          .onPageLoad(CheckMode)
-          .url
-        row.actions.head.items.head.attributes mustBe Map("id" -> "change-exemptionsForSmallProducers")
-        row.actions.head.items.head.content.asHtml mustBe Html("Change")
-      }
-
-      s"must show correct row when Exemptions For Small Producers is true and checkAnswers is false for ${returnPeriod._2}" in {
-        val userAnswers =
-          emptyUserAnswersForCorrectReturn
-            .copy(correctReturnPeriod = Some(returnPeriod._1))
-            .set(ExemptionsForSmallProducersPage, false)
-            .success
-            .value
-
-        val res = ExemptionsForSmallProducersSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)
-
-        res.rows.size mustBe 1
-
-        val row = res.rows.head
-        row.key.content.asHtml mustBe Html("Exemptions for registered small producers?")
-        row.value.content.asHtml mustBe Html("No")
-        res.rows.head.actions.head.items.head.href mustBe routes.ExemptionsForSmallProducersController
-          .onPageLoad(CheckMode)
-          .url
-        row.actions.head.items.head.attributes mustBe Map("id" -> "change-exemptionsForSmallProducers")
-        row.actions.head.items.head.content.asHtml mustBe Html("Change")
-      }
-
-      s"must show correct row when Exemptions For Small Producers is false for ${returnPeriod._2}" in {
-        val userAnswers =
-          emptyUserAnswersForCorrectReturn
-            .copy(correctReturnPeriod = Some(returnPeriod._1))
-            .set(ExemptionsForSmallProducersPage, false)
-            .success
-            .value
-
-        val res = ExemptionsForSmallProducersSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)
-
-        res.rows.size mustBe 1
-
-        val row = res.rows.head
-        row.key.content.asHtml mustBe Html("Exemptions for registered small producers?")
-        row.value.content.asHtml mustBe Html("No")
-        res.rows.head.actions.head.items.head.href mustBe routes.ExemptionsForSmallProducersController
-          .onPageLoad(CheckMode)
-          .url
-        row.actions.head.items.head.attributes mustBe Map("id" -> "change-exemptionsForSmallProducers")
-        row.actions.head.items.head.content.asHtml mustBe Html("Change")
-      }
-
-      s"must return empty when no answer build ${returnPeriod._2}" in {
-        val userAnswers = emptyUserAnswersForCorrectReturn.copy(correctReturnPeriod = Some(returnPeriod._1))
-
-        val res = ExemptionsForSmallProducersSummary.summaryListWithBandLevyRows(userAnswers, isCheckAnswers = true)
-        res.rows.size mustBe 0
-      }
-
+    "must return empty when page not answered" in {
+      val res = ExemptionsForSmallProducersSummary
+        .summaryListWithBandLevyRows(emptyUserAnswersForCorrectReturn, isCheckAnswers = true, levyCalculations)
+      res.rows.size mustBe 0
     }
   }
 }

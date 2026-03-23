@@ -61,20 +61,9 @@ This project uses [scalafmt](https://scalameta.org/scalafmt/) via the `sbt-scala
 
 Formatting is **not** wired into `compile` by default. Run `scalafmt`/`scalafmtAll` separately (for example, before committing or as part of a CI check), and use `compile` just for compilation.
 
-## Adding 2026 rates
+## Levy rates
 
-1. Make sure you have your NEW_LOWER_BAND_VALUE and NEW_HIGHER_BAND_VALUE band rate values for 2026 tax year
-2. Do a global find for `(2025 to 2025)` in Scala files and replace with `(2025 to 2026)`
-3. Add `val lowerBandCostPerLitrePostApril2026String: String = NEW_LOWER_BAND_VALUE` in `application.conf`
-4. Add `val higherBandCostPerLitrePostApril2026String: String = NEW_HIGHER_BAND_VALUE` in `application.conf`
-5. Add `val lowerBandCostPerLitrePostApril2026: BigDecimal = BigDecimal(lowerBandCostPerLitrePostApril2026String)` in `FrontendAppConfig`
-6. Add `val higherBandCostPerLitrePostApril2026: BigDecimal = BigDecimal(higherBandCostPerLitrePostApril2026String)` in `FrontendAppConfig`
-7. Add `Year2026 -> BandRates(lowerBandCostPerLitrePostApril2026, higherBandCostPerLitrePostApril2026)` to `LevyCalculator.bandRatesByTaxYear` function in `LevyCalculator.scala`
-8. Add `2026 -> BigDecimal(NEW_LOWER_BAND_VALUE)` to `lowerBandCostPerLitreMap` function in `TaxRateUtil.scala`
-9. Add `2026 -> BigDecimal(NEW_HIGHER_BAND_VALUE)` to `higherBandCostPerLitreMap` function in `TaxRateUtil.scala`
-10. Add `taxYear2026ReturnPeriod` to the `returnPeriods` list in all view tests where it's required
-11. Test the behaviour out and make sure it works!
-12. When happy with the changes, update these instructions for 'Adding 2027 rates'
+Levy band rates are managed in the backend service (`soft-drinks-industry-levy`). The frontend calls the backend's `/levy/calculate` endpoint to calculate levy amounts. No rate configuration is needed in this frontend.
 
 ### License
 

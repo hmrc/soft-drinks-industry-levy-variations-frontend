@@ -16,22 +16,24 @@
 
 package services
 
+import cats.data.EitherT
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
+import errors.VariationsErrors
 import models.backend.{ FinancialLineItem, RetrievedSubscription }
 import models.correctReturn.{ CorrectReturnUserAnswersData, ReturnsVariation }
 import models.submission.ReturnVariationData
-import models.{ Amounts, ReturnPeriod, SdilReturn, UserAnswers }
+import models.{ Amounts, LevyCalculation, ReturnPeriod, SdilReturn, UserAnswers }
 import pages.correctReturn.{ BalanceRepaymentRequired, CorrectionReasonPage, RepaymentMethodPage }
 import service.VariationResult
 import uk.gov.hmrc.http.HeaderCarrier
 import utilities.UserTypeCheck
 
 import javax.inject.{ Inject, Singleton }
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ ExecutionContext, Future }
 
 @Singleton
-class ReturnService @Inject() (sdilConnector: SoftDrinksIndustryLevyConnector)(implicit config: FrontendAppConfig) {
+class ReturnService @Inject() (sdilConnector: SoftDrinksIndustryLevyConnector, config: FrontendAppConfig) {
   private def extractTotal(l: List[(FinancialLineItem, BigDecimal)]): BigDecimal =
     l.headOption.fold(BigDecimal(0))(_._2)
 
@@ -57,11 +59,18 @@ class ReturnService @Inject() (sdilConnector: SoftDrinksIndustryLevyConnector)(i
     originalReturn: SdilReturn
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Amounts] =
     for {
-      isSmallProducer       <- sdilConnector.checkSmallProducerStatus(sdilRef, returnPeriod)
+      _                     <- sdilConnector.checkSmallProducerStatus(sdilRef, returnPeriod)
       balanceBroughtForward <- getBalanceBroughtForward(sdilRef)
-    } yield getAmounts(userAnswers, originalReturn, balanceBroughtForward, isSmallProducer.getOrElse(false))(using
-      returnPeriod
-    )
+      amounts <- EitherT.right[VariationsErrors](
+                   getAmounts(
+                     sdilRef,
+                     userAnswers,
+                     originalReturn,
+                     balanceBroughtForward,
+                     returnPeriod
+                   )
+                 )
+    } yield amounts
 
   def submitSdilReturnsVary(
     subscription: RetrievedSubscription,
@@ -93,50 +102,92 @@ class ReturnService @Inject() (sdilConnector: SoftDrinksIndustryLevyConnector)(i
     userAnswers: UserAnswers,
     correctReturnData: CorrectReturnUserAnswersData,
     returnPeriod: ReturnPeriod
-  )(implicit hc: HeaderCarrier): VariationResult[Unit] = {
-    implicit val rp: ReturnPeriod = returnPeriod
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): VariationResult[Unit] = {
     val isNewImporter = UserTypeCheck.isNewImporter(userAnswers, subscription)
     val isNewPacker = UserTypeCheck.isNewPacker(userAnswers, subscription)
-    val returnVariation = ReturnsVariation(
-      orgName = subscription.orgName,
-      ppobAddress = subscription.address,
-      importer = (isNewImporter, correctReturnData.totalImported.combineN(4)),
-      packer = (isNewPacker, correctReturnData.totalPacked(userAnswers.smallProducerList).combineN(4)),
-      warehouses = if (isNewImporter) {
-        userAnswers.warehouseList.values.toList
-      } else {
-        List()
-      },
-      packingSites = if (isNewPacker) {
-        userAnswers.packagingSiteList.values.toList
-      } else {
-        List()
-      },
-      phoneNumber = subscription.contact.phoneNumber,
-      email = subscription.contact.email,
-      taxEstimation = sdilReturn.taxEstimation
-    )
+    EitherT
+      .right[VariationsErrors](sdilReturn.taxEstimation(subscription.sdilRef, sdilConnector, returnPeriod))
+      .flatMap { taxEstimation =>
+        val returnVariation = ReturnsVariation(
+          orgName = subscription.orgName,
+          ppobAddress = subscription.address,
+          importer = (isNewImporter, correctReturnData.totalImported.combineN(4)),
+          packer = (isNewPacker, correctReturnData.totalPacked(userAnswers.smallProducerList).combineN(4)),
+          warehouses = if (isNewImporter) {
+            userAnswers.warehouseList.values.toList
+          } else {
+            List()
+          },
+          packingSites = if (isNewPacker) {
+            userAnswers.packagingSiteList.values.toList
+          } else {
+            List()
+          },
+          phoneNumber = subscription.contact.phoneNumber,
+          email = subscription.contact.email,
+          taxEstimation = taxEstimation
+        )
 
-    sdilConnector.submitReturnVariation(subscription.sdilRef, returnVariation)
+        sdilConnector.submitReturnVariation(subscription.sdilRef, returnVariation)
+      }
   }
 
+  def calculateLevyCalculations(sdilRef: String, userAnswers: UserAnswers)(implicit
+    hc: HeaderCarrier,
+    ec: ExecutionContext
+  ): Future[Map[(Long, Long), LevyCalculation]] = {
+    val correctReturnData = userAnswers.getCorrectReturnData
+    val litresPairs: Set[(Long, Long)] = correctReturnData
+      .map { data =>
+        val basePairs = Set(
+          (data.ownBrandsLitreage.lower, data.ownBrandsLitreage.higher),
+          (data.contractPackerLitreage.lower, data.contractPackerLitreage.higher),
+          (data.broughtIntoUkLitreage.lower, data.broughtIntoUkLitreage.higher),
+          (data.broughtIntoUkFromSmallProducerLitreage.lower, data.broughtIntoUkFromSmallProducerLitreage.higher),
+          (data.exportsLitreage.lower, data.exportsLitreage.higher),
+          (data.lostDamagedLitreage.lower, data.lostDamagedLitreage.higher)
+        )
+        val smallProducerList = userAnswers.smallProducerList
+        if (smallProducerList.nonEmpty)
+          basePairs + ((smallProducerList.map(_.litreage.lower).sum, smallProducerList.map(_.litreage.higher).sum))
+        else
+          basePairs
+      }
+      .getOrElse(Set.empty)
+
+    val returnPeriod = userAnswers.correctReturnPeriod.getOrElse(defaultReturnPeriod)
+
+    Future
+      .sequence(
+        litresPairs.toSeq.map { case (low, high) =>
+          sdilConnector.calculateLevy(sdilRef, low, high, returnPeriod).map(calc => (low, high) -> calc)
+        }
+      )
+      .map(_.toMap)
+  }
+
+  private val defaultReturnPeriod: ReturnPeriod = ReturnPeriod(2022, 3)
+
   private def getAmounts(
+    sdilRef: String,
     userAnswers: UserAnswers,
     originalReturn: SdilReturn,
     balanceBroughtForward: BigDecimal,
-    isSmallProducer: Boolean
-  )(implicit returnPeriod: ReturnPeriod): Amounts = {
-    val originalReturnTotal: BigDecimal = originalReturn.total
-    val totalForQuarter = SdilReturn.generateFromUserAnswers(userAnswers).total
-    val totalForQuarterLessForwardBalance = totalForQuarter - balanceBroughtForward
-    val netAdjustedAmount: BigDecimal = (totalForQuarter - originalReturnTotal) - balanceBroughtForward
-    Amounts(
-      originalReturnTotal,
-      totalForQuarter,
-      balanceBroughtForward,
-      totalForQuarterLessForwardBalance,
-      netAdjustedAmount
-    )
-  }
+    returnPeriod: ReturnPeriod
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Amounts] =
+    for {
+      originalReturnTotal <- originalReturn.total(sdilRef, sdilConnector, returnPeriod)
+      totalForQuarter     <- SdilReturn.generateFromUserAnswers(userAnswers).total(sdilRef, sdilConnector, returnPeriod)
+    } yield {
+      val totalForQuarterLessForwardBalance = totalForQuarter - balanceBroughtForward
+      val netAdjustedAmount = (totalForQuarter - originalReturnTotal) - balanceBroughtForward
+      Amounts(
+        originalReturnTotal,
+        totalForQuarter,
+        balanceBroughtForward,
+        totalForQuarterLessForwardBalance,
+        netAdjustedAmount
+      )
+    }
 
 }

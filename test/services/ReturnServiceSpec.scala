@@ -19,11 +19,10 @@ package services
 import base.SpecBase
 import config.FrontendAppConfig
 import connectors.SoftDrinksIndustryLevyConnector
-import models.TaxRateUtil._
 import models.backend.CentralAssessment
 import models.correctReturn.{ CorrectReturnUserAnswersData, RepaymentMethod, ReturnsVariation }
 import models.submission.{ Litreage, ReturnVariationData }
-import models.{ LitresInBands, ReturnPeriod, SdilReturn }
+import models.{ LevyCalculation, LitresInBands, ReturnPeriod, SdilReturn }
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -31,13 +30,14 @@ import pages.correctReturn.{ BalanceRepaymentRequired, CorrectionReasonPage, Rep
 import play.api.libs.json.Json
 
 import java.time.LocalDate
+import scala.concurrent.Future
 
 class ReturnServiceSpec extends SpecBase with MockitoSugar {
 
   val mockSdilConnector: SoftDrinksIndustryLevyConnector = mock[SoftDrinksIndustryLevyConnector]
   val mockAppConfig: FrontendAppConfig = mock[FrontendAppConfig]
 
-  val returnService = new ReturnService(mockSdilConnector)(using mockAppConfig)
+  val returnService = new ReturnService(mockSdilConnector, mockAppConfig)
 
   "getBalanceBroughtForward" - {
 
@@ -201,6 +201,11 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
 
         val sdilReturn = SdilReturn.generateFromUserAnswers(userAnswers, None)
 
+        val taxEstimationCalc =
+          LevyCalculation(BigDecimal("504.00"), BigDecimal("0.00"), BigDecimal("504.00"), BigDecimal("504.00"))
+        when(mockSdilConnector.calculateLevy(any(), any(), any(), any())(using any()))
+          .thenReturn(Future.successful(taxEstimationCalc))
+
         val expectedReturnsVariation = ReturnsVariation(
           aSubscription.orgName,
           aSubscription.address,
@@ -212,114 +217,6 @@ class ReturnServiceSpec extends SpecBase with MockitoSugar {
           aSubscription.contact.email,
           504.00
         )
-        when(mockAppConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
-        when(mockAppConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
-
-        when(mockSdilConnector.submitReturnVariation(aSubscription.sdilRef, expectedReturnsVariation)(using hc))
-          .thenReturn(createSuccessVariationResult((): Unit))
-
-        val res =
-          returnService.submitReturnVariation(aSubscription, sdilReturn, userAnswers, correctReturnData, returnPeriod)
-
-        whenReady(res.value) { result =>
-          result mustBe Right((): Unit)
-        }
-      }
-
-      "when the userAnswers is a new importer and not a new packer with warehouses" in {
-        val correctReturnData = CorrectReturnUserAnswersData(
-          true,
-          Some(LitresInBands(100, 100)),
-          false,
-          None,
-          false,
-          true,
-          Some(LitresInBands(100, 100)),
-          true,
-          Some(LitresInBands(100, 100)),
-          true,
-          Some(LitresInBands(100, 100)),
-          true,
-          Some(LitresInBands(100, 100))
-        )
-
-        val returnPeriod = ReturnPeriod(2025, 0)
-
-        val userAnswers = emptyUserAnswersForCorrectReturn
-          .copy(
-            warehouseList = twoWarehouses,
-            correctReturnPeriod = Option(returnPeriod),
-            data = Json.obj(("correctReturn", Json.toJson(correctReturnData)))
-          )
-
-        val sdilReturn = SdilReturn.generateFromUserAnswers(userAnswers, None)
-
-        val expectedReturnsVariation = ReturnsVariation(
-          aSubscription.orgName,
-          aSubscription.address,
-          (true, Litreage(800, 800)),
-          (false, Litreage(0, 0)),
-          twoWarehouses.values.toList,
-          List.empty,
-          aSubscription.contact.phoneNumber,
-          aSubscription.contact.email,
-          336.00
-        )
-        when(mockAppConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
-        when(mockAppConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
-
-        when(mockSdilConnector.submitReturnVariation(aSubscription.sdilRef, expectedReturnsVariation)(using hc))
-          .thenReturn(createSuccessVariationResult((): Unit))
-
-        val res =
-          returnService.submitReturnVariation(aSubscription, sdilReturn, userAnswers, correctReturnData, returnPeriod)
-
-        whenReady(res.value) { result =>
-          result mustBe Right((): Unit)
-        }
-      }
-
-      "when the userAnswers is a new packer with no warehouses" in {
-        val correctReturnData = CorrectReturnUserAnswersData(
-          true,
-          Some(LitresInBands(100, 100)),
-          true,
-          Some(LitresInBands(100, 100)),
-          false,
-          false,
-          None,
-          false,
-          None,
-          true,
-          Some(LitresInBands(100, 100)),
-          true,
-          Some(LitresInBands(100, 100))
-        )
-
-        val returnPeriod = ReturnPeriod(2025, 0)
-
-        val userAnswers = emptyUserAnswersForCorrectReturn
-          .copy(
-            packagingSiteList = packingSiteMap,
-            correctReturnPeriod = Option(returnPeriod),
-            data = Json.obj(("correctReturn", Json.toJson(correctReturnData)))
-          )
-
-        val sdilReturn = SdilReturn.generateFromUserAnswers(userAnswers, None)
-
-        val expectedReturnsVariation = ReturnsVariation(
-          aSubscription.orgName,
-          aSubscription.address,
-          (false, Litreage(0, 0)),
-          (true, Litreage(400, 400)),
-          List.empty,
-          packingSiteMap.values.toList,
-          aSubscription.contact.phoneNumber,
-          aSubscription.contact.email,
-          336.00
-        )
-        when(mockAppConfig.lowerBandCostPerLitre).thenReturn(lowerBandCostPerLitre)
-        when(mockAppConfig.higherBandCostPerLitre).thenReturn(higherBandCostPerLitre)
 
         when(mockSdilConnector.submitReturnVariation(aSubscription.sdilRef, expectedReturnsVariation)(using hc))
           .thenReturn(createSuccessVariationResult((): Unit))

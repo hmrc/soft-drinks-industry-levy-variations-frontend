@@ -16,6 +16,10 @@ trait PreconditionHelpers {
       .returns_variable("0000001611")
       .sdilBackend
       .returns_pending("0000001611")
+      .sdilBackend
+      .calculateLevyDefault()
+      .sdilBackend
+      .calculateLevy(BigDecimal("180"), BigDecimal("480"), 1000L, 2000L)
 
   def commonPreconditionDereg =
     builder.user.isAuthorisedAndEnrolled.sdilBackend
@@ -26,6 +30,10 @@ trait PreconditionHelpers {
       .returns_variable("0000001611")
       .sdilBackend
       .returns_pending("0000001611")
+      .sdilBackend
+      .calculateLevyDefault()
+      .sdilBackend
+      .calculateLevy(BigDecimal("180"), BigDecimal("480"), 1000L, 2000L)
 
   def commonPreconditionEmptyReturn =
     builder.user.isAuthorisedAndEnrolled.sdilBackend
@@ -42,6 +50,10 @@ trait PreconditionHelpers {
       .retrieveSubscription("utr", "0000001611", retrievedSubscription)
       .sdilBackend
       .returns_pending("0000001611")
+      .sdilBackend
+      .calculateLevyDefault()
+      .sdilBackend
+      .calculateLevy(BigDecimal("180"), BigDecimal("480"), 1000L, 2000L)
 
   def returnPendingNotFoundPreCondition =
     builder.user.isAuthorisedAndEnrolled.sdilBackend

@@ -16,15 +16,15 @@
 
 package views.summary
 
-import config.FrontendAppConfig
-import models.{ LitresInBands, UserAnswers }
+import models.{ LevyCalculation, LitresInBands, UserAnswers }
 import pages.QuestionPage
+import play.api.Logging
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 
-trait ReturnDetailsSummaryListWithLitres extends ReturnDetailsSummaryRowHelper {
+trait ReturnDetailsSummaryListWithLitres extends ReturnDetailsSummaryRowHelper with Logging {
 
   val page: QuestionPage[Boolean]
   val optLitresPage: Option[QuestionPage[LitresInBands]]
@@ -35,24 +35,26 @@ trait ReturnDetailsSummaryListWithLitres extends ReturnDetailsSummaryRowHelper {
   val hiddenText: String
   val isSmallProducerLitres: Boolean = false
 
-  def summaryListWithBandLevyRows(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit
-    messages: Messages,
-    config: FrontendAppConfig
-  ): SummaryList = {
+  def summaryListWithBandLevyRows(
+    userAnswers: UserAnswers,
+    isCheckAnswers: Boolean,
+    levyCalculations: Map[(Long, Long), LevyCalculation]
+  )(implicit messages: Messages): SummaryList = {
     val litresDetails: Seq[SummaryListRow] = optLitresPage match {
-      case Some(litresPage) => getLitresDetails(userAnswers, isCheckAnswers, litresPage, includeLevyRows = true)
-      case None if isSmallProducerLitres => getLitresForSmallProducerWithBandLevyRows(userAnswers, isCheckAnswers)
-      case None                          => Seq.empty
+      case Some(litresPage) =>
+        getLitresDetails(userAnswers, isCheckAnswers, litresPage, levyCalculations)
+      case None if isSmallProducerLitres =>
+        getLitresForSmallProducerWithBandLevyRows(userAnswers, isCheckAnswers, levyCalculations)
+      case None => Seq.empty
     }
     SummaryListViewModel(rows = row(userAnswers, isCheckAnswers) ++ litresDetails)
   }
 
   def summaryListWithoutBandLevyRows(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit
-    messages: Messages,
-    config: FrontendAppConfig
+    messages: Messages
   ): SummaryList = {
     val litresDetails: Seq[SummaryListRow] = optLitresPage match {
-      case Some(litresPage) => getLitresDetails(userAnswers, isCheckAnswers, litresPage, includeLevyRows = false)
+      case Some(litresPage) => getLitresDetailsWithoutLevy(userAnswers, isCheckAnswers, litresPage)
       case None             => Seq.empty
     }
     SummaryListViewModel(rows = row(userAnswers, isCheckAnswers) ++ litresDetails)
@@ -62,24 +64,50 @@ trait ReturnDetailsSummaryListWithLitres extends ReturnDetailsSummaryRowHelper {
     userAnswers: UserAnswers,
     isCheckAnswers: Boolean,
     litresPage: QuestionPage[LitresInBands],
-    includeLevyRows: Boolean
-  )(implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] =
+    levyCalculations: Map[(Long, Long), LevyCalculation]
+  )(implicit messages: Messages): Seq[SummaryListRow] =
     (userAnswers.get(page), userAnswers.get(litresPage)) match {
       case (Some(true), Some(litresInBands)) =>
-        summaryLitres.rows(litresInBands, isCheckAnswers, userAnswers.correctReturnPeriod, includeLevyRows)
+        val litresKey = (litresInBands.lowBand, litresInBands.highBand)
+        val levyCalculation = levyCalculations.getOrElse(
+          litresKey, {
+            logger.warn(s"Missing levy calculation for litres $litresKey, using zero")
+            LevyCalculation.zero
+          }
+        )
+        summaryLitres.rows(litresInBands, levyCalculation, isCheckAnswers)
       case _ => Seq.empty
     }
 
-  private def getLitresForSmallProducerWithBandLevyRows(userAnswers: UserAnswers, isCheckAnswers: Boolean)(implicit
-    messages: Messages,
-    config: FrontendAppConfig
-  ): Seq[SummaryListRow] = {
+  private def getLitresDetailsWithoutLevy(
+    userAnswers: UserAnswers,
+    isCheckAnswers: Boolean,
+    litresPage: QuestionPage[LitresInBands]
+  )(implicit messages: Messages): Seq[SummaryListRow] =
+    (userAnswers.get(page), userAnswers.get(litresPage)) match {
+      case (Some(true), Some(litresInBands)) =>
+        summaryLitres.rowsWithoutLevy(litresInBands, isCheckAnswers)
+      case _ => Seq.empty
+    }
+
+  private def getLitresForSmallProducerWithBandLevyRows(
+    userAnswers: UserAnswers,
+    isCheckAnswers: Boolean,
+    levyCalculations: Map[(Long, Long), LevyCalculation]
+  )(implicit messages: Messages): Seq[SummaryListRow] = {
     val smallProducerList = userAnswers.smallProducerList
     if (userAnswers.get(page).getOrElse(false) && smallProducerList.nonEmpty) {
       val lowBandLitres = smallProducerList.map(_.litreage.lower).sum
       val highBandLitres = smallProducerList.map(_.litreage.higher).sum
       val litresInBands = LitresInBands(lowBandLitres, highBandLitres)
-      summaryLitres.rows(litresInBands, isCheckAnswers, userAnswers.correctReturnPeriod, includeLevyRows = true)
+      val litresKey = (lowBandLitres, highBandLitres)
+      val levyCalculation = levyCalculations.getOrElse(
+        litresKey, {
+          logger.warn(s"Missing levy calculation for small producer litres $litresKey, using zero")
+          LevyCalculation.zero
+        }
+      )
+      summaryLitres.rows(litresInBands, levyCalculation, isCheckAnswers)
     } else {
       Seq.empty
     }
