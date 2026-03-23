@@ -20,15 +20,18 @@ import models.backend.{ FinancialLineItem, OptRetrievedSubscription, RetrievedSu
 import models.correctReturn.ReturnsVariation
 import models.submission.{ Litreage, ReturnVariationData }
 import models.{ DataHelper, ReturnPeriod, VariationsSubmissionDataHelper }
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{clearInvocations, verify, when}
 import play.api.http.Status.NO_CONTENT
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import repositories.{ CacheMap, SDILSessionCache }
-import uk.gov.hmrc.http.HttpResponse
+import uk.gov.hmrc.http.{ Authorization, HeaderCarrier, HttpResponse, RequestId, SessionId }
 import utilities.GenericLogger
 
-import scala.concurrent.Future
+import java.net.URL
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration.*
 
 class SoftDrinksIndustryLevyConnectorSpec
     extends HttpClientV2Helper with DataHelper with VariationsSubmissionDataHelper {
@@ -41,6 +44,26 @@ class SoftDrinksIndustryLevyConnectorSpec
     new SoftDrinksIndustryLevyConnector(http = mockHttp, frontendAppConfig, mockSDILSessionCache, logger)
 
   val utr: String = "1234567891"
+
+  private def correlationHeaderCarrier(requestIdValue: String, sessionIdValue: String): HeaderCarrier =
+    HeaderCarrier(
+      authorization = Some(Authorization("Bearer incoming-token")),
+      sessionId = Some(SessionId(sessionIdValue)),
+      requestId = Some(RequestId(requestIdValue)),
+      deviceID = Some("device-id-1"),
+      otherHeaders = Seq("X-Test-Header" -> "should-not-forward")
+    )
+
+  private def assertSanitisedCorrelationIds(outboundHc: HeaderCarrier, incomingHc: HeaderCarrier): Unit = {
+    outboundHc.requestId mustBe incomingHc.requestId
+    outboundHc.sessionId mustBe incomingHc.sessionId
+    outboundHc.authorization mustBe None
+    outboundHc.deviceID mustBe None
+    outboundHc.otherHeaders mustBe Seq.empty
+  }
+
+  private def jsonResponse(status: Int, json: JsValue): HttpResponse =
+    HttpResponse(status, Json.stringify(json))
 
   "SoftDrinksIndustryLevyConnector" - {
 
@@ -64,7 +87,7 @@ class SoftDrinksIndustryLevyConnectorSpec
       val sdilNumber: String = "XKSDIL000000022"
       when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(), any())(using any()))
         .thenReturn(Future.successful(None))
-      when(requestBuilderExecute[Option[RetrievedSubscription]]).thenReturn(Future.successful(Some(aSubscription)))
+      when(requestBuilderExecute[HttpResponse]).thenReturn(Future.successful(jsonResponse(200, Json.toJson(aSubscription))))
       when(mockSDILSessionCache.save[OptRetrievedSubscription](any(), any(), any())(using any()))
         .thenReturn(Future.successful(CacheMap("foo", Map("bar" -> Json.obj("wizz" -> "bang2")))))
       val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
@@ -81,7 +104,7 @@ class SoftDrinksIndustryLevyConnectorSpec
       val sdilNumber: String = "XKSDIL000000022"
       when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(), any())(using any()))
         .thenReturn(Future.successful(None))
-      when(requestBuilderExecute[Option[RetrievedSubscription]]).thenReturn(Future.successful(None))
+      when(requestBuilderExecute[HttpResponse]).thenReturn(Future.successful(HttpResponse(404, "")))
       when(mockSDILSessionCache.save[OptRetrievedSubscription](any, any, any)(using any()))
         .thenReturn(Future.successful(CacheMap("foo", Map("bar" -> Json.obj("wizz" -> "bang2")))))
       val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
@@ -96,7 +119,7 @@ class SoftDrinksIndustryLevyConnectorSpec
     "return a small producer status successfully" in {
       val sdilNumber: String = "XKSDIL000000022"
       val period = ReturnPeriod(year = 2022, quarter = 3)
-      when(requestBuilderExecute[Option[Boolean]]).thenReturn(Future.successful(Some(false)))
+      when(requestBuilderExecute[HttpResponse]).thenReturn(Future.successful(jsonResponse(200, Json.toJson(Some(false)))))
       val res = softDrinksIndustryLevyConnector.checkSmallProducerStatus(sdilNumber, period)
 
       whenReady(
@@ -110,7 +133,7 @@ class SoftDrinksIndustryLevyConnectorSpec
     "return none if no small producer status" in {
       val sdilNumber: String = "XKSDIL000000022"
       val period = ReturnPeriod(year = 2022, quarter = 3)
-      when(requestBuilderExecute[Option[Boolean]]).thenReturn(Future.successful(None))
+      when(requestBuilderExecute[HttpResponse]).thenReturn(Future.successful(HttpResponse(404, "")))
       val res = softDrinksIndustryLevyConnector.checkSmallProducerStatus(sdilNumber, period)
 
       whenReady(
@@ -122,7 +145,7 @@ class SoftDrinksIndustryLevyConnectorSpec
     }
 
     "return balance successfully" in {
-      when(requestBuilderExecute[BigDecimal]).thenReturn(Future.successful(BigDecimal(1000)))
+      when(requestBuilderExecute[HttpResponse]).thenReturn(Future.successful(jsonResponse(200, Json.toJson(BigDecimal(1000)))))
       val res = softDrinksIndustryLevyConnector.balance(sdilNumber, false)
 
       whenReady(
@@ -133,7 +156,7 @@ class SoftDrinksIndustryLevyConnectorSpec
     }
 
     "return balance history successfully" in {
-      when(requestBuilderExecute[List[FinancialLineItem]]).thenReturn(Future.successful(financialItemList))
+      when(requestBuilderExecute[HttpResponse]).thenReturn(Future.successful(jsonResponse(200, Json.toJson(financialItemList))))
 
       val res = softDrinksIndustryLevyConnector.balanceHistory(sdilNumber, false)
 
@@ -301,6 +324,51 @@ class SoftDrinksIndustryLevyConnectorSpec
           response mustEqual Right((): Unit)
         }
       }
+    }
+
+    "preserve correlation ids and strip custom headers in outbound GET HeaderCarrier for retrieveSubscription" in {
+      val incomingHc = correlationHeaderCarrier("request-id-variations-get-1", "session-id-variations-get-1")
+      clearInvocations(mockHttp)
+
+      when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(), any())(using any()))
+        .thenReturn(Future.successful(None))
+      when(requestBuilderExecute[HttpResponse]).thenReturn(Future.successful(jsonResponse(200, Json.toJson(aSubscription))))
+      when(mockSDILSessionCache.save[OptRetrievedSubscription](any, any, any)(using any()))
+        .thenReturn(Future.successful(CacheMap("foo", Map("bar" -> Json.obj("wizz" -> "bang2")))))
+
+      Await.result(
+        softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, "sdil")(using incomingHc).value,
+        1.seconds
+      )
+
+      val hcCaptor: ArgumentCaptor[HeaderCarrier] = ArgumentCaptor.forClass(classOf[HeaderCarrier])
+      verify(mockHttp).get(any[URL])(using hcCaptor.capture())
+
+      assertSanitisedCorrelationIds(hcCaptor.getValue, incomingHc)
+    }
+
+    "preserve correlation ids and strip custom headers in outbound POST HeaderCarrier for submitVariation" in {
+      val incomingHc = correlationHeaderCarrier("request-id-variations-post-1", "session-id-variations-post-1")
+      val variationsSubmission = testVariationSubmission(
+        variationContact = Some(updatedVariationsContact),
+        variationsPersonalDetails = Some(updatedPersonalDetails),
+        newSites = List(NEW_VARITION_SITE),
+        closeSites = List(CLOSED_SITE)
+      )
+      clearInvocations(mockHttp)
+
+      when(requestBuilderExecute[HttpResponse])
+        .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
+
+      Await.result(
+        softDrinksIndustryLevyConnector.submitVariation(variationsSubmission, aSubscription.sdilRef)(using incomingHc).value,
+        1.seconds
+      )
+
+      val hcCaptor: ArgumentCaptor[HeaderCarrier] = ArgumentCaptor.forClass(classOf[HeaderCarrier])
+      verify(mockHttp).post(any[URL])(using hcCaptor.capture())
+
+      assertSanitisedCorrelationIds(hcCaptor.getValue, incomingHc)
     }
   }
 

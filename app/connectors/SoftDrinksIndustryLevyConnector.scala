@@ -21,18 +21,19 @@ import config.FrontendAppConfig
 import errors.UnexpectedResponseFromSDIL
 import models.backend._
 import models.correctReturn.ReturnsVariation
-import models.submission.{ ReturnVariationData, VariationsSubmission }
-import models.{ ReturnPeriod, SdilReturn }
+import models.submission.{ReturnVariationData, VariationsSubmission}
+import models.{ReturnPeriod, SdilReturn}
 import play.api.http.Status.NO_CONTENT
-import play.api.libs.json.Json
-import repositories.{ SDILSessionCache, SDILSessionKeys }
+import play.api.libs.json.{JsValue, Json}
+import repositories.{SDILSessionCache, SDILSessionKeys}
 import service.VariationResult
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{ HeaderCarrier, HttpResponse, StringContextOps }
+import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, StringContextOps}
 import utilities.GenericLogger
 
 import javax.inject.Inject
-import scala.concurrent.{ ExecutionContext, Future }
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
 class SoftDrinksIndustryLevyConnector @Inject() (
@@ -44,8 +45,82 @@ class SoftDrinksIndustryLevyConnector @Inject() (
 
   lazy val sdilUrl: String = frontendAppConfig.sdilBaseUrl
 
-  private def getSubscriptionUrl(sdilNumber: String, identifierType: String): String =
-    s"$sdilUrl/subscription/$identifierType/$sdilNumber"
+  private val logger = genericLogger.logger
+
+  private class RawHttpReads extends HttpReads[HttpResponse] {
+    override def read(method: String, url: String, response: HttpResponse): HttpResponse = response
+  }
+
+  private val rawHttpReads = new RawHttpReads
+
+  private def outboundHeaderCarrier(hc: HeaderCarrier): HeaderCarrier =
+    HeaderCarrier(
+      requestId = hc.requestId,
+      sessionId = hc.sessionId
+    )
+
+  private def sdilContext(
+    path: String,
+    status: Option[Int] = None,
+    startTime: Option[Long] = None
+  ): String =
+    Seq(
+      Some(s"path=$path"),
+      status.map(st => s"status=$st"),
+      startTime.map(st => s"durationMs=${System.currentTimeMillis() - st}")
+    ).flatten.mkString(" ")
+
+  private def executeGet[A](operation: String, path: String)(implicit hc: HeaderCarrier, rds: HttpReads[A]): Future[A] = {
+    val urlString = s"$sdilUrl$path"
+    val startTime = System.currentTimeMillis()
+    logger.info(
+      s"SDIL $operation request ${sdilContext(path, startTime = Some(startTime))}"
+    )
+    http
+      .get(url"$urlString")(using outboundHeaderCarrier(hc))
+      .execute[HttpResponse](using rawHttpReads, ec)
+      .map { response =>
+        logger.info(
+          s"SDIL $operation response ${sdilContext(path, status = Some(response.status), startTime = Some(startTime))}"
+        )
+        rds.read("GET", urlString, response)
+      }
+      .recoverWith { case NonFatal(e) =>
+        logger.error(
+          s"SDIL $operation failure ${sdilContext(path, startTime = Some(startTime))} error=${e.getMessage}",
+          e
+        )
+        Future.failed(e)
+      }
+  }
+
+  private def executePost[A](operation: String, path: String, body: JsValue)(implicit
+    hc: HeaderCarrier,
+    rds: HttpReads[A]
+  ): Future[A] = {
+    val urlString = s"$sdilUrl$path"
+    val startTime = System.currentTimeMillis()
+    logger.info(
+      s"SDIL $operation request ${sdilContext(path, startTime = Some(startTime))}"
+    )
+    http
+      .post(url"$urlString")(using outboundHeaderCarrier(hc))
+      .withBody(body)
+      .execute[HttpResponse](using rawHttpReads, ec)
+      .map { response =>
+        logger.info(
+          s"SDIL $operation response ${sdilContext(path, status = Some(response.status), startTime = Some(startTime))}"
+        )
+        rds.read("POST", urlString, response)
+      }
+      .recoverWith { case NonFatal(e) =>
+        logger.error(
+          s"SDIL $operation failure ${sdilContext(path, startTime = Some(startTime))} error=${e.getMessage}",
+          e
+        )
+        Future.failed(e)
+      }
+  }
 
   def retrieveSubscription(identifierValue: String, identifierType: String)(implicit
     hc: HeaderCarrier
@@ -53,9 +128,10 @@ class SoftDrinksIndustryLevyConnector @Inject() (
     sdilSessionCache.fetchEntry[OptRetrievedSubscription](identifierValue, SDILSessionKeys.SUBSCRIPTION).flatMap {
       case Some(optSubscription) => Future.successful(Right(optSubscription.optRetrievedSubscription))
       case None =>
-        http
-          .get(url"${getSubscriptionUrl(identifierValue: String, identifierType)}")
-          .execute[Option[RetrievedSubscription]]
+        executeGet[Option[RetrievedSubscription]](
+          operation = "retrieveSubscription",
+          path = s"/subscription/$identifierType/$identifierValue"
+        )
           .flatMap { optRetrievedSubscription =>
             sdilSessionCache
               .save(identifierValue, SDILSessionKeys.SUBSCRIPTION, OptRetrievedSubscription(optRetrievedSubscription))
@@ -64,18 +140,11 @@ class SoftDrinksIndustryLevyConnector @Inject() (
               }
 
           }
-          .recover { case _ =>
-            genericLogger.logger.error(
-              s"[SoftDrinksIndustryLevyConnector][retrieveSubscription] - unexpected response for $identifierValue"
-            )
+          .recover { case NonFatal(_) =>
             Left(UnexpectedResponseFromSDIL)
           }
     }
   }
-
-  private def smallProducerUrl(sdilRef: String, period: ReturnPeriod): String =
-    s"$sdilUrl/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"
-
   def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod)(implicit
     hc: HeaderCarrier
   ): VariationResult[Option[Boolean]] = EitherT {
@@ -83,17 +152,16 @@ class SoftDrinksIndustryLevyConnector @Inject() (
       case Some(optSP) =>
         Future.successful(Right(optSP.optSmallProducer))
       case None =>
-        http
-          .get(url"${smallProducerUrl(sdilRef, period)}")
-          .execute[Option[Boolean]]
+        executeGet[Option[Boolean]](
+          operation = "checkSmallProducerStatus",
+          path = s"/subscriptions/sdil/$sdilRef/year/${period.year}/quarter/${period.quarter}"
+        )
           .flatMap { optSP =>
             sdilSessionCache
               .save(sdilRef, SDILSessionKeys.smallProducerForPeriod(period), OptSmallProducer(optSP))
               .map(_ => Right(optSP))
           }
-          .recover { case _ =>
-            genericLogger.logger
-              .error(s"[SoftDrinksIndustryLevyConnector][checkSmallProducerStatus] - unexpected response for $sdilRef")
+          .recover { case NonFatal(_) =>
             Left(UnexpectedResponseFromSDIL)
           }
     }
@@ -106,17 +174,16 @@ class SoftDrinksIndustryLevyConnector @Inject() (
     sdilSessionCache.fetchEntry[BigDecimal](sdilRef, SDILSessionKeys.balance(withAssessment)).flatMap {
       case Some(b) => Future.successful(Right(b))
       case None =>
-        val balanceUrl = s"$sdilUrl/balance/$sdilRef/$withAssessment"
-        http
-          .get(url"$balanceUrl")
-          .execute[BigDecimal]
+        executeGet[BigDecimal](
+          operation = "balance",
+          path = s"/balance/$sdilRef/$withAssessment"
+        )
           .flatMap { b =>
             sdilSessionCache
               .save[BigDecimal](sdilRef, SDILSessionKeys.balance(withAssessment), b)
               .map(_ => Right(b))
           }
-          .recover { case _ =>
-            genericLogger.logger.error(s"[SoftDrinksIndustryLevyConnector][balance] - unexpected response for $sdilRef")
+          .recover { case NonFatal(_) =>
             Left(UnexpectedResponseFromSDIL)
           }
     }
@@ -132,19 +199,16 @@ class SoftDrinksIndustryLevyConnector @Inject() (
       .flatMap {
         case Some(fli) => Future.successful(Right(fli))
         case None =>
-          val balanceHistoryUrl = s"$sdilUrl/balance/$sdilRef/history/all/$withAssessment"
-          http
-            .get(url"$balanceHistoryUrl")
-            .execute[List[FinancialLineItem]]
+          executeGet[List[FinancialLineItem]](
+            operation = "balanceHistory",
+            path = s"/balance/$sdilRef/history/all/$withAssessment"
+          )
             .flatMap { fli =>
               sdilSessionCache
                 .save[List[FinancialLineItem]](sdilRef, SDILSessionKeys.balanceHistory(withAssessment), fli)
                 .map(_ => Right(fli))
             }
-            .recover { case _ =>
-              genericLogger.logger.error(
-                s"[SoftDrinksIndustryLevyConnector][balance] - unexpected response for $sdilRef"
-              )
+            .recover { case NonFatal(_) =>
               Left(UnexpectedResponseFromSDIL)
             }
       }
@@ -160,10 +224,10 @@ class SoftDrinksIndustryLevyConnector @Inject() (
         case Some(optPreviousReturn) =>
           Future.successful(Right(optPreviousReturn.optReturn))
         case None =>
-          val returnUrl = s"$sdilUrl/returns/$utr/year/${period.year}/quarter/${period.quarter}"
-          http
-            .get(url"$returnUrl")
-            .execute[Option[SdilReturn]]
+          executeGet[Option[SdilReturn]](
+            operation = "getReturn",
+            path = s"/returns/$utr/year/${period.year}/quarter/${period.quarter}"
+          )
             .flatMap { optReturn =>
               sdilSessionCache
                 .save[OptPreviousSubmittedReturn](
@@ -173,10 +237,7 @@ class SoftDrinksIndustryLevyConnector @Inject() (
                 )
                 .map(_ => Right(optReturn))
             }
-            .recover { case _ =>
-              genericLogger.logger.error(
-                s"[SoftDrinksIndustryLevyConnector][returns_get] - unexpected response for $utr"
-              )
+            .recover { case NonFatal(_) =>
               Left(UnexpectedResponseFromSDIL)
             }
       }
@@ -192,16 +253,16 @@ class SoftDrinksIndustryLevyConnector @Inject() (
     }
 
   def returnsVariable(utr: String)(implicit hc: HeaderCarrier): VariationResult[List[ReturnPeriod]] = EitherT {
-    val variableUrl = s"$sdilUrl/returns/$utr/variable"
-    http
-      .get(url"$variableUrl")
-      .execute[List[ReturnPeriod]]
+    executeGet[List[ReturnPeriod]](
+      operation = "returnsVariable",
+      path = s"/returns/$utr/variable"
+    )
       .flatMap { variableReturns =>
         sdilSessionCache
           .save(utr, SDILSessionKeys.VARIABLE_RETURNS, variableReturns)
           .map(_ => Right(variableReturns))
       }
-      .recover { case _ =>
+      .recover { case NonFatal(_) =>
         Left(UnexpectedResponseFromSDIL)
       }
   }
@@ -216,16 +277,16 @@ class SoftDrinksIndustryLevyConnector @Inject() (
     }
 
   def returnsPending(utr: String)(implicit hc: HeaderCarrier): VariationResult[List[ReturnPeriod]] = EitherT {
-    val pendingUrl = s"$sdilUrl/returns/$utr/pending"
-    http
-      .get(url"$pendingUrl")
-      .execute[List[ReturnPeriod]]
+    executeGet[List[ReturnPeriod]](
+      operation = "returnsPending",
+      path = s"/returns/$utr/pending"
+    )
       .flatMap { variableReturns =>
         sdilSessionCache
           .save(utr, SDILSessionKeys.RETURNS_PENDING, variableReturns)
           .map(_ => Right(variableReturns))
       }
-      .recover { case _ =>
+      .recover { case NonFatal(_) =>
         Left(UnexpectedResponseFromSDIL)
       }
   }
@@ -233,25 +294,23 @@ class SoftDrinksIndustryLevyConnector @Inject() (
   def submitVariation(variation: VariationsSubmission, sdilNumber: String)(implicit
     hc: HeaderCarrier
   ): VariationResult[Unit] = EitherT {
-    val variationUrl = s"$sdilUrl/submit-variations/sdil/$sdilNumber"
-    http
-      .post(url"$variationUrl")
-      .withBody(Json.toJson(variation))
-      .execute[HttpResponse]
+    val path = s"/submit-variations/sdil/$sdilNumber"
+    executePost[HttpResponse](
+      operation = "submitVariation",
+      path = path,
+      body = Json.toJson(variation)
+    )(using hc, rawHttpReads)
       .map { resp =>
         resp.status match {
           case NO_CONTENT => Right((): Unit)
           case status =>
-            genericLogger.logger.error(
-              s"[SoftDrinksIndustryLevyConnector][submitVariation] - unexpected response $status for $sdilNumber"
+            logger.error(
+              s"SDIL submitVariation unexpected-response ${sdilContext(path, status = Some(status))}"
             )
             Left(UnexpectedResponseFromSDIL)
         }
       }
-      .recover { case _ =>
-        genericLogger.logger.error(
-          s"[SoftDrinksIndustryLevyConnector][submitVariation] - unexpected response for $sdilNumber"
-        )
+      .recover { case NonFatal(_) =>
         Left(UnexpectedResponseFromSDIL)
       }
   }
@@ -259,25 +318,23 @@ class SoftDrinksIndustryLevyConnector @Inject() (
   def submitSdilReturnsVary(sdilNumber: String, variation: ReturnVariationData)(implicit
     hc: HeaderCarrier
   ): VariationResult[Unit] = EitherT {
-    val varyUrl = s"$sdilUrl/returns/vary/$sdilNumber"
-    http
-      .post(url"$varyUrl")
-      .withBody(Json.toJson(variation))
-      .execute[HttpResponse]
+    val path = s"/returns/vary/$sdilNumber"
+    executePost[HttpResponse](
+      operation = "submitReturnsVariation",
+      path = path,
+      body = Json.toJson(variation)
+    )(using hc, rawHttpReads)
       .map { resp =>
         resp.status match {
           case NO_CONTENT => Right((): Unit)
           case status =>
-            genericLogger.logger.error(
-              s"[SoftDrinksIndustryLevyConnector][submitReturnsVariation] - unexpected response $status for $sdilNumber"
+            logger.error(
+              s"SDIL submitReturnsVariation unexpected-response ${sdilContext(path, status = Some(status))}"
             )
             Left(UnexpectedResponseFromSDIL)
         }
       }
-      .recover { case _ =>
-        genericLogger.logger.error(
-          s"[SoftDrinksIndustryLevyConnector][submitReturnsVariation] - unexpected response for $sdilNumber"
-        )
+      .recover { case NonFatal(_) =>
         Left(UnexpectedResponseFromSDIL)
       }
   }
@@ -285,25 +342,23 @@ class SoftDrinksIndustryLevyConnector @Inject() (
   def submitReturnVariation(sdilRef: String, variation: ReturnsVariation)(implicit
     hc: HeaderCarrier
   ): VariationResult[Unit] = EitherT {
-    val variationUrl = s"$sdilUrl/returns/variation/sdil/$sdilRef"
-    http
-      .post(url"$variationUrl")
-      .withBody(Json.toJson(variation))
-      .execute[HttpResponse]
+    val path = s"/returns/variation/sdil/$sdilRef"
+    executePost[HttpResponse](
+      operation = "returns_variation",
+      path = path,
+      body = Json.toJson(variation)
+    )(using hc, rawHttpReads)
       .map { resp =>
         resp.status match {
           case NO_CONTENT => Right((): Unit)
           case status =>
-            genericLogger.logger.error(
-              s"[SoftDrinksIndustryLevyConnector][returns_variation] - unexpected response $status for $sdilRef"
+            logger.error(
+              s"SDIL returns_variation unexpected-response ${sdilContext(path, status = Some(status))}"
             )
             Left(UnexpectedResponseFromSDIL)
         }
       }
-      .recover { case _ =>
-        genericLogger.logger.error(
-          s"[SoftDrinksIndustryLevyConnector][returns_variation] - unexpected response for $sdilRef"
-        )
+      .recover { case NonFatal(_) =>
         Left(UnexpectedResponseFromSDIL)
       }
   }
