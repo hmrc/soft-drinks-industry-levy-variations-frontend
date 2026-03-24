@@ -2,7 +2,7 @@ package testSupport.preConditions
 
 import com.github.tomakehurst.wiremock.client.WireMock._
 import models.backend.{ FinancialLineItem, RetrievedSubscription }
-import models.{ ReturnPeriod, SdilReturn }
+import models.{ LevyCalculation, ReturnPeriod, SdilReturn }
 import play.api.libs.json.Json
 import testSupport.SDILBackendTestData._
 
@@ -193,6 +193,29 @@ case class SdilBackendStub()(implicit builder: PreconditionBuilder) {
     stubFor(
       post(urlPathMatching(s"/returns/variation/sdil/$sdilRef"))
         .willReturn(noContent())
+    )
+    builder
+  }
+
+  def calculateLevy(lowBandLevy: BigDecimal, highBandLevy: BigDecimal, lowLitres: Long, highLitres: Long) = {
+    val total = (lowBandLevy + highBandLevy).setScale(2, BigDecimal.RoundingMode.HALF_UP)
+    val roundedDown = (lowBandLevy + highBandLevy).setScale(2, BigDecimal.RoundingMode.DOWN)
+    val response = LevyCalculation(lowBandLevy, highBandLevy, total, roundedDown)
+    stubFor(
+      post(urlPathEqualTo("/levy/calculate"))
+        .withRequestBody(matchingJsonPath("$.lowLitres", equalTo(lowLitres.toString)))
+        .withRequestBody(matchingJsonPath("$.highLitres", equalTo(highLitres.toString)))
+        .willReturn(ok(Json.toJson(response).toString()))
+    )
+    builder
+  }
+
+  def calculateLevyDefault() = {
+    val response = LevyCalculation.zero
+    stubFor(
+      post(urlPathEqualTo("/levy/calculate"))
+        .atPriority(10)
+        .willReturn(ok(Json.toJson(response).toString()))
     )
     builder
   }

@@ -34,11 +34,11 @@ import java.time.format.DateTimeFormatter
 class ChangeActivitySentController @Inject() (
   override val messagesApi: MessagesApi,
   controllerActions: ControllerActions,
-  implicit val config: FrontendAppConfig,
   val controllerComponents: MessagesControllerComponents,
   view: ChangeActivitySentView,
   genericLogger: GenericLogger
-) extends FrontendBaseController with I18nSupport {
+)(implicit config: FrontendAppConfig)
+    extends FrontendBaseController with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withRequiredJourneyDataPostSubmission(ChangeActivity) {
     implicit request =>

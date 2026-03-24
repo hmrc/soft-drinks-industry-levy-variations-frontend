@@ -16,9 +16,7 @@
 
 package views.summary
 
-import config.FrontendAppConfig
-import models.LevyCalculator.getLevyCalculation
-import models.{ LevyCalculation, LitresInBands, ReturnPeriod }
+import models.{ LevyCalculation, LitresInBands }
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -40,23 +38,24 @@ trait SummaryListRowLitresHelper {
 
   def rows(
     litresInBands: LitresInBands,
-    isCheckAnswers: Boolean,
-    correctReturnPeriod: Option[ReturnPeriod] = None,
-    includeLevyRows: Boolean = true
-  )(implicit messages: Messages, config: FrontendAppConfig): Seq[SummaryListRow] = {
-    val levyCalculation: Option[LevyCalculation] =
-      correctReturnPeriod.map(getLevyCalculation(litresInBands.lowBand, litresInBands.highBand, _))
-    val lowBandLevyRow: Option[SummaryListRow] =
-      if (includeLevyRows) levyCalculation.map(calc => bandLevyRow(calc.lowLevy, lowBand)) else None
-    val highBandLevyRow: Option[SummaryListRow] =
-      if (includeLevyRows) levyCalculation.map(calc => bandLevyRow(calc.highLevy, highBand)) else None
+    levyCalculation: LevyCalculation,
+    isCheckAnswers: Boolean
+  )(implicit messages: Messages): Seq[SummaryListRow] =
     Seq(
-      Option(bandRow(litresInBands.lowBand, lowBand, isCheckAnswers, includeLevyRows)),
-      lowBandLevyRow,
-      Option(bandRow(litresInBands.highBand, highBand, isCheckAnswers, includeLevyRows)),
-      highBandLevyRow
-    ).flatten
-  }
+      bandRow(litresInBands.lowBand, lowBand, isCheckAnswers, noBorder = true),
+      bandLevyRow(levyCalculation.lowLevy, lowBand),
+      bandRow(litresInBands.highBand, highBand, isCheckAnswers, noBorder = true),
+      bandLevyRow(levyCalculation.highLevy, highBand)
+    )
+
+  def rowsWithoutLevy(
+    litresInBands: LitresInBands,
+    isCheckAnswers: Boolean
+  )(implicit messages: Messages): Seq[SummaryListRow] =
+    Seq(
+      bandRow(litresInBands.lowBand, lowBand, isCheckAnswers, noBorder = false),
+      bandRow(litresInBands.highBand, highBand, isCheckAnswers, noBorder = false)
+    )
 
   private def bandRow(litres: Long, band: String, isCheckAnswers: Boolean, noBorder: Boolean)(implicit
     messages: Messages
@@ -97,9 +96,9 @@ trait SummaryListRowLitresHelper {
     if (hasZeroLevy) {
       0
     } else if (isNegativeLevy) {
-      levyAmount.toDouble * -1
+      levyAmount * -1
     } else {
-      levyAmount.toDouble
+      levyAmount
     }
 
   def action(isCheckAnswers: Boolean, band: String)(implicit messages: Messages): Option[Actions] = if (

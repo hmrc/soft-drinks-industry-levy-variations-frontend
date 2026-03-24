@@ -17,7 +17,6 @@
 package controllers.correctReturn
 
 import com.google.inject.Inject
-import config.FrontendAppConfig
 import controllers.ControllerHelper
 import controllers.actions._
 import handlers.ErrorHandler
@@ -45,7 +44,7 @@ class CorrectReturnCYAController @Inject() (
   view: CorrectReturnCYAView,
   val genericLogger: GenericLogger,
   val errorHandler: ErrorHandler
-)(implicit config: FrontendAppConfig, val ec: ExecutionContext)
+)(implicit val ec: ExecutionContext)
     extends ControllerHelper with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async { implicit request =>
@@ -58,17 +57,21 @@ class CorrectReturnCYAController @Inject() (
         request.originalSdilReturn
       )
 
-      calculateAmounts.value.map {
+      calculateAmounts.value.flatMap {
         case Right(amounts) =>
-          val orgName: String = " " + request.subscription.orgName
-          val sections =
-            CorrectReturnBaseCYASummary.summaryListAndHeadings(request.userAnswers, request.subscription, amounts)
-          Ok(view(orgName, amounts, sections, controllers.correctReturn.routes.CorrectReturnCYAController.onSubmit))
+          correctReturnOrchestrator.calculateLevyCalculations(request.sdilEnrolment, request.userAnswers).map {
+            levyCalculations =>
+              val orgName: String = " " + request.subscription.orgName
+              val sections =
+                CorrectReturnBaseCYASummary
+                  .summaryListAndHeadings(request.userAnswers, request.subscription, amounts, levyCalculations)
+              Ok(view(orgName, amounts, sections, controllers.correctReturn.routes.CorrectReturnCYAController.onSubmit))
+          }
         case Left(_) =>
           genericLogger.logger.error(
             s"[SoftDrinksIndustryLevyConnector][Balance] - unexpected response for ${request.sdilEnrolment}"
           )
-          Redirect(controllers.routes.SelectChangeController.onPageLoad.url)
+          Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url))
       }
     }
   }

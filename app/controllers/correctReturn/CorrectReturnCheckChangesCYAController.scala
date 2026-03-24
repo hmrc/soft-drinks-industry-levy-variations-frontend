@@ -17,7 +17,6 @@
 package controllers.correctReturn
 
 import com.google.inject.Inject
-import config.FrontendAppConfig
 import controllers.ControllerHelper
 import controllers.actions.{ ControllerActions, RequiredUserAnswersForCorrectReturn }
 import handlers.ErrorHandler
@@ -47,7 +46,7 @@ class CorrectReturnCheckChangesCYAController @Inject() (
   correctReturnOrchestrator: CorrectReturnOrchestrator,
   val genericLogger: GenericLogger,
   val errorHandler: ErrorHandler
-)(implicit config: FrontendAppConfig, val ec: ExecutionContext)
+)(implicit val ec: ExecutionContext)
     extends ControllerHelper with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = controllerActions.withCorrectReturnJourneyData.async { implicit request =>
@@ -71,20 +70,25 @@ class CorrectReturnCheckChangesCYAController @Inject() (
               Future.successful(Redirect(controllers.routes.SelectChangeController.onPageLoad.url))
             case Success(answers) =>
               requiredUserAnswers.requireData(CorrectReturnCheckChangesPage, answers, request.subscription) {
-                val currentSDILReturn = SdilReturn.generateFromUserAnswers(request.userAnswers)
-                val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(
-                  request.originalSdilReturn,
-                  currentSDILReturn
-                )
-                val orgName: String = " " + request.subscription.orgName
-                val sections = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(
-                  request.userAnswers,
-                  request.subscription,
-                  changedPages,
-                  isCheckAnswers = true,
-                  amounts
-                )
-                Future.successful(Ok(view(orgName, sections, routes.CorrectReturnCheckChangesCYAController.onSubmit)))
+                correctReturnOrchestrator
+                  .calculateLevyCalculations(request.sdilEnrolment, request.userAnswers)
+                  .map { levyCalculations =>
+                    val currentSDILReturn = SdilReturn.generateFromUserAnswers(request.userAnswers)
+                    val changedPages = ChangedPage.returnLiteragePagesThatChangedComparedToOriginalReturn(
+                      request.originalSdilReturn,
+                      currentSDILReturn
+                    )
+                    val orgName: String = " " + request.subscription.orgName
+                    val sections = CorrectReturnCheckChangesSummary.changeSpecificSummaryListAndHeadings(
+                      request.userAnswers,
+                      request.subscription,
+                      changedPages,
+                      isCheckAnswers = true,
+                      amounts,
+                      levyCalculations
+                    )
+                    Ok(view(orgName, sections, routes.CorrectReturnCheckChangesCYAController.onSubmit))
+                  }
               }
           }
         }
