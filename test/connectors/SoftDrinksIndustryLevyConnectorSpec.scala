@@ -22,15 +22,15 @@ import models.submission.{ Litreage, ReturnVariationData }
 import models.{ DataHelper, ReturnPeriod, VariationsSubmissionDataHelper }
 import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{clearInvocations, verify, when}
+import org.mockito.Mockito.{ clearInvocations, verify, when }
 import play.api.http.Status.NO_CONTENT
-import play.api.libs.json.{JsValue, Json}
+import play.api.libs.json.{ JsValue, Json }
 import repositories.{ CacheMap, SDILSessionCache }
 import uk.gov.hmrc.http.{ Authorization, HeaderCarrier, HttpResponse, RequestId, SessionId }
 import utilities.GenericLogger
 
 import java.net.URL
-import scala.concurrent.{Await, Future}
+import scala.concurrent.{ Await, Future }
 import scala.concurrent.duration.*
 
 class SoftDrinksIndustryLevyConnectorSpec
@@ -87,7 +87,9 @@ class SoftDrinksIndustryLevyConnectorSpec
       val sdilNumber: String = "XKSDIL000000022"
       when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(), any())(using any()))
         .thenReturn(Future.successful(None))
-      when(requestBuilderExecute[HttpResponse]).thenReturn(Future.successful(jsonResponse(200, Json.toJson(aSubscription))))
+      when(requestBuilderExecute[HttpResponse]).thenReturn(
+        Future.successful(jsonResponse(200, Json.toJson(aSubscription)))
+      )
       when(mockSDILSessionCache.save[OptRetrievedSubscription](any(), any(), any())(using any()))
         .thenReturn(Future.successful(CacheMap("foo", Map("bar" -> Json.obj("wizz" -> "bang2")))))
       val res = softDrinksIndustryLevyConnector.retrieveSubscription(sdilNumber, identifierType)
@@ -119,7 +121,9 @@ class SoftDrinksIndustryLevyConnectorSpec
     "return a small producer status successfully" in {
       val sdilNumber: String = "XKSDIL000000022"
       val period = ReturnPeriod(year = 2022, quarter = 3)
-      when(requestBuilderExecute[HttpResponse]).thenReturn(Future.successful(jsonResponse(200, Json.toJson(Some(false)))))
+      when(requestBuilderExecute[HttpResponse]).thenReturn(
+        Future.successful(jsonResponse(200, Json.toJson(Some(false))))
+      )
       val res = softDrinksIndustryLevyConnector.checkSmallProducerStatus(sdilNumber, period)
 
       whenReady(
@@ -145,7 +149,9 @@ class SoftDrinksIndustryLevyConnectorSpec
     }
 
     "return balance successfully" in {
-      when(requestBuilderExecute[HttpResponse]).thenReturn(Future.successful(jsonResponse(200, Json.toJson(BigDecimal(1000)))))
+      when(requestBuilderExecute[HttpResponse]).thenReturn(
+        Future.successful(jsonResponse(200, Json.toJson(BigDecimal(1000))))
+      )
       val res = softDrinksIndustryLevyConnector.balance(sdilNumber, false)
 
       whenReady(
@@ -156,7 +162,9 @@ class SoftDrinksIndustryLevyConnectorSpec
     }
 
     "return balance history successfully" in {
-      when(requestBuilderExecute[HttpResponse]).thenReturn(Future.successful(jsonResponse(200, Json.toJson(financialItemList))))
+      when(requestBuilderExecute[HttpResponse]).thenReturn(
+        Future.successful(jsonResponse(200, Json.toJson(financialItemList)))
+      )
 
       val res = softDrinksIndustryLevyConnector.balanceHistory(sdilNumber, false)
 
@@ -332,7 +340,9 @@ class SoftDrinksIndustryLevyConnectorSpec
 
       when(mockSDILSessionCache.fetchEntry[OptRetrievedSubscription](any(), any())(using any()))
         .thenReturn(Future.successful(None))
-      when(requestBuilderExecute[HttpResponse]).thenReturn(Future.successful(jsonResponse(200, Json.toJson(aSubscription))))
+      when(requestBuilderExecute[HttpResponse]).thenReturn(
+        Future.successful(jsonResponse(200, Json.toJson(aSubscription)))
+      )
       when(mockSDILSessionCache.save[OptRetrievedSubscription](any, any, any)(using any()))
         .thenReturn(Future.successful(CacheMap("foo", Map("bar" -> Json.obj("wizz" -> "bang2")))))
 
@@ -361,7 +371,9 @@ class SoftDrinksIndustryLevyConnectorSpec
         .thenReturn(Future.successful(HttpResponse(NO_CONTENT, "")))
 
       Await.result(
-        softDrinksIndustryLevyConnector.submitVariation(variationsSubmission, aSubscription.sdilRef)(using incomingHc).value,
+        softDrinksIndustryLevyConnector
+          .submitVariation(variationsSubmission, aSubscription.sdilRef)(using incomingHc)
+          .value,
         1.seconds
       )
 

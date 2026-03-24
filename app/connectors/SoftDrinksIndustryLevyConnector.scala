@@ -24,15 +24,15 @@ import models.correctReturn.ReturnsVariation
 import models.submission.{ ReturnVariationData, VariationsSubmission }
 import models.{ LevyCalculation, LevyCalculationRequest, ReturnPeriod, SdilReturn }
 import play.api.http.Status.NO_CONTENT
-import play.api.libs.json.{JsValue, Json}
-import repositories.{SDILSessionCache, SDILSessionKeys}
+import play.api.libs.json.{ JsValue, Json }
+import repositories.{ SDILSessionCache, SDILSessionKeys }
 import service.VariationResult
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpReads, HttpResponse, StringContextOps}
+import uk.gov.hmrc.http.{ HeaderCarrier, HttpReads, HttpResponse, StringContextOps }
 import utilities.GenericLogger
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{ ExecutionContext, Future }
 import scala.util.control.NonFatal
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 
@@ -70,7 +70,10 @@ class SoftDrinksIndustryLevyConnector @Inject() (
       startTime.map(st => s"durationMs=${System.currentTimeMillis() - st}")
     ).flatten.mkString(" ")
 
-  private def executeGet[A](operation: String, path: String)(implicit hc: HeaderCarrier, rds: HttpReads[A]): Future[A] = {
+  private def executeGet[A](operation: String, path: String)(implicit
+    hc: HeaderCarrier,
+    rds: HttpReads[A]
+  ): Future[A] = {
     val urlString = s"$sdilUrl$path"
     val startTime = System.currentTimeMillis()
     logger.info(
