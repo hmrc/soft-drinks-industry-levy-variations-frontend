@@ -57,7 +57,7 @@ class SoftDrinksIndustryLevyConnectorSpec
   private def assertSanitisedCorrelationIds(outboundHc: HeaderCarrier, incomingHc: HeaderCarrier): Unit = {
     outboundHc.requestId mustBe incomingHc.requestId
     outboundHc.sessionId mustBe incomingHc.sessionId
-    outboundHc.authorization mustBe None
+    outboundHc.authorization mustBe incomingHc.authorization
     outboundHc.deviceID mustBe None
     outboundHc.otherHeaders mustBe Seq.empty
   }
