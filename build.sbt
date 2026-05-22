@@ -1,7 +1,8 @@
 import play.sbt.routes.RoutesKeys
 import sbt.Def
 import scoverage.ScoverageKeys
-import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
+
+ThisBuild / scalaVersion := "3.7.4"
 
 lazy val appName: String = "soft-drinks-industry-levy-variations-frontend"
 
@@ -9,12 +10,9 @@ lazy val root = (project in file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(inConfig(Test)(testSettings): _*)
-  .configs(IntegrationTest)
-  .settings(inConfig(IntegrationTest)(itSettings): _*)
   .settings(majorVersion := 0, libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always) // libraryDependencySchemes added to get around the scoverage compile errors for scala 2.13.10
   .settings(ThisBuild / useSuperShell := false)
   .settings(
-    scalaVersion := "3.7.4",
     name := appName,
     RoutesKeys.routesImport ++= Seq(
       "models._",
@@ -65,17 +63,19 @@ lazy val root = (project in file("."))
 
 lazy val testSettings: Seq[Def.Setting[_]] = Seq(
   fork := true,
+  javaOptions += "-XX:+EnableDynamicAgentLoading",
   unmanagedSourceDirectories += baseDirectory.value / "test-utils"
 )
 
-lazy val itSettings = Defaults.itSettings ++ Seq(
-  unmanagedSourceDirectories := Seq(
-    baseDirectory.value / "it",
-    baseDirectory.value / "test-utils"
-  ),
-  unmanagedResourceDirectories := Seq(
-    baseDirectory.value / "it" / "resources"
-  ),
-  parallelExecution := false,
-  fork := true
-)
+lazy val it = (project in file("it"))
+  .enablePlugins(PlayScala)
+  .disablePlugins(SbtDistributablesPlugin)
+  .dependsOn(root % "test->test")
+  .settings(
+    majorVersion := 0,
+    Test / unmanagedSourceDirectories := Seq(baseDirectory.value),
+    Test / unmanagedResourceDirectories := Seq(baseDirectory.value / "resources"),
+    Test / parallelExecution := false,
+    Test / fork := true,
+    Test / javaOptions += "-XX:+EnableDynamicAgentLoading"
+  )
