@@ -4,12 +4,12 @@
 
 @media (min-width: 40.0625em) {
   .sdil-right-align--desktop {
-    text-align: right !important;
+    text-align: right;
+    padding-right: 0px !important;
   }
 }
 
-@media print {
-    .govuk-summary-list__row--no-actions::after {
-        display: none !important
-    }
+.govuk-summary-list__row--no-actions::after {
+    display: none !important
 }
+
