@@ -23,7 +23,7 @@ object AppDependencies {
     "uk.gov.hmrc"            %% s"bootstrap-test-$playVersion"  % bootstrapVersion,
     "uk.gov.hmrc.mongo"      %% s"hmrc-mongo-test-$playVersion" % hmrcMongoVersion,
     "io.github.wolfendale"   %% "scalacheck-gen-regexp"       % "1.1.0"
-  ).map(_ % "test, it")
+  ).map(_ % Test)
 
 val all: Seq[ModuleID] = compile ++ test
 }
