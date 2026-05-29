@@ -58,12 +58,12 @@ trait SubmissionVariationHelper {
   }
 
   def addSitesToUserAnswers(userAnswers: UserAnswers, hasNewSites: Boolean, hasRemovedSites: Boolean): UserAnswers = {
-    val (productionSites: Map[String, Site], warehouses: Map[String, Site]) = (hasNewSites, hasRemovedSites) match {
+    val (productionSites, warehouses) = (hasNewSites, hasRemovedSites) match {
       case (true, true) => (Map("2" -> site3), Map("2" -> site4))
       case (true, _)    => (Map("1" -> site1, "2" -> site3), Map("1" -> site2, "2" -> site4))
-      case (_, true)    => (Map.empty, Map.empty)
+      case (_, true)    => (Map.empty[String, Site], Map.empty[String, Site])
       case _            => (Map("1" -> site1), Map("1" -> site2))
-    }: @unchecked
+    }
     userAnswers.copy(
       packagingSiteList = productionSites,
       warehouseList = warehouses

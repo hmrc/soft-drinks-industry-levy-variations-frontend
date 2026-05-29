@@ -152,6 +152,19 @@ class SoftDrinksIndustryLevyConnector @Inject() (
           }
     }
   }
+
+  def retrieveSubscriptionNoCache(identifierValue: String, identifierType: String)(implicit
+    hc: HeaderCarrier
+  ): VariationResult[Option[RetrievedSubscription]] = EitherT {
+    executeGet[Option[RetrievedSubscription]](
+      operation = "retrieveSubscriptionNoCache",
+      path = s"/subscription/$identifierType/$identifierValue"
+    ).map(Right(_))
+      .recover { case NonFatal(_) =>
+        Left(UnexpectedResponseFromSDIL)
+      }
+  }
+
   def checkSmallProducerStatus(sdilRef: String, period: ReturnPeriod)(implicit
     hc: HeaderCarrier
   ): VariationResult[Option[Boolean]] = EitherT {

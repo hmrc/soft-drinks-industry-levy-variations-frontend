@@ -1,5 +1,6 @@
 package controllers
 
+import com.github.tomakehurst.wiremock.client.WireMock.{ getRequestedFor, urlPathEqualTo, verify => verifyRequest }
 import models.{ NormalMode, SelectChange }
 import org.jsoup.Jsoup
 import org.scalatest.matchers.must.Matchers._
@@ -12,6 +13,45 @@ class SelectChangeControllerISpec extends ControllerITTestHelper {
   val route = "/select-change"
 
   s"GET $route" - {
+    "should use the active SDIL enrolment when multiple SDIL references are returned" in {
+      build.user.isAuthorisedAndEnrolledWithInactiveAndActiveSdilRefs.sdilBackend
+        .retrieveSubscription("sdil", INACTIVE_SDIL_REF, diffSubscriptionWithInactiveSdilRefAndDeRegDate)
+        .sdilBackend
+        .retrieveSubscription("sdil", SDIL_REF, diffSubscription)
+        .sdilBackend
+        .returns_variable(UTR)
+
+      WsTestClient.withClient { client =>
+        val result1 = createClientRequestGet(client, baseUrl + route)
+
+        whenReady(result1) { res =>
+          res.status mustBe 200
+          verifyRequest(1, getRequestedFor(urlPathEqualTo(s"/subscription/sdil/$INACTIVE_SDIL_REF")))
+          verifyRequest(2, getRequestedFor(urlPathEqualTo(s"/subscription/sdil/$SDIL_REF")))
+        }
+      }
+    }
+
+    "should use the active SDIL enrolment in preference to UTR when both are returned" in {
+      build.user.isAuthorisedAndEnrolledWithUtrInactiveAndActiveSdilRefs.sdilBackend
+        .retrieveSubscription("sdil", INACTIVE_SDIL_REF, diffSubscriptionWithInactiveSdilRefAndDeRegDate)
+        .sdilBackend
+        .retrieveSubscription("sdil", SDIL_REF, diffSubscription)
+        .sdilBackend
+        .returns_variable(UTR)
+
+      WsTestClient.withClient { client =>
+        val result1 = createClientRequestGet(client, baseUrl + route)
+
+        whenReady(result1) { res =>
+          res.status mustBe 200
+          verifyRequest(1, getRequestedFor(urlPathEqualTo(s"/subscription/sdil/$INACTIVE_SDIL_REF")))
+          verifyRequest(2, getRequestedFor(urlPathEqualTo(s"/subscription/sdil/$SDIL_REF")))
+          verifyRequest(0, getRequestedFor(urlPathEqualTo(s"/subscription/utr/$UTR")))
+        }
+      }
+    }
+
     "should render the select change page" - {
       "that includes the option to correct a return" - {
         "when the user has variable returns" in {

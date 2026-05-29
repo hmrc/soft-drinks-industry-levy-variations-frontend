@@ -24,6 +24,7 @@ import handlers.ErrorHandler
 import models.requests.IdentifierRequest
 import play.api.mvc.Results._
 import play.api.mvc._
+import services.SdilSubscriptionService
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
@@ -31,6 +32,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
 import scala.concurrent.{ ExecutionContext, Future }
+import scala.util.control.NonFatal
 
 trait IdentifierAction
     extends ActionBuilder[IdentifierRequest, AnyContent] with ActionFunction[Request, IdentifierRequest]
@@ -40,6 +42,7 @@ class AuthenticatedIdentifierAction @Inject() (
   config: FrontendAppConfig,
   val parser: BodyParsers.Default,
   sdilConnector: SoftDrinksIndustryLevyConnector,
+  sdilSubscriptionService: SdilSubscriptionService,
   errorHandler: ErrorHandler
 )(implicit val executionContext: ExecutionContext)
     extends IdentifierAction with AuthorisedFunctions with ActionHelpers {
@@ -50,14 +53,23 @@ class AuthenticatedIdentifierAction @Inject() (
 
     authorised(AuthProviders(GovernmentGateway)).retrieve(allEnrolments) { enrolments =>
       val maybeUtr = getUtr(enrolments)
-      val maybeSdil = getSdilEnrolment(enrolments)
-      (maybeSdil, maybeUtr) match {
-        case (None, None) =>
-          Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
-        case (Some(sdil), _) =>
-          getSubscriptionAndGenerateIdentifierRequest(sdil.value, "sdil", request, block)
-        case (None, Some(utr)) => getSubscriptionAndGenerateIdentifierRequest(utr, "utr", request, block)
-      }
+      val sdilRefs = getAllSdilEnrolments(enrolments)
+
+      sdilSubscriptionService
+        .resolveActiveSdilRef(sdilRefs)
+        .flatMap { maybeSdil =>
+          (maybeSdil, maybeUtr) match {
+            case (None, None) =>
+              Future.successful(Redirect(routes.UnauthorisedController.onPageLoad))
+            case (Some(sdil), _) =>
+              getSubscriptionAndGenerateIdentifierRequest(sdil, "sdil", request, block)
+            case (None, Some(utr)) =>
+              getSubscriptionAndGenerateIdentifierRequest(utr, "utr", request, block)
+          }
+        }
+        .recoverWith { case NonFatal(_) =>
+          errorHandler.internalServerErrorTemplate(using request).map(errorView => InternalServerError(errorView))
+        }
     } recover {
       case _: NoActiveSession =>
         Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl)))
