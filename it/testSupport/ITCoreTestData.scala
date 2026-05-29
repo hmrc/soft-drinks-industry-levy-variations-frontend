@@ -20,6 +20,8 @@ trait ITCoreTestData
 
   val UTR = "0000001611"
   val SDIL_REF = "XKSDIL000000022"
+  val INACTIVE_SDIL_REF = "XKSDIL000000026"
+  val deregDate = LocalDate.now.minusMonths(6)
 
   val validDateJson = Json.obj(
     "value.day"   -> day.toString,
@@ -79,6 +81,9 @@ trait ITCoreTestData
       Contact(Some("Ava Adams"), Some("Chief Infrastructure Agent"), "04495 206189", "Adeline.Greene@gmail.com"),
     deregDate = None
   )
+
+  val diffSubscriptionWithInactiveSdilRefAndDeRegDate: RetrievedSubscription =
+    diffSubscription.copy(sdilRef = INACTIVE_SDIL_REF, deregDate = Some(deregDate))
 
   val diffSubscriptionWithWarehouses: RetrievedSubscription = backend.RetrievedSubscription(
     utr = "0000001611",

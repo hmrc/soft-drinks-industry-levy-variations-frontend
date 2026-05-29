@@ -403,7 +403,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
       sectionIndex: Option[Int]
     ): Unit =
       (packingSites, warehouseSites) match {
-        case (Some(packingSites), Some(warehouseSites)) =>
+        case (Some(_), Some(_)) =>
           sectionIndex map { sectionInd =>
             val sites = page
               .getElementsByClass("govuk-summary-list")
@@ -452,7 +452,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
               .first()
               .attr("href") mustBe routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
           }
-        case (Some(packingSites), None) =>
+        case (Some(_), None) =>
           sectionIndex map { sectionInd =>
 
             val sites = page
@@ -481,7 +481,7 @@ class ChangeActivityCYAControllerISpec extends ControllerITTestHelper with WsTes
               .first()
               .attr("href") mustBe routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
           }
-        case (None, Some(warehouseSites)) =>
+        case (None, Some(_)) =>
           sectionIndex map { sectionInd =>
 
             val sites = page

@@ -130,7 +130,7 @@ class ChangeRegisteredDetailsControllerISpec extends ControllerITTestHelper {
             val checkBoxInputs = page.getElementsByClass("govuk-checkboxes__input")
             checkBoxInputs.size() mustBe 2
 
-            ChangeRegisteredDetails.voluntaryValues.zipWithIndex.foreach { case (checkBoxItem1, index1) =>
+            ChangeRegisteredDetails.voluntaryValues.zipWithIndex.foreach { case (_, index1) =>
               checkBoxInputs.get(index1).attr("value") should not equal "sites"
             }
           }

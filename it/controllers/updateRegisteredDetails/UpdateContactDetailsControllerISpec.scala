@@ -238,7 +238,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
           }
         }
       }
-      updateContactDetailsMap.zipWithIndex.foreach { case ((fieldName, _), index) =>
+      updateContactDetailsMap.zipWithIndex.foreach { case ((fieldName, _), _) =>
         "when no answer is build for field" + fieldName in {
           build.commonPrecondition
 
@@ -368,7 +368,7 @@ class UpdateContactDetailsControllerISpec extends ControllerITTestHelper {
           }
         }
       }
-      updateContactDetailsMap.zipWithIndex.foreach { case ((fieldName, _), index) =>
+      updateContactDetailsMap.zipWithIndex.foreach { case ((fieldName, _), _) =>
         "when no answer is build for field" + fieldName in {
           build.commonPrecondition
 
