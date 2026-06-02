@@ -128,7 +128,7 @@ class SessionRepositoryISpec
               encryption.crypto
                 .decrypt((resultParsedToJson \ "contactAddress").as[EncryptedValue], userAnswersBefore.id)
             )
-          )(Reads.optionWithNull[UkAddress])
+          )(using Reads.optionWithNull[UkAddress])
           .get
 
       dataDecrypted mustBe userAnswersBefore.data

@@ -32,7 +32,7 @@ trait TestConfiguration
     extends GuiceOneServerPerSuite with IntegrationPatience with PatienceConfiguration with BeforeAndAfterEach
     with BeforeAndAfterAll with SessionDatabaseOperations {
 
-  me: Suite with TestSuite =>
+  me: Suite & TestSuite =>
 
   val wiremockHost: String = "localhost"
   val wiremockPort: Int = Port.randomAvailable
