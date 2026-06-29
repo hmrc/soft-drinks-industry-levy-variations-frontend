@@ -83,17 +83,17 @@ trait ControllerHelper extends FrontendBaseController with I18nSupport {
         errorHandler.internalServerErrorTemplate.map(errorView => InternalServerError(errorView))
     }
 
-  def updateDatabaseWithoutRedirect(updatedAnswers: Try[UserAnswers], page: Page): Future[Boolean] =
+  def updateDatabaseWithoutRedirect(updatedAnswers: Try[UserAnswers], page: Page): Future[Status] =
     updatedAnswers match {
       case Failure(_) =>
         genericLogger.logger.error(s"Failed to resolve user answers while on ${page.toString}")
-        Future.successful(false)
+        Future.successful(InternalServerError)
       case Success(answers) =>
         sessionService.set(answers).map {
-          case Right(_) => true
+          case Right(_) => Ok
           case Left(_) =>
             genericLogger.logger.error(sessionRepo500ErrorMessage(page))
-            false
+            InternalServerError
         }
     }
 
