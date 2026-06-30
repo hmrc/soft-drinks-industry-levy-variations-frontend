@@ -77,5 +77,6 @@ lazy val it = (project in file("it"))
     Test / unmanagedResourceDirectories := Seq(baseDirectory.value / "resources"),
     Test / parallelExecution := false,
     Test / fork := true,
-    Test / javaOptions += "-XX:+EnableDynamicAgentLoading"
+    Test / javaOptions += "-XX:+EnableDynamicAgentLoading",
+      scalacOptions += "-Wconf:msg=Flag.*repeatedly:s"
   )
