@@ -23,6 +23,7 @@ import handlers.ErrorHandler
 import models.SelectChange.UpdateRegisteredDetails
 import models.{ CheckMode, Mode }
 import navigation._
+import pages.updateRegisteredDetails.PackagingSiteDetailsPage
 import play.api.data.Form
 import play.api.i18n.{ Messages, MessagesApi }
 import play.api.mvc.{ Action, AnyContent, MessagesControllerComponents, RequestHeader }
@@ -33,7 +34,6 @@ import utilities.GenericLogger
 import viewmodels.govuk.SummaryListFluency
 import views.html.updateRegisteredDetails.PackagingSiteDetailsView
 import views.summary.updateRegisteredDetails.PackagingSiteDetailsSummary
-
 import javax.inject.Inject
 import scala.concurrent.{ ExecutionContext, Future }
 
@@ -59,7 +59,11 @@ class PackagingSiteDetailsController @Inject() (
         rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList, mode)
       )
 
-      Ok(view(form, mode, siteList))
+      val preparedForm = request.userAnswers
+        .get(PackagingSiteDetailsPage)
+        .fold(form)(form.fill)
+
+      Ok(view(preparedForm, mode, siteList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -68,11 +72,17 @@ class PackagingSiteDetailsController @Inject() (
       val siteList: SummaryList = SummaryListViewModel(
         rows = PackagingSiteDetailsSummary.row2(request.userAnswers.packagingSiteList, mode)
       )
+
       form
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, siteList))),
-          value => getOnwardUrl(value, mode).map(Redirect(_))
+          value => {
+            val updatedAnswers = request.userAnswers.set(PackagingSiteDetailsPage, value)
+
+            updateDatabaseWithoutRedirect(updatedAnswers, PackagingSiteDetailsPage)
+              .flatMap(_ => getOnwardUrl(value, mode).map(Redirect(_)))
+          }
         )
     }
 
