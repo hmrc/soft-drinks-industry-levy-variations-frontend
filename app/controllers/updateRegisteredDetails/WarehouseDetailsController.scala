@@ -61,7 +61,11 @@ class WarehouseDetailsController @Inject() (
         case _ => None
       }
 
-      Ok(view(form, mode, summaryList))
+      val preparedForm = request.userAnswers
+        .get(WarehouseDetailsPage)
+        .fold(form)(form.fill)
+
+      Ok(view(preparedForm, mode, summaryList))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -88,7 +92,12 @@ class WarehouseDetailsController @Inject() (
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, summaryList))),
-          value => getOnwardUrl(value, addContactDetails, addBusinessAddress, mode).map(Redirect(_))
+          value => {
+            val updatedAnswers = request.userAnswers.set(WarehouseDetailsPage, value)
+
+            updateDatabaseWithoutRedirect(updatedAnswers, WarehouseDetailsPage)
+              .flatMap(_ => getOnwardUrl(value, addContactDetails, addBusinessAddress, mode).map(Redirect(_)))
+          }
         )
     }
 

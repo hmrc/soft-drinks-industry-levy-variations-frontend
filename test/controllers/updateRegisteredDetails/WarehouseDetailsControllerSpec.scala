@@ -29,7 +29,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{ times, verify, when }
 import org.scalatestplus.mockito.MockitoSugar
-import pages.updateRegisteredDetails.ChangeRegisteredDetailsPage
+import pages.updateRegisteredDetails.{ ChangeRegisteredDetailsPage, WarehouseDetailsPage }
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -92,21 +92,26 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
         }
       }
 
-      s"must populate the view correctly on a GET when the question has previously been answered in $mode" in {
+      List(true, false).foreach { answer =>
+        s"must populate the view correctly on a GET when the question has previously been answered $answer in $mode" in {
+          val userAnswers = emptyUserAnswersForUpdateRegisteredDetails
+            .set(WarehouseDetailsPage, answer)
+            .success
+            .value
 
-        val userAnswers = emptyUserAnswersForUpdateRegisteredDetails
+          val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+          running(application) {
+            val request = FakeRequest(GET, warehouseDetailsRouteForMode(mode))
 
-        running(application) {
-          val request = FakeRequest(GET, warehouseDetailsRouteForMode(mode))
+            val view = application.injector.instanceOf[WarehouseDetailsView]
 
-          val view = application.injector.instanceOf[WarehouseDetailsView]
+            val result = route(application, request).value
 
-          val result = route(application, request).value
-
-          status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form, mode, None)(using request, messages(application)).toString
+            status(result) mustEqual OK
+            contentAsString(result) mustEqual
+              view(form.fill(answer), mode, None)(using request, messages(application)).toString
+          }
         }
       }
 
@@ -180,6 +185,8 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
           ArgumentMatchers.any(),
           ArgumentMatchers.any()
         )(using ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+
+        verify(mockSessionRepository, times(1)).set(any())
       }
     }
 
@@ -221,6 +228,8 @@ class WarehouseDetailsControllerSpec extends SpecBase with MockitoSugar with Sum
           ArgumentMatchers.any(),
           ArgumentMatchers.any()
         )(using ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+
+        verify(mockSessionRepository, times(1)).set(any())
       }
     }
 
