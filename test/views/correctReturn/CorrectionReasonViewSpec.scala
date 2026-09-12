@@ -109,6 +109,12 @@ class CorrectionReasonViewSpec extends ViewSpecHelper {
           .attr("href") mustBe "#value"
         errorSummary.text() mustBe "Reason for correcting the return must be 255 characters or less"
       }
+      "should have a textarea with an id matching the error summary link" in {
+        documentWithErrors
+          .getElementsByClass(Selectors.textArea)
+          .first()
+          .id() mustBe "value"
+      }
     }
 
     testBackLink(document)
