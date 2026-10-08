@@ -119,7 +119,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
     userAnswersForUpdateRegisteredDetailsWarehouseDetailsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
-        s"should return OK and render the page with neither radio checked" +
+        s"should return OK and render the page with $key selected" +
           "(with message displaying no warehouses added)" in {
             build.commonPrecondition
 
@@ -137,9 +137,9 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
                 val radioInputs = page.getElementsByClass("govuk-radios__input")
                 radioInputs.size() mustBe 2
                 radioInputs.get(0).attr("value") mustBe "true"
-                radioInputs.get(0).hasAttr("checked") mustBe false
+                radioInputs.get(0).hasAttr("checked") mustBe (key == "yes")
                 radioInputs.get(1).attr("value") mustBe "false"
-                radioInputs.get(1).hasAttr("checked") mustBe false
+                radioInputs.get(1).hasAttr("checked") mustBe (key == "no")
               }
             }
           }
@@ -183,7 +183,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
 
     userAnswersForUpdateRegisteredDetailsWarehouseDetailsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
-        s"should return OK and render the page with neither radio checked" +
+        s"should return OK and render the page with $key selected" +
           "(with message displaying no warehouses added)" in {
             build.commonPrecondition
 
@@ -201,9 +201,9 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
                 val radioInputs = page.getElementsByClass("govuk-radios__input")
                 radioInputs.size() mustBe 2
                 radioInputs.get(0).attr("value") mustBe "true"
-                radioInputs.get(0).hasAttr("checked") mustBe false
+                radioInputs.get(0).hasAttr("checked") mustBe (key == "yes")
                 radioInputs.get(1).attr("value") mustBe "false"
-                radioInputs.get(1).hasAttr("checked") mustBe false
+                radioInputs.get(1).hasAttr("checked") mustBe (key == "no")
                 getAnswers(sdilNumber).map(userAnswers => userAnswers.warehouseList).get mustBe Map.empty
               }
             }
@@ -257,7 +257,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
               val dataStoredForPage =
                 getAnswers(userAnswersWithSiteOnlyChangeRegisteredDetailsSelections.id)
                   .fold[Option[Boolean]](None)(_.get(WarehouseDetailsPage))
-              dataStoredForPage.isEmpty mustBe true
+              dataStoredForPage mustBe Some(false)
             }
           }
         }
@@ -286,7 +286,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
                   val dataStoredForPage =
                     getAnswers(userAnswersWithSitesAndContactDetailsChangeRegisteredDetailsSelections.id)
                       .fold[Option[Boolean]](None)(_.get(WarehouseDetailsPage))
-                  dataStoredForPage.isEmpty mustBe true
+                  dataStoredForPage mustBe Some(false)
                 }
               }
             }
@@ -386,7 +386,8 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
                 "phoneNumber" -> "04495 206189",
                 "email"       -> "Adeline.Greene@gmail.com"
               ),
-              "changeRegisteredDetails" -> Seq("sites")
+              "changeRegisteredDetails" -> Seq("sites"),
+              "warehouseDetails"        -> true
             )
           )
         )
@@ -504,7 +505,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
               )
               val dataStoredForPage =
                 getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(WarehouseDetailsPage))
-              dataStoredForPage.isEmpty mustBe true
+              dataStoredForPage mustBe Some(false)
             }
           }
         }
@@ -532,7 +533,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
               )
               val dataStoredForPage =
                 getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(WarehouseDetailsPage))
-              dataStoredForPage.isEmpty mustBe true
+              dataStoredForPage mustBe Some(false)
             }
           }
         }
@@ -559,7 +560,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
               )
               val dataStoredForPage =
                 getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(WarehouseDetailsPage))
-              dataStoredForPage.isEmpty mustBe true
+              dataStoredForPage mustBe Some(false)
             }
           }
         }
@@ -581,7 +582,7 @@ class WarehouseDetailsControllerISpec extends ControllerITTestHelper {
           res.status mustBe 303
           res.header(HeaderNames.LOCATION) mustBe Some(routes.UpdateRegisteredDetailsCYAController.onPageLoad.url)
           val dataStoredForPage = getAnswers(userAnswers.id).fold[Option[Boolean]](None)(_.get(WarehouseDetailsPage))
-          dataStoredForPage.isEmpty mustBe true
+          dataStoredForPage mustBe Some(false)
         }
       }
     }
