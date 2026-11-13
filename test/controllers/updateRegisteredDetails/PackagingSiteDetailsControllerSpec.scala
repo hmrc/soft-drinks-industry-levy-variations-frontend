@@ -26,7 +26,7 @@ import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{ times, verify, when }
 import org.scalatestplus.mockito.MockitoSugar
-import pages.updateRegisteredDetails.ChangeRegisteredDetailsPage
+import pages.updateRegisteredDetails.{ ChangeRegisteredDetailsPage, PackagingSiteDetailsPage }
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
@@ -47,8 +47,11 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
   val formProvider = new PackagingSiteDetailsFormProvider()
   val form: Form[Boolean] = formProvider()
 
-  lazy val packagingSiteDetailsRoute: String = routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
-  lazy val packagingSiteDetailsCheckRoute: String = routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
+  lazy val packagingSiteDetailsRoute: String =
+    routes.PackagingSiteDetailsController.onPageLoad(NormalMode).url
+
+  lazy val packagingSiteDetailsCheckRoute: String =
+    routes.PackagingSiteDetailsController.onPageLoad(CheckMode).url
 
   def packagingSiteDetailsRouteForMode(mode: Mode): String =
     if (mode == CheckMode) packagingSiteDetailsCheckRoute else packagingSiteDetailsRoute
@@ -59,46 +62,67 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
   "PackagingSiteDetails Controller within Update Registered Details" - {
 
     List(NormalMode, CheckMode).foreach { mode =>
+
       s"must return OK and the correct view for a GET in $mode" in {
 
         val application =
-          applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetailsWithPackagingSite)).build()
+          applicationBuilder(
+            userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetailsWithPackagingSite)
+          ).build()
 
         val summary = SummaryListViewModel(
           rows = PackagingSiteDetailsSummary.row2(packingSiteMap, mode)
         )
 
         running(application) {
-          val request = FakeRequest(GET, packagingSiteDetailsRouteForMode(mode))
+          val request =
+            FakeRequest(GET, packagingSiteDetailsRouteForMode(mode))
 
           val result = route(application, request).value
 
-          val view = application.injector.instanceOf[PackagingSiteDetailsView]
+          val view =
+            application.injector.instanceOf[PackagingSiteDetailsView]
 
           status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form, mode, summary)(using request, messages(application)).toString
+
+          contentAsString(result) mustEqual
+            view(form, mode, summary)(using request, messages(application)).toString
         }
       }
 
-      s"must populate the view correctly on a GET when the question has previously been answered in $mode" in {
+      List(true, false).foreach { answer =>
+        s"must populate the view correctly on a GET when the question has previously been answered $answer in $mode" in {
 
-        val summary = SummaryListViewModel(
-          rows = PackagingSiteDetailsSummary.row2(packingSiteMap, mode)
-        )
+          val summary = SummaryListViewModel(
+            rows = PackagingSiteDetailsSummary.row2(packingSiteMap, mode)
+          )
 
-        val userAnswers = emptyUserAnswersForUpdateRegisteredDetailsWithPackagingSite
+          val userAnswers =
+            emptyUserAnswersForUpdateRegisteredDetailsWithPackagingSite
+              .set(PackagingSiteDetailsPage, answer)
+              .success
+              .value
 
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+          val application =
+            applicationBuilder(userAnswers = Some(userAnswers)).build()
 
-        running(application) {
-          val request = FakeRequest(GET, packagingSiteDetailsRouteForMode(mode))
+          running(application) {
+            val request =
+              FakeRequest(GET, packagingSiteDetailsRouteForMode(mode))
 
-          val view = application.injector.instanceOf[PackagingSiteDetailsView]
+            val view =
+              application.injector.instanceOf[PackagingSiteDetailsView]
 
-          val result = route(application, request).value
+            val result = route(application, request).value
 
-          status(result) mustEqual OK
-          contentAsString(result) mustEqual view(form, mode, summary)(using request, messages(application)).toString
+            status(result) mustEqual OK
+
+            contentAsString(result) mustEqual
+              view(form.fill(answer), mode, summary)(using
+                request,
+                messages(application)
+              ).toString
+          }
         }
       }
     }
@@ -107,12 +131,17 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
 
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
+      when(mockSessionService.set(any()))
+        .thenReturn(Future.successful(Right(true)))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
+        applicationBuilder(
+          userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)
+        )
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
+            bind[Navigator].toInstance(
+              new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)
+            ),
             bind[SessionService].toInstance(mockSessionService)
           )
           .build()
@@ -125,7 +154,11 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.WarehouseDetailsController.onPageLoad(NormalMode).url
+
+        redirectLocation(result).value mustEqual
+          routes.WarehouseDetailsController.onPageLoad(NormalMode).url
+
+        verify(mockSessionService, times(1)).set(any())
       }
     }
 
@@ -133,12 +166,17 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
 
       val mockSessionService = mock[SessionService]
 
-      when(mockSessionService.set(any())).thenReturn(Future.successful(Right(true)))
+      when(mockSessionService.set(any()))
+        .thenReturn(Future.successful(Right(true)))
 
       val application =
-        applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails))
+        applicationBuilder(
+          userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetails)
+        )
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
+            bind[Navigator].toInstance(
+              new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)
+            ),
             bind[SessionService].toInstance(mockSessionService)
           )
           .build()
@@ -151,14 +189,24 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(
-          result
-        ).value mustEqual controllers.updateRegisteredDetails.routes.UpdateRegisteredDetailsCYAController.onPageLoad.url
+
+        redirectLocation(result).value mustEqual
+          controllers.updateRegisteredDetails.routes.UpdateRegisteredDetailsCYAController.onPageLoad.url
+
+        verify(mockSessionService, times(1)).set(any())
       }
     }
 
-    testInvalidJourneyType(UpdateRegisteredDetails, packagingSiteDetailsRoute)
-    testRedirectToPostSubmissionIfRequired(UpdateRegisteredDetails, packagingSiteDetailsRoute)
+    testInvalidJourneyType(
+      UpdateRegisteredDetails,
+      packagingSiteDetailsRoute
+    )
+
+    testRedirectToPostSubmissionIfRequired(
+      UpdateRegisteredDetails,
+      packagingSiteDetailsRoute
+    )
+
     testNoUserAnswersError(packagingSiteDetailsRoute)
 
     List(NormalMode, CheckMode).foreach { mode =>
@@ -169,7 +217,9 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         )
 
         val application =
-          applicationBuilder(userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetailsWithPackagingSite)).build()
+          applicationBuilder(
+            userAnswers = Some(emptyUserAnswersForUpdateRegisteredDetailsWithPackagingSite)
+          ).build()
 
         running(application) {
           val request =
@@ -178,44 +228,59 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
 
           val boundForm = form.bind(Map("value" -> ""))
 
-          val view = application.injector.instanceOf[PackagingSiteDetailsView]
+          val view =
+            application.injector.instanceOf[PackagingSiteDetailsView]
 
           val result = route(application, request).value
 
           status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual view(boundForm, mode, summary)(using
-            request,
-            messages(application)
-          ).toString
+
+          contentAsString(result) mustEqual
+            view(boundForm, mode, summary)(using
+              request,
+              messages(application)
+            ).toString
         }
       }
     }
 
     "must redirect to the next page when valid data is submitted (true)" in {
+
       val mockSessionRepository = mock[SessionRepository]
       val mockAddressLookupService = mock[AddressLookupService]
       val onwardUrlForALF = "foobarwizz"
 
-      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      when(mockSessionRepository.set(any()))
+        .thenReturn(Future.successful(true))
 
       when(
         mockAddressLookupService.initJourneyAndReturnOnRampUrl(
           ArgumentMatchers.eq(PackingDetails),
           ArgumentMatchers.any(),
           ArgumentMatchers.any()
-        )(using ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
-      )
-        .thenReturn(Future.successful(onwardUrlForALF))
+        )(using
+          ArgumentMatchers.any(),
+          ArgumentMatchers.any(),
+          ArgumentMatchers.any(),
+          ArgumentMatchers.any()
+        )
+      ).thenReturn(Future.successful(onwardUrlForALF))
 
-      val userAnswers = emptyUserAnswersForUpdateRegisteredDetails
-        .set(ChangeRegisteredDetailsPage, ChangeRegisteredDetails.values)
-        .success
-        .value
+      val userAnswers =
+        emptyUserAnswersForUpdateRegisteredDetails
+          .set(
+            ChangeRegisteredDetailsPage,
+            ChangeRegisteredDetails.values
+          )
+          .success
+          .value
 
       val application =
         applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
-            bind[Navigator].toInstance(new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)),
+            bind[Navigator].toInstance(
+              new FakeNavigatorForUpdateRegisteredDetails(onwardRoute)
+            ),
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[AddressLookupService].toInstance(mockAddressLookupService)
           )
@@ -231,13 +296,18 @@ class PackagingSiteDetailsControllerSpec extends SpecBase with MockitoSugar with
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual onwardUrlForALF
 
-        verify(mockAddressLookupService, times(1)).initJourneyAndReturnOnRampUrl(
-          ArgumentMatchers.eq(PackingDetails),
-          ArgumentMatchers.any(),
-          ArgumentMatchers.any()
-        )(using ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any(), ArgumentMatchers.any())
+        verify(mockAddressLookupService, times(1))
+          .initJourneyAndReturnOnRampUrl(
+            ArgumentMatchers.eq(PackingDetails),
+            ArgumentMatchers.any(),
+            ArgumentMatchers.any()
+          )(using
+            ArgumentMatchers.any(),
+            ArgumentMatchers.any(),
+            ArgumentMatchers.any(),
+            ArgumentMatchers.any()
+          )
       }
     }
-
   }
 }

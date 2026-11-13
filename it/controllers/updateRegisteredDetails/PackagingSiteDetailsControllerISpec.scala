@@ -60,7 +60,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
     userAnswersForUpdateRegisteredDetailsPackagingSiteDetailsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
-        s"should return OK and render the page with neither radio checked" in {
+        s"should return OK and render the page with $key selected" in {
           build.commonPrecondition
 
           setAnswers(userAnswers)
@@ -75,9 +75,9 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
-              radioInputs.get(0).hasAttr("checked") mustBe false
+              radioInputs.get(0).hasAttr("checked") mustBe (key == "yes")
               radioInputs.get(1).attr("value") mustBe "false"
-              radioInputs.get(1).hasAttr("checked") mustBe false
+              radioInputs.get(1).hasAttr("checked") mustBe (key == "no")
             }
           }
         }
@@ -118,7 +118,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
 
     userAnswersForUpdateRegisteredDetailsPackagingSiteDetailsPage.foreach { case (key, userAnswers) =>
       s"when the userAnswers contains data for the page with " + key + " selected" - {
-        s"should return OK and render the page with neither radio checked" in {
+        s"should return OK and render the page with $key selected" in {
           build.commonPrecondition
 
           setAnswers(userAnswers)
@@ -133,9 +133,9 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
               val radioInputs = page.getElementsByClass("govuk-radios__input")
               radioInputs.size() mustBe 2
               radioInputs.get(0).attr("value") mustBe "true"
-              radioInputs.get(0).hasAttr("checked") mustBe false
+              radioInputs.get(0).hasAttr("checked") mustBe (key == "yes")
               radioInputs.get(1).attr("value") mustBe "false"
-              radioInputs.get(1).hasAttr("checked") mustBe false
+              radioInputs.get(1).hasAttr("checked") mustBe (key == "no")
             }
           }
         }
@@ -169,7 +169,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
               res.header(HeaderNames.LOCATION) mustBe Some(routes.WarehouseDetailsController.onPageLoad(NormalMode).url)
               val dataStoredForPage = getAnswers(emptyUserAnswersForUpdateRegisteredDetails.id)
                 .fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
-              dataStoredForPage.isEmpty mustBe true
+              dataStoredForPage mustBe Some(false)
             }
           }
         }
@@ -190,7 +190,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
               res.header(HeaderNames.LOCATION) mustBe Some(routes.WarehouseDetailsController.onPageLoad(NormalMode).url)
               val dataStoredForPage = getAnswers(emptyUserAnswersForUpdateRegisteredDetails.id)
                 .fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
-              dataStoredForPage.isEmpty mustBe true
+              dataStoredForPage mustBe Some(false)
             }
           }
         }
@@ -257,7 +257,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
               res.header(HeaderNames.LOCATION) mustBe Some(routes.UpdateRegisteredDetailsCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(emptyUserAnswersForUpdateRegisteredDetails.id)
                 .fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
-              dataStoredForPage.isEmpty mustBe true
+              dataStoredForPage mustBe Some(false)
             }
           }
         }
@@ -278,7 +278,7 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
               res.header(HeaderNames.LOCATION) mustBe Some(routes.UpdateRegisteredDetailsCYAController.onPageLoad.url)
               val dataStoredForPage = getAnswers(emptyUserAnswersForUpdateRegisteredDetails.id)
                 .fold[Option[Boolean]](None)(_.get(PackagingSiteDetailsPage))
-              dataStoredForPage.isEmpty mustBe true
+              dataStoredForPage mustBe Some(false)
             }
           }
         }
@@ -420,7 +420,8 @@ class PackagingSiteDetailsControllerISpec extends ControllerITTestHelper {
                   "position"    -> "Chief Infrastructure Agent",
                   "phoneNumber" -> "04495 206189",
                   "email"       -> "Adeline.Greene@gmail.com"
-                )
+                ),
+              "packagingSiteDetails" -> true
             )
           )
         )
