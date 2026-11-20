@@ -315,7 +315,7 @@ class ReasonControllerISpec extends ControllerITTestHelper {
             val errorSummary = errorSummaryList.get(0)
             errorSummary
               .select("a")
-              .attr("href") mustBe "#correctionReason"
+              .attr("href") mustBe "#value"
             errorSummary.text() mustBe "Enter why you need to cancel your registration"
           }
         }
