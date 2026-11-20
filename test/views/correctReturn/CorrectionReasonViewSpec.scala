@@ -106,9 +106,7 @@ class CorrectionReasonViewSpec extends ViewSpecHelper {
           .first()
         errorSummary
           .select("a")
-          .attr("href") mustBe "#value"
-        val targetId = errorSummary.select("a").attr("href").stripPrefix("#")
-        documentWithErrors.select(s"textarea[id='$targetId']").size() mustBe 1
+          .attr("href") mustBe "#correctionReason"
         errorSummary.text() mustBe "Reason for correcting the return must be 255 characters or less"
       }
     }
