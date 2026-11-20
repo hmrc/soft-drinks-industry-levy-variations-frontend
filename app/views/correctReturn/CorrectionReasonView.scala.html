@@ -34,7 +34,7 @@
     @formHelper(action = routes.CorrectionReasonController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map(“value” -> “correctionReason”)))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "correctionReason")))
         }
 
         @characterCount(
